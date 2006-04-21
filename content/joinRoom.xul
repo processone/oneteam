@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+
+
+<!DOCTYPE window [
+<!ENTITY Room.titre "Ajouter un salon">
+<!ENTITY Room.login "Utilisateur">
+<!ENTITY Room.pass "Mot de Passe">
+<!ENTITY Room.server "Serveur">
+<!ENTITY Room.room "Room">
+]>
+
+
+<window
+    id="Login"
+    title="Join Room"
+    orient="horizontal"
+    width="270"
+    height="180"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+
+<spacer flex="1" />
+<groupbox id="xf-config-Roombox" flex="1">
+			<caption class="titre" label="&Room.titre;" />
+			<grid flex="1" >
+				<columns>
+					<column id="labels" flex="1"/>
+					<column id="fields" flex="1"/>
+				</columns>
+				<rows id="rows" flex="1">
+					<row>
+						<description value="&Room.login; :" />
+						<textbox id="login" />
+					</row>
+					<row>
+						<description value="&Room.pass; :" />
+						<textbox id="pass" />
+					</row>
+					<row>
+						<description value="&Room.room; :" />
+						<textbox id="room" />
+					</row>
+					<row>
+						<description value="&Room.server; :" />
+						<textbox id="server"/>
+					</row>
+					
+					
+				</rows>
+			</grid>
+
+			<hbox>
+				<spacer flex="1" />
+				<button label="Join" oncommand="performJoinRoom(event);"/>
+			
+				<spacer flex="1" />
+				<button label="Cancel" oncommand="self.close();"/>
+			</hbox>	
+		</groupbox>
+
+<spacer flex="1" />
+	
+</window>

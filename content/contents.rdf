@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+
+  <RDF:Seq RDF:about="urn:mozilla:package:root">
+    <RDF:li RDF:resource="urn:mozilla:package:messenger"/>
+  </RDF:Seq>
+
+  <RDF:Description RDF:about="urn:mozilla:package:messenger"
+        chrome:displayName="messenger"
+        chrome:author="SOUQUET AMédée"
+        chrome:name="messenger">
+  </RDF:Description>
+
+</RDF:RDF>

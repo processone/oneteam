@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+
+
+<!DOCTYPE window [
+<!ENTITY Contact.titre "Ajouter un contact">
+<!ENTITY Contact.login "Utilisateur">
+<!ENTITY Contact.server "Serveur">
+<!ENTITY Contact.group "Groupe">
+]>
+
+
+<window
+    id="Login"
+    title="Add New Contact"
+    orient="horizontal"
+    onload="loadGroups();"
+    width="230"
+    height="160"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+<script type="application/x-javascript" src="JavaScript/prefs.js"/>
+<script type="application/x-javascript" src="JavaScript/shared.js"/>
+<script type="application/x-javascript" src="JavaScript/gui.js"/>
+<script type="application/x-javascript" src="JavaScript/addContact.js"/>
+
+		<spacer flex="1" />
+<groupbox id="xf-config-groupbox" flex="1">
+			<caption class="titre" label="&Contact.titre;" />
+			<grid flex="1" >
+				<columns>
+					<column id="labels" flex="1"/>
+					<column id="fields" flex="1"/>
+				</columns>
+				<rows id="rows" flex="1">
+					<row>
+						<description value="&Contact.login; :" />
+						<textbox id="login" />
+					</row>
+					<row>
+						<description value="&Contact.server; :" />
+						<textbox id="server"/>
+					</row>
+					<row>
+		<description value="&Contact.group; :" />						
+
+		
+		<menulist id="menuGroups"  height="20" width="100" flex="1" maxheight="35" minheight="15">
+  	 	<menupopup id="groups">
+    		 
+  		 </menupopup>
+		</menulist>
+					</row>
+					
+				</rows>
+			</grid>
+
+			<hbox>
+				<spacer flex="1" />
+				<button label="Add" oncommand="performAddContact(event);"/>
+			
+				<spacer flex="1" />
+				<button label="Cancel" oncommand="self.close();"/>
+			</hbox>	
+		</groupbox>
+
+<spacer flex="1" />
+	
+</window>
