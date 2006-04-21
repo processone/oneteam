@@ -1,0 +1,16 @@
+<!ENTITY menuLabber.etat "Identification">
+<!ENTITY menuLabber.connexion "Votre nom">
+<!ENTITY menuLabber.deconnexion "Votre mot de passe">
+<!ENTITY menuLabber.changer_password "XUL Forum : identification">
+<!ENTITY menuLabber.editer_infos "Bienvenue sur XUL Forum !">
+<!ENTITY menuLabber.quitter "Options avancÃ©es">
+
+
+<!ENTITY menuService.ajouter_contact "Votre DN exact">
+<!ENTITY menuService.creer_conference "URL du fichier de configuration">
+<!ENTITY menuService.services "Ignorer l'identification auprÃšs du serveur LDAP">
+
+
+<!ENTITY menuAide.Aide "Recharger">
+<!ENTITY menuAide.aide_rapide "La liste des derniers sujets :">
+<!ENTITY menuAide.apropos "La liste des derniers sujets :">
