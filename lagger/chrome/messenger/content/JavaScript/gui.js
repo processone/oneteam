@@ -56,21 +56,20 @@ tabpanel.appendChild(text);
 }
 
 // Ouvrir une boite de dialogue
-
 }
-
 
 // Function to get connexion and users roster
 function init(){
-if(window.arguments.length > 0) {
-
-  var textbox_httpbase = window.opener.textbox_httpbase;
-  var textbox_user = window.opener.textbox_httpbase;
-  var textbox_pass = window.opener.textbox_pass;
-  var textbox_server = window.opener.textbox_server;
-
-	myjid = textbox_user + "@" + textbox_server;
-
+	var prefs = loadPrefs();
+	if (prefs.user != null)
+		var textbox_user = prefs.user;
+	if (prefs.pass != null)
+		var textbox_pass = prefs.pass;
+	if (prefs.server != null)
+		var textbox_server = prefs.server;
+	if (prefs.httpbase != null)
+		var textbox_httpbase = prefs.httpbase;
+  myjid = textbox_user + "@" + textbox_server;
 
 // setup args for contructor
 	var oArgs = new Object();
@@ -88,17 +87,12 @@ if(window.arguments.length > 0) {
 		oArg.resource = 'Lagger';
 		oArg.pass = textbox_pass;
 
-      
-  
-
 /* register handlers */
 	con.registerHandler("message",handleMessage);
 	con.registerHandler("presence",handlePresence);
 	con.registerHandler("iq",handleEvent);
 	con.registerHandler("onconnect",handleConnected);
 	con.registerHandler('onerror',handleError);
-
-
 
 try{
 		con.connect(oArg);
@@ -115,8 +109,6 @@ else {
 	alert("connexion failed");
  return;
 }
-
-    }
 
 
 }
@@ -252,14 +244,9 @@ function authorizeContactSeeMe(jid){
 
 var aPresence = new JSJaCPresence();
 aPresence.setType('subscribed');
-
-
   aPresence.setTo(jid);
-
   con.send(aPresence);
-    
   //window.close();
-
 }
 
 // Function to remove a contact

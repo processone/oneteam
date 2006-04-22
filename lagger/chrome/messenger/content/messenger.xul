@@ -56,10 +56,6 @@
 						<label value="&Login.httpbase; : " />
 						<textbox id="http_base"/>
 					</row>
-					<row id="xf-row-options">
-						<label value="&Login.advanced;" />
-						<checkbox id="checkauto" oncommand="" />
-					</row>
 				</rows>
 			</grid>
 
