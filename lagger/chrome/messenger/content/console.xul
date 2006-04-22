@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<!DOCTYPE window []>
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
 
 <window
     id="Console"
-    title="Console XML"
+    title="&Console.title;"
     orient="horizontal"
     width="450"
     height="400"
@@ -19,12 +19,12 @@
 
 <vbox align="center" flex="1">
 <spacer flex="1"/>
-<label value="Jabber Input/Output" style="font-weight: bold;" flex="1"/>
+<label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
 
 <textbox id="textconsole" style="color: #000066;" multiline="true"  height="200" width="450" flex="1" readonly="true"/>
 <spacer flex="1"/>
 <spacer flex="1"/>
-<label value="XML Input From Templates" style="font-weight: bold;" flex="1"/>
+<label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
 <textbox id="texttemplates" style="color: #FF6600;" multiline="true"  height="150" width="450" flex="1"/>
 
 <hbox align="center" flex="1">
@@ -52,7 +52,7 @@
    </menupopup>
 </menulist>
 
-<button label="Send" oncommand="sentToServer();"/>
+<button label="&Console.send;" oncommand="sentToServer();"/>
 </hbox>
 </vbox>
 

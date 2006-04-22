@@ -3,6 +3,8 @@ var textbox_pass;
 var textbox_server;
 var textbox_httpbase;
 
+var gui
+
 // Initialisation function
 function init() {
 
@@ -35,6 +37,10 @@ var check = document.getElementById ("checkauto");
 	server : textbox_server,
 	httpbase : textbox_httpbase } );	
 		
-window.open("chrome://messenger/content/gui.xul", "Lagger", "chrome,centerscreen,resizable");
+gui = window.open("chrome://messenger/content/gui.xul", "Lagger", "chrome,centerscreen,resizable");
+
+//gui.affect (textbox_user,textbox_pass,textbox_server,textbox_httpbase);
+
 window.close();
 }
+

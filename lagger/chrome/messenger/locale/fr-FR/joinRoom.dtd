@@ -1,0 +1,5 @@
+<!ENTITY Room.titre "Ajouter un salon">
+<!ENTITY Room.login "Utilisateur">
+<!ENTITY Room.pass "Mot de Passe">
+<!ENTITY Room.server "Serveur">
+<!ENTITY Room.room "Room">

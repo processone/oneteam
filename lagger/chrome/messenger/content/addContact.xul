@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
-
-
-<!DOCTYPE window [
-<!ENTITY Contact.titre "Ajouter un contact">
-<!ENTITY Contact.login "Utilisateur">
-<!ENTITY Contact.server "Serveur">
-<!ENTITY Contact.group "Groupe">
-]>
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/addContact.dtd">
 
 
 <window

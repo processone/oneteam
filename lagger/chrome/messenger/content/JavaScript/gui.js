@@ -58,6 +58,11 @@ tabpanel.appendChild(text);
 // Ouvrir une boite de dialogue
 }
 
+
+// Function to get connexion infos
+//function affect (user , pass, server, base);
+
+
 // Function to get connexion and users roster
 function init(){
 	var prefs = loadPrefs();
@@ -178,6 +183,13 @@ textbox.setAttribute("maxheight","40");
 textbox.setAttribute("minheight","30");
 textbox.setAttribute("onkeypress","sendMsg(event);");
 textbox.setAttribute("oninput","informWriting();");
+
+
+/*var lift = document.createElement("scrollbar");
+lift.setAttribute("id","textlift");
+lift.setAttribute("orient","vertical");
+
+textbox.appendChild (lift);*/
 
 bottom.appendChild (textbox);
 
