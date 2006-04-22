@@ -41,7 +41,11 @@ function doLogin (event){
 		oArgs.pass = textbox_pass;
 		con.connect(oArgs);
 
-		
+		//oArgs.domain = 'localhost';
+		//oArgs.username = 'admin';
+		//oArgs.resource = 'Lagger';
+		//oArgs.pass = 'skatecom';
+		//con.connect(oArgs);
 
 
 
@@ -62,8 +66,7 @@ else {
 con.send(new JSJaCPresence());
 
 
-window.open("chrome://messenger/content/messenger.xul", "Lagger",
-    "chrome,centerscreen");
+window.open("chrome://messenger/content/messenger.xul", "Lagger","chrome,centerscreen");
 window.close();
 
 }

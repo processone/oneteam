@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY Login.titre "Connection labber">
+<!ENTITY Login.login "Identifiant">
+<!ENTITY Login.server "Serveur">
+<!ENTITY Login.httpbase "Http-Base">
+<!ENTITY Login.password "Mot de Passe">
+<!ENTITY Login.advanced "Connection automatique">
+]>
+
+<window
+    id="Login"
+    title="Labber"
+    orient="horizontal"
+    width="350"
+    height="200"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript" src="JavaScript/Login.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+  <script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
+
+  <hbox>
+    <spacer flex="1" />
+    <groupbox id="xf-config-groupbox" flex="1">
+      <caption class="titre" label="&Login.titre;" />
+      <grid>
+	<columns>
+	  <column id="xf-ident-grid-textes" />
+	  <column id="xf-ident-grid-champs" />
+	</columns>
+	<rows id="xf-ident-rows">
+	  <row>
+	    <description value="&Login.login; : " />
+	    <textbox id="nom" />
+	  </row>
+	  <row>
+	    <description value="&Login.password; : " />
+	    <textbox id="pass" type="password" />
+	  </row>
+	  <row>
+	    <description value="&Login.server; : " />
+	    <textbox id="server"/>
+	  </row>
+	  <row>
+	    <description value="&Login.httpbase; : " />
+	    <textbox id="http_base"/>
+	  </row>
+	  <row id="xf-row-options">
+	    <description value="&Login.advanced;" />
+	    <checkbox id="xf-ident-opt" oncommand="montrerOptions();" />
+	  </row>
+	</rows>
+      </grid>
+      
+      <hbox id="xf-config-hbox">
+	<spacer flex="1" />
+	<button label="OK" oncommand="doLogin(event);"/>
+      </hbox>			
+    </groupbox>
+
+    <spacer flex="1" />
+  </hbox>
+</window>

@@ -31,10 +31,6 @@ function doLogin (event){
 
 var check = document.getElementById ("checkauto");
 
-	
-
-	
-
 	textbox_user = document.getElementById("user").value;
 	textbox_pass = document.getElementById("pass").value;
 	textbox_server = document.getElementById("server").value;

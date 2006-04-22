@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
+
+<!--<!DOCTYPE window SYSTEM "chrome://messenger/locale/messenger.dtd"> -->
+
+<!DOCTYPE window [
+
+<!ENTITY menulagger.connexion "Se connecter en tant que...">
+<!ENTITY menulagger.quitter "Quitter">
+<!ENTITY menulagger.ajouter_contact "Ajouter un contact">
+<!ENTITY menulagger.creer_conference "Rejoindre un salon">
+<!ENTITY menulagger.services_discovery "Decouverte de service">
+<!ENTITY menulagger.outils_admin "Outils d'administration">
+
+
+<!ENTITY menuConfig.configuration "Config">
+<!ENTITY menuConfig.plugins "Plugins">
+<!ENTITY menuConfig.preferences "Preferences">
+
+<!ENTITY menuAide.Aide "Aide">
+<!ENTITY menuAide.aide_rapide "Aide">
+<!ENTITY menuAide.console "Console XML">
+<!ENTITY menuAide.apropos "A propos">
+
+
+<!ENTITY listitemcontext.Communiquer "Envoyer un message">
+<!ENTITY listitemcontext.SupprimerContact "Supprimer le contact">
+<!ENTITY listitemcontext.InviterConference "Inviter a la conference">
+<!ENTITY listitemcontext.Rename "Renommer">
+<!ENTITY listitemcontext.Infos "Infos">
+
+<!ENTITY listitemcontextgroup.Rename "Renommer">
+
+
+<!ENTITY tabcontext.Close "Fermer l'onglet">
+<!ENTITY tabcontext.CloseAll "Fermer tous les onglets">
+
+<!ENTITY status.Away "Absent">
+<!ENTITY status.Available "Disponible">
+<!ENTITY status.Dnd "Occupe">
+]>
+
+<window
+    id="Messenger"
+    title="Lagger"
+    orient="horizontal"
+    onload="init();"
+    resizable="true"
+    width="155"
+    onclose="closeWindows();"
+    height="300"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <script type="application/x-javascript" src="JavaScript/gui.js"/>
+  
+
+  <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+  <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+  <script type="application/x-javascript" src="JavaScript/prefs.js"/>
+  <script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
+  <script type="application/x-javascript" src="JavaScript/shared.js"/>
+  <script type="application/x-javascript" src="JavaScript/console.js"/>
+
+<vbox flex="1">
+
+  <!-- The menus -->
+  <toolbox>
+    <menubar id="sample-menubar">
+      <menu id="lagger-menu" label="Lagger">
+	<menupopup id="file-popup">
+	  
+	  
+	  <menuitem label="&menulagger.ajouter_contact;" oncommand="addContact();"/>
+	  <menuitem label="&menulagger.creer_conference;" oncommand="joinRoom();"/>
+	  <menuseparator/>
+	  <menuitem label="&menulagger.services_discovery;"/>
+	  <menuitem label="&menulagger.outils_admin;"/>
+	  <menuseparator/>
+	  <menuitem label="&menulagger.quitter;" oncommand="closeWindows();" />
+	</menupopup>
+      </menu>
+    
+      <menu id="configuration-menu" label="&menuConfig.configuration;">
+	<menupopup id="config-popup">
+	  <menuitem label="&menuConfig.plugins;"/>
+	  <menuitem label="&menuConfig.preferences;" oncommand="launchPreferences();"/>
+	  
+	</menupopup>
+      </menu>
+
+      <menu id="help-menu" label="&menuAide.Aide;">
+	<menupopup id="help-popup">
+	  <menuitem label="&menuAide.aide_rapide;" oncommand="launchWizard();" />
+	  <menuitem label="&menuAide.console;" oncommand="launchConsole();" />
+	  <menuseparator/>
+	  <menuitem label="&menuAide.apropos;"/>
+	</menupopup>
+      </menu>
+    </menubar>
+  </toolbox>
+
+
+  <!-- The main toolbar -->
+  <toolbox>
+    <toolbar id="icones-toolbar">
+      <toolbarseparator id="s0"/>
+      
+      <toolbarseparator id="s1">
+	<toolbarbutton id="Adduser" label="" image="img/user_role-add.gif" onclick="addContact();"/>
+	<toolbarbutton id="joinRoom" label="" image="img/user_role2-add.gif"  onclick="joinRoom();"/>
+      </toolbarseparator>
+      
+      <toolbarseparator id="s2">
+	<toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif"/>
+	<toolbarbutton id="Help" label="" image="img/General/help.gif"/>
+      </toolbarseparator>
+
+      <toolbarseparator id="s3"/>
+    </toolbar>
+  </toolbox>
+
+  <hbox flex="1">
+    <!-- The contact list -->
+
+    <listbox height="400" width="150" maxwidth="150" minwidth="140"  id="liste_contacts" flex="1">
+      
+<!--<listcols id="liste_col" flex="1">
+      <listcol flex="1" align="stretch"/>
+      <listcol flex="1" align="stretch"/>
+
+	
+   </listcols>-->
+    </listbox>
+
+    <!-- List Contact's context menu -->
+    <popupset>
+      <popup id="itemcontext">
+	<menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
+	<menuitem label="&listitemcontext.InviterConference;"/>
+	<menuseparator/>
+	<menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeContact();"/>
+	<menuitem label="&listitemcontext.Rename;" oncommand="renameContact();"/>
+	<menuseparator/>
+	<menuitem label="&listitemcontext.Infos;" oncommand="getInfos();"/>
+      </popup>
+    </popupset>
+    
+    <popupset>
+      <popup id="itemcontextgroup">
+	<menuitem label="&listitemcontextgroup.Rename;" oncommand="renameGroup(event);"/>
+      </popup>
+    </popupset>
+
+    <vbox flex="1" id="middle">
+
+<!-- The tabPane
+<tabbox flex="1">
+   <tabs id="tabs1">
+    
+   </tabs>
+  <tabpanels id="tabpanels1" flex="1">
+     
+   </tabpanels>
+</tabbox>
+
+ TabPane context menu 
+<popupset>
+  <popup id="tabcontext">
+    <menuitem label="&tabcontext.Close;" oncommand="closeTab();"/>
+    <menuitem label="&tabcontext.CloseAll;" oncommand="closeAllTab();"/>
+  </popup>
+</popupset>
+
+
+
+ The textbox toolbar 
+<toolbox>
+     <toolbar id="textbox-toolbar">
+
+	<toolbarseparator id="s1">
+       	<toolbarbutton id="Adduser" label="" image="" onclick="addContact();"/>
+       	<toolbarbutton id="AddGroup" label="" image=""  onclick="addGroup();"/>
+	</toolbarseparator>
+
+	<toolbarseparator id="s2">
+	<toolbarbutton id="SendFile" label="" image=""/>
+	<toolbarbutton id="ServiceDiscovery" label="" image=""/>
+	</toolbarseparator>
+
+	<toolbarseparator id="s3">
+	<toolbarbutton id="Help" label="" image=""/>
+	</toolbarseparator>
+
+
+	
+     </toolbar>
+   </toolbox>  -->
+    </vbox>
+  </hbox>
+
+  <hbox flex="1" id="bottom">
+
+    <!-- Personal status list -->
+    <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="40" minheight="30" maxwidth="150" minwidth="150" orient="vertical" src="img/online.png" >
+      <menupopup flex="1">
+	<menuitem image="img/away.png" class="menuitem-iconic" orient="vertical"  label="&status.Away;" oncommand="changeStatus('away');"/>
+	<menuitem class="menuitem-iconic" image="chrome://messenger/content/img/online.png" label="&status.Available;" selected="true" oncommand="changeStatus('chat');"/>
+	<menuitem class="menuitem-iconic" image="chrome://messenger/content/img/dnd.png" label="&status.Dnd;" oncommand="changeStatus('dnd');"/>
+      </menupopup>
+    </menulist>
+
+    <!-- Text entry -->
+    <!--<textbox id="textentry" multiline="true" height="40" width="400" flex="1" maxheight="40" minheight="30"  onkeypress="sendMsg(event);" oninput="informWriting();"/>-->
+  </hbox>
+</vbox>
+</window>
