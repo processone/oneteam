@@ -64,10 +64,10 @@ tabpanel.appendChild(text);
 function init(){
 if(window.arguments.length > 0) {
 
-  var textbox_httpbase = window.arguments[0].httpbase;
-  var textbox_user = window.arguments[0].user;
-  var textbox_pass = window.arguments[0].pass;
-  var textbox_server = window.arguments[0].server;
+  var textbox_httpbase = window.opener.textbox_httpbase;
+  var textbox_user = window.opener.textbox_httpbase;
+  var textbox_pass = window.opener.textbox_pass;
+  var textbox_server = window.opener.textbox_server;
 
 	myjid = textbox_user + "@" + textbox_server;
 
