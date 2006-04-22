@@ -41,11 +41,7 @@ function doLogin (event){
 		oArgs.pass = textbox_pass;
 		con.connect(oArgs);
 
-		//oArgs.domain = 'localhost';
-		//oArgs.username = 'admin';
-		//oArgs.resource = 'Lagger';
-		//oArgs.pass = 'skatecom';
-		//con.connect(oArgs);
+		
 
 
 
