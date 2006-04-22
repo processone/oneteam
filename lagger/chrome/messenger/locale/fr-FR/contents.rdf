@@ -8,7 +8,7 @@ xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
 	</RDF:Seq>
 
 	<RDF:Description about="urn:mozilla:locale:fr-FR"
-		chrome:displayName="Pack français pour Labber"
+		chrome:displayName="Pack français pour P1 Messenger"
 		chrome:author="Amédée SOUQUET"
 		chrome:name="fr-FR">
 		<chrome:packages>

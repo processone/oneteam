@@ -1,32 +1,30 @@
-<!ENTITY menuLabber.etat "Statut">
-<!ENTITY menuLabber.connexion "Se connecter en tant que...">
-<!ENTITY menuLabber.deconnexion "Se deconnecter">
-<!ENTITY menuLabber.changer_password "Changer le mot de passe">
-<!ENTITY menuLabber.editer_infos "Editer mes infos">
-<!ENTITY menuLabber.quitter "Quitter">
+<!ENTITY menulagger.connexion "Se connecter en tant que...">
+<!ENTITY menulagger.quitter "Quitter">
+<!ENTITY menulagger.addContact "Ajouter un contact">
+<!ENTITY menulagger.joinConference "Rejoindre un salon">
+<!ENTITY menulagger.servicesDiscovery "Decouverte de service">
+<!ENTITY menulagger.adminTools "Outils d'administration">
 
-
-<!ENTITY menuService.services "Services">
-<!ENTITY menuService.ajouter_contact "Ajouter un contact">
-<!ENTITY menuService.creer_conference "Créer une conférence">
-<!ENTITY menuService.services_discovery "Découverte de service">
-<!ENTITY menuService.outils_admin "Outils d'administration">
-
-
-<!ENTITY menuConfig.configuration "Configuration">
+<!ENTITY menuConfig.configuration "Config">
 <!ENTITY menuConfig.plugins "Plugins">
-<!ENTITY menuConfig.preferences "Préférences">
+<!ENTITY menuConfig.preferences "Preferences">
 
 <!ENTITY menuAide.Aide "Aide">
 <!ENTITY menuAide.aide_rapide "Aide">
+<!ENTITY menuAide.console "Console XML">
 <!ENTITY menuAide.apropos "A propos">
-
 
 <!ENTITY listitemcontext.Communiquer "Envoyer un message">
 <!ENTITY listitemcontext.SupprimerContact "Supprimer le contact">
-<!ENTITY listitemcontext.InviterConference "Inviter à la conférence">
+<!ENTITY listitemcontext.InviterConference "Inviter a la conference">
+<!ENTITY listitemcontext.Rename "Renommer">
+<!ENTITY listitemcontext.Infos "Infos">
+
+<!ENTITY listitemcontextgroup.Rename "Renommer">
+
+<!ENTITY tabcontext.Close "Fermer l'onglet">
+<!ENTITY tabcontext.CloseAll "Fermer tous les onglets">
 
 <!ENTITY status.Away "Absent">
 <!ENTITY status.Available "Disponible">
-<!ENTITY status.Coding "En train de programmer">
-<!ENTITY status.Sleeping "En train de dormir">
+<!ENTITY status.Dnd "Occupe">

@@ -1,44 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?> 
-
-<!--<!DOCTYPE window SYSTEM "chrome://messenger/locale/messenger.dtd"> -->
-
-<!DOCTYPE window [
-
-<!ENTITY menulagger.connexion "Se connecter en tant que...">
-<!ENTITY menulagger.quitter "Quitter">
-<!ENTITY menulagger.ajouter_contact "Ajouter un contact">
-<!ENTITY menulagger.creer_conference "Rejoindre un salon">
-<!ENTITY menulagger.services_discovery "Decouverte de service">
-<!ENTITY menulagger.outils_admin "Outils d'administration">
-
-
-<!ENTITY menuConfig.configuration "Config">
-<!ENTITY menuConfig.plugins "Plugins">
-<!ENTITY menuConfig.preferences "Preferences">
-
-<!ENTITY menuAide.Aide "Aide">
-<!ENTITY menuAide.aide_rapide "Aide">
-<!ENTITY menuAide.console "Console XML">
-<!ENTITY menuAide.apropos "A propos">
-
-
-<!ENTITY listitemcontext.Communiquer "Envoyer un message">
-<!ENTITY listitemcontext.SupprimerContact "Supprimer le contact">
-<!ENTITY listitemcontext.InviterConference "Inviter a la conference">
-<!ENTITY listitemcontext.Rename "Renommer">
-<!ENTITY listitemcontext.Infos "Infos">
-
-<!ENTITY listitemcontextgroup.Rename "Renommer">
-
-
-<!ENTITY tabcontext.Close "Fermer l'onglet">
-<!ENTITY tabcontext.CloseAll "Fermer tous les onglets">
-
-<!ENTITY status.Away "Absent">
-<!ENTITY status.Available "Disponible">
-<!ENTITY status.Dnd "Occupe">
-]>
+<?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?> 
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/messenger.dtd">
 
 <window
     id="Messenger"
@@ -73,11 +35,11 @@
 	<menupopup id="file-popup">
 	  
 	  
-	  <menuitem label="&menulagger.ajouter_contact;" oncommand="addContact();"/>
-	  <menuitem label="&menulagger.creer_conference;" oncommand="joinRoom();"/>
+	  <menuitem label="&menulagger.addContact;" oncommand="addContact();"/>
+	  <menuitem label="&menulagger.joinConference;" oncommand="joinRoom();"/>
 	  <menuseparator/>
-	  <menuitem label="&menulagger.services_discovery;"/>
-	  <menuitem label="&menulagger.outils_admin;"/>
+	  <menuitem label="&menulagger.servicesDiscovery;"/>
+	  <menuitem label="&menulagger.adminTools;"/>
 	  <menuseparator/>
 	  <menuitem label="&menulagger.quitter;" oncommand="closeWindows();" />
 	</menupopup>
@@ -206,9 +168,9 @@
     <!-- Personal status list -->
     <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="40" minheight="30" maxwidth="150" minwidth="150" orient="vertical" src="img/online.png" >
       <menupopup flex="1">
-	<menuitem image="img/away.png" class="menuitem-iconic" orient="vertical"  label="&status.Away;" oncommand="changeStatus('away');"/>
-	<menuitem class="menuitem-iconic" image="chrome://messenger/content/img/online.png" label="&status.Available;" selected="true" oncommand="changeStatus('chat');"/>
-	<menuitem class="menuitem-iconic" image="chrome://messenger/content/img/dnd.png" label="&status.Dnd;" oncommand="changeStatus('dnd');"/>
+	<menuitem class="menuitem-iconic icon-away" label="&status.Away;" oncommand="changeStatus('away');"/>
+	<menuitem class="menuitem-iconic" image="img/online.png" label="&status.Available;" selected="true" oncommand="changeStatus('chat');"/>
+	<menuitem class="menuitem-iconic" image="img/dnd.png" label="&status.Dnd;" oncommand="changeStatus('dnd');"/>
       </menupopup>
     </menulist>
 

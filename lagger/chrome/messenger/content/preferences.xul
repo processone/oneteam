@@ -41,9 +41,7 @@
     </vbox>
 
   </prefpane>
-
- 
-      <prefpane id="Editor" label="Editor" image="">
+        <prefpane id="Editor" label="Editor" image="">
         <preferences>
           <preference id="pref-backup" name="myapp.mybackups" type="bool"/>
           <preference id="pref-backupduration" name="myapp.mybackups.duration" type="int"/>

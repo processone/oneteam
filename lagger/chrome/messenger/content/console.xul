@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<!DOCTYPE window [
-
-]>
-
+<!DOCTYPE window []>
 
 <window
     id="Console"
@@ -57,8 +54,6 @@
 
 <button label="Send" oncommand="sentToServer();"/>
 </hbox>
-
-
 </vbox>
 
 </window>

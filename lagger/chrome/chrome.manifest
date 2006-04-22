@@ -1,3 +1,6 @@
-content messenger          file:messenger/content/
+content messenger           file:messenger/content/
 locale  messenger fr-FR     file:messenger/locale/fr-FR/
+locale  messenger en-GB     file:messenger/locale/en-GB/
+locale  messenger en-US     file:messenger/locale/en-US/
+skin    messenger default   file:messenger/skin/default/
 

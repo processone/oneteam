@@ -1,3 +1,5 @@
+INSTALL
+=======
 You need to install Xulrunner:
 
 - Download:
@@ -6,4 +8,10 @@ ftp://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/1.8.0.1/linux-i686/en-U
 - Install instruction (in French):
 http://xulfr.org/wiki/XulRunner/Installation
 
-export XRE_CONSOLE_LOG=`pwd`/messenger.log
+Running
+=======
+
+./messenger
+
+To launch the application with a different locale:
+./messenger -UILocale fr-FR
