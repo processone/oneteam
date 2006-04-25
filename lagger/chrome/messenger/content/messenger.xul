@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/login.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/messenger.dtd">
 
 
@@ -7,8 +8,8 @@
     id="Login"
     title="Lagger"
     orient="horizontal"
-    width="440"
-    height="200"
+    width="190"
+    height="300"
     onload="init();"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -21,40 +22,46 @@
 <script type="application/x-javascript" src="JavaScript/shared.js"/>
 <script type="application/x-javascript" src="JavaScript/prefs.js"/>
 <script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
-
+<script type="application/x-javascript" src="../../../defaults/preferences/prefs.js"/>
 		
-<groupbox id="xf-config-groupbox" flex="1">
+<groupbox align="center" flex="1">
+
 			<caption class="titre" label="&Login.titre;"/>
-			<grid flex="1">
-				<columns>
-					<column id="xf-ident-grid-textes"/>
-					<column id="xf-ident-grid-champs" flex="1"/>
-				</columns>
-				<rows id="xf-ident-rows" flex="1">
-					<row>
-						<label value="&Login.login; : " />
-						<textbox id="user"/>
-					</row>
-					<row>
-						<label value="&Login.password; : " />
-						<textbox id="pass" type="password" />
-					</row>
-					<row>
-						<label value="&Login.server; : " />
+			
+			<spacer height="20"/>
+				
+						<label value="&Login.login; : "  style="color:#777" />
+						
+						<spacer height="5"/>
+						
+						<textbox id="user" width="100"/>
+						
+						<spacer height="10"/>
+						
+						<label value="&Login.password; : "  style="color:#777"/>
+						
+						<spacer height="5"/>
+						
+						<textbox id="pass" type="password" width="100"/>
+						<spacer height="3"/>
+						<checkbox id="checkbox-password" label="Remember password" />
+					<!--  	<label value="&Login.server; : " />
 						<textbox id="server"/>
-					</row>
-					<row>
+					
 						<label value="&Login.httpbase; : " />
-						<textbox id="http_base"/>
-					</row>
-				</rows>
-			</grid>
-
-			<hbox id="xf-config-hbox">
-				<spacer flex="1" />
-				<button label="OK" oncommand="doLogin(event);"/>
-			</hbox>			
-
+						<textbox id="http_base"/> -->
+					
+			 
+						<spacer height="20"/>
+			
+						<button label="&Login.signin;" oncommand="doLogin(event);"/>
+					 	
+					 	<spacer height="30"/>
+					 	
+					 	<!--<statusbarpanel>-->
+                       		 <label popup="popup-tools" class="text-link" value="&Login.settings;" align="right" onclick="openSettings();"/>
+                			<!-- </statusbarpanel> -->
+					
 		</groupbox>
 
 	

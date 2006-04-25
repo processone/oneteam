@@ -560,7 +560,7 @@ function sendMsg(event) {
         var aMsg = new JSJaCMessage();
         aMsg.setTo(receiver);
         aMsg.setBody(textEntry.value);
-	aMsg.setType('chat');
+		aMsg.setType('chat');
         con.send(aMsg);
 	
 	// alert (aMsg.xml());

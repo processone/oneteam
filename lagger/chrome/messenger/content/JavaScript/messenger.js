@@ -14,9 +14,9 @@ function init() {
 	if (prefs.pass != null)
 		document.getElementById("pass").setAttribute("value", prefs.pass);
 	if (prefs.server != null)
-		document.getElementById("server").setAttribute("value", prefs.server);
+		textbox_server = prefs.server;
 	if (prefs.httpbase != null)
-		document.getElementById("http_base").setAttribute("value", prefs.httpbase);
+		textbox_httpbase = prefs.httpbase;
 }
 
 // Function for authentication
@@ -26,9 +26,10 @@ var check = document.getElementById ("checkauto");
 
 	textbox_user = document.getElementById("user").value;
 	textbox_pass = document.getElementById("pass").value;
-	textbox_server = document.getElementById("server").value;
-	textbox_httpbase = document.getElementById("http_base").value;
-
+	textbox_server = "process-one.net";
+	//textbox_httpbase = document.getElementById("http_base").value;
+	textbox_httpbase = "http://" + textbox_server + ":" + "5280" + "/" + "http-poll" + "/";
+	alert(textbox_httpbase);
 	// Write data properties in file
 	savePrefs ( {
         registerLogin : true,
@@ -39,8 +40,11 @@ var check = document.getElementById ("checkauto");
 		
 gui = window.open("chrome://messenger/content/gui.xul", "Lagger", "chrome,centerscreen,resizable");
 
-//gui.affect (textbox_user,textbox_pass,textbox_server,textbox_httpbase);
 
 window.close();
 }
 
+//function to open startup settings
+function openSettings(){
+window.open("settings.xul","Startup settings", "chrome,centerscreen,dialog,resizable");
+}

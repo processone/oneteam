@@ -4,3 +4,5 @@
 <!ENTITY Login.httpbase "Http-Base">
 <!ENTITY Login.password "Password">
 <!ENTITY Login.advanced "Automatic Connection">
+<!ENTITY Login.settings "Startup Settings">
+<!ENTITY Login.signin "Sign In">
