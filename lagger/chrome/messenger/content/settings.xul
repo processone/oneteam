@@ -111,11 +111,11 @@
 
 				<row>
 					<spacer/>
-					<checkbox id="avatars" label="Show avatars in chatbox" preference="chat.messagebox.showavatars" />
+					<checkbox id="windows" label="Show separated chat windows" preference="chat.messagebox.showavatars" />
 				</row>
 				<row hidden="true">
 					<spacer/>
-					<checkbox id="xx" label="Show avatars in chatbox" preference="chat.messagebox.showavatars" />
+					<checkbox id="xx" label="Show separated chat windows" preference="chat.messagebox.showavatars" />
 				</row>
 
 			</rows>
