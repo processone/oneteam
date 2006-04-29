@@ -1,21 +1,16 @@
 var consol;
 var inputEditor;
+var conn;
 
 function startConsole(){
-
-
 consol = document.getElementById("textconsole");
 inputEditor = document.getElementById("texttemplates");
-
-
+conn=window.opener.con;
 }
 
 // Initialisation function
 function addInConsole(msg) {
-
-
 	consol.value += msg + "\n";
-		
 }
 
 
@@ -41,10 +36,12 @@ inputEditor.value = '<message to="" type=""><body></body></message>';
 
 }
 
-
 function sendToServer (){
-
-var con = window.opener.con;
-//TO DO
-
+  var str = inputEditor.value;
+  
+  // TODO: This does not seem to work yet. I do not know why:
+  conn.sendstr(str);
+  
+  inputEditor.value="";
+  addInConsole(str + "\n");
 }

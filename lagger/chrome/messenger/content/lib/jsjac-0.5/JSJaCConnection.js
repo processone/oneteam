@@ -52,6 +52,7 @@ function JSJaCConnection(oArg) {
 		this.oDbg.log("registered handler for event '"+event+"'",2);
 	};
 	this.send = JSJaCSend;
+	this.sendstr = JSJaCSendStr;
 	this.setPollInterval = function(timerval) {
 		if (!timerval || isNaN(timerval)) {
 			this.oDbg.log("Invalid timerval: " + timerval,1);
@@ -480,6 +481,32 @@ function JSJaCSendEmpty() {
 	var reqstr = this._getRequestString();
 	this.oDbg.log("sending: " + reqstr,4);
 	this._req[slot].send(reqstr);
+}
+
+function JSJaCSendStr(str) {
+	var slot = this._getFreeSlot();
+	this._req[slot] = this._setupRequest(true);
+
+        oCon = this;
+        this._req[slot].onreadystatechange = function() {
+                if (typeof(oCon) == 'undefined' || !oCon)
+                        return;
+                if (oCon._req[slot].readyState == 4) {
+                        oCon.oDbg.log("async recv: "+oCon._req[slot].responseText,4);
+                        oCon._getStreamID(slot); // handle response
+                }
+	        }
+						
+	        if (typeof(this._req[slot].onerror) != 'undefined') {
+	                this._req[slot].onerror = function(e) {
+                if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
+                               return;
+              oCon.oDbg.log('XmlHttpRequest error',1);
+              return false;
+          };
+      }
+        this.oDbg.log("sending: " + str,4);
+        this._req[slot].send(str);
 }
 
 function JSJaCHandleResponse(req) {

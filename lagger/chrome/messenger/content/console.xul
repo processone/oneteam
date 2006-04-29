@@ -52,7 +52,7 @@
    </menupopup>
 </menulist>
 
-<button label="&Console.send;" oncommand="sentToServer();"/>
+<button label="&Console.send;" oncommand="sendToServer();"/>
 </hbox>
 </vbox>
 

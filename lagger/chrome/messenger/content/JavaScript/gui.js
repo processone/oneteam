@@ -222,8 +222,8 @@ self.resizeTo(155,300);
 // Launch console
 function launchConsole(){
 cons = window.open("chrome://messenger/content/console.xul", "Console","chrome,centerscreen");
-console = true;
-
+cons.opener=window;
+console=true;
 }
 
 // Function to add a contact
@@ -649,6 +649,10 @@ self.close();
 
 //Callback on connection error
 function handleError(e) {
+
+if (console){
+   cons.addInConsole(e.xml() + "\n");
+}
  
 switch (e.getAttribute('code')) {
 	case '401':
@@ -679,8 +683,6 @@ function handleConnected() {
 	
 	myPresence = new JSJaCPresence();
 	
-	
-	
 	// Send packet to get the contact list
 	var iq = new JSJaCIQ();
 	iq.setIQ(null,null,'get','rost');
@@ -704,7 +706,6 @@ function handleEvent(iq) {
         //alert ("received packet!");
 	if (console){
 	cons.addInConsole(iq.xml() + "\n");
-	
 	}
 }
 
