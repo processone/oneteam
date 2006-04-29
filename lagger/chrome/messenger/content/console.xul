@@ -3,57 +3,57 @@
 
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
 
-<window
-    id="Console"
-    title="&Console.title;"
-    orient="horizontal"
-    width="450"
-    height="400"
-    onload="startConsole();"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<window id="Console"
+        title="&Console.title;"
+        orient="horizontal"
+        width="450"
+        height="400"
+        onload="startConsole();"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="JavaScript/shared.js"/>
-<script type="application/x-javascript" src="JavaScript/gui.js"/>
-<script type="application/x-javascript" src="JavaScript/console.js"/>
+    <script type="application/x-javascript" src="JavaScript/shared.js"/>
+    <script type="application/x-javascript" src="JavaScript/gui.js"/>
+    <script type="application/x-javascript" src="JavaScript/console.js"/>
 
 
-<vbox align="center" flex="1">
-<spacer flex="1"/>
-<label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
+    <vbox align="center" flex="1">
+        <spacer flex="1"/>
+        <label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
 
-<textbox id="textconsole" style="color: #000066;" multiline="true"  height="200" width="450" flex="1" readonly="true"/>
-<spacer flex="1"/>
-<spacer flex="1"/>
-<label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
-<textbox id="texttemplates" style="color: #FF6600;" multiline="true"  height="150" width="450" flex="1"/>
+        <textbox id="textconsole" style="color: #000066;" multiline="true" height="200" width="450" flex="1"
+                 readonly="true"/>
+        <spacer flex="1"/>
+        <spacer flex="1"/>
+        <label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
+        <textbox id="texttemplates" style="color: #FF6600;" multiline="true" height="150" width="450" flex="1"/>
 
-<hbox align="center" flex="1">
-<menulist label="IQ  ">
-<menupopup flex="1">
-     <menuitem label="IQ" oncommand="writeXMLIQ();"/>
-	<menuitem label="Time IQ"/>
-	<menuitem label="Version IQ"/>
-	<menuitem label="Last IQ"/>
-   </menupopup>
-</menulist>
-<menulist label="Presence  ">
-<menupopup flex="1">
-     <menuitem label="Presence" oncommand="writeXMLPresence();"/>
-     <menuitem label="Available"/>
-     <menuitem label="Unavailable"/>  	
-   </menupopup>
-</menulist>
-<menulist label="Message  ">
-<menupopup flex="1">
-     <menuitem label="Message" oncommand="writeXMLMessage();"/>
-     <menuitem label="Normal"/>
-     <menuitem label="Chat"/>
-     <menuitem label="Headline"/>
-   </menupopup>
-</menulist>
+        <hbox align="center" flex="1">
+            <menulist label="IQ  ">
+                <menupopup flex="1">
+                    <menuitem label="IQ" oncommand="writeXMLIQ();"/>
+                    <menuitem label="Time IQ"/>
+                    <menuitem label="Version IQ"/>
+                    <menuitem label="Last IQ"/>
+                </menupopup>
+            </menulist>
+            <menulist label="Presence  ">
+                <menupopup flex="1">
+                    <menuitem label="Presence" oncommand="writeXMLPresence();"/>
+                    <menuitem label="Available"/>
+                    <menuitem label="Unavailable"/>
+                </menupopup>
+            </menulist>
+            <menulist label="Message  ">
+                <menupopup flex="1">
+                    <menuitem label="Message" oncommand="writeXMLMessage();"/>
+                    <menuitem label="Normal"/>
+                    <menuitem label="Chat"/>
+                    <menuitem label="Headline"/>
+                </menupopup>
+            </menulist>
 
-<button label="&Console.send;" oncommand="sendToServer();"/>
-</hbox>
-</vbox>
+            <button label="&Console.send;" oncommand="sendToServer();"/>
+        </hbox>
+    </vbox>
 
 </window>

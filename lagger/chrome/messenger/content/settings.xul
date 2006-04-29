@@ -3,155 +3,154 @@
 <?xml-stylesheet href="chrome://messenger/skin/settings.css" type="text/css"?>
 
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	title="Settings" id="settings" onload="initialize()">
-	
-	 <script>
-                var port = null;
-                function initialize(){
-                        port = document.getElementById('chat.connection.port');
-                }
-        </script>
-	<prefpane id="connection" label="Connection">
-		
-		<preferences>
+            title="Settings" id="settings" onload="initialize()">
 
-			<preference id="chat.connection.host"
-				name="chat.connection.host" type="string"/>
-			<preference id="chat.connection.port"
-				name="chat.connection.port" type="int"/>
-			<preference id="chat.connection.ssl"
-				name="chat.connection.ssl" type="bool"/>
-			<preference id="chat.connection.overridehost"
-				name="chat.connection.overridehost" type="bool"/>
-			<preference id="chat.connection.resource"
-				name="chat.connection.resource" type="string"/>
-			<preference id="chat.connection.priority"
-				name="chat.connection.priority" type="int"/>			
-			<preference id="chat.messagebox.showavatars"
-				name="chat.messagebox.showavatars" type="bool"/>
-			<preference id="chat.advanced.jabberinfo"
-				name="chat.advanced.jabberinfo" type="bool"/>				
-		</preferences>
-	
-		<grid flex="1" id="grid-connection">
-			<columns>
-				<column flex="1" minwidth="60"/>
-				<column flex="2"/>
-			</columns>
-			<rows id="rows-connection">
-				<row>
-					<spacer/>
-					<checkbox id="ssl" label="Use SSL" preference="chat.connection.ssl" 
-						onclick="if(this.checked)port.value = 5280; else port.value = 5223;"/>
-				</row>
-				<row>
-					<label value="Port: " control="port"/>
-					<textbox id="port" preference="chat.connection.port"/>
-				</row>
-				
+    <script>
+        var port = null;
+        function initialize(){
+        port = document.getElementById('chat.connection.port');
+        }
+    </script>
+    <prefpane id="connection" label="Connection">
 
-				
-				<spacer height="20"/>
-				
-				<row>
-					<label value="Host: " control="host"/>
-					<checkbox id="jidhost" label="Override host" preference="chat.connection.overridehost"
-						onclick="document.getElementById('hostbox').hidden = this.checked;"/>
-				</row>
-				<row id="hostbox">
-					<spacer/>
-					<textbox id="host" preference="chat.connection.host"/>
-				</row>
-				
-				<spacer height="20"/>
-				
-				<row>
-					<label value="Resource: " control="resource"/>
-					<textbox id="resource" preference="chat.connection.resource"/>
-				</row>
-				
-			</rows>
-			
-		</grid>
-				
-		
-	</prefpane>
-	
-	<prefpane id="groupchat" label="Groupchat">
-		<preferences>
-			<preference id="chat.muc.nickname"
-				name="chat.muc.nickname" type="string"/>			
-		</preferences>
-	
-		<grid flex="1" id="grid-connection">
-			<columns>
-				<column flex="1" minwidth="60"/>
-				<column flex="2"/>
-			</columns>
-			<rows id="rows-muc">
+        <preferences>
 
-				<row>
-					<label value="Default nickname: " control="nickname"/>
-					<textbox id="nickname" preference="chat.muc.nickname"/>
-				</row>
+            <preference id="chat.connection.host"
+                        name="chat.connection.host" type="string"/>
+            <preference id="chat.connection.port"
+                        name="chat.connection.port" type="int"/>
+            <preference id="chat.connection.ssl"
+                        name="chat.connection.ssl" type="bool"/>
+            <preference id="chat.connection.overridehost"
+                        name="chat.connection.overridehost" type="bool"/>
+            <preference id="chat.connection.resource"
+                        name="chat.connection.resource" type="string"/>
+            <preference id="chat.connection.priority"
+                        name="chat.connection.priority" type="int"/>
+            <preference id="chat.messagebox.showavatars"
+                        name="chat.messagebox.showavatars" type="bool"/>
+            <preference id="chat.advanced.jabberinfo"
+                        name="chat.advanced.jabberinfo" type="bool"/>
+        </preferences>
 
-			</rows>
-			
-		</grid>
-	</prefpane>
-	
-	<prefpane id="appearance" label="Appearance">
-	
-		<grid flex="1" id="grid-connection">
-			<columns>
-				<column flex="1" minwidth="60"/>
-				<column flex="2"/>
-			</columns>
-			<rows id="rows-muc">
-
-				<row>
-					<spacer/>
-					<checkbox id="windows" label="Show separated chat windows" preference="chat.messagebox.showavatars" />
-				</row>
-				<row hidden="true">
-					<spacer/>
-					<checkbox id="xx" label="Show separated chat windows" preference="chat.messagebox.showavatars" />
-				</row>
-
-			</rows>
-			
-		</grid>
-	</prefpane>
-		
-	<prefpane id="advanced" label="Advanced">
+        <grid flex="1" id="grid-connection">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="2"/>
+            </columns>
+            <rows id="rows-connection">
+                <row>
+                    <spacer/>
+                    <checkbox id="ssl" label="Use SSL" preference="chat.connection.ssl"
+                              onclick="if(this.checked)port.value = 5280; else port.value = 5223;"/>
+                </row>
+                <row>
+                    <label value="Port: " control="port"/>
+                    <textbox id="port" preference="chat.connection.port"/>
+                </row>
 
 
-		<grid flex="1" id="grid-adv">
-			<columns>
-				<column flex="1" minwidth="60"/>
-				<column flex="2"/>
-			</columns>
-			<rows id="rows-connection">
+                <spacer height="20"/>
 
-				<row>
-					<label value="Priority: " control="priority"/>
-					<textbox id="priority" preference="chat.connection.priority"/>
-				</row>
-				
+                <row>
+                    <label value="Host: " control="host"/>
+                    <checkbox id="jidhost" label="Override host" preference="chat.connection.overridehost"
+                              onclick="document.getElementById('hostbox').hidden = this.checked;"/>
+                </row>
+                <row id="hostbox">
+                    <spacer/>
+                    <textbox id="host" preference="chat.connection.host"/>
+                </row>
+
+                <spacer height="20"/>
+
+                <row>
+                    <label value="Resource: " control="resource"/>
+                    <textbox id="resource" preference="chat.connection.resource"/>
+                </row>
+
+            </rows>
+
+        </grid>
 
 
-				<row>
-					<spacer/>
-					<checkbox id="zwabber" label="Show advanced Jabber info" preference="chat.advanced.jabberinfo" />
-				</row>
+    </prefpane>
 
-				<row>
-					<spacer/>
-					<button label="Show passwordmanager" 
-						oncommand="window.openDialog('chrome://passwordmgr/content/passwordManager.xul','', null);"/>
-				</row>			
-			</rows>
-			
-		</grid>
-	</prefpane>
+    <prefpane id="groupchat" label="Groupchat">
+        <preferences>
+            <preference id="chat.muc.nickname"
+                        name="chat.muc.nickname" type="string"/>
+        </preferences>
+
+        <grid flex="1" id="grid-connection">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="2"/>
+            </columns>
+            <rows id="rows-muc">
+
+                <row>
+                    <label value="Default nickname: " control="nickname"/>
+                    <textbox id="nickname" preference="chat.muc.nickname"/>
+                </row>
+
+            </rows>
+
+        </grid>
+    </prefpane>
+
+    <prefpane id="appearance" label="Appearance">
+
+        <grid flex="1" id="grid-connection">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="2"/>
+            </columns>
+            <rows id="rows-muc">
+
+                <row>
+                    <spacer/>
+                    <checkbox id="windows" label="Show separated chat windows"
+                              preference="chat.messagebox.showavatars"/>
+                </row>
+                <row hidden="true">
+                    <spacer/>
+                    <checkbox id="xx" label="Show separated chat windows" preference="chat.messagebox.showavatars"/>
+                </row>
+
+            </rows>
+
+        </grid>
+    </prefpane>
+
+    <prefpane id="advanced" label="Advanced">
+
+
+        <grid flex="1" id="grid-adv">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="2"/>
+            </columns>
+            <rows id="rows-connection">
+
+                <row>
+                    <label value="Priority: " control="priority"/>
+                    <textbox id="priority" preference="chat.connection.priority"/>
+                </row>
+
+
+                <row>
+                    <spacer/>
+                    <checkbox id="zwabber" label="Show advanced Jabber info" preference="chat.advanced.jabberinfo"/>
+                </row>
+
+                <row>
+                    <spacer/>
+                    <button label="Show passwordmanager"
+                            oncommand="window.openDialog('chrome://passwordmgr/content/passwordManager.xul','', null);"/>
+                </row>
+            </rows>
+
+        </grid>
+    </prefpane>
 </prefwindow>

@@ -2,46 +2,42 @@ var consol;
 var inputEditor;
 var conn;
 
-function startConsole(){
-consol = document.getElementById("textconsole");
-inputEditor = document.getElementById("texttemplates");
-conn=window.opener.con;
+function startConsole() {
+    consol = document.getElementById("textconsole");
+    inputEditor = document.getElementById("texttemplates");
+    conn = window.opener.con;
 }
 
 // Initialisation function
 function addInConsole(msg) {
-	consol.value += msg + "\n";
+    consol.value += msg + "\n";
 }
 
 
-function writeXMLPresence(){
+function writeXMLPresence() {
+    try {
+        inputEditor.value = "<presence><show></show><status></status><priority></priority></presence>";
+    }
 
-try{
-inputEditor.value = "<presence><show></show><status></status><priority></priority></presence>";
+    catch (e) {
+        alert(e);
+    }
 }
 
-catch (e) {alert(e);}
-
+function writeXMLIQ() {
+    inputEditor.value = '<iq to="" type=""><query xmlns=""></query></iq>';
 }
 
-function writeXMLIQ(){
-
-inputEditor.value = '<iq to="" type=""><query xmlns=""></query></iq>';
-
+function writeXMLMessage() {
+    inputEditor.value = '<message to="" type=""><body></body></message>';
 }
 
-function writeXMLMessage (){
+function sendToServer() {
+    var str = inputEditor.value;
 
-inputEditor.value = '<message to="" type=""><body></body></message>';
+    // TODO: This does not seem to work yet. I do not know why:
+    conn.sendstr(str);
 
-}
-
-function sendToServer (){
-  var str = inputEditor.value;
-  
-  // TODO: This does not seem to work yet. I do not know why:
-  conn.sendstr(str);
-  
-  inputEditor.value="";
-  addInConsole(str + "\n");
+    inputEditor.value = "";
+    addInConsole(str + "\n");
 }

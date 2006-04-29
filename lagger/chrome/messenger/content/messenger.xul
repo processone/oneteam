@@ -4,65 +4,64 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/messenger.dtd">
 
 
-<window
-    id="Login"
-    title="Lagger"
-    orient="horizontal"
-    width="190"
-    height="300"
-    onload="init();"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<window id="Login"
+        title="Lagger"
+        orient="horizontal"
+        width="190"
+        height="300"
+        onload="init();"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<script type="application/x-javascript" src="JavaScript/messenger.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
-<script type="application/x-javascript" src="JavaScript/shared.js"/>
-<script type="application/x-javascript" src="JavaScript/prefs.js"/>
-<script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
-<script type="application/x-javascript" src="../../../defaults/preferences/prefs.js"/>
-		
-<groupbox align="center" flex="1">
+    <script type="application/x-javascript" src="JavaScript/messenger.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+    <script type="application/x-javascript" src="JavaScript/shared.js"/>
+    <script type="application/x-javascript" src="JavaScript/prefs.js"/>
+    <script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
+    <script type="application/x-javascript" src="../../../defaults/preferences/prefs.js"/>
 
-			<caption class="titre" label="&Login.titre;"/>
-			
-			<spacer height="20"/>
-				
-						<label value="&Login.login; : "  style="color:#777" />
-						
-						<spacer height="5"/>
-						
-						<textbox id="user" width="100"/>
-						
-						<spacer height="10"/>
-						
-						<label value="&Login.password; : "  style="color:#777"/>
-						
-						<spacer height="5"/>
-						
-						<textbox id="pass" type="password" width="100"/>
-						<spacer height="3"/>
-						<checkbox id="checkbox-password" label="Remember password" />
-					<!--  	<label value="&Login.server; : " />
-						<textbox id="server"/>
-					
-						<label value="&Login.httpbase; : " />
-						<textbox id="http_base"/> -->
-					
-			 
-						<spacer height="20"/>
-			
-						<button label="&Login.signin;" oncommand="doLogin(event);"/>
-					 	
-					 	<spacer height="30"/>
-					 	
-					 	<!--<statusbarpanel>-->
-                       		 <label popup="popup-tools" class="text-link" value="&Login.settings;" align="right" onclick="openSettings();"/>
-                			<!-- </statusbarpanel> -->
-					
-		</groupbox>
+    <groupbox align="center" flex="1">
 
-	
+        <caption class="titre" label="&Login.titre;"/>
+
+        <spacer height="20"/>
+
+        <label value="&Login.login; : " style="color:#777"/>
+
+        <spacer height="5"/>
+
+        <textbox id="user" width="100"/>
+
+        <spacer height="10"/>
+
+        <label value="&Login.password; : " style="color:#777"/>
+
+        <spacer height="5"/>
+
+        <textbox id="pass" type="password" width="100"/>
+        <spacer height="3"/>
+        <checkbox id="checkbox-password" label="Remember password"/>
+        <!--  	<label value="&Login.server; : " />
+                          <textbox id="server"/>
+
+                          <label value="&Login.httpbase; : " />
+                          <textbox id="http_base"/> -->
+
+
+        <spacer height="20"/>
+
+        <button label="&Login.signin;" oncommand="doLogin(event);"/>
+
+        <spacer height="30"/>
+
+        <!--<statusbarpanel>-->
+        <label popup="popup-tools" class="text-link" value="&Login.settings;" align="right" onclick="openSettings();"/>
+        <!-- </statusbarpanel> -->
+
+    </groupbox>
+
+
 </window>

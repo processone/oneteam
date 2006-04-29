@@ -7,12 +7,13 @@ pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 
 
-pref("browser.preferences.animateFadeIn",false);
-pref("browser.preferences.instantApply",false);
+pref("browser.preferences.animateFadeIn", false);
+pref("browser.preferences.instantApply", false);
 
 
 pref("chat.connection.username", "");
-pref("chat.connection.password", ""); // please don't use this
+pref("chat.connection.password", "");
+// please don't use this
 pref("chat.connection.priority", 5);
 pref("chat.connection.resource", "http-poll");
 pref("chat.connection.host", "process-one.net");
