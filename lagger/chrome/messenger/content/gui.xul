@@ -14,8 +14,7 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript" src="JavaScript/gui.js"/>
-
-
+    <script type="application/x-javascript" src="JavaScript/disco.js"/>
     <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
     <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
     <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
@@ -38,7 +37,7 @@
                         <menuitem label="&menulagger.addContact;" oncommand="addContact();"/>
                         <menuitem label="&menulagger.joinConference;" oncommand="joinRoom();"/>
                         <menuseparator/>
-                        <menuitem label="&menulagger.servicesDiscovery;"/>
+                        <menuitem label="&menulagger.servicesDiscovery;" oncommand="openDisco();"/>
                         <menuitem label="&menulagger.adminTools;"/>
                         <menuseparator/>
                         <menuitem label="&menulagger.quitter;" oncommand="closeWindows();"/>
@@ -76,7 +75,7 @@
                 </toolbarseparator>
 
                 <toolbarseparator id="s2">
-                    <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif"/>
+                    <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="openDisco();"/>
                     <toolbarbutton id="Help" label="" image="img/General/help.gif"/>
                 </toolbarseparator>
 

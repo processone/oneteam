@@ -8,6 +8,7 @@ var myPresence;
 var deployedGUI = false;
 var console = false;
 var cons;
+var server;
 
 
 // Function to open a simple conversation
@@ -74,8 +75,9 @@ function init() {
         var textbox_server = prefs.server;
     if (prefs.httpbase != null)
         var textbox_httpbase = prefs.httpbase;
+    
     myjid = textbox_user + "@" + textbox_server;
-
+	server = textbox_server;
     // setup args for contructor
     var oArgs = new Object();
 
@@ -626,6 +628,11 @@ function launchPreferences() {
     window.open("chrome://messenger/content/preferences.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
 }
 
+
+// Function to open Service Discovery
+function openDisco(){
+ window.open("chrome://messenger/content/disco.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
+ }
 
 // Function to launch wizard window
 function launchWizard() {

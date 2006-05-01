@@ -41,3 +41,13 @@ function sendToServer() {
     inputEditor.value = "";
     addInConsole(str + "\n");
 }
+
+// Function to close the window
+function closeWindows() {
+
+window.opener.console = false;     
+    self.close();
+
+
+}
+

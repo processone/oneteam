@@ -9,6 +9,7 @@
         width="450"
         height="400"
         onload="startConsole();"
+        onclose="closeWindows();"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript" src="JavaScript/shared.js"/>

@@ -92,6 +92,8 @@ function getRoomRoster(aPresence) {
         }
 
     }
+    
+    // Show room contact's list
 }
 
 // Function to invite  users in Room
