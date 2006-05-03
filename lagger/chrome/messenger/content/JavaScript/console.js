@@ -2,6 +2,8 @@ var consol;
 var inputEditor;
 var conn;
 
+
+
 function startConsole() {
     consol = document.getElementById("textconsole");
     inputEditor = document.getElementById("texttemplates");
@@ -15,21 +17,56 @@ function addInConsole(msg) {
 
 
 function writeXMLPresence() {
-    try {
-        inputEditor.value = "<presence><show></show><status></status><priority></priority></presence>";
-    }
-
-    catch (e) {
-        alert(e);
-    }
+  
+        inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';
+  
 }
+
+function writeXMLPresenceA() {
+  
+        inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';
+  
+}
+
+function writeXMLPresenceU() {
+  
+        inputEditor.value = '<presence to="" type="unavailable"><status> </status></presence>';
+  
+}
+
+
 
 function writeXMLIQ() {
     inputEditor.value = '<iq to="" type=""><query xmlns=""></query></iq>';
 }
 
+function writeXMLIQTime() {
+    inputEditor.value = '<iq to="" type="get" id=""><query xmlns="jabber:iq:time"/></iq>';
+}
+
+function writeXMLIQVersion() {
+    inputEditor.value = '<iq to="" type="get" id=""><query xmlns="jabber:iq:version"/></iq>';
+}
+
+function writeXMLIQLast() {
+    inputEditor.value = '<iq to="" type="get" id=""><query xmlns="jabber:iq:last"/></iq>';
+}
+
+
+
+
+
 function writeXMLMessage() {
     inputEditor.value = '<message to="" type=""><body></body></message>';
+}
+
+
+function writeXMLMessageChat() {
+    inputEditor.value = '<message to="" type="chat"><body> </body> </message>';
+}
+
+function writeXMLMessageHeadline() {
+    inputEditor.value = '<message to="" type="headline"><subject> </subject><body> </body><x xmlns="jabber:x:oob"><url> </url><desc> </desc></x></message>';
 }
 
 function sendToServer() {
@@ -39,7 +76,12 @@ function sendToServer() {
     conn.sendstr(str);
 
     inputEditor.value = "";
-    addInConsole(str + "\n");
+    addInConsole("OUT : " + str + "\n");
+}
+
+// Function to clear the console
+function clearConsole(){
+	consol.value = '';
 }
 
 // Function to close the window
@@ -50,4 +92,6 @@ window.opener.console = false;
 
 
 }
+
+
 

@@ -2,3 +2,4 @@
 <!ENTITY Console.traffic "Input - Output Jabber">
 <!ENTITY Console.templates "XML Packet Templates">
 <!ENTITY Console.send "Send">
+<!ENTITY Console.clear "Clear">

@@ -2,3 +2,4 @@
 <!ENTITY Console.traffic "Entrées - Sorties Jabber">
 <!ENTITY Console.templates "Modèles d'entrées XML">
 <!ENTITY Console.send "Envoyer">
+<!ENTITY Console.clear "Effacer">

@@ -43,16 +43,19 @@ function openConversation(event) {
         var tabspanel = document.getElementById("tabpanels1");
         var tabpanel = document.createElement("tabpanel");
         tabpanel.setAttribute("id", "tabpanel" + liste.selectedItem.id);
+        tabpanel.setAttribute("flex", "5");
+        tabpanel.setAttribute("height", "400");
+        tabpanel.setAttribute("width", "400");
         tabspanel.appendChild(tabpanel);
 
         var text = document.createElement("textbox");
 
         text.setAttribute("id", "text" + liste.selectedItem.id);
         text.setAttribute("multiline", "true");
-        text.setAttribute("height", "400");
-        text.setAttribute("width", "400");
+        //text.setAttribute("height", "400");
+        //text.setAttribute("width", "400");
         text.setAttribute("readonly", "true");
-        text.setAttribute("flex", "1");
+        text.setAttribute("flex", "5");
         tabpanel.appendChild(text);
     }
 
@@ -124,12 +127,13 @@ function init() {
 function extendGUI() {
 
 
-    var middle = document.getElementById("middle");
+    var right = document.getElementById("right");
+    right.setAttribute("flex", "5");
 
     var tabbox = document.createElement("tabbox");
-    tabbox.setAttribute("flex", "1");
+    tabbox.setAttribute("flex", "5");
 
-    middle.appendChild(tabbox);
+    right.appendChild(tabbox);
 
     var tabs = document.createElement("tabs");
     tabs.setAttribute("id", "tabs1");
@@ -137,14 +141,14 @@ function extendGUI() {
     tabbox.appendChild(tabs);
 
     var tabpanels = document.createElement("tabpanels");
-    tabpanels.setAttribute("flex", "1");
+    tabpanels.setAttribute("flex", "5");
     tabpanels.setAttribute("id", "tabpanels1");
 
     tabbox.appendChild(tabpanels);
 
     var popupset = document.createElement("popupset");
 
-    middle.appendChild(popupset);
+    right.appendChild(popupset);
 
     var popup = document.createElement("popup");
     popup.setAttribute("id", "tabcontext");
@@ -166,7 +170,7 @@ function extendGUI() {
 
     var toolbox = document.createElement("toolbox");
 
-    middle.appendChild(toolbox);
+    right.appendChild(toolbox);
 
     var toolbar = document.createElement("toolbar");
     toolbar.setAttribute("id", "textbox-toolbar");
@@ -175,14 +179,14 @@ function extendGUI() {
 
     // add buttons to toolbar here
 
-    var bottom = document.getElementById("bottom");
 
     var textbox = document.createElement("textbox");
     textbox.setAttribute("id", "textentry");
     textbox.setAttribute("multiline", "true");
     textbox.setAttribute("height", "40");
     textbox.setAttribute("width", "400");
-    textbox.setAttribute("flex", "1");
+    textbox.setAttribute("maxwidth", "700");
+    textbox.setAttribute("flex", "5");
     textbox.setAttribute("maxheight", "40");
     textbox.setAttribute("minheight", "30");
     textbox.setAttribute("onkeypress", "sendMsg(event);");
@@ -195,7 +199,7 @@ function extendGUI() {
 
    textbox.appendChild (lift);*/
 
-    bottom.appendChild(textbox);
+    right.appendChild(textbox);
 
 }
 
@@ -204,22 +208,30 @@ function reduceGUI() {
 
     deployedGUI = false;
 
-    var middle = document.getElementById("middle");
+    var right = document.getElementById("right");
 
 
-    var childNodes = middle.childNodes;
-    for (i = 0; i < childNodes.length; i ++) {
+    var childNodes = right.childNodes;
+   /* for (i = 0; i < childNodes.length; i ++) {
         var child = childNodes[i];
-        middle.removeChild(child);
-    }
-
-
-    var bottom = document.getElementById("bottom");
-
-    childNodes = bottom.childNodes;
-    bottom.removeChild(childNodes[1]);
-
+        var littleChilds = child.childNodes;
+        
+        right.removeChild(child);
+    }*/
+    
+    right.setAttribute("flex","0");
     self.resizeTo(155, 300);
+	
+	while(right.childNodes != null){
+		right.removeChild(right.firstChild);
+		}
+	
+   //var text = document.getElementById("textentry");
+
+    //childNodes = right.childNodes;
+    //right.removeChild(text);
+
+	
 }
 
 
@@ -254,7 +266,7 @@ function authorizeSeeContact(jid) {
 
     con.send(aPresence);
     if (console) {
-        cons.addInConsole("IN : " + aPresence.xml() + "\n");
+        cons.addInConsole("OUT : " + aPresence.xml() + "\n");
     }
 
     //window.close();
@@ -269,7 +281,7 @@ function authorizeContactSeeMe(jid) {
     aPresence.setTo(jid);
     con.send(aPresence);
      if (console) {
-        cons.addInConsole("IN : " + aPresence.xml() + "\n");
+        cons.addInConsole("OUT : " + aPresence.xml() + "\n");
     }
     //window.close();
 }
@@ -305,7 +317,7 @@ function removeContact()
 
         con.send(iq);
          if (console) {
-        cons.addInConsole("IN : " + iq.xml() + "\n");
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
     }
     catch (e) {
@@ -486,22 +498,19 @@ function showGroup(group) {
     item.setAttribute("label", group);
     item.setAttribute("id", "group" + group);
     liste.appendChild(item);
+    
+    /*var item = document.createElement("treeitem");
+    //item.setAttribute("context", "itemcontextgroup");
+    //item.setAttribute("open", "true");
+    //item.setAttribute("image", "chrome://messenger/content/img/tes.png");
+    item.setAttribute("container","true");
+    item.setAttribute("label", group);
+    item.setAttribute("id", "group" + group);
+    liste.appendChild(item);*/
 
-    /**var cellone = document.createElement ("listcell");
-     item.appendChild(cellone);
+   
 
-     var image = document.createElement ("image");
-     image.setAttribute("src","img/us.gif");
-     image.setAttribute("width","15");
-     image.setAttribute("height","15");
-     image.setAttribute("id","img" + group);
-
-     cellone.appendChild(image);
-
-     var celltwo = document.createElement ("listcell");
-     celltwo.setAttribute("label",group);
-
-     item.appendChild(celltwo);*/
+    
 }
 
 // Function to empty the contact's list
@@ -519,7 +528,7 @@ function refreshList() {
     con.send(myPresence);
     
      if (console) {
-        cons.addInConsole("IN : " + myPresence.xml() + "\n");
+        cons.addInConsole("OUT : " + myPresence.xml() + "\n");
     }
 }
 
@@ -536,25 +545,24 @@ function showUser(user) {
     item.setAttribute("id", user[0]);
     item.setAttribute("flex", "1");
     liste.appendChild(item);
+    
+    /*var item = document.createElement("treeitem");
+    var row = document.createElement("treerow");
+    var cell1 = document.createElement("treecell");
+    var cell2 = document.createElement("treecell");
+    item.setAttribute("context", "itemcontext");
+    //item.setAttribute("ondblclick", "openConversation(event)");
+    //item.setAttribute("class", "listitem-iconic");
+    cell1.setAttribute("src", "chrome://messenger/content/img/" + user[4]);
+    cell2.setAttribute("label", user[3]);
+    cell2.setAttribute("id", user[0]);
+    //item.setAttribute("flex", "1");
+    row.appendChild(cell1);
+    row.appendChild(cell2);
+    item.appendChild(row);
+    liste.appendChild(item);*/
 
-    /**var cellone = document.createElement ("listcell");
-     cellone.setAttribute("flex","1");
-     item.appendChild(cellone);
-
-     var image = document.createElement ("image");
-     image.setAttribute("src","img/offline.png");
-     image.setAttribute("width","15");
-     image.setAttribute("height","15");
-     image.setAttribute("id","img" + user[0]);
-
-
-     cellone.appendChild(image);
-
-     var celltwo = document.createElement ("listcell");
-     celltwo.setAttribute("label",user[3]);
-     celltwo.setAttribute("flex","1");
-
-     item.appendChild(celltwo); */
+    
 
 }
 
@@ -585,7 +593,7 @@ function sendMsg(event) {
             con.send(aMsg);
             
              if (console) {
-        cons.addInConsole("IN : " + aMsg.xml() + "\n");
+        cons.addInConsole("OUT : " + aMsg.xml() + "\n");
     }
 
             // alert (aMsg.xml());
@@ -611,7 +619,7 @@ function notifyWriting(jid) {
 
     con.send(aMsg);
      if (console) {
-        cons.addInConsole("IN : " + aMsg.xml() + "\n");
+        cons.addInConsole("OUT : " + aMsg.xml() + "\n");
     }
 }
 
@@ -645,7 +653,7 @@ function changeStatus(status) {
     // Specify presence to server
     con.send(myPresence);
      if (console) {
-        cons.addInConsole("IN : " + myPresence.xml() + "\n");
+        cons.addInConsole("OUT : " + myPresence.xml() + "\n");
     }
 }
 
@@ -670,7 +678,7 @@ function launchWizard() {
 // Function to close the window
 function closeWindows() {
 
-    if (cons)
+    if (console)
         cons.close();
     self.close();
 
@@ -684,7 +692,7 @@ function closeWindows() {
 function handleError(e) {
 
     if (console) {
-        cons.addInConsole("OUT : " + e.xml() + "\n");
+        cons.addInConsole("IN : " + e.xml() + "\n");
     }
 
     switch (e.getAttribute('code')) {
@@ -723,8 +731,8 @@ function handleConnected() {
     con.send(iq, getRoster);
 
     if (console) {
-        cons.addInConsole("IN : " + iq.xml() + "\n");
-        cons.addInConsole("IN : " + myPresence.xml() + "\n");
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
+        cons.addInConsole("OUT : " + myPresence.xml() + "\n");
     }
 
     // Specify presence to server
@@ -736,7 +744,7 @@ function handleConnected() {
 function handleEvent(iq) {
     //alert ("received packet!");
     if (console) {
-        cons.addInConsole("OUT : " + iq.xml() + "\n");
+        cons.addInConsole("IN : " + iq.xml() + "\n");
     }
 }
 
@@ -753,7 +761,7 @@ function handleMessage(aJSJaCPacket) {
 
     if (console) {
 
-        cons.addInConsole("OUT : " + aJSJaCPacket.xml() + "\n");
+        cons.addInConsole("IN : " + aJSJaCPacket.xml() + "\n");
     }
 
     var name = keepLogin(origin);
@@ -819,7 +827,7 @@ function handlePresence(aJSJaCPacket) {
     }
 
     if (console) {
-        cons.addInConsole("OUT : " +  aJSJaCPacket.xml() + "\n");
+        cons.addInConsole("IN : " +  aJSJaCPacket.xml() + "\n");
     }
 
 

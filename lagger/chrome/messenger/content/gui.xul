@@ -85,16 +85,20 @@
 
         <hbox flex="1">
             <!-- The contact list -->
+            
+            <vbox flex="1" id ="left">
 
-            <listbox height="400" width="150" maxwidth="150" minwidth="140" id="liste_contacts" flex="1">
-
-                <!--<listcols id="liste_col" flex="1">
-                   <listcol flex="1" align="stretch"/>
-                   <listcol flex="1" align="stretch"/>
-
-
-                </listcols>-->
+           <listbox height="400" width="150" maxwidth="400" minwidth="140" id="liste_contacts" flex="1">
             </listbox>
+             <!--<tree height="400" width="150" maxwidth="200" minwidth="140"  flex="1" id="liste_contacts">
+            <treecols>
+            <treecol id="status"  flex="1"/>
+    			<treecol id="user" flex="2"/>
+            </treecols>
+            <treechildren id="liste_contact">
+            
+            </treechildren>
+            </tree>-->
 
             <!-- List Contact's context menu -->
             <popupset>
@@ -114,8 +118,23 @@
                     <menuitem label="&listitemcontextgroup.Rename;" oncommand="renameGroup(event);"/>
                 </popup>
             </popupset>
+            
+              <!-- Personal status list -->
+            <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="40" minheight="30"
+                      maxwidth="400" minwidth="140" src="img/online.png">
+                <menupopup flex="1">
+                    <menuitem class="menuitem-iconic icon-away" label="&status.Away;"
+                              oncommand="changeStatus('away');"/>
+                    <menuitem class="menuitem-iconic" image="img/online.png" label="&status.Available;" selected="true"
+                              oncommand="changeStatus('chat');"/>
+                    <menuitem class="menuitem-iconic" image="img/dnd.png" label="&status.Dnd;"
+                              oncommand="changeStatus('dnd');"/>
+                </menupopup>
+            </menulist>
+            
+            </vbox>
 
-            <vbox flex="1" id="middle">
+            <vbox flex="0" id="right">
 
                 <!-- The tabPane
            <tabbox flex="1">
@@ -159,26 +178,13 @@
 
                 </toolbar>
               </toolbox>  -->
-            </vbox>
-        </hbox>
 
-        <hbox flex="1" id="bottom">
-
-            <!-- Personal status list -->
-            <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="40" minheight="30"
-                      maxwidth="150" minwidth="150" orient="vertical" src="img/online.png">
-                <menupopup flex="1">
-                    <menuitem class="menuitem-iconic icon-away" label="&status.Away;"
-                              oncommand="changeStatus('away');"/>
-                    <menuitem class="menuitem-iconic" image="img/online.png" label="&status.Available;" selected="true"
-                              oncommand="changeStatus('chat');"/>
-                    <menuitem class="menuitem-iconic" image="img/dnd.png" label="&status.Dnd;"
-                              oncommand="changeStatus('dnd');"/>
-                </menupopup>
-            </menulist>
 
             <!-- Text entry -->
             <!--<textbox id="textentry" multiline="true" height="40" width="400" flex="1" maxheight="40" minheight="30"  onkeypress="sendMsg(event);" oninput="informWriting();"/>-->
+        </vbox>
+        
+        
         </hbox>
     </vbox>
 </window>

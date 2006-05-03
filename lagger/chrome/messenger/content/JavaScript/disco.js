@@ -17,7 +17,7 @@ try{
 	con.send(iq,getDiscoItems);
 	
 	if (console) {
-        cons.addInConsole("IN : " + iq.xml() + "\n");
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
 	
 	}
@@ -31,7 +31,7 @@ try{
         return;
 
 	if (console) {
-        cons.addInConsole("OUT : " + iq.xml() + "\n");
+        cons.addInConsole("IN : " + iq.xml() + "\n");
     }
     disco = new Array();
 
@@ -65,7 +65,7 @@ function getDiscoInfo(iq) {
         disco[iq.getFrom()] = iq;
         
         if (console) {
-        cons.addInConsole("OUT : " + iq.xml() + "\n");
+        cons.addInConsole("IN : " + iq.xml() + "\n");
     }
         
         var discoList = document.getElementById("discolist");

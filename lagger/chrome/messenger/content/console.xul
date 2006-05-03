@@ -7,7 +7,7 @@
         title="&Console.title;"
         orient="horizontal"
         width="450"
-        height="400"
+        height="450"
         onload="startConsole();"
         onclose="closeWindows();"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -24,7 +24,10 @@
         <textbox id="textconsole" style="color: #000066;" multiline="true" height="200" width="450" flex="1"
                  readonly="true"/>
         <spacer flex="1"/>
-        <spacer flex="1"/>
+        
+        <button label="&Console.clear;" oncommand="clearConsole();"/>
+        
+        <spacer flex="10"/>
         <label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
         <textbox id="texttemplates" style="color: #FF6600;" multiline="true" height="150" width="450" flex="1"/>
 
@@ -32,24 +35,23 @@
             <menulist label="IQ  ">
                 <menupopup flex="1">
                     <menuitem label="IQ" oncommand="writeXMLIQ();"/>
-                    <menuitem label="Time IQ"/>
-                    <menuitem label="Version IQ"/>
-                    <menuitem label="Last IQ"/>
+                    <menuitem label="Time IQ" oncommand="writeXMLIQTime();"/>
+                    <menuitem label="Version IQ" oncommand="writeXMLIQVersion();"/>
+                    <menuitem label="Last IQ" oncommand="writeXMLIQLast();"/>
                 </menupopup>
             </menulist>
             <menulist label="Presence  ">
                 <menupopup flex="1">
                     <menuitem label="Presence" oncommand="writeXMLPresence();"/>
-                    <menuitem label="Available"/>
-                    <menuitem label="Unavailable"/>
+                    <menuitem label="Available" oncommand="writeXMLPresenceA();"/>
+                    <menuitem label="Unavailable" oncommand="writeXMLPresenceU();"/>
                 </menupopup>
             </menulist>
             <menulist label="Message  ">
                 <menupopup flex="1">
                     <menuitem label="Message" oncommand="writeXMLMessage();"/>
-                    <menuitem label="Normal"/>
-                    <menuitem label="Chat"/>
-                    <menuitem label="Headline"/>
+                    <menuitem label="Chat" oncommand="writeXMLMessageChat();"/>
+                    <menuitem label="Headline" oncommand="writeXMLMessageHeadline();"/>
                 </menupopup>
             </menulist>
 
