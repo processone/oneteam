@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/disco.dtd">
+
+<window id="Disco"
+        title="&Disco.title;"
+        orient="horizontal"
+        onload="sendDiscoRequest();"
+        resizable="true"
+        width="200"
+        onclose="closeWindows();"
+        height="300"
+        style="overflow: auto"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        
+        <script type="application/x-javascript" src="JavaScript/gui.js"/>
+        <script type="application/x-javascript" src="JavaScript/disco.js"/>
+        <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+ 	    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+    		<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+        
+        
+       
+        <richlistbox id="discolist" flex ="1">
+        
+    <!--<richlistitem>
+      <description>A XUL Description!</description>
+    </richlistitem>
+    <richlistitem>
+      <button label="A XUL Button"/>
+    </richlistitem>-->
+  </richlistbox>
+        
+    </window>

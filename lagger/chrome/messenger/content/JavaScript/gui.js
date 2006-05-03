@@ -225,9 +225,12 @@ function reduceGUI() {
 
 // Launch console
 function launchConsole() {
+
+	if (!console){
     cons = window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
     cons.opener = window;
     console = true;
+    }
 }
 
 // Function to add a contact
@@ -250,6 +253,9 @@ function authorizeSeeContact(jid) {
     aPresence.setTo(jid);
 
     con.send(aPresence);
+    if (console) {
+        cons.addInConsole("IN : " + aPresence.xml() + "\n");
+    }
 
     //window.close();
 }
@@ -262,6 +268,9 @@ function authorizeContactSeeMe(jid) {
     aPresence.setType('subscribed');
     aPresence.setTo(jid);
     con.send(aPresence);
+     if (console) {
+        cons.addInConsole("IN : " + aPresence.xml() + "\n");
+    }
     //window.close();
 }
 
@@ -295,6 +304,9 @@ function removeContact()
 
 
         con.send(iq);
+         if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+    }
     }
     catch (e) {
         alert(e);
@@ -470,6 +482,7 @@ function showGroup(group) {
     item.setAttribute("context", "itemcontextgroup");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/tes.png");
+    item.setAttribute("container","true");
     item.setAttribute("label", group);
     item.setAttribute("id", "group" + group);
     liste.appendChild(item);
@@ -504,6 +517,10 @@ function emptyList() {
 function refreshList() {
 
     con.send(myPresence);
+    
+     if (console) {
+        cons.addInConsole("IN : " + myPresence.xml() + "\n");
+    }
 }
 
 // Function to show a user in roster
@@ -566,6 +583,10 @@ function sendMsg(event) {
             aMsg.setBody(textEntry.value);
             aMsg.setType('chat');
             con.send(aMsg);
+            
+             if (console) {
+        cons.addInConsole("IN : " + aMsg.xml() + "\n");
+    }
 
             // alert (aMsg.xml());
 
@@ -589,10 +610,13 @@ function notifyWriting(jid) {
     var composing = x.appendChild(aMsg.getDoc().createElement('composing'));
 
     con.send(aMsg);
+     if (console) {
+        cons.addInConsole("IN : " + aMsg.xml() + "\n");
+    }
 }
 
 
-// Function to change his own status
+// Function to change its  status
 function changeStatus(status) {
 
 
@@ -620,6 +644,9 @@ function changeStatus(status) {
 
     // Specify presence to server
     con.send(myPresence);
+     if (console) {
+        cons.addInConsole("IN : " + myPresence.xml() + "\n");
+    }
 }
 
 
@@ -657,7 +684,7 @@ function closeWindows() {
 function handleError(e) {
 
     if (console) {
-        cons.addInConsole(e.xml() + "\n");
+        cons.addInConsole("OUT : " + e.xml() + "\n");
     }
 
     switch (e.getAttribute('code')) {
@@ -696,7 +723,8 @@ function handleConnected() {
     con.send(iq, getRoster);
 
     if (console) {
-        cons.addInConsole(iq.xml() + "\n");
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+        cons.addInConsole("IN : " + myPresence.xml() + "\n");
     }
 
     // Specify presence to server
@@ -708,7 +736,7 @@ function handleConnected() {
 function handleEvent(iq) {
     //alert ("received packet!");
     if (console) {
-        cons.addInConsole(iq.xml() + "\n");
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
 }
 
@@ -725,7 +753,7 @@ function handleMessage(aJSJaCPacket) {
 
     if (console) {
 
-        cons.addInConsole(aJSJaCPacket.xml() + "\n");
+        cons.addInConsole("OUT : " + aJSJaCPacket.xml() + "\n");
     }
 
     var name = keepLogin(origin);
@@ -791,7 +819,7 @@ function handlePresence(aJSJaCPacket) {
     }
 
     if (console) {
-        cons.addInConsole(aJSJaCPacket.xml() + "\n");
+        cons.addInConsole("OUT : " +  aJSJaCPacket.xml() + "\n");
     }
 
 

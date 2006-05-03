@@ -484,7 +484,9 @@ function JSJaCSendEmpty() {
 }
 
 function JSJaCSendStr(str) {
-	var slot = this._getFreeSlot();
+
+this._pQueue = this._pQueue.concat(str);
+	/*var slot = this._getFreeSlot();
 	this._req[slot] = this._setupRequest(true);
 
         oCon = this;
@@ -506,7 +508,7 @@ function JSJaCSendStr(str) {
           };
       }
         this.oDbg.log("sending: " + str,4);
-        this._req[slot].send(str);
+        this._req[slot].send(str);*/
 }
 
 function JSJaCHandleResponse(req) {

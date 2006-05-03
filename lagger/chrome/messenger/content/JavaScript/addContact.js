@@ -1,3 +1,7 @@
+var con = window.opener.con;
+var console = window.opener.console;
+var cons = window.opener.cons;
+
 function loadGroups() {
 
     var groups = document.getElementById("groups");
@@ -44,6 +48,10 @@ function performAddContact(event) {
 
         //alert (iq.xml());
         con.send(iq);
+        
+         if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+   	 }
 
         var user = new Array(jid, "none", choosenGroup, login.value, "offline.png");
 

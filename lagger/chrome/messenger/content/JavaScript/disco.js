@@ -15,6 +15,11 @@ try{
 	iq.setIQ(server,null,'get','disco_item');
 	iq.setQuery('http://jabber.org/protocol/disco#items');
 	con.send(iq,getDiscoItems);
+	
+	if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+    }
+	
 	}
 	catch (e){alert(e);}
 }
@@ -26,7 +31,7 @@ try{
         return;
 
 	if (console) {
-        cons.addInConsole(iq.xml() + "\n");
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
     disco = new Array();
 
@@ -60,7 +65,7 @@ function getDiscoInfo(iq) {
         disco[iq.getFrom()] = iq;
         
         if (console) {
-        cons.addInConsole(iq.xml() + "\n");
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
         
         var discoList = document.getElementById("discolist");
