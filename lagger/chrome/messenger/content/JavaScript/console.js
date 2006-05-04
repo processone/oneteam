@@ -85,7 +85,7 @@ function clearConsole(){
 }
 
 // Function to close the window
-function closeWindows() {
+function closeConsole() {
 
 window.opener.console = false;     
     self.close();

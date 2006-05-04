@@ -7,9 +7,9 @@
         orient="horizontal"
         onload="sendDiscoRequest();"
         resizable="true"
-        width="200"
+        width="300"
         onclose="closeWindows();"
-        height="300"
+        height="270"
         style="overflow: auto"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
@@ -23,7 +23,7 @@
         
         
        
-        <richlistbox id="discolist" flex ="1">
+        <listbox id="discolist" flex ="1">
         
     <!--<richlistitem>
       <description>A XUL Description!</description>
@@ -31,6 +31,6 @@
     <richlistitem>
       <button label="A XUL Button"/>
     </richlistitem>-->
-  </richlistbox>
+  </listbox>
         
     </window>

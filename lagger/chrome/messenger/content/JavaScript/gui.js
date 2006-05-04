@@ -2,6 +2,9 @@
 var con;
 var users = new Array();
 var groups = new Array();
+var rooms = new Array();
+var conferences = new Array();
+var index = 0;
 var user;
 var myjid;
 var myPresence;
@@ -336,6 +339,83 @@ function joinRoom() {
 
 }
 
+// Function to get Rooms items
+function getRoomItems (iq){
+
+try{
+    if (!iq)
+        return;
+
+	if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+    }
+    disco = new Array();
+
+    var items = iq.getNode().firstChild.childNodes;
+	alert (iq.xml());
+ 
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].nodeName != 'item' || !items[i].getAttribute('jid') || items[i].getAttribute('node') != null) // skip those
+            continue;
+        var aIQ = new JSJaCIQ();
+        aIQ.setIQ(items[i].getAttribute('jid'), null, 'get', 'disco_info_' + i);
+        aIQ.setQuery("http://jabber.org/protocol/disco#info");
+
+        con.send(aIQ, getRoomNames);
+    }
+    index = 0;
+    showRooms();
+    }
+	catch (e){alert(e);}
+	}
+	
+	
+	// Function get Rooms names
+function getRoomNames (iq){
+
+try{	
+
+    if (!iq || iq.getType() != 'result')
+        return;
+
+
+	
+    if (iq.getType() == 'result') {
+        disco[index] = iq.getFrom();
+        //disco[iq.getFrom()] = iq;
+        
+        if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+    }
+        
+        
+        rooms.push(iq.getNode().getElementsByTagName('identity').item(0).getAttribute('name'));
+       alert (rooms [index ++]);
+        
+       //alert (iq.xml());
+
+        // If the identity does not have a name, set the name to jid
+        if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('name') == null)
+            iq.getNode().getElementsByTagName('identity').item(0).setAttribute('name', iq.getFrom());
+
+        // set loghost
+        if (iq.getNode().getElementsByTagName('identity').item(0)) {
+            if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('category') == 'store') {
+                for (var j = 0; j < iq.getNode().getElementsByTagName('feature').length; j++) {
+                    if (iq.getNode().getElementsByTagName('feature').item(j).getAttribute('var') == 'http://jabber.org/protocol/archive') {
+                        loghost = iq.getFrom();
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+     }
+	catch (e){alert(e);}
+
+	}
+
 
 // Function to get roster
 function getRoster(iq) {
@@ -379,11 +459,18 @@ function getRoster(iq) {
 
     try {
         showUsers(users);
+        
+        alert(iq.xml());
+        
+        //sendServerRequest();
+        //sendDiscoRoomRequest(conferences[0]);
+        
+       // }
     }
     catch(e) {
         alert(e);
     }
-    //alert (iq.xml());
+    
 }
 
 
@@ -393,6 +480,31 @@ function showGroups() {
         showGroup(groups[i]);
     }
 }
+
+
+// Function to show rooms in roster
+function showRooms() {
+
+	try{
+	 
+	var liste = document.getElementById("liste_contacts");
+	 alert ("je rentre showRooms");
+    var item = document.createElement("listitem");
+    //item.setAttribute("context", "itemcontextgroup");
+    item.setAttribute("class", "listitem-iconic");
+    item.setAttribute("image", "chrome://messenger/content/img/tes.png");
+    item.setAttribute("label", "Conferences");
+    item.setAttribute("id", "conferences");
+    liste.appendChild(item);
+	
+	for (var i = 0; i < rooms.length; i++) {
+        showRoom(rooms[i]);
+        
+    }
+    alert ("je sors showRooms");
+    }
+    catch(e) {alert(e);}
+  }
 
 
 // Function which try to select a tab corresponding to jid (if exist)
@@ -494,9 +606,11 @@ function showGroup(group) {
     item.setAttribute("context", "itemcontextgroup");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/tes.png");
-    item.setAttribute("container","true");
     item.setAttribute("label", group);
-    item.setAttribute("id", "group" + group);
+    //item.setAttribute("value", "group");
+    item.setAttribute("orient", "horizontal");
+    //item.setAttribute("id", "group" + group);
+    item.setAttribute("id", "group");
     liste.appendChild(item);
     
     /*var item = document.createElement("treeitem");
@@ -507,11 +621,29 @@ function showGroup(group) {
     item.setAttribute("label", group);
     item.setAttribute("id", "group" + group);
     liste.appendChild(item);*/
-
-   
-
     
 }
+
+
+// Function to show a room in roster
+function showRoom (room){
+	try {
+	
+	alert("je rentre room");
+	
+	var liste = document.getElementById("liste_contacts");
+    var item = document.createElement("listitem");
+    item.setAttribute("context", "itemcontextgroup");
+    item.setAttribute("class", "listitem-iconic");
+    item.setAttribute("image", "chrome://messenger/content/img/tes.png");
+    item.setAttribute("label", room);
+    item.setAttribute("id", "room");
+    liste.appendChild(item);
+ 	
+ 	alert("je sors room");
+ 	} catch (e) {alert(e);}
+}
+
 
 // Function to empty the contact's list
 function emptyList() {
@@ -560,11 +692,108 @@ function showUser(user) {
     row.appendChild(cell1);
     row.appendChild(cell2);
     item.appendChild(row);
-    liste.appendChild(item);*/
-
-    
+    liste.appendChild(item);*/    
 
 }
+
+
+// Function to send disco room items request
+function sendDiscoRoomRequest (conferenceServer){
+try{
+	iq = new JSJaCIQ();
+	iq.setIQ(conferenceServer,null,'get','disco_item');
+	iq.setQuery('http://jabber.org/protocol/disco#items');
+	con.send(iq,getRoomItems);
+	 //<iq id='9' to='conference.process-one.net' type='get' xml:lang='en'><query xmlns='http://jabber.org/protocol/disco#items'/></iq>
+	if (console) {
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
+    }
+	
+	}
+	catch (e){alert(e);}
+
+}
+
+// Function to send disco items request
+function sendServerRequest(){
+try{
+	alert("je rentre dans serverRequest");
+	var iq = new JSJaCIQ();
+	iq.setIQ(server,null,'get','disco_item');
+	iq.setQuery('http://jabber.org/protocol/disco#items');
+	con.send(iq,getServerItems);
+	
+	if (console) {
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
+    }
+	alert("je sors de serverRequest");
+	}
+	catch (e){alert(e);}
+}
+
+// Function for retreiving Disco Items
+function getServerItems(iq) {
+try{
+	alert("je rentre dans serverItems");
+    if (!iq)
+        return;
+
+	if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+    }
+   
+    alert (iq.xml());
+
+    var items = iq.getNode().firstChild.childNodes;
+
+    /* query items */
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].nodeName != 'item' || !items[i].getAttribute('jid') || items[i].getAttribute('node') != null) // skip those
+            continue;
+        var aIQ = new JSJaCIQ();
+        aIQ.setIQ(items[i].getAttribute('jid'), null, 'get', 'disco_info_' + i);
+        aIQ.setQuery("http://jabber.org/protocol/disco#info");
+
+        con.send(aIQ, getServerInfo);
+    }
+    
+    alert("je sors de serverItem");
+    }
+	catch (e){alert(e);}
+}
+
+// Function to get the discoInfo
+function getServerInfo(iq) {
+
+	try{
+	alert("je rentre dans serverInfo");	
+
+    if (!iq || iq.getType() != 'result')
+        return;
+
+	
+    if (iq.getType() == 'result') {
+       
+        
+        if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('category') == 'conference'){
+        conferences.push(iq.getFrom());
+        alert(conferences[0]);
+        }
+        
+        if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+    		}
+        
+        alert (iq.xml());
+  
+        
+    }
+    alert("je sors de serverInfo");
+     }
+	catch (e){alert(e);}
+}
+
+
 
 // Function to send a message
 function sendMsg(event) {

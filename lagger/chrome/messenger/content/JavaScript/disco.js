@@ -1,5 +1,5 @@
 
-var disco;
+var disco = new Array();
 var con = window.opener.con;
 var server = window.opener.server;
 
@@ -11,7 +11,7 @@ var cons = window.opener.cons;
 // Function to send disco items request
 function sendDiscoRequest(){
 try{
-	iq = new JSJaCIQ();
+	var iq = new JSJaCIQ();
 	iq.setIQ(server,null,'get','disco_item');
 	iq.setQuery('http://jabber.org/protocol/disco#items');
 	con.send(iq,getDiscoItems);
@@ -33,7 +33,8 @@ try{
 	if (console) {
         cons.addInConsole("IN : " + iq.xml() + "\n");
     }
-    disco = new Array();
+   
+    alert (iq.xml());
 
     var items = iq.getNode().firstChild.childNodes;
 
@@ -59,28 +60,32 @@ function getDiscoInfo(iq) {
     if (!iq || iq.getType() != 'result')
         return;
 
-
+	
 	
     if (iq.getType() == 'result') {
-        disco[iq.getFrom()] = iq;
+       // disco[item++] = iq.getFrom();
+        //disco[iq.getFrom()] = iq;
+     
         
         if (console) {
         cons.addInConsole("IN : " + iq.xml() + "\n");
     }
         
         var discoList = document.getElementById("discolist");
-        var item = document.createElement("richlistitem");
-         var description = document.createElement("description");
-    	//item.setAttribute("context", "itemcontextgroup");
-    //item.setAttribute("class", "listitem-iconic");
-    //item.setAttribute("image", "chrome://messenger/content/img/tes.png");
-    	//item.setAttribute("label", "test");
+        var item = document.createElement("listitem");
+         //var description = document.createElement("description");
+    
+    //item.setAttribute("context", "itemcontextgroup");
+    item.setAttribute("class", "listitem-iconic");
+    item.setAttribute("image", "chrome://messenger/content/img/ampoule.png");
+    	item.setAttribute("label",iq.getFrom());
     //item.setAttribute("id", "group" + group);
-    textNode = document.createTextNode(iq.getFrom());
-    description.appendChild(textNode);
-    item.appendChild(description);
+    //textNode = document.createTextNode(iq.getFrom());
+    //description.appendChild(textNode);
+    //item.appendChild(description);
        discoList.appendChild(item);
         
+        alert (iq.xml());
 
         // If the identity does not have a name, set the name to jid
         if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('name') == null)

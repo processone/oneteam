@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/gui.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/gui.dtd">
 
 <window id="Messenger"
         title="Lagger"
         orient="horizontal"
         onload="init();"
-        resizable="true"
         width="155"
         onclose="closeWindows();"
         height="300"
@@ -125,9 +125,9 @@
                 <menupopup flex="1">
                     <menuitem class="menuitem-iconic icon-away" label="&status.Away;"
                               oncommand="changeStatus('away');"/>
-                    <menuitem class="menuitem-iconic" image="img/online.png" label="&status.Available;" selected="true"
+                    <menuitem class="menuitem-iconic" label="&status.Available;" selected="true"
                               oncommand="changeStatus('chat');"/>
-                    <menuitem class="menuitem-iconic" image="img/dnd.png" label="&status.Dnd;"
+                    <menuitem class="menuitem-iconic" label="&status.Dnd;"
                               oncommand="changeStatus('dnd');"/>
                 </menupopup>
             </menulist>

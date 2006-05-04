@@ -9,7 +9,7 @@
         width="450"
         height="450"
         onload="startConsole();"
-        onclose="closeWindows();"
+        onclose="closeConsole();"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
     <script type="application/x-javascript" src="JavaScript/shared.js"/>
@@ -25,7 +25,7 @@
                  readonly="true"/>
         <spacer flex="1"/>
         
-        <button label="&Console.clear;" oncommand="clearConsole();"/>
+        <button label="&Console.clear;" oncommand="clearConsole();" flex="1"/>
         
         <spacer flex="10"/>
         <label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
