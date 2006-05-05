@@ -48,6 +48,8 @@ function openConversation(event) {
         }
         tab.setAttribute("selected", "true");
         
+        tabs.appendChild(tab);
+        
 
         var tabspanel = document.getElementById("tabpanels1");
         var tabpanel = document.createElement("tabpanel");
@@ -74,7 +76,6 @@ function openConversation(event) {
 	
 		tab.setAttribute("context", "tabroomcontext");
 		
-		tabs.appendChild(tab);
 		
 		// add the room roster to the gui
 		var hbox = document.getElementById("panel-roster" + tabs.selectedItem.id);
@@ -716,7 +717,7 @@ function showRoomUser (roomUser){
     item.setAttribute("context", "itemcontextroom");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
-    item.setAttribute("label", roomUser [4]);
+    item.setAttribute("label", roomUser [1]);
     item.setAttribute("id", roomUser [0]);
     listeRoom.appendChild(item);
  	
@@ -963,7 +964,7 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
 
         aPresence.getNode().appendChild(x);
 
-        con.send(aPresence, getRoomRoster(aPresence));
+        con.send(aPresence,getRoomRoster);
 
 	if (console) {
         cons.addInConsole("OUT : " + aPresence.xml() + "\n");
@@ -1029,11 +1030,10 @@ function createReserved(){
 function getRoomRoster(aPresence) {
 
 		
-		
 		try{
 
 	if (console) {
-        cons.addInConsole("IN : " + aPresence.xml() + "\n");
+        cons.addInConsole("IN (RoomRoster) : " + aPresence.xml() + "\n");
     }
 
     var x;
@@ -1046,15 +1046,16 @@ function getRoomRoster(aPresence) {
     if (x) {
         var from = aPresence.getFrom().substring(aPresence.getFrom().indexOf('/') + 1);
 
-        alert("jabber from:" + aPresence.getFrom() + ", from:" + from);
+        //alert("jabber from:" + aPresence.getFrom() + ", from:" + from);
 
 
-        var roomUser = new array(aPresence.getFrom(), from, "", "", "", "", "");
+        var roomUser = new Array(aPresence.getFrom(), from, "", "", "", "", "");
 		
-		alert (roomUser [0]);
+		//alert ("USer" + roomUser [1]);
 		
         var item = x.getElementsByTagName('item').item(0);
-
+		
+		
         roomUser[2] = item.getAttribute('affiliation');
         roomUser[3] = item.getAttribute('role');
         roomUser[4] = item.getAttribute('nick');
@@ -1344,8 +1345,9 @@ function handleEvent(iq) {
 // Callback on receiving message Function
 function handleMessage(aJSJaCPacket) {
 
+	
 
-    var origin = aJSJaCPacket.getFrom()
+    var origin = aJSJaCPacket.getFrom();
     var mess = "Received Message from" + origin;
     alert(mess);
 	
@@ -1416,7 +1418,9 @@ function handlePresence(aJSJaCPacket) {
     var sender = cutResource(aJSJaCPacket.getFrom());
     var item = document.getElementById(sender);
     var user;
-
+    
+   
+	
     for (i = 0; i < users.length; i++) {
         user = users[i];
         if (user [0] == sender)
@@ -1476,6 +1480,8 @@ function handlePresence(aJSJaCPacket) {
         if (aJSJaCPacket.getStatus())
             presence += aJSJaCPacket.getStatus();
     }
+    
+    
     //alert (presence);
 }
 
