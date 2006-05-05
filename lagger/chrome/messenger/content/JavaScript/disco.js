@@ -34,7 +34,7 @@ try{
         cons.addInConsole("IN : " + iq.xml() + "\n");
     }
    
-    alert (iq.xml());
+    //alert (iq.xml());
 
     var items = iq.getNode().firstChild.childNodes;
 
@@ -85,7 +85,7 @@ function getDiscoInfo(iq) {
     //item.appendChild(description);
        discoList.appendChild(item);
         
-        alert (iq.xml());
+        //alert (iq.xml());
 
         // If the identity does not have a name, set the name to jid
         if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('name') == null)

@@ -9,6 +9,9 @@
         width="270"
         height="180"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        
+        
+      
 
     <spacer flex="1"/>
     <groupbox id="xf-config-Roombox" flex="1">

@@ -3,9 +3,12 @@ var con;
 var users = new Array();
 var groups = new Array();
 var rooms = new Array();
+var roomUsers = new Array();
+var roles = new Array();
 var conferences = new Array();
 var index = 0;
 var user;
+var room;
 var myjid;
 var myPresence;
 var deployedGUI = false;
@@ -26,9 +29,12 @@ function openConversation(event) {
     var liste = document.getElementById("liste_contacts");
 
 
-    if (document.getElementById("tab" + liste.selectedItem.id) == null) {
+    if (document.getElementById("tab" + "tab" + liste.selectedItem.id) == null) {
 
-
+		var hbox = document.createElement("hbox");
+      	hbox.setAttribute("flex", "1");
+        hbox.setAttribute("id", "panel-roster" + "tab"+ liste.selectedItem.id);
+		
         var tabs = document.getElementById("tabs1");
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + liste.selectedItem.id);
@@ -41,7 +47,7 @@ function openConversation(event) {
             child.setAttribute("selected", "false");
         }
         tab.setAttribute("selected", "true");
-        tabs.appendChild(tab);
+        
 
         var tabspanel = document.getElementById("tabpanels1");
         var tabpanel = document.createElement("tabpanel");
@@ -49,6 +55,7 @@ function openConversation(event) {
         tabpanel.setAttribute("flex", "5");
         tabpanel.setAttribute("height", "400");
         tabpanel.setAttribute("width", "400");
+        tabpanel.appendChild(hbox);
         tabspanel.appendChild(tabpanel);
 
         var text = document.createElement("textbox");
@@ -59,15 +66,38 @@ function openConversation(event) {
         //text.setAttribute("width", "400");
         text.setAttribute("readonly", "true");
         text.setAttribute("flex", "5");
-        tabpanel.appendChild(text);
+        hbox.appendChild(text);
+        
+        try {
+		
+		if (liste.selectedItem.getAttribute("context") == 'itemcontextroom'){
+	
+		tab.setAttribute("context", "tabroomcontext");
+		
+		tabs.appendChild(tab);
+		
+		// add the room roster to the gui
+		var hbox = document.getElementById("panel-roster" + tabs.selectedItem.id);
+		
+		var listboxRoom = document.createElement("listbox");
+		//listboxRoom.setAttribute("flex", "1");
+		listboxRoom.setAttribute("width", "120");
+		listboxRoom.setAttribute("id", "liste_contacts_room" + tabs.selectedItem.id);
+		
+		hbox.appendChild(listboxRoom);
+		
+		performJoinRoom (liste.selectedItem.id,myjid,'','asouquet');
+		
+		self.resizeTo(500, 300);
+		}
+		
+		}
+		catch(e){alert(e);}
     }
 
-    // Ouvrir une boite de dialogue
+   
 }
 
-
-// Function to get connexion infos
-//function affect (user , pass, server, base);
 
 
 // Function to get connexion and users roster
@@ -128,14 +158,16 @@ function init() {
 
 // Function to extend gui for conversation
 function extendGUI() {
-
+	
+	
 
     var right = document.getElementById("right");
-    right.setAttribute("flex", "5");
+    		right.setAttribute("flex", "5");
 
     var tabbox = document.createElement("tabbox");
-    tabbox.setAttribute("flex", "5");
+    		tabbox.setAttribute("flex", "5");
 
+	
     right.appendChild(tabbox);
 
     var tabs = document.createElement("tabs");
@@ -147,29 +179,55 @@ function extendGUI() {
     tabpanels.setAttribute("flex", "5");
     tabpanels.setAttribute("id", "tabpanels1");
 
-    tabbox.appendChild(tabpanels);
+	tabbox.appendChild (tabpanels);
+    
 
     var popupset = document.createElement("popupset");
 
     right.appendChild(popupset);
+	
+	var popupsetroom = document.createElement("popupsetroom");
 
+    right.appendChild(popupsetroom);
+	
+	// Popup Contact
+	
     var popup = document.createElement("popup");
     popup.setAttribute("id", "tabcontext");
 
-    popupset.appendChild(popup);
 
     var itema = document.createElement("menuitem");
     itema.setAttribute("label", "Close");
-    //&amp;tabcontext.Close;
     itema.setAttribute("oncommand", "closeTab();");
 
     var itemb = document.createElement("menuitem");
     itemb.setAttribute("label", "CloseAll");
-    //&amp;tabcontext.CloseAll;
     itemb.setAttribute("oncommand", "closeAllTab();");
 
     popup.appendChild(itema);
     popup.appendChild(itemb);
+    
+    popupset.appendChild(popup);
+    
+    // PopUp ROOM
+    
+    var popuproom = document.createElement("popup");
+    popuproom.setAttribute("id", "tabroomcontext");
+    
+    var itemrooma = document.createElement("menuitem");
+    itemrooma.setAttribute("label", "Close");
+    itemrooma.setAttribute("oncommand", "closeTab();");
+
+    var itemroomb = document.createElement("menuitem");
+    itemroomb.setAttribute("label", "CloseAll");
+    itemroomb.setAttribute("oncommand", "closeAllTab();");
+
+    popuproom.appendChild(itemrooma);
+    popuproom.appendChild(itemroomb);
+    
+    popupsetroom.appendChild(popuproom);
+    
+    
 
     var toolbox = document.createElement("toolbox");
 
@@ -237,25 +295,6 @@ function reduceGUI() {
 	
 }
 
-
-// Launch console
-function launchConsole() {
-
-	if (!console){
-    cons = window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
-    cons.opener = window;
-    console = true;
-    }
-}
-
-// Function to add a contact
-function addContact()
-{
-
-    window.open("chrome://messenger/content/addContact.xul", "Add New Contact", "chrome,centerscreen");
-
-
-}
 
 
 // Function to ask authorisation for adding contact
@@ -331,13 +370,7 @@ function removeContact()
 }
 
 
-// Function to join a room
-function joinRoom() {
 
-    window.open("chrome://messenger/content/joinRoom.xul", "Join a room", "chrome,centerscreen");
-
-
-}
 
 // Function to get Rooms items
 function getRoomItems (iq){
@@ -422,7 +455,10 @@ function getRoster(iq) {
 
     var items = iq.getQuery().childNodes;
 
-    //assert iq.getType() == 'result'
+    
+    if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+    }
 
     /* setup groups */
     if (!items)
@@ -448,9 +484,19 @@ function getRoster(iq) {
                     if (!already)
                         groups.push(group);
                 }
+                
+                 if (items.item(i).getAttribute('category') == 'conference'){
+                 //alert ("i enter here");
+                 room = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "user-sibling.gif");
+                rooms.push(room);
+                }
+                 else{
             user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png");
-            //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + group + name);
+            //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
             users.push(user);
+            }
+            
+           
         }
     } catch(e) {
         alert("Dans la boucle" + e);
@@ -460,12 +506,12 @@ function getRoster(iq) {
     try {
         showUsers(users);
         
-        alert(iq.xml());
+        //alert(iq.xml());
         
         //sendServerRequest();
         //sendDiscoRoomRequest(conferences[0]);
         
-       // }
+       
     }
     catch(e) {
         alert(e);
@@ -483,19 +529,20 @@ function showGroups() {
 
 
 // Function to show rooms in roster
-function showRooms() {
+/**function showRooms() {
 
-	try{
 	 
-	var liste = document.getElementById("liste_contacts");
-	 alert ("je rentre showRooms");
-    var item = document.createElement("listitem");
-    //item.setAttribute("context", "itemcontextgroup");
-    item.setAttribute("class", "listitem-iconic");
-    item.setAttribute("image", "chrome://messenger/content/img/tes.png");
-    item.setAttribute("label", "Conferences");
-    item.setAttribute("id", "conferences");
-    liste.appendChild(item);
+	for (var g = 0; g < groups.length; g++) {
+        var group = groups[g];
+        showGroup(group);
+
+        for (var i = 0; i < users.length; i++) {
+
+            var user = users[i];
+            if (user [2] == group)
+                showUser(user);
+
+        }
 	
 	for (var i = 0; i < rooms.length; i++) {
         showRoom(rooms[i]);
@@ -504,7 +551,7 @@ function showRooms() {
     alert ("je sors showRooms");
     }
     catch(e) {alert(e);}
-  }
+  }*/
 
 
 // Function which try to select a tab corresponding to jid (if exist)
@@ -547,6 +594,12 @@ function closeTab() {
 
         tabs.removeChild(tab);
 
+		if (tab.getAttribute("context") == "tabroomcontext"){
+			var listRooms = document.getElementById ("liste_contacts_room" + tab.id);
+			var hbox = document.getElementById("panel-roster" + tab.id);
+				hbox.removeChild (listRooms);
+				} 
+			
 
         var tabspanel = document.getElementById("tabpanels1");
         var tabpanel = document.getElementById("tabpanel" + liste.selectedItem.id);
@@ -591,6 +644,13 @@ function showUsers(users) {
         }
         //end forUser
 
+		for (var i = 0; i < rooms.length; i++) {
+        var room = rooms[i];
+            if (room [2] == group)
+        			showRoom(rooms[i]);
+        
+   		 }
+   		 //end forRoom
     }
     //end forGroup
 
@@ -629,21 +689,40 @@ function showGroup(group) {
 function showRoom (room){
 	try {
 	
-	alert("je rentre room");
 	
 	var liste = document.getElementById("liste_contacts");
     var item = document.createElement("listitem");
-    item.setAttribute("context", "itemcontextgroup");
+    item.setAttribute("context", "itemcontextroom");
     item.setAttribute("class", "listitem-iconic");
-    item.setAttribute("image", "chrome://messenger/content/img/tes.png");
-    item.setAttribute("label", room);
-    item.setAttribute("id", "room");
+    item.setAttribute("ondblclick", "openConversation(event)");
+    item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
+    item.setAttribute("label", room [3]);
+    item.setAttribute("id", room [0]);
     liste.appendChild(item);
  	
- 	alert("je sors room");
+ 	
  	} catch (e) {alert(e);}
 }
 
+
+// Fonction to show a user in a room
+function showRoomUser (roomUser){
+	try {
+	
+	var tabs = document.getElementById("tabs1");
+	
+	var listeRoom = document.getElementById("liste_contacts_room" + tabs.selectedItem.id);
+    var item = document.createElement("listitem");
+    item.setAttribute("context", "itemcontextroom");
+    item.setAttribute("class", "listitem-iconic");
+    item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
+    item.setAttribute("label", roomUser [4]);
+    item.setAttribute("id", roomUser [0]);
+    listeRoom.appendChild(item);
+ 	
+ 	
+ 	} catch (e) {alert(e);}
+}
 
 // Function to empty the contact's list
 function emptyList() {
@@ -799,42 +878,296 @@ function getServerInfo(iq) {
 function sendMsg(event) {
 
     var tab = document.getElementById("tabs1");
-    var receiver = tab.selectedItem.id.substring(3, 30)
+    var receiver = tab.selectedItem.id.substring(3, 50);
 
-    //notifyWriting(receiver);
+	var tabpanel = document.getElementById("tabpanels1");
+    var textInBox = document.getElementById("text" + tab.selectedItem.id.substring(3, 50));
+
+	var textEntry = document.getElementById("textentry");
+
+	try {
+
+	 //notifyWriting(receiver);
 
     if (event.shiftKey)
         ;
     else if (event.keyCode == 13) {
+   
+    
+    if (tab.selectedItem.getAttribute('context') == 'tabroomcontext'){
+		sendRoomMessage (receiver);
+		alert ("RoomChat" + receiver);
+		}
+		else {
 
-        var textEntry = document.getElementById("textentry");
+        
 
         if ((textEntry.value).split(" ") != "") {
 
-            var tabpanel = document.getElementById("tabpanels1");
-            var textInBox = document.getElementById("text" + tab.selectedItem.id.substring(3, 30));
+            
 
-            //alert (tab.selectedItem.id.substring(3,30));
+            alert (tab.selectedItem.id.substring(3,50));
             var aMsg = new JSJaCMessage();
             aMsg.setTo(receiver);
             aMsg.setBody(textEntry.value);
             aMsg.setType('chat');
             con.send(aMsg);
             
+            }
+            
+            
+            
              if (console) {
         cons.addInConsole("OUT : " + aMsg.xml() + "\n");
     }
 
-            // alert (aMsg.xml());
+ 
 
-
-            // Write author of message followed by the message
+}
+           
+    // Write author of message followed by the message
             textInBox.value += keepLogin(myjid) + " : " + textEntry.value + "\n";
             textEntry.value = '';
+            // alert (aMsg.xml());
+    
+    }
+    
+    
+    
+    } catch (e) {alert (e);}
+}
+
+/*************************************** ROOMS ******************************************/
+
+// function to perform room joining
+function performJoinRoom(wholeRoom,jid, pass, nick) {
+    try {
+		
+        var aPresence = new JSJaCPresence();
+        aPresence.setTo(wholeRoom + '/' + nick);
+        aPresence.setXMLLang ('en');
+        //aPresence.setFrom(jid + "/Lagger");
+        
+        /**var vcard = aPresence.getDoc().createElement('x');
+        vcard.setAttribute('xmlns', 'vcard-temp:x:update');
+        vcard.appendChild(aPresence.getDoc().createElement('photo'));
+        
+        aPresence.getNode().appendChild(vcard);*/
+     
+
+        var x = aPresence.getDoc().createElement('x');
+        x.setAttribute('xmlns', 'http://jabber.org/protocol/muc');
+        
+        if (typeof(pass) != 'undefined' && pass != '')
+            x.appendChild(aPresence.getDoc().createElement('password')).appendChild(aPresence.getDoc().createTextNode(pass));
+
+        aPresence.getNode().appendChild(x);
+
+        con.send(aPresence, getRoomRoster(aPresence));
+
+	if (console) {
+        cons.addInConsole("OUT : " + aPresence.xml() + "\n");
+    }
+	
+	
+    }
+    catch (e) {
+        alert(e);
+    }
+    
+
+}
+
+
+// Function to create a room
+function createRoom() {
+
+ 		var aPresence = new JSJaCPresence();
+        aPresence.setTo(wholeRoom + '/' + nick);
+        aPresence.setFrom(jid);
+
+        var x = aPresence.getDoc().createElement('x');
+        x.setAttribute('xmlns', 'http://jabber.org/protocol/muc');
+        
+	
+		con.send(aPresence);
+		
+}
+
+
+// Function to create instant room
+function createInstantRoom (){
+	var iq = new JSJaCIQ();
+	iq.setIQ(wholeRoom,null,'set','create');
+	iq.setQuery('http://jabber.org/protocol/muc#owner');
+	
+	var x = iq.getDoc().createElement('x');
+        x.setAttribute('xmlns', 'http://jabber:x:data');
+        x.setAttribute('type', 'submit');
+	
+		con.send(iq);
+}
+
+
+// Function to create reserved room
+function createReserved(){
+	
+	var iq = new JSJaCIQ();
+	iq.setIQ(wholeRoom,null,'get','create');
+	iq.setQuery('http://jabber.org/protocol/muc#owner');
+	
+	
+		con.send(iq);
+		
+		// TODO if room does'nt already exist
+		// => send configuration form
+}
+
+
+
+// Function to retrieve RoomRoster
+function getRoomRoster(aPresence) {
+
+		
+		
+		try{
+
+	if (console) {
+        cons.addInConsole("IN : " + aPresence.xml() + "\n");
+    }
+
+    var x;
+    for (var i = 0; i < aPresence.getNode().getElementsByTagName('x').length; i++)
+        if (aPresence.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
+            x = aPresence.getNode().getElementsByTagName('x').item(i);
+            break;
+        }
+
+    if (x) {
+        var from = aPresence.getFrom().substring(aPresence.getFrom().indexOf('/') + 1);
+
+        alert("jabber from:" + aPresence.getFrom() + ", from:" + from);
+
+
+        var roomUser = new array(aPresence.getFrom(), from, "", "", "", "", "");
+		
+		alert (roomUser [0]);
+		
+        var item = x.getElementsByTagName('item').item(0);
+
+        roomUser[2] = item.getAttribute('affiliation');
+        roomUser[3] = item.getAttribute('role');
+        roomUser[4] = item.getAttribute('nick');
+        roomUser[5] = item.getAttribute('jid');
+        if (item.getElementsByTagName('reason').item(0))
+            roomUser.reason = item.getElementsByTagName('reason').item(0).firstChild.nodeValue;
+        if (actor = item.getElementsByTagName('actor').item(0)) {
+            if (actor.getAttribute('jid') != null)
+                roomUser[6] = actor.getAttribute('jid');
+            else if (item.getElementsByTagName('actor').item(0).firstChild != null)
+                roomUser[6] = item.getElementsByTagName('actor').item(0).firstChild.nodeValue;
+        }
+        var role = roomUser[3];
+        if (role != '') {
+
+            var already = false;
+            for (r = 0; r < roles.length; r++) {
+                if (roles[r] == role)
+                    already = true;
+            }
+            if (!already)
+                roles.push(role);
+            roomUsers.push(roomUser);
+            	showRoomUser(roomUser);
         }
 
     }
+    
+     }
+    catch (e) {
+        alert(e);
+    }
+    
+    
 }
+
+
+
+// Function to invite  users in Room
+function invite() {
+    var users;
+
+    for (var i = 0; i < users.length; i++) {
+
+
+        var aMessage = new JSJaCMessage();
+        aMessage.setTo(opener.parent.jid);
+        var x = aMessage.getNode().appendChild(aMessage.getDoc().createElement('x'));
+        x.setAttribute('xmlns', 'http://jabber.org/protocol/muc#user');
+        var aNode = x.appendChild(aMessage.getDoc().createElement('invite'));
+        aNode.setAttribute('to', users[i]);
+        //TODO if reason != null
+        //aNode.appendChild(aMessage.getDoc().createElement('reason')).appendChild(aMessage.getDoc().createTextNode(reason));
+
+        con.send(aMessage);
+
+    }
+
+}
+
+// Function to accept or decline invitation in new room
+function acceptInvitation(accept, from, roomName) {
+    if (accept) {
+        // TODO Go into the room
+    } else {
+        var aMessage = new JSJaCMessage();
+        aMessage.setTo(from);
+        var x = aMessage.getNode().appendChild(aMessage.getDoc().createElement('x'));
+        x.setAttribute('xmlns', 'http://jabber.org/protocol/muc#user');
+        var decline = x.appendChild(aMessage.getDoc().createElement('decline'));
+        decline.setAttribute('to', roomName);
+        //TODO if reason != null
+        //decline.appendChild(aMessage.getDoc().createElement('reason')).appendChild(aMessage.getDoc().createTextNode(reason));
+        con.send(aMessage);
+    }
+
+}
+
+
+// Function to convert chat into a conference
+function convertIntoConference() {
+    // TODO
+    
+    // 1) create a new room
+    // 2) send history to the chat to the room
+    // 3) Invitation to 2 and third person giving a continuation flag
+}
+
+
+// Function to send message to a room
+function sendRoomMessage(roomName) {
+	
+    
+        // TOFIX
+        var textEntry = document.getElementById("textentry");
+
+        if ((textEntry.value).split(" ") != "") {
+
+            var aMsg = new JSJaCMessage();
+            aMsg.setTo(roomName);
+            aMsg.setBody(textEntry.value);
+            aMsg.setType('groupchat');
+            con.send(aMsg);
+       
+    }
+}
+
+
+// Function to receive a room message
+function receiveRoomMessage (){
+;
+}
+
 
 
 // Function which send writing notification
@@ -887,6 +1220,9 @@ function changeStatus(status) {
 }
 
 
+
+/************************************ WINDOWS ******************************************/
+
 // Function to launch preferences window
 function launchPreferences() {
     window.open("chrome://messenger/content/preferences.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
@@ -903,6 +1239,33 @@ function launchWizard() {
     window.open("chrome://messenger/content/wizard.xul", "Lagger Wizard", "chrome,centerscreen");
 }
 
+
+// Launch console
+function launchConsole() {
+
+	if (!console){
+    cons = window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
+    cons.opener = window;
+    console = true;
+    }
+}
+
+
+// Function to add a contact
+function addContact()
+{
+    window.open("chrome://messenger/content/addContact.xul", "Add New Contact", "chrome,centerscreen");
+
+}
+
+
+// Function to join a room
+function joinRoom() {
+
+    window.open("chrome://messenger/content/joinRoom.xul", "Join a room", "chrome,centerscreen");
+
+
+}
 
 // Function to close the window
 function closeWindows() {
@@ -985,7 +1348,12 @@ function handleMessage(aJSJaCPacket) {
     var origin = aJSJaCPacket.getFrom()
     var mess = "Received Message from" + origin;
     alert(mess);
-
+	
+	if (!deployedGUI) {
+        extendGUI();
+        deployedGUI = true;
+        self.resizeTo(400, 300);
+    }
     window.getAttention();
 
     if (console) {
@@ -1026,8 +1394,8 @@ function handleMessage(aJSJaCPacket) {
 
         text.setAttribute("id", "text" + jid);
         text.setAttribute("multiline", "true");
-        text.setAttribute("height", "400");
-        text.setAttribute("width", "380");
+        //text.setAttribute("height", "400");
+        //text.setAttribute("width", "380");
         text.setAttribute("readonly", "true");
         text.setAttribute("flex", "1");
         tabpanel.appendChild(text);

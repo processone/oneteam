@@ -24,6 +24,7 @@
     <script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
     <script type="application/x-javascript" src="JavaScript/shared.js"/>
     <script type="application/x-javascript" src="JavaScript/console.js"/>
+    
 
     <vbox flex="1">
 
@@ -88,7 +89,7 @@
             
             <vbox flex="1" id ="left">
 
-           <listbox height="400" width="150" maxwidth="400" minwidth="140" id="liste_contacts" flex="1">
+           <listbox height="400" width="150"  minwidth="140" id="liste_contacts" flex="1">
             </listbox>
              <!--<tree height="400" width="150" maxwidth="200" minwidth="140"  flex="1" id="liste_contacts">
             <treecols>
@@ -119,9 +120,16 @@
                 </popup>
             </popupset>
             
+            <popupset>
+                <popup id="itemcontextroom">
+                    <menuitem label="&listitemcontextgroup.Rename;" oncommand="renameGroup(event);"/>
+                <!-- TO DO -->
+                </popup>
+            </popupset>
+            
               <!-- Personal status list -->
             <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="40" minheight="30"
-                      maxwidth="400" minwidth="140" src="img/online.png">
+                       minwidth="140" src="img/online.png">
                 <menupopup flex="1">
                     <menuitem class="menuitem-iconic icon-away" label="&status.Away;"
                               oncommand="changeStatus('away');"/>

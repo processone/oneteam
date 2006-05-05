@@ -11,9 +11,9 @@ var roomUsers = new Array();
 var roles = new Array();
 
 // function to perform room joining
-function performJoinRoom(event) {
+function performJoinRoom(wholeRoom,jid, pass, nick) {
     try {
-
+		alert ("enter in performJoinRoom");
         var aPresence = new JSJaCPresence();
         aPresence.setTo(wholeRoom + '/' + nick);
         aPresence.setFrom(jid);
@@ -41,13 +41,61 @@ function performJoinRoom(event) {
     catch (e) {
         alert(e);
     }
-    self.close();
+    
 
 }
 
 
+// Function to create a room
+function createRoom() {
+
+ 		var aPresence = new JSJaCPresence();
+        aPresence.setTo(wholeRoom + '/' + nick);
+        aPresence.setFrom(jid);
+
+        var x = aPresence.getDoc().createElement('x');
+        x.setAttribute('xmlns', 'http://jabber.org/protocol/muc');
+        
+	
+		con.send(aPresence);
+		
+}
+
+
+// Function to create instant room
+function createInstantRoom (){
+	var iq = new JSJaCIQ();
+	iq.setIQ(wholeRoom,null,'set','create');
+	iq.setQuery('http://jabber.org/protocol/muc#owner');
+	
+	var x = iq.getDoc().createElement('x');
+        x.setAttribute('xmlns', 'http://jabber:x:data');
+        x.setAttribute('type', 'submit');
+	
+		con.send(iq);
+}
+
+
+// Function to create reserved room
+function createReserved(){
+	
+	var iq = new JSJaCIQ();
+	iq.setIQ(wholeRoom,null,'get','create');
+	iq.setQuery('http://jabber.org/protocol/muc#owner');
+	
+	
+		con.send(iq);
+		
+		// TODO if room does'nt already exist
+		// => send configuration form
+}
+
+
+
 // Function to retrieve RoomRoster
 function getRoomRoster(aPresence) {
+
+		try{
 
     var x;
     for (var i = 0; i < aPresence.getNode().getElementsByTagName('x').length; i++)
@@ -63,7 +111,9 @@ function getRoomRoster(aPresence) {
 
 
         var roomUser = new array(aPresence.getFrom(), from, "", "", "", "", "");
-
+		
+		alert (roomUser [0]);
+		
         var item = x.getElementsByTagName('item').item(0);
 
         roomUser[2] = item.getAttribute('affiliation');
@@ -93,8 +143,16 @@ function getRoomRoster(aPresence) {
 
     }
     
+     }
+    catch (e) {
+        alert(e);
+    }
+    
+    
     // Show room contact's list
 }
+
+
 
 // Function to invite  users in Room
 function invite() {
@@ -140,11 +198,15 @@ function acceptInvitation(accept, from, roomName) {
 // Function to convert chat into a conference
 function convertIntoConference() {
     // TODO
+    
+    // 1) create a new room
+    // 2) send history to the chat to the room
+    // 3) Invitation to 2 and third person giving a continuation flag
 }
 
 
 // Function to send message to a room
-function sendRoomMessage(event, roomName) {
+function sendRoomMessage(roomName) {
 
     if (event.shiftKey)
         ;
@@ -162,4 +224,10 @@ function sendRoomMessage(event, roomName) {
             con.send(aMsg);
         }
     }
+}
+
+
+// Function to receive a room message
+function receiveRoomMessage (){
+;
 }

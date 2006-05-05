@@ -1,14 +1,8 @@
 Fonctionnalité à implémenter:
 
-- Console XML:
-  Il est important de pouvoir avoir une console XML qui fonctionne, car cela va
-  nous aider dans la suite du développement. Il est ainsi possible de tester
-  les échanges de paquets XML avec le serveur avant d'implémenter une
-  fonctionnalité.
-  Cette fonctionnalité doit bien remettre en avant les flux recu et envoyé
-  comme dans la console Tkabber, avec un marqueur IN: et OUT: 
-  Le point le plus difficile sur cette fonction est de pouvoir envoyer un
-  paquet Raw avec JSJac. J'ai essayé d'ajouter quelque chose dans JSJac, mais
-  je ne suis pas certain que cela fonctionne.
+- 
 
+Bugs à corriger :
+
+- la fermeture du premier onglet sur du multionglet ne donne pas le focus à l'onglet suivant
 
