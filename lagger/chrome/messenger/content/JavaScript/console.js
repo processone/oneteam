@@ -12,14 +12,19 @@ function startConsole() {
 
 // Initialisation function
 function addInConsole(msg) {
-    consol.value += msg + "\n";
+    // consol.value += msg + "\n";
+    // var frame = document.getAnonymousNodes(consol)[0];
+    var frame = consol;
+
+     // TODO: Use well formed HTML by directly manipulating the DOM tree.
+     //if(!frame.contentDocument.textContent)
+     //       frame.contentDocument.write("<html><head><link rel='stylesheet' type='text/css' href='chrome://chat/skin/chat.css'/></head><body>");
+      frame.contentDocument.write("<p>" + html_escape(msg) + "</p>");
+      frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
 }
 
-
 function writeXMLPresence() {
-  
-        inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';
-  
+        inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';  
 }
 
 function writeXMLPresenceA() {

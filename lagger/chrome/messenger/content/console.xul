@@ -7,11 +7,13 @@
         title="&Console.title;"
         orient="horizontal"
         width="450"
-        height="450"
+        height="550"
         onload="startConsole();"
         onclose="closeConsole();"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml">
 
+    <script type="application/x-javascript" src="chrome://messenger/content/utils/htmlformat.js"/>
     <script type="application/x-javascript" src="JavaScript/shared.js"/>
     <script type="application/x-javascript" src="JavaScript/gui.js"/>
     <script type="application/x-javascript" src="JavaScript/console.js"/>
@@ -21,15 +23,17 @@
         <spacer flex="1"/>
         <label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
 
-        <textbox id="textconsole" style="color: #000066;" multiline="true" height="200" width="450" flex="1"
-                 readonly="true"/>
+       <html:iframe id="textconsole" height="250" width="1024"/>
+       <!-- <textbox id="textconsole" style="color: #000066;" multiline="true" height="200" width="450" flex="1"
+                 readonly="true"/> -->
         <spacer flex="1"/>
         
         <button label="&Console.clear;" oncommand="clearConsole();" flex="1"/>
         
         <spacer flex="10"/>
+
         <label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
-        <textbox id="texttemplates" style="color: #FF6600;" multiline="true" height="150" width="450" flex="1"/>
+        <textbox id="texttemplates" style="color: #FF6600;" multiline="true" height="150" width="1024" flex="1"/>
 
         <hbox align="center" flex="1">
             <menulist label="IQ  ">
@@ -57,6 +61,7 @@
 
             <button label="&Console.send;" oncommand="sendToServer();"/>
         </hbox>
+
     </vbox>
 
 </window>
