@@ -1273,8 +1273,12 @@ function closeWindows() {
 
     if (console)
         cons.close();
-    self.close();
+	
+    if (!con.connected())
+                con.disconnect();
 
+	
+    self.close();
 
 }
 
