@@ -21,6 +21,7 @@ function addInConsole(msg) {
      //       frame.contentDocument.write("<html><head><link rel='stylesheet' type='text/css' href='chrome://chat/skin/chat.css'/></head><body>");
       frame.contentDocument.write("<p>" + html_escape(msg) + "</p>");
       frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
+    
 }
 
 function writeXMLPresence() {

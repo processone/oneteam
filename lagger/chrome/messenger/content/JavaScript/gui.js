@@ -29,7 +29,7 @@ function openConversation(event) {
     var liste = document.getElementById("liste_contacts");
 
 
-    if (document.getElementById("tab" + "tab" + liste.selectedItem.id) == null) {
+    if (document.getElementById("tab" + liste.selectedItem.id) == null) {
 
 		var hbox = document.createElement("hbox");
       	hbox.setAttribute("flex", "1");
@@ -897,7 +897,7 @@ function sendMsg(event) {
     
     if (tab.selectedItem.getAttribute('context') == 'tabroomcontext'){
 		sendRoomMessage (receiver);
-		alert ("RoomChat" + receiver);
+		//alert ("RoomChat" + receiver);
 		}
 		else {
 
@@ -1031,11 +1031,18 @@ function getRoomRoster(aPresence) {
 
 		
 		try{
+		
+		//var from = aPresence.getFrom().substring(aPresence.getFrom().indexOf('/') + 1);
+		//if (from == keepLogin(myjid)){
+			
 
 	if (console) {
         cons.addInConsole("IN (RoomRoster) : " + aPresence.xml() + "\n");
     }
-
+	
+	//return;
+	//}
+	
     var x;
     for (var i = 0; i < aPresence.getNode().getElementsByTagName('x').length; i++)
         if (aPresence.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
@@ -1353,6 +1360,12 @@ function handleMessage(aJSJaCPacket) {
 
     var origin = aJSJaCPacket.getFrom();
     var mess = "Received Message from" + origin;
+    var pattern = /conference/
+    
+    // Message come from me
+    if (origin.match(keepLogin(myJid)))
+    		return;
+    
     alert(mess);
 	
 	if (!deployedGUI) {
@@ -1422,8 +1435,9 @@ function handlePresence(aJSJaCPacket) {
     var sender = cutResource(aJSJaCPacket.getFrom());
     var item = document.getElementById(sender);
     var user;
-    
+    var pattern = /conference/
    
+  //alert (aJSJaCPacket.xml());
 	
     for (i = 0; i < users.length; i++) {
         user = users[i];
@@ -1435,13 +1449,64 @@ function handlePresence(aJSJaCPacket) {
         cons.addInConsole("IN : " +  aJSJaCPacket.xml() + "\n");
     }
 
+ 
 
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
         item.setAttribute("image", "chrome://messenger/content/img/online.png");
         user [4] = "online.png";
     }
+    
+    
+	
+	if ( aJSJaCPacket.getFrom().match(pattern) ){
+		
+		
+        var from = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf('/') + 1);
 
+		if (from == keepLogin(myJid))
+		 	;
+		else{
+
+        var roomUser = new Array(aJSJaCPacket.getFrom(), from, "", "", "", "", "");
+		
+		//alert ("USer" + roomUser [1]);
+		
+        var item = aJSJaCPacket.getNode().getElementsByTagName('item').item(0);
+		
+		
+        roomUser[2] = item.getAttribute('affiliation');
+        roomUser[3] = item.getAttribute('role');
+        roomUser[4] = item.getAttribute('nick');
+        roomUser[5] = item.getAttribute('jid');
+        if (item.getElementsByTagName('reason').item(0))
+            roomUser.reason = item.getElementsByTagName('reason').item(0).firstChild.nodeValue;
+        if (actor = item.getElementsByTagName('actor').item(0)) {
+            if (actor.getAttribute('jid') != null)
+                roomUser[6] = actor.getAttribute('jid');
+            else if (item.getElementsByTagName('actor').item(0).firstChild != null)
+                roomUser[6] = item.getElementsByTagName('actor').item(0).firstChild.nodeValue;
+        }
+        var role = roomUser[3];
+        if (role != '') {
+
+            var already = false;
+            for (r = 0; r < roles.length; r++) {
+                if (roles[r] == role)
+                    already = true;
+            }
+            if (!already)
+                roles.push(role);
+            roomUsers.push(roomUser);
+            	showRoomUser(roomUser);
+        }
+		}
+    }
+    
+     //}
+    // }
+	
+	
     else {
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
 
