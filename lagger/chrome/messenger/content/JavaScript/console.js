@@ -12,7 +12,8 @@ function startConsole() {
 
 // Initialisation function
 function addInConsole(msg) {
-    // consol.value += msg + "\n";
+
+     //consol.value += msg + "\n";
     // var frame = document.getAnonymousNodes(consol)[0];
     var frame = consol;
 
@@ -22,6 +23,7 @@ function addInConsole(msg) {
       frame.contentDocument.write("<p>" + html_escape(msg) + "</p>");
       frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
     
+
 }
 
 function writeXMLPresence() {

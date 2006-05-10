@@ -23,14 +23,14 @@
         
         
        
-        <listbox id="discolist" flex ="1">
-        
-    <!--<richlistitem>
-      <description>A XUL Description!</description>
-    </richlistitem>
-    <richlistitem>
-      <button label="A XUL Button"/>
-    </richlistitem>-->
-  </listbox>
+        <!-- <listbox id="discolist" flex ="1">
+  </listbox> -->
+  <tree flex ="1">
+  <treecols>
+       <treecol id="service" flex="2"/>
+  </treecols>
+  		<treechildren id="discolist" flex ="1">
+  		</treechildren>
+  </tree>
         
     </window>

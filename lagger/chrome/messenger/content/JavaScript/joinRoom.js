@@ -1,14 +1,23 @@
 var con = window.opener.con;
-var login = document.getElementById("login");
-var server = document.getElementById("server");
-var room = document.getElementById("room");
-var pass = document.getElementById("pass");
-
-var jid = login.value + "@" + server.value;
-var wholeRoom = room.value + "@" + server.value;
 
 var roomUsers = new Array();
 var roles = new Array();
+
+// Function to load server list
+function loadServers(){
+	//window.opener.sendServerRequest();
+	var servers = document.getElementById("servers");
+    var menuserver = document.getElementById("menuServer");
+    var listServer = window.opener.server;
+    
+    var item = document.createElement("menuitem");
+        item.setAttribute("label", listServer);
+        item.setAttribute("id", listServer);
+        //item.setAttribute("selected","true");
+
+        servers.appendChild(item);
+}
+
 
 // function to perform room joining
 function performJoinRoom(wholeRoom,jid, pass, nick) {
@@ -16,7 +25,7 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
 		alert ("enter in performJoinRoom");
         var aPresence = new JSJaCPresence();
         aPresence.setTo(wholeRoom + '/' + nick);
-        aPresence.setFrom(jid);
+        //aPresence.setFrom(jid);
 
         var x = aPresence.getDoc().createElement('x');
         x.setAttribute('xmlns', 'http://jabber.org/protocol/muc');
@@ -24,8 +33,13 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
             x.appendChild(aPresence.getDoc().createElement('password')).appendChild(aPresence.getDoc().createTextNode(pass));
 
         aPresence.getNode().appendChild(x);
-
-        con.send(aPresence, getRoomRoster(aPresence));
+		
+		 if (window.opener.console) {
+        window.opener.cons.addInConsole("OUT : " + aPresence.xml() + "\n");
+    }
+        con.send(aPresence);
+        
+       
 
         /*var user = new Array(jid,"none",choosenGroup,login.value,"offline.png");
 
@@ -63,8 +77,25 @@ function createRoom() {
 
 
 // Function to create instant room
-function createInstantRoom (){
-	var iq = new JSJaCIQ();
+function createInstantRoom(){
+
+
+var login = document.getElementById("login");
+var server = document.getElementById("server");
+var roomname = document.getElementById("room");
+var pass = document.getElementById("pass");
+
+var jid = login.value + "@" + server.value;
+var wholeRoom = roomname.value + "@" + server.value;
+
+	alert (wholeRoom);
+	self.close();
+	
+	try{
+	
+	
+	
+	/**var iq = new JSJaCIQ();
 	iq.setIQ(wholeRoom,null,'set','create');
 	iq.setQuery('http://jabber.org/protocol/muc#owner');
 	
@@ -73,6 +104,20 @@ function createInstantRoom (){
         x.setAttribute('type', 'submit');
 	
 		con.send(iq);
+		
+		if (window.opener.console) {
+        window.opener.cons.addInConsole("OUT : " +iq.xml() + "\n");
+    }*/
+    
+    this.performJoinRoom(roomname.value,'','','Am?d?e');
+		
+		window.opener.rooms.push(roomname.value);
+        window.opener.emptyList();
+        window.opener.showUsers(window.opener.users);
+        window.opener.refreshList();
+        }
+        catch (e){alert(e);}
+        
 }
 
 

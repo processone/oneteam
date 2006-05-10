@@ -6,12 +6,19 @@
 <window id="Login"
         title="Join Room"
         orient="horizontal"
+        onload="loadServers();"
         width="270"
         height="180"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
         
-      
+      <script type="application/x-javascript" src="JavaScript/gui.js"/>
+    <script type="application/x-javascript" src="JavaScript/joinRoom.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
 
     <spacer flex="1"/>
     <groupbox id="xf-config-Roombox" flex="1">
@@ -36,7 +43,11 @@
                 </row>
                 <row>
                     <description value="&Room.server; :"/>
-                    <textbox id="server"/>
+                    <menulist id="menuServer" height="20" width="100" flex="1" maxheight="35" minheight="15">
+                        <menupopup id="servers">
+
+                        </menupopup>
+                        </menulist>
                 </row>
 
 
@@ -45,7 +56,7 @@
 
         <hbox>
             <spacer flex="1"/>
-            <button label="Join" oncommand="performJoinRoom(event);"/>
+            <button label="Join" oncommand="createInstantRoom();"/>
 
             <spacer flex="1"/>
             <button label="Cancel" oncommand="self.close();"/>

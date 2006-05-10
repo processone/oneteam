@@ -1,11 +1,16 @@
 //var Debug;
 var con;
+
+
 var users = new Array();
 var groups = new Array();
 var rooms = new Array();
 var roomUsers = new Array();
 var roles = new Array();
 var conferences = new Array();
+var servers = new Array();
+
+
 var index = 0;
 var user;
 var room;
@@ -60,13 +65,14 @@ function openConversation(event) {
         tabpanel.appendChild(hbox);
         tabspanel.appendChild(tabpanel);
 
-        var text = document.createElement("textbox");
+        //var text = document.createElement("textbox");
+        var text = document.createElement("iframe");
 
         text.setAttribute("id", "text" + liste.selectedItem.id);
-        text.setAttribute("multiline", "true");
+        //text.setAttribute("multiline", "true");
         //text.setAttribute("height", "400");
         //text.setAttribute("width", "400");
-        text.setAttribute("readonly", "true");
+        //text.setAttribute("readonly", "true");
         text.setAttribute("flex", "5");
         hbox.appendChild(text);
         
@@ -925,9 +931,15 @@ function sendMsg(event) {
  
 
 }
-           
+           var frame = textInBox;
     // Write author of message followed by the message
-            textInBox.value += keepLogin(myjid) + " : " + textEntry.value + "\n";
+            //textInBox.value += keepLogin(myjid) + " : " + textEntry.value + "\n";
+            //if(!textBox.contentDocument.textContent)
+            var msg = textEntry.value + "\n";
+            var login = keepLogin(myjid);
+            frame.contentDocument.write("<p><u><FONT COLOR='#FF6633'>" + html_escape(login) + "</u>" +   " : " + "</font>");
+            frame.contentDocument.write(html_escape(msg) + "</p>");
+      		frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
             textEntry.value = '';
             // alert (aMsg.xml());
     
@@ -996,18 +1008,6 @@ function createRoom() {
 }
 
 
-// Function to create instant room
-function createInstantRoom (){
-	var iq = new JSJaCIQ();
-	iq.setIQ(wholeRoom,null,'set','create');
-	iq.setQuery('http://jabber.org/protocol/muc#owner');
-	
-	var x = iq.getDoc().createElement('x');
-        x.setAttribute('xmlns', 'http://jabber:x:data');
-        x.setAttribute('type', 'submit');
-	
-		con.send(iq);
-}
 
 
 // Function to create reserved room
@@ -1409,13 +1409,14 @@ function handleMessage(aJSJaCPacket) {
         tabpanel.setAttribute("id", "tabpanel" + jid);
         tabspanel.appendChild(tabpanel);
 
-        var text = document.createElement("textbox");
+        //var text = document.createElement("textbox");
+        var text = document.createElement("iframe");
 
         text.setAttribute("id", "text" + jid);
-        text.setAttribute("multiline", "true");
+        //text.setAttribute("multiline", "true");
         //text.setAttribute("height", "400");
         //text.setAttribute("width", "380");
-        text.setAttribute("readonly", "true");
+        //text.setAttribute("readonly", "true");
         text.setAttribute("flex", "1");
         tabpanel.appendChild(text);
     }
@@ -1423,8 +1424,11 @@ function handleMessage(aJSJaCPacket) {
     // ecrire (aJSJaCPacket.getBody()) dans le panel corresponsant
 
     var textToWrite = document.getElementById("text" + jid);
-    textToWrite.value += name + ": " + aJSJaCPacket.getBody() + "\n";
-    textToWrite.scrollToIndex(4);
+    //textToWrite.value += name + ": " + aJSJaCPacket.getBody() + "\n";
+    textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(name) + "</u>" +   " : " + "</font>");
+    textToWrite.contentDocument.write(html_escape(aJSJaCPacket.getBody() + "\n") + "</p>");
+    textToWrite.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
+   
 }
 
 

@@ -23,9 +23,10 @@
         <spacer flex="1"/>
         <label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
 
-       <html:iframe id="textconsole" height="250" width="1024"/>
-       <!-- <textbox id="textconsole" style="color: #000066;" multiline="true" height="200" width="450" flex="1"
-                 readonly="true"/> -->
+		
+      <html:iframe id="textconsole" height="250" width="1024"/>
+       <!--  <textbox id="textconsole" style="color: #000066;" multiline="true" height="250" width="1024" flex="1"
+                 readonly="true"/>-->
                  <!--<scrollbar id="scroll" curpos="0" maxpos="0"/> -->
         <spacer flex="1"/>
         

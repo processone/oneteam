@@ -72,25 +72,82 @@ function getDiscoInfo(iq) {
     }
         
         var discoList = document.getElementById("discolist");
-        var item = document.createElement("listitem");
-         //var description = document.createElement("description");
-    
-    //item.setAttribute("context", "itemcontextgroup");
+        
+        
+        /**var item = document.createElement("listitem");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/ampoule.png");
-    	item.setAttribute("label",iq.getFrom());
-    //item.setAttribute("id", "group" + group);
-    //textNode = document.createTextNode(iq.getFrom());
-    //description.appendChild(textNode);
-    //item.appendChild(description);
-       discoList.appendChild(item);
+    	item.setAttribute("label",iq.getFrom());*/
+    
+    var mainrow = document.createElement("treerow");
+    
+    var item = document.createElement("treeitem");
+    item.setAttribute("container","true");
+     item.setAttribute("open","true");
+    //item.setAttribute("label",iq.getFrom());
+    //item.setAttribute("id", "");
+  	 //item.setAttribute("ondblclick", "exploreItem();");
+  	 
+  	 var maincell = document.createElement("treecell");
+    	 maincell.setAttribute("label",iq.getFrom());
+  	 
+  	 
+  	 item.appendChild(mainrow);
+  	 mainrow.appendChild(maincell); 
+     discoList.appendChild(item);
+    
+    
+    var children = document.createElement("treechildren");
+    var row = document.createElement("treerow");
+    
         
         //alert (iq.xml());
 
+		var entityName = iq.getNode().getElementsByTagName('identity').item(0).getAttribute('name')
+       
         // If the identity does not have a name, set the name to jid
-        if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('name') == null)
+        if (entityName == null)
             iq.getNode().getElementsByTagName('identity').item(0).setAttribute('name', iq.getFrom());
 
+	
+	//alert (entityName);
+	var child = document.createElement("treeitem");
+	child.setAttribute("open","true");
+    //child.setAttribute("label",entityName);
+    
+    var cell = document.createElement("treecell");
+    cell.setAttribute("label",entityName);
+    //item.setAttribute("id", "");
+  	//item.setAttribute("ondblclick", "exploreItem();");
+    
+    children.appendChild(child);
+    child.appendChild(row);
+    row.appendChild(cell);
+    
+    item.appendChild(children);
+
+	var features = iq.getNode().getElementsByTagName('feature');
+	
+	for (var i = 0 ; features.item(i) != null ; i++){
+	
+	var child = document.createElement("treeitem");
+	var row = document.createElement("treerow");
+	child.setAttribute("open","true");
+    //child.setAttribute("label",entityName);
+    
+    var cell = document.createElement("treecell");
+    cell.setAttribute("label",features.item(i).getAttribute('var'));
+    
+    //item.setAttribute("id", "");
+  	//item.setAttribute("ondblclick", "exploreItem();");
+    
+    children.appendChild(child);
+    child.appendChild(row);
+    row.appendChild(cell);
+    
+	
+	}
+	
         // set loghost
         if (iq.getNode().getElementsByTagName('identity').item(0)) {
             if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('category') == 'store') {
