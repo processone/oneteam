@@ -93,7 +93,7 @@ function openConversation(event) {
 		
 		hbox.appendChild(listboxRoom);
 		
-		performJoinRoom (liste.selectedItem.id,myjid,'',keepLogin (myJid));
+		performJoinRoom (liste.selectedItem.id,myjid,'',keepLogin (myjid));
 		
 		self.resizeTo(500, 300);
 		}
