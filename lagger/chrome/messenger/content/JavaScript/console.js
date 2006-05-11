@@ -8,6 +8,7 @@ function startConsole() {
     consol = document.getElementById("textconsole");
     inputEditor = document.getElementById("texttemplates");
     conn = window.opener.con;
+    self.setCursor('pointer');
 }
 
 // Initialisation function

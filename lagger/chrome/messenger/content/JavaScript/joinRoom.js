@@ -8,21 +8,33 @@ function loadServers(){
 	//window.opener.sendServerRequest();
 	var servers = document.getElementById("servers");
     var menuserver = document.getElementById("menuServer");
-    var listServer = window.opener.server;
+   
+    //window.opener.sendServerRequest();
     
-    var item = document.createElement("menuitem");
-        item.setAttribute("label", listServer);
-        item.setAttribute("id", listServer);
+    var listmucs = window.opener.mucs;
+    
+   
+
+
+    for (var i = 0; i < listmucs.length; i++) {
+    		//alert (listmucs[i]);
+  		var item = document.createElement("menuitem");
+        item.setAttribute("label", listmucs[i]);
+        item.setAttribute("id", listmucs[i]);
         //item.setAttribute("selected","true");
 
         servers.appendChild(item);
+        }
+        
+        window.opener.mucs.splice(0,mucs.length);
+      
 }
 
 
 // function to perform room joining
 function performJoinRoom(wholeRoom,jid, pass, nick) {
     try {
-		alert ("enter in performJoinRoom");
+		//alert ("enter in performJoinRoom");
         var aPresence = new JSJaCPresence();
         aPresence.setTo(wholeRoom + '/' + nick);
         //aPresence.setFrom(jid);
@@ -41,7 +53,7 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
         
        
 
-        /*var user = new Array(jid,"none",choosenGroup,login.value,"offline.png");
+        /**var room = new Array(jid,"none",choosenGroup,login.value,"offline.png");
 
       window.opener.users.push(user);
 
@@ -81,40 +93,69 @@ function createInstantRoom(){
 
 
 var login = document.getElementById("login");
-var server = document.getElementById("server");
+var server = document.getElementById("menuServer");
 var roomname = document.getElementById("room");
 var pass = document.getElementById("pass");
 
-var jid = login.value + "@" + server.value;
-var wholeRoom = roomname.value + "@" + server.value;
+
+var wholeRoom = roomname.value + "@" + server.selectedItem.id;
 
 	alert (wholeRoom);
 	self.close();
 	
 	try{
 	
+
+
+	var iq = new JSJaCIQ();
+	iq.setIQ(window.opener.server,null,'set','create');
 	
+	var item = iq.getDoc().createElement('item');
+        item.setAttribute('jid', wholeRoom);
+        item.setAttribute('category', 'conference');
+	
+	var group = iq.getDoc().createElement('group');
+		group.appendChild(iq.getDoc().createTextNode("Conferences"));
+	
+	item.appendChild(group);
+	iq.setQuery('jabber:iq:roster').appendChild(item);
+	
+	con.send(iq);
 	
 	/**var iq = new JSJaCIQ();
-	iq.setIQ(wholeRoom,null,'set','create');
-	iq.setQuery('http://jabber.org/protocol/muc#owner');
+	iq.setIQ(wholeRoom + "/" + login.value,null,'set','create');
+	
 	
 	var x = iq.getDoc().createElement('x');
         x.setAttribute('xmlns', 'http://jabber:x:data');
         x.setAttribute('type', 'submit');
 	
-		con.send(iq);
+	iq.setQuery('http://jabber.org/protocol/muc#owner').appendChild(x);
+	
+		con.send(iq);*/
 		
 		if (window.opener.console) {
         window.opener.cons.addInConsole("OUT : " +iq.xml() + "\n");
-    }*/
+    }
     
-    this.performJoinRoom(roomname.value,'','','Am?d?e');
+    this.performJoinRoom(wholeRoom,'','',login.value);
 		
-		window.opener.rooms.push(roomname.value);
+		
+		var room = new Array(wholeRoom + "/" + login.value, 'both', 'Conferences', roomname.value, "user-sibling.gif");
+		
+		var exist = false;
+		
+		for (var i = 0 ; i < window.opener.rooms.length ; i ++){
+		   if (room [0] == rooms [i] [0])
+		   		exist = true;
+		   		}
+		
+		if (!exist){
+		window.opener.rooms.push(room);
         window.opener.emptyList();
         window.opener.showUsers(window.opener.users);
         window.opener.refreshList();
+        	}
         }
         catch (e){alert(e);}
         

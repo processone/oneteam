@@ -22,6 +22,11 @@
 
 <!ENTITY listitemcontextgroup.Rename "Renommer">
 
+<!ENTITY listitemcontextroom.InsertRoom "Entrer dans le salon">
+<!ENTITY listitemcontextroom.Remove "Supprimer le salon">
+<!ENTITY listitemcontextroom.Rename "Renommer le salon">
+
+
 <!ENTITY tabcontext.Close "Fermer l'onglet">
 <!ENTITY tabcontext.CloseAll "Fermer tous les onglets">
 

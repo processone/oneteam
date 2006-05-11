@@ -8,7 +8,7 @@ var rooms = new Array();
 var roomUsers = new Array();
 var roles = new Array();
 var conferences = new Array();
-var servers = new Array();
+var mucs = new Array();
 
 
 var index = 0;
@@ -93,7 +93,7 @@ function openConversation(event) {
 		
 		hbox.appendChild(listboxRoom);
 		
-		performJoinRoom (liste.selectedItem.id,myjid,'','asouquet');
+		performJoinRoom (liste.selectedItem.id,myjid,'',keepLogin (myJid));
 		
 		self.resizeTo(500, 300);
 		}
@@ -143,6 +143,8 @@ function init() {
     con.registerHandler("iq", handleEvent);
     con.registerHandler("onconnect", handleConnected);
     con.registerHandler('onerror', handleError);
+    
+    self.setCursor('default');
 
     try {
         con.connect(oArg);
@@ -154,6 +156,7 @@ function init() {
 
     if (con.connected()) {
         //alert ("I'm connected");
+       ;
     }
 
     else {
@@ -460,6 +463,8 @@ try{
 // Function to get roster
 function getRoster(iq) {
 
+	sendServerRequest();
+
     var items = iq.getQuery().childNodes;
 
     
@@ -733,7 +738,7 @@ function showRoomUser (roomUser){
 
 // Function to empty the contact's list
 function emptyList() {
-
+	
     var liste = document.getElementById("liste_contacts");
     while (liste.hasChildNodes())
         liste.removeChild(liste.firstChild);
@@ -803,7 +808,7 @@ try{
 // Function to send disco items request
 function sendServerRequest(){
 try{
-	alert("je rentre dans serverRequest");
+	//alert("je rentre dans serverRequest");
 	var iq = new JSJaCIQ();
 	iq.setIQ(server,null,'get','disco_item');
 	iq.setQuery('http://jabber.org/protocol/disco#items');
@@ -812,7 +817,7 @@ try{
 	if (console) {
         cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
-	alert("je sors de serverRequest");
+	//alert("je sors de serverRequest");
 	}
 	catch (e){alert(e);}
 }
@@ -820,7 +825,7 @@ try{
 // Function for retreiving Disco Items
 function getServerItems(iq) {
 try{
-	alert("je rentre dans serverItems");
+	//alert("je rentre dans serverItems");
     if (!iq)
         return;
 
@@ -828,7 +833,7 @@ try{
         cons.addInConsole("IN : " + iq.xml() + "\n");
     }
    
-    alert (iq.xml());
+    //alert (iq.xml());
 
     var items = iq.getNode().firstChild.childNodes;
 
@@ -843,7 +848,7 @@ try{
         con.send(aIQ, getServerInfo);
     }
     
-    alert("je sors de serverItem");
+    //alert("je sors de serverItem");
     }
 	catch (e){alert(e);}
 }
@@ -852,7 +857,7 @@ try{
 function getServerInfo(iq) {
 
 	try{
-	alert("je rentre dans serverInfo");	
+	//alert("je rentre dans serverInfo");	
 
     if (!iq || iq.getType() != 'result')
         return;
@@ -862,19 +867,27 @@ function getServerInfo(iq) {
        
         
         if (iq.getNode().getElementsByTagName('identity').item(0).getAttribute('category') == 'conference'){
+        
         conferences.push(iq.getFrom());
-        alert(conferences[0]);
+        
+        		var pattern = /mod_muc/
+        		
+        			if (iq.xml().match(pattern)){
+        				mucs.push(iq.getFrom());
+        				//alert ("ici j'ajoute l'iq" + iq.xml());
+        				}
+        //alert(conferences[0]);
         }
         
         if (console) {
         cons.addInConsole("IN : " + iq.xml() + "\n");
     		}
         
-        alert (iq.xml());
+        //alert (iq.xml());
   
         
     }
-    alert("je sors de serverInfo");
+    //alert("je sors de serverInfo");
      }
 	catch (e){alert(e);}
 }

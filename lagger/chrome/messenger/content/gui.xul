@@ -123,8 +123,10 @@
             
             <popupset>
                 <popup id="itemcontextroom">
-                    <menuitem label="&listitemcontextgroup.Rename;" oncommand="renameGroup(event);"/>
-                <!-- TO DO -->
+                		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand="enterRoom(event);"/>
+                    <menuseparator/>
+                    <menuitem label="&listitemcontextroom.Rename;" oncommand="renameGroup(event);"/>
+                		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeRoom(event);"/>
                 </popup>
             </popupset>
             
