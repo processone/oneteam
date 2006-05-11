@@ -73,6 +73,7 @@ function openConversation(event) {
         //text.setAttribute("height", "400");
         //text.setAttribute("width", "400");
         //text.setAttribute("readonly", "true");
+        //alert ("text" + liste.selectedItem.id);
         text.setAttribute("flex", "5");
         hbox.appendChild(text);
         
@@ -338,8 +339,8 @@ function authorizeContactSeeMe(jid) {
     //window.close();
 }
 
-// Function to remove a contact
-function removeContact()
+// Function to remove an element from roster
+function removeFromRoster()
 {
 
     try {
@@ -725,7 +726,7 @@ function showRoomUser (roomUser){
 	
 	var listeRoom = document.getElementById("liste_contacts_room" + tabs.selectedItem.id);
     var item = document.createElement("listitem");
-    item.setAttribute("context", "itemcontextroom");
+    item.setAttribute("context", "itemcontextroomuser");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
     item.setAttribute("label", roomUser[1]);
@@ -1369,17 +1370,17 @@ function handleEvent(iq) {
 // Callback on receiving message Function
 function handleMessage(aJSJaCPacket) {
 
-	
+	try {
 
     var origin = aJSJaCPacket.getFrom();
     var mess = "Received Message from" + origin;
     var pattern = /conference/
     
     // Message come from me
-    if (origin.match(keepLogin(myJid)))
+    if (origin.match(keepLogin(myjid)))
     		return;
     
-    alert(mess);
+    
 	
 	if (!deployedGUI) {
         extendGUI();
@@ -1395,7 +1396,7 @@ function handleMessage(aJSJaCPacket) {
 
     var name = keepLogin(origin);
     var jid = cutResource(origin);
-
+	var roomUserName = origin.substring(origin.indexOf("/")+ 1,origin.length); 
 
     //alert ("tab" + aJSJaCPacket.getFrom());
 
@@ -1435,13 +1436,15 @@ function handleMessage(aJSJaCPacket) {
     }
 
     // ecrire (aJSJaCPacket.getBody()) dans le panel corresponsant
-
+	
+	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
     //textToWrite.value += name + ": " + aJSJaCPacket.getBody() + "\n";
-    textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(name) + "</u>" +   " : " + "</font>");
+    textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
     textToWrite.contentDocument.write(html_escape(aJSJaCPacket.getBody() + "\n") + "</p>");
-    textToWrite.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
+    textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
+   } catch(e) {alert ("Dans handle messsage" + e);}
 }
 
 
@@ -1496,19 +1499,19 @@ function handlePresence(aJSJaCPacket) {
 		//alert ("USer" + roomUser [1]);
 		
         
-		 var item = x.getElementsByTagName('item').item(0);
+		 var itemx = x.getElementsByTagName('item').item(0);
 		
-        roomUser[2] = item.getAttribute('affiliation');
-        roomUser[3] = item.getAttribute('role');
-        roomUser[4] = item.getAttribute('nick');
-        roomUser[5] = item.getAttribute('jid');
+        roomUser[2] = itemx.getAttribute('affiliation');
+        roomUser[3] = itemx.getAttribute('role');
+        roomUser[4] = itemx.getAttribute('nick');
+        roomUser[5] = itemx.getAttribute('jid');
         if (item.getElementsByTagName('reason').item(0))
-            roomUser.reason = item.getElementsByTagName('reason').item(0).firstChild.nodeValue;
-        if (actor = item.getElementsByTagName('actor').item(0)) {
+            roomUser.reason = itemx.getElementsByTagName('reason').item(0).firstChild.nodeValue;
+        if (actor = itemx.getElementsByTagName('actor').item(0)) {
             if (actor.getAttribute('jid') != null)
                 roomUser[6] = actor.getAttribute('jid');
-            else if (item.getElementsByTagName('actor').item(0).firstChild != null)
-                roomUser[6] = item.getElementsByTagName('actor').item(0).firstChild.nodeValue;
+            else if (itemx.getElementsByTagName('actor').item(0).firstChild != null)
+                roomUser[6] = itemx.getElementsByTagName('actor').item(0).firstChild.nodeValue;
         }
         var role = roomUser[3];
         if (role != '') {
@@ -1525,17 +1528,20 @@ function handlePresence(aJSJaCPacket) {
         }
 		}
     }
+    return;
     }
     
 
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
+        if (item)
         item.setAttribute("image", "chrome://messenger/content/img/online.png");
         user [4] = "online.png";
     }
     	
 	
     else {
+   		 
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
 
         var type = aJSJaCPacket.getType();
@@ -1548,10 +1554,12 @@ function handlePresence(aJSJaCPacket) {
             		presence += aJSJaCPacket.getType();
            		 //alert (type.substring(0,2));
            		 if (type.substring(0, 2) == "un") {
+           		 if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/offline.png");
                 user [4] = "offline.png";
            			 }
             if (type.substring(0, 2) == "in") {
+            if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/invisible.png");
                 user [4] = "invisible.png";
            		 }
@@ -1562,14 +1570,17 @@ function handlePresence(aJSJaCPacket) {
             presence += aJSJaCPacket.getShow();
             //alert (show.substring(0,2));
             if (show.substring(0, 2) == "xa") {
+            if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/xa.png");
                 user [4] = "xa.png";
             }
             if (show.substring(0, 2) == "dn") {
+            if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/dnd.png");
                 user [4] = "dnd.png";
             }
             if (show.substring(0, 2) == "aw") {
+            if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/away.png");
                 user [4] = "away.png";
             }

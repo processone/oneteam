@@ -90,7 +90,8 @@ function sendToServer() {
 
 // Function to clear the console
 function clearConsole(){
-	consol.value = '';
+	consol.contentDocument.close();
+	consol.contentDocument.open();
 }
 
 // Function to close the window

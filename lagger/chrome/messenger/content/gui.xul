@@ -108,8 +108,8 @@
                     <menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
                     <menuitem label="&listitemcontext.InviterConference;"/>
                     <menuseparator/>
-                    <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeContact();"/>
-                    <menuitem label="&listitemcontext.Rename;" oncommand="renameContact();"/>
+                    <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
+                    <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
                     <menuseparator/>
                     <menuitem label="&listitemcontext.Infos;" oncommand="getInfos();"/>
                 </popup>
@@ -123,10 +123,19 @@
             
             <popupset>
                 <popup id="itemcontextroom">
-                		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand="enterRoom(event);"/>
+                		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand="openConversation(event);"/>
                     <menuseparator/>
-                    <menuitem label="&listitemcontextroom.Rename;" oncommand="renameGroup(event);"/>
-                		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeRoom(event);"/>
+                    <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>
+                		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>
+                </popup>
+            </popupset>
+            
+            <popupset>
+                <popup id="itemcontextroomuser">
+                		<!--<menuitem label="&listitemcontextroomuser.InsertRoom;" oncommand="enterRoom(event);"/>
+                    <menuseparator/>
+                    <menuitem label="&listitemcontextroomuser.Rename;" oncommand="renameGroup(event);"/>
+                		<menuitem label="&listitemcontextroomuser.Remove;" oncommand="removeRoom(event);"/> -->
                 </popup>
             </popupset>
             
