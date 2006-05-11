@@ -720,7 +720,7 @@ function showRoom (room){
 // Fonction to show a user in a room
 function showRoomUser (roomUser){
 	try {
-	
+	//alert (roomUser[1]);
 	var tabs = document.getElementById("tabs1");
 	
 	var listeRoom = document.getElementById("liste_contacts_room" + tabs.selectedItem.id);
@@ -728,8 +728,8 @@ function showRoomUser (roomUser){
     item.setAttribute("context", "itemcontextroom");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
-    item.setAttribute("label", roomUser [1]);
-    item.setAttribute("id", roomUser [0]);
+    item.setAttribute("label", roomUser[1]);
+    item.setAttribute("id", roomUser[0]);
     listeRoom.appendChild(item);
  	
  	
@@ -1456,6 +1456,8 @@ function handlePresence(aJSJaCPacket) {
    
   //alert (aJSJaCPacket.xml());
 	
+	try {
+	
     for (i = 0; i < users.length; i++) {
         user = users[i];
         if (user [0] == sender)
@@ -1465,32 +1467,36 @@ function handlePresence(aJSJaCPacket) {
     if (console) {
         cons.addInConsole("IN : " +  aJSJaCPacket.xml() + "\n");
     }
-
- 
-
-    if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
-        presence = aJSJaCPacket.getFrom() + "has become available.";
-        item.setAttribute("image", "chrome://messenger/content/img/online.png");
-        user [4] = "online.png";
-    }
     
     
-	
-	if ( aJSJaCPacket.getFrom().match(pattern) ){
+    
+    
+
+ if ( aJSJaCPacket.getFrom().match(pattern) ){
 		
-		
+		var x;
+    for (var i = 0; i < aJSJaCPacket.getNode().getElementsByTagName('x').length; i++)
+        if (aJSJaCPacket.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
+            x = aJSJaCPacket.getNode().getElementsByTagName('x').item(i);
+            break;
+        }
+
+    if (x) {
+		 
         var from = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf('/') + 1);
+		//alert ("handle presence" + from);
 
-		if (from == keepLogin(myJid))
-		 	;
+		if (from == keepLogin(myjid))
+		;
+		 	//alert("recu un propre message" + from);
 		else{
 
         var roomUser = new Array(aJSJaCPacket.getFrom(), from, "", "", "", "", "");
 		
 		//alert ("USer" + roomUser [1]);
 		
-        var item = aJSJaCPacket.getNode().getElementsByTagName('item').item(0);
-		
+        
+		 var item = x.getElementsByTagName('item').item(0);
 		
         roomUser[2] = item.getAttribute('affiliation');
         roomUser[3] = item.getAttribute('role');
@@ -1519,35 +1525,40 @@ function handlePresence(aJSJaCPacket) {
         }
 		}
     }
+    }
     
-     //}
-    // }
-	
+
+    if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
+        presence = aJSJaCPacket.getFrom() + "has become available.";
+        item.setAttribute("image", "chrome://messenger/content/img/online.png");
+        user [4] = "online.png";
+    }
+    	
 	
     else {
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
 
         var type = aJSJaCPacket.getType();
-        if (type) {
-            if (type == 'subscribe') {
+       		 if (type) {
+           		 if (type == 'subscribe') {
 
-                authorizeContactSeeMe(sender);
-            }
+               	 authorizeContactSeeMe(sender);
+           			 }
 
-            presence += aJSJaCPacket.getType();
-            //alert (type.substring(0,2));
-            if (type.substring(0, 2) == "un") {
+            		presence += aJSJaCPacket.getType();
+           		 //alert (type.substring(0,2));
+           		 if (type.substring(0, 2) == "un") {
                 item.setAttribute("image", "chrome://messenger/content/img/offline.png");
                 user [4] = "offline.png";
-            }
+           			 }
             if (type.substring(0, 2) == "in") {
                 item.setAttribute("image", "chrome://messenger/content/img/invisible.png");
                 user [4] = "invisible.png";
-            }
-        }
-        else {
+           		 }
+        			}
+       			 else {
 
-            var show = aJSJaCPacket.getShow();
+            		var show = aJSJaCPacket.getShow();
             presence += aJSJaCPacket.getShow();
             //alert (show.substring(0,2));
             if (show.substring(0, 2) == "xa") {
@@ -1568,6 +1579,10 @@ function handlePresence(aJSJaCPacket) {
     }
     
     
+    
+    
+    
+    } catch (e) {alert(e);}
     //alert (presence);
 }
 
