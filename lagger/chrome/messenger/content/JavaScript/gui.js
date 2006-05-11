@@ -14,6 +14,7 @@ var mucs = new Array();
 var index = 0;
 var user;
 var room;
+var myRoomNick;
 var myjid;
 var myPresence;
 var deployedGUI = false;
@@ -94,7 +95,8 @@ function openConversation(event) {
 		
 		hbox.appendChild(listboxRoom);
 		
-		performJoinRoom (liste.selectedItem.id,myjid,'',keepLogin (myjid));
+		myRoomNick = keepLogin(myjid);
+		performJoinRoom (liste.selectedItem.id,myjid,'',myRoomNick);
 		
 		self.resizeTo(500, 300);
 		}
@@ -278,6 +280,8 @@ function extendGUI() {
 // Function to reduce GUI
 function reduceGUI() {
 
+//try{
+
     deployedGUI = false;
 
     var right = document.getElementById("right");
@@ -303,6 +307,7 @@ function reduceGUI() {
     //childNodes = right.childNodes;
     //right.removeChild(text);
 
+//} catch (e) {alert ("Dans reduceGUI" + e)};
 	
 }
 
@@ -590,17 +595,24 @@ function selectTab(jid) {
 // Function to close a tab
 function closeTab() {
 
+//try{
 
     var liste = document.getElementById("liste_contacts");
 
     var tabs = document.getElementById("tabs1");
     var tab = document.getElementById(tabs.selectedItem.id);
     var index = tabs.selectedIndex;
-
+	
     var childNodes = tabs.childNodes;
+    
+    //alert (tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
 
-    if (childNodes.length == 1)
-        reduceGUI();
+    if (childNodes.length == 1){
+    		if (tab.getAttribute("context") == "tabroomcontext")
+        exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
+   		 reduceGUI();
+    		
+        }
     else {
         var child = childNodes[tabs.selectedIndex--];
 
@@ -608,9 +620,13 @@ function closeTab() {
         tabs.removeChild(tab);
 
 		if (tab.getAttribute("context") == "tabroomcontext"){
+		
 			var listRooms = document.getElementById ("liste_contacts_room" + tab.id);
 			var hbox = document.getElementById("panel-roster" + tab.id);
 				hbox.removeChild (listRooms);
+				
+				exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
+				
 				} 
 			
 
@@ -623,6 +639,9 @@ function closeTab() {
         if (child)
             child.setAttribute("selected", "true");
     }
+    
+    
+    //} catch (e) {alert(" In closeTab" + e);}
 }
 
 
@@ -1006,6 +1025,29 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
 }
 
 
+// Function to exit a room
+function exitRoom(room){
+	 var aPresence = new JSJaCPresence();
+        aPresence.setTo(room);
+		aPresence.setType('unavailable');
+		
+		con.send(aPresence);
+		
+		if (console) {
+        cons.addInConsole("OUT : " + aPresence.xml() + "\n");
+    }
+}
+
+
+// Function to change room nickname
+function changeRoomNickName (){
+
+if (console) {
+        cons.addInConsole("OUT : " + aPresence.xml() + "\n");
+    }
+}
+
+
 // Function to create a room
 function createRoom() {
 
@@ -1018,6 +1060,10 @@ function createRoom() {
         
 	
 		con.send(aPresence);
+		
+		if (console) {
+        cons.addInConsole("OUT : " + aPresence.xml() + "\n");
+    }
 		
 }
 
@@ -1033,6 +1079,10 @@ function createReserved(){
 	
 	
 		con.send(iq);
+		
+		if (console) {
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
+    }
 		
 		// TODO if room does'nt already exist
 		// => send configuration form
