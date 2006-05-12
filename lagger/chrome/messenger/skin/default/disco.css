@@ -1,13 +1,11 @@
 
-
-listitem[selected="true"] {
-background: #FFFF00;
-}
-
-listitem {
-font-weight: bold;
-font-size: 30px;
-margin-top: 50px;
-margin-bottom: 50px;
-padding-left: 30px;
-}
+treechildren::-moz-tree-row(head){ 
+	background-color: #FFFFAA; }
+treechildren::-moz-tree-row(odd){
+	background-color: #EEEEEE; }
+treechildren::-moz-tree-row(odd, selected){
+	 background-color: #FFFFAA; }
+treechildren::-moz-tree-cell-text(selected){ 
+	color: #000000; }
+treechildren::-moz-tree-cell-text(odd, selected){ 
+	color: #000000; }

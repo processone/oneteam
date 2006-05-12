@@ -80,6 +80,7 @@ function getDiscoInfo(iq) {
     	item.setAttribute("label",iq.getFrom());*/
     
     var mainrow = document.createElement("treerow");
+    mainrow.setAttribute("properties", "head");
     
     var item = document.createElement("treeitem");
     item.setAttribute("container","true");
@@ -98,6 +99,7 @@ function getDiscoInfo(iq) {
     
     
     var children = document.createElement("treechildren");
+    children.setAttribute("id","treechildren");
     var row = document.createElement("treerow");
     
         

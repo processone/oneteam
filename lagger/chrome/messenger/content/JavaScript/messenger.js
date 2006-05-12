@@ -1,49 +1,59 @@
 var textbox_user;
 var textbox_pass;
-var textbox_server;
-var textbox_httpbase;
+var server;
+var httpbase;
+var port;
+var resource;
 
-var gui
+var gui;
+var settings;
 
+const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
+		.getService(Components.interfaces.nsIPrefBranch);
+		
 // Initialisation function
 function init() {
-
+	try{
     var prefs = loadPrefs();
     if (prefs.user != null)
         document.getElementById("user").setAttribute("value", prefs.user);
     if (prefs.pass != null)
         document.getElementById("pass").setAttribute("value", prefs.pass);
-    if (prefs.server != null)
-        textbox_server = prefs.server;
-    if (prefs.httpbase != null)
-        textbox_httpbase = prefs.httpbase;
+    } catch (e) {alert(e);}
 }
 
 // Function for authentication
 function doLogin(event) {
-
+	try{
     var check = document.getElementById("checkauto");
 
-    textbox_user = document.getElementById("user").value;
-    textbox_pass = document.getElementById("pass").value;
-    textbox_server = "process-one.net";
-    //textbox_httpbase = document.getElementById("http_base").value;
-    textbox_httpbase = "http://" + textbox_server + ":" + "5280" + "/" + "http-poll" + "/";
-    alert(textbox_httpbase);
+    this.textbox_user = document.getElementById("user").value;
+    this.textbox_pass = document.getElementById("pass").value;
+    
+    this.port = gPrefService.getIntPref("chat.connection.port");
+    this.server = gPrefService.getCharPref("chat.connection.host");
+    this.resource = gPrefService.getCharPref("chat.connection.resource");
+    this.httpbase = "http://" + this.server + ":" + this.port + "/" + this.resource + "/";
+    
+    alert(this.httpbase);
     // Write data properties in file
-    savePrefs({
+   /* savePrefs({
         registerLogin : true,
         user : textbox_user,
         pass : textbox_pass,
-        server : textbox_server,
-        httpbase : textbox_httpbase });
+        server : server,
+        httpbase : httpbase });*/
 
     gui = window.open("chrome://messenger/content/gui.xul", "Lagger", "chrome,centerscreen,resizable");
 
     window.close();
+     } catch (e) {alert(e);}
 }
+
+
+
 
 //function to open startup settings
 function openSettings() {
-    window.open("settings.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");
+    settings = window.open("settings.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");
 }

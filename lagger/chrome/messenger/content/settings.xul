@@ -4,6 +4,7 @@
 
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             title="Settings" id="settings" onload="initialize()">
+ 
 
     <script>
         var port = null;
@@ -42,7 +43,7 @@
                 <row>
                     <spacer/>
                     <checkbox id="ssl" label="Use SSL" preference="chat.connection.ssl"
-                              onclick="if(this.checked)port.value = 5280; else port.value = 5223;"/>
+                              onclick="if(this.checked) { port.value = 5280;} else {port.value = 5223; }"/>
                 </row>
                 <row>
                     <label value="Port: " control="port"/>

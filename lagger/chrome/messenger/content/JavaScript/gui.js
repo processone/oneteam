@@ -1,6 +1,8 @@
 //var Debug;
 var con;
 
+const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
+		.getService(Components.interfaces.nsIPrefBranch);
 
 var users = new Array();
 var groups = new Array();
@@ -17,10 +19,13 @@ var room;
 var myRoomNick;
 var myjid;
 var myPresence;
-var deployedGUI = false;
-var console = false;
 var cons;
 var server;
+
+
+var deployedGUI = false;
+var console = false;
+var hideDecoUser = false;
 
 
 // Function to open a simple conversation
@@ -52,7 +57,6 @@ function openConversation(event) {
             var child = childNodes[i];
             child.setAttribute("selected", "false");
         }
-        tab.setAttribute("selected", "true");
         
         tabs.appendChild(tab);
         
@@ -65,6 +69,14 @@ function openConversation(event) {
         tabpanel.setAttribute("width", "400");
         tabpanel.appendChild(hbox);
         tabspanel.appendChild(tabpanel);
+        
+       
+        
+        tab.setAttribute("selected", "true");
+        var tabbox = document.getElementById("tabbox");
+        tabbox.selectedPanel = tabpanel;
+       
+        
 
         //var text = document.createElement("textbox");
         var text = document.createElement("iframe");
@@ -111,23 +123,26 @@ function openConversation(event) {
 
 
 // Function to get connexion and users roster
-function init() {
+function initGUI() {
+
+	try{
+	
+	
     var prefs = loadPrefs();
-    if (prefs.user != null)
+    //if (prefs.user != null)
         var textbox_user = prefs.user;
-    if (prefs.pass != null)
+    //if (prefs.pass != null)
         var textbox_pass = prefs.pass;
-    if (prefs.server != null)
-        var textbox_server = prefs.server;
-    if (prefs.httpbase != null)
-        var textbox_httpbase = prefs.httpbase;
-    
-    myjid = textbox_user + "@" + textbox_server;
-	server = textbox_server;
+   
+    server = gPrefService.getCharPref("chat.connection.host");;
+    this.port = gPrefService.getIntPref("chat.connection.port");
+    this.resource = gPrefService.getCharPref("chat.connection.resource");	
+    myjid = textbox_user + "@" + server;
+	
     // setup args for contructor
     var oArgs = new Object();
 
-    oArgs.httpbase = textbox_httpbase;
+    oArgs.httpbase = "http://" + this.server + ":" + this.port + "/" + this.resource + "/";;
     oArgs.timerval = 2000;
     //oArgs.oDbg = Debug;
 
@@ -135,7 +150,7 @@ function init() {
 
     // setup args for connect method
     var oArg = new Object();
-    oArg.domain = textbox_server;
+    oArg.domain = server;
     oArg.username = textbox_user;
     oArg.resource = 'Lagger';
     oArg.pass = textbox_pass;
@@ -149,12 +164,9 @@ function init() {
     
     self.setCursor('default');
 
-    try {
+    
         con.connect(oArg);
-    }
-    catch (e) {
-        alert("caught exception:" + e);
-    }
+  
 
 
     if (con.connected()) {
@@ -166,6 +178,10 @@ function init() {
         alert("connexion failed");
     }
 
+}
+catch(e) {
+        alert("caught exception:" + e);
+    }
 
 }
 
@@ -179,7 +195,7 @@ function extendGUI() {
 
     var tabbox = document.createElement("tabbox");
     		tabbox.setAttribute("flex", "5");
-
+		tabbox.setAttribute("id","tabbox");
 	
     right.appendChild(tabbox);
 
@@ -614,7 +630,12 @@ function closeTab() {
     		
         }
     else {
-        var child = childNodes[tabs.selectedIndex--];
+    
+    		if (tabs.selectedIndex == 0)
+    			
+    			var child = childNodes[tabs.selectedIndex++];
+    		else 
+    			 var child = childNodes[tabs.selectedIndex--];
 
 
         tabs.removeChild(tab);
@@ -647,32 +668,77 @@ function closeTab() {
 
 // Function to close all tabs
 function closeAllTab() {
-
-    reduceGUI();
-
-    var parent = document.getElementById("tabs1");
-    while (parent.hasChildNodes())
-        parent.removeChild(parent.firstChild);
+	
+	var parent = document.getElementById("tabs1");
+   
 
     var parentbis = document.getElementById("tabpanels1");
-    while (parentbis.hasChildNodes())
+    
+        
+	
+	
+	 while (parent.hasChildNodes()){
+	 if (parent.firstChild.getAttribute("context") == "tabroomcontext")
+        exitRoom(parent.firstChild.id.substring(parent.firstChild.id.indexOf("b") + 1,parent.firstChild.id.length) + "/" + myRoomNick);
+        parent.removeChild(parent.firstChild);
+        
+        }
+        
+        while (parentbis.hasChildNodes())
         parentbis.removeChild(parentbis.firstChild);
+        
+    reduceGUI();
 
+    
+
+}
+
+
+//Function to hide deconnected users
+function hideDecoUsers(){
+	if (!hideDecoUser){ 
+	hideDecoUser = true;
+	this.emptyList();
+    this.showUsers(users);
+	this.refreshList();
+	}
+	else
+	showDecoUsers();
+}
+
+
+// Function to show deconnected users
+function showDecoUsers(){
+	hideDecoUser = false;
+	this.emptyList();
+    this.showUsers(users);
+	this.refreshList();
 }
 
 // Function to show all users in roster
 function showUsers(users) {
 
-    for (var g = 0; g < groups.length; g++) {
+	try {
+
+	
+    for (var g = 0; g < groups.length; g++) {  
         var group = groups[g];
         showGroup(group);
 
         for (var i = 0; i < users.length; i++) {
 
             var user = users[i];
-            if (user [2] == group)
+            if (user [2] == group){
+            		if (hideDecoUser){
+            			
+            			if (user [4] != "offline.png")
+                		showUser(user);
+                }
+                else {
+                	
                 showUser(user);
-
+                }
+			}
         }
         //end forUser
 
@@ -686,6 +752,7 @@ function showUsers(users) {
     }
     //end forGroup
 
+} catch (e) {alert(e);}
 
 }
 
@@ -758,7 +825,7 @@ function showRoomUser (roomUser){
 
 // Function to empty the contact's list
 function emptyList() {
-	
+	//alert("Empylist");
     var liste = document.getElementById("liste_contacts");
     while (liste.hasChildNodes())
         liste.removeChild(liste.firstChild);
@@ -767,7 +834,7 @@ function emptyList() {
 
 // Fuction to refresh the list
 function refreshList() {
-
+	//alert("refreshList");
     con.send(myPresence);
     
      if (console) {
