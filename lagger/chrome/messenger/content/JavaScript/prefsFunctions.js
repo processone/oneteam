@@ -4,7 +4,7 @@ function loadPrefs(pPrefs) {
             .getBranch("extensions.messenger.");
     var branche = Components.classes["@mozilla.org/preferences-service;1"]
             .getService(Components.interfaces.nsIPrefBranch);
-    var prefs = {registerLogin : false, user : null, pass : null, server : null,
+    var prefs = {registerLogin : false, user : null, pass : null, port : null, server : null,
         lastConfig : null, askAgain : false, httpbase : null};
     if (pPrefs != null) {
         for (a in pPrefs) {
