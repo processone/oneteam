@@ -48,7 +48,8 @@
 
                 <menu id="configuration-menu" label="&menuConfig.configuration;">
                     <menupopup id="config-popup">
-                        <menuitem label="&menuConfig.plugins;"/>
+                        <menuitem label="&menuConfig.plugins;" oncommand="launchExtWindow ();"/>
+                        <menuitem label="Themes" oncommand="launchThemeWindow ();"/>
                         <menuitem label="&menuConfig.preferences;" oncommand="launchPreferences();"/>
 
                     </menupopup>
@@ -90,8 +91,14 @@
             
             <vbox flex="1" id ="left">
 
-           <listbox height="400" width="150"  minwidth="140" id="liste_contacts" flex="1">
+           <listbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1">
             </listbox>
+            
+            <popup id="listcontext" >
+			<menuitem type="checkbox" label="Use full names" oncommand="cmd_usefullname"/>
+			<menuseparator/>
+			<menuitem type="checkbox" label="Mask offline users" oncommand="hideDecoUsers();"/>
+			</popup>
              <!--<tree height="400" width="150" maxwidth="200" minwidth="140"  flex="1" id="liste_contacts">
             <treecols>
             <treecol id="status"  flex="1"/>

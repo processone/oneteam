@@ -3,6 +3,7 @@ var textbox_pass;
 var server;
 var httpbase;
 var port;
+var base;
 var resource;
 
 var gui;
@@ -32,8 +33,8 @@ function doLogin(event) {
     
     this.port = gPrefService.getIntPref("chat.connection.port");
     this.server = gPrefService.getCharPref("chat.connection.host");
-    this.resource = gPrefService.getCharPref("chat.connection.resource");
-    this.httpbase = "http://" + this.server + ":" + this.port + "/" + this.resource + "/";
+    this.base = gPrefService.getCharPref("chat.connection.base");
+    this.httpbase = "http://" + this.server + ":" + this.port + "/" + this.base + "/";
     
     alert(this.httpbase);
     // Write data properties in file

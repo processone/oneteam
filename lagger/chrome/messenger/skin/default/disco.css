@@ -1,11 +1,13 @@
+treechildren::-moz-tree-cell-text(selected){ 
+	color: #000000; }
+
+treechildren::-moz-tree-row(odd){
+	background-color: #EEEEEE; }
 
 treechildren::-moz-tree-row(head){ 
 	background-color: #FFFFAA; }
-treechildren::-moz-tree-row(odd){
-	background-color: #EEEEEE; }
-treechildren::-moz-tree-row(odd, selected){
-	 background-color: #FFFFAA; }
-treechildren::-moz-tree-cell-text(selected){ 
-	color: #000000; }
-treechildren::-moz-tree-cell-text(odd, selected){ 
-	color: #000000; }
+
+
+treechildren::-moz-tree-twisty{
+	-moz-appearance:treetwisty;
+	}

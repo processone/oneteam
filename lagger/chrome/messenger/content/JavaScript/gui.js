@@ -21,6 +21,8 @@ var myjid;
 var myPresence;
 var cons;
 var server;
+var port;
+var base;
 
 
 var deployedGUI = false;
@@ -80,6 +82,7 @@ function openConversation(event) {
 
         //var text = document.createElement("textbox");
         var text = document.createElement("iframe");
+        
 
         text.setAttribute("id", "text" + liste.selectedItem.id);
         //text.setAttribute("multiline", "true");
@@ -88,7 +91,11 @@ function openConversation(event) {
         //text.setAttribute("readonly", "true");
         //alert ("text" + liste.selectedItem.id);
         text.setAttribute("flex", "5");
+        text.setAttribute("wait-cursor","false");
+        text.setAttribute("class","box-inset");
         hbox.appendChild(text);
+       
+        //text.contentDocument.write("<div><table><tr><td>");
         
         try {
 		
@@ -134,15 +141,15 @@ function initGUI() {
     //if (prefs.pass != null)
         var textbox_pass = prefs.pass;
    
-    server = gPrefService.getCharPref("chat.connection.host");;
+    server = gPrefService.getCharPref("chat.connection.host");
     this.port = gPrefService.getIntPref("chat.connection.port");
-    this.resource = gPrefService.getCharPref("chat.connection.resource");	
+    this.base = gPrefService.getCharPref("chat.connection.base");	
     myjid = textbox_user + "@" + server;
 	
     // setup args for contructor
     var oArgs = new Object();
 
-    oArgs.httpbase = "http://" + this.server + ":" + this.port + "/" + this.resource + "/";;
+    oArgs.httpbase = "http://" + this.server + ":" + this.port + "/" + this.base + "/";;
     oArgs.timerval = 2000;
     //oArgs.oDbg = Debug;
 
@@ -152,7 +159,7 @@ function initGUI() {
     var oArg = new Object();
     oArg.domain = server;
     oArg.username = textbox_user;
-    oArg.resource = 'Lagger';
+    oArg.resource = gPrefService.getCharPref("chat.connection.resource");
     oArg.pass = textbox_pass;
 
     /* register handlers */
@@ -1389,6 +1396,22 @@ function launchConsole() {
     }
 }
 
+// Launch theme window
+function launchThemeWindow(){
+
+window.openDialog("chrome://mozapps/content/extensions/extensions.xul?type=themes",
+ "ext", "chrome,dialog,centerscreen,resizable");
+ 
+ }
+ 
+// Launch extension window
+function launchExtWindow(){
+
+ window.openDialog("chrome://mozapps/content/extensions/extensions.xul?type=extensions",
+ "ext", "chrome,dialog,centerscreen,resizable");
+ 
+ }
+
 
 // Function to add a contact
 function addContact()
@@ -1409,15 +1432,10 @@ function joinRoom() {
 // Function to close the window
 function closeWindows() {
 
-    if (console)
-        cons.close();
-	
-    if (!con.connected())
-                con.disconnect();
-
-	
-    self.close();
-
+   
+Components.classes['@mozilla.org/toolkit/app-startup;1']
+  .getService(Components.interfaces.nsIAppStartup)
+  .quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
 }
 
 
@@ -1458,7 +1476,8 @@ function handleError(e) {
 function handleConnected() {
 
     myPresence = new JSJaCPresence();
-
+    myPresence.setPriority(gPrefService.getIntPref("chat.connection.priority").toString(10));
+	
     // Send packet to get the contact list
     var iq = new JSJaCIQ();
     iq.setIQ(null, null, 'get', 'rost');

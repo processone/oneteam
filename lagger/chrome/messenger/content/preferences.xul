@@ -6,84 +6,159 @@
             type="prefwindow"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             buttons="accept, cancel"
-            height="400"
-            width="500"
+            height="350"
+            width="350"
+            	onload="loadFonts();"
             title="Preferences">
-
-    <prefpane id="General" label="General" image="">
+            
+<script type="application/x-javascript" src="JavaScript/preferences.js"/>
+    
+    <prefpane id="general" label="General">
 
         <preferences>
-            <preference id="myBool"
-                        name="extensions.myExtension.myBool"
-                        type="bool"/>
-            <preference id="myInt"
-                        name="extensions.myExtension.myInt"
-                        type="int"/>
+
+            <preference id="chat.connection.host"
+                        name="chat.connection.host" type="string"/>
+            <preference id="chat.connection.port"
+                        name="chat.connection.port" type="int"/>
+          
         </preferences>
 
-        <vbox>
+        <grid flex="1" id="grid-connection">
+            <columns>
+                <column flex="1" minwidth="30"/>
+                <column flex="1"/>
+            </columns>
+            <rows id="rows-general">
+                 <row>
+                    <label value="General options : " control="nickname"/>
+                    <checkbox id="sort status" label="Sort contacts by status"
+                              preference="chat.gui.showseparatedwindows"/>
+                </row>
+               
+               <row>
+                    <spacer/>
+                    <checkbox id="showoffline" label="Mask offline users"
+                              preference="chat.roster.showoffline"/>
+                </row>
+                
+				<row>
+                    <spacer/>
+                    <checkbox id="showemptygroup" label="Mask empty groups"
+                              preference="chat.messagebox.showavatars"/>
+                              
+                </row>
+                
+                <row>
+                    <spacer/>
+                    <checkbox id="saveguiproperties" label="Keep interface properties"
+                              preference="chat.messagebox.showavatars"/>
+                </row>
+                
+                <spacer height="20"/>
+                
+                <row>
+					<label value="Status inconset : " control="nickname"/>
+                    
+                    <menulist label="Available" id="status"  height="25" maxwidth="120" flex="1" 
+                        src="img/online.png">
+                			<menupopup flex="1">
+                   			<menuitem class="menuitem-iconic icon-away" label="gajim"
+                              oncommand="changeStatus('away');"/>
+                    			<menuitem class="menuitem-iconic" label="ampoule" selected="true"
+                              oncommand="changeStatus('chat');"/>
+                 
+               		    </menupopup>
+            			</menulist>
+                </row>
+            </rows>
 
-            <radiogroup id="radio_myBool"
-                        preference="myBool">
-                <vbox>
-                    <radio id="default"
-                           label="Default"
-                           value="true"/>
-                    <radio id="custom"
-                           label="Custom"
-                           value="false"/>
-                </vbox>
-            </radiogroup>
+        </grid>
 
-            <textbox id="text_myInt"
-                     preference="myInt"/>
-
-        </vbox>
 
     </prefpane>
-    <prefpane id="Editor" label="Editor" image="">
+
+    <prefpane id="editor" label="Editor">
         <preferences>
-            <preference id="pref-backup" name="myapp.mybackups" type="bool"/>
-            <preference id="pref-backupduration" name="myapp.mybackups.duration" type="int"/>
+            <preference id="chat.muc.nickname"
+                        name="chat.muc.nickname" type="string"/>
         </preferences>
-        <vbox>
-            <checkbox label="Automatically Save Backups" preference="pref-backup"/>
-            <textbox label="Duration:" preference="pref-backupduration"/>
-        </vbox>
+
+        <grid flex="1" id="grid-connection">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="1"/>
+            </columns>
+            <rows id="rows-muc">
+
+                <row>
+                    <label  value="Incoming message : " control="nickname"/>
+                    <colorpicker id="test" type="button" color="#996633" height="25" maxwidth="50" onchange="test();"/>
+                </row>
+                
+                <spacer height="20"/>
+                
+                 <row>
+                    <label value="Outgoing message : " control="nickname"/>
+                    <colorpicker type="button" color="#330000" height="25" maxwidth="50"/>
+                </row>
+                
+                <spacer height="20"/>
+                
+                 <row>
+                    <label value="Status Message : " control="nickname"/>
+                    <colorpicker type="button" color="#66FF99" height="25" maxwidth="50"/>
+                </row>
+                
+                <spacer height="20"/>
+                
+                 <row>
+                    <label value="URL : " control="nickname"/>
+                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50"/>
+                </row>
+
+				<spacer height="20"/>
+				
+				<row>
+                    <label value="Font : " control="nickname"/>
+                    <button type="select-font" height="25" maxwidth="50"/>
+                </row>
+            </rows>
+
+        </grid>
     </prefpane>
 
-    <prefpane id="saveoptions" label="Status" image="">
-        <preferences>
-            <preference id="pref-backup" name="myapp.mybackups" type="bool"/>
-            <preference id="pref-backupduration" name="myapp.mybackups.duration" type="int"/>
-        </preferences>
-        <vbox>
-            <checkbox label="Automatically Save Backups" preference="pref-backup"/>
-            <textbox label="Duration:" preference="pref-backupduration"/>
-        </vbox>
+    <prefpane id="status" label="Status">
+
+        <grid flex="1" id="grid-connection">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="2"/>
+            </columns>
+            <rows id="rows-muc">
+
+                
+            </rows>
+
+        </grid>
     </prefpane>
 
-
-    <prefpane id="File Transfert" label="File Transfert" image="">
-        <preferences>
-            <preference id="pref-backup" name="myapp.mybackups" type="bool"/>
-            <preference id="pref-backupduration" name="myapp.mybackups.duration" type="int"/>
-        </preferences>
-        <vbox>
-            <checkbox label="Automatically Save Backups" preference="pref-backup"/>
-            <textbox label="Duration:" preference="pref-backupduration"/>
-        </vbox>
-    </prefpane>
+    <prefpane id="advanced" label="Advanced">
 
 
-    <prefpane id="Personal" label="Personal" image="">
-        <preferences>
-            <preference id="pref-backup" name="myapp.mybackups" type="bool"/>
-            <preference id="pref-backupduration" name="myapp.mybackups.duration" type="int"/>
-        </preferences>
-        <vbox>
-            <checkbox label="Automatically Save Backups" preference="pref-backup"/>
-            <textbox label="Duration:" preference="pref-backupduration"/>
-        </vbox>
+        <grid flex="1" id="grid-adv">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="2"/>
+            </columns>
+            <rows id="rows-connection">
+
+               
+                
+                
+            </rows>
+
+        </grid>
     </prefpane>
 </prefwindow>
+

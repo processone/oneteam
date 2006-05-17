@@ -24,6 +24,6 @@ color : rgb(26%, 31%, 35%);
 
 
 
-menuitem {
+menupopup > menuitem {
 list-style-image: url( "chrome://messenger/skin/images/away.png" );
 }

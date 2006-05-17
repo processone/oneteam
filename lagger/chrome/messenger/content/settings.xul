@@ -26,12 +26,16 @@
                         name="chat.connection.overridehost" type="bool"/>
             <preference id="chat.connection.resource"
                         name="chat.connection.resource" type="string"/>
+            <preference id="chat.connection.base"
+                        name="chat.connection.base" type="string"/>
             <preference id="chat.connection.priority"
                         name="chat.connection.priority" type="int"/>
             <preference id="chat.messagebox.showavatars"
                         name="chat.messagebox.showavatars" type="bool"/>
-            <preference id="chat.advanced.jabberinfo"
-                        name="chat.advanced.jabberinfo" type="bool"/>
+            <preference id="chat.roster.showoffline"
+                        name="chat.roster.showoffline" type="bool"/>
+            <preference id="chat.gui.showseparatedwindows"
+            				name="chat.gui.showseparatedwindows" type="bool"/>
         </preferences>
 
         <grid flex="1" id="grid-connection">
@@ -66,8 +70,8 @@
                 <spacer height="20"/>
 
                 <row>
-                    <label value="Resource: " control="resource"/>
-                    <textbox id="resource" preference="chat.connection.resource"/>
+                    <label value="Base: " control="base"/>
+                    <textbox id="base" preference="chat.connection.base"/>
                 </row>
 
             </rows>
@@ -112,13 +116,20 @@
                 <row>
                     <spacer/>
                     <checkbox id="windows" label="Show separated chat windows"
+                              preference="chat.gui.showseparatedwindows"/>
+                </row>
+               
+               <row>
+                    <spacer/>
+                    <checkbox id="showoffline" label="Always mask offline users"
+                              preference="chat.roster.showoffline"/>
+                </row>
+                
+				<row>
+                    <spacer/>
+                    <checkbox id="showavatars" label="Mask users avatars"
                               preference="chat.messagebox.showavatars"/>
                 </row>
-                <row hidden="true">
-                    <spacer/>
-                    <checkbox id="xx" label="Show separated chat windows" preference="chat.messagebox.showavatars"/>
-                </row>
-
             </rows>
 
         </grid>
@@ -138,18 +149,24 @@
                     <label value="Priority: " control="priority"/>
                     <textbox id="priority" preference="chat.connection.priority"/>
                 </row>
-
-
-                <row>
-                    <spacer/>
-                    <checkbox id="zwabber" label="Show advanced Jabber info" preference="chat.advanced.jabberinfo"/>
+                
+				<spacer height="20"/>
+				
+				<row>
+                    <label value="Resource: " control="resource"/>
+                    <textbox id="resource" preference="chat.connection.resource"/>
                 </row>
-
+                
+                <spacer height="20"/>
+                
                 <row>
                     <spacer/>
                     <button label="Show passwordmanager"
                             oncommand="window.openDialog('chrome://passwordmgr/content/passwordManager.xul','', null);"/>
                 </row>
+                
+                
+                
             </rows>
 
         </grid>

@@ -1,4 +1,10 @@
 
-window {
+
+
+groupbox {
 	background-color: #FFFFCC;
+}
+
+caption {
+	color: #996633;
 }

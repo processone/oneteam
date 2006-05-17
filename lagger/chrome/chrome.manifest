@@ -3,4 +3,4 @@ locale  messenger fr-FR     file:messenger/locale/fr-FR/
 locale  messenger en-GB     file:messenger/locale/en-GB/
 locale  messenger en-US     file:messenger/locale/en-US/
 skin    messenger default   file:messenger/skin/default/
-
+locale branding en-US locale/branding/en-US/
