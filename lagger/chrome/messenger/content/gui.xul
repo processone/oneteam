@@ -79,7 +79,7 @@
 
                 <toolbarseparator id="s2">
                     <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="openDisco();"/>
-                    <toolbarbutton id="Hide offlines" label="" image="img/not_in_the_roster.png" oncommand="hideDecoUsers();"/>
+                    <toolbarbutton id="Help" label="" image="img/General/help.gif" oncommand=""/>
                 </toolbarseparator>
 
                 <toolbarseparator id="s3"/>

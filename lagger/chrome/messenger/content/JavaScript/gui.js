@@ -13,6 +13,7 @@ var conferences = new Array();
 var mucs = new Array();
 
 
+
 var index = 0;
 var user;
 var room;
@@ -36,7 +37,7 @@ function openConversation(event) {
     if (!deployedGUI) {
         extendGUI();
         deployedGUI = true;
-        self.resizeTo(400, 300);
+        self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
     }
 
     var liste = document.getElementById("liste_contacts");
@@ -117,7 +118,7 @@ function openConversation(event) {
 		myRoomNick = keepLogin(myjid);
 		performJoinRoom (liste.selectedItem.id,myjid,'',myRoomNick);
 		
-		self.resizeTo(500, 300);
+		self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
 		}
 		
 		}
@@ -126,6 +127,10 @@ function openConversation(event) {
 
    
 }
+
+
+
+
 
 
 
@@ -297,7 +302,9 @@ function extendGUI() {
    textbox.appendChild (lift);*/
 
     right.appendChild(textbox);
-
+	
+	
+	
 }
 
 // Function to reduce GUI
@@ -319,7 +326,7 @@ function reduceGUI() {
     }*/
     
     right.setAttribute("flex","0");
-    self.resizeTo(155, 300);
+    self.resizeTo(155, document.getElementById("Messenger").boxObject.height);
 	
 	while(right.childNodes != null){
 		right.removeChild(right.firstChild);
@@ -830,6 +837,24 @@ function showRoomUser (roomUser){
  	} catch (e) {alert(e);}
 }
 
+
+// Function to sort roster by status
+function sortRosterByStatus (){
+
+	for (var i = 0 ; i < users.length ;i++){
+		if (users[i][4] == "online.png")
+				;
+		else if (users[i][4] == "dnd.png")
+		;
+		else if (users[i][4] == "xa.png")
+		;
+		else if (users[i][4] == "away.png")
+		;
+		else
+		;
+		}
+}
+
 // Function to empty the contact's list
 function emptyList() {
 	//alert("Empylist");
@@ -842,6 +867,8 @@ function emptyList() {
 // Fuction to refresh the list
 function refreshList() {
 	//alert("refreshList");
+	
+	//var myPresence = new JSJaCPresence();
     con.send(myPresence);
     
      if (console) {
@@ -857,7 +884,7 @@ function showUser(user) {
     item.setAttribute("context", "itemcontext");
     item.setAttribute("ondblclick", "openConversation(event)");
     item.setAttribute("class", "listitem-iconic");
-    item.setAttribute("image", "chrome://messenger/content/img/" + user[4]);
+    item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
     item.setAttribute("label", user[3]);
     item.setAttribute("id", user[0]);
     item.setAttribute("flex", "1");
@@ -1020,7 +1047,7 @@ function sendMsg(event) {
 
             
 
-            alert (tab.selectedItem.id.substring(3,50));
+            //alert (tab.selectedItem.id.substring(3,50));
             var aMsg = new JSJaCMessage();
             aMsg.setTo(receiver);
             aMsg.setBody(textEntry.value);
@@ -1045,7 +1072,7 @@ function sendMsg(event) {
             var msg = textEntry.value + "\n";
             var login = keepLogin(myjid);
             frame.contentDocument.write("<p><u><FONT COLOR='#FF6633'>" + html_escape(login) + "</u>" +   " : " + "</font>");
-            frame.contentDocument.write(html_escape(msg) + "</p>");
+            frame.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.outgoingmessagecolor") + ">" + html_escape(msg) +"</font>" + "</p>");
       		frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
             textEntry.value = '';
             // alert (aMsg.xml());
@@ -1521,7 +1548,7 @@ function handleMessage(aJSJaCPacket) {
 	if (!deployedGUI) {
         extendGUI();
         deployedGUI = true;
-        self.resizeTo(400, 300);
+        self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
     }
     window.getAttention();
 
@@ -1533,7 +1560,7 @@ function handleMessage(aJSJaCPacket) {
     var name = keepLogin(origin);
     var jid = cutResource(origin);
 	var roomUserName = origin.substring(origin.indexOf("/")+ 1,origin.length); 
-
+	//alert(origin);
     //alert ("tab" + aJSJaCPacket.getFrom());
 
 
@@ -1567,6 +1594,8 @@ function handleMessage(aJSJaCPacket) {
         //text.setAttribute("height", "400");
         //text.setAttribute("width", "380");
         //text.setAttribute("readonly", "true");
+        text.setAttribute("wait-cursor","false");
+        text.setAttribute("class","box-inset");
         text.setAttribute("flex", "1");
         tabpanel.appendChild(text);
     }
@@ -1576,8 +1605,11 @@ function handleMessage(aJSJaCPacket) {
 	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
     //textToWrite.value += name + ": " + aJSJaCPacket.getBody() + "\n";
-    textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
-    textToWrite.contentDocument.write(html_escape(aJSJaCPacket.getBody() + "\n") + "</p>");
+    if(origin.match(pattern))
+    		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
+    else
+    		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(name) + "</u>" +   " : " + "</font>");
+    textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +html_escape(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
     textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
    } catch(e) {alert ("Dans handle messsage" + e);}
@@ -1671,7 +1703,7 @@ function handlePresence(aJSJaCPacket) {
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
         if (item)
-        item.setAttribute("image", "chrome://messenger/content/img/online.png");
+        item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "online.png");
         user [4] = "online.png";
     }
     	
@@ -1691,12 +1723,12 @@ function handlePresence(aJSJaCPacket) {
            		 //alert (type.substring(0,2));
            		 if (type.substring(0, 2) == "un") {
            		 if (item)
-                item.setAttribute("image", "chrome://messenger/content/img/offline.png");
+                item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "offline.png");
                 user [4] = "offline.png";
            			 }
             if (type.substring(0, 2) == "in") {
             if (item)
-                item.setAttribute("image", "chrome://messenger/content/img/invisible.png");
+                item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "invisible.png");
                 user [4] = "invisible.png";
            		 }
         			}
@@ -1707,17 +1739,17 @@ function handlePresence(aJSJaCPacket) {
             //alert (show.substring(0,2));
             if (show.substring(0, 2) == "xa") {
             if (item)
-                item.setAttribute("image", "chrome://messenger/content/img/xa.png");
+                item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "xa.png");
                 user [4] = "xa.png";
             }
             if (show.substring(0, 2) == "dn") {
             if (item)
-                item.setAttribute("image", "chrome://messenger/content/img/dnd.png");
+                item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "dnd.png");
                 user [4] = "dnd.png";
             }
             if (show.substring(0, 2) == "aw") {
             if (item)
-                item.setAttribute("image", "chrome://messenger/content/img/away.png");
+                item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "away.png");
                 user [4] = "away.png";
             }
         }

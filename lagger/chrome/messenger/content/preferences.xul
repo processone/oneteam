@@ -12,15 +12,22 @@
             title="Preferences">
             
 <script type="application/x-javascript" src="JavaScript/preferences.js"/>
-    
+
+
     <prefpane id="general" label="General">
 
         <preferences>
 
-            <preference id="chat.connection.host"
-                        name="chat.connection.host" type="string"/>
-            <preference id="chat.connection.port"
-                        name="chat.connection.port" type="int"/>
+            <preference id="chat.general.showavatars"
+                        name="chat.general.showavatars" type="bool"/>
+            <preference id="chat.roster.showoffline"
+                        name="chat.roster.showoffline" type="bool"/>
+            <preference id="chat.general.keepproperties"
+                        name="chat.general.keepproperties" type="bool"/>
+            <preference id="chat.general.iconsetdir"
+                        name="chat.general.iconsetdir" type="string"/>
+            <preference id="chat.roster.sortbystatus"
+                        name="chat.roster.sortbystatus" type="bool"/>
           
         </preferences>
 
@@ -33,7 +40,7 @@
                  <row>
                     <label value="General options : " control="nickname"/>
                     <checkbox id="sort status" label="Sort contacts by status"
-                              preference="chat.gui.showseparatedwindows"/>
+                              preference="chat.roster.sortbystatus"/>
                 </row>
                
                <row>
@@ -45,14 +52,14 @@
 				<row>
                     <spacer/>
                     <checkbox id="showemptygroup" label="Mask empty groups"
-                              preference="chat.messagebox.showavatars"/>
+                              preference="chat.general.showavatars"/>
                               
                 </row>
                 
                 <row>
                     <spacer/>
                     <checkbox id="saveguiproperties" label="Keep interface properties"
-                              preference="chat.messagebox.showavatars"/>
+                              preference="chat.general.keepproperties"/>
                 </row>
                 
                 <spacer height="20"/>
@@ -61,12 +68,12 @@
 					<label value="Status inconset : " control="nickname"/>
                     
                     <menulist label="Available" id="status"  height="25" maxwidth="120" flex="1" 
-                        src="img/online.png">
+                        preference="chat.general.iconsetdir" oncommand="window.opener.refreshList();">
                 			<menupopup flex="1">
-                   			<menuitem class="menuitem-iconic icon-away" label="gajim"
-                              oncommand="changeStatus('away');"/>
-                    			<menuitem class="menuitem-iconic" label="ampoule" selected="true"
-                              oncommand="changeStatus('chat');"/>
+                   			<menuitem class="menuitem-iconic" label="gajim" value="dcraven/"
+                              oncommand=""/>
+                    			<menuitem class="menuitem-iconic" label="ampoule" selected="true" value="crystal/"
+                              oncommand=""/>
                  
                		    </menupopup>
             			</menulist>
@@ -80,8 +87,20 @@
 
     <prefpane id="editor" label="Editor">
         <preferences>
-            <preference id="chat.muc.nickname"
-                        name="chat.muc.nickname" type="string"/>
+            <preference id="chat.editor.incomingmessagecolor"
+                        name="chat.editor.incomingmessagecolor" type="string"/>
+            <preference id="chat.editor.outgoingmessagecolor"
+                        name="chat.editor.outgoingmessagecolor" type="string"/>
+            <preference id="chat.editor.statusmessagecolor"
+                        name="chat.editor.statusmessagecolor" type="string"/>
+            <preference id="chat.editor.urlmessagecolor"
+                        name="chat.editor.urlmessagecolor" type="string"/>
+            <preference id="chat.editor.consoleinmessagecolor"
+                        name="chat.editor.consoleinmessagecolor" type="string"/>
+            <preference id="chat.editor.consoleoutmessagecolor"
+                        name="chat.editor.consoleoutmessagecolor" type="string"/>
+            <preference id="chat.editor.font"
+                        name="chat.editor.font" type="string"/>
         </preferences>
 
         <grid flex="1" id="grid-connection">
@@ -93,35 +112,49 @@
 
                 <row>
                     <label  value="Incoming message : " control="nickname"/>
-                    <colorpicker id="test" type="button" color="#996633" height="25" maxwidth="50" onchange="test();"/>
+                    <colorpicker id="test" type="button" color="#996633" height="25" maxwidth="50" preference="chat.editor.incomingmessagecolor" onchange="test();"/>
                 </row>
                 
-                <spacer height="20"/>
+                <spacer height="10"/>
                 
                  <row>
                     <label value="Outgoing message : " control="nickname"/>
-                    <colorpicker type="button" color="#330000" height="25" maxwidth="50"/>
+                    <colorpicker type="button" color="#330000" height="25" maxwidth="50" preference="chat.editor.outgoingmessagecolor"/>
                 </row>
                 
-                <spacer height="20"/>
+                <spacer height="10"/>
                 
                  <row>
                     <label value="Status Message : " control="nickname"/>
-                    <colorpicker type="button" color="#66FF99" height="25" maxwidth="50"/>
+                    <colorpicker type="button" color="#66FF99" height="25" maxwidth="50" preference="chat.editor.statusmessagecolor"/>
                 </row>
                 
-                <spacer height="20"/>
+                <spacer height="10"/>
                 
                  <row>
                     <label value="URL : " control="nickname"/>
-                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50"/>
+                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.urlmessagecolor"/>
+                </row>
+				
+				<spacer height="10"/>
+				
+				<row>
+                    <label value="Incoming console query : " control="nickname"/>
+                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleinmessagecolor"/>
+                </row>
+                
+                <spacer height="10"/>
+                
+                <row>
+                    <label value="Outgoing console query : " control="nickname"/>
+                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleoutmessagecolor"/>
                 </row>
 
-				<spacer height="20"/>
+				<spacer height="10"/>
 				
 				<row>
                     <label value="Font : " control="nickname"/>
-                    <button type="select-font" height="25" maxwidth="50"/>
+                    <button type="select-font" height="25" maxwidth="50" preference="chat.editor.font"/>
                 </row>
             </rows>
 

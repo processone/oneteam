@@ -8,7 +8,7 @@ pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 
 
-pref("browser.preferences.animateFadeIn", false);
+pref("browser.preferences.animateFadeIn", true);
 pref("browser.preferences.instantApply", false);
 
 
@@ -17,6 +17,7 @@ pref("xpinstall.dialog.progress.skin", "chrome://mozapps/content/extensions/exte
 pref("xpinstall.dialog.progress.chrome", "chrome://mozapps/content/extensions/extensions.xul?type=extensions");
 pref("xpinstall.dialog.progress.type.skin", "Extension:Manager-themes");
 pref("xpinstall.dialog.progress.type.chrome", "Extension:Manager-extensions");
+
 pref("extensions.update.enabled", true);
 pref("extensions.update.interval", 86400);
 pref("extensions.dss.enabled", false);
@@ -50,10 +51,24 @@ pref("chat.connection.overridehost", false);
 
 pref("chat.roster.showoffline", false);
 pref("chat.roster.filtered", false);
-pref("chat.roster.group", "");
-pref("chat.roster.filtergroups", "");
+pref("chat.roster.showemptygroup", true);
+pref("chat.roster.filtergroups", false);
+pref("chat.roster.sortbystatus", false);
 
-pref("chat.messagebox.showavatars", false);
-pref("chat.gui.showseparatedwindows",false);
-pref("chat.advanced.jabberinfo", false);
+
 pref("chat.muc.nickname", "");
+
+pref("chat.general.showavatars", false);
+pref("chat.general.showseparatedwindows",false);
+
+pref("chat.general.keepproperties", false);
+pref("chat.general.iconsetdir", "crystal/");
+
+pref("chat.editor.incomingmessagecolor", "");
+pref("chat.editor.outgoingmessagecolor", "");
+pref("chat.editor.statusmessagecolor", "");
+pref("chat.editor.urlmessagecolor", "");
+pref("chat.editor.consoleinmessagecolor", "");
+pref("chat.editor.consoleoutmessagecolor", "");
+
+pref("chat.editor.font", "");

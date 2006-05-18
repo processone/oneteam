@@ -36,7 +36,7 @@ function doLogin(event) {
     this.base = gPrefService.getCharPref("chat.connection.base");
     this.httpbase = "http://" + this.server + ":" + this.port + "/" + this.base + "/";
     
-    alert(this.httpbase);
+    //alert(this.httpbase);
     // Write data properties in file
    /* savePrefs({
         registerLogin : true,
