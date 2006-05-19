@@ -1,0 +1,11 @@
+<!ENTITY Settings.ssl "Use SSL">
+<!ENTITY Settings.port "Port : ">
+<!ENTITY Settings.host "Host : ">
+<!ENTITY Settings.base "Base : ">
+<!ENTITY Settings.nickname "Default nickname : ">
+<!ENTITY Settings.separatedwin "Separate chat windows">
+<!ENTITY Settings.maskoff "Mask offline users">
+<!ENTITY Settings.maskavatars "Mask avatars">
+<!ENTITY Settings.priority "Priority : ">
+<!ENTITY Settings.resource "Resource : ">
+<!ENTITY Settings.showpwdmanager "Show password manager">
