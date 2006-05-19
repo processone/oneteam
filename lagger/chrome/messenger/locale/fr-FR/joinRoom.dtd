@@ -3,3 +3,5 @@
 <!ENTITY Room.pass "Mot de Passe">
 <!ENTITY Room.server "Serveur">
 <!ENTITY Room.room "Room">
+<!ENTITY Room.join "Joindre">
+<!ENTITY Room.cancel "Annuler">

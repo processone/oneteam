@@ -24,6 +24,7 @@ var cons;
 var server;
 var port;
 var base;
+var infojid;
 
 
 var deployedGUI = false;
@@ -552,6 +553,7 @@ function getRoster(iq) {
 
 
     try {
+    		
         showUsers(users);
         
         //alert(iq.xml());
@@ -564,7 +566,8 @@ function getRoster(iq) {
     catch(e) {
         alert(e);
     }
-    
+    //if (!gPrefService.getCharPref("chat.roster.showOffline"))
+         	//hideDecoUsers();
 }
 
 
@@ -855,6 +858,38 @@ function sortRosterByStatus (){
 		}
 }
 
+
+// Function to publish its avatar via vcard
+function publishAvatar(){
+
+/*con.sendStr('<iq from="juliet@capulet.com" type="set" id="vc1"><vCard xmlns="vcard-temp">
+    <BDAY>1476-06-09</BDAY>
+    <ADR>
+      <CTRY>Italy</CTRY>
+      <LOCALITY>Verona</LOCALITY>
+      <HOME/>
+    </ADR>
+    <NICKNAME/>
+    <N><GIVEN>Juliet</GIVEN><FAMILY>Capulet</FAMILY></N>
+    <EMAIL>jcapulet@shakespeare.lit</EMAIL>
+    <PHOTO>
+      <TYPE>image/jpeg</TYPE>
+      <BINVAL>
+        Base64-encoded-avatar-file-here!
+      </BINVAL>
+    </PHOTO>
+  </vCard>
+</iq>');*/
+}
+
+// Function to retrieve avatar
+function retrieveAvatar(){
+
+}
+
+
+
+
 // Function to empty the contact's list
 function emptyList() {
 	//alert("Empylist");
@@ -907,6 +942,9 @@ function showUser(user) {
     liste.appendChild(item);*/    
 
 }
+
+
+
 
 
 // Function to send disco room items request
@@ -1438,6 +1476,16 @@ function launchExtWindow(){
  "ext", "chrome,dialog,centerscreen,resizable");
  
  }
+ 
+ // function to edit your personal info
+function launchPersoInfoWindow(){
+var liste = document.getElementById("liste_contacts");
+
+	infojid = liste.selectedItem.id;
+	alert (infojid);
+	window.open("chrome://messenger/content/info.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
+	
+}
 
 
 // Function to add a contact
@@ -1604,7 +1652,12 @@ function handleMessage(aJSJaCPacket) {
 	
 	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
-    //textToWrite.value += name + ": " + aJSJaCPacket.getBody() + "\n";
+    
+    if (aJSJaCPacket.getBody() == null)
+    		showState(aJSJaCPacket);
+    
+    	else{
+    
     if(origin.match(pattern))
     		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
     else
@@ -1612,6 +1665,7 @@ function handleMessage(aJSJaCPacket) {
     textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +html_escape(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
     textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
+   	}
    } catch(e) {alert ("Dans handle messsage" + e);}
 }
 

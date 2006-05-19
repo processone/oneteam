@@ -21,7 +21,10 @@ function addInConsole(msg) {
      // TODO: Use well formed HTML by directly manipulating the DOM tree.
      //if(!frame.contentDocument.textContent)
      //       frame.contentDocument.write("<html><head><link rel='stylesheet' type='text/css' href='chrome://chat/skin/chat.css'/></head><body>");
-      frame.contentDocument.write("<p>" + html_escape(msg) + "</p>");
+      if(msg.substring(0,2) == "IN")
+      frame.contentDocument.write("<p>" + "<FONT COLOR=" + gPrefService.getCharPref("chat.editor.consoleinmessagecolor") + ">" + html_escape(msg) + "</font>" + "</p>");
+      else
+      frame.contentDocument.write("<p>"+ "<FONT COLOR=" + gPrefService.getCharPref("chat.editor.consoleoutmessagecolor") + ">" + html_escape(msg) + "</font>" + "</p>");
       frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
     
 

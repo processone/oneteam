@@ -2,6 +2,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/settings.css" type="text/css"?>
 
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/settings.dtd">
+
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             title="Settings" id="settings" onload="initialize()">
  
@@ -46,11 +48,11 @@
             <rows id="rows-connection">
                 <row>
                     <spacer/>
-                    <checkbox id="ssl" label="Use SSL" preference="chat.connection.ssl"
+                    <checkbox id="ssl" label="&Settings.ssl;" preference="chat.connection.ssl"
                               onclick="if(this.checked) { port.value = 5280;} else {port.value = 5223; }"/>
                 </row>
                 <row>
-                    <label value="Port: " control="port"/>
+                    <label value="&Settings.port;" control="port"/>
                     <textbox id="port" preference="chat.connection.port"/>
                 </row>
 
@@ -58,19 +60,14 @@
                 <spacer height="20"/>
 
                 <row>
-                    <label value="Host: " control="host"/>
-                    <checkbox id="jidhost" label="Override host" preference="chat.connection.overridehost"
-                              onclick="document.getElementById('hostbox').hidden = this.checked;"/>
-                </row>
-                <row id="hostbox">
-                    <spacer/>
+                    <label value="&Settings.host;" control="host"/>
                     <textbox id="host" preference="chat.connection.host"/>
                 </row>
 
                 <spacer height="20"/>
 
                 <row>
-                    <label value="Base: " control="base"/>
+                    <label value="&Settings.base;" control="base"/>
                     <textbox id="base" preference="chat.connection.base"/>
                 </row>
 
@@ -95,7 +92,7 @@
             <rows id="rows-muc">
 
                 <row>
-                    <label value="Default nickname: " control="nickname"/>
+                    <label value="&Settings.nickname;" control="nickname"/>
                     <textbox id="nickname" preference="chat.muc.nickname"/>
                 </row>
 
@@ -115,19 +112,19 @@
 
                 <row>
                     <spacer/>
-                    <checkbox id="windows" label="Show separated chat windows"
+                    <checkbox id="windows" label="&Settings.separatedwin;"
                               preference="chat.gui.showseparatedwindows"/>
                 </row>
                
                <row>
                     <spacer/>
-                    <checkbox id="showoffline" label="Always mask offline users"
+                    <checkbox id="showoffline" label="&Settings.maskoff;"
                               preference="chat.roster.showoffline"/>
                 </row>
                 
 				<row>
                     <spacer/>
-                    <checkbox id="showavatars" label="Mask users avatars"
+                    <checkbox id="showavatars" label="&Settings.maskavatars;"
                               preference="chat.messagebox.showavatars"/>
                 </row>
             </rows>
@@ -146,14 +143,14 @@
             <rows id="rows-connection">
 
                 <row>
-                    <label value="Priority: " control="priority"/>
+                    <label value="&Settings.priority;" control="priority"/>
                     <textbox id="priority" preference="chat.connection.priority"/>
                 </row>
                 
 				<spacer height="20"/>
 				
 				<row>
-                    <label value="Resource: " control="resource"/>
+                    <label value="&Settings.resource;" control="resource"/>
                     <textbox id="resource" preference="chat.connection.resource"/>
                 </row>
                 
@@ -161,7 +158,7 @@
                 
                 <row>
                     <spacer/>
-                    <button label="Show passwordmanager"
+                    <button label="&Settings.showpwdmanager;"
                             oncommand="window.openDialog('chrome://passwordmgr/content/passwordManager.xul','', null);"/>
                 </row>
                 

@@ -24,8 +24,7 @@
         
         
        
-        <!-- <listbox id="discolist" flex ="1">
-  </listbox> -->
+        
   <tree flex ="1">
   <treecols>
        <treecol id="service" flex="2"/>

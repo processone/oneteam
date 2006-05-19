@@ -7,6 +7,7 @@
 
 <!ENTITY menuConfig.configuration "Config">
 <!ENTITY menuConfig.plugins "Plugins">
+<!ENTITY menuConfig.themes "Themes">
 <!ENTITY menuConfig.preferences "Preferences">
 
 <!ENTITY menuAide.Aide "Help">
@@ -25,6 +26,9 @@
 <!ENTITY listitemcontextroom.InsertRoom "Enter the room">
 <!ENTITY listitemcontextroom.Remove "Remove the room">
 <!ENTITY listitemcontextroom.Rename "Rename the room">
+
+<!ENTITY rosterContext.useFullNames "Use full names">
+<!ENTITY rosterContext.maskOffline "Mask offline users">
 
 <!ENTITY tabcontext.Close "Close Tab">
 <!ENTITY tabcontext.CloseAll "Close All Tabs">

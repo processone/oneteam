@@ -3,7 +3,7 @@
 
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/joinRoom.dtd">
 
-<window id="Login"
+<window id="Room"
         title="Join Room"
         orient="horizontal"
         onload="loadServers();"
@@ -56,10 +56,10 @@
 
         <hbox>
             <spacer flex="1"/>
-            <button label="Join" oncommand="createInstantRoom();"/>
+            <button label="&Room.join;" oncommand="createInstantRoom();"/>
 
             <spacer flex="1"/>
-            <button label="Cancel" oncommand="self.close();"/>
+            <button label="&Room.cancel;" oncommand="self.close();"/>
         </hbox>
     </groupbox>
 

@@ -49,7 +49,7 @@
                 <menu id="configuration-menu" label="&menuConfig.configuration;">
                     <menupopup id="config-popup">
                         <menuitem label="&menuConfig.plugins;" oncommand="launchExtWindow ();"/>
-                        <menuitem label="Themes" oncommand="launchThemeWindow ();"/>
+                        <menuitem label="&menuConfig.themes;" oncommand="launchThemeWindow ();"/>
                         <menuitem label="&menuConfig.preferences;" oncommand="launchPreferences();"/>
 
                     </menupopup>
@@ -79,7 +79,7 @@
 
                 <toolbarseparator id="s2">
                     <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="openDisco();"/>
-                    <toolbarbutton id="Help" label="" image="img/General/help.gif" oncommand=""/>
+                    <toolbarbutton id="EditMyInfos" label="" image="img/General/help.gif" oncommand="launchPersoInfoWindow();"/>
                 </toolbarseparator>
 
                 <toolbarseparator id="s3"/>
@@ -95,9 +95,9 @@
             </listbox>
             
             <popup id="listcontext" >
-			<menuitem type="checkbox" label="Use full names" oncommand="cmd_usefullname"/>
+			<menuitem type="checkbox" label="&rosterContext.useFullNames;" oncommand="cmd_usefullname"/>
 			<menuseparator/>
-			<menuitem type="checkbox" label="Mask offline users" oncommand="hideDecoUsers();"/>
+			<menuitem type="checkbox" label="&rosterContext.maskOffline;" oncommand="hideDecoUsers();"/>
 			</popup>
              <!--<tree height="400" width="150" maxwidth="200" minwidth="140"  flex="1" id="liste_contacts">
             <treecols>
@@ -118,7 +118,7 @@
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
                     <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
                     <menuseparator/>
-                    <menuitem label="&listitemcontext.Infos;" oncommand="getInfos();"/>
+                    <menuitem label="&listitemcontext.Infos;" oncommand="launchPersoInfoWindow();"/>
                 </popup>
             </popupset>
 

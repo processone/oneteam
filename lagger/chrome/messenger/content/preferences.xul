@@ -154,7 +154,14 @@
 				
 				<row>
                     <label value="Font : " control="nickname"/>
-                    <button type="select-font" height="25" maxwidth="50" preference="chat.editor.font"/>
+                    
+                		<menulist id="fontchooser"  height="25" maxwidth="150" flex="1" 
+                         preference="chat.editor.font" oncommand="">
+                			<menupopup flex="1" id="popfont">
+                 
+                 
+               		    </menupopup>
+            			</menulist>	
                 </row>
             </rows>
 

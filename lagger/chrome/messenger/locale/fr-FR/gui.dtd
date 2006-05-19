@@ -7,6 +7,7 @@
 
 <!ENTITY menuConfig.configuration "Config">
 <!ENTITY menuConfig.plugins "Plugins">
+<!ENTITY menuConfig.themes "Themes">
 <!ENTITY menuConfig.preferences "Preferences">
 
 <!ENTITY menuAide.Aide "Aide">
@@ -25,6 +26,9 @@
 <!ENTITY listitemcontextroom.InsertRoom "Entrer dans le salon">
 <!ENTITY listitemcontextroom.Remove "Supprimer le salon">
 <!ENTITY listitemcontextroom.Rename "Renommer le salon">
+
+<!ENTITY rosterContext.useFullNames "Afficher les noms">
+<!ENTITY rosterContext.maskOffline "Masquer les deconnectes">
 
 
 <!ENTITY tabcontext.Close "Fermer l'onglet">

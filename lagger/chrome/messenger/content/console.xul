@@ -25,9 +25,7 @@
 
 		
       <html:iframe id="textconsole" height="250" width="1024" wait-cursor="false"/>
-       <!--  <textbox id="textconsole" style="color: #000066;" multiline="true" height="250" width="1024" flex="1"
-                 readonly="true"/>-->
-                 <!--<scrollbar id="scroll" curpos="0" maxpos="0"/> -->
+       
         <spacer flex="1"/>
         
         <button label="&Console.clear;" oncommand="clearConsole();" flex="1"/>
