@@ -27,6 +27,7 @@ var base;
 var infojid;
 
 
+
 var deployedGUI = false;
 var console = false;
 var hideDecoUser = false;
@@ -46,15 +47,39 @@ function openConversation(event) {
 
     if (document.getElementById("tab" + liste.selectedItem.id) == null) {
 
+		var vboxpanel = document.createElement("vbox");
+		var hboxhead = document.createElement("hbox");
 		var hbox = document.createElement("hbox");
+      	
       	hbox.setAttribute("flex", "1");
         hbox.setAttribute("id", "panel-roster" + "tab"+ liste.selectedItem.id);
+        
+        vboxpanel.setAttribute("id", "vboxpanel"+ liste.selectedItem.id);
+        vboxpanel.setAttribute("flex", "1");
+        
+        hboxhead.setAttribute("id", "head" + "tab"+ liste.selectedItem.id);
+        
+        
+        var imghead = document.createElement("image");
+        imghead.setAttribute("id", "imghead"+ liste.selectedItem.id);
+        imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/online.png");
+        
+        var namehead = document.createElement("label");
+        namehead.setAttribute("value", keepLogin(liste.selectedItem.id));
+        
+        var writestate = document.createElement("label");
+        writestate.setAttribute("id", "writestate"+ liste.selectedItem.id);
+        
+        hboxhead.appendChild (imghead);
+        hboxhead.appendChild (namehead);
+        hboxhead.appendChild (writestate);
 		
         var tabs = document.getElementById("tabs1");
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + liste.selectedItem.id);
         tab.setAttribute("label", (liste.selectedItem.id).substring(0, (liste.selectedItem.id).indexOf("@")));
         tab.setAttribute("context", "tabcontext");
+        tab.setAttribute("onfocus","tabfocused()");
 
         var childNodes = tabs.childNodes;
         for (var i = 0; i < childNodes.length; i++) {
@@ -71,10 +96,11 @@ function openConversation(event) {
         tabpanel.setAttribute("flex", "5");
         tabpanel.setAttribute("height", "400");
         tabpanel.setAttribute("width", "400");
-        tabpanel.appendChild(hbox);
+        tabpanel.appendChild(vboxpanel);
         tabspanel.appendChild(tabpanel);
         
-       
+       vboxpanel.appendChild(hboxhead);
+       vboxpanel.appendChild(hbox);
         
         tab.setAttribute("selected", "true");
         var tabbox = document.getElementById("tabbox");
@@ -639,7 +665,8 @@ function closeTab() {
     var childNodes = tabs.childNodes;
     
     //alert (tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
-
+		notifyGone(tab.id.indexOf("b") + 1,tab.id.length);
+		
     if (childNodes.length == 1){
     		if (tab.getAttribute("context") == "tabroomcontext")
         exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
@@ -1065,9 +1092,12 @@ function sendMsg(event) {
 	var textEntry = document.getElementById("textentry");
 
 	try {
-
-	 //notifyWriting(receiver);
-
+	
+	
+	 notifyWriting(receiver);
+	 //TODO Calculate interval between 2 method call
+	 notifyPause(receiver);
+	 
     if (event.shiftKey)
         ;
     else if (event.keyCode == 13) {
@@ -1090,6 +1120,9 @@ function sendMsg(event) {
             aMsg.setTo(receiver);
             aMsg.setBody(textEntry.value);
             aMsg.setType('chat');
+            var active = aMsg.getNode().appendChild(aMsg.getDoc().createElement('active'));
+    			active.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
+            
             con.send(aMsg);
             
             }
@@ -1379,16 +1412,108 @@ function receiveRoomMessage (){
 ;
 }
 
+// Function to make pause
+function pause(numberMillis)
+{
+var now = new Date();
+var exitTime = now.getTime() + numberMillis;
+while (true)
+{
+now = new Date();
+if (now.getTime() > exitTime)
+return;
+}
+} 
+
+// Function which send pause notification
+function notifyPause(jid) {
+   var aMsg = new JSJaCMessage();
+    aMsg.setTo(jid);
+    aMsg.setType('chat');
+    var pause = aMsg.getNode().appendChild(aMsg.getDoc().createElement('paused'));
+    pause.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
+   
+
+    con.send(aMsg);
+     if (console) {
+        cons.addInConsole("OUT : " + aMsg.xml() + "\n");
+    }
+}
+
+
+// Function which is called when tab is focused
+function tabfocused(){
+
+	var tabs = document.getElementById("tabs1");
+	
+	var childNodes = tabs.childNodes;
+	
+for (var i = 0; i < childNodes.length; i++) {
+  	var child = childNodes[i];
+  	var jid = child.id.substring(3, 50);
+	notifyInactive(jid);
+}
+
+	// notifyActive Current tab 
+    var jid = tabs.selectedItem.id.substring(3, 50);
+	notifyActive(jid);
+} 
+
+// Function which send active notification
+function notifyActive(jid) {
+   var aMsg = new JSJaCMessage();
+    aMsg.setTo(jid);
+    aMsg.setType('chat');
+    var active = aMsg.getNode().appendChild(aMsg.getDoc().createElement('active'));
+    active.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
+   
+
+    con.send(aMsg);
+     if (console) {
+        cons.addInConsole("OUT : " + aMsg.xml() + "\n");
+    }
+}
+
+// Function which send inactive notification
+function notifyInactive(jid) {
+   var aMsg = new JSJaCMessage();
+    aMsg.setTo(jid);
+    aMsg.setType('chat');
+    var inactive = aMsg.getNode().appendChild(aMsg.getDoc().createElement('inactive'));
+    inactive.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
+   
+
+    con.send(aMsg);
+     if (console) {
+        cons.addInConsole("OUT : " + aMsg.xml() + "\n");
+    }
+}
+
+
+// Function which send gone notification
+function notifyGone(jid) {
+   var aMsg = new JSJaCMessage();
+    aMsg.setTo(jid);
+    aMsg.setType('chat');
+    var gone = aMsg.getNode().appendChild(aMsg.getDoc().createElement('gone'));
+    gone.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
+   
+
+    con.send(aMsg);
+     if (console) {
+        cons.addInConsole("OUT : " + aMsg.xml() + "\n");
+    }
+}
 
 
 // Function which send writing notification
 function notifyWriting(jid) {
     var aMsg = new JSJaCMessage();
     aMsg.setTo(jid);
-    aMsg.setFrom(myjid);
-    var x = aMsg.appendChild(aMsg.getDoc().createElement('x'));
-    item.setAttribute('xmlns', 'jabber:x:event');
-    var composing = x.appendChild(aMsg.getDoc().createElement('composing'));
+    aMsg.setType('chat');
+    var compo = aMsg.getNode().appendChild(aMsg.getDoc().createElement('composing'));
+    compo.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
+   
 
     con.send(aMsg);
      if (console) {
@@ -1483,7 +1608,7 @@ var liste = document.getElementById("liste_contacts");
 
 	infojid = liste.selectedItem.id;
 	alert (infojid);
-	window.open("chrome://messenger/content/info.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
+	window.open("chrome://messenger/content/info.xul", "", "chrome,titlebar,toolbar,centerscreen,modal");
 	
 }
 
@@ -1598,7 +1723,7 @@ function handleMessage(aJSJaCPacket) {
         deployedGUI = true;
         self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
     }
-    window.getAttention();
+    //window.getAttention();
 
     if (console) {
 
@@ -1669,6 +1794,24 @@ function handleMessage(aJSJaCPacket) {
    } catch(e) {alert ("Dans handle messsage" + e);}
 }
 
+// Function to show the writing state 
+function showState(aJSJaCPacket){
+ 
+ 	var writestate = document.getElementById("writestate" + cutResource(aJSJaCPacket.getFrom()));
+ 	if(aJSJaCPacket.getNode().getElementsByTagName('composing'))
+		writestate.setAttribute("value","is composing a message...");
+	else if(aJSJaCPacket.getNode().getElementsByTagName('active'))
+		writestate.setAttribute("value","is active...");
+	else if(aJSJaCPacket.getNode().getElementsByTagName('inactive'))
+		writestate.setAttribute("value","is doing something else...");
+	else if(aJSJaCPacket.getNode().getElementsByTagName('paused'))
+		writestate.setAttribute("value","is in pause...");
+	else if(aJSJaCPacket.getNode().getElementsByTagName('gone'))
+		writestate.setAttribute("value","is gone...");
+		
+		pause(100);
+		writestate.setAttribute('value','');
+}
 
 // Callback on changing presence status Function
 function handlePresence(aJSJaCPacket) {
@@ -1779,6 +1922,11 @@ function handlePresence(aJSJaCPacket) {
            		 if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "offline.png");
                 user [4] = "offline.png";
+                		if (hideDecoUser){
+                			this.emptyList();
+   						this.showUsers(users);
+						this.refreshList();
+						}
            			 }
             if (type.substring(0, 2) == "in") {
             if (item)
