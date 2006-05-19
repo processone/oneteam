@@ -665,7 +665,7 @@ function closeTab() {
     var childNodes = tabs.childNodes;
     
     //alert (tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
-		notifyGone(tab.id.indexOf("b") + 1,tab.id.length);
+		notifyGone(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length));
 		
     if (childNodes.length == 1){
     		if (tab.getAttribute("context") == "tabroomcontext")
@@ -1797,6 +1797,7 @@ function handleMessage(aJSJaCPacket) {
 // Function to show the writing state 
 function showState(aJSJaCPacket){
  
+ 	alert("writestate" + cutResource(aJSJaCPacket.getFrom()));
  	var writestate = document.getElementById("writestate" + cutResource(aJSJaCPacket.getFrom()));
  	if(aJSJaCPacket.getNode().getElementsByTagName('composing'))
 		writestate.setAttribute("value","is composing a message...");
