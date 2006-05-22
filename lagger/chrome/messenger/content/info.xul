@@ -25,7 +25,7 @@
        <hbox>
        
        <vbox id="left">
-       <image id="avatar" src="img/Amedee.png"/>
+       <image id="avatar"/>
        </vbox>
        
        <vbox id="right">

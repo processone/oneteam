@@ -670,7 +670,7 @@ function closeTab() {
     var liste = document.getElementById("liste_contacts");
 
     var tabs = document.getElementById("tabs1");
-    var tab = document.getElementById(tabs.selectedItem.id);
+    var tab = tabs.selectedItem;
     var index = tabs.selectedIndex;
 	
     var childNodes = tabs.childNodes;
@@ -682,18 +682,19 @@ function closeTab() {
 		notifyGone(jid);
 		
     if (childNodes.length == 1){
+   
     		if (tab.getAttribute("context") == "tabroomcontext")
         exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
    		 reduceGUI();
     		
         }
     else {
+    		var child;
     
-    		if (tabs.selectedIndex == 0)
-    			
-    			var child = childNodes[tabs.selectedIndex++];
+    		if (tabs.selectedIndex == 0)	
+    			child = childNodes[tabs.selectedIndex++];
     		else 
-    			 var child = childNodes[tabs.selectedIndex--];
+    			child = childNodes[tabs.selectedIndex--];
 
 
         tabs.removeChild(tab);
@@ -720,7 +721,7 @@ function closeTab() {
     }
     
     
-    //} catch (e) {alert(" In closeTab" + e);}
+   // } catch (e) {alert(" In closeTab" + e);}
 }
 
 
@@ -1328,7 +1329,7 @@ function getRoomRoster(aPresence) {
         var from = aPresence.getFrom().substring(aPresence.getFrom().indexOf('/') + 1);
 		
         //alert("jabber from:" + aPresence.getFrom() + ", from:" + from);
-        alert (myRoomNick);
+        //alert (myRoomNick);
 
 		if (myRoomNick)
 		from = myRoomNick;
@@ -1487,17 +1488,19 @@ function notifyPause(jid) {
 function tabfocused(){
 
 	var tabs = document.getElementById("tabs1");
-	
+	var pattern = /conference/
 	var childNodes = tabs.childNodes;
 	
 for (var i = 0; i < childNodes.length; i++) {
   	var child = childNodes[i];
   	var jid = child.id.substring(3, 50);
+  	if (! jid.match(pattern))
 	notifyInactive(jid);
 }
 
 	// notifyActive Current tab 
     var jid = tabs.selectedItem.id.substring(3, 50);
+    if (! jid.match(pattern))
 	notifyActive(jid);
 } 
 
@@ -1907,6 +1910,7 @@ function handlePresence(aJSJaCPacket) {
   //alert (aJSJaCPacket.xml());
 	
 	try {
+		
 	
     for (i = 0; i < users.length; i++) {
         user = users[i];
