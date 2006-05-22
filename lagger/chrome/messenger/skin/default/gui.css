@@ -27,3 +27,9 @@ color : rgb(26%, 31%, 35%);
 menupopup > menuitem {
 list-style-image: url( "chrome://messenger/skin/images/away.png" );
 }
+
+.tabs-closebutton {  margin: 0px 4px;
+ padding: 3px 2px;
+ border: none;
+ list-style-image: url("chrome://messenger/content/img/close.png");
+}

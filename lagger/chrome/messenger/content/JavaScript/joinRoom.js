@@ -53,19 +53,11 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
         
        
 
-        /**var room = new Array(jid,"none",choosenGroup,login.value,"offline.png");
-
-      window.opener.users.push(user);
-
-
-      window.opener.emptyList();
-      window.opener.showUsers(window.opener.users);
-      window.opener.refreshList();
-      */
+      alert ("Je rentre dans performJoinRoom de joinROOm");
 
     }
     catch (e) {
-        alert(e);
+        alert("Dans performJoinRoom de joinRoom" + e);
     }
     
 

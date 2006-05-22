@@ -17,7 +17,7 @@ var mucs = new Array();
 var index = 0;
 var user;
 var room;
-var myRoomNick;
+var myRoomNick= gPrefService.getCharPref("chat.muc.nickname");
 var myjid;
 var myPresence;
 var cons;
@@ -62,7 +62,8 @@ function openConversation(event) {
         
         var imghead = document.createElement("image");
         imghead.setAttribute("id", "imghead"+ liste.selectedItem.id);
-        imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/online.png");
+        var status = findStatusByJid(liste.selectedItem.id);
+        imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + status);
         
         var namehead = document.createElement("label");
         namehead.setAttribute("value", keepLogin(liste.selectedItem.id));
@@ -75,6 +76,7 @@ function openConversation(event) {
         hboxhead.appendChild (writestate);
 		
         var tabs = document.getElementById("tabs1");
+        tabs.setAttribute("closebutton","true");
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + liste.selectedItem.id);
         tab.setAttribute("label", (liste.selectedItem.id).substring(0, (liste.selectedItem.id).indexOf("@")));
@@ -142,7 +144,7 @@ function openConversation(event) {
 		
 		hbox.appendChild(listboxRoom);
 		
-		myRoomNick = keepLogin(myjid);
+		//myRoomNick = keepLogin(myjid);
 		performJoinRoom (liste.selectedItem.id,myjid,'',myRoomNick);
 		
 		self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
@@ -369,6 +371,15 @@ function reduceGUI() {
 }
 
 
+// Function to find a status user by its jid
+function findStatusByJid(jid){
+
+	for (var i = 0 ; i < users.length ; i++){
+	if (users [i] [0] == jid)
+		return users [i] [4];
+		}
+}
+
 
 // Function to ask authorisation for adding contact
 function authorizeSeeContact(jid) {
@@ -472,7 +483,7 @@ try{
     index = 0;
     showRooms();
     }
-	catch (e){alert(e);}
+	catch (e){alert("get Room items" + e);}
 	}
 	
 	
@@ -518,7 +529,7 @@ try{
     }
     
      }
-	catch (e){alert(e);}
+	catch (e){alert("getRoomNames " + e);}
 
 	}
 
@@ -590,7 +601,7 @@ function getRoster(iq) {
        
     }
     catch(e) {
-        alert(e);
+        alert("getROster" + e);
     }
     //if (!gPrefService.getCharPref("chat.roster.showOffline"))
          	//hideDecoUsers();
@@ -663,9 +674,12 @@ function closeTab() {
     var index = tabs.selectedIndex;
 	
     var childNodes = tabs.childNodes;
+    var pattern = /conference/
+    var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
     
     //alert (tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
-		notifyGone(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length));
+		if (! jid.match(pattern))
+		notifyGone(jid);
 		
     if (childNodes.length == 1){
     		if (tab.getAttribute("context") == "tabroomcontext")
@@ -856,6 +870,11 @@ function showRoomUser (roomUser){
 	
 	var listeRoom = document.getElementById("liste_contacts_room" + tabs.selectedItem.id);
     var item = document.createElement("listitem");
+    
+    
+    if (roomUser[1] == keepLogin(myjid) || roomUser[1] == gPrefService.getCharPref("chat.muc.nickname"))
+    item.setAttribute("context", "itemcontextroomme");
+    else
     item.setAttribute("context", "itemcontextroomuser");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
@@ -866,6 +885,8 @@ function showRoomUser (roomUser){
  	
  	} catch (e) {alert(e);}
 }
+
+
 
 
 // Function to sort roster by status
@@ -1093,10 +1114,14 @@ function sendMsg(event) {
 
 	try {
 	
-	
+	 var pattern = /conference/
+    
+    // Message come from me
+    if (! receiver.match(pattern)){
 	 notifyWriting(receiver);
 	 //TODO Calculate interval between 2 method call
 	 notifyPause(receiver);
+	 }
 	 
     if (event.shiftKey)
         ;
@@ -1105,7 +1130,8 @@ function sendMsg(event) {
     
     if (tab.selectedItem.getAttribute('context') == 'tabroomcontext'){
 		sendRoomMessage (receiver);
-		//alert ("RoomChat" + receiver);
+		textEntry.value = '';
+		return;
 		}
 		else {
 
@@ -1164,7 +1190,7 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
         var aPresence = new JSJaCPresence();
         aPresence.setTo(wholeRoom + '/' + nick);
         aPresence.setXMLLang ('en');
-        //aPresence.setFrom(jid + "/Lagger");
+       
         
         /**var vcard = aPresence.getDoc().createElement('x');
         vcard.setAttribute('xmlns', 'vcard-temp:x:update');
@@ -1211,8 +1237,20 @@ function exitRoom(room){
 }
 
 
-// Function to change room nickname
-function changeRoomNickName (){
+
+
+// Function to change of room nickname
+function changeRoomNickname(newNick){
+
+		myRoomNick = newNick;
+ 		var tabs = document.getElementById("tabs1");
+ 		
+ 		var aPresence = new JSJaCPresence();
+        aPresence.setTo(tabs.selectedItem.id.substring(3,tabs.selectedItem.id.length) + "/" + newNick);
+        
+        con.send(aPresence,getRoomRoster);
+        
+       
 
 if (console) {
         cons.addInConsole("OUT : " + aPresence.xml() + "\n");
@@ -1288,10 +1326,13 @@ function getRoomRoster(aPresence) {
 
     if (x) {
         var from = aPresence.getFrom().substring(aPresence.getFrom().indexOf('/') + 1);
-
+		
         //alert("jabber from:" + aPresence.getFrom() + ", from:" + from);
+        alert (myRoomNick);
 
-
+		if (myRoomNick)
+		from = myRoomNick;
+		
         var roomUser = new Array(aPresence.getFrom(), from, "", "", "", "", "");
 		
 		//alert ("USer" + roomUser [1]);
@@ -1329,7 +1370,7 @@ function getRoomRoster(aPresence) {
     
      }
     catch (e) {
-        alert(e);
+        alert("getRoom roster" + e);
     }
     
     
@@ -1398,6 +1439,7 @@ function sendRoomMessage(roomName) {
         if ((textEntry.value).split(" ") != "") {
 
             var aMsg = new JSJaCMessage();
+            aMsg.setFrom(roomName + "/" + myRoomNick);
             aMsg.setTo(roomName);
             aMsg.setBody(textEntry.value);
             aMsg.setType('groupchat');
@@ -1594,6 +1636,11 @@ window.openDialog("chrome://mozapps/content/extensions/extensions.xul?type=theme
  
  }
  
+ 
+function launchChangeNicknameWindow(){
+	window.openDialog("chrome://messenger/content/changeNickname.xul", "Change Nickname", "chrome,titlebar,toolbar,centerscreen,modal");
+}
+ 
 // Launch extension window
 function launchExtWindow(){
 
@@ -1607,8 +1654,8 @@ function launchPersoInfoWindow(){
 var liste = document.getElementById("liste_contacts");
 
 	infojid = liste.selectedItem.id;
-	alert (infojid);
-	window.open("chrome://messenger/content/info.xul", "", "chrome,titlebar,toolbar,centerscreen,modal");
+	//alert (infojid);
+	window.open("chrome://messenger/content/info.xul", infojid, "chrome,titlebar,toolbar,centerscreen,modal");
 	
 }
 
@@ -1713,10 +1760,10 @@ function handleMessage(aJSJaCPacket) {
     var pattern = /conference/
     
     // Message come from me
-    if (origin.match(keepLogin(myjid)))
+    if (origin.match(myjid))
     		return;
     
-    
+    //alert("handle message");
 	
 	if (!deployedGUI) {
         extendGUI();
@@ -1739,7 +1786,31 @@ function handleMessage(aJSJaCPacket) {
 
     if (document.getElementById("tab" + jid) == null) {
 
-
+		var vboxpanel = document.createElement("vbox");
+		var hboxhead = document.createElement("hbox");
+        
+        vboxpanel.setAttribute("id", "vboxpanel"+ jid);
+        vboxpanel.setAttribute("flex", "1");
+        
+        hboxhead.setAttribute("id", "head" + "tab"+ jid);
+        
+        
+        var imghead = document.createElement("image");
+        imghead.setAttribute("id", "imghead"+ jid);
+        var status = findStatusByJid(jid);
+        imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + status);
+        
+        var namehead = document.createElement("label");
+        namehead.setAttribute("value", keepLogin(jid));
+        
+        var writestate = document.createElement("label");
+        writestate.setAttribute("id", "writestate"+ jid);
+        
+        hboxhead.appendChild (imghead);
+        hboxhead.appendChild (namehead);
+        hboxhead.appendChild (writestate);
+		
+		
         var tabs = document.getElementById("tabs1");
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + jid);
@@ -1758,6 +1829,9 @@ function handleMessage(aJSJaCPacket) {
         var tabpanel = document.createElement("tabpanel");
         tabpanel.setAttribute("id", "tabpanel" + jid);
         tabspanel.appendChild(tabpanel);
+        
+        vboxpanel.appendChild(hboxhead);
+       	tabpanel.appendChild(vboxpanel);
 
         //var text = document.createElement("textbox");
         var text = document.createElement("iframe");
@@ -1770,16 +1844,16 @@ function handleMessage(aJSJaCPacket) {
         text.setAttribute("wait-cursor","false");
         text.setAttribute("class","box-inset");
         text.setAttribute("flex", "1");
-        tabpanel.appendChild(text);
+        vboxpanel.appendChild(text);
     }
 
-    // ecrire (aJSJaCPacket.getBody()) dans le panel corresponsant
+   
 	
 	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
     
-    if (aJSJaCPacket.getBody() == null)
-    		showState(aJSJaCPacket);
+    if (aJSJaCPacket.getBody() == null && !origin.match(pattern))
+    			showState(aJSJaCPacket);
     
     	else{
     
@@ -1797,6 +1871,9 @@ function handleMessage(aJSJaCPacket) {
 // Function to show the writing state 
 function showState(aJSJaCPacket){
  
+ 
+	try { 
+ 
  	//alert("writestate" + cutResource(aJSJaCPacket.getFrom()));
  	var writestate = document.getElementById("writestate" + cutResource(aJSJaCPacket.getFrom()));
  	if(aJSJaCPacket.getNode().getElementsByTagName('composing'))
@@ -1812,10 +1889,14 @@ function showState(aJSJaCPacket){
 		
 		pause(100);
 		writestate.setAttribute('value','');
+		
+		}
+		catch(e) {alert ("Dans showstate" + e);}
 }
 
 // Callback on changing presence status Function
 function handlePresence(aJSJaCPacket) {
+/* HERE IS AN ERROR ATTEMPTING CREATING A ROOM */
 
     var presence;
     var sender = cutResource(aJSJaCPacket.getFrom());
@@ -1903,6 +1984,9 @@ function handlePresence(aJSJaCPacket) {
         if (item)
         item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "online.png");
         user [4] = "online.png";
+         var imghead = document.getElementById("imghead"+ user[0]);
+			if (imghead) 
+        		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
     }
     	
 	
@@ -1923,6 +2007,9 @@ function handlePresence(aJSJaCPacket) {
            		 if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "offline.png");
                 user [4] = "offline.png";
+                 var imghead = document.getElementById("imghead"+ user[0]);
+					if (imghead) 
+        					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
                 		if (hideDecoUser){
                 			this.emptyList();
    						this.showUsers(users);
@@ -1933,6 +2020,9 @@ function handlePresence(aJSJaCPacket) {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "invisible.png");
                 user [4] = "invisible.png";
+                 var imghead = document.getElementById("imghead"+ user[0]);
+				if (imghead) 
+        				imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
            		 }
         			}
        			 else {
@@ -1944,16 +2034,25 @@ function handlePresence(aJSJaCPacket) {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "xa.png");
                 user [4] = "xa.png";
+                 var imghead = document.getElementById("imghead"+ user[0]);
+			if (imghead) 
+        		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
             }
             if (show.substring(0, 2) == "dn") {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "dnd.png");
                 user [4] = "dnd.png";
+                 var imghead = document.getElementById("imghead"+ user[0]);
+			if (imghead) 
+        		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
             }
             if (show.substring(0, 2) == "aw") {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "away.png");
                 user [4] = "away.png";
+                 var imghead = document.getElementById("imghead"+ user[0]);
+			if (imghead) 
+        		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
             }
         }
         if (aJSJaCPacket.getStatus())
@@ -1964,7 +2063,7 @@ function handlePresence(aJSJaCPacket) {
     
     
     
-    } catch (e) {alert(e);}
+    } catch (e) {alert("handle presence" + e);}
     //alert (presence);
 }
 

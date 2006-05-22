@@ -1,0 +1,9 @@
+<!ENTITY Info.name "Nom : ">
+<!ENTITY Info.firstname "First Name : ">
+<!ENTITY Info.email "E-Mail : ">
+<!ENTITY Info.phone "Téléphone : ">
+
+
+<!ENTITY Info.organisation "Organisation : ">
+<!ENTITY Info.jabberid "Jabber ID : ">
+<!ENTITY Info.address "Addresse : ">

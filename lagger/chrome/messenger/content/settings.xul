@@ -24,8 +24,6 @@
                         name="chat.connection.port" type="int"/>
             <preference id="chat.connection.ssl"
                         name="chat.connection.ssl" type="bool"/>
-            <preference id="chat.connection.overridehost"
-                        name="chat.connection.overridehost" type="bool"/>
             <preference id="chat.connection.resource"
                         name="chat.connection.resource" type="string"/>
             <preference id="chat.connection.base"
@@ -34,6 +32,7 @@
                         name="chat.connection.priority" type="int"/>
             <preference id="chat.messagebox.showavatars"
                         name="chat.messagebox.showavatars" type="bool"/>
+            
             <preference id="chat.roster.showoffline"
                         name="chat.roster.showoffline" type="bool"/>
             <preference id="chat.gui.showseparatedwindows"

@@ -27,6 +27,8 @@
 <!ENTITY listitemcontextroom.Remove "Supprimer le salon">
 <!ENTITY listitemcontextroom.Rename "Renommer le salon">
 
+<!ENTITY listitemcontextroomme.ChangeNick "Change nickname">
+
 <!ENTITY rosterContext.useFullNames "Afficher les noms">
 <!ENTITY rosterContext.maskOffline "Masquer les deconnectes">
 

@@ -147,6 +147,16 @@
                 </popup>
             </popupset>
             
+            
+            <popupset>
+                <popup id="itemcontextroomme">
+                		<menuitem label="&listitemcontextroomme.ChangeNick;" oncommand="launchChangeNicknameWindow();"/>
+                    <!-- <menuseparator/>
+                    <menuitem label="&listitemcontextroomme.Rename;" oncommand="renameGroup(event);"/>
+                		<menuitem label="&listitemcontextroomme.Remove;" oncommand="removeRoom(event);"/> -->
+                </popup>
+            </popupset>
+            
               <!-- Personal status list -->
             <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="40" minheight="30"
                        minwidth="140" src="img/online.png">

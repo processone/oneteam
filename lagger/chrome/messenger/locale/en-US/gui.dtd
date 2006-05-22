@@ -27,6 +27,8 @@
 <!ENTITY listitemcontextroom.Remove "Remove the room">
 <!ENTITY listitemcontextroom.Rename "Rename the room">
 
+<!ENTITY listitemcontextroomme.ChangeNick "Change nickname">
+
 <!ENTITY rosterContext.useFullNames "Use full names">
 <!ENTITY rosterContext.maskOffline "Mask offline users">
 
