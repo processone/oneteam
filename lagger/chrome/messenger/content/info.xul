@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<window id="Info"
+        title="title"
+        orient="horizontal"
+        onload="requestClientSysInfo();"
+        resizable="true"
+        width="300"
+        onclose="self.close();"
+        height="270"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        
+        <script type="application/x-javascript" src="JavaScript/info.js"/>
+        <script type="application/x-javascript" src="JavaScript/gui.js"/>
+        <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+ 	    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+    		<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+        
+        <tabbox flex="1">
+              <tabs id="tabs1">
+				<tab id="Jabber" label="jabber"/>
+				<tab id="General" label="general"/>
+				<tab id="Location" label="location"/>
+				<tab id="Work" label="work"/>
+				<tab id="About" label="about"/>
+              </tabs>
+             <tabpanels id="tabpanels1" flex="1">
+				<tabpanel id="Jabber" label="jabber"/>
+				<tabpanel id="General" label="general"/>
+				<tabpanel id="Location" label="location"/>
+				<tabpanel id="Work" label="work"/>
+				<tabpanel id="About" label="about"/>
+              </tabpanels>
+           </tabbox>
+ </window>
