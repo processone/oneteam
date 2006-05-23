@@ -782,7 +782,8 @@ function showUsers(users) {
 	
     for (var g = 0; g < groups.length; g++) {  
         var group = groups[g];
-        showGroup(group);
+         showGroup(group);
+        //var countUser = 0;
 
         for (var i = 0; i < users.length; i++) {
 
@@ -790,16 +791,27 @@ function showUsers(users) {
             if (user [2] == group){
             		if (hideDecoUser){
             			
-            			if (user [4] != "offline.png")
+            			if (user [4] != "offline.png"){
                 		showUser(user);
+                		//countUser++;
+                		}
+                		
                 }
                 else {
                 	
                 showUser(user);
+                //countUser ++;
                 }
 			}
         }
         //end forUser
+       /*  if (gPrefService.getBoolPref("chat.general.showemptygroup")){
+       	 	if (countUser > 0)
+       	 	showGroup(group);
+        }
+        else */
+        
+        
 
 		for (var i = 0; i < rooms.length; i++) {
         var room = rooms[i];

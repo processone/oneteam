@@ -18,8 +18,8 @@
 
         <preferences>
 
-            <preference id="chat.general.showavatars"
-                        name="chat.general.showavatars" type="bool"/>
+            <preference id="chat.general.showemptygroups"
+                        name="chat.general.showemptygroups" type="bool"/>
             <preference id="chat.roster.showoffline"
                         name="chat.roster.showoffline" type="bool"/>
             <preference id="chat.general.keepproperties"

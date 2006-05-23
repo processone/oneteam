@@ -1,12 +1,10 @@
 Fonctionnalité à implémenter:
-- Ajouter un bouton dans la barre d'outil permettant de masquer les contacts déconnectés de la liste. Pour les conférences: Seules les conférences ouvertes restes affichées.
+- 
 
 
 Bugs à corriger :
 
-- la fermeture du premier onglet sur du multionglet ne donne pas le focus à l'onglet suivant
-- L'ouverture d'une conference ne donne pas le focus à la conférence.
-- Lorsque l'on ouvre un onglet, ne pas redimensionner en hauteur. Conserver la même dimension. Même chose lorsque l'on ferme le dernier onglet.
-- La taille fenêtre de login doit être légèrement en hauteur, car le bas est tronqué
+- Fermeture d'une conference sur premier onglet.
+- Creation d'une conference.
 
 

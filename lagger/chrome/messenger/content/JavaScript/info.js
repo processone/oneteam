@@ -82,46 +82,117 @@ function retrieveVcard(iq){
         window.opener.cons.addInConsole("IN : " + iq.xml() + "\n");
     }
     
-    try {
+   // try {
     
-    //var photo = iq.getNode().getElementsByTagName('PHOTOS').item(0).firstChild.nodeValue;
+    var tag;
+    
+    
 	
-	var name = iq.getNode().getElementsByTagName('FN').item(0).firstChild.nodeValue;
-	var email = iq.getNode().getElementsByTagName('EMAIL').item(0).firstChild.nodeValue;
-	var phone = iq.getNode().getElementsByTagName('NUMBER').item(0).firstChild.nodeValue;
+	tag = iq.getNode().getElementsByTagName('FN');
+		if (tag)	
+			var name = tag.item(0).firstChild.nodeValue;
+			if (name){
+				var labelname = document.getElementById("name");
+				labelname.setAttribute("value",name);
+				labelname.readonly = true;
+				}
+			
+			
+	tag = iq.getNode().getElementsByTagName('USERID');
+		if (tag)
+			var id = tag.item(0).firstChild.nodeValue;
+			if (id){
+				var labeljabberid = document.getElementById("jabberid");
+				labeljabberid.setAttribute("value",id);
+				labeljabberid.readonly = true;
+				}
+			
+	tag = iq.getNode().getElementsByTagName('BINVAL')
+		if (tag)
+			var base64data = tag.item(0).firstChild.nodeValue.toString();
+				if (base64data){
+				var uri = "data:image/png;base64," + base64data;
+					//alert (uri);
 	
-	//var org = iq.getNode().getElementsByTagName('ORGNAME').item(0).firstChild.nodeValue;
-	var id = iq.getNode().getElementsByTagName('USERID').item(0).firstChild.nodeValue;
-	//var adress = iq.getNode().getElementsByTagName('ADRESS').item(0).firstChild.nodeValue;
+				var image = document.getElementById("avatar");
+				image.setAttribute("src",uri);
+				image.setAttribute("height",50);
+				image.setAttribute("width",50);
+				}
+			
 	
-	var base64data =  iq.getNode().getElementsByTagName('BINVAL').item(0).firstChild.nodeValue;
-	var uri = "data:image/png;base64," + base64data;
-	//alert (uri);
+	/*tag = iq.getNode().getElementsByTagName('EMAIL');
+		if (tag)	
+			var email = tag.item(0).firstChild.nodeValue;
+			if (email){
+			var emailtext = document.getElementById("email");
+				emailtext.setAttribute("value",email);
+				}*/
+			
+			
+	tag = iq.getNode().getElementsByTagName('NUMBER');
+		if (tag)
+			var number = tag.item(0).firstChild.nodeValue;
+			if (number){
+				var numbertext = document.getElementById("number");
+				numbertext.setAttribute("value",number);
+				numbertext.readonly = true;
+				}
+			
+	tag = iq.getNode().getElementsByTagName('ORGNAME');
+		if (tag)
+			var orgname = tag.item(0).firstChild.nodeValue;	
+				if (orgname){
+				var orgnametext = document.getElementById("orgname");
+				orgnametext.setAttribute("value",orgname);
+				orgnametext.readonly = true;
+				}
 	
-	var image = document.getElementById("avatar");
+	tag = iq.getNode().getElementsByTagName('STREET');
+		if (tag)
+			var address = tag.item(0).firstChild.nodeValue;	
+				if (address){
+					var addresstext = document.getElementById("place");
+					addresstext.setAttribute("value",address);
+					addresstext.readonly = true;
+				}
+	
+	tag = iq.getNode().getElementsByTagName('PCODE');
+		if (tag)
+			var address = tag.item(0).firstChild.nodeValue;	
+				if (address){
+					var addresstext = document.getElementById("zip");
+					addresstext.setAttribute("value",address);
+					addresstext.readonly = true;
+				}
+	
+	tag = iq.getNode().getElementsByTagName('CTRY');
+		if (tag)
+			var address = tag.item(0).firstChild.nodeValue;	
+				if (address){
+					var addresstext = document.getElementById("country");
+					addresstext.setAttribute("value",address);
+					addresstext.readonly = true;
+				}
+	
+	tag = iq.getNode().getElementsByTagName('LOCALITY');
+		if (tag)
+			var address = tag.item(0).firstChild.nodeValue;	
+				if (address){
+					var addresstext = document.getElementById("town");
+					addresstext.setAttribute("value",address);
+					addresstext.readonly = true;
+				}
+	
+	
+	if (window.opener.console) {
+        window.opener.cons.addInConsole("TEST : " + base64data + "\n");
+    }
 	
 	
 	
-	var labelname = document.getElementById("name");
-	var labelmail = document.getElementById("email");
-	var labelphone = document.getElementById("phone");
-	//var labelorg = document.getElementById("organisation");
-	var labeljabberid = document.getElementById("jabberid");
-	var labeladdress = document.getElementById("address");
-	
-	labelname.setAttribute("value",name);
-	labelmail.setAttribute("value",email);
-	labelphone.setAttribute("value", phone);
-	
-	//labelorg.setAttribute("value",org);
-	labeljabberid.setAttribute("value",id);
-	//labeladdress.setAttribute("value",address);
-	
-	image.setAttribute("src",uri);
-	image.setAttribute("height",32);
-	image.setAttribute("width",32);
-	}
-	catch(e) {alert (e);}
+	//}
+	//catch(e) {alert (e);}
 }
 
 // Function to create the photo file

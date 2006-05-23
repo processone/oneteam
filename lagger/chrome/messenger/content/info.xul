@@ -8,9 +8,9 @@
         orient="horizontal"
         onload="requestClientSysInfo();"
         resizable="true" 
-        width="300"
+        width="290"
         onclose="self.close();"
-        height="170"
+        height="380"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
         <script type="application/x-javascript" src="JavaScript/info.js"/>
@@ -21,50 +21,174 @@
     		<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
     		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
         
-        <vbox id="bottom"> 
-       <hbox>
+       <vbox>
        
-       <vbox id="left">
-       <image id="avatar"/>
-       </vbox>
+       <grid flex="1">
+				
+				<columns>
+					<column/>
+					<column flex="3"/>
+				</columns>
+				<rows>
+					<row>
+						 <image id="avatar"/>
+						 <vbox>
+						 
+						 <hbox>
+						 	<label id="namehead" value="&Info.name;"/>
+      					 	<textbox id="name" flex="1"/>
+      					 </hbox>
+      					 <hbox>
+      					 	<label id="jabberidhead" value="&Info.jabberid;"/>
+       						<textbox flex="1" id="jabberid"/>
+       					</hbox>
+      					 </vbox>
+					</row>
+					
+					<spacer heigth="20"/>
+					
+					<row>
+						<checkbox id="jidhost" label="Infos"
+						onclick="document.getElementById('infos').hidden = this.checked; if (!this.checked) self.resizeTo(290, self.boxObject.height + 70); else self.resizeTo(290, self.boxObject.height - 70);"/>
+					</row>
+					
+					<vbox id="infos" hidden="true">
+					<row>
+						<label id="emailhead" value="E-Mail : "/>
+       					<textbox id="email" flex="1"/>
+					</row>
+					
+					<row>
+						<label id="numberhead" value="Phone : "/>
+       					<textbox id="number" flex="1"/>
+					</row>
+					
+					<row>
+						<label id="orgnamehead" value="Organisation : "/>
+       					<textbox id="orgname" flex="1"/>
+					</row>
+					</vbox>
+					
+					<row>
+						<checkbox id="address" label="Address"
+						onclick="document.getElementById('adress').hidden = this.checked; if (!this.checked) self.resizeTo(290, self.boxObject.height + 100); else self.resizeTo(290, self.boxObject.height - 100);"/>
+					</row>
+					
+					<vbox id="adress" hidden="true">
+					<row>
+						<label id="placename" value="Place : "/>
+       					<textbox id="place" flex="1"/>
+					</row>
+					<row>
+						<label id="zipname" value="Zip code : "/>
+       					<textbox id="zip" flex="1"/>
+					</row>
+					<row>
+						<label id="townname" value="Town : "/>
+       					<textbox id="town" flex="1"/>
+					</row>
+					<row>
+						<label id="countryname" value="Country : "/>
+       					<textbox id="country" flex="1"/>
+					</row>
+					</vbox>
+					
+					<row>
+						<checkbox id="jidhost" label="System"
+						onclick="document.getElementById('system').hidden = this.checked;if (!this.checked) self.resizeTo(290, self.boxObject.height + 20); else self.resizeTo(290, self.boxObject.height - 20);"/>
+					</row>
+					
+					<vbox id="system" hidden="true">
+					<row>
+						<label id="oshead" value="OS : "/>
+       					<textbox id="os" flex="1"/>
+					</row>
+					<row>
+						<label id="clientname" value="Client : "/>
+       					<textbox id="client" flex="1"/>
+					</row>
+					</vbox>
+					
+					</rows>
+					</grid>
+					
+			
+			
+			
+			
+			<!-- <grid flex="1" id="infos" hidden="true">
+				
+				<columns>
+					<column/>
+					<column flex="3"/>
+				</columns>
+					<rows>
+					<row>
+						<label id="emailhead" value="E-Mail : "/>
+       					<textbox id="email" flex="1"/>
+					</row>
+					
+					<row>
+						<label id="numberhead" value="Phone : "/>
+       					<textbox id="number" flex="1"/>
+					</row>
+					
+					<row>
+						<label id="orgnamehead" value="Organisation : "/>
+       					<textbox id="orgname" flex="1"/>
+					</row>
+					
+					
+					
+				</rows>
+				</grid>
+				
+				
+				
+				
+				<grid flex="1" id="system" hidden="true">
+				
+				<columns>
+					<column/>
+					<column flex="3"/>
+				</columns>
+					<rows >
+					<row>
+						<label id="emailhead" value="E-Mail : "/>
+       		<textbox id="email" flex="1"/>
+					</row>
+					
+					<row>
+						<label id="numberhead" value="Phone : "/>
+       		<textbox id="number" flex="1"/>
+					</row>
+					
+					<row>
+						<label id="orgnamehead" value="Organisation : "/>
+       		<textbox id="orgname" flex="1"/>
+					</row>
+					
+					
+					<row>
+					<checkbox id="jidhost" label="Work"
+						onclick="document.getElementById('work').hidden = this.checked;"/>
+					</row>
+				</rows>
+       </grid> -->
        
-       <vbox id="right">
-       
-       <hbox>
-       <label id="namehead" value="&Info.name;"/>
-       <label id="name" />
-       </hbox>
-       
-       <hbox>
-       <label id="emailhead" value="&Info.email;"/>
-       <label id="email" />
-       </hbox>
-       
-       <hbox>
-       <label id="phonehead" value="&Info.phone;"/>  
-       <label id="phone" />
-       </hbox>
-       
-       </vbox>
-       
-       </hbox>
-       
-       <spacer height="20"/>
-      
-      <hbox>
-       <label id="jabberidhead" value="&Info.jabberid;"/>
-       <label id="jabberid"/>
-       </hbox>
-       
-       <hbox>
-       <label id="organisationhead" value="&Info.organisation;"/>
-        <label id="organisation"/>
-       </hbox>
-       
-       <hbox>
-       <label id="addresshead" value="&Info.address;"/>
-       <label id="address"/>
-       </hbox>
-       
-       </vbox>
+    
+						
+	   	<!-- <checkbox id="jidhost" label="Work"
+						onclick="document.getElementById('work').hidden = this.checked;"/>
+		<vbox id="work" hidden="true">
+		</vbox>
+			
+			
+	    <checkbox id="jidhost" label="Infos"
+						onclick="document.getElementById('info').hidden = this.checked;"/>										
+       	<vbox id="infos" hidden="true">
+        </vbox>
+        
+        </vbox>-->
+        </vbox>
  </window>
