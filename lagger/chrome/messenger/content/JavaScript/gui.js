@@ -18,6 +18,7 @@ var index = 0;
 var user;
 var room;
 var myRoomNick= gPrefService.getCharPref("chat.muc.nickname");
+var polling = gPrefService.getBoolPref("chat.connection.polling");
 var myjid;
 var myPresence;
 var cons;
@@ -182,11 +183,15 @@ function initGUI() {
 	
     // setup args for contructor
     var oArgs = new Object();
-
-    oArgs.httpbase = "http://" + this.server + ":" + this.port + "/" + this.base + "/";;
+	
+    oArgs.httpbase = "http://" + this.server + ":" + this.port + "/" + this.base + "/";
     oArgs.timerval = 2000;
     //oArgs.oDbg = Debug;
 
+	
+	if(!polling)
+	con = new JSJaCHttpBindingConnection(oArgs);
+	else
     con = new JSJaCHttpPollingConnection(oArgs);
 
     // setup args for connect method
@@ -210,14 +215,14 @@ function initGUI() {
   
 
 
-    if (con.connected()) {
+    /*if (con.connected()) {
         //alert ("I'm connected");
        ;
     }
 
     else {
         alert("connexion failed");
-    }
+    }*/
 
 }
 catch(e) {

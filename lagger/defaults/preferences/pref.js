@@ -40,14 +40,15 @@ pref("network.protocol-handler.warn-external.mailto", false);
 
 pref("chat.connection.username", "");
 pref("chat.connection.password", "");
-// please don't use this
+
 pref("chat.connection.priority", 5);
-pref("chat.connection.base", "http-poll");
+pref("chat.connection.base", "http-bind");
 pref("chat.connection.resource", "maison");
 pref("chat.connection.host", "process-one.net");
 pref("chat.connection.port", 5280);
 pref("chat.connection.ssl", false);
 pref("chat.connection.overridehost", false);
+pref("chat.connection.polling", false);
 
 pref("chat.roster.showoffline", false);
 pref("chat.roster.filtered", false);

@@ -11,6 +11,7 @@ function requestClientSysInfo() {
 	try {
 
 	var iq = new JSJaCIQ();
+	
 	iq.setIQ(window.opener.infojid,null,'get','sys_info');
 	iq.setQuery('jabber:iq:version');
 	

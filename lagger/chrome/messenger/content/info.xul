@@ -10,7 +10,7 @@
         resizable="true" 
         width="290"
         onclose="self.close();"
-        height="380"
+        height="170"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
         <script type="application/x-javascript" src="JavaScript/info.js"/>
@@ -49,7 +49,7 @@
 					
 					<row>
 						<checkbox id="jidhost" label="Infos"
-						onclick="document.getElementById('infos').hidden = this.checked; if (!this.checked) self.resizeTo(290, self.boxObject.height + 70); else self.resizeTo(290, self.boxObject.height - 70);"/>
+						onclick='document.getElementById("infos").hidden = this.checked; if (!this.checked) self.resizeTo(290, document.getElementById("Info").boxObject.height + 70); else self.resizeTo(290, document.getElementById("Info").boxObject.height - 70);'/>
 					</row>
 					
 					<vbox id="infos" hidden="true">
@@ -71,7 +71,7 @@
 					
 					<row>
 						<checkbox id="address" label="Address"
-						onclick="document.getElementById('adress').hidden = this.checked; if (!this.checked) self.resizeTo(290, self.boxObject.height + 100); else self.resizeTo(290, self.boxObject.height - 100);"/>
+						onclick='document.getElementById("adress").hidden = this.checked; if (!this.checked) self.resizeTo(290, document.getElementById("Info").boxObject.height + 100); else self.resizeTo(290, document.getElementById("Info").boxObject.height - 100);'/>
 					</row>
 					
 					<vbox id="adress" hidden="true">
@@ -95,7 +95,7 @@
 					
 					<row>
 						<checkbox id="jidhost" label="System"
-						onclick="document.getElementById('system').hidden = this.checked;if (!this.checked) self.resizeTo(290, self.boxObject.height + 20); else self.resizeTo(290, self.boxObject.height - 20);"/>
+						onclick='document.getElementById("system").hidden = this.checked;if (!this.checked) self.resizeTo(290, document.getElementById("Info").boxObject.height + 40); else self.resizeTo(290, document.getElementById("Info").boxObject.height - 40);'/>
 					</row>
 					
 					<vbox id="system" hidden="true">

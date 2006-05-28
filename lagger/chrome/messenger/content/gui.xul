@@ -21,12 +21,14 @@
     <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
     <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
     <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>
     <script type="application/x-javascript" src="JavaScript/prefsFunctions.js"/>
     <script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
     <script type="application/x-javascript" src="JavaScript/shared.js"/>
     <script type="application/x-javascript" src="JavaScript/console.js"/>
     <script type="application/x-javascript" src="chrome://messenger/content/utils/htmlformat.js"/>
     <script type="application/x-javascript" src="JavaScript/messenger.js"/>
+    
 
     <vbox flex="1">
 
