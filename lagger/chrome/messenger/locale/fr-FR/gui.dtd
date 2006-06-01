@@ -6,6 +6,7 @@
 <!ENTITY menulagger.adminTools "Outils d'administration">
 
 <!ENTITY menuConfig.configuration "Config">
+<!ENTITY menuConfig.editinfo "Editer ses infos">
 <!ENTITY menuConfig.plugins "Plugins">
 <!ENTITY menuConfig.themes "Themes">
 <!ENTITY menuConfig.preferences "Preferences">

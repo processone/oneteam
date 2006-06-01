@@ -1,45 +1,130 @@
-var version;
-var os;
-var clientName;
+// Function to publish infos
+function publishInfo(){
 
-
-
-
-// Function request a client system info
-function requestClientSysInfo() {
+var iq = new JSJaCIQ();
+	var elem = iq.getDoc().createElement('vCard');
+	iq.setIQ(null,window.opener.myjid,'set','vcard');
 	
-	try {
+	iq.getNode().appendChild(elem).setAttribute('xmlns','vcard-temp');
 
-	var iq = new JSJaCIQ();
-	
-	iq.setIQ(window.opener.infojid,null,'get','sys_info');
-	iq.setQuery('jabber:iq:version');
-	
-	if (window.opener.console) {
+
+var fn = document.createElement("FN");
+var family = document.createElement("FAMILY");
+var nickname = document.createElement("NICKNAME");
+var url = document.createElement("URL");
+var userid = document.createElement("USERID");
+var bday = document.createElement("BDAY");
+
+var street = document.createElement("STREET");
+var pcode = document.createElement("PCODE");
+var ctry = document.createElement("CTRY");
+var locality = document.createElement("LOCALITY");
+var extadd = document.createElement("EXTADD");
+
+var orgname = document.createElement("ORGNAME");
+var orgunit = document.createElement("ORGUNIT");
+var number = document.createElement("NUMBER");
+var role = document.createElement("ROLE");
+var email = document.createElement("EMAIL");
+
+var desc = document.createElement("DESC");
+
+var binval = document.createElement("BINVAL");
+
+var fnnode = document.createTextNode(document.getElementById("name").value);
+var familynode = document.createTextNode(document.getElementById("family").value);
+var nicknamenode = document.createTextNode(document.getElementById("nickname").value);
+var urlnode = document.createTextNode(document.getElementById("url").value);
+var useridnode = document.createTextNode(document.getElementById("userid").value);
+var bdaynode = document.createTextNode(document.getElementById("birthday").value);
+
+var streetnode = document.createTextNode(document.getElementById("street").value);
+var pcodenode = document.createTextNode(document.getElementById("postal").value);
+var ctrynode = document.createTextNode(document.getElementById("country").value);
+var localitynode = document.createTextNode(document.getElementById("location").value);
+var extaddnode = document.createTextNode(document.getElementById("extra").value);
+
+var orgnamenode = document.createTextNode(document.getElementById("company").value);
+var orgunitnode = document.createTextNode(document.getElementById("department").value);
+var numbernode = document.createTextNode(document.getElementById("phone").value);
+var rolenode = document.createTextNode(document.getElementById("role").value);
+var emailnode = document.createTextNode(document.getElementById("email").value);
+
+var descnode = document.createTextNode(document.getElementById("about").value);
+
+var binvalnode = document.createTextNode(document.getElementById("photo").getAttribute("src"));
+
+
+fn.appendChild(fnnode);
+elem.appendChild(fn);
+
+family.appendChild(familynode);
+elem.appendChild(family);
+
+nickname.appendChild(nicknamenode);
+elem.appendChild(nickname);
+
+url.appendChild(urlnode);
+elem.appendChild(url);
+
+userid.appendChild(useridnode);
+elem.appendChild(userid);
+
+bday.appendChild(bdaynode);
+elem.appendChild(bday);
+
+street.appendChild(streetnode);
+elem.appendChild(street);
+
+pcode.appendChild(pcodenode);
+elem.appendChild(pcode);
+
+ctry.appendChild(ctrynode);
+elem.appendChild(ctry);
+
+locality.appendChild(localitynode);
+elem.appendChild(locality);
+
+extadd.appendChild(extaddnode);
+elem.appendChild(extadd);
+
+orgname.appendChild(orgnamenode);
+elem.appendChild(orgname);
+
+orgunit.appendChild(orgunitnode);
+elem.appendChild(orgunit);
+
+number.appendChild(numbernode);
+elem.appendChild(number);
+
+role.appendChild(rolenode);
+elem.appendChild(role);
+
+email.appendChild(emailnode);
+elem.appendChild(email);
+
+desc.appendChild(descnode);
+elem.appendChild(desc);
+
+binval.appendChild(binvalnode);
+elem.appendChild(binval);
+
+window.opener.con.send(iq);
+
+if (window.opener.console) {
         window.opener.cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
-	
-	 sendVcardRequest();
-	
-	window.opener.con.send(iq, retrieveSysInfo);
-	
-	
-
-  
-   
-   }
-   catch (e) {alert (e);}
 }
 
 
-// Function to send a vcard request
-function sendVcardRequest (){
+// Function to retrieve infos
+function retrieveInfos() {
 
 try {
 
 	var iq = new JSJaCIQ();
 	var elem = iq.getDoc().createElement('vCard');
-	iq.setIQ(window.opener.infojid,null,'get','vcard');
+	iq.setIQ(window.opener.myjid,null,'get','vcard');
 	
 	iq.getNode().appendChild(elem).setAttribute('xmlns','vcard-temp');
 	
@@ -50,50 +135,11 @@ try {
     }
     
     }
-   catch (e) {alert (e);}
-   
-   
-}
-
-
-// function to retrieve a client system info
-function retrieveSysInfo(iq){
-
-//alert (iq.xml());
-
-try {
-
-var tag;
-
-        	
-        tag = iq.getNode().getElementsByTagName('version');
-		if (tag && tag.item(0))	
-			var version = tag.item(0).firstChild.nodeValue;
-			
-			
-			 tag = iq.getNode().getElementsByTagName('os');
-		if (tag && tag.item(0)){	
-			var os = tag.item(0).firstChild.nodeValue;
-			var ostext = document.getElementById("os");
-				ostext.setAttribute("value",os);
-				ostext.readonly = true;
-				}
-			
-			 tag = iq.getNode().getElementsByTagName('name');
-		if (tag && tag.item(0)){
-			var name = tag.item(0).firstChild.nodeValue;
-			var clienttext = document.getElementById("client");
-				clienttext.setAttribute("value",name + " " + version);
-				clienttext.readonly = true;
-				}
-        	
-        if (window.opener.console) {
-        window.opener.cons.addInConsole("IN : " + iq.xml() + "\n");
-    }
+   catch (e) {alert ("retrieveInfos" + e);}
 
 }
-   catch (e) {alert (e);}
-}
+
+
 
 // Function to retrieve personal v-card
 function retrieveVcard(iq){
@@ -109,7 +155,7 @@ function retrieveVcard(iq){
 	
 	
 	tag = iq.getNode().getElementsByTagName('FN');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0).firstChild)	
 			var name = tag.item(0).firstChild.nodeValue;
 			if (name){
 				var nametext = document.getElementById("name");
@@ -118,7 +164,7 @@ function retrieveVcard(iq){
 				}
 				
 	tag = iq.getNode().getElementsByTagName('FAMILY');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0).firstChild)	
 			var fam = tag.item(0).firstChild.nodeValue;
 			if (fam){
 				var famtext = document.getElementById("family");
@@ -128,7 +174,7 @@ function retrieveVcard(iq){
 				
 				
 		tag = iq.getNode().getElementsByTagName('NICKNAME');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var nick = tag.item(0).firstChild.nodeValue;
 			if (nick){
 				var nicktext = document.getElementById("nickname");
@@ -140,7 +186,7 @@ function retrieveVcard(iq){
 	
 				
 	tag = iq.getNode().getElementsByTagName('URL');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0).firstChild)	
 			var url = tag.item(0).firstChild.nodeValue;
 			if (url){
 			var urltext = document.getElementById("url");
@@ -149,7 +195,7 @@ function retrieveVcard(iq){
 	
 	
 	tag = iq.getNode().getElementsByTagName('BDAY');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0).firstChild)	
 			var bday = tag.item(0).firstChild.nodeValue;
 			if (bday){
 			var bdaytext = document.getElementById("birthday");
@@ -158,7 +204,7 @@ function retrieveVcard(iq){
 			
 			
 	tag = iq.getNode().getElementsByTagName('USERID');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var id = tag.item(0).firstChild.nodeValue;
 			if (id){
 				var labeljabberid = document.getElementById("userid");
@@ -172,7 +218,7 @@ function retrieveVcard(iq){
 			
 	
 	tag = iq.getNode().getElementsByTagName('STREET');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var street = tag.item(0).firstChild.nodeValue;	
 				if (street){
 					var streettext = document.getElementById("street");
@@ -181,7 +227,7 @@ function retrieveVcard(iq){
 				}
 	
 	tag = iq.getNode().getElementsByTagName('PCODE');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var zip = tag.item(0).firstChild.nodeValue;	
 				if (zip){
 					var ziptext = document.getElementById("postal");
@@ -190,7 +236,7 @@ function retrieveVcard(iq){
 				}
 	
 	tag = iq.getNode().getElementsByTagName('CTRY');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var country = tag.item(0).firstChild.nodeValue;	
 				if (country){
 					var countrytext = document.getElementById("country");
@@ -199,7 +245,7 @@ function retrieveVcard(iq){
 				}
 	
 	tag = iq.getNode().getElementsByTagName('LOCALITY');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var address = tag.item(0).firstChild.nodeValue;	
 				if (address){
 					var addresstext = document.getElementById("location");
@@ -209,7 +255,7 @@ function retrieveVcard(iq){
 				
 				
 	tag = iq.getNode().getElementsByTagName('EXTADD');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var extra = tag.item(0).firstChild.nodeValue;	
 				if (extra){
 					var extratext = document.getElementById("extra");
@@ -222,7 +268,7 @@ function retrieveVcard(iq){
 	
 	
 	tag = iq.getNode().getElementsByTagName('NUMBER');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var number = tag.item(0).firstChild.nodeValue;
 			if (number){
 				var numbertext = document.getElementById("phone");
@@ -231,7 +277,7 @@ function retrieveVcard(iq){
 				}
 				
 		tag = iq.getNode().getElementsByTagName('ORGUNIT');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var orgunit = tag.item(0).firstChild.nodeValue;
 			if (orgunit){
 				var unittext = document.getElementById("department");
@@ -240,7 +286,7 @@ function retrieveVcard(iq){
 				}	
 				
 		tag = iq.getNode().getElementsByTagName('ROLE');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var role = tag.item(0).firstChild.nodeValue;
 			if (role){
 				var roletext = document.getElementById("role");
@@ -249,7 +295,7 @@ function retrieveVcard(iq){
 				}			
 			
 	tag = iq.getNode().getElementsByTagName('ORGNAME');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0).firstChild)
 			var orgname = tag.item(0).firstChild.nodeValue;	
 				if (orgname){
 				var orgnametext = document.getElementById("company");
@@ -258,7 +304,7 @@ function retrieveVcard(iq){
 				}
 	
 	tag = iq.getNode().getElementsByTagName('EMAIL');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0).firstChild)	
 			var email = tag.item(0).firstChild.nodeValue;
 			if (email){
 			var emailtext = document.getElementById("email");
@@ -272,7 +318,7 @@ function retrieveVcard(iq){
 	
 	
 	tag = iq.getNode().getElementsByTagName('DESC');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0).firstChild)	
 			var desc = tag.item(0).firstChild.nodeValue;
 			if (desc){
 			var desctext = document.getElementById("about");
@@ -285,8 +331,8 @@ function retrieveVcard(iq){
 	/******************************* AVATAR **************************/
 	
 	
-		tag = iq.getNode().getElementsByTagName('BINVAL');
-		if (tag && tag.item(0))
+		tag = iq.getNode().getElementsByTagName('BINVAL')
+		if (tag && tag.item(0).firstChild)
 			var base64data = tag.item(0).firstChild.nodeValue.toString();
 				if (base64data){
 				var uri = "data:image/png;base64," + base64data;
@@ -307,18 +353,5 @@ function retrieveVcard(iq){
 	
 	
 	}
-	catch(e) {alert ("retrieve vcard" + e);}
-}
-
-// Function to create the photo file
-function createPhotoFile(){
- 	
-	
-	/*//create a unique tempfile
-      var dest = Components.classes["@mozilla.org/file/directory_service;1"]
-          .getService(Components.interfaces.nsIProperties)
-          .get("TmpD", Components.interfaces.nsIFile);
-      dest.append(basename(url));
-      dest.createUnique(dest.NORMAL_FILE_TYPE, 0664);*/
-
+	catch(e) {alert ("retrieveVcard" + e);}
 }

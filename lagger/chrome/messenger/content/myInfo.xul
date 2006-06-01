@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/info.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/info.dtd">
+<?xml-stylesheet href="chrome://global/skin/myInfo.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/myInfo.dtd">
 
-<window id="Info"
-		title="Identity Card"
+<window id="myInfo"
+		title="&myInfo.title;"
         orient="horizontal"
-        onload="requestClientSysInfo();"
+        onload="loadMyInfo();"
         resizable="true" 
         width="290"
         onclose="self.close();"
-        height="290"
+        height="280"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
-        <script type="application/x-javascript" src="JavaScript/info.js"/>
+    	    <script type="application/x-javascript" src="JavaScript/myInfo.js"/>
         <script type="application/x-javascript" src="JavaScript/gui.js"/>
         <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
     		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
  	    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
     		<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
-    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
-        
-       <vbox flex="1">
-       
-        <spacer height="15"/>
+    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>    
+                        
+	<vbox flex="1" align="center">
+	
+	 <spacer height="15"/>
         
         <tabbox id="tablist" flex="1">
           <tabs>
@@ -45,28 +45,28 @@
                                 <rows>
                                         <row>
                                                 <label value="Name:" control="fn"/>
-                                                <textbox id="name" flex="1" readonly="true"/>
+                                                <textbox persist="value" id="name" flex="1"/>
                                         </row>
                                         <row>
                                                 <label value="Family:" control="fn"/>
-                                                <textbox id="family" readonly="true"/>
+                                                <textbox persist="value" id="family"/>
                                         </row>
                                         <row>
                                                 <label value="Nickname:" control="nickname"/>
-                                                <textbox id="nickname" readonly="true"/>
+                                                <textbox persist="value" id="nickname"/>
                                         </row>
                                         <row>
                                                 <label value="E-mail:" control="url"/>
-                                                <textbox id="userid" readonly="true"/>
+                                                <textbox persist="value" id="userid" />
                                         </row>
                                         <row>
                                                 <label value="Homepage:" control="url"/>
-                                                <textbox id="url" readonly="true"/>
+                                                <textbox persist="value" id="url" />
                                         </row>
                                         <row>
                                                 <label value="Birthday:" control="location"/>
                                                 <!--<datepicker id="location"/> -->
-                                                <textbox id="birthday" readonly="true"/>
+                                                <textbox persist="value" id="birthday"/>
                                         </row>
                                 </rows>
 
@@ -82,23 +82,23 @@
                                         
                                         <row>
                                                 <label value="Street:" control="nickname"/>
-                                                <textbox id="street" readonly="true"/>
+                                                <textbox persist="value" id="street"/>
                                         </row>
                                         <row>
                                                 <label value="Extra address:"/>
-                                                <textbox id="extra" readonly="true"/>
+                                                <textbox persist="value" id="extra" />
                                         </row>
                                         <row>
                                                 <label value="City state:"/>
-                                                <textbox id="location" readonly="true"/>
+                                                <textbox persist="value" id="location"/>
                                         </row>
                                          <row>
                                                 <label value="Postal Code:"/>
-                                                <textbox id="postal" readonly="true"/>
+                                                <textbox persist="value" id="postal"/>
                                         </row>
                                         <row>
                                                 <label value="Country:"/>
-                                                <textbox id="country" readonly="true"/>
+                                                <textbox persist="value" id="country"/>
                                         </row>
                                 </rows>
 
@@ -114,24 +114,24 @@
                                         
                                         <row>
                                                 <label value="Company:"/>
-                                                <textbox id="company" readonly="true"/>
+                                                <textbox persist="value" id="company"/>
                                         </row>
                                         <row>
                                                 <label value="Department:"/>
-                                                <textbox id="department" readonly="true"/>
+                                                <textbox persist="value" id="department" />
                                         </row>
-                                       
+                                        
                                          <row>
                                                 <label value="Role:"/>
-                                                <textbox id="role" readonly="true"/>
+                                                <textbox persist="value" id="role"/>
                                         </row>
                                         <row>
                                                 <label value="Phone:"/>
-                                                <textbox id="phone" readonly="true"/>
+                                                <textbox persist="value" id="phone"/>
                                         </row>
                                         <row>
                                                 <label value="E-Mail:"/>
-                                                <textbox id="email" readonly="true"/>
+                                                <textbox persist="value" id="email"/>
                                         </row>
                                 </rows>
 
@@ -139,8 +139,8 @@
                         
                         <vbox>
                                 
-                                        <hbox>
-                                        <textbox multiline="true" readonly="true" width="240" height="130" id="about" style="border: 1px solid #aaa"/>
+                                        <hbox flex="1">
+                                        <textbox persist="value" multiline="true" width="240" height="130" id="about" flex="1" style="border: 1px solid #aaa"/>
                                         </hbox>
                                         <spacer height="20"/>
                                         <hbox>
@@ -152,37 +152,12 @@
                         <vbox >
                                 <hbox>
                                         <hbox>
-                                        <image id="photo" onload="resize()" maxwidth="100"  maxheight="100" style="border: 1px solid #aaa"/>
+                                        <image id="photo" persist="src" onload="resize()" maxwidth="100"  maxheight="100" style="border: 1px solid #aaa"/>
                                         </hbox>
                                         <hbox>
                                         <label class="text-link" style="-moz-user-focus:ignore;" value="Change my picture" onclick="changePicture()" flex="0"/>
                                         </hbox>
-                                       
                                 </hbox>
-                                
-                          <spacer height="30"/>
-                                
-                                <grid flex="1">
-
-                                <columns>
-                                        <column flex="1"/>
-                                        <column flex="3"/>
-                                </columns>
-                                <rows>
-                                        
-                                        <row>
-                                               <label value="Client:"/>
-                                      <textbox id="client"/>
-                                        </row>
-                                        <row>
-                                                 <label value="Os:"/>
-                                     <textbox id="os"/>
-                                        </row>
-                                       
-                                </rows>
-
-                        </grid>
-                                 
                         </vbox>
                         
                         
@@ -191,8 +166,10 @@
                 </tabbox>
         
         <spacer height="15"/>
-       
-       		<hbox align="right">
+        
+        <hbox align="center">
+       		 <button label="Publish" onclick="publishInfo();"/>
+        		 <button label="Retrieve" onclick="retrieveInfos();"/>
        		 <button label="Close" onclick="self.close();"/>
         </hbox>
        
@@ -200,4 +177,5 @@
         
         
         
- </window>
+        
+</window>        

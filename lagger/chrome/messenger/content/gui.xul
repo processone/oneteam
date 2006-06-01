@@ -29,6 +29,65 @@
     <script type="application/x-javascript" src="chrome://messenger/content/utils/htmlformat.js"/>
     <script type="application/x-javascript" src="JavaScript/messenger.js"/>
     
+    <script src="chrome://global/content/nsDragAndDrop.js"/>
+	<script src="chrome://global/content/nsTransferable.js"/>
+   
+   <script>
+   
+   
+   var listObserver =
+  {
+  
+  getSupportedFlavours : function() {
+    var flavours = new FlavourSet();
+    flavours.appendFlavour("text/unicode");
+    return flavours;
+  },
+
+  onDragStart: function(evt, transferData, action)
+    {
+   		 var plainText="Cabbage";
+   		 
+   		 
+      transferData.data=new TransferData();
+      transferData.data.addDataForFlavour("text/unicode",plainText);
+    },
+    
+    onDragOver: function(evt,flavour,session){
+   
+   	 //alert ("ondragover!!");
+    
+    },
+
+	onDrop: function(evt, dropdata, session)
+  {
+ 	  var liste = document.getElementById("liste_contacts");
+    
+      var startElement = liste.selectedItem;
+      
+      var startuser = findUserByJid(startElement.id);
+      
+      if (evt.target.id == "group"){
+     
+      startuser [2] = evt.target.getAttribute("label");
+      }
+      else{
+      var dropuser = findUserByJid(evt.target.id);
+      startuser [2] = dropuser [2];
+      }
+      
+     
+      emptyList();
+      showUsers(users);
+      refreshList();
+       
+       
+    }
+ };
+ 
+
+ </script>
+    
 
     <vbox flex="1">
 
@@ -51,6 +110,7 @@
 
                 <menu id="configuration-menu" label="&menuConfig.configuration;">
                     <menupopup id="config-popup">
+                   		 <menuitem label="&menuConfig.editinfo;" oncommand="launchPersoInfoWindow ();"/>
                         <menuitem label="&menuConfig.plugins;" oncommand="launchExtWindow ();"/>
                         <menuitem label="&menuConfig.themes;" oncommand="launchThemeWindow ();"/>
                         <menuitem label="&menuConfig.preferences;" oncommand="launchPreferences();"/>
@@ -94,7 +154,11 @@
             
             <vbox flex="1" id ="left">
 
-           <listbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1">
+           <listbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1"
+       	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
+       	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
+ 			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
+           
             </listbox>
             
             <popup id="listcontext" >
@@ -121,7 +185,7 @@
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
                     <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
                     <menuseparator/>
-                    <menuitem label="&listitemcontext.Infos;" oncommand="launchPersoInfoWindow();"/>
+                    <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
                 </popup>
             </popupset>
 

@@ -1,0 +1,3 @@
+datepicker{
+-moz-binding: url("chrome://messenger/content/datepicker.xml#datepicker");
+}

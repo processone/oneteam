@@ -34,6 +34,8 @@ var console = false;
 var hideDecoUser = false;
 
 
+ 
+
 // Function to open a simple conversation
 function openConversation(event) {
 
@@ -123,6 +125,8 @@ function openConversation(event) {
         //alert ("text" + liste.selectedItem.id);
         text.setAttribute("flex", "5");
         text.setAttribute("wait-cursor","false");
+        text.setAttribute("onload","event.stopPropagation();");
+         text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
         hbox.appendChild(text);
        
@@ -386,6 +390,24 @@ function findStatusByJid(jid){
 }
 
 
+// Function to find a resource user by its jid
+function findResourceByJid(jid){
+
+	for (var i = 0 ; i < users.length ; i++){
+	if (users [i] [0] == jid)
+		return users [i] [5];
+		}
+}
+
+// Function to find a  user by its jid
+function findUserByJid(jid){
+
+	for (var i = 0 ; i < users.length ; i++){
+	if (users [i] [0] == jid)
+		return users [i] ;
+		}
+}
+
 // Function to ask authorisation for adding contact
 function authorizeSeeContact(jid) {
 
@@ -542,7 +564,7 @@ try{
 // Function to get roster
 function getRoster(iq) {
 
-	sendServerRequest();
+	//sendServerRequest();
 
     var items = iq.getQuery().childNodes;
 
@@ -577,12 +599,13 @@ function getRoster(iq) {
                 }
                 
                  if (items.item(i).getAttribute('category') == 'conference'){
-                 //alert ("i enter here");
+                    
                  room = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "user-sibling.gif");
                 rooms.push(room);
                 }
                  else{
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png");
+                 var resources = new Array();
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources);
             //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
             users.push(user);
             }
@@ -864,6 +887,7 @@ function showGroup(group) {
 function showRoom (room){
 	try {
 	
+	alert ("je rentre dans show room");
 	
 	var liste = document.getElementById("liste_contacts");
     var item = document.createElement("listitem");
@@ -925,33 +949,6 @@ function sortRosterByStatus (){
 }
 
 
-// Function to publish its avatar via vcard
-function publishAvatar(){
-
-/*con.sendStr('<iq from="juliet@capulet.com" type="set" id="vc1"><vCard xmlns="vcard-temp">
-    <BDAY>1476-06-09</BDAY>
-    <ADR>
-      <CTRY>Italy</CTRY>
-      <LOCALITY>Verona</LOCALITY>
-      <HOME/>
-    </ADR>
-    <NICKNAME/>
-    <N><GIVEN>Juliet</GIVEN><FAMILY>Capulet</FAMILY></N>
-    <EMAIL>jcapulet@shakespeare.lit</EMAIL>
-    <PHOTO>
-      <TYPE>image/jpeg</TYPE>
-      <BINVAL>
-        Base64-encoded-avatar-file-here!
-      </BINVAL>
-    </PHOTO>
-  </vCard>
-</iq>');*/
-}
-
-// Function to retrieve avatar
-function retrieveAvatar(){
-
-}
 
 
 
@@ -979,6 +976,8 @@ function refreshList() {
 
 // Function to show a user in roster
 function showUser(user) {
+	
+	//alert ("je rentre dans show User");
 
     var liste = document.getElementById("liste_contacts");
     var item = document.createElement("listitem");
@@ -1669,13 +1668,25 @@ function launchExtWindow(){
  
  }
  
- // function to edit your personal info
-function launchPersoInfoWindow(){
+ // function to edit contact info
+function launchInfoWindow(){
 var liste = document.getElementById("liste_contacts");
 
-	infojid = liste.selectedItem.id;
-	//alert (infojid);
+	
+	var user = findUserByJid(liste.selectedItem.id);
+	
+	// jid + resource
+	infojid = user[0] + "/" + user[5] [0];
+	
 	window.open("chrome://messenger/content/info.xul", infojid, "chrome,titlebar,toolbar,centerscreen,modal");
+	
+}
+
+// function to edit your personal info
+function launchPersoInfoWindow(){
+
+	
+	window.open("chrome://messenger/content/myInfo.xul", "Edit your info", "chrome,titlebar,toolbar,centerscreen,modal");
 	
 }
 
@@ -1862,6 +1873,8 @@ function handleMessage(aJSJaCPacket) {
         //text.setAttribute("width", "380");
         //text.setAttribute("readonly", "true");
         text.setAttribute("wait-cursor","false");
+        text.setAttribute("onload","event.stopPropagation();");
+         text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
         text.setAttribute("flex", "1");
         vboxpanel.appendChild(text);
@@ -1918,11 +1931,16 @@ function showState(aJSJaCPacket){
 function handlePresence(aJSJaCPacket) {
 /* HERE IS AN ERROR ATTEMPTING CREATING A ROOM */
 
+	
+
     var presence;
     var sender = cutResource(aJSJaCPacket.getFrom());
+    var resource = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf("/")+ 1);
+    
     var item = document.getElementById(sender);
     var user;
     var pattern = /conference/
+   
    
   //alert (aJSJaCPacket.xml());
 	
@@ -2004,10 +2022,16 @@ function handlePresence(aJSJaCPacket) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
         if (item)
         item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "online.png");
+       
         user [4] = "online.png";
          var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+    		
+    		var resources = findResourceByJid(sender);
+    		if (resources)
+    		resources.push(resource);
+    		
     }
     	
 	
