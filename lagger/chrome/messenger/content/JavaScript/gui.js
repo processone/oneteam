@@ -564,7 +564,7 @@ try{
 // Function to get roster
 function getRoster(iq) {
 
-	//sendServerRequest();
+	sendServerRequest();
 
     var items = iq.getQuery().childNodes;
 
@@ -621,9 +621,9 @@ function getRoster(iq) {
     		
         showUsers(users);
         
-        //alert(iq.xml());
+       alert(iq.xml());
         
-        //sendServerRequest();
+      
         //sendDiscoRoomRequest(conferences[0]);
         
        

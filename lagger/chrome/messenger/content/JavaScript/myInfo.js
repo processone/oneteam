@@ -1,6 +1,9 @@
 // Function to publish infos
 function publishInfo(){
 
+
+try{
+
 var iq = new JSJaCIQ();
 	var elem = iq.getDoc().createElement('vCard');
 	iq.setIQ(null,window.opener.myjid,'set','vcard');
@@ -58,8 +61,19 @@ var binvalnode = document.createTextNode(document.getElementById("photo").getAtt
 fn.appendChild(fnnode);
 elem.appendChild(fn);
 
+var n = document.createElement('N');
+
 family.appendChild(familynode);
-elem.appendChild(family);
+
+var given = document.createElement('GIVEN');
+var middle = document.createElement('MIDDLE');
+
+
+n.appendChild(family);
+n.appendChild(given);
+n.appendChild(middle);
+
+elem.appendChild(n);
 
 nickname.appendChild(nicknamenode);
 elem.appendChild(nickname);
@@ -73,26 +87,35 @@ elem.appendChild(userid);
 bday.appendChild(bdaynode);
 elem.appendChild(bday);
 
+var adr = document.createElement('ADR');
+elem.appendChild(adr);
+
+var home = document.createElement('HOME');
+adr.appendChild(home);
+
 street.appendChild(streetnode);
-elem.appendChild(street);
+adr.appendChild(street);
 
 pcode.appendChild(pcodenode);
-elem.appendChild(pcode);
+adr.appendChild(pcode);
 
 ctry.appendChild(ctrynode);
-elem.appendChild(ctry);
+adr.appendChild(ctry);
 
 locality.appendChild(localitynode);
-elem.appendChild(locality);
+adr.appendChild(locality);
 
 extadd.appendChild(extaddnode);
-elem.appendChild(extadd);
+adr.appendChild(extadd);
+
+var org = document.createElement('ORG');
+elem.appendChild(org);
 
 orgname.appendChild(orgnamenode);
-elem.appendChild(orgname);
+org.appendChild(orgname);
 
 orgunit.appendChild(orgunitnode);
-elem.appendChild(orgunit);
+org.appendChild(orgunit);
 
 number.appendChild(numbernode);
 elem.appendChild(number);
@@ -114,6 +137,10 @@ window.opener.con.send(iq);
 if (window.opener.console) {
         window.opener.cons.addInConsole("OUT : " + iq.xml() + "\n");
     }
+    
+    }
+    catch(e){alert (e);}
+    
 }
 
 

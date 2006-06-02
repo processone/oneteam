@@ -5,10 +5,11 @@ var roles = new Array();
 
 // Function to load server list
 function loadServers(){
-	//window.opener.sendServerRequest();
+	
+	try{
+	
 	var servers = document.getElementById("servers");
-    var menuserver = document.getElementById("menuServer");
-   
+    
     //window.opener.sendServerRequest();
     
     var listmucs = window.opener.mucs;
@@ -17,19 +18,165 @@ function loadServers(){
 
 
     for (var i = 0; i < listmucs.length; i++) {
-    		//alert (listmucs[i]);
-  		var item = document.createElement("menuitem");
-        item.setAttribute("label", listmucs[i]);
-        item.setAttribute("id", listmucs[i]);
-        //item.setAttribute("selected","true");
+    		
+  		var item = document.createElement("treeitem");
+  		 var row = document.createElement("treerow");
+   		 var cell1 = document.createElement("treecell");
+   		  var child = document.createElement("treechildren");
+  
+    cell1.setAttribute("label", listmucs[i].substring(listmucs[i].indexOf(".") + 1));
+    cell1.setAttribute("id",listmucs[i].substring(listmucs[i].indexOf(".") + 1) );
+  
+    row.appendChild(cell1);
+    
+   child.setAttribute("id","child" + listmucs[i].substring(listmucs[i].indexOf(".") + 1));
+    
+    item.setAttribute("container", "true");
+    item.setAttribute("open", "true");
+    item.appendChild(row);
+    item.appendChild(child);
 
-        servers.appendChild(item);
+    servers.appendChild(item);
         }
         
         window.opener.mucs.splice(0,mucs.length);
       
+      
+  	requestRetrieveBookmarks();
+      
+      }
+      
+      catch(e){alert("dans load servers" + e);}
 }
 
+
+// Function to request retrieve bookmarks
+function requestRetrieveBookmarks(){
+ 		
+ 		
+ 		var iq = new JSJaCIQ();
+        iq.setType('get');
+        query = iq.setQuery('jabber:iq:private');
+        query.appendChild(iq.getDoc().createElement('storage')).setAttribute('xmlns','storage:bookmarks');
+			
+		con.send(iq,retrieveBookmarks);
+		
+		if (window.opener.console) {
+        window.opener.cons.addInConsole("OUT : " +iq.xml() + "\n");
+    }
+		
+}
+
+// Function to request retrieve bookmarks
+function retrieveBookmarks(iq){
+
+var conference = iq.getNode().getElementsByTagName('conference');
+
+
+for (var i = 0 ; i < conference.item.length ; i++){
+	
+	var conf =  conference.item(i);
+	var jid = conf.getAttribute("jid");
+	var server = jid.substring(jid.indexOf(".") + 1);
+	var name = conf.getAttribute("name");
+	
+	 var item = document.createElement("treeitem");
+  		 var row = document.createElement("treerow");
+   		 var cell1 = document.createElement("treecell");
+
+
+	cell1.setAttribute("label", name);
+    cell1.setAttribute("id",name);
+  
+    row.appendChild(cell1);
+    
+   
+    item.appendChild(row);
+    
+    
+   
+   
+   var elem = document.getElementById("child" + server);
+   elem.appendChild(item);
+
+}
+
+if (window.opener.console) {
+        window.opener.cons.addInConsole("IN : " +iq.xml() + "\n");
+    }
+}
+
+// Function to add room bookmark
+function addBookmark (){
+
+try{
+
+var login = document.getElementById("login");
+var server = document.getElementById("server");
+var roomname = document.getElementById("room");
+var pass = document.getElementById("pass");
+
+			
+		 	
+		 var item = document.createElement("treeitem");
+  		 var row = document.createElement("treerow");
+   		 var cell1 = document.createElement("treecell");
+
+
+	cell1.setAttribute("label", roomname.value);
+    cell1.setAttribute("id",roomname.value);
+  
+    row.appendChild(cell1);
+    
+   
+    item.appendChild(row);
+    
+    
+   var theserver = server.value.substring(server.value.indexOf(".") + 1);
+   
+   var elem = document.getElementById("child" + theserver);
+   elem.appendChild(item);
+   
+   
+   var iq = new JSJaCIQ();
+        iq.setType('set');
+        
+
+        query = iq.setQuery('jabber:iq:private');
+      
+      var storage = iq.getDoc().createElement('storage');
+      storage.setAttribute('xmlns','storage:bookmarks');
+      query.appendChild(storage);
+   
+   	var conference = iq.getDoc().createElement('conference');
+   	conference.setAttribute('name',roomname.value);
+   	
+   	// TO FIX
+   	conference.setAttribute('autojoin','true');
+   	conference.setAttribute('jid',roomname.value + "@" + server.value);
+   	
+   	var nick = iq.getDoc().createElement('nick');
+   	nick.appendChild(iq.getDoc().createTextNode(login.value));
+   	
+   	var password = iq.getDoc().createElement('password');
+   	password.appendChild(iq.getDoc().createTextNode(pass.value));
+   	
+   	storage.appendChild(conference);
+   	conference.appendChild(nick);
+   	conference.appendChild(password);
+   	
+   	con.send(iq);
+	
+	
+		if (window.opener.console) {
+        window.opener.cons.addInConsole("OUT : " +iq.xml() + "\n");
+    }
+   	
+    }
+      
+      catch(e){alert("dans add bookmark" + e);}
+
+}
 
 // function to perform room joining
 function performJoinRoom(wholeRoom,jid, pass, nick) {
@@ -85,12 +232,12 @@ function createInstantRoom(){
 
 
 var login = document.getElementById("login");
-var server = document.getElementById("menuServer");
+var server = document.getElementById("server");
 var roomname = document.getElementById("room");
 var pass = document.getElementById("pass");
 
 
-var wholeRoom = roomname.value + "@" + server.selectedItem.id;
+var wholeRoom = roomname.value + "@" + server.value;
 
 	alert (wholeRoom);
 	self.close();

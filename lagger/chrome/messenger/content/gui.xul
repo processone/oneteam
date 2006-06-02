@@ -74,13 +74,30 @@
       else{
       var dropuser = findUserByJid(evt.target.id);
       startuser [2] = dropuser [2];
-      }
+       }
       
+      try{
+      var iq = new JSJaCIQ();
+        iq.setType('set');
+        var query = iq.setQuery('jabber:iq:roster');
+        var item = query.appendChild(iq.getDoc().createElement('item'));
+        item.setAttribute('jid',startElement.id);
+        var group = item.appendChild(iq.getDoc().createElement('group'));
+        group.appendChild(iq.getDoc().createTextNode(startuser [2]));
+
+        //alert (iq.xml());
+        con.send(iq);
      
       emptyList();
       showUsers(users);
       refreshList();
        
+       if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+   	 }
+       
+      }
+       catch(e){alert(e);}
        
     }
  };
