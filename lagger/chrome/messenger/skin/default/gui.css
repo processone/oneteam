@@ -5,11 +5,18 @@
     list-style-image: url( "chrome://messenger/skin/images/away.png" );
 }
 
-#conferences{
+#conference{
 color : rgb(26%, 31%, 35%);
 background: #FFCC99;
 font-weight : bold;
 }
+
+#server {
+color : rgb(15%, 15%, 70%);
+background: #CCCCFF;
+font-weight : bold;
+}
+
 
 #group {
 color : rgb(15%, 15%, 70%);

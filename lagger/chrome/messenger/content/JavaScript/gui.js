@@ -39,6 +39,7 @@ var hideDecoUser = false;
 // Function to open a simple conversation
 function openConversation(event) {
 
+	
     if (!deployedGUI) {
         extendGUI();
         deployedGUI = true;
@@ -47,32 +48,40 @@ function openConversation(event) {
 
     var liste = document.getElementById("liste_contacts");
 
+	
+	var id;
+	
+	if (event.target.id)
+		id = event.target.id;
+	else
+		id = liste.selectedItem.id;
 
-    if (document.getElementById("tab" + liste.selectedItem.id) == null) {
+    if (document.getElementById("tab" + id) == null) {
 
 		var vboxpanel = document.createElement("vbox");
 		var hboxhead = document.createElement("hbox");
-		var hbox = document.createElement("hbox");
-      	
-      	hbox.setAttribute("flex", "1");
-        hbox.setAttribute("id", "panel-roster" + "tab"+ liste.selectedItem.id);
-        
-        vboxpanel.setAttribute("id", "vboxpanel"+ liste.selectedItem.id);
+		
+        vboxpanel.setAttribute("id", "vboxpanel"+ id);
         vboxpanel.setAttribute("flex", "1");
         
-        hboxhead.setAttribute("id", "head" + "tab"+ liste.selectedItem.id);
+        hboxhead.setAttribute("id", "head" + "tab"+ id);
         
         
         var imghead = document.createElement("image");
-        imghead.setAttribute("id", "imghead"+ liste.selectedItem.id);
-        var status = findStatusByJid(liste.selectedItem.id);
+       imghead.setAttribute("id", "imghead"+ id);
+        var status = findStatusByJid(id);
         imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + status);
         
+        
+       
+        
         var namehead = document.createElement("label");
-        namehead.setAttribute("value", keepLogin(liste.selectedItem.id));
+        namehead.setAttribute("value", keepLogin(id));
+        namehead.setAttribute("id","namehead" + keepLogin(id));
+        
         
         var writestate = document.createElement("label");
-        writestate.setAttribute("id", "writestate"+ liste.selectedItem.id);
+        writestate.setAttribute("id", "writestate"+ id);
         
         hboxhead.appendChild (imghead);
         hboxhead.appendChild (namehead);
@@ -81,8 +90,8 @@ function openConversation(event) {
         var tabs = document.getElementById("tabs1");
         tabs.setAttribute("closebutton","true");
         var tab = document.createElement("tab");
-        tab.setAttribute("id", "tab" + liste.selectedItem.id);
-        tab.setAttribute("label", (liste.selectedItem.id).substring(0, (liste.selectedItem.id).indexOf("@")));
+        tab.setAttribute("id", "tab" + id);
+        tab.setAttribute("label", (id).substring(0, (id).indexOf("@")));
         tab.setAttribute("context", "tabcontext");
         tab.setAttribute("onfocus","tabfocused()");
 
@@ -97,7 +106,7 @@ function openConversation(event) {
 
         var tabspanel = document.getElementById("tabpanels1");
         var tabpanel = document.createElement("tabpanel");
-        tabpanel.setAttribute("id", "tabpanel" + liste.selectedItem.id);
+        tabpanel.setAttribute("id", "tabpanel" + id);
         tabpanel.setAttribute("flex", "5");
         tabpanel.setAttribute("height", "400");
         tabpanel.setAttribute("width", "400");
@@ -105,55 +114,51 @@ function openConversation(event) {
         tabspanel.appendChild(tabpanel);
         
        vboxpanel.appendChild(hboxhead);
-       vboxpanel.appendChild(hbox);
+       
         
         tab.setAttribute("selected", "true");
         var tabbox = document.getElementById("tabbox");
         tabbox.selectedPanel = tabpanel;
        
-        
 
         //var text = document.createElement("textbox");
         var text = document.createElement("iframe");
         
 
-        text.setAttribute("id", "text" + liste.selectedItem.id);
+        text.setAttribute("id", "text" + id);
         //text.setAttribute("multiline", "true");
         //text.setAttribute("height", "400");
         //text.setAttribute("width", "400");
         //text.setAttribute("readonly", "true");
-        //alert ("text" + liste.selectedItem.id);
+        //alert ("text" + id);
         text.setAttribute("flex", "5");
         text.setAttribute("wait-cursor","false");
         text.setAttribute("onload","event.stopPropagation();");
          text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
-        hbox.appendChild(text);
+        vboxpanel.appendChild(text);
        
         //text.contentDocument.write("<div><table><tr><td>");
-        
+       
         try {
 		
-		if (liste.selectedItem.getAttribute("context") == 'itemcontextroom'){
+		if (event.target.getAttribute("context") == 'itemcontextroom'){
 	
+		
 		tab.setAttribute("context", "tabroomcontext");
 		
 		
-		// add the room roster to the gui
-		var hbox = document.getElementById("panel-roster" + tabs.selectedItem.id);
-		
-		var listboxRoom = document.createElement("listbox");
-		//listboxRoom.setAttribute("flex", "1");
-		listboxRoom.setAttribute("width", "120");
-		listboxRoom.setAttribute("id", "liste_contacts_room" + tabs.selectedItem.id);
-		
-		hbox.appendChild(listboxRoom);
 		
 		//myRoomNick = keepLogin(myjid);
-		performJoinRoom (liste.selectedItem.id,myjid,'',myRoomNick);
+		//alert (id);
+		performJoinRoom (id,myjid,'',myRoomNick);
 		
 		self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
 		}
+		
+		
+		
+		
 		
 		}
 		catch(e){alert(e);}
@@ -161,10 +166,6 @@ function openConversation(event) {
 
    
 }
-
-
-
-
 
 
 
@@ -214,10 +215,10 @@ function initGUI() {
     
     self.setCursor('default');
 
+	
     
         con.connect(oArg);
   
-
 
     /*if (con.connected()) {
         //alert ("I'm connected");
@@ -364,7 +365,7 @@ function reduceGUI() {
     }*/
     
     right.setAttribute("flex","0");
-    self.resizeTo(155, document.getElementById("Messenger").boxObject.height);
+    self.resizeTo(170, document.getElementById("Messenger").boxObject.height);
 	
 	while(right.childNodes != null){
 		right.removeChild(right.firstChild);
@@ -564,7 +565,8 @@ try{
 // Function to get roster
 function getRoster(iq) {
 
-	sendServerRequest();
+ try {
+		sendServerRequest();
 
     var items = iq.getQuery().childNodes;
 
@@ -576,7 +578,7 @@ function getRoster(iq) {
     /* setup groups */
     if (!items)
         return;
-    try {
+   
         for (var i = 0; i < items.length; i++) {
 
 
@@ -598,30 +600,28 @@ function getRoster(iq) {
                         groups.push(group);
                 }
                 
-                 if (items.item(i).getAttribute('category') == 'conference'){
+                /* if (items.item(i).getAttribute('category') == 'conference'){
                     
                  room = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "user-sibling.gif");
                 rooms.push(room);
-                }
-                 else{
+                }*/
+                 //else{
                  var resources = new Array();
             user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources);
             //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
             users.push(user);
-            }
+            //}
             
            
         }
-    } catch(e) {
-        alert("Dans la boucle" + e);
-    }
+   
 
 
-    try {
+   
     		
         showUsers(users);
-        
-       alert(iq.xml());
+        //loadServers();
+       //alert(iq.xml());
         
       
         //sendDiscoRoomRequest(conferences[0]);
@@ -633,6 +633,153 @@ function getRoster(iq) {
     }
     //if (!gPrefService.getCharPref("chat.roster.showOffline"))
          	//hideDecoUsers();
+}
+
+
+// Function to load server list
+function loadServers(){
+	
+	try{
+	
+	
+	
+	/* var servers = document.getElementById("serveritems");
+    
+    alert (mucs.length);
+
+    for (var i = 0; i < mucs.length; i++) {
+    		
+  		var item = document.createElement("treeitem");
+  		 var row = document.createElement("treerow");
+   		 var cell1 = document.createElement("treecell");
+   		  var child = document.createElement("treechildren");
+  
+  
+  
+    cell1.setAttribute("label", mucs[i].substring(mucs[i].indexOf(".") + 1));
+    cell1.setAttribute("id","confcell" + mucs[i].substring(mucs[i].indexOf(".") + 1) );
+  
+    row.appendChild(cell1);
+    
+   child.setAttribute("id","confchild" + mucs[i].substring(mucs[i].indexOf(".") + 1));
+    
+    
+    item.setAttribute("container", "true");
+    item.setAttribute("open", "true");
+    item.appendChild(row);
+    item.appendChild(child);
+
+    servers.appendChild(item);*/
+    alert ("To temporize");
+    
+    var confs = document.getElementById("liste_conf");
+    
+     for (var i = 0; i < mucs.length; i++) {
+    
+    var item = document.createElement("listitem");
+    item.setAttribute("label", mucs[i].substring(mucs[i].indexOf(".") + 1));
+    item.setAttribute("id","server");
+    
+    var cell = document.createElement("listcell");
+    cell.setAttribute("label", mucs[i].substring(mucs[i].indexOf(".") + 1));
+    cell.setAttribute("id",mucs[i].substring(mucs[i].indexOf(".") + 1) + "cell");
+    cell.setAttribute("flex", "1");
+    
+    item.appendChild(cell);
+    
+    confs.appendChild(item);
+        }
+        
+        //mucs.splice(0,mucs.length);
+      
+      
+  	requestRetrieveBookmarks();
+      
+      }
+      
+      catch(e){alert("dans load servers" + e);}
+}
+
+
+// Function to request retrieve bookmarks
+function requestRetrieveBookmarks(){
+ 		
+ 		try{
+ 		
+ 		var iq = new JSJaCIQ();
+        iq.setType('get');
+        query = iq.setQuery('jabber:iq:private');
+        query.appendChild(iq.getDoc().createElement('storage')).setAttribute('xmlns','storage:bookmarks');
+			
+		con.send(iq,retrieveBookmarks);
+		
+		if (console) {
+        cons.addInConsole("OUT : " +iq.xml() + "\n");
+    }
+		
+		
+		 }
+      
+      catch(e){alert("request book" + e);}
+}
+
+// Function to request retrieve bookmarks
+function retrieveBookmarks(iq){
+
+try {
+
+var conference = iq.getNode().getElementsByTagName('conference');
+
+
+for (var i = 0 ; i < conference.item.length ; i++){
+	
+	var conf =  conference.item(i);
+	var jid = conf.getAttribute("jid");
+	var serveritem = jid.substring(jid.indexOf(".") + 1);
+	var name = conf.getAttribute("name");
+	
+		/* var item = document.createElement("treeitem");
+  		 var row = document.createElement("treerow");
+   		 var cell1 = document.createElement("treecell");
+
+	cell1.setAttribute("label", name);
+    cell1.setAttribute("id","room" + name);
+  	cell1.setAttribute("class","treecell-indent");
+  	
+    
+    row.appendChild(cell1);
+    
+   
+    item.appendChild(row);
+    
+   var elem = document.getElementById("confchild" + serveritem);
+  
+   elem.appendChild(item);*/
+	var item = document.createElement("listitem");
+	item.setAttribute("label", name);
+    item.setAttribute("id",jid);
+    item.setAttribute("context","itemcontextroom");
+    item.setAttribute("ondblclick","openConversation(event)");
+    
+     var cell = document.createElement("listcell");
+    cell.setAttribute("label", name);
+    cell.setAttribute("id",jid + "cell");
+     cell.setAttribute("flex", "1");
+    
+    item.appendChild(cell);
+    
+    var confs = document.getElementById("liste_conf");
+    confs.appendChild(item);
+}
+
+if (console) {
+        cons.addInConsole("IN : " +iq.xml() + "\n");
+    }
+    
+    
+     }
+      
+      catch(e){alert("retrieve book" + e);}
 }
 
 
@@ -711,8 +858,30 @@ function closeTab() {
 		
     if (childNodes.length == 1){
    
-    		if (tab.getAttribute("context") == "tabroomcontext")
+    		if (tab.getAttribute("context") == "tabroomcontext"){
+    		
+    		
+		
+			var listconfs = document.getElementById ("liste_conf");
+			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
+			//alert ("jid" + jid);
+			var element = document.getElementById(jid);
+			//alert ("name" + element.nextSibling);
+			var el;
+			while (el = element.nextSibling){
+				if (el.getAttribute("id").match(jid)){
+					//alert (el.getAttribute("id"));
+					listconfs.removeChild(el);
+					}
+				else{
+				
+				//alert (el.getAttribute("id"));
+					break;	
+					}
+			}			
         exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
+   		 }
+   		 
    		 reduceGUI();
     		
         }
@@ -729,11 +898,25 @@ function closeTab() {
 
 		if (tab.getAttribute("context") == "tabroomcontext"){
 		
-			var listRooms = document.getElementById ("liste_contacts_room" + tab.id);
-			var hbox = document.getElementById("panel-roster" + tab.id);
-				hbox.removeChild (listRooms);
+		
+			var listconfs = document.getElementById ("liste_conf");
+			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
+			//alert ("jid" + jid);
+			var element = document.getElementById(jid);
+			//alert ("name" + element.nextSibling);
+			var el;
+			while (el = element.nextSibling){
+				if (el.getAttribute("id").match(jid)){
+					//alert (el.getAttribute("id"));
+					listconfs.removeChild(el);
+					}
+				else{
 				
-				exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
+				//alert (el.getAttribute("id"));
+					break;	
+					}
+			}			
+				exitRoom(jid + "/" + myRoomNick);
 				
 				} 
 			
@@ -749,7 +932,7 @@ function closeTab() {
     }
     
     
-   // } catch (e) {alert(" In closeTab" + e);}
+  //  } catch (e) {alert(" In closeTab" + e);}
 }
 
 
@@ -783,6 +966,7 @@ function closeAllTab() {
 
 //Function to hide deconnected users
 function hideDecoUsers(){
+	
 	if (!hideDecoUser){ 
 	hideDecoUser = true;
 	this.emptyList();
@@ -910,21 +1094,51 @@ function showRoomUser (roomUser){
 	//alert (roomUser[1]);
 	var tabs = document.getElementById("tabs1");
 	
-	var listeRoom = document.getElementById("liste_contacts_room" + tabs.selectedItem.id);
+	var listconf = document.getElementById("liste_conf");
+	
+	
+	var jidroom = roomUser[0].substring(0,roomUser[0].indexOf('/'));
+	//alert ("jidroom" + jidroom);
+	//var currentroom = document.getElementById(roomUser[0]);
+	var currentroom = document.getElementById(jidroom);
+	//alert ("show room user" + currentroom.getAttribute(name));
+	
     var item = document.createElement("listitem");
     
+    //item.setAttribute("label", roomUser[1]);
+    item.setAttribute("id", roomUser[0]);
+    
+    var image =  document.createElement("image");
+    // TO FIX : GIVE THE RIGHT SRC IF EXIST
+    image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
+    image.setAttribute("width", "20");
+    image.setAttribute("height", "20");
+   
+ 	
+ 	var cell = document.createElement("listcell");
+ 	cell.setAttribute("class", "listitem-iconic");
+    cell.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
+    cell.setAttribute("label", roomUser[1]);
+    cell.setAttribute("id", roomUser[0] + "cell");
+    cell.setAttribute("flex", "1");
     
     if (roomUser[1] == keepLogin(myjid) || roomUser[1] == gPrefService.getCharPref("chat.muc.nickname"))
-    item.setAttribute("context", "itemcontextroomme");
+    cell.setAttribute("context", "itemcontextroomme");
     else
-    item.setAttribute("context", "itemcontextroomuser");
-    item.setAttribute("class", "listitem-iconic");
-    item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
-    item.setAttribute("label", roomUser[1]);
-    item.setAttribute("id", roomUser[0]);
-    listeRoom.appendChild(item);
- 	
- 	
+    cell.setAttribute("context", "itemcontextroomuser");
+    
+    item.appendChild (cell);
+ 	 item.appendChild(image);
+ 	 
+ 	 //listconf.appendChild(item);
+    //currentroom.appendChild( item);
+    if (currentroom.nextSibling){
+    
+    listconf.insertBefore(item,currentroom.nextSibling);
+    }
+    else
+    listconf.appendChild(item);
+    
  	} catch (e) {alert(e);}
 }
 
@@ -980,14 +1194,39 @@ function showUser(user) {
 	//alert ("je rentre dans show User");
 
     var liste = document.getElementById("liste_contacts");
-    var item = document.createElement("listitem");
+     var item = document.createElement("listitem");
+     item.setAttribute("ondblclick", "openConversation(event)");
+     item.setAttribute("id", user[0]);
+  	 item.setAttribute("context", "itemcontext");
+     
+   /* var item = document.createElement("listitem");
     item.setAttribute("context", "itemcontext");
     item.setAttribute("ondblclick", "openConversation(event)");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
     item.setAttribute("label", user[3]);
     item.setAttribute("id", user[0]);
-    item.setAttribute("flex", "1");
+    item.setAttribute("flex", "1");*/
+    
+    var cell =  document.createElement("listcell");
+    
+    cell.setAttribute("context", "itemcontext");
+    cell.setAttribute("ondblclick", "openConversation(event)");
+    cell.setAttribute("class", "listitem-iconic");
+    cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+    cell.setAttribute("label", user[3]);
+    cell.setAttribute("id", user[0] + "cell");
+    cell.setAttribute("flex", "1");
+    
+    item.appendChild(cell);
+    
+    var image =  document.createElement("image");
+    // TO FIX : GIVE THE RIGHT SRC IF EXIST
+    image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
+    image.setAttribute("width", "20");
+    image.setAttribute("height", "20");
+    item.appendChild(image);
+    
     liste.appendChild(item);
     
     /*var item = document.createElement("treeitem");
@@ -1071,7 +1310,7 @@ try{
 
         con.send(aIQ, getServerInfo);
     }
-    
+    loadServers();
     //alert("je sors de serverItem");
     }
 	catch (e){alert(e);}
@@ -1098,6 +1337,7 @@ function getServerInfo(iq) {
         		
         			if (iq.xml().match(pattern)){
         				mucs.push(iq.getFrom());
+        				 
         				//alert ("ici j'ajoute l'iq" + iq.xml());
         				}
         //alert(conferences[0]);
@@ -1108,7 +1348,7 @@ function getServerInfo(iq) {
     		}
         
         //alert (iq.xml());
-  
+  	
         
     }
     //alert("je sors de serverInfo");
@@ -1890,10 +2130,21 @@ function handleMessage(aJSJaCPacket) {
     
     	else{
     
-    if(origin.match(pattern))
+    if(origin.match(pattern)){
+    	var conf = document.getElementById(roomUserName);
+    	if (conf){
+    		
+    		var namehead = document.getElementById("namehead" + keepLogin(roomUserName));
+    		namehead.setAttribute("value",html_escape(aJSJaCPacket.getBody()));
+    		return;
+    		}
+    	else 
     		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
+    
+    }
     else
     		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(name) + "</u>" +   " : " + "</font>");
+    
     textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +html_escape(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
     textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
@@ -1937,7 +2188,8 @@ function handlePresence(aJSJaCPacket) {
     var sender = cutResource(aJSJaCPacket.getFrom());
     var resource = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf("/")+ 1);
     
-    var item = document.getElementById(sender);
+    
+    var item = document.getElementById(sender + "cell");
     var user;
     var pattern = /conference/
    

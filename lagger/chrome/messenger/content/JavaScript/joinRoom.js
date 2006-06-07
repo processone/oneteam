@@ -1,10 +1,11 @@
 var con = window.opener.con;
 
-var roomUsers = new Array();
-var roles = new Array();
+//var roomUsers = new Array();
+//var roles = new Array();
 
 // Function to load server list
 function loadServers(){
+	
 	
 	try{
 	
@@ -15,7 +16,7 @@ function loadServers(){
     var listmucs = window.opener.mucs;
     
    
-
+	
 
     for (var i = 0; i < listmucs.length; i++) {
     		
@@ -72,6 +73,7 @@ function retrieveBookmarks(iq){
 
 var conference = iq.getNode().getElementsByTagName('conference');
 
+//alert (iq.xml());
 
 for (var i = 0 ; i < conference.item.length ; i++){
 	
@@ -105,6 +107,22 @@ if (window.opener.console) {
         window.opener.cons.addInConsole("IN : " +iq.xml() + "\n");
     }
 }
+
+// Function to remove an existing bookmark
+function removeBookmark(){
+
+var iq = new JSJaCIQ();
+        iq.setType('set action="delete"');
+        query = iq.setQuery('jabber:iq:private');
+        query.appendChild(iq.getDoc().createElement('storage')).setAttribute('xmlns','storage:bookmarks');
+			
+		con.send(iq,retrieveBookmarks);
+		
+		if (window.opener.console) {
+        window.opener.cons.addInConsole("OUT : " +iq.xml() + "\n");
+    }
+}
+
 
 // Function to add room bookmark
 function addBookmark (){

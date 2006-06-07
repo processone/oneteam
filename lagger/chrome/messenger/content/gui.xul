@@ -7,9 +7,9 @@
         title="Lagger"
         orient="horizontal"
         onload="initGUI();"
-        width="155"
+        width="170"
         onclose="closeWindows();"
-        height="300"
+        height="400"
         style="overflow: auto"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -170,13 +170,47 @@
             <!-- The contact list -->
             
             <vbox flex="1" id ="left">
-
-           <listbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1"
+			
+			<tabbox id="tabitemlist" flex="1">
+          		<tabs>
+                        <tab label="Contacts"/>
+                        <tab label="Conferences"/>
+                                      
+         	 </tabs>
+			<tabpanels flex="1">
+          
+          	 <listbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1"
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
-           
+         	  <listcols>
+    				<listcol/>
+  			 	   <listcol/>
+  		  	  </listcols>
             </listbox>
+            
+           <!-- <tree id="book" width="180" flex="1" hidecolumnpicker="true" context="itemcontextroom" ondblclick="openConversation(event)">
+     		 	<treecols>
+         			  <treecol id="colbook" flex="1" hideheader="true"/> 
+            
+    				 </treecols>
+   				 	 <treechildren id="serveritems">
+     					</treechildren>
+ 			</tree> -->
+ 			
+ 			 <listbox height="400" width="150"  minwidth="140" id="liste_conf" flex="1"
+       	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
+       	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
+ 			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
+ 			<listcols>
+    				<listcol/>
+  			 	   <listcol/>
+  		  	  </listcols>
+            
+             </listbox>
+            
+            </tabpanels>
+            </tabbox>
             
             <popup id="listcontext" >
 			<menuitem type="checkbox" label="&rosterContext.useFullNames;" oncommand="cmd_usefullname"/>
