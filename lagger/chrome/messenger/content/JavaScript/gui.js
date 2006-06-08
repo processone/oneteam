@@ -736,8 +736,8 @@ try {
 
 var conference = iq.getNode().getElementsByTagName('conference');
 
-
-for (var i = 0 ; i < conference.item.length ; i++){
+alert ("nombredeconf" + conference.item.length);
+for (var i = 0 ; i <= conference.item.length ; i++){
 	
 	var conf =  conference.item(i);
 	var jid = conf.getAttribute("jid");
@@ -1416,7 +1416,7 @@ function sendMsg(event) {
 
             
 
-            //alert (tab.selectedItem.id.substring(3,50));
+            
             var aMsg = new JSJaCMessage();
             aMsg.setTo(receiver);
             aMsg.setBody(textEntry.value);

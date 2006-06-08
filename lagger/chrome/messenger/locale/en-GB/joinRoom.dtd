@@ -4,4 +4,4 @@
 <!ENTITY Room.server "Server">
 <!ENTITY Room.room "Room">
 <!ENTITY Room.join "Join">
-<!ENTITY Room.cancel "Cancel">
+<!ENTITY Room.cancel "Ok">

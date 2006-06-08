@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-
+<?xml-stylesheet href="chrome://messenger/skin/joinRoom.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/joinRoom.dtd">
 
 <window id="Room"
         title="Join Room"
         orient="horizontal"
-        onload="loadServers();"
+        onload="loadServer();"
         width="490"
         height="240"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -51,7 +51,7 @@
  
  <hbox align="right">
 
- <button id="rem" label="Remove"/>
+ <button id="rem" label="Remove" onclick="removeBookmark();"/>
  </hbox>
  </vbox>
     
@@ -92,7 +92,7 @@
             <button label="&Room.join;" oncommand="createInstantRoom();"/>
 			<button id="add" label="Add as bookmark" oncommand="addBookmark();"/>
             <spacer flex="1"/>
-            <button label="&Room.cancel;" oncommand="self.close();"/>
+            <button label="&Room.cancel;" oncommand="sendBookmarkPacket();self.close();"/>
         </hbox>
     </groupbox>
 

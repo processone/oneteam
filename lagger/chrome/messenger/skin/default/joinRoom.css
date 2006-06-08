@@ -1,0 +1,9 @@
+treechildren::-moz-tree-row(container)
+{
+	
+	color : rgb(15%, 15%, 70%);
+	background-color: #CCCCFF;
+	font-weight : bold;
+ 	border: 1px solid red;
+}
+

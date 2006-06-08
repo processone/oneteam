@@ -13,6 +13,19 @@ function getArgs() {
     }
 }
 
+function RTrim(chaine){
+	var carriageReturn = new String("\n\r");
+	var s = new String(chaine);
+		
+		if (carriageReturn.indexOf(s.charAt(s.length-1)) != -1) {
+			var i = s.length - 1;
+			while (i >= 0 && carriageReturn.indexOf(s.charAt(i)) != -1)
+			i--;
+			s = s.substring(0, i+1);
+		}
+	return s;
+}
+
 function keepLogin(aJID) {
     if (typeof(aJID) == 'undefined' || !aJID)
         return;
