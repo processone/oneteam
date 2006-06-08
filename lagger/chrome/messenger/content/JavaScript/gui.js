@@ -47,15 +47,21 @@ function openConversation(event) {
     }
 
     var liste = document.getElementById("liste_contacts");
-
+	var confs = document.getElementById("liste_conf");
 	
 	var id;
 	
-	if (event.target.id)
+	if (event.target.id){
 		id = event.target.id;
-	else
+		}
+	else if (liste.selectedItem){
 		id = liste.selectedItem.id;
-
+		}
+	else if (confs.selectedItem){
+		id = confs.selectedItem.id;
+		}
+		
+		
     if (document.getElementById("tab" + id) == null) {
 
 		var vboxpanel = document.createElement("vbox");
@@ -142,7 +148,7 @@ function openConversation(event) {
        
         try {
 		
-		if (event.target.getAttribute("context") == 'itemcontextroom'){
+		if (event.target.getAttribute("context") == 'itemcontextroom' || event.target.getAttribute("context") == ""){
 	
 		
 		tab.setAttribute("context", "tabroomcontext");
@@ -1110,7 +1116,7 @@ function showRoomUser (roomUser){
     
     var image =  document.createElement("image");
     // TO FIX : GIVE THE RIGHT SRC IF EXIST
-    image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
+    //image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
     image.setAttribute("width", "20");
     image.setAttribute("height", "20");
    
@@ -1222,9 +1228,12 @@ function showUser(user) {
     
     var image =  document.createElement("image");
     // TO FIX : GIVE THE RIGHT SRC IF EXIST
-    image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
+    //image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
     image.setAttribute("width", "20");
     image.setAttribute("height", "20");
+   	image.setAttribute("persist", "src");
+    image.setAttribute("id", "image" + user[0]);
+    //alert ("image" + user[0]);
     item.appendChild(image);
     
     liste.appendChild(item);

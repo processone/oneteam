@@ -27,6 +27,8 @@ function loadServers(){
   
     cell1.setAttribute("label", listmucs[i].substring(listmucs[i].indexOf(".") + 1));
     cell1.setAttribute("id",listmucs[i].substring(listmucs[i].indexOf(".") + 1) );
+  	
+  
   
     row.appendChild(cell1);
     
@@ -151,10 +153,37 @@ var pass = document.getElementById("pass");
     
     
    var theserver = server.value.substring(server.value.indexOf(".") + 1);
+   alert (theserver);
    
    var elem = document.getElementById("child" + theserver);
-   elem.appendChild(item);
    
+   // server exists
+   	if (elem) 
+   		elem.appendChild(item);
+   	
+   	else { // I Add the server to bookmarks
+   	var servers = document.getElementById("servers");
+   	var item = document.createElement("treeitem");
+  		 var row = document.createElement("treerow");
+   		 var cell1 = document.createElement("treecell");
+   		  var child = document.createElement("treechildren");
+  
+    cell1.setAttribute("label", listmucs[i].substring(listmucs[i].indexOf(".") + 1));
+    cell1.setAttribute("id",listmucs[i].substring(listmucs[i].indexOf(".") + 1) );
+  	
+  
+  
+    row.appendChild(cell1);
+    
+   child.setAttribute("id","child" + listmucs[i].substring(listmucs[i].indexOf(".") + 1));
+    
+    item.setAttribute("container", "true");
+    item.setAttribute("open", "true");
+    item.appendChild(row);
+    item.appendChild(child);
+
+    servers.appendChild(item);
+   }
    
    var iq = new JSJaCIQ();
         iq.setType('set');

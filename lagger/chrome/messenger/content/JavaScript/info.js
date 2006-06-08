@@ -164,6 +164,7 @@ function retrieveVcard(iq){
 				var labeljabberid = document.getElementById("userid");
 				labeljabberid.setAttribute("value",id);
 				labeljabberid.readonly = true;
+				jabberid = id;
 				}
 			
 			
@@ -296,6 +297,12 @@ function retrieveVcard(iq){
 				image.setAttribute("src",uri);
 				image.setAttribute("height",50);
 				image.setAttribute("width",50);
+				
+				
+				//alert ("image" + cutResource(window.opener.infojid));
+				var rosterimage = window.opener.document.getElementById("image" + cutResource(window.opener.infojid));
+				rosterimage.setAttribute("src",uri);
+				rosterimage.setAttribute("persist", "src");
 				}
 			
 	

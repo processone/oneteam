@@ -248,7 +248,7 @@
             
             <popupset>
                 <popup id="itemcontextroom">
-                		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand="openConversation(event);"/>
+                		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand='document.getElementById("liste_contacts").clearSelection();openConversation(event);'/>
                     <menuseparator/>
                     <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>
                 		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>

@@ -13,6 +13,7 @@
         height="290"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
+        <script type="application/x-javascript" src="JavaScript/shared.js"/>
         <script type="application/x-javascript" src="JavaScript/info.js"/>
         <script type="application/x-javascript" src="JavaScript/gui.js"/>
         <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
