@@ -1959,10 +1959,13 @@ function joinRoom() {
 // Function to close the window
 function closeWindows() {
 
+   con.disconnect();
    
 Components.classes['@mozilla.org/toolkit/app-startup;1']
   .getService(Components.interfaces.nsIAppStartup)
   .quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+  
+  
 }
 
 
@@ -2203,7 +2206,7 @@ function handlePresence(aJSJaCPacket) {
     var pattern = /conference/
    
    
-  //alert (aJSJaCPacket.xml());
+  
 	
 	try {
 		
@@ -2223,7 +2226,7 @@ function handlePresence(aJSJaCPacket) {
     
 
  if ( aJSJaCPacket.getFrom().match(pattern) ){
-		
+		alert (aJSJaCPacket.xml());
 		var x;
     for (var i = 0; i < aJSJaCPacket.getNode().getElementsByTagName('x').length; i++)
         if (aJSJaCPacket.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {

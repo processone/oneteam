@@ -382,3 +382,9 @@ function retrieveVcard(iq){
 	}
 	catch(e) {alert ("retrieveVcard" + e);}
 }
+
+// Function to change my picture
+function changePicture(){
+
+window.open("chrome://messenger/content/fileChooser.xul", "Choose a picture", "chrome,titlebar,toolbar,centerscreen,modal");
+}

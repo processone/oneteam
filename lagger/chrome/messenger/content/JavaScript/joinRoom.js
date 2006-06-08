@@ -1,5 +1,5 @@
 var con = window.opener.con;
-
+var theserver;
 //var roomUsers = new Array();
 //var roles = new Array();
 
@@ -15,7 +15,7 @@ function loadServers(){
     
     var listmucs = window.opener.mucs;
     
-   
+   	theserver = listmucs[0].substring(listmucs[0].indexOf(".") + 1);
 	
 
     for (var i = 0; i < listmucs.length; i++) {
@@ -152,8 +152,8 @@ var pass = document.getElementById("pass");
     item.appendChild(row);
     
     
-   var theserver = server.value.substring(server.value.indexOf(".") + 1);
-   alert (theserver);
+   //var theserver = server.value.substring(server.value.indexOf(".") + 1);
+   //alert (theserver);
    
    var elem = document.getElementById("child" + theserver);
    
@@ -161,29 +161,32 @@ var pass = document.getElementById("pass");
    	if (elem) 
    		elem.appendChild(item);
    	
-   	else { // I Add the server to bookmarks
+   	/*else { // I Add the server to bookmarks
    	var servers = document.getElementById("servers");
-   	var item = document.createElement("treeitem");
-  		 var row = document.createElement("treerow");
-   		 var cell1 = document.createElement("treecell");
-   		  var child = document.createElement("treechildren");
+   	
+   		var itemserver = document.createElement("treeitem");
+  		 var rowserver = document.createElement("treerow");
+   		 var cellserver = document.createElement("treecell");
+   		  var childserver = document.createElement("treechildren");
   
-    cell1.setAttribute("label", listmucs[i].substring(listmucs[i].indexOf(".") + 1));
-    cell1.setAttribute("id",listmucs[i].substring(listmucs[i].indexOf(".") + 1) );
+    cellserver.setAttribute("label", theserver);
+    cellserver.setAttribute("id",theserver );
   	
   
   
-    row.appendChild(cell1);
+    rowserver.appendChild(cellserver);
     
-   child.setAttribute("id","child" + listmucs[i].substring(listmucs[i].indexOf(".") + 1));
+   childserver.setAttribute("id","child" + theserver);
     
-    item.setAttribute("container", "true");
-    item.setAttribute("open", "true");
-    item.appendChild(row);
-    item.appendChild(child);
+    itemserver.setAttribute("container", "true");
+    itemserver.setAttribute("open", "true");
+    itemserver.appendChild(rowserver);
+    itemserver.appendChild(childserver);
+    
+    childserver.appendChild(item);
 
-    servers.appendChild(item);
-   }
+    servers.appendChild(itemserver);
+   }*/
    
    var iq = new JSJaCIQ();
         iq.setType('set');
