@@ -385,6 +385,21 @@ function retrieveVcard(iq){
 
 // Function to change my picture
 function changePicture(){
+	selection();
 
-window.open("chrome://messenger/content/fileChooser.xul", "Choose a picture", "chrome,titlebar,toolbar,centerscreen,modal");
 }
+
+
+function selection() {
+  var nsIFilePicker = Components.interfaces.nsIFilePicker;
+  var fp = Components.classes["@mozilla.org/filepicker;1"]
+          .createInstance(nsIFilePicker);
+  fp.init(window, "S?lectionner un fichier", nsIFilePicker.modeOpen);
+  fp.appendFilters(nsIFilePicker.filterText | nsIFilePicker.filterAll);
+  if (fp.show() != nsIFilePicker.returnOK) {
+    //alert("Vous avez annul? la s?lection");
+    return;
+  }
+  var filePath = fp.file.path;
+  alert("Fichier s?lectionn? : " + filePath);
+ }
