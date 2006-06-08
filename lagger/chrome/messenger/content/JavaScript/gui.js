@@ -1112,6 +1112,7 @@ function showRoomUser (roomUser){
     var item = document.createElement("listitem");
     
     //item.setAttribute("label", roomUser[1]);
+    
     item.setAttribute("id", roomUser[0]);
     
     var image =  document.createElement("image");
@@ -1148,7 +1149,15 @@ function showRoomUser (roomUser){
  	} catch (e) {alert(e);}
 }
 
+// Function to mask a roomUser
+function maskRoomUser(roomUserJid){
 
+	var listconf = document.getElementById("liste_conf");
+
+	var item = document.getElementById(roomUserJid);
+	
+	listconf.removeItemAt(listconf.getIndexOfItem(item));
+}
 
 
 // Function to sort roster by status
@@ -2223,10 +2232,21 @@ function handlePresence(aJSJaCPacket) {
     
     
     
-    
+    try{
 
  if ( aJSJaCPacket.getFrom().match(pattern) ){
-		alert (aJSJaCPacket.xml());
+		//alert (aJSJaCPacket.xml());
+		
+		
+		// If others packets take status anchor , put && in the if
+		if (aJSJaCPacket.getNode().getElementsByTagName('status').item(0)){
+			if (aJSJaCPacket.getNode().getElementsByTagName('status').item(0).firstChild.nodeValue == "offline"){
+			
+			maskRoomUser(aJSJaCPacket.getFrom());
+			}
+		
+		}
+		else {
 		var x;
     for (var i = 0; i < aJSJaCPacket.getNode().getElementsByTagName('x').length; i++)
         if (aJSJaCPacket.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
@@ -2280,7 +2300,9 @@ function handlePresence(aJSJaCPacket) {
     }
     return;
     }
+    }
     
+    } catch (e) {alert ("handle presence" + e);}
 
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";

@@ -401,5 +401,9 @@ function selection() {
     return;
   }
   var filePath = fp.file.path;
+  var image = document.getElementById("photo");
+				image.setAttribute("src",filePath);
+				image.setAttribute("height",50);
+				image.setAttribute("width",50);
   alert("Fichier s?lectionn? : " + filePath);
  }
