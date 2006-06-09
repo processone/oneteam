@@ -773,9 +773,9 @@ try {
 var conference = iq.getNode().getElementsByTagName('conference');
 
 //alert ("nombredeconf" + conference.item.length);
-for (var i = 0 ; i < conference.item.length ; i++){
+for (var i = 0 ; i < conference.length ; i++){
 	
-	var conf =  conference.item(i);
+	var conf =  conference[i];
 	var jid = conf.getAttribute("jid");
 	var serveritem = jid.substring(jid.indexOf(".") + 1);
 	var name = conf.getAttribute("name");

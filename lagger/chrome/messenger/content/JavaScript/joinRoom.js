@@ -19,7 +19,7 @@ function loadServer(){
    	theserver = listmucs[0].substring(listmucs[0].indexOf(".") + 1);
 
     		
-  		var item = document.createElement("treeitem");
+  		/*var item = document.createElement("treeitem");
   		 var row = document.createElement("treerow");
    		 var cell1 = document.createElement("treecell");
    		  var child = document.createElement("treechildren");
@@ -36,7 +36,11 @@ function loadServer(){
     item.setAttribute("container", "true");
     item.setAttribute("open", "true");
     item.appendChild(row);
-    item.appendChild(child);
+    item.appendChild(child);*/
+    
+    var item = document.createElement("listitem");
+	item.setAttribute("label", listmucs[0].substring(listmucs[0].indexOf(".") + 1));
+    item.setAttribute("id","serveritem" );
 
     servers.appendChild(item);
        
@@ -76,24 +80,22 @@ try {
 
 var conference = iq.getNode().getElementsByTagName('conference');
 
-//alert (iq.xml());
-
-for (var i = 0 ; i < conference.item.length ; i++){
+for (var i = 0 ; i < conference.length ; i++){
 	
 	var bookmark = new Array();
 	
-	var conf =  conference.item(i);
+	var conf =  conference[i];
 	var jid = conf.getAttribute("jid");
 	var name = conf.getAttribute("name");
 
 	
 	var nickname = "";
-	if (iq.getNode().getElementsByTagName('nick').item(i).firstChild)
-	 	nickname = iq.getNode().getElementsByTagName('nick').item(i).firstChild.nodeValue;
+	if (iq.getNode().getElementsByTagName('nick')[i].firstChild)
+	 	nickname = iq.getNode().getElementsByTagName('nick')[i].firstChild.nodeValue;
 	
 	var password;
-	if (iq.getNode().getElementsByTagName('password').item(i).firstChild)
-		password = iq.getNode().getElementsByTagName('password').item(i).firstChild.nodeValue;
+	if (iq.getNode().getElementsByTagName('password')[i].firstChild)
+		password = iq.getNode().getElementsByTagName('password')[i].firstChild.nodeValue;
 	var room = jid.substring(0,jid.indexOf("@"));
 	var server = jid.substring(jid.indexOf("@") + 1);
 	var autojoin = conf.getAttribute("autojoin");
@@ -112,9 +114,9 @@ for (var i = 0 ; i < conference.item.length ; i++){
 	
 	bookmarks.push(bookmark);
 	
-	 var item = document.createElement("treeitem");
-  		 var row = document.createElement("treerow");
-   		 var cell1 = document.createElement("treecell");
+	 /*var item = document.createElement("treeitem");
+  	 var row = document.createElement("treerow");
+     var cell1 = document.createElement("treecell");
 
 
 	cell1.setAttribute("label", name);
@@ -125,12 +127,14 @@ for (var i = 0 ; i < conference.item.length ; i++){
    
     item.appendChild(row);
     
-    
-   
-   
    var elem = document.getElementById("child" + theserver);
-   elem.appendChild(item);
-
+   elem.appendChild(item);*/
+	var item = document.createElement("listitem");
+	item.setAttribute("label", name);
+    item.setAttribute("id",name);
+    
+    var servers = document.getElementById("servers");
+    servers.appendChild (item);
 }
 
 if (window.opener.console) {
@@ -145,15 +149,17 @@ if (window.opener.console) {
 function removeBookmark(){
 
 try {
-var tree = document.getElementById("bookmarks");
-
+/*var tree = document.getElementById("bookmarks");
 
 var elem = document.getElementById("child" + theserver);
 
 var index = tree.currentIndex;
 var item = tree.contentView.getItemAtIndex(index);
  
-elem.removeChild(item);
+elem.removeChild(item);*/
+
+var liste = document.getElementById("servers");
+liste.removeChild(liste.currentItem);
 
 bookmarks.splice(bookmarks[index]);
  } catch (e) {alert ("removeBookmark" + e);}
@@ -172,7 +178,7 @@ var pass = document.getElementById("pass");
 var autojoin = document.getElementById("auto");
 			
 		 	
-		 var item = document.createElement("treeitem");
+		/* var item = document.createElement("treeitem");
   		 var row = document.createElement("treerow");
    		 var cell1 = document.createElement("treecell");
 
@@ -192,6 +198,15 @@ var autojoin = document.getElementById("auto");
    // server exists
    	if (elem) 
    		elem.appendChild(item);
+   		*/
+   		
+   		var item = document.createElement("listitem");
+   		item.setAttribute("label", roomname.value);
+    	item.setAttribute("id",roomname.value);
+  
+   		
+   		var liste = document.getElementById("servers");
+   		liste.appendChild (item);
    		
    var bookmark = new Array();
    bookmark.push (login.value);
@@ -208,33 +223,6 @@ var autojoin = document.getElementById("auto");
    
    bookmarks.push (bookmark);
    	
-   	/*else { // I Add the server to bookmarks
-   	var servers = document.getElementById("servers");
-   	
-   		var itemserver = document.createElement("treeitem");
-  		 var rowserver = document.createElement("treerow");
-   		 var cellserver = document.createElement("treecell");
-   		  var childserver = document.createElement("treechildren");
-  
-    cellserver.setAttribute("label", theserver);
-    cellserver.setAttribute("id",theserver );
-  	
-  
-  
-    rowserver.appendChild(cellserver);
-    
-   childserver.setAttribute("id","child" + theserver);
-    
-    itemserver.setAttribute("container", "true");
-    itemserver.setAttribute("open", "true");
-    itemserver.appendChild(rowserver);
-    itemserver.appendChild(childserver);
-    
-    childserver.appendChild(item);
-
-    servers.appendChild(itemserver);
-   }*/
-   
    
    	
     }

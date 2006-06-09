@@ -26,7 +26,7 @@
     
     <vbox flex="1">
     
-    <!-- <label value="Bookmarks"/> -->
+    <!-- <label value="Bookmarks"/> 
    
     <tree id="bookmarks" width="180" flex="1" hidecolumnpicker="true">
       <treecols>
@@ -34,20 +34,11 @@
             
      </treecols>
      <treechildren id="servers">
-       <!--  <treeitem container="true" open="true">
-            <treerow>
-                <treecell label="aaaaa"/>
-                
-            </treerow>
-         </treeitem>
-        <treeitem>
-            <treerow>
-                <treecell label="aaaaa"/>
-                
-            </treerow>
-         </treeitem>-->
+       
      </treechildren>
- </tree>
+ </tree>-->
+ 
+ <listbox context="listcontext" width="180"  id="servers" flex="1"/>
  
  <hbox align="right">
 
