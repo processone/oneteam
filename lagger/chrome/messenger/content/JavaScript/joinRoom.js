@@ -114,6 +114,8 @@ for (var i = 0 ; i < conference.length ; i++){
 	
 	bookmarks.push(bookmark);
 	
+	//alert (bookmarks);
+	
 	 /*var item = document.createElement("treeitem");
   	 var row = document.createElement("treerow");
      var cell1 = document.createElement("treecell");
@@ -158,10 +160,30 @@ var item = tree.contentView.getItemAtIndex(index);
  
 elem.removeChild(item);*/
 
+
+// remove in roster
+
+
+ var listconf = window.opener.document.getElementById("liste_conf");
 var liste = document.getElementById("servers");
+
+//alert (liste.selectedIndex -1);
+
+var item = window.opener.document.getElementById(bookmarks[liste.selectedIndex -1][2] + "@" + bookmarks[liste.selectedIndex -1][3]);
+
+
+listconf.removeChild (item);
+
+//alert  ("selectionn? dans la liste" + liste.selectedIndex);
+bookmarks.splice([liste.selectedIndex -1],1);
+
+
+// remove in bookmarks list
+
 liste.removeChild(liste.currentItem);
 
-bookmarks.splice(bookmarks[index]);
+
+
  } catch (e) {alert ("removeBookmark" + e);}
 }
 
@@ -200,13 +222,13 @@ var autojoin = document.getElementById("auto");
    		elem.appendChild(item);
    		*/
    		
-   		var item = document.createElement("listitem");
-   		item.setAttribute("label", roomname.value);
-    	item.setAttribute("id",roomname.value);
+   		var itembook = document.createElement("listitem");
+   		itembook.setAttribute("label", roomname.value);
+    	itembook.setAttribute("id",roomname.value);
   
    		
    		var liste = document.getElementById("servers");
-   		liste.appendChild (item);
+   		liste.appendChild (itembook);
    		
    var bookmark = new Array();
    bookmark.push (login.value);
@@ -223,7 +245,28 @@ var autojoin = document.getElementById("auto");
    
    bookmarks.push (bookmark);
    	
-   
+   // I add it now in roster
+   var listconf = window.opener.document.getElementById("liste_conf");
+	
+	//window.opener.document.getElementById("liste_contacts").clearSelection();
+	
+	var item = document.createElement("listitem");
+	item.setAttribute("label", roomname.value);
+    item.setAttribute("id",roomname.value + "@" + server.value);
+    item.setAttribute("context","itemcontextroom");
+    item.setAttribute("ondblclick","openConversation(event)");
+    
+     var cell = document.createElement("listcell");
+    cell.setAttribute("label", roomname.value);
+    cell.setAttribute("id",  roomname.value + "@" + server.value + "cell");
+     cell.setAttribute("flex", "1");
+	cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+    cell.setAttribute("class", "listitem-iconic");
+    
+    item.appendChild(cell);
+    
+    listconf.appendChild(item);
+    listconf.selectItem(item);
    	
     }
       

@@ -59,7 +59,7 @@ function startTheTimer()
     if (secs==0)
     {
         stopTheClock();
-        notifyPause(receiver);
+        notifyPause(currentReceiver);
 	 	notifyWritingCount = true;
     }
     else
@@ -189,6 +189,8 @@ function openConversation(event) {
 		
 		tab.setAttribute("context", "tabroomcontext");
 		
+		var cell = document.getElementById(id + "cell");
+    	cell.setAttribute("image", "chrome://messenger/content/img/crystal/opened.png");
 		
 		
 		//myRoomNick = keepLogin(myjid);
@@ -768,6 +770,8 @@ function requestRetrieveBookmarks(){
 // Function to request retrieve bookmarks
 function retrieveBookmarks(iq){
 
+//alert (iq.xml());
+
 try {
 
 var conference = iq.getNode().getElementsByTagName('conference');
@@ -803,11 +807,13 @@ for (var i = 0 ; i < conference.length ; i++){
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
+    
      var cell = document.createElement("listcell");
     cell.setAttribute("label", name);
     cell.setAttribute("id",jid + "cell");
      cell.setAttribute("flex", "1");
-     
+     cell.setAttribute("class", "listitem-iconic");
+    cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
     
     item.appendChild(cell);
     
@@ -911,6 +917,10 @@ function closeTab() {
 			var element = document.getElementById(jid);
 			//alert ("id element" + element);
 			
+    	
+			var cellConf = document.getElementById(jid + "cell");
+			cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+			
 			// mask all users in room
 			var el = element.nextSibling;
 			//alert (el);
@@ -950,9 +960,11 @@ function closeTab() {
 			//alert ("jid" + jid);
 			var element = document.getElementById(jid);
 			
+			var cellConf = document.getElementById(jid + "cell");
+			cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
 			
 			// mask all users in room
-			// ERROR HERE FOR FEW CONFERENCES! WHY??
+			
 			var el= element.nextSibling;
 			if (el)
 			while (el.getAttribute("id").match(jid)){
@@ -2333,7 +2345,7 @@ function handlePresence(aJSJaCPacket) {
     
     
     
-    try{
+    
 
  if ( aJSJaCPacket.getFrom().match(pattern) ){
 		//alert (aJSJaCPacket.xml());
@@ -2403,8 +2415,11 @@ function handlePresence(aJSJaCPacket) {
     }
     }
     
-    } catch (e) {alert ("handle presence" + e);}
+   
 
+   // Try 
+  else {
+  
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
         if (item)
@@ -2493,7 +2508,7 @@ function handlePresence(aJSJaCPacket) {
     
     
     
-    
+   } 
     
     } catch (e) {alert("handle presence" + e);}
     //alert (presence);
