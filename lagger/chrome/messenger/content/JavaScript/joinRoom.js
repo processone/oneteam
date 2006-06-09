@@ -78,7 +78,7 @@ var conference = iq.getNode().getElementsByTagName('conference');
 
 //alert (iq.xml());
 
-for (var i = 0 ; i <= conference.item.length ; i++){
+for (var i = 0 ; i < conference.item.length ; i++){
 	
 	var bookmark = new Array();
 	

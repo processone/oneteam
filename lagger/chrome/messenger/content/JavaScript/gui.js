@@ -773,7 +773,7 @@ try {
 var conference = iq.getNode().getElementsByTagName('conference');
 
 //alert ("nombredeconf" + conference.item.length);
-for (var i = 0 ; i <= conference.item.length ; i++){
+for (var i = 0 ; i < conference.item.length ; i++){
 	
 	var conf =  conference.item(i);
 	var jid = conf.getAttribute("jid");
@@ -900,7 +900,7 @@ function closeTab() {
 		notifyGone(jid);
 		
     if (childNodes.length == 1){
-   
+   		
     		if (tab.getAttribute("context") == "tabroomcontext"){
     		
     		
@@ -931,6 +931,7 @@ function closeTab() {
     		
         }
     else {
+    
     		var child;
     
     		if (tabs.selectedIndex == 0)	
@@ -975,8 +976,14 @@ function closeTab() {
 
         tabspanel.removeChild(tabpanel);
 
-        if (child)
+        if (child){
             child.setAttribute("selected", "true");
+            var tabbox = document.getElementById("tabbox");
+            //var jid = child.getAttribute("id");
+            //alert (jid);
+            //var newTab = document.getElementById("tabpanel");
+        	tabbox.selectedPanel = tabpanel;
+        	}
     }
     
     
