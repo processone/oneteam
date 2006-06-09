@@ -28,12 +28,48 @@ var base;
 var infojid;
 
 
-
+var notifyWritingCount = true;
 var deployedGUI = false;
 var console = false;
 var hideDecoUser = false;
 
+var secs;
+var timerID = null;
+var timerRunning = false;
+var delay = 1000;
+var currentReceiver;
 
+function initializeTimer()
+{
+    // Set the length of the timer, in seconds
+    secs = 3;
+    stopTheClock();
+    startTheTimer();
+}
+
+function stopTheClock()
+{
+    if(timerRunning)
+        clearTimeout(timerID);
+    timerRunning = false;
+}
+
+function startTheTimer()
+{
+    if (secs==0)
+    {
+        stopTheClock();
+        notifyPause(receiver);
+	 	notifyWritingCount = true;
+    }
+    else
+    {
+        self.status = secs;
+        secs = secs - 1;
+        timerRunning = true;
+        timerID = self.setTimeout("startTheTimer()", delay);
+    }
+}
  
 
 // Function to open a simple conversation
@@ -736,7 +772,7 @@ try {
 
 var conference = iq.getNode().getElementsByTagName('conference');
 
-alert ("nombredeconf" + conference.item.length);
+//alert ("nombredeconf" + conference.item.length);
 for (var i = 0 ; i <= conference.item.length ; i++){
 	
 	var conf =  conference.item(i);
@@ -870,21 +906,19 @@ function closeTab() {
 		
 			var listconfs = document.getElementById ("liste_conf");
 			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
-			//alert ("jid" + jid);
+			alert ("jid" + jid);
 			var element = document.getElementById(jid);
-			//alert ("name" + element.nextSibling);
-			var el;
-			while (el = element.nextSibling){
-				if (el.getAttribute("id").match(jid)){
-					//alert (el.getAttribute("id"));
+			alert ("id element" + element.getAttribute("id"));
+			
+			// mask all users in room
+			var el= element.nextSibling;
+			while (el.getAttribute("id").match(jid)){
+				//alert (el.id);
 					listconfs.removeChild(el);
+					el = element.nextSibling;
 					}
-				else{
-				
-				//alert (el.getAttribute("id"));
-					break;	
-					}
-			}			
+			
+					
         exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
    		 }
    		 
@@ -900,35 +934,35 @@ function closeTab() {
     			child = childNodes[tabs.selectedIndex--];
 
 
-        tabs.removeChild(tab);
+        
 
 		if (tab.getAttribute("context") == "tabroomcontext"){
-		
+			
 		
 			var listconfs = document.getElementById ("liste_conf");
 			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
-			//alert ("jid" + jid);
+			alert ("jid" + jid);
 			var element = document.getElementById(jid);
-			//alert ("name" + element.nextSibling);
-			var el;
-			while (el = element.nextSibling){
-				if (el.getAttribute("id").match(jid)){
-					//alert (el.getAttribute("id"));
+			
+			
+			// mask all users in room
+			// ERROR HERE FOR FEW CONFERENCES! WHY??
+			var el= element.nextSibling;
+			while (el.getAttribute("id").match(jid)){
+				//alert (el.id);
 					listconfs.removeChild(el);
+					el = element.nextSibling;
 					}
-				else{
 				
-				//alert (el.getAttribute("id"));
-					break;	
-					}
-			}			
 				exitRoom(jid + "/" + myRoomNick);
 				
 				} 
-			
-
+		
+		
+		// Remove the tab and the corresponding tabpanel	
+		tabs.removeChild(tab);
         var tabspanel = document.getElementById("tabpanels1");
-        var tabpanel = document.getElementById("tabpanel" + liste.selectedItem.id);
+        var tabpanel = document.getElementById("tabpanel" + jid);
 
 
         tabspanel.removeChild(tabpanel);
@@ -938,7 +972,7 @@ function closeTab() {
     }
     
     
-  //  } catch (e) {alert(" In closeTab" + e);}
+   //} catch (e) {alert(" In closeTab" + e);}
 }
 
 
@@ -1105,7 +1139,7 @@ function showRoomUser (roomUser){
 	
 	var jidroom = roomUser[0].substring(0,roomUser[0].indexOf('/'));
 	//alert ("jidroom" + jidroom);
-	//var currentroom = document.getElementById(roomUser[0]);
+	//alert(roomUser[0]);
 	var currentroom = document.getElementById(jidroom);
 	//alert ("show room user" + currentroom.getAttribute(name));
 	
@@ -1393,9 +1427,14 @@ function sendMsg(event) {
     
     // Message come from me
     if (! receiver.match(pattern)){
-	 notifyWriting(receiver);
-	 //TODO Calculate interval between 2 method call
-	 notifyPause(receiver);
+    
+    	currentReceiver = receiver;
+   		 if (notifyWritingCount == true){
+	 			notifyWriting(receiver);
+	 			notifyWritingCount = false;
+	 			initializeTimer();
+	 			}		
+			
 	 }
 	 
     if (event.shiftKey)
@@ -1500,6 +1539,9 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
 
 // Function to exit a room
 function exitRoom(room){
+	
+	try {
+
 	 var aPresence = new JSJaCPresence();
         aPresence.setTo(room);
 		aPresence.setType('unavailable');
@@ -1509,6 +1551,8 @@ function exitRoom(room){
 		if (console) {
         cons.addInConsole("OUT : " + aPresence.xml() + "\n");
     }
+    
+    } catch (e) {alert ("exit room" + e)}
 }
 
 
@@ -1674,6 +1718,48 @@ function invite() {
     }
 
 }
+
+// Function to create instant room
+function createInstantRoom(wholeRoom){
+	
+	try{
+	
+	var listconf = document.getElementById("liste_conf");
+	
+	//window.opener.document.getElementById("liste_contacts").clearSelection();
+	
+	var item = document.createElement("listitem");
+	item.setAttribute("label", wholeRoom.substring(0,wholeRoom.indexOf("@")));
+    item.setAttribute("id",wholeRoom);
+    item.setAttribute("context","itemcontextroom");
+    item.setAttribute("ondblclick","openConversation(event)");
+    
+     var cell = document.createElement("listcell");
+    cell.setAttribute("label", wholeRoom.substring(0,wholeRoom.indexOf("@")));
+    cell.setAttribute("id",wholeRoom + "cell");
+     cell.setAttribute("flex", "1");
+    
+    item.appendChild(cell);
+    
+    listconf.appendChild(item);
+    listconf.selectItem(item);
+
+	var evt = document.createEvent("MouseEvents");
+	//evt.initMouseEvent("dblclick", true, true, window.opener,
+  // 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	evt.initEvent("dblclick", true, false);
+	
+	item.dispatchEvent(evt);
+	
+
+
+    
+  
+        }
+        catch (e){alert(e);}
+        
+}
+
 
 // Function to accept or decline invitation in new room
 function acceptInvitation(accept, from, roomName) {
@@ -2235,7 +2321,7 @@ function handlePresence(aJSJaCPacket) {
     try{
 
  if ( aJSJaCPacket.getFrom().match(pattern) ){
-		//alert (aJSJaCPacket.xml());
+		alert (aJSJaCPacket.xml());
 		
 		
 		// If others packets take status anchor , put && in the if

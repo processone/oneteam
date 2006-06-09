@@ -179,6 +179,8 @@
          	 </tabs>
 			<tabpanels flex="1">
           
+          
+           <!-- onselect='document.getElementById("liste_conf").clearSelection();currentItem.selected(true);'-->
           	 <listbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1"
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
@@ -198,7 +200,8 @@
      					</treechildren>
  			</tree> -->
  			
- 			 <listbox height="400" width="150"  minwidth="140" id="liste_conf" flex="1"
+ 			<!--  onselect='document.getElementById("liste_contacts").clearSelection();currentItem.selected(true);'-->
+ 			 <listbox height="400" width="150"  minwidth="140" id="liste_conf" flex="1"  
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">

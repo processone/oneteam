@@ -351,14 +351,46 @@ var pass = document.getElementById("pass");
 
 var wholeRoom = roomname.value + "@" + server.value;
 
-	alert (wholeRoom);
+	
 	self.close();
 	
 	try{
 	
+	var listconf = window.opener.document.getElementById("liste_conf");
+	
+	//window.opener.document.getElementById("liste_contacts").clearSelection();
+	
+	var item = document.createElement("listitem");
+	item.setAttribute("label", roomname.value);
+    item.setAttribute("id",wholeRoom);
+    item.setAttribute("context","itemcontextroom");
+    item.setAttribute("ondblclick","openConversation(event)");
+    
+     var cell = document.createElement("listcell");
+    cell.setAttribute("label", roomname.value);
+    cell.setAttribute("id",wholeRoom + "cell");
+     cell.setAttribute("flex", "1");
+    
+    item.appendChild(cell);
+    
+    listconf.appendChild(item);
+    listconf.selectItem(item);
 
+	var evt = document.createEvent("MouseEvents");
+	//evt.initMouseEvent("dblclick", true, true, window.opener,
+  // 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	evt.initEvent("dblclick", true, false);
+	
+	res = item.dispatchEvent(evt);
+	if ( res ) {
+    // None of the handlers called preventDefault
+    b.disabled = true;
+}
 
-	var iq = new JSJaCIQ();
+	//listconf.ondbclick
+	//window.opener.openConversation(event);
+	
+	/*var iq = new JSJaCIQ();
 	iq.setIQ(window.opener.server,null,'set','create');
 	
 	var item = iq.getDoc().createElement('item');
@@ -371,7 +403,7 @@ var wholeRoom = roomname.value + "@" + server.value;
 	item.appendChild(group);
 	iq.setQuery('jabber:iq:roster').appendChild(item);
 	
-	con.send(iq);
+	con.send(iq);*/
 	
 	/**var iq = new JSJaCIQ();
 	iq.setIQ(wholeRoom + "/" + login.value,null,'set','create');
@@ -389,10 +421,10 @@ var wholeRoom = roomname.value + "@" + server.value;
         window.opener.cons.addInConsole("OUT : " +iq.xml() + "\n");
     }
     
-    this.performJoinRoom(wholeRoom,'','',login.value);
+    //this.performJoinRoom(wholeRoom,'','',login.value);
 		
 		
-		var room = new Array(wholeRoom + "/" + login.value, 'both', 'Conferences', roomname.value, "user-sibling.gif");
+		/*var room = new Array(wholeRoom + "/" + login.value, 'both', 'Conferences', roomname.value, "user-sibling.gif");
 		
 		var exist = false;
 		
@@ -406,7 +438,7 @@ var wholeRoom = roomname.value + "@" + server.value;
         window.opener.emptyList();
         window.opener.showUsers(window.opener.users);
         window.opener.refreshList();
-        	}
+        	}*/
         }
         catch (e){alert(e);}
         
