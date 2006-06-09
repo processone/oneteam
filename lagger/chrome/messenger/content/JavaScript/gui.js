@@ -807,6 +807,7 @@ for (var i = 0 ; i <= conference.item.length ; i++){
     cell.setAttribute("label", name);
     cell.setAttribute("id",jid + "cell");
      cell.setAttribute("flex", "1");
+     
     
     item.appendChild(cell);
     
@@ -906,16 +907,20 @@ function closeTab() {
 		
 			var listconfs = document.getElementById ("liste_conf");
 			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
-			alert ("jid" + jid);
+			//alert ("jid" + jid);
 			var element = document.getElementById(jid);
-			alert ("id element" + element.getAttribute("id"));
+			//alert ("id element" + element);
 			
 			// mask all users in room
-			var el= element.nextSibling;
+			var el = element.nextSibling;
+			//alert (el);
+			if (el)
 			while (el.getAttribute("id").match(jid)){
 				//alert (el.id);
 					listconfs.removeChild(el);
 					el = element.nextSibling;
+					if (!el)
+					break;
 					}
 			
 					
@@ -941,17 +946,20 @@ function closeTab() {
 		
 			var listconfs = document.getElementById ("liste_conf");
 			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
-			alert ("jid" + jid);
+			//alert ("jid" + jid);
 			var element = document.getElementById(jid);
 			
 			
 			// mask all users in room
 			// ERROR HERE FOR FEW CONFERENCES! WHY??
 			var el= element.nextSibling;
+			if (el)
 			while (el.getAttribute("id").match(jid)){
 				//alert (el.id);
 					listconfs.removeChild(el);
 					el = element.nextSibling;
+					if (!el)
+					break;
 					}
 				
 				exitRoom(jid + "/" + myRoomNick);
@@ -2321,7 +2329,7 @@ function handlePresence(aJSJaCPacket) {
     try{
 
  if ( aJSJaCPacket.getFrom().match(pattern) ){
-		alert (aJSJaCPacket.xml());
+		//alert (aJSJaCPacket.xml());
 		
 		
 		// If others packets take status anchor , put && in the if
