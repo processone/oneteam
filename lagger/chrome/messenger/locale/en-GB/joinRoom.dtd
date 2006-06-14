@@ -1,4 +1,6 @@
+<!ENTITY Room.window "Room Manager">
 <!ENTITY Room.titre "Join a Chat Room">
+<!ENTITY Room.name "Title">
 <!ENTITY Room.login "Nickname">
 <!ENTITY Room.pass "Password">
 <!ENTITY Room.server "Server">

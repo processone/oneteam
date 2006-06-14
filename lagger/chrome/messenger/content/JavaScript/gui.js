@@ -784,6 +784,7 @@ for (var i = 0 ; i < conference.length ; i++){
 	var jid = conf.getAttribute("jid");
 	var serveritem = jid.substring(jid.indexOf(".") + 1);
 	var name = conf.getAttribute("name");
+	var autojoin = conf.getAttribute("autojoin");
 	
 	rooms.push(jid);
 	
@@ -822,6 +823,14 @@ for (var i = 0 ; i < conference.length ; i++){
     
     var confs = document.getElementById("liste_conf");
     confs.appendChild(item);
+    
+    if (autojoin == "true"){
+    confs.selectItem(item);
+    var evt = document.createEvent("MouseEvents");
+	evt.initEvent("dblclick", true, false);
+	
+	item.dispatchEvent(evt);
+    }
 }
 
 if (console) {
@@ -917,6 +926,8 @@ function closeTab() {
     var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
     
     //alert (tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
+	
+	
 		
 		//if (! jid.match(pattern))
 		if (!isRoom (jid))
@@ -1781,6 +1792,9 @@ function createInstantRoom(wholeRoom){
 	
 	try{
 	
+	rooms.push(wholeRoom);
+	//alert (window.opener.rooms);
+	
 	var listconf = document.getElementById("liste_conf");
 	
 	//window.opener.document.getElementById("liste_contacts").clearSelection();
@@ -2105,7 +2119,7 @@ function addContact()
 // Function to join a room
 function joinRoom() {
 
-    window.open("chrome://messenger/content/joinRoom.xul", "Join a room", "chrome,centerscreen");
+    window.open("chrome://messenger/content/joinRoom.xul", "Room Manager", "chrome,centerscreen");
 
 
 }
@@ -2278,9 +2292,9 @@ function handleMessage(aJSJaCPacket) {
         //text.setAttribute("height", "400");
         //text.setAttribute("width", "380");
         //text.setAttribute("readonly", "true");
-        text.setAttribute("wait-cursor","false");
-        text.setAttribute("onload","event.stopPropagation();");
-         text.setAttribute("src","about:blank");
+        //text.setAttribute("wait-cursor","false");
+        //text.setAttribute("onload","event.stopPropagation();");
+         //text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
         text.setAttribute("flex", "1");
         vboxpanel.appendChild(text);

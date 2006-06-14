@@ -111,6 +111,8 @@ for (var i = 0 ; i < conference.length ; i++){
 	bookmark.push(password);
 	bookmark.push(room);
 	bookmark.push(server);
+	bookmark.push(autojoin);
+	bookmark.push(name);
 	
 	bookmarks.push(bookmark);
 	
@@ -134,6 +136,8 @@ for (var i = 0 ; i < conference.length ; i++){
 	var item = document.createElement("listitem");
 	item.setAttribute("label", name);
     item.setAttribute("id",name);
+    item.setAttribute("class", "listitem-iconic");
+    item.setAttribute("image", "chrome://messenger/content/img/book.png");
     
     var servers = document.getElementById("servers");
     servers.appendChild (item);
@@ -198,7 +202,9 @@ var server = document.getElementById("server");
 var roomname = document.getElementById("room");
 var pass = document.getElementById("pass");
 var autojoin = document.getElementById("auto");
-			
+var name = document.getElementById("name");
+
+
 		 	
 		/* var item = document.createElement("treeitem");
   		 var row = document.createElement("treerow");
@@ -223,11 +229,17 @@ var autojoin = document.getElementById("auto");
    		*/
    		
    		var itembook = document.createElement("listitem");
-   		itembook.setAttribute("label", roomname.value);
+   		itembook.setAttribute("label", name.value);
     	itembook.setAttribute("id",roomname.value);
+    	itembook.setAttribute("image", "chrome://messenger/content/img/book.png");
+        itembook.setAttribute("class", "listitem-iconic");
   
    		
    		var liste = document.getElementById("servers");
+   		
+   		if (liste.selectedItem)
+   			removeBookmark();
+   		
    		liste.appendChild (itembook);
    		
    var bookmark = new Array();
@@ -235,8 +247,8 @@ var autojoin = document.getElementById("auto");
    bookmark.push (pass.value);
    bookmark.push (roomname.value);
    bookmark.push (server.value);
-   bookmark.push (autojoin.value);
-   
+   bookmark.push (autojoin.checked);
+    bookmark.push (name.value);
    /*alert (login.value);
 	alert (pass.value);
 	alert(roomname.value);
@@ -251,13 +263,13 @@ var autojoin = document.getElementById("auto");
 	//window.opener.document.getElementById("liste_contacts").clearSelection();
 	
 	var item = document.createElement("listitem");
-	item.setAttribute("label", roomname.value);
+	item.setAttribute("label", name.value);
     item.setAttribute("id",roomname.value + "@" + server.value);
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
      var cell = document.createElement("listcell");
-    cell.setAttribute("label", roomname.value);
+    cell.setAttribute("label", name.value);
     cell.setAttribute("id",  roomname.value + "@" + server.value + "cell");
      cell.setAttribute("flex", "1");
 	cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
@@ -291,7 +303,7 @@ var iq = new JSJaCIQ();
    for (var i = 0 ; i < bookmarks.length ; i ++){
    
    	var conference = iq.getDoc().createElement('conference');
-   	conference.setAttribute('name',bookmarks[i][2]);
+   	conference.setAttribute('name',bookmarks[i][5]);
    	
    	// TO FIX
    	conference.setAttribute('autojoin',bookmarks[i][4]);
@@ -373,32 +385,34 @@ function createRoom() {
 // Function to create instant room
 function createInstantRoom(){
 
+try{
 
 var login = document.getElementById("login");
 var server = document.getElementById("server");
 var roomname = document.getElementById("room");
 var pass = document.getElementById("pass");
-
+var name = document.getElementById("name");
 
 var wholeRoom = roomname.value + "@" + server.value;
 window.opener.rooms.push(wholeRoom);
+alert (window.opener.rooms);
 	
 	self.close();
 	
-	try{
+	
 	
 	var listconf = window.opener.document.getElementById("liste_conf");
 	
 	//window.opener.document.getElementById("liste_contacts").clearSelection();
 	
 	var item = document.createElement("listitem");
-	item.setAttribute("label", roomname.value);
+	item.setAttribute("label", name.value);
     item.setAttribute("id",wholeRoom);
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
      var cell = document.createElement("listcell");
-    cell.setAttribute("label", roomname.value);
+    cell.setAttribute("label", name.value);
     cell.setAttribute("id",wholeRoom + "cell");
      cell.setAttribute("flex", "1");
     
@@ -613,13 +627,20 @@ var server = document.getElementById("server");
 var roomname = document.getElementById("room");
 var pass = document.getElementById("pass");
 var autojoin = document.getElementById("auto");
+var name = document.getElementById("name");
 
 var liste = document.getElementById("servers");
 
 login.value = bookmarks[liste.selectedIndex -1][0];
 server.value = bookmarks[liste.selectedIndex -1][3];
 roomname.value = bookmarks[liste.selectedIndex -1][2];
-pass.value = bookmarks[liste.selectedIndex -1][1];
-autojoin.value = bookmarks[liste.selectedIndex -1][4];
+
+if (bookmarks[liste.selectedIndex -1][1] != "undefined")
+	pass.value = bookmarks[liste.selectedIndex -1][1];
+else 
+	pass.value ="";
+autojoin.checked = bookmarks[liste.selectedIndex -1][4];
+name.value = bookmarks[liste.selectedIndex -1][5];
+
 
 }

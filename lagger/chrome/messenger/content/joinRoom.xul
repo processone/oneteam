@@ -4,11 +4,11 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/joinRoom.dtd">
 
 <window id="Room"
-        title="Join Room"
+        title="&Room.window;"
         orient="horizontal"
         onload="loadServer();"
         width="490"
-        height="240"
+        height="290"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
         
@@ -22,9 +22,9 @@
 
     <spacer flex="1"/>
     
-    <hbox flex="1">
+    <hbox>
     
-    <vbox flex="1">
+    <vbox flex="1" align="start">
     
     <!-- <label value="Bookmarks"/> 
    
@@ -38,7 +38,7 @@
      </treechildren>
  </tree>-->
  
- <listbox context="listcontext" width="180"  id="servers" flex="1" onselect="showProperties();"/>
+ <listbox context="listcontext" width="180" flex="1" id="servers" onselect="showProperties();"/>
  
  <hbox align="right">
 
@@ -47,13 +47,20 @@
  </vbox>
     
     <groupbox id="xf-config-Roombox" flex="1">
-        <caption class="titre" label="&Room.titre;"/>
+        <caption class="titre" label="&Room.titre;" />
+        
+         <spacer height="15"/>
+        
         <grid flex="1">
             <columns>
                 <column id="labels" flex="1"/>
                 <column id="fields" flex="1"/>
             </columns>
             <rows id="rows" flex="1">
+            	<row>
+                    <description value="&Room.name; :"/>
+                    <textbox persist="true" id="name"/>
+                </row>
                 <row>
                     <description value="&Room.login; :"/>
                     <textbox persist="true" id="login"/>
@@ -70,6 +77,7 @@
                     <description value="&Room.server; :"/>
                     <textbox persist="true" id="server"/>                  
                 </row>
+                 <spacer height="10"/>
 				<row>
                     <spacer height="10"/>
                     <checkbox id="auto" label="Auto join"/>                  
@@ -81,7 +89,7 @@
         <hbox align="center">
             <spacer flex="1"/>
             <button label="&Room.join;" oncommand='self.close();window.opener.createInstantRoom(document.getElementById("room").value + "@" + document.getElementById("server").value);'/>
-			<button id="add" label="Add as bookmark" oncommand="addBookmark();"/>
+			<button id="add" label="Save bookmark" oncommand="addBookmark();"/>
             <spacer flex="1"/>
             <button label="&Room.cancel;" oncommand="sendBookmarkPacket();self.close();"/>
         </hbox>

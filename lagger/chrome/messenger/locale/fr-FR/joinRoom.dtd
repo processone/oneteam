@@ -1,7 +1,9 @@
+<!ENTITY Room.window "Gestionnaire de salon">
 <!ENTITY Room.titre "Rejoindre un salon">
+<!ENTITY Room.name "Nom">
 <!ENTITY Room.login "Pseudo">
 <!ENTITY Room.pass "Mot de Passe">
 <!ENTITY Room.server "Serveur">
-<!ENTITY Room.room "Room">
+<!ENTITY Room.room "Salon">
 <!ENTITY Room.join "Joindre">
 <!ENTITY Room.cancel "Ok">

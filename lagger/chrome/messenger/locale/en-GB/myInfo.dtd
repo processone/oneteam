@@ -1,4 +1,31 @@
 <!ENTITY myInfo.title "Edit your info">
-<!ENTITY myInfo.le "Edit your info">
-<!ENTITY myInfo.tile "Edit your info">
-<!ENTITY myInfo.tite "Edit your info">
+<!ENTITY myInfo.General "General">
+<!ENTITY myInfo.Location "Location">
+<!ENTITY myInfo.Work "Work">
+<!ENTITY myInfo.About "About">
+<!ENTITY myInfo.Avatar "Avatar">
+
+
+<!ENTITY myInfo.Name "Name :">
+<!ENTITY myInfo.Family "Family :">
+<!ENTITY myInfo.Nickname "Nickname :">
+<!ENTITY myInfo.E-mail "E-mail :">
+<!ENTITY myInfo.Homepage "Homepage :">
+<!ENTITY myInfo.Birthday "Birthday :">
+
+<!ENTITY myInfo.Street "Street :">
+<!ENTITY myInfo.ExtraAddress "Extra Address :">
+<!ENTITY myInfo.CityState "City State :">
+<!ENTITY myInfo.PostalCode "Postal Code : ">
+<!ENTITY myInfo.Country "Country :">
+
+
+<!ENTITY myInfo.Company "Company :">
+<!ENTITY myInfo.Department "Department :">
+<!ENTITY myInfo.Role "Role :">
+<!ENTITY myInfo.Phone "Phone :">
+<!ENTITY myInfo.E-Mail "E-Mail :">
+
+
+<!ENTITY myInfo.ChangePicture "Select a picture">
+<!ENTITY myInfo.Clear "Clear">

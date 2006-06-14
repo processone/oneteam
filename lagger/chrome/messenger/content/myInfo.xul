@@ -27,11 +27,11 @@
         
         <tabbox id="tablist" flex="1">
           <tabs>
-                        <tab label="General"/>
-                        <tab label="Location"/>
-                        <tab label="Work"/>
-                        <tab label="About"/>
-                        <tab label="Avatar" id="avatartab"/>
+                        <tab label="&myInfo.General;"/>
+                        <tab label="&myInfo.Location;"/>
+                        <tab label="&myInfo.Work;"/>
+                        <tab label="&myInfo.About;"/>
+                        <tab label="&myInfo.Avatar;" id="avatartab"/>
                         
           </tabs>
           <tabpanels flex="1">
@@ -44,27 +44,27 @@
                                 </columns>
                                 <rows>
                                         <row>
-                                                <label value="Name:" control="fn"/>
+                                                <label value="&myInfo.Name;" control="fn"/>
                                                 <textbox persist="value" id="name" flex="1"/>
                                         </row>
                                         <row>
-                                                <label value="Family:" control="fn"/>
+                                                <label value="&myInfo.Family;" control="fn"/>
                                                 <textbox persist="value" id="family"/>
                                         </row>
                                         <row>
-                                                <label value="Nickname:" control="nickname"/>
+                                                <label value="&myInfo.Nickname;" control="nickname"/>
                                                 <textbox persist="value" id="nickname"/>
                                         </row>
                                         <row>
-                                                <label value="E-mail:" control="url"/>
+                                                <label value="&myInfo.E-mail;" control="url"/>
                                                 <textbox persist="value" id="userid" />
                                         </row>
                                         <row>
-                                                <label value="Homepage:" control="url"/>
+                                                <label value="&myInfo.Homepage;" control="url"/>
                                                 <textbox persist="value" id="url" />
                                         </row>
                                         <row>
-                                                <label value="Birthday:" control="location"/>
+                                                <label value="&myInfo.Birthday;" control="location"/>
                                                 <!--<datepicker id="location"/> -->
                                                 <textbox persist="value" id="birthday"/>
                                         </row>
@@ -81,23 +81,23 @@
                                 <rows>
                                         
                                         <row>
-                                                <label value="Street:" control="nickname"/>
+                                                <label value="&myInfo.Street;" control="nickname"/>
                                                 <textbox persist="value" id="street"/>
                                         </row>
                                         <row>
-                                                <label value="Extra address:"/>
+                                                <label value="&myInfo.ExtraAddress;"/>
                                                 <textbox persist="value" id="extra" />
                                         </row>
                                         <row>
-                                                <label value="City state:"/>
+                                                <label value="&myInfo.CityState;"/>
                                                 <textbox persist="value" id="location"/>
                                         </row>
                                          <row>
-                                                <label value="Postal Code:"/>
+                                                <label value="&myInfo.PostalCode;"/>
                                                 <textbox persist="value" id="postal"/>
                                         </row>
                                         <row>
-                                                <label value="Country:"/>
+                                                <label value="&myInfo.Country;"/>
                                                 <textbox persist="value" id="country"/>
                                         </row>
                                 </rows>
@@ -113,24 +113,24 @@
                                 <rows>
                                         
                                         <row>
-                                                <label value="Company:"/>
+                                                <label value="&myInfo.Company;"/>
                                                 <textbox persist="value" id="company"/>
                                         </row>
                                         <row>
-                                                <label value="Department:"/>
+                                                <label value="&myInfo.Department;"/>
                                                 <textbox persist="value" id="department" />
                                         </row>
                                         
                                          <row>
-                                                <label value="Role:"/>
+                                                <label value="&myInfo.Role;"/>
                                                 <textbox persist="value" id="role"/>
                                         </row>
                                         <row>
-                                                <label value="Phone:"/>
+                                                <label value="&myInfo.Phone;"/>
                                                 <textbox persist="value" id="phone"/>
                                         </row>
                                         <row>
-                                                <label value="E-Mail:"/>
+                                                <label value="&myInfo.E-Mail;"/>
                                                 <textbox persist="value" id="email"/>
                                         </row>
                                 </rows>
@@ -144,7 +144,7 @@
                                         </hbox>
                                         <spacer height="20"/>
                                         <hbox>
-                                        <button label="Clear" width="60" height="30" onclick="clear()"/>
+                                        <button label="&myInfo.Clear;" width="60" height="30" onclick="clear()"/>
                                         </hbox>
                                
                         </vbox>
@@ -152,10 +152,11 @@
                         <vbox >
                                 <hbox>
                                         <hbox>
-                                        <image id="photo" persist="src" onload="resize()" maxwidth="100"  maxheight="100" style="border: 1px solid #aaa"/>
+                                        <!-- maxwidth="100"  maxheight="100" -->
+                                        <image id="photo"  src="img/Amedee.png" onload="resize()"  style="border: 1px solid #aaa" flex="1"/>
                                         </hbox>
                                         <hbox>
-                                        <label class="text-link" style="-moz-user-focus:ignore;" value="Change my picture" onclick="changePicture()" flex="0"/>
+                                        <label class="text-link" style="-moz-user-focus:ignore;" value="&myInfo.ChangePicture;" onclick="changePicture()" flex="0"/>
                                         </hbox>
                                 </hbox>
                         </vbox>
