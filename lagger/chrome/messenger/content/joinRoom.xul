@@ -38,7 +38,7 @@
      </treechildren>
  </tree>-->
  
- <listbox context="listcontext" width="180"  id="servers" flex="1"/>
+ <listbox context="listcontext" width="180"  id="servers" flex="1" onselect="showProperties();"/>
  
  <hbox align="right">
 

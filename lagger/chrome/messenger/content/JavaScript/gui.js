@@ -28,6 +28,7 @@ var base;
 var infojid;
 
 
+var serversLoaded = false;
 var notifyWritingCount = true;
 var deployedGUI = false;
 var console = false;
@@ -714,7 +715,7 @@ function loadServers(){
     item.appendChild(child);
 
     servers.appendChild(item);*/
-    alert ("To temporize");
+    //alert (mucs.length);
     
     var confs = document.getElementById("liste_conf");
     
@@ -784,6 +785,8 @@ for (var i = 0 ; i < conference.length ; i++){
 	var serveritem = jid.substring(jid.indexOf(".") + 1);
 	var name = conf.getAttribute("name");
 	
+	rooms.push(jid);
+	
 		/* var item = document.createElement("treeitem");
   		 var row = document.createElement("treerow");
    		 var cell1 = document.createElement("treecell");
@@ -839,6 +842,18 @@ function showGroups() {
     }
 }
 
+// Function to detect if to jid correspond a room
+function isRoom (jid){
+
+	var res = false;
+	
+	for (var i = 0 ; i < rooms.length ; i++){
+		if (rooms [i] == jid)
+			res = true;
+	}
+	
+	return res;
+}
 
 // Function to show rooms in roster
 /**function showRooms() {
@@ -902,7 +917,9 @@ function closeTab() {
     var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
     
     //alert (tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
-		if (! jid.match(pattern))
+		
+		//if (! jid.match(pattern))
+		if (!isRoom (jid))
 		notifyGone(jid);
 		
     if (childNodes.length == 1){
@@ -1361,7 +1378,7 @@ try{
     }
 	//alert("je sors de serverRequest");
 	}
-	catch (e){alert(e);}
+	catch (e){alert("send server request" + e);}
 }
 
 // Function for retreiving Disco Items
@@ -1375,31 +1392,38 @@ try{
         cons.addInConsole("IN : " + iq.xml() + "\n");
     }
    
-    //alert (iq.xml());
+   
 
     var items = iq.getNode().firstChild.childNodes;
+    
 
     /* query items */
     for (var i = 0; i < items.length; i++) {
+    
+     
         if (items[i].nodeName != 'item' || !items[i].getAttribute('jid') || items[i].getAttribute('node') != null) // skip those
             continue;
+            
+          
+        	    
         var aIQ = new JSJaCIQ();
         aIQ.setIQ(items[i].getAttribute('jid'), null, 'get', 'disco_info_' + i);
         aIQ.setQuery("http://jabber.org/protocol/disco#info");
 
         con.send(aIQ, getServerInfo);
     }
-    loadServers();
+   serversLoaded = true;
+   
     //alert("je sors de serverItem");
     }
-	catch (e){alert(e);}
+	catch (e){alert("getServerItems" + e);}
 }
 
 // Function to get the discoInfo
 function getServerInfo(iq) {
 
 	try{
-	//alert("je rentre dans serverInfo");	
+	
 
     if (!iq || iq.getType() != 'result')
         return;
@@ -1417,9 +1441,14 @@ function getServerInfo(iq) {
         			if (iq.xml().match(pattern)){
         				mucs.push(iq.getFrom());
         				 
-        				//alert ("ici j'ajoute l'iq" + iq.xml());
+        			
         				}
-        //alert(conferences[0]);
+       
+        }
+        
+        if (serversLoaded){
+         loadServers();
+         serversLoaded = false;
         }
         
         if (console) {
@@ -1432,7 +1461,7 @@ function getServerInfo(iq) {
     }
     //alert("je sors de serverInfo");
      }
-	catch (e){alert(e);}
+	catch (e){alert("Get server info" + e);}
 }
 
 
@@ -1453,7 +1482,8 @@ function sendMsg(event) {
 	 var pattern = /conference/
     
     // Message come from me
-    if (! receiver.match(pattern)){
+    //if (! receiver.match(pattern)){
+    if (! isRoom (receiver)){
     
     	currentReceiver = receiver;
    		 if (notifyWritingCount == true){
@@ -1881,13 +1911,15 @@ function tabfocused(){
 for (var i = 0; i < childNodes.length; i++) {
   	var child = childNodes[i];
   	var jid = child.id.substring(3, 50);
-  	if (! jid.match(pattern))
+  	//if (! jid.match(pattern))
+  	if (! isRoom(jid))
 	notifyInactive(jid);
 }
 
 	// notifyActive Current tab 
     var jid = tabs.selectedItem.id.substring(3, 50);
-    if (! jid.match(pattern))
+    //if (! jid.match(pattern))
+    if (! isRoom(jid))
 	notifyActive(jid);
 } 
 
@@ -2162,7 +2194,7 @@ function handleMessage(aJSJaCPacket) {
 
     var origin = aJSJaCPacket.getFrom();
     var mess = "Received Message from" + origin;
-    var pattern = /conference/
+    //var pattern = /conference/
     
     // Message come from me
     if (origin.match(myjid))
@@ -2259,12 +2291,14 @@ function handleMessage(aJSJaCPacket) {
 	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
     
-    if (aJSJaCPacket.getBody() == null && !origin.match(pattern))
+    //if (aJSJaCPacket.getBody() == null && !origin.match(pattern))
+    if (aJSJaCPacket.getBody() == null && !isRoom(origin))
     			showState(aJSJaCPacket);
     
     	else{
     
-    if(origin.match(pattern)){
+    //if(origin.match(pattern)){
+    if(isRoom(origin)){
     	var conf = document.getElementById(roomUserName);
     	if (conf){
     		
@@ -2316,7 +2350,7 @@ function showState(aJSJaCPacket){
 function handlePresence(aJSJaCPacket) {
 /* HERE IS AN ERROR ATTEMPTING CREATING A ROOM */
 
-	
+	//alert (aJSJaCPacket.xml());
 
     var presence;
     var sender = cutResource(aJSJaCPacket.getFrom());
@@ -2347,8 +2381,9 @@ function handlePresence(aJSJaCPacket) {
     
     
 
- if ( aJSJaCPacket.getFrom().match(pattern) ){
-		//alert (aJSJaCPacket.xml());
+// if ( aJSJaCPacket.getFrom().match(pattern) ){
+if ( isRoom (sender) ){
+		
 		
 		
 		// If others packets take status anchor , put && in the if
@@ -2359,43 +2394,48 @@ function handlePresence(aJSJaCPacket) {
 			}
 		
 		}
-		else {
-		var x;
-    for (var i = 0; i < aJSJaCPacket.getNode().getElementsByTagName('x').length; i++)
-        if (aJSJaCPacket.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
-            x = aJSJaCPacket.getNode().getElementsByTagName('x').item(i);
-            break;
-        }
-
-    if (x) {
-		 
-        var from = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf('/') + 1);
-		//alert ("handle presence" + from);
-
-		if (from == keepLogin(myjid))
-		;
-		 	//alert("recu un propre message" + from);
-		else{
-
-        var roomUser = new Array(aJSJaCPacket.getFrom(), from, "", "", "", "", "");
 		
-		//alert ("USer" + roomUser [1]);
+		
+		else {
+			var x;
+  
+ 			   for (var i = 0; i < aJSJaCPacket.getNode().getElementsByTagName('x').length; i++)
+    			    if (aJSJaCPacket.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
+       				     x = aJSJaCPacket.getNode().getElementsByTagName('x').item(i);
+          				  break;
+     			   }
+
+ 			   if (x) {
+		 
+    	    var from = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf('/') + 1);
+			//alert ("handle presence" + from);
+
+				if (from == keepLogin(myjid))
+				;
+		 	//alert("recu un propre message" + from);
+			else{
+
+      	  var roomUser = new Array(aJSJaCPacket.getFrom(), from, "", "", "", "", "");
+		
+			//alert ("USer" + roomUser [1]);
 		
         
-		 var itemx = x.getElementsByTagName('item').item(0);
+			 var itemx = x.getElementsByTagName('item').item(0);
 		
-        roomUser[2] = itemx.getAttribute('affiliation');
-        roomUser[3] = itemx.getAttribute('role');
-        roomUser[4] = itemx.getAttribute('nick');
-        roomUser[5] = itemx.getAttribute('jid');
-        if (item.getElementsByTagName('reason').item(0))
-            roomUser.reason = itemx.getElementsByTagName('reason').item(0).firstChild.nodeValue;
-        if (actor = itemx.getElementsByTagName('actor').item(0)) {
+     		   roomUser[2] = itemx.getAttribute('affiliation');
+      		  roomUser[3] = itemx.getAttribute('role');
+      		  roomUser[4] = itemx.getAttribute('nick');
+      		  roomUser[5] = itemx.getAttribute('jid');
+      		  if (item.getElementsByTagName('reason').item(0))
+       	     roomUser.reason = itemx.getElementsByTagName('reason').item(0).firstChild.nodeValue;
+       
+       	 if (actor = itemx.getElementsByTagName('actor').item(0)) {
             if (actor.getAttribute('jid') != null)
                 roomUser[6] = actor.getAttribute('jid');
             else if (itemx.getElementsByTagName('actor').item(0).firstChild != null)
                 roomUser[6] = itemx.getElementsByTagName('actor').item(0).firstChild.nodeValue;
         }
+       
         var role = roomUser[3];
         if (role != '') {
 
@@ -2413,12 +2453,12 @@ function handlePresence(aJSJaCPacket) {
     }
     return;
     }
-    }
+ }
     
    
 
    // Try 
-  else {
+else {
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";

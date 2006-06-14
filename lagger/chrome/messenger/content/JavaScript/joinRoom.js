@@ -381,7 +381,7 @@ var pass = document.getElementById("pass");
 
 
 var wholeRoom = roomname.value + "@" + server.value;
-
+window.opener.rooms.push(wholeRoom);
 	
 	self.close();
 	
@@ -605,29 +605,21 @@ function convertIntoConference() {
 }
 
 
-// Function to send message to a room
-function sendRoomMessage(roomName) {
+// Function to show a bookmark properties
+function showProperties (){
 
-    if (event.shiftKey)
-        ;
-    else if (event.keyCode == 13) {
+var login = document.getElementById("login");
+var server = document.getElementById("server");
+var roomname = document.getElementById("room");
+var pass = document.getElementById("pass");
+var autojoin = document.getElementById("auto");
 
-        // TOFIX
-        var textEntry = document.getElementById("the textentry");
+var liste = document.getElementById("servers");
 
-        if ((textEntry.value).split(" ") != "") {
+login.value = bookmarks[liste.selectedIndex -1][0];
+server.value = bookmarks[liste.selectedIndex -1][3];
+roomname.value = bookmarks[liste.selectedIndex -1][2];
+pass.value = bookmarks[liste.selectedIndex -1][1];
+autojoin.value = bookmarks[liste.selectedIndex -1][4];
 
-            var aMsg = new JSJaCMessage();
-            aMsg.setTo(roomName);
-            aMsg.setBody(textEntry.value);
-            aMsg.setType('groupchat');
-            con.send(aMsg);
-        }
-    }
-}
-
-
-// Function to receive a room message
-function receiveRoomMessage (){
-;
 }
