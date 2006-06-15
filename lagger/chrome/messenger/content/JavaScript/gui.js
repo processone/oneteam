@@ -31,6 +31,7 @@ var infojid;
 
 var serversLoaded = false;
 var notifyWritingCount = true;
+var writing = false;
 var deployedGUI = false;
 var console = false;
 var hideDecoUser = false;
@@ -44,7 +45,7 @@ var currentReceiver;
 function initializeTimer()
 {
     // Set the length of the timer, in seconds
-    secs = 3;
+    secs = 10;
     stopTheClock();
     startTheTimer();
 }
@@ -61,7 +62,9 @@ function startTheTimer()
     if (secs==0)
     {
         stopTheClock();
+        if (writing == false)
         notifyPause(currentReceiver);
+        
 	 	notifyWritingCount = true;
     }
     else
@@ -788,7 +791,11 @@ var nickname = iq.getNode().getElementsByTagName('nick');
 //alert ("nombredeconf" + conference.item.length);
 for (var i = 0 ; i < conference.length ; i++){
 	
-	var nick = nickname[i].firstChild.nodeValue;
+	if (nickname[i].firstChild)
+		var nick = nickname[i].firstChild.nodeValue;
+	else
+		var nick = keepLogin (myjid);
+	
 	var conf =  conference[i];
 	var jid = conf.getAttribute("jid");
 	var serveritem = jid.substring(jid.indexOf(".") + 1);
@@ -1525,11 +1532,13 @@ function sendMsg(event) {
 
 	try {
 	
-	 var pattern = /conference/
+	
     
     // Message come from me
     //if (! receiver.match(pattern)){
     if (! isRoom (receiver)){
+    
+    writing = true;
     
     	currentReceiver = receiver;
    		 if (notifyWritingCount == true){
@@ -1594,7 +1603,7 @@ function sendMsg(event) {
     }
     
     
-    
+    writing = false;
     } catch (e) {alert (e);}
 }
 
@@ -2396,7 +2405,7 @@ function showState(aJSJaCPacket){
 	else if(aJSJaCPacket.getNode().getElementsByTagName('gone'))
 		writestate.setAttribute("value","is gone...");
 		
-		pause(100);
+		pause(200);
 		writestate.setAttribute('value','');
 		
 		}

@@ -77,7 +77,7 @@ function requestRetrieveBookmarks(){
 function retrieveBookmarks(iq){
 
 try {
-
+//alert (iq.xml());
 var conference = iq.getNode().getElementsByTagName('conference');
 
 for (var i = 0 ; i < conference.length ; i++){
@@ -104,7 +104,7 @@ for (var i = 0 ; i < conference.length ; i++){
 	alert (password);
 	alert(room);
 	alert (server);
-	alert (autojoin);*/
+	alert ("autojoin" + autojoin);*/
 		
 	
 	bookmark.push(nickname);
@@ -348,7 +348,12 @@ var iq = new JSJaCIQ();
    	conference.setAttribute('jid',bookmarks[i][2] + "@" + bookmarks[i][3]);
    	
    	var nick = iq.getDoc().createElement('nick');
-   	nick.appendChild(iq.getDoc().createTextNode(bookmarks[i][0]));
+   	var nickname;
+   	if (bookmarks[i][0] == "undefined")
+   		nickname = keepLogin(window.opener.myjid);
+   	else
+   		nickname = bookmarks[i][0];
+   	nick.appendChild(iq.getDoc().createTextNode(nickname));
    	
    	var password = iq.getDoc().createElement('password');
    	password.appendChild(iq.getDoc().createTextNode(bookmarks[i][1]));
@@ -677,7 +682,8 @@ if (bookmarks[liste.selectedIndex -1][1] != "undefined")
 	pass.value = bookmarks[liste.selectedIndex -1][1];
 else 
 	pass.value ="";
-autojoin.checked = bookmarks[liste.selectedIndex -1][4];
+	
+autojoin.setAttribute ("checked",bookmarks[liste.selectedIndex -1][4]);
 name.value = bookmarks[liste.selectedIndex -1][5];
 
 
