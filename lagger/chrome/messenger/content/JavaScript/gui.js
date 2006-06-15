@@ -1101,7 +1101,7 @@ function hideDecoUsers(){
 	hideDecoUser = true;
 	this.emptyList();
     this.showUsers(users);
-	this.refreshList();
+	//this.refreshList();
 	}
 	else
 	showDecoUsers();
@@ -1113,7 +1113,7 @@ function showDecoUsers(){
 	hideDecoUser = false;
 	this.emptyList();
     this.showUsers(users);
-	this.refreshList();
+	//this.refreshList();
 }
 
 // Function to show all users in roster
@@ -1561,7 +1561,7 @@ function sendMsg(event) {
             
             var aMsg = new JSJaCMessage();
             aMsg.setTo(receiver);
-            aMsg.setBody(textEntry.value);
+            aMsg.setBody(RTrim(textEntry.value));
             aMsg.setType('chat');
             var active = aMsg.getNode().appendChild(aMsg.getDoc().createElement('active'));
     			active.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
@@ -1909,7 +1909,7 @@ function sendRoomMessage(roomName) {
             var aMsg = new JSJaCMessage();
             aMsg.setFrom(roomName + "/" + myRoomNick);
             aMsg.setTo(roomName);
-            aMsg.setBody(textEntry.value);
+            aMsg.setBody(RTrim(textEntry.value));
             aMsg.setType('groupchat');
             con.send(aMsg);
        
@@ -2244,7 +2244,8 @@ function handleMessage(aJSJaCPacket) {
 
     var origin = aJSJaCPacket.getFrom();
     var mess = "Received Message from" + origin;
-    //var pattern = /conference/
+   
+   //alert (origin);
     
     // Message come from me
     if (origin.match(myjid))
@@ -2267,7 +2268,9 @@ function handleMessage(aJSJaCPacket) {
     var name = keepLogin(origin);
     var jid = cutResource(origin);
 	var roomUserName = origin.substring(origin.indexOf("/")+ 1,origin.length); 
-	//alert(origin);
+	
+	//alert("origine" + origin);
+	//alert ("room User name" +  roomUserName);
     //alert ("tab" + aJSJaCPacket.getFrom());
 
 
@@ -2319,6 +2322,9 @@ function handleMessage(aJSJaCPacket) {
         
         vboxpanel.appendChild(hboxhead);
        	tabpanel.appendChild(vboxpanel);
+       	
+       	 var tabbox = document.getElementById("tabbox");
+        tabbox.selectedPanel = tabpanel;
 
         //var text = document.createElement("textbox");
         var text = document.createElement("iframe");
@@ -2341,30 +2347,31 @@ function handleMessage(aJSJaCPacket) {
 	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
     
-    //if (aJSJaCPacket.getBody() == null && !origin.match(pattern))
+  
     if (aJSJaCPacket.getBody() == null && !isRoom(origin))
     			showState(aJSJaCPacket);
     
-    	else{
+    else{
     
-    //if(origin.match(pattern)){
-    if(isRoom(origin)){
-    	var conf = document.getElementById(roomUserName);
-    	if (conf){
+   
+    	if(isRoom(cutResource(origin))){
+    		var conf = document.getElementById(roomUserName);
+    		//alert ("room User name" +  roomUserName);
+    			if (conf){
     		
-    		var namehead = document.getElementById("namehead" + keepLogin(roomUserName));
-    		namehead.setAttribute("value",html_escape(aJSJaCPacket.getBody()));
-    		return;
-    		}
-    	else 
-    		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
+    				var namehead = document.getElementById("namehead" + keepLogin(roomUserName));
+    				namehead.setAttribute("value",html_escape(aJSJaCPacket.getBody()));
+    				return;
+    			}
+    			else 
+    				textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
     
-    }
-    else
+    			}
+    	else
     		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(name) + "</u>" +   " : " + "</font>");
     
-    textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +html_escape(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
-    textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
+    		textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +html_escape(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
+    		textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
    	}
    } catch(e) {alert ("Dans handle messsage" + e);}
@@ -2409,7 +2416,7 @@ function handlePresence(aJSJaCPacket) {
     
     var item = document.getElementById(sender + "cell");
     var user;
-    var pattern = /conference/
+    
    
    
   //alert (resource);
@@ -2429,9 +2436,6 @@ function handlePresence(aJSJaCPacket) {
     
     
     
-    
-
-// if ( aJSJaCPacket.getFrom().match(pattern) ){
 	if ( isRoom (sender) ){
 		
 		//alert (aJSJaCPacket.xml());
