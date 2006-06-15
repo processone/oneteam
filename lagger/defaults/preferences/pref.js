@@ -37,7 +37,7 @@ pref("network.protocol-handler.warn-external.https", false);
 pref("network.protocol-handler.warn-external.ftp", false);
 pref("network.protocol-handler.warn-external.mailto", false);
 
-
+pref ("general.skins.selectedSkin","");
 
 pref("chat.connection.username", "");
 pref("chat.connection.password", "");

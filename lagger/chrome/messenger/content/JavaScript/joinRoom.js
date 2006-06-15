@@ -155,17 +155,9 @@ if (window.opener.console) {
 function removeBookmark(){
 
 try {
-/*var tree = document.getElementById("bookmarks");
-
-var elem = document.getElementById("child" + theserver);
-
-var index = tree.currentIndex;
-var item = tree.contentView.getItemAtIndex(index);
- 
-elem.removeChild(item);*/
 
 
-// remove in roster
+// Remove in roster
 
 
  var listconf = window.opener.document.getElementById("liste_conf");
@@ -173,10 +165,44 @@ var liste = document.getElementById("servers");
 
 //alert (liste.selectedIndex -1);
 
-var item = window.opener.document.getElementById(bookmarks[liste.selectedIndex -1][2] + "@" + bookmarks[liste.selectedIndex -1][3]);
+var jid = bookmarks[liste.selectedIndex -1][2] + "@" + bookmarks[liste.selectedIndex -1][3];
+var item = window.opener.document.getElementById(jid);
 
 
-listconf.removeChild (item);
+
+
+var cellConf = window.opener.document.getElementById(jid + "cell");
+cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+			
+			// mask all users in room
+			var el = item.nextSibling;
+			//alert (el);
+			if (el)
+			while (el.getAttribute("id").match(jid)){
+				//alert (el.id);
+					listconf.removeChild(el);
+					el = item.nextSibling;
+					if (!el)
+					break;
+					}
+			
+			listconf.removeChild (item);
+			
+			
+			// We get the nick corresponding to the room to exit
+			var nick;
+		
+		for (var i = 0 ; i < window.opener.rooms.length ; i++){
+		if (window.opener.rooms [i] == jid)
+			nick = window.opener.nicks[i];
+		}
+					
+        exitRoom(jid + "/" + nick);
+        
+
+// Remove reference to room and nick in arrays        
+window.opener.rooms.splice(i,1);
+window.opener.nicks.splice(i,1);
 
 //alert  ("selectionn? dans la liste" + liste.selectedIndex);
 bookmarks.splice([liste.selectedIndex -1],1);
@@ -237,8 +263,10 @@ var name = document.getElementById("name");
    		
    		var liste = document.getElementById("servers");
    		
-   		if (liste.selectedItem)
+   		if (liste.selectedItem){
    			removeBookmark();
+   			
+   			}
    		
    		liste.appendChild (itembook);
    		
@@ -279,6 +307,16 @@ var name = document.getElementById("name");
     
     listconf.appendChild(item);
     listconf.selectItem(item);
+    
+    var jid = roomname.value + "@" + server.value;
+    window.opener.rooms.push(jid);
+    
+    
+    // Add the nickname associated to the room
+    for (var i = 0 ; i < window.opener.rooms.length ; i++){
+		if (window.opener.rooms [i] == jid)
+			window.opener.nicks[i] = login.value;
+		}
    	
     }
       

@@ -150,7 +150,7 @@
                     <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleoutmessagecolor"/>
                 </row>
 
-				<spacer height="10"/>
+				<spacer height="20"/>
 				
 				<row>
                     <label value="Font : " control="nickname"/>

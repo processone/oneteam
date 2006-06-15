@@ -6,6 +6,7 @@ const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
 
 var users = new Array();
 var groups = new Array();
+var nicks = new Array();
 var rooms = new Array();
 var roomUsers = new Array();
 var roles = new Array();
@@ -98,6 +99,7 @@ function openConversation(event) {
 		id = confs.selectedItem.id;
 		}
 		
+	//alert (id);
 		
     if (document.getElementById("tab" + id) == null) {
 
@@ -193,10 +195,15 @@ function openConversation(event) {
 		var cell = document.getElementById(id + "cell");
     	cell.setAttribute("image", "chrome://messenger/content/img/crystal/opened.png");
 		
+		var nick;
 		
-		//myRoomNick = keepLogin(myjid);
-		//alert (id);
-		performJoinRoom (id,myjid,'',myRoomNick);
+		for (var i = 0 ; i < rooms.length ; i++){
+		if (rooms [i] == id)
+			nick = nicks[i];
+		}
+		
+		//myRoomNick
+		performJoinRoom (id,myjid,'',nick);
 		
 		self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
 		}
@@ -206,7 +213,7 @@ function openConversation(event) {
 		
 		
 		}
-		catch(e){alert(e);}
+		catch(e){alert("OPen conv" + e);}
     }
 
    
@@ -776,10 +783,12 @@ function retrieveBookmarks(iq){
 try {
 
 var conference = iq.getNode().getElementsByTagName('conference');
+var nickname = iq.getNode().getElementsByTagName('nick');
 
 //alert ("nombredeconf" + conference.item.length);
 for (var i = 0 ; i < conference.length ; i++){
 	
+	var nick = nickname[i].firstChild.nodeValue;
 	var conf =  conference[i];
 	var jid = conf.getAttribute("jid");
 	var serveritem = jid.substring(jid.indexOf(".") + 1);
@@ -787,6 +796,7 @@ for (var i = 0 ; i < conference.length ; i++){
 	var autojoin = conf.getAttribute("autojoin");
 	
 	rooms.push(jid);
+	nicks.push(nick);
 	
 		/* var item = document.createElement("treeitem");
   		 var row = document.createElement("treerow");
@@ -916,6 +926,7 @@ function closeTab() {
 //try{
 
     var liste = document.getElementById("liste_contacts");
+    var listconfs = document.getElementById ("liste_conf");
 
     var tabs = document.getElementById("tabs1");
     var tab = tabs.selectedItem;
@@ -939,8 +950,8 @@ function closeTab() {
     		
     		
 		
-			var listconfs = document.getElementById ("liste_conf");
-			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
+			
+			
 			//alert ("jid" + jid);
 			var element = document.getElementById(jid);
 			//alert ("id element" + element);
@@ -961,8 +972,13 @@ function closeTab() {
 					break;
 					}
 			
-					
-        exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + myRoomNick);
+		var nick;
+		
+		for (var i = 0 ; i < rooms.length ; i++){
+		if (rooms [i] == jid)
+			nick = nicks[i];
+		}			
+        exitRoom(tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length) + "/" + nick);
    		 }
    		 
    		 reduceGUI();
@@ -983,8 +999,8 @@ function closeTab() {
 		if (tab.getAttribute("context") == "tabroomcontext"){
 			
 		
-			var listconfs = document.getElementById ("liste_conf");
-			var jid = tab.id.substring(tab.id.indexOf("b") + 1,tab.id.length);
+			
+			
 			//alert ("jid" + jid);
 			var element = document.getElementById(jid);
 			
@@ -1003,7 +1019,14 @@ function closeTab() {
 					break;
 					}
 				
-				exitRoom(jid + "/" + myRoomNick);
+				var nick;
+		
+		for (var i = 0 ; i < rooms.length ; i++){
+		if (rooms [i] == jid)
+			nick = nicks[i];
+		}	
+				
+				exitRoom(jid + "/" + nick);
 				
 				} 
 		
@@ -1027,7 +1050,7 @@ function closeTab() {
     }
     
     
-   //} catch (e) {alert(" In closeTab" + e);}
+  // } catch (e) {alert(" In closeTab" + e);}
 }
 
 
@@ -1039,12 +1062,24 @@ function closeAllTab() {
 
     var parentbis = document.getElementById("tabpanels1");
     
-        
+       
 	
 	
 	 while (parent.hasChildNodes()){
-	 if (parent.firstChild.getAttribute("context") == "tabroomcontext")
-        exitRoom(parent.firstChild.id.substring(parent.firstChild.id.indexOf("b") + 1,parent.firstChild.id.length) + "/" + myRoomNick);
+	  
+	  		
+	 
+	 if (parent.firstChild.getAttribute("context") == "tabroomcontext"){
+		    var jid = parent.firstChild.id.substring(parent.firstChild.id.indexOf("b") + 1,parent.firstChild.id.length);
+	  		var nick;
+		
+			for (var i = 0 ; i < rooms.length ; i++){
+				if (rooms [i] == jid)
+				nick = nicks[i];
+			}
+        	exitRoom(jid + "/" + nick);
+        }
+        
         parent.removeChild(parent.firstChild);
         
         }
@@ -1573,6 +1608,7 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
         aPresence.setTo(wholeRoom + '/' + nick);
         aPresence.setXMLLang ('en');
        
+      
         
         /**var vcard = aPresence.getDoc().createElement('x');
         vcard.setAttribute('xmlns', 'vcard-temp:x:update');
@@ -1598,7 +1634,7 @@ function performJoinRoom(wholeRoom,jid, pass, nick) {
 	
     }
     catch (e) {
-        alert(e);
+        alert("performJoinRoom" + e);
     }
     
 
@@ -1717,8 +1753,8 @@ function getRoomRoster(aPresence) {
         //alert("jabber from:" + aPresence.getFrom() + ", from:" + from);
         //alert (myRoomNick);
 
-		if (myRoomNick)
-		from = myRoomNick;
+		//if (myRoomNick)
+		//from = myRoomNick;
 		
         var roomUser = new Array(aPresence.getFrom(), from, "", "", "", "", "");
 		
@@ -2376,7 +2412,7 @@ function handlePresence(aJSJaCPacket) {
     var pattern = /conference/
    
    
-  
+  //alert (resource);
 	
 	try {
 		
@@ -2396,9 +2432,19 @@ function handlePresence(aJSJaCPacket) {
     
 
 // if ( aJSJaCPacket.getFrom().match(pattern) ){
-if ( isRoom (sender) ){
+	if ( isRoom (sender) ){
 		
+		//alert (aJSJaCPacket.xml());
 		
+		var nick;
+		
+		for (var i = 0 ; i < rooms.length ; i++){
+		if (rooms [i] == sender)
+			nick = nicks[i];
+		}
+		
+		if  (nick == resource)
+			return;
 		
 		// If others packets take status anchor , put && in the if
 		if (aJSJaCPacket.getNode().getElementsByTagName('status').item(0)){
@@ -2408,6 +2454,8 @@ if ( isRoom (sender) ){
 			}
 		
 		}
+		
+		
 		
 		
 		else {
