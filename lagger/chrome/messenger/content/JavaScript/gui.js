@@ -212,13 +212,24 @@ function openConversation(event) {
 		}
 		
 		
+			
 		
 		
 		
 		}
 		catch(e){alert("OPen conv" + e);}
     }
-
+	
+	else {
+			
+			var tab = document.getElementById("tab" + id);
+			var tabpanel = document.getElementById("tabpanel" + id);
+			
+			selectTab(id);
+            var tabbox = document.getElementById("tabbox");
+            
+        	tabbox.selectedPanel = tabpanel;
+		}
    
 }
 
@@ -1658,7 +1669,8 @@ function exitRoom(room){
 	 var aPresence = new JSJaCPresence();
         aPresence.setTo(room);
 		aPresence.setType('unavailable');
-		
+		var status = aPresence.getNode().appendChild(aPresence.getDoc().createElement('status'));
+		status.appendChild(aPresence.getDoc().createTextNode("offline"));
 		con.send(aPresence);
 		
 		if (console) {
@@ -1790,6 +1802,10 @@ function getRoomRoster(aPresence) {
             var already = false;
             for (r = 0; r < roles.length; r++) {
                 if (roles[r] == role)
+                    already = true;
+            }
+             for (var j = 0; j < roomUsers.length; j++) {
+                if (roomUsers[j] == roomUser)
                     already = true;
             }
             if (!already)
@@ -2427,8 +2443,7 @@ function handlePresence(aJSJaCPacket) {
     var user;
     
    
-   
-  //alert (resource);
+  //alert ("handle presence");
 	
 	try {
 		
@@ -2447,7 +2462,7 @@ function handlePresence(aJSJaCPacket) {
     
 	if ( isRoom (sender) ){
 		
-		//alert (aJSJaCPacket.xml());
+		//alert ("message provenant d'une room");
 		
 		var nick;
 		
@@ -2473,7 +2488,7 @@ function handlePresence(aJSJaCPacket) {
 		
 		else {
 			var x;
-  
+  //alert ("message provenant d'une utilisateur");
  			   for (var i = 0; i < aJSJaCPacket.getNode().getElementsByTagName('x').length; i++)
     			    if (aJSJaCPacket.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
        				     x = aJSJaCPacket.getNode().getElementsByTagName('x').item(i);
@@ -2519,6 +2534,11 @@ function handlePresence(aJSJaCPacket) {
                 if (roles[r] == role)
                     already = true;
             }
+            for (var j = 0; j < roomUsers.length; j++) {
+                if (roomUsers[j] == roomUser)
+                    already = true;
+            }
+            
             if (!already)
                 roles.push(role);
             roomUsers.push(roomUser);
