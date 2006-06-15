@@ -383,7 +383,7 @@ function extendGUI() {
     textbox.setAttribute("maxheight", "40");
     textbox.setAttribute("minheight", "30");
     textbox.setAttribute("onkeypress", "sendMsg(event);");
-    textbox.setAttribute("oninput", "notifyWriting();");
+    //textbox.setAttribute("oninput", "notifyWriting();");
 
 
     /*var lift = document.createElement("scrollbar");
