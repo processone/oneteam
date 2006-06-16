@@ -2595,7 +2595,7 @@ else {
     					resources.push(resource);
     					}
     		}
-    } // endif getType !getShow
+    } // endif !getType !getShow
     	
 	
 	// Type or Show packet
@@ -2606,25 +2606,37 @@ else {
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
 
         var type = aJSJaCPacket.getType();
+        var show = aJSJaCPacket.getShow();
+        
+         // If sender own resources,take its max priority's one
+    			if (resources){
+    				var maxPrioIndex = 0;
+    				
+    				for  (var i = 0 ; i < resources.length ; i ++){
+    						if (resources [i] [0] == clientId){
+    							if (type)
+    								resources [i][2] = type.substring(0, 2);
+    							else
+    								resources [i][3] = show.substring(0, 2);
+    							
+    						}
+    					if (resources [i] [1] > maxPrio)
+    						maxPrioIndex = i; 
+    				}	
+    				if (type) 	 
+           		 		type = resources [maxPrioIndex][2];
+           		 	else
+           		 		show = resources [maxPrioIndex][3];
+        		}	
+        
+        
        		 if (type) {
            		 if (type == 'subscribe') {
 
                	 authorizeContactSeeMe(sender);
            			 }
            			 
-           	 // If sender own resources,take its max priority's one
-    			if (resources){
-    				var maxPrioIndex = 0;
-    				
-    				for  (var i = 0 ; i < resources.length ; i ++){
-    						if (resources [i] [0] == clientId){
-    							resources [i][2] = type.substring(0, 2);
-    						}
-    					if (resources [i] [1] > maxPrio)
-    						maxPrioIndex = i; 
-    				}		 
-           		 	type = resources [maxPrioIndex][2];
-        		}	
+           	
 
             		presence += aJSJaCPacket.getType();
            		 //alert (type.substring(0,2));
@@ -2659,7 +2671,7 @@ else {
        			 
        			
 
-            		var show = aJSJaCPacket.getShow();
+            		
             presence += aJSJaCPacket.getShow();
             //alert (show.substring(0,2));
           if (show.substring(0, 2) == "xa") {
