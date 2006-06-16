@@ -153,7 +153,7 @@
                                 <hbox>
                                         <hbox>
                                         <!-- maxwidth="100"  maxheight="100" -->
-                                        <image id="photo"  src="img/Amedee.png" onload="resize()"  style="border: 1px solid #aaa" flex="1"/>
+                                        <image id="photo" flex="1" style="border: 1px solid #aaa" onload="resize()"/>
                                         </hbox>
                                         <hbox>
                                         <label class="text-link" style="-moz-user-focus:ignore;" value="&myInfo.ChangePicture;" onclick="changePicture()" flex="0"/>

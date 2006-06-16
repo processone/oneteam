@@ -666,12 +666,7 @@ function getRoster(iq) {
                         groups.push(group);
                 }
                 
-                /* if (items.item(i).getAttribute('category') == 'conference'){
-                    
-                 room = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "user-sibling.gif");
-                rooms.push(room);
-                }*/
-                 //else{
+              
                  var resources = new Array();
             user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources);
             //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
@@ -1142,8 +1137,8 @@ function showUsers(users) {
 	
     for (var g = 0; g < groups.length; g++) {  
         var group = groups[g];
-         showGroup(group);
-        //var countUser = 0;
+        var itemGroup = showGroup(group);
+        var countUser = 0;
 
         for (var i = 0; i < users.length; i++) {
 
@@ -1153,32 +1148,34 @@ function showUsers(users) {
             			
             			if (user [4] != "offline.png"){
                 		showUser(user);
-                		//countUser++;
+                		countUser++;
                 		}
                 		
                 }
                 else {
                 	
                 showUser(user);
-                //countUser ++;
+                countUser ++;
                 }
 			}
         }
         //end forUser
-       /*  if (gPrefService.getBoolPref("chat.general.showemptygroup")){
+       /*  if (gPrefService.getBoolPref("chat.general.showemptygroup")){*/
        	 	if (countUser > 0)
-       	 	showGroup(group);
-        }
+       	 	  ;
+       	 	else
+       	 	  itemGroup.setAttribute("disabled","true");
+       /* }
         else */
         
         
 
-		for (var i = 0; i < rooms.length; i++) {
+		/*for (var i = 0; i < rooms.length; i++) {
         var room = rooms[i];
             if (room [2] == group)
         			showRoom(rooms[i]);
         
-   		 }
+   		 }*/
    		 //end forRoom
     }
     //end forGroup
@@ -1201,6 +1198,7 @@ function showGroup(group) {
     item.setAttribute("orient", "horizontal");
     //item.setAttribute("id", "group" + group);
     item.setAttribute("id", "group");
+   
     liste.appendChild(item);
     
     /*var item = document.createElement("treeitem");
@@ -1211,6 +1209,8 @@ function showGroup(group) {
     item.setAttribute("label", group);
     item.setAttribute("id", "group" + group);
     liste.appendChild(item);*/
+    
+   	return item;
     
 }
 
@@ -2436,7 +2436,7 @@ function handlePresence(aJSJaCPacket) {
 
     var presence;
     var sender = cutResource(aJSJaCPacket.getFrom());
-    var resource = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf("/")+ 1);
+    var clientId = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf("/")+ 1);
     
     
     var item = document.getElementById(sender + "cell");
@@ -2459,7 +2459,7 @@ function handlePresence(aJSJaCPacket) {
     }
     
     
-    
+    // Sender is a room
 	if ( isRoom (sender) ){
 		
 		//alert ("message provenant d'une room");
@@ -2471,8 +2471,10 @@ function handlePresence(aJSJaCPacket) {
 			nick = nicks[i];
 		}
 		
-		if  (nick == resource)
+		if  (nick == clientId)
 			return;
+		
+		
 		
 		// If others packets take status anchor , put && in the if
 		if (aJSJaCPacket.getNode().getElementsByTagName('status').item(0)){
@@ -2481,14 +2483,12 @@ function handlePresence(aJSJaCPacket) {
 			maskRoomUser(aJSJaCPacket.getFrom());
 			}
 		
-		}
-		
-		
-		
+		 }
+				
 		
 		else {
 			var x;
-  //alert ("message provenant d'une utilisateur");
+  			//alert ("message provenant d'une utilisateur");
  			   for (var i = 0; i < aJSJaCPacket.getNode().getElementsByTagName('x').length; i++)
     			    if (aJSJaCPacket.getNode().getElementsByTagName('x').item(i).getAttribute('xmlns') == 'http://jabber.org/protocol/muc#user') {
        				     x = aJSJaCPacket.getNode().getElementsByTagName('x').item(i);
@@ -2503,7 +2503,8 @@ function handlePresence(aJSJaCPacket) {
 				if (from == keepLogin(myjid))
 				;
 		 	//alert("recu un propre message" + from);
-			else{
+			
+			  else{
 
       	  var roomUser = new Array(aJSJaCPacket.getFrom(), from, "", "", "", "", "");
 		
@@ -2552,8 +2553,10 @@ function handlePresence(aJSJaCPacket) {
     
    
 
-   // Try 
+   // Sender is a user
 else {
+
+	var resources = findResourceByJid(sender);
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
@@ -2565,14 +2568,40 @@ else {
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
     		
-    		var resources = findResourceByJid(sender);
-    		if (resources)
-    		resources.push(resource);
     		
-    }
+    		// Retrieve priority value and put resources values into resource array
+    		var priorityAnchor = aJSJaCPacket.getNode().getElementsByTagName('priority');
+    		var priority;
+    		
+    		if (priorityAnchor.item (0) && priorityAnchor.item (0).firstChild)
+    			priority = priorityAnchor.item (0).firstChild.nodeValue;
+    		
+    		if (resources && priority){
+    			var contains = false;
+    				for  (var i = 0 ; i < resources.length ; i ++){
+    					if (resources [i] [0] == clientId){
+    						contains = true;
+    						resources [i] [1] = priority;
+    						
+    						}
+    				}
+    				
+    				if (!contains) {
+    					var resource = new Array();
+    						resource[0] = clientId;
+    						resource[1] = priority;
+    						
+    					
+    					resources.push(resource);
+    					}
+    		}
+    } // endif getType !getShow
     	
 	
+	// Type or Show packet
     else {
+    	
+    				
    		 
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
 
@@ -2582,6 +2611,20 @@ else {
 
                	 authorizeContactSeeMe(sender);
            			 }
+           			 
+           	 // If sender own resources,take its max priority's one
+    			if (resources){
+    				var maxPrioIndex = 0;
+    				
+    				for  (var i = 0 ; i < resources.length ; i ++){
+    						if (resources [i] [0] == clientId){
+    							resources [i][2] = type.substring(0, 2);
+    						}
+    					if (resources [i] [1] > maxPrio)
+    						maxPrioIndex = i; 
+    				}		 
+           		 	type = resources [maxPrioIndex][2];
+        		}	
 
             		presence += aJSJaCPacket.getType();
            		 //alert (type.substring(0,2));
@@ -2606,43 +2649,57 @@ else {
 				if (imghead) 
         				imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
            		 }
-        			}
+           		 
+           		 
+           		
+        		
+        		
+        		}
        			 else {
+       			 
+       			
 
             		var show = aJSJaCPacket.getShow();
             presence += aJSJaCPacket.getShow();
             //alert (show.substring(0,2));
-            if (show.substring(0, 2) == "xa") {
+          if (show.substring(0, 2) == "xa") {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "xa.png");
                 user [4] = "xa.png";
                  var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
-            }
-            if (show.substring(0, 2) == "dn") {
+          }
+          if (show.substring(0, 2) == "dn") {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "dnd.png");
                 user [4] = "dnd.png";
                  var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
-            }
-            if (show.substring(0, 2) == "aw") {
+         }
+         if (show.substring(0, 2) == "aw") {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "away.png");
                 user [4] = "away.png";
                  var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
-            }
-        }
+         }
+      
+     			 }// else
+     			 
+     			 
         if (aJSJaCPacket.getStatus())
             presence += aJSJaCPacket.getStatus();
     }
     
     
-    
+   	if (hideDecoUser){
+    	emptyList();
+    	showUsers(users);
+    }
+   
    } 
     
     } catch (e) {alert("handle presence" + e);}

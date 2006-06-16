@@ -391,6 +391,9 @@ function changePicture(){
 
 
 function selection() {
+
+try {
+
   var nsIFilePicker = Components.interfaces.nsIFilePicker;
   var fp = Components.classes["@mozilla.org/filepicker;1"]
           .createInstance(nsIFilePicker);
@@ -400,10 +403,22 @@ function selection() {
     //alert("Vous avez annul? la s?lection");
     return;
   }
+  else {
   var filePath = fp.file.path;
   var image = document.getElementById("photo");
 				image.setAttribute("src",filePath);
-				//image.setAttribute("height",50);
-				//image.setAttribute("width",50);
+				image.setAttribute("height",50);
+				image.setAttribute("width",50);
   alert("Fichier s?lectionn? : " + filePath);
+  }
+  
+  }
+  catch (e) {alert ("dans selection" + e);}
+  
+ }
+ 
+ 
+ function resize(){
+alert ("resize"); 
+ 
  }
