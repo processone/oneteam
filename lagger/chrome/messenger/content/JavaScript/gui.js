@@ -2620,7 +2620,7 @@ else {
 	// Type or Show packet
     else {
     	
-    				
+    	var resources = findResourceByJid(sender);			
    		 
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
 
@@ -2675,7 +2675,7 @@ else {
 						this.refreshList();
 						}
 						
-				var maxPrioIndex = 0;
+				/*var maxPrioIndex = 0;
     				var maxPrio = priority;
     				
     				for  (var i = 0 ; i < resources.length ; i ++){
@@ -2687,7 +2687,7 @@ else {
     				}	
     				
            		 		type = resources [maxPrioIndex][2];	
-           		 		show = resources [maxPrioIndex][3];	
+           		 		show = resources [maxPrioIndex][3];	*/
            			 }
             if (type.substring(0, 2) == "in") {
             if (item)

@@ -35,7 +35,7 @@
     <spacer flex="1"/>
 
     <button  label="OK" oncommand="connectWithNewNickname();"/>
-    <button label="Cancel" oncommand="self.close();"/>
+    <button label="Cancel" oncommand="self.close();window.opener.closeTab();"/>
   </hbox>
 </vbox>        
         
