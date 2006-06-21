@@ -20,11 +20,11 @@
     <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
     <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
 
-    <spacer flex="1"/>
     
-    <hbox>
     
-    <vbox flex="1" align="start">
+    <hbox flex="1">
+    
+    <vbox flex="1">
     
     <!-- <label value="Bookmarks"/> 
    
@@ -40,7 +40,7 @@
  
  <listbox context="listcontext" width="180" flex="1" id="servers" onselect="showProperties();"/>
  
- <hbox align="right">
+ <hbox>
 
  <button id="rem" label="Remove" onclick="removeBookmark();"/>
  </hbox>
@@ -95,7 +95,7 @@
         </hbox>
     </groupbox>
 
-    <spacer flex="1"/>
+   
     </hbox>
 
 </window>

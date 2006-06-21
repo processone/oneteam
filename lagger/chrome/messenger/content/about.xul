@@ -6,7 +6,7 @@
 		title="About"
         orient="horizontal"
         resizable="true" 
-        width="200"
+        width="180"
         onclose="self.close();"
         height="290"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

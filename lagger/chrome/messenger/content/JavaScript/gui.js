@@ -137,11 +137,14 @@ function openConversation(event) {
 		
         var tabs = document.getElementById("tabs1");
         tabs.setAttribute("closebutton","true");
+        tabs.setAttribute("onclosetab","closeTab();");
+        
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + id);
         tab.setAttribute("label", (id).substring(0, (id).indexOf("@")));
         tab.setAttribute("context", "tabcontext");
         tab.setAttribute("onfocus","tabfocused()");
+        
 
         var childNodes = tabs.childNodes;
         for (var i = 0; i < childNodes.length; i++) {
@@ -318,6 +321,7 @@ function extendGUI() {
 
     var tabs = document.createElement("tabs");
     tabs.setAttribute("id", "tabs1");
+    tabs.setAttribute("onclosetab","closeTab();");
 
     tabbox.appendChild(tabs);
 

@@ -171,8 +171,8 @@
             
             <vbox flex="1" id ="left">
 			
-			<tabbox id="tabitemlist" flex="1">
-          		<tabs>
+			<tabbox id="tabitemlist" flex="1" orient="vertical">
+          		<tabs orient="vertical">
                         <tab label="Contacts"/>
                         <tab label="Conferences"/>
                                       
