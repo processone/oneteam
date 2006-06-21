@@ -140,7 +140,7 @@
                         <menuitem label="&menuAide.aide_rapide;" oncommand="launchWizard();"/>
                         <menuitem label="&menuAide.console;" oncommand="launchConsole();"/>
                         <menuseparator/>
-                        <menuitem label="&menuAide.apropos;"/>
+                        <menuitem label="&menuAide.apropos;" oncommand="launchAbout();"/>
                     </menupopup>
                 </menu>
             </menubar>

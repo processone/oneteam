@@ -1750,9 +1750,10 @@ function getRoomRoster(aPresence) {
 		
 		try{
 		
-		//var from = aPresence.getFrom().substring(aPresence.getFrom().indexOf('/') + 1);
-		//if (from == keepLogin(myjid)){
-			
+		if (aPresence.getType() == "error")
+			 if (aPresence.getNode().getElementsByTagName('error').item(0).getAttribute('code') == '409') {
+				launchNicknameWindow();
+				}
 
 	if (console) {
         cons.addInConsole("IN (RoomRoster) : " + aPresence.xml() + "\n");
@@ -2111,7 +2112,14 @@ function openDisco(){
 
 // Function to launch wizard window
 function launchWizard() {
-    window.open("chrome://messenger/content/wizard.xul", "Lagger Wizard", "chrome,centerscreen");
+   
+	var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
+                          .getService(Components.interfaces.nsIIOService);
+ 	var uriToOpen = ioservice.newURI("http://www.process-one.net", null, null);
+ 	var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                      .getService(Components.interfaces.nsIExternalProtocolService);
+ 	extps.loadURI(uriToOpen, null);
+
 }
 
 
@@ -2123,6 +2131,11 @@ function launchConsole() {
     cons.opener = window;
     console = true;
     }
+}
+
+// Launch about window
+function launchAbout(){
+	window.open("chrome://messenger/content/about.xul", "About Lagger", "chrome,titlebar,toolbar,centerscreen,modal");
 }
 
 // Launch theme window
@@ -2154,10 +2167,16 @@ var liste = document.getElementById("liste_contacts");
 	var user = findUserByJid(liste.selectedItem.id);
 	
 	// jid + resource
-	infojid = user[0] + "/" + user[5] [0];
+	infojid = user[0] + "/" + user[5] [0] [0];
 	
 	window.open("chrome://messenger/content/info.xul", infojid, "chrome,titlebar,toolbar,centerscreen,modal");
 	
+}
+
+// Function to launch the change nick window
+function launchNicknameWindow(){
+	window.open("chrome://messenger/content/changeNick.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");
+
 }
 
 // function to edit your personal info
@@ -2437,7 +2456,7 @@ function handlePresence(aJSJaCPacket) {
     var presence;
     var sender = cutResource(aJSJaCPacket.getFrom());
     var clientId = aJSJaCPacket.getFrom().substring(aJSJaCPacket.getFrom().indexOf("/")+ 1);
-    
+    var priority;
     
     var item = document.getElementById(sender + "cell");
     var user;
@@ -2571,7 +2590,7 @@ else {
     		
     		// Retrieve priority value and put resources values into resource array
     		var priorityAnchor = aJSJaCPacket.getNode().getElementsByTagName('priority');
-    		var priority;
+    		
     		
     		if (priorityAnchor.item (0) && priorityAnchor.item (0).firstChild)
     			priority = priorityAnchor.item (0).firstChild.nodeValue;
@@ -2609,8 +2628,9 @@ else {
         var show = aJSJaCPacket.getShow();
         
          // If sender own resources,take its max priority's one
-    			if (resources){
+    		/*	if (resources){
     				var maxPrioIndex = 0;
+    				var maxPrio = priority;
     				
     				for  (var i = 0 ; i < resources.length ; i ++){
     						if (resources [i] [0] == clientId){
@@ -2620,14 +2640,16 @@ else {
     								resources [i][3] = show.substring(0, 2);
     							
     						}
-    					if (resources [i] [1] > maxPrio)
+    					if (resources [i] [1] > maxPrio){
     						maxPrioIndex = i; 
+    						maxPrio = resources [i] [1];
+    						}
     				}	
     				if (type) 	 
            		 		type = resources [maxPrioIndex][2];
            		 	else
            		 		show = resources [maxPrioIndex][3];
-        		}	
+        		}	*/
         
         
        		 if (type) {
@@ -2652,6 +2674,20 @@ else {
    						this.showUsers(users);
 						this.refreshList();
 						}
+						
+				var maxPrioIndex = 0;
+    				var maxPrio = priority;
+    				
+    				for  (var i = 0 ; i < resources.length ; i ++){
+    						
+    					if (resources [i] [1] > maxPrio){
+    						maxPrioIndex = i; 
+    						maxPrio = resources [i] [1];
+    						}
+    				}	
+    				
+           		 		type = resources [maxPrioIndex][2];	
+           		 		show = resources [maxPrioIndex][3];	
            			 }
             if (type.substring(0, 2) == "in") {
             if (item)

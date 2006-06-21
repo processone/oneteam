@@ -321,11 +321,11 @@ function retrieveVcard(iq){
 function createPhotoFile(){
  	
 	
-	/*//create a unique tempfile
+	//create a unique tempfile
       var dest = Components.classes["@mozilla.org/file/directory_service;1"]
           .getService(Components.interfaces.nsIProperties)
           .get("TmpD", Components.interfaces.nsIFile);
       dest.append(basename(url));
-      dest.createUnique(dest.NORMAL_FILE_TYPE, 0664);*/
+      dest.createUnique(dest.NORMAL_FILE_TYPE, 0664);
 
 }

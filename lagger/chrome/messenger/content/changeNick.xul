@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+
+<window id="Nick"
+		title="Impossible to connect"
+        orient="horizontal"
+        resizable="true" 
+        width="350"
+        onload="loadNick();"
+        onclose="self.close();"
+        height="150"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="JavaScript/changeNick.js"/>
+<script type="application/x-javascript" src="JavaScript/gui.js"/>        
+        
+<vbox flex="1">
+
+<spacer height="10"/>
+
+ <hbox>
+  <description>
+    Nickname is already used.Please choose another one.
+  </description>
+ </hbox>
+  
+  <spacer height="20"/>
+  
+    <textbox id="text-nickname" value=""/>
+  
+<spacer height="20"/>
+
+  <hbox>
+    <spacer flex="1"/>
+
+    <button  label="OK" oncommand="connectWithNewNickname();"/>
+    <button label="Cancel" oncommand="self.close();"/>
+  </hbox>
+</vbox>        
+        
+ </window> 
