@@ -89,6 +89,16 @@ function getDiscoInfo(iq) {
     //item.setAttribute("id", "");
   	 //item.setAttribute("ondblclick", "exploreItem();");
   	 
+  	 var category;
+  	 var type;
+  	 
+  	 var identity = iq.getNode().getElementsByTagName('identity');
+		if (identity){	
+			 category = identity.item(0).getAttribute("category");
+			type = identity.item(0).getAttribute("type");
+			}
+			
+  	 
   	 var maincell = document.createElement("treecell");
     	 maincell.setAttribute("label",iq.getFrom());
   	 
@@ -115,10 +125,24 @@ function getDiscoInfo(iq) {
 	//alert (entityName);
 	var child = document.createElement("treeitem");
 	child.setAttribute("open","true");
-    //child.setAttribute("label",entityName);
+	
+	var image;
+	
+	if (category == "conference")
+		image = "user_role2-add.gif";
+	else if (category == "pubsub")
+		image = "pubsub.png";
+	else if (category == "directory")
+		image = "vcard.png";
+	else if (category == "gateway" && type == "msn")
+		image = "msn.png";
+	
+	
+    
     
     var cell = document.createElement("treecell");
-    cell.setAttribute("label",entityName);
+    cell.setAttribute("label",entityName + " " + "(" + category + "/" + type + ")");
+    cell.setAttribute("src", "chrome://messenger/content/img/" + image);
     //item.setAttribute("id", "");
   	//item.setAttribute("ondblclick", "exploreItem();");
     

@@ -8,9 +8,9 @@
         orient="horizontal"
         onload="sendDiscoRequest();"
         resizable="true"
-        width="300"
+        width="320"
         onclose="self.close();"
-        height="270"
+        height="470"
         style="overflow: auto"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
@@ -25,9 +25,9 @@
         
        
         
-  <tree flex ="1">
+  <tree flex ="1" hidecolumnpicker="true" >
   <treecols>
-       <treecol id="service" flex="2"/>
+       <treecol id="service" flex="2" primary="true" hideheader="true"/>
   </treecols>
   		<treechildren id="discolist" flex ="1">
   		</treechildren>
