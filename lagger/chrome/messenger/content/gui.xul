@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/gui.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/gui.dtd">
@@ -9,7 +10,7 @@
         onload="initGUI();"
         width="170"
         onclose="closeWindows();"
-        height="400"
+        height="450"
         style="overflow: auto"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -171,8 +172,8 @@
             
             <vbox flex="1" id ="left">
 			
-			<tabbox id="tabitemlist" flex="1" orient="vertical">
-          		<tabs orient="vertical">
+			<tabbox id="tabitemlist" flex="1">
+          		<tabs>
                         <tab label="Contacts"/>
                         <tab label="Conferences"/>
                                       
@@ -239,6 +240,22 @@
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
                     <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
                     <menuseparator/>
+                    
+                    <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
+                </popup>
+            </popupset>
+            
+            <popupset>
+                <popup id="itemcontexttempuser">
+                    <menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
+                    <menuitem label="&listitemcontext.InviterConference;"/>
+                    <menuseparator/>
+                    <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
+                    <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
+                    <menuseparator/>
+                    <menuitem label="Ask to see him" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
+                    <menuitem label="Authorize to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
+                    <menuseparator/>
                     <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
                 </popup>
             </popupset>
@@ -278,7 +295,7 @@
             </popupset>
             
               <!-- Personal status list -->
-            <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="40" minheight="30"
+            <menulist label="Available" id="status" height="50" width="150" flex="1" maxheight="50" minheight="30"
                        minwidth="140" src="img/online.png">
                 <menupopup flex="1">
                     <menuitem class="menuitem-iconic icon-away" label="&status.Away;"

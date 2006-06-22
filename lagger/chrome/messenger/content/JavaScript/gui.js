@@ -182,10 +182,9 @@ function openConversation(event) {
         //text.setAttribute("width", "400");
         //text.setAttribute("readonly", "true");
         //alert ("text" + id);
+        text.setAttribute("type","content");
+        text.setAttribute("src","about:blank");
         text.setAttribute("flex", "5");
-        text.setAttribute("wait-cursor","false");
-        text.setAttribute("onload","event.stopPropagation();");
-         text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
         vboxpanel.appendChild(text);
        
@@ -234,6 +233,8 @@ function openConversation(event) {
         	tabbox.selectedPanel = tabpanel;
 		}
    
+   
+   //window.setCursor("crosshair");
 }
 
 
@@ -380,12 +381,30 @@ function extendGUI() {
     
 
     var toolbox = document.createElement("toolbox");
+    toolbox.setAttribute("height","30");
+    toolbox.setAttribute("maxheight","30");
+    toolbox.setAttribute("minheight","30");
+    toolbox.setAttribute("flex","1");
 
     right.appendChild(toolbox);
 
     var toolbar = document.createElement("toolbar");
     toolbar.setAttribute("id", "textbox-toolbar");
-
+    toolbar.setAttribute("flex", "1");
+    
+    var toolbarseparator = document.createElement("toolbarseparator");
+	/*var toolbarbutton1 =  document.createElement("toolbarbutton");
+	toolbarbutton1.setAttribute("image","chrome://messenger/content/img/mail.png");*/
+	
+	
+	var toolbarbutton2 =  document.createElement("toolbarbutton");
+	toolbarbutton2.setAttribute("image","chrome://messenger/content/img/General/picture.gif");
+	toolbarbutton2.setAttribute("oncommand","sendFile();");
+	
+	
+	//toolbarseparator.appendChild( toolbarbutton1);
+	toolbarseparator.appendChild( toolbarbutton2);
+	toolbar.appendChild(toolbarseparator);
     toolbox.appendChild(toolbar);
 
     // add buttons to toolbar here
@@ -394,11 +413,11 @@ function extendGUI() {
     var textbox = document.createElement("textbox");
     textbox.setAttribute("id", "textentry");
     textbox.setAttribute("multiline", "true");
-    textbox.setAttribute("height", "40");
+    textbox.setAttribute("height", "50");
     textbox.setAttribute("width", "400");
     textbox.setAttribute("maxwidth", "700");
     textbox.setAttribute("flex", "5");
-    textbox.setAttribute("maxheight", "40");
+    textbox.setAttribute("maxheight", "60");
     textbox.setAttribute("minheight", "30");
     textbox.setAttribute("onkeypress", "sendMsg(event);");
     //textbox.setAttribute("oninput", "notifyWriting();");
@@ -672,7 +691,7 @@ function getRoster(iq) {
                 
               
                  var resources = new Array();
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources);
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false");
             //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
             users.push(user);
             //}
@@ -1333,7 +1352,17 @@ function emptyList() {
 	//alert("Empylist");
     var liste = document.getElementById("liste_contacts");
     while (liste.hasChildNodes())
-        liste.removeChild(liste.firstChild);
+       liste.removeChild(liste.firstChild);
+      
+    var listcols = document.createElement("listcols");
+    
+    var listcol1 = document.createElement("listcol");
+    var listcol2 = document.createElement("listcol");
+    
+    listcols.appendChild (listcol1);
+    listcols.appendChild (listcol2);
+    
+    liste.appendChild (listcols);
 
 }
 
@@ -1532,7 +1561,151 @@ function getServerInfo(iq) {
 	catch (e){alert("Get server info" + e);}
 }
 
+// Function to send a file
+function sendFile(){
+/*<iq to="mremond@process-one.net/Gajim" type="set" id="OC8RJP3NF1SLT4XW">
+<si xmlns="http://jabber.org/protocol/si" profile="http://jabber.org/protocol/si/profile/file-transfer" id="OC8RJP3NF1SLT4XW">
+<file xmlns="http://jabber.org/protocol/si/profile/file-transfer" name="bidon.txt" size="6">
+<desc />
+<range />
+</file>
+<feature xmlns="http://jabber.org/protocol/feature-neg">
+<x xmlns="jabber:x:data" type="form">
+<field var="stream-method" type="list-single">
+<option>
+<value>http://jabber.org/protocol/bytestreams</value>
+</option>
+</field>
+</x>
+</feature>
+</si>
+</iq>
 
+<iq from='mremond@process-one.net/Gajim' to='asouquet@process-one.net/Gajim' type='result' id='OC8RJP3NF1SLT4XW'>
+<si xmlns='http://jabber.org/protocol/si'>
+<feature xmlns='http://jabber.org/protocol/feature-neg'>
+<x xmlns='jabber:x:data' type='submit'>
+<field var='stream-method'>
+<value>http://jabber.org/protocol/bytestreams</value>
+</field>
+</x>
+</feature>
+</si>
+</iq>
+
+<iq to="mremond@process-one.net/Gajim" type="set" id="id_OC8RJP3NF1SLT4XW">
+<query xmlns="http://jabber.org/protocol/bytestreams" mode="tcp" sid="OC8RJP3NF1SLT4XW">
+<streamhost host="82.235.30.110" jid="asouquet@process-one.net/Gajim" port="28011" />
+<streamhost host="208.245.212.98" jid="proxy.jabber.org" port="7777" />
+<streamhost host="213.134.161.52" jid="proxy65.jabber.autocom.pl" port="7777" />
+<streamhost host="129.16.79.37" jid="proxy.jabber.cd.chalmers.se" port="7777" />
+<streamhost host="82.119.241.3" jid="proxy.netlab.cz" port="7777" />
+<streamhost host="217.10.10.196" jid="proxy65.jabber.ccc.de" port="7777" />
+<streamhost host="84.107.143.192" jid="proxy65.unstable.nl" port="7777" />
+</query>
+</iq>
+
+<iq from='mremond@process-one.net/Gajim' to='asouquet@process-one.net/Gajim' id='id_OC8RJP3NF1SLT4XW' type='result'>
+<query xmlns='http://jabber.org/protocol/bytestreams'>
+<streamhost-used jid='proxy.jabber.org'/>
+</query>
+</iq>
+
+<iq to="proxy.jabber.org" type="set" id="au_OC8RJP3NF1SLT4XW">
+<query xmlns="http://jabber.org/protocol/bytestreams" sid="OC8RJP3NF1SLT4XW">
+<activate>mremond@process-one.net/Gajim</activate>
+</query>
+</iq>
+
+<iq from='proxy.jabber.org' to='asouquet@process-one.net/Gajim' id='au_OC8RJP3NF1SLT4XW' type='result'>
+<query xmlns='http://jabber.org/protocol/bytestreams' sid='OC8RJP3NF1SLT4XW'/>
+</iq>*/
+
+	var nsIFilePicker = Components.interfaces.nsIFilePicker;
+  var fp = Components.classes["@mozilla.org/filepicker;1"]
+          .createInstance(nsIFilePicker);
+  fp.init(window, "Selectionner un fichier", nsIFilePicker.modeOpen);
+  fp.appendFilters(nsIFilePicker.filterText | nsIFilePicker.filterAll);
+  if (fp.show() != nsIFilePicker.returnOK) {
+    
+    return;
+  }
+  else {
+  var filePath = fp.file.path;
+  var file = fp.file.leafName;
+  var size = fp.file.fileSize;
+  
+  	alert (file);
+  //isDirectory()
+   var tabbox = document.getElementById("tabbox");
+   var jid = tabbox.selectedTab.id;
+   
+   var transfertWin = launchTransfertWindow();
+
+	var iq = new JSJaCIQ();
+	iq.setIQ(jid,null,'set','file-tranfert');
+	
+	var si = iq.getDoc().createElement('si');
+	si.setAttribute('xmlns','http://jabber.org/protocol/si');
+	si.setAttribute('profile','http://jabber.org/protocol/si/profile/file-transfer');
+	
+	var file = iq.getDoc().createElement('file');
+	file.setAttribute('xmlns','http://jabber.org/protocol/si/profile/file-transfer');
+	file.setAttribute('name',file);
+	file.setAttribute('size',size);
+	
+	var desc = iq.getDoc().createElement('desc');
+	var range = iq.getDoc().createElement('range');
+	
+	file.appendChild (desc);
+	file.appendChild (range);
+	
+	var feature = iq.getDoc().createElement('feature');
+	feature.setAttribute('xmlns','http://jabber.org/protocol/feature-neg');
+	
+	
+	var x = iq.getDoc().createElement('x');
+	x.setAttribute('xmlns','jabber:x:data');
+	x.setAttribute('type','form');
+	
+	var field = iq.getDoc().createElement('field');
+	field.setAttribute('var','stream-method');
+	field.setAttribute('type','list-single');
+	
+	var option = iq.getDoc().createElement('option');
+	
+	var value = iq.getDoc().createElement('value');
+	
+	var textNode = iq.getDoc().createTextNode('http://jabber.org/protocol/bytestreams');
+	
+	value.appendChild (textNode);
+	
+	si.appendChild (file);
+	si.appendChild(feature);
+	
+	feature.appendChild (x);
+	x.appendChild(field);
+	field.appendChild (option);
+	option.appendChild(value);
+	
+	iq.getNode().appendChild(si);
+	
+	con.send (iq ,sendFileRequest);
+	
+	 if (console) {
+        cons.addInConsole("OUT : " + iq.xml() + "\n");
+    }
+	
+	}
+		
+
+}
+
+// Callback send file
+function sendFileRequest (iq){
+
+alert (iq.xml());
+}
 
 // Function to send a message
 function sendMsg(event) {
@@ -1607,10 +1780,10 @@ function sendMsg(event) {
     // Write author of message followed by the message
             //textInBox.value += keepLogin(myjid) + " : " + textEntry.value + "\n";
             //if(!textBox.contentDocument.textContent)
-            var msg = textEntry.value + "\n";
+            var msg = textEntry.value; //  + "\n"
             var login = keepLogin(myjid);
-            frame.contentDocument.write("<p><u><FONT COLOR='#FF6633'>" + html_escape(login) + "</u>" +   " : " + "</font>");
-            frame.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.outgoingmessagecolor") + ">" + html_escape(msg) +"</font>" + "</p>");
+            frame.contentDocument.write("<p><u><FONT COLOR='#FF6633'>" + login + "</u>" +   " : " + "</font>");
+            frame.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.outgoingmessagecolor") + ">" + msgFormat(msg) +"</font>" + "</p>");
       		frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
             textEntry.value = '';
             // alert (aMsg.xml());
@@ -2183,6 +2356,11 @@ function launchNicknameWindow(){
 
 }
 
+// Function to launch transfert window
+function launchTransfertWindow(){
+	window.open("chrome://messenger/content/fileTransfert.xul", "File transfert", "chrome,centerscreen");
+}
+
 // function to edit your personal info
 function launchPersoInfoWindow(){
 
@@ -2383,8 +2561,8 @@ function handleMessage(aJSJaCPacket) {
         //text.setAttribute("width", "380");
         //text.setAttribute("readonly", "true");
         //text.setAttribute("wait-cursor","false");
-        //text.setAttribute("onload","event.stopPropagation();");
-         //text.setAttribute("src","about:blank");
+        text.setAttribute("type","content");
+        text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
         text.setAttribute("flex", "1");
         vboxpanel.appendChild(text);
@@ -2412,13 +2590,13 @@ function handleMessage(aJSJaCPacket) {
     				return;
     			}
     			else 
-    				textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(roomUserName) + "</u>" +   " : " + "</font>");
+    				textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + roomUserName + "</u>" +   " : " + "</font>");
     
     			}
     	else
-    		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + html_escape(name) + "</u>" +   " : " + "</font>");
+    		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + name + "</u>" +   " : " + "</font>");
     
-    		textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +html_escape(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
+    		textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +msgFormat(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
     		textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
    	}
@@ -2586,6 +2764,15 @@ else {
         if (item)
         item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "online.png");
        
+       if (user [6] == "true"){
+       var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
+                              .getService(Components.interfaces.nsIAlertsService);
+ 	alertsService.showAlertNotification("chrome://messenger/content/img/dcraven/online.png",
+                                    user[3], "Is now available",
+                                    false, "", null);
+           user [6] = "false";                         
+                               }
+                               
         user [4] = "online.png";
          var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
@@ -2670,6 +2857,7 @@ else {
            		 if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "offline.png");
                 user [4] = "offline.png";
+                user [6] = "true";
                  var imghead = document.getElementById("imghead"+ user[0]);
 					if (imghead) 
         					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);

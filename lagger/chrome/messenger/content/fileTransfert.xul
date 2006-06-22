@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
+
+
+<window id="FT"
+        title="File transferts"
+        orient="horizontal"
+        width="400"
+        onclose="closeWindows();"
+        height="250"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        
+  <vbox align="center" flex="1">      
+  
+ <hbox flex="1">       
+ <listbox context="listcontext" height="100" width="350"  minwidth="240" id="list_transfert" flex="1">
+         	  <listcols>
+    				<listcol/>
+  			 	    <listcol/>
+  			 	    <listcol/>
+  			 	    <listcol/>
+  		  	  </listcols>
+ </listbox>
+ </hbox>
+ 
+ 	<spacer height="30"/>
+            
+  <hbox align="center">
+  
+  	<button label="Clean up"/>
+  	<button label="Pause"/>
+  	<button label="Cancel"/>
+  	<button label="Close"/>
+  
+  </hbox>
+  
+  </vbox>
+  
+</window>
