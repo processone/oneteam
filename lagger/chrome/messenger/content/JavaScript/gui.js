@@ -1406,7 +1406,7 @@ function showUser(user) {
     cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
     if (user [7] > 1)
-    	cell.setAttribute("label", user[3] + " " + "("  + (user [7]-1) + ")");
+    	cell.setAttribute("label", user[3] + " " + "("  + (user [7]) + ")");
     else
     	cell.setAttribute("label", user[3]);
     cell.setAttribute("id", user[0] + "cell");
@@ -2762,7 +2762,7 @@ function handlePresence(aJSJaCPacket) {
 else {
 
 	var resources = findResourceByJid(sender);
-	
+	//alert (resources);
 		
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
@@ -2825,8 +2825,8 @@ else {
     	 		
     	 		var label = elementList.getAttribute ("label");
     	 		
-    	 		alert (label.charAt (label.length -3 ));
-    	 		alert (label.substring (label.indexOf ("("),label.indexOf (")")));
+    	 		//alert (label.charAt (label.length -3 ));
+    	 		//alert (label.substring (label.indexOf ("("),label.indexOf (")")));
     	 		if (label.charAt (label.length -3 ) == "(") 
     	 			 newLabel = label.substring (0,label.indexOf ("(") - 1) + " " +  "(" + nbResources + ")";
     	 		else
@@ -2843,7 +2843,8 @@ else {
 	// Type or Show packet
     else {
     	
-    	var resources = findResourceByJid(sender);			
+    	var resources = findResourceByJid(sender);
+    	//alert (resources);		
    		 
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
 
