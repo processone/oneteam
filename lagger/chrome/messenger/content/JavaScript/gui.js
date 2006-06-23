@@ -132,6 +132,7 @@ function openConversation(event) {
         writestate.setAttribute("id", "writestate"+ id);
         
         hboxhead.appendChild (imghead);
+       
         hboxhead.appendChild (namehead);
         hboxhead.appendChild (writestate);
 		
@@ -691,7 +692,7 @@ function getRoster(iq) {
                 
               
                  var resources = new Array();
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false");
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0);
             //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
             users.push(user);
             //}
@@ -1135,8 +1136,8 @@ function hideDecoUsers(){
 	
 	if (!hideDecoUser){ 
 	hideDecoUser = true;
-	this.emptyList();
-    this.showUsers(users);
+	emptyList();
+    showUsers(users);
 	//this.refreshList();
 	}
 	else
@@ -1147,8 +1148,8 @@ function hideDecoUsers(){
 // Function to show deconnected users
 function showDecoUsers(){
 	hideDecoUser = false;
-	this.emptyList();
-    this.showUsers(users);
+	emptyList();
+    showUsers(users);
 	//this.refreshList();
 }
 
@@ -1404,7 +1405,10 @@ function showUser(user) {
     cell.setAttribute("ondblclick", "openConversation(event)");
     cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
-    cell.setAttribute("label", user[3]);
+    if (user [7] > 1)
+    	cell.setAttribute("label", user[3] + " " + "("  + (user [7]-1) + ")");
+    else
+    	cell.setAttribute("label", user[3]);
     cell.setAttribute("id", user[0] + "cell");
     cell.setAttribute("flex", "1");
     
@@ -2644,7 +2648,7 @@ function handlePresence(aJSJaCPacket) {
     var user;
     
    
-  //alert ("handle presence");
+  
 	
 	try {
 		
@@ -2758,6 +2762,8 @@ function handlePresence(aJSJaCPacket) {
 else {
 
 	var resources = findResourceByJid(sender);
+	
+		
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
@@ -2782,29 +2788,47 @@ else {
     		// Retrieve priority value and put resources values into resource array
     		var priorityAnchor = aJSJaCPacket.getNode().getElementsByTagName('priority');
     		
+    		var nbResources = 0 ;
     		
     		if (priorityAnchor.item (0) && priorityAnchor.item (0).firstChild)
     			priority = priorityAnchor.item (0).firstChild.nodeValue;
+    			
+    		var resource = new Array();
+    		resource [0] = clientId;
+    		resource [1] = priority;
     		
-    		if (resources && priority){
-    			var contains = false;
-    				for  (var i = 0 ; i < resources.length ; i ++){
-    					if (resources [i] [0] == clientId){
-    						contains = true;
-    						resources [i] [1] = priority;
-    						
-    						}
+    		var contains = false;
+    		for  (var i = 0 ; i < resources.length ; i ++){
+    			if (resources [i] == resource)
+    			contains = true;
+    			}
+    	
+    	if (!contains)
+    		resources.push(resource);
+    		
+    			
+    		
+    		//alert ("clientId" + clientId);
+    	
+    		
+    		
+    			
+    				for  (var j = 0 ; j < resources.length ; j ++){	
+    						nbResources++;
+    						user [7]++;
+    							
     				}
     				
-    				if (!contains) {
-    					var resource = new Array();
-    						resource[0] = clientId;
-    						resource[1] = priority;
-    						
-    					
-    					resources.push(resource);
-    					}
-    		}
+    				
+    	 	if (nbResources > 1){
+    	 		var elementList = document.getElementById (sender + "cell");
+    	 		var newLabel = elementList.getAttribute ("label") + " " +  "(" + nbResources + ")";
+    	 		
+    	 		elementList.setAttribute ("label",newLabel);
+    	 		
+    	 	}
+    				
+    			
     } // endif !getType !getShow
     	
 	
@@ -2862,11 +2886,22 @@ else {
 					if (imghead) 
         					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
                 		if (hideDecoUser){
-                			this.emptyList();
-   						this.showUsers(users);
-						this.refreshList();
+                			emptyList();
+   						    showUsers(users);
+						    refreshList();
 						}
-						
+				var elementList = document.getElementById (sender + "cell");
+    	 		var label = elementList.getAttribute ("label");
+    	 		var nbResources = label.substring (label.indexOf("(") + 1,label.length -1);
+    	 		alert (nbResources);
+    	 		var nb = parseInt(nbResources);
+    	 		
+    	 		user [7] --;
+    	 		
+    	 		if (nb - 1 > 1)
+    	 			elementList.setAttribute ("label",keepLogin(sender) + "(" + nb - 1 + ")");
+    	 		else
+    	 			elementList.setAttribute ("label",keepLogin(sender));
 				/*var maxPrioIndex = 0;
     				var maxPrio = priority;
     				
