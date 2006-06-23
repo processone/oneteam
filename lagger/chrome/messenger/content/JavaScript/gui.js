@@ -2799,7 +2799,7 @@ else {
     		
     		var contains = false;
     		for  (var i = 0 ; i < resources.length ; i ++){
-    			if (resources [i] == resource)
+    			if (resources [i] [0] == resource [0])
     			contains = true;
     			}
     	
@@ -2808,9 +2808,9 @@ else {
     		
     			
     		
-    		//alert ("clientId" + clientId);
+    		//alert ("ressources" + resources);
     	
-    		
+    		user [7] = 0;
     		
     			
     				for  (var j = 0 ; j < resources.length ; j ++){	
@@ -2822,8 +2822,16 @@ else {
     				
     	 	if (nbResources > 1){
     	 		var elementList = document.getElementById (sender + "cell");
-    	 		var newLabel = elementList.getAttribute ("label") + " " +  "(" + nbResources + ")";
     	 		
+    	 		var label = elementList.getAttribute ("label");
+    	 		
+    	 		alert (label.charAt (label.length -3 ));
+    	 		alert (label.substring (label.indexOf ("("),label.indexOf (")")));
+    	 		if (label.charAt (label.length -3 ) == "(") 
+    	 			 newLabel = label.substring (0,label.indexOf ("(") - 1) + " " +  "(" + nbResources + ")";
+    	 		else
+    	 			newLabel = label +  " " +  "(" + nbResources + ")";
+    	 			
     	 		elementList.setAttribute ("label",newLabel);
     	 		
     	 	}
@@ -2843,9 +2851,10 @@ else {
         var show = aJSJaCPacket.getShow();
         
          // If sender own resources,take its max priority's one
-    		/*	if (resources){
+    			/*if (resources){
     				var maxPrioIndex = 0;
     				var maxPrio = priority;
+    				
     				
     				for  (var i = 0 ; i < resources.length ; i ++){
     						if (resources [i] [0] == clientId){
@@ -2865,7 +2874,7 @@ else {
            		 	else
            		 		show = resources [maxPrioIndex][3];
         		}	*/
-        
+        /**********************************************/
         
        		 if (type) {
            		 if (type == 'subscribe') {
@@ -2892,18 +2901,20 @@ else {
 						}
 				var elementList = document.getElementById (sender + "cell");
     	 		var label = elementList.getAttribute ("label");
-    	 		var nbResources = label.substring (label.indexOf("(") + 1,label.length -1);
-    	 		alert (nbResources);
-    	 		var nb = parseInt(nbResources);
+    	 		//var nbResources = label.substring (label.indexOf("(") + 1,label.length -1);
+    	 		//alert (nbResources);
+    	 		//var nb = parseInt(nbResources);
     	 		
     	 		user [7] --;
     	 		
-    	 		if (nb - 1 > 1)
-    	 			elementList.setAttribute ("label",keepLogin(sender) + "(" + nb - 1 + ")");
+    	 		if (user [7] > 1)
+    	 			elementList.setAttribute ("label",keepLogin(sender) + " " +  "(" + user[7] + ")");
     	 		else
     	 			elementList.setAttribute ("label",keepLogin(sender));
-				/*var maxPrioIndex = 0;
-    				var maxPrio = priority;
+				var maxPrioIndex = 0;
+    				
+    				/***********************/
+    				/*var maxPrio = priority;
     				
     				for  (var i = 0 ; i < resources.length ; i ++){
     						
@@ -2915,6 +2926,7 @@ else {
     				
            		 		type = resources [maxPrioIndex][2];	
            		 		show = resources [maxPrioIndex][3];	*/
+           		 		/**********************/
            			 }
             if (type.substring(0, 2) == "in") {
             if (item)
