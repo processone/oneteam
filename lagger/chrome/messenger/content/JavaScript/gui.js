@@ -2652,11 +2652,15 @@ function handlePresence(aJSJaCPacket) {
 	
 	try {
 		
+		if (sender.match(myjid))
+    		return;
 	
     for (i = 0; i < users.length; i++) {
         user = users[i];
-        if (user [0] == sender)
+        if (user [0] == sender){
             break;
+            
+            }
     }
 
     if (console) {
