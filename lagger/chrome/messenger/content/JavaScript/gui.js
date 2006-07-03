@@ -254,8 +254,18 @@ function initGUI() {
    
     server = gPrefService.getCharPref("chat.connection.host");
     this.port = gPrefService.getIntPref("chat.connection.port");
-    this.base = gPrefService.getCharPref("chat.connection.base");	
-    myjid = textbox_user + "@" + server;
+    this.base = gPrefService.getCharPref("chat.connection.base");
+    
+    if (server == ""){
+    	myjid = textbox_user;
+    	//var us = gPrefService.getCharPref("chat.connection.username");
+    	//alert (us);
+    	server = myjid.substring(myjid.indexOf ("@") + 1,myjid.length);
+    	//server = myjid.substring(0,myjid.indexOf ("@"));
+    	
+    	}
+    else
+    	myjid = keepLogin(textbox_user) + "@" + server;
 	
     // setup args for contructor
     var oArgs = new Object();
@@ -273,7 +283,7 @@ function initGUI() {
     // setup args for connect method
     var oArg = new Object();
     oArg.domain = server;
-    oArg.username = textbox_user;
+    oArg.username = keepLogin(textbox_user);
     oArg.resource = gPrefService.getCharPref("chat.connection.resource");
     oArg.pass = textbox_pass;
 
@@ -1175,32 +1185,23 @@ function showUsers(users) {
                 		countUser++;
                 		}
                 		
-                }
-                else {
+                	}
+               		 else {
                 	
-                showUser(user);
-                countUser ++;
-                }
+               			 showUser(user);
+                		countUser ++;
+                		}
 			}
         }
         //end forUser
-       /*  if (gPrefService.getBoolPref("chat.general.showemptygroup")){*/
+   
        	 	if (countUser > 0)
-       	 	  ;
+       	 	  itemGroup.setAttribute("hidden","false");
        	 	else
-       	 	  itemGroup.setAttribute("disabled","true");
-       /* }
-        else */
+       	 	  itemGroup.setAttribute("hidden","true");
+   
         
-        
-
-		/*for (var i = 0; i < rooms.length; i++) {
-        var room = rooms[i];
-            if (room [2] == group)
-        			showRoom(rooms[i]);
-        
-   		 }*/
-   		 //end forRoom
+	
     }
     //end forGroup
 
@@ -2342,16 +2343,21 @@ function launchExtWindow(){
  
  // function to edit contact info
 function launchInfoWindow(){
-var liste = document.getElementById("liste_contacts");
 
+try {
 	
+	var liste = document.getElementById("liste_contacts");
 	var user = findUserByJid(liste.selectedItem.id);
 	
+	var resource = user[5] [0];
+	infojid = user[0];
+	if (resource)
 	// jid + resource
-	infojid = user[0] + "/" + user[5] [0] [0];
+	infojid = infojid + "/" + resource [0];
 	
 	window.open("chrome://messenger/content/info.xul", infojid, "chrome,titlebar,toolbar,centerscreen,modal");
 	
+	} catch (e) {alert ("dans launchInfo" + e);}
 }
 
 // Function to launch the change nick window
@@ -2577,9 +2583,11 @@ function handleMessage(aJSJaCPacket) {
 	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
     
+    if (!isRoom(origin))
+   showState (aJSJaCPacket);
   
     if (aJSJaCPacket.getBody() == null && !isRoom(origin))
-    			showState(aJSJaCPacket);
+    			;
     
     else{
     
@@ -2600,6 +2608,9 @@ function handleMessage(aJSJaCPacket) {
     	else
     		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + name + "</u>" +   " : " + "</font>");
     
+    		var tab = document.getElementById ("tab" + jid);
+    		tab.setAttribute("style","color: #FF0000;");
+    		tab.setAttribute("onclick",'this.style.color = "#000000";');
     		textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +msgFormat(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
     		textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
@@ -2610,24 +2621,48 @@ function handleMessage(aJSJaCPacket) {
 // Function to show the writing state 
 function showState(aJSJaCPacket){
  
- 
+var state = false;
 	try { 
  
- 	//alert("writestate" + cutResource(aJSJaCPacket.getFrom()));
- 	var writestate = document.getElementById("writestate" + cutResource(aJSJaCPacket.getFrom()));
- 	if(aJSJaCPacket.getNode().getElementsByTagName('composing'))
+ 	var jid = cutResource(aJSJaCPacket.getFrom());
+ 	//alert("je rentre " + aJSJaCPacket.getNode().getElementsByTagName('composing'));
+ 	
+ 	var writestate = document.getElementById("writestate" + jid);
+ 	if(aJSJaCPacket.getNode().getElementsByTagName('composing')){
 		writestate.setAttribute("value","is composing a message...");
-	else if(aJSJaCPacket.getNode().getElementsByTagName('active'))
+		state = true;
+		var tab = document.getElementById("tab" + jid);
+			if (tab){
+				tab.setAttribute("style","color: #66FF00;");
+    			
+    			}
+		}
+	else if(aJSJaCPacket.getNode().getElementsByTagName('active')){
 		writestate.setAttribute("value","is active...");
-	else if(aJSJaCPacket.getNode().getElementsByTagName('inactive'))
-		writestate.setAttribute("value","is doing something else...");
-	else if(aJSJaCPacket.getNode().getElementsByTagName('paused'))
-		writestate.setAttribute("value","is in pause...");
-	else if(aJSJaCPacket.getNode().getElementsByTagName('gone'))
-		writestate.setAttribute("value","is gone...");
+		state = true;
 		
-		pause(200);
+		}
+	else if(aJSJaCPacket.getNode().getElementsByTagName('inactive')){
+		writestate.setAttribute("value","is doing something else...");
+		state = true;
+		
+		}
+	else if(aJSJaCPacket.getNode().getElementsByTagName('paused')){
+		writestate.setAttribute("value","is in pause...");
+		state = true;
+		
+		}
+	else if(aJSJaCPacket.getNode().getElementsByTagName('gone')){
+		writestate.setAttribute("value","is gone...");
+		state = true;
+		
+		}
+		
+		if (state){
+		pause(500);
 		writestate.setAttribute('value','');
+		tab.setAttribute("style",'color : #000000;');
+		}
 		
 		}
 		catch(e) {alert ("Dans showstate" + e);}

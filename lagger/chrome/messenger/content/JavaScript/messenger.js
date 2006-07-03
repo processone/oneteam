@@ -38,12 +38,12 @@ function doLogin(event) {
     
     //alert(this.httpbase);
     // Write data properties in file
-   /* savePrefs({
+    savePrefs({
         registerLogin : true,
         user : textbox_user,
         pass : textbox_pass,
         server : server,
-        httpbase : httpbase });*/
+        httpbase : httpbase });
 
     gui = window.open("chrome://messenger/content/gui.xul", "Lagger", "chrome,centerscreen,resizable");
 

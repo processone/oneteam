@@ -37,7 +37,7 @@
 
         <textbox id="user" width="100" preference="chat.connection.username"/>
 
-        <spacer height="10"/>
+        <spacer height="20"/>
 
         <label value="&Login.password; : " style="color:#777"/>
 

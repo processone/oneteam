@@ -4,7 +4,7 @@ var cons = window.opener.cons;
 
 function loadGroups() {
 
-    var groups = document.getElementById("groups");
+   /* var groups = document.getElementById("groups");
     var menugroups = document.getElementById("menuGroups");
     var listGroups = window.opener.groups;
     var item;
@@ -17,7 +17,8 @@ function loadGroups() {
         //item.setAttribute("selected","true");
 
         groups.appendChild(item);
-    }
+    }*/
+    ;
 }
 
 // function to add a contact
@@ -29,7 +30,8 @@ function performAddContact(event) {
     var groups = document.getElementById("menuGroups");
 
     var listGroups = window.opener.groups;
-
+    //ADDED
+	var chosenGroup = document.getElementById("groups").value;
 
     var jid = login.value + "@" + server.value;
 
@@ -40,11 +42,11 @@ function performAddContact(event) {
         var item = query.appendChild(iq.getDoc().createElement('item'));
         item.setAttribute('jid', jid);
         var group = item.appendChild(iq.getDoc().createElement('group'));
-        if (groups.selectedItem)
-            var choosenGroup = groups.selectedItem.id;
-        else
-            choosenGroup = listGroups[0];
-        group.appendChild(iq.getDoc().createTextNode(choosenGroup));
+        /*if (groups.selectedItem)
+            var chosenGroup = groups.selectedItem.id;*/
+        if  (!chosenGroup)
+            chosenGroup = listGroups[0];
+        group.appendChild(iq.getDoc().createTextNode(chosenGroup));
 
         //alert (iq.xml());
         con.send(iq);
@@ -53,7 +55,7 @@ function performAddContact(event) {
         cons.addInConsole("IN : " + iq.xml() + "\n");
    	 }
 
-        var user = new Array(jid, "none", choosenGroup, login.value, "offline.png");
+        var user = new Array(jid, "none", chosenGroup, login.value, "offline.png");
 
         window.opener.users.push(user);
         window.opener.emptyList();

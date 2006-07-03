@@ -44,11 +44,12 @@
                     <description value="&Contact.group; :"/>
 
 
-                    <menulist id="menuGroups" height="25" width="100" flex="1" maxheight="35" minheight="15">
+                   <!--   <menulist id="menuGroups" height="25" width="100" flex="1" maxheight="35" minheight="15">
                         <menupopup id="groups">
 
                         </menupopup>
-                    </menulist>
+                    </menulist> -->
+                    <textbox id="groups"/>
                 </row>
 
             </rows>
