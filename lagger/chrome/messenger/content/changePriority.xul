@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+
+<window id="Nick"
+		title="Another connected resource"
+        orient="horizontal"
+        resizable="true" 
+        width="350"
+        onload="loadPriority();"
+        onclose="self.close();"
+        height="150"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="JavaScript/changePriority.js"/>
+<script type="application/x-javascript" src="JavaScript/gui.js"/>     
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>   
+        
+<vbox flex="1">
+
+<spacer height="10"/>
+
+ <hbox>
+  <description>
+    You're connected on another resource.Upgrade priority?
+  </description>
+ </hbox>
+  
+  <spacer height="20"/>
+  
+    <textbox id="text-priority" value=""/>
+  
+<spacer height="20"/>
+
+  <hbox>
+    <spacer flex="1"/>
+
+    <button  label="OK" oncommand="changePriority();"/>
+    <button label="Cancel" oncommand="self.close();window.opener.closeTab();"/>
+  </hbox>
+</vbox>        
+        
+ </window> 
