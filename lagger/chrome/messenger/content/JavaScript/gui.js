@@ -704,10 +704,13 @@ function getRoster(iq) {
                 
               
                  var resources = new Array();
+                
+                // Don't want msn gate in roster
+                 if (items.item(i).getAttribute('jid').match ("@")){
             user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0);
             //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
             users.push(user);
-            //}
+            }
             
            
         }
@@ -718,7 +721,7 @@ function getRoster(iq) {
     		
         showUsers(users);
         //loadServers();
-       //alert(iq.xml());
+      //alert(iq.xml());
         
       
         //sendDiscoRoomRequest(conferences[0]);
@@ -2613,7 +2616,7 @@ function handlePresence(aJSJaCPacket) {
     var item = document.getElementById(sender + "cell");
     var user;
     
-   
+   //alert (aJSJaCPacket.xml());
   
 	
 	try {
@@ -2748,7 +2751,7 @@ function handlePresence(aJSJaCPacket) {
    
 
    // Sender is a user
-else {
+else if (! isRoom (sender) && sender.match("@")){
 
 	var resources = findResourceByJid(sender);
 	//alert (resources);

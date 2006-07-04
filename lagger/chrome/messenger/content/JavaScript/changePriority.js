@@ -18,7 +18,6 @@ var priority = document.getElementById("text-priority").value;
 	 var presence = new JSJaCPresence();
 	 presence.setPriority (priority + "");
 	
-	alert(presence.xml());
 	
 	window.opener.myPresence = presence;
 	
