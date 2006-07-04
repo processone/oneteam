@@ -7,8 +7,8 @@
 <window id="messenger"
         title="Lagger"
         orient="horizontal"
-        width="190"
-        height="320"
+        width="230"
+        height="440"
         onload="init();"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -29,21 +29,21 @@
 
         <caption class="titre" label="&Login.titre;"/>
 
-        <spacer height="20"/>
+        <spacer height="80"/>
 
         <label value="&Login.login; : " style="color:#777"/>
 
-        <spacer height="5"/>
+        <spacer height="10"/>
 
-        <textbox id="user" width="100" preference="chat.connection.username"/>
+        <textbox id="user" width="180" preference="chat.connection.username"/>
 
         <spacer height="20"/>
 
         <label value="&Login.password; : " style="color:#777"/>
 
-        <spacer height="5"/>
+        <spacer height="10"/>
 
-        <textbox id="pass" type="password" width="100" preference="chat.connection.password"/>
+        <textbox id="pass" type="password" width="180" preference="chat.connection.password"/>
         <spacer height="3"/>
         <checkbox id="checkbox-password" label="Remember password"/>
         <!--  	<label value="&Login.server; : " />

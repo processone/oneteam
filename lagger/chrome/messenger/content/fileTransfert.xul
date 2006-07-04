@@ -6,34 +6,53 @@
 <window id="FT"
         title="File transferts"
         orient="horizontal"
-        width="400"
+        width="600"
+        onload="initFileTransfert();"
         onclose="closeWindows();"
         height="250"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
-  <vbox align="center" flex="1">      
+        <script type="application/x-javascript" src="JavaScript/fileTransfert.js"/>
+        <script type="application/x-javascript" src="JavaScript/gui.js"/>
+        <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    <script type="application/x-javascript" src="JavaScript/shared.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>
+    <script type="application/x-javascript" src="JavaScript/prefsFunctions.js"/>
+        
+        
+  <vbox flex="1">      
   
  <hbox flex="1">       
- <listbox context="listcontext" height="100" width="350"  minwidth="240" id="list_transfert" flex="1">
-         	  <listcols>
-    				<listcol/>
-  			 	    <listcol/>
-  			 	    <listcol/>
-  			 	    <listcol/>
-  		  	  </listcols>
- </listbox>
+ <tree context="listcontext" height="100" width="350"  minwidth="240" id="list_transfert" flex="1">
+         	  <treecols>
+    				<treecol  width="30"/>
+  			 	    <treecol label="File"  width="170"/>
+  			 	    <treecol label="Receiver"  width="130"/>
+  			 	    <treecol label="Time"  width="130"/>
+  			 	    <treecol label="Progress" flex="1" type="progressmeter"/>
+  		  	  </treecols>
+  		  	  <treechildren id="transferts_treechildren">
+  		  	  </treechildren>
+ </tree>
  </hbox>
  
  	<spacer height="30"/>
-            
+   
+   
+   <vbox align="center">         
   <hbox align="center">
   
   	<button label="Clean up"/>
   	<button label="Pause"/>
   	<button label="Cancel"/>
-  	<button label="Close"/>
+  	<button label="Close" oncommand="window.close();"/>
   
   </hbox>
+  </vbox>
   
   </vbox>
   

@@ -13,7 +13,7 @@ var roles = new Array();
 var conferences = new Array();
 var mucs = new Array();
 
-
+var transfertWindow;
 
 var index = 0;
 var user;
@@ -1171,6 +1171,7 @@ function showUsers(users) {
 	
     for (var g = 0; g < groups.length; g++) {  
         var group = groups[g];
+        //alert (group);
         var itemGroup = showGroup(group);
         var countUser = 0;
 
@@ -1626,91 +1627,17 @@ function sendFile(){
 <query xmlns='http://jabber.org/protocol/bytestreams' sid='OC8RJP3NF1SLT4XW'/>
 </iq>*/
 
-	var nsIFilePicker = Components.interfaces.nsIFilePicker;
-  var fp = Components.classes["@mozilla.org/filepicker;1"]
-          .createInstance(nsIFilePicker);
-  fp.init(window, "Selectionner un fichier", nsIFilePicker.modeOpen);
-  fp.appendFilters(nsIFilePicker.filterText | nsIFilePicker.filterAll);
-  if (fp.show() != nsIFilePicker.returnOK) {
-    
-    return;
-  }
-  else {
-  var filePath = fp.file.path;
-  var file = fp.file.leafName;
-  var size = fp.file.fileSize;
-  
-  	alert (file);
-  //isDirectory()
-   var tabbox = document.getElementById("tabbox");
-   var jid = tabbox.selectedTab.id;
+try {
+
+	
    
-   var transfertWin = launchTransfertWindow();
-
-	var iq = new JSJaCIQ();
-	iq.setIQ(jid,null,'set','file-tranfert');
-	
-	var si = iq.getDoc().createElement('si');
-	si.setAttribute('xmlns','http://jabber.org/protocol/si');
-	si.setAttribute('profile','http://jabber.org/protocol/si/profile/file-transfer');
-	
-	var file = iq.getDoc().createElement('file');
-	file.setAttribute('xmlns','http://jabber.org/protocol/si/profile/file-transfer');
-	file.setAttribute('name',file);
-	file.setAttribute('size',size);
-	
-	var desc = iq.getDoc().createElement('desc');
-	var range = iq.getDoc().createElement('range');
-	
-	file.appendChild (desc);
-	file.appendChild (range);
-	
-	var feature = iq.getDoc().createElement('feature');
-	feature.setAttribute('xmlns','http://jabber.org/protocol/feature-neg');
-	
-	
-	var x = iq.getDoc().createElement('x');
-	x.setAttribute('xmlns','jabber:x:data');
-	x.setAttribute('type','form');
-	
-	var field = iq.getDoc().createElement('field');
-	field.setAttribute('var','stream-method');
-	field.setAttribute('type','list-single');
-	
-	var option = iq.getDoc().createElement('option');
-	
-	var value = iq.getDoc().createElement('value');
-	
-	var textNode = iq.getDoc().createTextNode('http://jabber.org/protocol/bytestreams');
-	
-	value.appendChild (textNode);
-	
-	si.appendChild (file);
-	si.appendChild(feature);
-	
-	feature.appendChild (x);
-	x.appendChild(field);
-	field.appendChild (option);
-	option.appendChild(value);
-	
-	iq.getNode().appendChild(si);
-	
-	con.send (iq ,sendFileRequest);
-	
-	 if (console) {
-        cons.addInConsole("OUT : " + iq.xml() + "\n");
-    }
-	
-	}
-		
-
-}
-
-// Callback send file
-function sendFileRequest (iq){
-
-alert (iq.xml());
-}
+    launchTransfertWindow();
+    
+   
+    
+      }
+	catch (e){alert("sendFile" + e);}
+ }
 
 // Function to send a message
 function sendMsg(event) {
@@ -2368,14 +2295,15 @@ function launchNicknameWindow(){
 
 // Function to launch transfert window
 function launchTransfertWindow(){
-	window.open("chrome://messenger/content/fileTransfert.xul", "File transfert", "chrome,centerscreen");
+	transfertWindow = window.open("chrome://messenger/content/fileTransfert.xul", "File transfert", "chrome,centerscreen");
+	transfertWindow.opener = window;
 }
 
 // function to edit your personal info
 function launchPersoInfoWindow(){
 
 	
-	window.open("chrome://messenger/content/myInfo.xul", "Edit your info", "chrome,titlebar,toolbar,centerscreen,modal");
+	 window.open("chrome://messenger/content/myInfo.xul", "Edit your info", "chrome,titlebar,toolbar,centerscreen,modal");
 	
 }
 
@@ -2583,7 +2511,8 @@ function handleMessage(aJSJaCPacket) {
 	//alert ("text" + jid); 
     var textToWrite = document.getElementById("text" + jid);
     
-    if (!isRoom(origin))
+    
+    if (!isRoom(cutResource(origin)))
    showState (aJSJaCPacket);
   
     if (aJSJaCPacket.getBody() == null && !isRoom(origin))
