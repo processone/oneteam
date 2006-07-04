@@ -22,6 +22,8 @@ var myRoomNick= gPrefService.getCharPref("chat.muc.nickname");
 var polling = gPrefService.getBoolPref("chat.connection.polling");
 var myjid;
 var myPresence;
+var otherpriority;
+var askpriority = true;
 var cons;
 var server;
 var port;
@@ -2616,8 +2618,27 @@ function handlePresence(aJSJaCPacket) {
 	
 	try {
 		
-		if (sender.match(myjid))
-    		return;
+		if (myjid.match(sender)){
+	
+			if (askpriority){
+				var tag = aJSJaCPacket.getNode().getElementsByTagName('priority');
+				if (tag && tag.item(0))	
+				otherpriority = tag.item(0).firstChild.nodeValue;
+				var mypriority = gPrefService.getIntPref("chat.connection.priority");
+		
+			
+			
+				if (otherpriority > mypriority)
+				window.open("chrome://messenger/content/changePriority.xul","", "chrome,centerscreen");
+			
+				askpriority = false;
+				}
+				//alert (aJSJaCPacket.xml());
+				
+    			return;
+		}
+
+
 	
     for (i = 0; i < users.length; i++) {
         user = users[i];

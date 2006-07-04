@@ -30,9 +30,9 @@
  <tree context="listcontext" height="100" width="350"  minwidth="240" id="list_transfert" flex="1">
          	  <treecols>
     				<treecol  width="30"/>
-  			 	    <treecol label="File"  width="170"/>
+  			 	    <treecol label="File"  width="100"/>
   			 	    <treecol label="Receiver"  width="130"/>
-  			 	    <treecol label="Time"  width="130"/>
+  			 	    <treecol label="Remaining Time"  width="130"/>
   			 	    <treecol label="Progress" flex="1" type="progressmeter"/>
   		  	  </treecols>
   		  	  <treechildren id="transferts_treechildren">

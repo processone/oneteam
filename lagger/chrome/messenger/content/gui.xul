@@ -30,6 +30,7 @@
     <script type="application/x-javascript" src="chrome://messenger/content/utils/htmlformat.js"/>
     <script type="application/x-javascript" src="JavaScript/messenger.js"/>
     <script type="application/x-javascript" src="JavaScript/fileTransfert.js"/>
+    <script type="application/x-javascript" src="JavaScript/changePriority.js"/>
     
     <script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
