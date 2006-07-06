@@ -2508,11 +2508,11 @@ function handleMessage(aJSJaCPacket) {
     var invite = aJSJaCPacket.getNode().getElementsByTagName('invite');
 	if (invite && invite.item(0)){
 		 
-		window.open("chrome://messenger/content/invitation.xul", "", "chrome,centerscreen",{ id : jid , room : roomUserName} );
+		window.openDialog("chrome://messenger/content/invitation.xul", "", "chrome,centerscreen",{ id : jid , room : roomUserName} );
 		
 		}
 
-    if (document.getElementById("tab" + jid) == null) {
+    else if (document.getElementById("tab" + jid) == null) {
 
 		var vboxpanel = document.createElement("vbox");
 		var hboxhead = document.createElement("hbox");
