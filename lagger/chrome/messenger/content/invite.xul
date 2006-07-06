@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+
+<window id="invite"
+		title="Invite users"
+        orient="horizontal"
+        resizable="true" 
+        width="400"
+        onload="loadContactList();"
+        onclose="self.close();"
+        height="350"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+
+<script type="application/x-javascript" src="JavaScript/invite.js"/>
+<script type="application/x-javascript" src="JavaScript/gui.js"/>     
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>
+<script type="application/x-javascript" src="JavaScript/shared.js"/>
+
+<vbox align="center" flex="1">
+
+<hbox id="head">
+<listbox  height="300" width="150"  minwidth="140" id="invitable" flex="1"
+       	   />
+
+<vbox align="center">
+
+<spacer height="160"/>
+<button label="--->" oncommand="makeInvited();"/>
+
+
+</vbox>
+
+<listbox  height="300" width="150"  minwidth="140" id="invited" flex="1"
+       	    /> 			
+
+
+</hbox>
+
+<spacer height="20"/>
+
+<hbox align="center">
+<button  label="OK" oncommand="inviteUsers();self.close();"/>
+<button label="Cancel" oncommand="self.close();"/>
+</hbox>
+
+</vbox>
+       
+ </window>       

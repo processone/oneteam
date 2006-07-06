@@ -599,7 +599,7 @@ try{
     disco = new Array();
 
     var items = iq.getNode().firstChild.childNodes;
-	alert (iq.xml());
+	//alert (iq.xml());
  
     for (var i = 0; i < items.length; i++) {
         if (items[i].nodeName != 'item' || !items[i].getAttribute('jid') || items[i].getAttribute('node') != null) // skip those
@@ -1151,9 +1151,10 @@ function hideDecoUsers(){
 	
 	if (!hideDecoUser){ 
 	hideDecoUser = true;
-	emptyList();
-    showUsers(users);
-	//this.refreshList();
+	/*emptyList();
+    showUsers(users);*/
+    //this.refreshList();
+    hideOrNotUsers ();
 	}
 	else
 	showDecoUsers();
@@ -1163,9 +1164,63 @@ function hideDecoUsers(){
 // Function to show deconnected users
 function showDecoUsers(){
 	hideDecoUser = false;
-	emptyList();
-    showUsers(users);
+	//emptyList();
+    /*showUsers(users);*/
+    hideOrNotUsers ();
 	//this.refreshList();
+}
+
+
+function hideOrNotUsers (){
+for (var g = 0; g < groups.length; g++) {  
+        var group = groups[g];
+        //alert (group);
+        var itemGroup = document.getElementById("group" + group);
+        var countUser = 0;
+
+        for (var i = 0; i < users.length; i++) {
+
+            var user = users[i];
+            if (user [2] == group){
+            	//alert (user [0]);
+            //var userItem = document.getElementById(user[0]);
+            		if (hideDecoUser){
+            			
+            			if (user [4] == "offline.png"){
+                		//showUser(user);
+                		//userItem.setAttribute ("hidden","true");
+                		document.getElementById(user[0] + "cell").hidden= true;
+                		}
+                		else {
+                		countUser++;
+                		
+                		}
+                		
+                	}
+               		 else {
+               		 
+               		 	if (user [4] == "offline.png"){
+                		document.getElementById(user[0] + "cell").hidden=false;
+                		//userItem.setAttribute("hidden", '');
+               			 //showUser(user);
+               			 
+               			 }
+                		countUser ++;
+                		}
+			}
+        }
+        //end forUser
+   
+       	 	/*if (countUser > 0)
+       	 	  itemGroup.setAttribute("hidden","false");
+       	 	else
+       	 	  itemGroup.setAttribute("hidden","true");*/
+   
+        
+	
+    }
+
+
 }
 
 // Function to show all users in roster
@@ -1184,7 +1239,7 @@ function showUsers(users) {
 
             var user = users[i];
             if (user [2] == group){
-            		if (hideDecoUser){
+            /*		if (hideDecoUser){
             			
             			if (user [4] != "offline.png"){
                 		showUser(user);
@@ -1196,16 +1251,16 @@ function showUsers(users) {
                 	
                			 showUser(user);
                 		countUser ++;
-                		}
+                		}*/
+                		showUser(user);
 			}
         }
         //end forUser
    
-       	 	if (countUser > 0)
-       	 	  itemGroup.setAttribute("hidden","false");
+       	 	/*if (countUser > 0)
+       	 	  itemGroup.hidden=false;
        	 	else
-       	 	  itemGroup.setAttribute("hidden","true");
-   
+       	 	  itemGroup.hidden=true;*/
         
 	
     }
@@ -1227,8 +1282,8 @@ function showGroup(group) {
     item.setAttribute("label", group);
     //item.setAttribute("value", "group");
     item.setAttribute("orient", "horizontal");
-    //item.setAttribute("id", "group" + group);
-    item.setAttribute("id", "group");
+    item.setAttribute("id", "group" + group);
+    //item.setAttribute("id", "group");
    
     liste.appendChild(item);
     
@@ -1287,6 +1342,9 @@ function showRoomUser (roomUser){
     //item.setAttribute("label", roomUser[1]);
     
     item.setAttribute("id", roomUser[0]);
+    
+    // Here to retrieve easily when inviting
+    item.setAttribute("label", roomUser[1]);
     
     var image =  document.createElement("image");
     // TO FIX : GIVE THE RIGHT SRC IF EXIST
@@ -1942,24 +2000,28 @@ function getRoomRoster(aPresence) {
 
 
 // Function to invite  users in Room
-function invite() {
-    var users;
+function invite(jid,room) {
+    
 
-    for (var i = 0; i < users.length; i++) {
+   
 
 
         var aMessage = new JSJaCMessage();
-        aMessage.setTo(opener.parent.jid);
+        aMessage.setTo(jid);
         var x = aMessage.getNode().appendChild(aMessage.getDoc().createElement('x'));
         x.setAttribute('xmlns', 'http://jabber.org/protocol/muc#user');
         var aNode = x.appendChild(aMessage.getDoc().createElement('invite'));
-        aNode.setAttribute('to', users[i]);
+        aNode.setAttribute('to', room);
         //TODO if reason != null
-        //aNode.appendChild(aMessage.getDoc().createElement('reason')).appendChild(aMessage.getDoc().createTextNode(reason));
+        var reason = "I want to speak!";
+        aNode.appendChild(aMessage.getDoc().createElement('reason')).appendChild(aMessage.getDoc().createTextNode(reason));
 
         con.send(aMessage);
 
+		if (console) {
+        cons.addInConsole("OUT : " + aMessage.xml() + "\n");
     }
+   
 
 }
 
@@ -2012,6 +2074,7 @@ function createInstantRoom(wholeRoom){
 function acceptInvitation(accept, from, roomName) {
     if (accept) {
         // TODO Go into the room
+        performJoinRoom (roomName,myjid,'',myRoomNick);
     } else {
         var aMessage = new JSJaCMessage();
         aMessage.setTo(from);
@@ -2441,7 +2504,13 @@ function handleMessage(aJSJaCPacket) {
 	//alert("origine" + origin);
 	//alert ("room User name" +  roomUserName);
     //alert ("tab" + aJSJaCPacket.getFrom());
-
+    
+    var invite = aJSJaCPacket.getNode().getElementsByTagName('invite');
+	if (invite && invite.item(0)){
+		 
+		window.open("chrome://messenger/content/invitation.xul", "", "chrome,centerscreen",{ id : jid , room : roomUserName} );
+		
+		}
 
     if (document.getElementById("tab" + jid) == null) {
 
@@ -2646,6 +2715,7 @@ function handlePresence(aJSJaCPacket) {
     for (i = 0; i < users.length; i++) {
         user = users[i];
         if (user [0] == sender){
+        	
             break;
             
             }
@@ -2813,6 +2883,7 @@ else if (! isRoom (sender) && sender.match("@")){
     				
     				
     	 	if (nbResources > 1){
+    	 	//alert ("ressources > 1" + sender);
     	 		var elementList = document.getElementById (sender + "cell");
     	 		
     	 		var label = elementList.getAttribute ("label");
@@ -2888,9 +2959,10 @@ else if (! isRoom (sender) && sender.match("@")){
 					if (imghead) 
         					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
                 		if (hideDecoUser){
-                			emptyList();
+                			/*emptyList();
    						    showUsers(users);
-						    refreshList();
+						    refreshList();*/
+						    hideOrNotUsers();
 						}
 				var elementList = document.getElementById (sender + "cell");
     	 		var label = elementList.getAttribute ("label");
@@ -2900,10 +2972,15 @@ else if (! isRoom (sender) && sender.match("@")){
     	 		
     	 		user [7] --;
     	 		
-    	 		if (user [7] > 1)
+    	 		if (user [7] > 1){
+    	 			alert ("user [7]> 1");
     	 			elementList.setAttribute ("label",keepLogin(sender) + " " +  "(" + user[7] + ")");
-    	 		else
+    	 		}
+    	 		else {
+    	 			alert ("user [7]< 1");
     	 			elementList.setAttribute ("label",keepLogin(sender));
+    	 			}
+    	 			
 				var maxPrioIndex = 0;
     				
     				/***********************/
@@ -2976,8 +3053,9 @@ else if (! isRoom (sender) && sender.match("@")){
     
     
    	if (hideDecoUser){
-    	emptyList();
-    	showUsers(users);
+    	/*emptyList();
+    	showUsers(users);*/
+    	hideOrNotUsers();
     }
    
    } 

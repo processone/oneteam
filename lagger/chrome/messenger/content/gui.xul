@@ -31,6 +31,7 @@
     <script type="application/x-javascript" src="JavaScript/messenger.js"/>
     <script type="application/x-javascript" src="JavaScript/fileTransfert.js"/>
     <script type="application/x-javascript" src="JavaScript/changePriority.js"/>
+    <script type="application/x-javascript" src="JavaScript/invite.js"/>
     
     <script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
@@ -265,12 +266,14 @@
             <popupset>
                 <popup id="itemcontextgroup">
                     <menuitem label="&listitemcontextgroup.Rename;" oncommand="renameGroup(event);"/>
+                	
                 </popup>
             </popupset>
             
             <popupset>
                 <popup id="itemcontextroom">
                 		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand='document.getElementById("liste_contacts").clearSelection();openConversation(event);'/>
+                   		 <menuitem label="&listitemcontext.InviterConference;" oncommand='window.open("chrome://messenger/content/invite.xul", "", "chrome,centerscreen");'/>
                     <menuseparator/>
                     <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>
                 		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>
