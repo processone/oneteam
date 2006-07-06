@@ -11,10 +11,14 @@
         onclose="self.close();"
         height="150"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        
+         <script type="application/x-javascript" src="JavaScript/gui.js"/>
 
 <script><![CDATA[
   var jid;
     var roomName;
+  
+  try {
   
   
   function loadInviteMessage() {
@@ -23,12 +27,14 @@
     
    var message = "you received invitation from" + jid + "to the room" + roomName;
    
-   document.getElementById ("message").setValue(message);
+   document.getElementById ("message").setAttribute("value",message);
   }
   
   function accept (){
   wiwdow.opener.acceptInvitation (true, jid,roomName);
   }
+  
+  } catch (e) {alert ("dans invitation.xul" + e);}
   
   ]]></script>
   
