@@ -38,6 +38,9 @@ var deployedGUI = false;
 var console = false;
 var hideDecoUser = false;
 
+var invitingJid;
+var invitingRoom;
+
 var secs;
 var timerID = null;
 var timerRunning = false;
@@ -2476,6 +2479,20 @@ function handleMessage(aJSJaCPacket) {
 
     var origin = aJSJaCPacket.getFrom();
     var mess = "Received Message from" + origin;
+    
+    
+    if (console) {
+
+        cons.addInConsole("IN : " + aJSJaCPacket.xml() + "\n");
+    }
+    
+    var invite = aJSJaCPacket.getNode().getElementsByTagName('invite');
+	if (invite && invite.item(0)){
+		 invitingJid  = cutResource(aJSJaCPacket.getFrom());
+		 invitingRoom = invite.item(0).getAttribute("to");
+		window.open("chrome://messenger/content/invitation.xul", "", "chrome,centerscreen");
+		return;
+		}
    
    //alert (origin);
     
@@ -2492,10 +2509,7 @@ function handleMessage(aJSJaCPacket) {
     }
     //window.getAttention();
 
-    if (console) {
-
-        cons.addInConsole("IN : " + aJSJaCPacket.xml() + "\n");
-    }
+    
 
     var name = keepLogin(origin);
     var jid = cutResource(origin);
@@ -2505,20 +2519,22 @@ function handleMessage(aJSJaCPacket) {
 	//alert ("room User name" +  roomUserName);
     //alert ("tab" + aJSJaCPacket.getFrom());
     
-    var invite = aJSJaCPacket.getNode().getElementsByTagName('invite');
-	if (invite && invite.item(0)){
-		 
-		window.openDialog("chrome://messenger/content/invitation.xul", "", "chrome,centerscreen",{ id : jid , room : roomUserName} );
-		
-		}
+    
 
-    else if (document.getElementById("tab" + jid) == null) {
+    if (document.getElementById("tab" + jid) == null) {
 
 		var vboxpanel = document.createElement("vbox");
+		 vboxpanel.setAttribute("id", "vboxpanel"+ jid);
+        vboxpanel.setAttribute("flex", "1");
+        
+        
+        // then it's an invitation
+		if(!isRoom(cutResource(origin)))
+	
+		{	
 		var hboxhead = document.createElement("hbox");
         
-        vboxpanel.setAttribute("id", "vboxpanel"+ jid);
-        vboxpanel.setAttribute("flex", "1");
+       
         
         hboxhead.setAttribute("id", "head" + "tab"+ jid);
         
@@ -2537,7 +2553,9 @@ function handleMessage(aJSJaCPacket) {
         hboxhead.appendChild (imghead);
         hboxhead.appendChild (namehead);
         hboxhead.appendChild (writestate);
-		
+        
+         vboxpanel.appendChild(hboxhead);
+		}
 		
         var tabs = document.getElementById("tabs1");
         var tab = document.createElement("tab");
@@ -2558,7 +2576,7 @@ function handleMessage(aJSJaCPacket) {
         tabpanel.setAttribute("id", "tabpanel" + jid);
         tabspanel.appendChild(tabpanel);
         
-        vboxpanel.appendChild(hboxhead);
+       
        	tabpanel.appendChild(vboxpanel);
        	
        	 var tabbox = document.getElementById("tabbox");
@@ -2568,11 +2586,7 @@ function handleMessage(aJSJaCPacket) {
         var text = document.createElement("iframe");
 
         text.setAttribute("id", "text" + jid);
-        //text.setAttribute("multiline", "true");
-        //text.setAttribute("height", "400");
-        //text.setAttribute("width", "380");
-        //text.setAttribute("readonly", "true");
-        //text.setAttribute("wait-cursor","false");
+        
         text.setAttribute("type","content");
         text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");

@@ -45,7 +45,7 @@
 
         <textbox id="pass" type="password" width="180" preference="chat.connection.password"/>
         <spacer height="3"/>
-        <checkbox id="checkbox-password" label="Remember password"/>
+        <checkbox id="checkbox-password" label="Remember password" preference="chat.connection.remember"/>
         <!--  	<label value="&Login.server; : " />
                           <textbox id="server"/>
 

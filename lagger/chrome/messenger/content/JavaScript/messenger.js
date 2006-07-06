@@ -16,10 +16,12 @@ const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
 function init() {
 	try{
     var prefs = loadPrefs();
+    if (gPrefService.getBoolPref("chat.connection.remember"){
     if (prefs.user != null)
         document.getElementById("user").setAttribute("value", prefs.user);
     if (prefs.pass != null)
         document.getElementById("pass").setAttribute("value", prefs.pass);
+        }
     } catch (e) {alert(e);}
 }
 

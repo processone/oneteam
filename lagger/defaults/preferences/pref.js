@@ -43,6 +43,7 @@ pref ("general.skins.selectedSkin","");
 
 pref("chat.connection.username", "");
 pref("chat.connection.password", "");
+pref("chat.connection.remember", "true");
 
 pref("chat.connection.priority", 5);
 pref("chat.connection.base", "http-bind");

@@ -6,45 +6,24 @@
 		title="Invitation to a conference"
         orient="horizontal"
         resizable="true" 
-        width="200"
+        width="300"
         onload="loadInviteMessage();"
         onclose="self.close();"
-        height="150"
+        height="170"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
          <script type="application/x-javascript" src="JavaScript/gui.js"/>
+		<script type="application/x-javascript" src="JavaScript/invitation.js"/>
 
-<script><![CDATA[
-  var jid;
-    var roomName;
-  
-  try {
-  
-  
-  function loadInviteMessage() {
-    jid = window.arguments[0].id;
-    roomName = window.argument[0].room;
-    
-   var message = "you received invitation from" + jid + "to the room" + roomName;
-   
-   document.getElementById ("message").setAttribute("value",message);
-  }
-  
-  function accept (){
-  wiwdow.opener.acceptInvitation (true, jid,roomName);
-  }
-  
-  } catch (e) {alert ("dans invitation.xul" + e);}
-  
-  ]]></script>
-  
+<spacer height="20"/>
 
-<label value="" id="message"/>
+<label id="messageId"/>
+<label id="messageRoom"/>
 
 <spacer height="20"/>
 
 <hbox align="center">
-<button  label="OK" oncommand="self.close(); accept ();"/>
+<button  label="OK" oncommand="accept (); self.close();"/>
 <button label="Cancel" oncommand="self.close();"/>
 </hbox>        
         
