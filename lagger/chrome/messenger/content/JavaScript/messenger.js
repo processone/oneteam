@@ -19,8 +19,15 @@ function init() {
     
     if (prefs.user != null)
         document.getElementById("user").setAttribute("value", prefs.user);
-    if (prefs.pass != null)
+        
+       
+    
+    if(prefs.askAgain == false){
+    	if (prefs.pass != null)
         document.getElementById("pass").setAttribute("value", prefs.pass);
+        }
+    else
+    	document.getElementById("checkbox-password").setAttribute ("checked","false");
         
     } catch (e) {alert(e);}
 }
@@ -54,6 +61,24 @@ function doLogin(event) {
 }
 
 
+function savePassword (){
+
+
+var bool = document.getElementById("checkbox-password").checked;
+
+
+
+if (!bool){
+
+ savePrefs({
+        askAgain : true });
+        }
+else{
+
+	savePrefs({
+        askAgain : false });
+}
+}
 
 
 //function to open startup settings

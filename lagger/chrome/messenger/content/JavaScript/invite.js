@@ -30,7 +30,7 @@ var cellConf = itemConf.firstChild;
 var users = itemConf.nextSibling;
 
 
-			if (users)
+		/*	if (users)
 			while (users.getAttribute("id").match(jid)){
 			
 				
@@ -41,7 +41,7 @@ var users = itemConf.nextSibling;
 					users = users.nextSibling;
 					if (!users)
 					break;
-					}
+					}*/
 
 
 
