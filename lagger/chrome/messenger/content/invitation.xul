@@ -6,26 +6,67 @@
 		title="Invitation to a conference"
         orient="horizontal"
         resizable="true" 
-        width="300"
+        width="390"
         onload="loadInviteMessage();"
         onclose="self.close();"
-        height="170"
+        height="210"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
          <script type="application/x-javascript" src="JavaScript/gui.js"/>
 		<script type="application/x-javascript" src="JavaScript/invitation.js"/>
 
-<spacer height="20"/>
 
-<label id="messageId"/>
+
+
+<groupbox class="invitation-group" flex="1">
+ 
+ <caption label="Invitation"/>
+ 
+ <spacer height="30"/>
+<vbox  flex="1">
+
+<grid flex="1">
+
+                                <columns>
+                                        <column flex="1"/>
+                                        <column flex="3"/>
+                                </columns>
+                                <rows>
+<row>
+<label id="messageJid"/>
+<textbox id="jid" readonly="true" width="100" />
+
+</row>
+
+<row>
 <label id="messageRoom"/>
+<textbox id="room" readonly="true" />
+</row>
+
+<row>
+<label  value="Reason : "/>
+<textbox id="reason" readonly="true" />
+</row>
+
+</rows>
+
+</grid>
+
+
 
 <spacer height="20"/>
 
+
+</vbox>   
+
+<vbox align="center">
 <hbox align="center">
-<button  label="OK" oncommand="accept (); self.close();"/>
+<button  label="Join" oncommand="accept (); self.close();"/>
 <button label="Cancel" oncommand="self.close();"/>
-</hbox>        
-        
+</hbox>     
+</vbox>
+
+
+</groupbox>
         
 </window>

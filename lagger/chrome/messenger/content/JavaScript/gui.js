@@ -40,6 +40,7 @@ var hideDecoUser = false;
 
 var invitingJid;
 var invitingRoom;
+var invitingReason;
 
 var secs;
 var timerID = null;
@@ -131,7 +132,7 @@ function openConversation(event) {
         var namehead = document.createElement("label");
         namehead.setAttribute("value", keepLogin(id));
         namehead.setAttribute("id","namehead" + keepLogin(id));
-        
+       
         
         var writestate = document.createElement("label");
         writestate.setAttribute("id", "writestate"+ id);
@@ -203,8 +204,7 @@ function openConversation(event) {
 		
 		tab.setAttribute("context", "tabroomcontext");
 		
-		var cell = document.getElementById(id + "cell");
-    	cell.setAttribute("image", "chrome://messenger/content/img/crystal/opened.png");
+		
 		
 		var nick;
 		
@@ -275,7 +275,7 @@ function initGUI() {
     // setup args for contructor
     var oArgs = new Object();
 	
-    oArgs.httpbase = "http://" + this.server + ":" + this.port + "/" + this.base + "/";
+    oArgs.httpbase = "http://" + server + ":" + this.port + "/" + this.base + "/";
     oArgs.timerval = 2000;
     //oArgs.oDbg = Debug;
 
@@ -1105,7 +1105,7 @@ function closeTab() {
     }
     
     
-  // } catch (e) {alert(" In closeTab" + e);}
+   //} catch (e) {alert(" In closeTab" + e);}
 }
 
 
@@ -1799,6 +1799,9 @@ function sendMsg(event) {
 function performJoinRoom(wholeRoom,jid, pass, nick) {
     try {
 		
+		var cell = document.getElementById(wholeRoom + "cell");
+    	cell.setAttribute("image", "chrome://messenger/content/img/crystal/opened.png");
+		
         var aPresence = new JSJaCPresence();
         aPresence.setTo(wholeRoom + '/' + nick);
         aPresence.setXMLLang ('en');
@@ -2489,7 +2492,16 @@ function handleMessage(aJSJaCPacket) {
     var invite = aJSJaCPacket.getNode().getElementsByTagName('invite');
 	if (invite && invite.item(0)){
 		 invitingJid  = cutResource(aJSJaCPacket.getFrom());
+		 if (isRoom (invitingJid)){
+		 	invitingRoom = invitingJid;
+		 	invitingJid = invite.item(0).getAttribute("from");
+		 	}
+		 else	
 		 invitingRoom = invite.item(0).getAttribute("to");
+		 
+		 var reason = aJSJaCPacket.getNode().getElementsByTagName('reason');
+		 	if (reason && reason.item(0) && reason.item(0).firstChild)
+		 		invitingReason = reason.item(0).firstChild.nodeValue;
 		window.open("chrome://messenger/content/invitation.xul", "", "chrome,centerscreen");
 		return;
 		}
@@ -2527,41 +2539,48 @@ function handleMessage(aJSJaCPacket) {
 		 vboxpanel.setAttribute("id", "vboxpanel"+ jid);
         vboxpanel.setAttribute("flex", "1");
         
-        
-        // then it's an invitation
-		if(!isRoom(cutResource(origin)))
-	
-		{	
-		var hboxhead = document.createElement("hbox");
-        
-       
-        
+        var hboxhead = document.createElement("hbox");  
         hboxhead.setAttribute("id", "head" + "tab"+ jid);
         
         
-        var imghead = document.createElement("image");
+        // then it's an invitation
+	/*	if(!isRoom(cutResource(origin)))
+	
+		{*/
+		
+		var imghead = document.createElement("image");
         imghead.setAttribute("id", "imghead"+ jid);
         var status = findStatusByJid(jid);
         imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + status);
+        hboxhead.appendChild (imghead);
+        
+        //}
+        	
+		
         
         var namehead = document.createElement("label");
-        namehead.setAttribute("value", keepLogin(jid));
+        namehead.setAttribute("value","namehead" + keepLogin(jid));
+        namehead.setAttribute("id","namehead" + keepLogin(jid));
+       
         
         var writestate = document.createElement("label");
         writestate.setAttribute("id", "writestate"+ jid);
         
-        hboxhead.appendChild (imghead);
+        
         hboxhead.appendChild (namehead);
         hboxhead.appendChild (writestate);
         
          vboxpanel.appendChild(hboxhead);
-		}
+		//
 		
         var tabs = document.getElementById("tabs1");
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + jid);
         tab.setAttribute("label", name);
-        tab.setAttribute("context", "tabcontext");
+        if(!isRoom(cutResource(origin)))
+        	tab.setAttribute("context", "tabcontext");
+       	else
+        	tab.setAttribute("context","tabroomcontext");
 
         var childNodes = tabs.childNodes;
         for (var i = 0; i < childNodes.length; i++) {
@@ -2611,10 +2630,11 @@ function handleMessage(aJSJaCPacket) {
    
     	if(isRoom(cutResource(origin))){
     		var conf = document.getElementById(roomUserName);
-    		//alert ("room User name" +  roomUserName);
+    		//alert (" je rentre la ou je veux : room User name" +  roomUserName);
     			if (conf){
     		
     				var namehead = document.getElementById("namehead" + keepLogin(roomUserName));
+    				
     				namehead.setAttribute("value",html_escape(aJSJaCPacket.getBody()));
     				return;
     			}

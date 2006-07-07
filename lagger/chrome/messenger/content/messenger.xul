@@ -29,7 +29,11 @@
 
         <caption class="titre" label="&Login.titre;"/>
 
-        <spacer height="80"/>
+        <spacer height="20"/>
+        
+         <label popup="popup-tools" class="text-link" value="New Account" align="right" onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
+        
+         <spacer height="40"/>
 
         <label value="&Login.login; : " style="color:#777"/>
 

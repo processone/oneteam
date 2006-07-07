@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+
+<window id="account"
+		title="New Account"
+        orient="horizontal"
+        resizable="true" 
+        width="300"
+        onclose="self.close();"
+        height="260"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+
+<script type="application/x-javascript" src="JavaScript/account.js"/>
+<script type="application/x-javascript" src="JavaScript/gui.js"/>     
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>
+<script type="application/x-javascript" src="JavaScript/shared.js"/>
+
+
+<groupbox class="account-group">
+ 
+ <caption label="New account"/>
+<vbox align="center" flex="1">
+
+<hbox id="head">
+
+<image src="chrome://messenger/content/img/account.png"/>
+
+<spacer width="30"/>
+
+<label value="Fill in the field with public server"/>
+
+</hbox>
+
+<separator/>
+
+<grid flex="1">
+
+                                <columns>
+                                        <column flex="1"/>
+                                        <column flex="3"/>
+                                </columns>
+                                <rows>
+                                        <row>
+                                                <label value="Jabber server:" control="fn"/>
+                                                <textbox id="server" value="jabber.org" flex="1"/>
+                                        </row>
+                                        <row>
+                                                <label value="Login:" control="fn"/>
+                                                <textbox id="login"/>
+                                        </row>
+                                        <row>
+                                                <label value="Password:" control="nickname"/>
+                                                <textbox id="pass" type="password"/>
+                                        </row>
+                                       
+                                </rows>
+
+                        </grid>
+
+
+	<hbox align="right">
+<button  label="OK" oncommand="register();self.close();"/>
+<button label="Cancel" oncommand="self.close();"/>
+</hbox>
+</vbox>
+</groupbox>
+       
+ </window>

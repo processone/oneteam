@@ -6,10 +6,10 @@
 		title="Invite users"
         orient="horizontal"
         resizable="true" 
-        width="400"
+        width="430"
         onload="loadContactList();"
         onclose="self.close();"
-        height="350"
+        height="450"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 
@@ -23,33 +23,58 @@
 <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>
 <script type="application/x-javascript" src="JavaScript/shared.js"/>
 
-<vbox align="center" flex="1">
+
+<groupbox class="invite-group" flex="1">
+ 
+ <caption label="Invite contacts"/>
+
+<vbox  flex="1">
+
+<spacer height="30"/>
 
 <hbox id="head">
-<listbox  height="300" width="150"  minwidth="140" id="invitable" flex="1"
-       	   />
 
-<vbox align="center">
+<vbox>
+<label value="Contacts to invite"/>
+<spacer height="10"/>
+<listbox  height="240" width="150"  minwidth="140" id="invitable" flex="1" seltype="multiple"/>
 
-<spacer height="160"/>
+</vbox>
+
+<vbox flex="1">
+
+<spacer height="100"/>
+<button label="Invite all" oncommand="makeInvited();"/>
+<spacer height="40"/>
 <button label="--->" oncommand="makeInvited();"/>
 
 
 </vbox>
 
-<listbox  height="300" width="150"  minwidth="140" id="invited" flex="1"
-       	    /> 			
-
+<vbox>
+<label value="Invited contacts"/>
+<spacer height="10"/>
+<listbox  height="240" width="150"  minwidth="140" id="invited" flex="1"/>
+		
+</vbox>
 
 </hbox>
 
 <spacer height="20"/>
 
-<hbox align="center">
+<hbox>
+<label value="Reason [Optional] : "/>
+<textbox id="reason" flex="1"/>
+</hbox>
+
+<spacer height="30"/>
+
+<hbox align="right">
 <button  label="OK" oncommand="inviteUsers();self.close();"/>
 <button label="Cancel" oncommand="self.close();"/>
 </hbox>
 
 </vbox>
+</groupbox>
        
  </window>       
