@@ -1285,8 +1285,8 @@ function showGroup(group) {
     item.setAttribute("label", group);
     //item.setAttribute("value", "group");
     item.setAttribute("orient", "horizontal");
-    item.setAttribute("id", "group" + group);
-    //item.setAttribute("id", "group");
+    //item.setAttribute("id", "group" + group);
+    item.setAttribute("id", "group");
    
     liste.appendChild(item);
     
