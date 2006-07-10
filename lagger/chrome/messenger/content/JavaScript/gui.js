@@ -42,11 +42,52 @@ var invitingJid;
 var invitingRoom;
 var invitingReason;
 
+var suscribed;
+
 var secs;
 var timerID = null;
 var timerRunning = false;
 var delay = 1000;
 var currentReceiver;
+
+var roomPanelObserver = {
+ 
+  getSupportedFlavours : function() {
+    var flavours = new FlavourSet();
+    flavours.appendFlavour("text/unicode");
+    return flavours;
+  },
+  
+  onDragOver: function(evt,flavour,session){
+   
+   	 //alert ("ondragover!!");
+    
+    },
+ 
+ onDrop: function(evt, dropdata, session)
+  {
+  
+  try {
+  
+  //alert("on drop");
+  
+  var liste = document.getElementById("liste_contacts");
+  var tabbox = document.getElementById("tabbox");
+  
+  var tab= tabbox.selectedTab.id;
+  var room = tab.substring (3,tab.length);
+  
+  var startElement = liste.selectedItem.id;
+ 
+    
+    if  (isRoom (room))
+    invite (startElement,room);
+    
+  }catch(e){alert("on drop" + e);}
+  
+  }
+  
+  };
 
 function initializeTimer()
 {
@@ -182,7 +223,7 @@ function openConversation(event) {
         //var text = document.createElement("textbox");
         var text = document.createElement("iframe");
         
-
+		
         text.setAttribute("id", "text" + id);
         //text.setAttribute("multiline", "true");
         //text.setAttribute("height", "400");
@@ -204,7 +245,8 @@ function openConversation(event) {
 		
 		tab.setAttribute("context", "tabroomcontext");
 		
-		
+		text.setAttribute ("ondragdrop","nsDragAndDrop.drop(event,roomPanelObserver);");
+		text.setAttribute ("ondragover","nsDragAndDrop.dragOver(event,roomPanelObserver);");
 		
 		var nick;
 		
@@ -544,6 +586,21 @@ function authorizeContactSeeMe(jid) {
     }
     //window.close();
 }
+
+
+// Function to forbid user to see me
+function forbidToSeeMe (jid){
+
+ var aPresence = new JSJaCPresence();
+    aPresence.setType('unsubscribe');
+    aPresence.setTo(jid);
+    con.send(aPresence);
+     if (console) {
+        cons.addInConsole("OUT : " + aPresence.xml() + "\n");
+    }
+
+}
+
 
 // Function to remove an element from roster
 function removeFromRoster()
@@ -1192,7 +1249,7 @@ for (var g = 0; g < groups.length; g++) {
             			if (user [4] == "offline.png"){
                 		//showUser(user);
                 		//userItem.setAttribute ("hidden","true");
-                		document.getElementById(user[0] + "cell").hidden= true;
+                		document.getElementById(user[0] + "cell").collapsed= true;
                 		}
                 		else {
                 		countUser++;
@@ -1203,7 +1260,7 @@ for (var g = 0; g < groups.length; g++) {
                		 else {
                		 
                		 	if (user [4] == "offline.png"){
-                		document.getElementById(user[0] + "cell").hidden=false;
+                		document.getElementById(user[0] + "cell").collapsed=false;
                 		//userItem.setAttribute("hidden", '');
                			 //showUser(user);
                			 
@@ -1215,9 +1272,9 @@ for (var g = 0; g < groups.length; g++) {
         //end forUser
    
        	 	/*if (countUser > 0)
-       	 	  itemGroup.setAttribute("hidden","false");
+       	 	  itemGroup.setAttribute("collapsed","false");
        	 	else
-       	 	  itemGroup.setAttribute("hidden","true");*/
+       	 	  itemGroup.setAttribute("collapsed","true");*/
    
         
 	
@@ -2361,6 +2418,26 @@ try {
 	} catch (e) {alert ("dans launchInfo" + e);}
 }
 
+
+// Function to load invite window
+function launchInviteWindow (){
+
+var listeconf = document.getElementById("liste_conf");
+
+var jidRoom = listeconf.selectedItem.id;
+
+var cellRoom = document.getElementById(jidRoom + "cell");
+
+if(cellRoom.getAttribute("image") != "chrome://messenger/content/img/crystal/closed.png")
+
+window.open("chrome://messenger/content/invite.xul", "", "chrome,centerscreen");
+
+else
+
+alert ( "please open a room before trying to invite contacts");
+
+}
+
 // Function to launch the change nick window
 function launchNicknameWindow(){
 	window.open("chrome://messenger/content/changeNick.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");
@@ -2559,7 +2636,7 @@ function handleMessage(aJSJaCPacket) {
 		
         
         var namehead = document.createElement("label");
-        namehead.setAttribute("value","namehead" + keepLogin(jid));
+        namehead.setAttribute("value",keepLogin(jid));
         namehead.setAttribute("id","namehead" + keepLogin(jid));
        
         
@@ -2604,6 +2681,9 @@ function handleMessage(aJSJaCPacket) {
         //var text = document.createElement("textbox");
         var text = document.createElement("iframe");
 
+
+		text.setAttribute ("ondragdrop","nsDragAndDrop.drop(event,roomPanelObserver);");
+		text.setAttribute ("ondragover","nsDragAndDrop.dragOver(event,roomPanelObserver);");
         text.setAttribute("id", "text" + jid);
         
         text.setAttribute("type","content");
@@ -2979,7 +3059,12 @@ else if (! isRoom (sender) && sender.match("@")){
 
                	 authorizeContactSeeMe(sender);
            			 }
-           			 
+           		
+           		
+           		else if (type == 'subscribed') {
+           		suscribed = sender;
+           		window.open("chrome://messenger/content/suscribed.xul", "", "chrome,centerscreen,resizable");
+           		}
            	
 
             		presence += aJSJaCPacket.getType();

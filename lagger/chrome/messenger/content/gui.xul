@@ -32,6 +32,7 @@
     <script type="application/x-javascript" src="JavaScript/fileTransfert.js"/>
     <script type="application/x-javascript" src="JavaScript/changePriority.js"/>
     <script type="application/x-javascript" src="JavaScript/invite.js"/>
+    <script type="application/x-javascript" src="JavaScript/suscribed.js"/>
     
     <script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
@@ -71,6 +72,8 @@
       
       var startuser = findUserByJid(startElement.id);
       
+     
+      
       if (evt.target.id == "group"){
      
       startuser [2] = evt.target.getAttribute("label");
@@ -105,6 +108,7 @@
        
     }
  };
+ 
  
 
  </script>
@@ -243,7 +247,8 @@
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
                     <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
                     <menuseparator/>
-                    
+                     <menuitem label="Forbid him to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);document.getElementById("liste_contacts").selectedItem.setAttribute("context","itemcontexttempuser");'/>
+                    <menuseparator/>
                     <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
                 </popup>
             </popupset>
@@ -256,8 +261,8 @@
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
                     <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
                     <menuseparator/>
-                    <menuitem label="Ask to see him" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
-                    <menuitem label="Authorize to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
+                    <menuitem label="Ask to see him" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);this.disabled=true;'/>
+                    <menuitem label="Authorize to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);this.disabled=true;'/>
                     <menuseparator/>
                     <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
                 </popup>
@@ -273,7 +278,7 @@
             <popupset>
                 <popup id="itemcontextroom">
                 		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand='document.getElementById("liste_contacts").clearSelection();openConversation(event);'/>
-                   		 <menuitem label="&listitemcontext.InviterConference;" oncommand='window.open("chrome://messenger/content/invite.xul", "", "chrome,centerscreen");'/>
+                   		 <menuitem label="&listitemcontext.InviterConference;" oncommand='launchInviteWindow();'/>
                     <menuseparator/>
                     <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>
                 		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>
