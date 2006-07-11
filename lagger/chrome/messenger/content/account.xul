@@ -21,7 +21,7 @@
 <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
 <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>
 <script type="application/x-javascript" src="JavaScript/shared.js"/>
-
+<script type="application/x-javascript" src="JavaScript/Debugger-0.3/Debugger.js"/>
 
 <groupbox class="account-group">
  

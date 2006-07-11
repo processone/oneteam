@@ -114,7 +114,7 @@ function retrieveVcard(iq){
 			if (name){
 				var nametext = document.getElementById("name");
 				nametext.setAttribute("value",name);
-				
+				nametext.readonly=true;
 				}
 				
 	tag = iq.getNode().getElementsByTagName('FAMILY');
@@ -123,7 +123,7 @@ function retrieveVcard(iq){
 			if (fam){
 				var famtext = document.getElementById("family");
 				famtext.setAttribute("value",fam);
-				
+				famtext.readonly=true;
 				}			
 				
 				
@@ -133,7 +133,7 @@ function retrieveVcard(iq){
 			if (nick){
 				var nicktext = document.getElementById("nickname");
 				nicktext.setAttribute("value",nick);
-				
+				nicktext.readonly=true;
 				}
 				
 				
@@ -144,6 +144,7 @@ function retrieveVcard(iq){
 			var url = tag.item(0).firstChild.nodeValue;
 			if (url){
 			var urltext = document.getElementById("url");
+				urltext.readonly=true;
 				urltext.setAttribute("value",url);
 				}			
 	
@@ -153,6 +154,7 @@ function retrieveVcard(iq){
 			var bday = tag.item(0).firstChild.nodeValue;
 			if (bday){
 			var bdaytext = document.getElementById("birthday");
+				bdaytext.readonly=true;
 				bdaytext.setAttribute("value",bday);
 				}							
 			
@@ -264,6 +266,7 @@ function retrieveVcard(iq){
 			if (email){
 			var emailtext = document.getElementById("email");
 				emailtext.setAttribute("value",email);
+				emailtext.readonly = true;
 				}
 	
 	
@@ -278,6 +281,7 @@ function retrieveVcard(iq){
 			if (desc){
 			var desctext = document.getElementById("about");
 				desctext.setAttribute("value",desc);
+				desctext.readonly = true;
 				}
 	
 	

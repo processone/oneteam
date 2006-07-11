@@ -1210,10 +1210,10 @@ function hideDecoUsers(){
 	
 	if (!hideDecoUser){ 
 	hideDecoUser = true;
-	/*emptyList();
-    showUsers(users);*/
+	emptyList();
+    showHide();
     //this.refreshList();
-    hideOrNotUsers ();
+    //hideOrNotUsers ();
 	}
 	else
 	showDecoUsers();
@@ -1223,9 +1223,9 @@ function hideDecoUsers(){
 // Function to show deconnected users
 function showDecoUsers(){
 	hideDecoUser = false;
-	//emptyList();
-    /*showUsers(users);*/
-    hideOrNotUsers ();
+	emptyList();
+    showHide();
+    //hideOrNotUsers ();
 	//this.refreshList();
 }
 
@@ -1280,6 +1280,84 @@ for (var g = 0; g < groups.length; g++) {
         
 	
     }
+
+
+}
+
+
+
+function showHide(){
+try {
+
+
+	
+	
+	for (var g = 0; g < groups.length; g++) {  
+        var group = groups[g];
+        //alert (group);
+        
+      var countUser = 0;
+        
+		// First loop to count user
+        for (var i = 0; i < users.length; i++) {
+
+            var user = users[i];
+            if (user [2] == group){
+            		if (hideDecoUser){
+            			
+            			if (user [4] != "offline.png"){
+                		
+                		countUser++;
+                		}
+                		
+                	}
+               		 else {
+                	
+               			 
+                		countUser ++;
+                		}
+                		
+			}
+        }
+        //end forUser
+        
+        if (countUser)
+        	showGroup(group); 
+        
+        
+         for (var i = 0; i < users.length; i++) {
+
+            var user = users[i];
+            if (user [2] == group){
+            		if (hideDecoUser){
+            			
+            			if (user [4] != "offline.png"){
+                		showUser(user);
+                		
+                		}
+                		
+                	}
+               		 else {
+                	
+               			 showUser(user);
+                		
+                		}
+                		
+			}
+        }
+        //end forUser
+   
+	
+    }
+    //end forGroup
+	
+	
+	
+    
+   
+       	 	
+
+} catch (e) {alert(e);}
 
 
 }
@@ -2940,7 +3018,8 @@ else if (! isRoom (sender) && sender.match("@")){
 
 	var resources = findResourceByJid(sender);
 	//alert (resources);
-		
+	
+	
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
         presence = aJSJaCPacket.getFrom() + "has become available.";
@@ -2956,44 +3035,55 @@ else if (! isRoom (sender) && sender.match("@")){
            user [6] = "false";                         
                                }
                                
+        
+                               
         user [4] = "online.png";
          var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
-    		
+    	
+    	if (hideDecoUser){
+    	emptyList();
+    	showHide();
+    	}
     		
     		// Retrieve priority value and put resources values into resource array
     		var priorityAnchor = aJSJaCPacket.getNode().getElementsByTagName('priority');
     		
-    		var nbResources = 0 ;
     		
     		if (priorityAnchor.item (0) && priorityAnchor.item (0).firstChild)
     			priority = priorityAnchor.item (0).firstChild.nodeValue;
     			
+    		
+    			
     		var resource = new Array();
     		resource [0] = clientId;
-    		resource [1] = priority;
+    		
+    		if (priority)
+    			resource [1] = priority;
+    		else
+    			resource [1] = 5;
     		
     		var contains = false;
     		for  (var i = 0 ; i < resources.length ; i ++){
-    			if (resources [i] [0] == resource [0])
-    			contains = true;
+    			if (resources [i] [0] == resource [0]){
+    				resources [i] [1] = resource [1];
+    				contains = true;
+    			}
     			}
     	
     	if (!contains)
     		resources.push(resource);
-    		
-    			
+    	
     		
     		//alert ("ressources" + resources);
     	
-    		user [7] = 0;
-    		
+    		var nbResources = 0;
+    		user [7] = 0;	
     			
     				for  (var j = 0 ; j < resources.length ; j ++){	
     						nbResources++;
-    						user [7]++;
-    							
+    						user [7]++;			
     				}
     				
     				
@@ -3025,15 +3115,26 @@ else if (! isRoom (sender) && sender.match("@")){
     	//alert (resources);		
    		 
         presence += aJSJaCPacket.getFrom() + " has set his presence to ";
+        
+        
 
         var type = aJSJaCPacket.getType();
         var show = aJSJaCPacket.getShow();
         
-         // If sender own resources,take its max priority's one
-    			/*if (resources){
-    				var maxPrioIndex = 0;
-    				var maxPrio = priority;
+        for  (var i = 0 ; i < resources.length ; i ++){
+    			if (resources [i] [0] == clientId){
+    				priority = resources [i] [1];
     				
+    				}
+    			}
+        
+         // If sender own resources,take its max priority's one
+    			if (resources && (resources.length > 1) ){
+    			
+    			// Check to delete resource once user is offline
+    				
+    				var maxPrio = priority;
+    				var maxPrioIndex = 0;
     				
     				for  (var i = 0 ; i < resources.length ; i ++){
     						if (resources [i] [0] == clientId){
@@ -3044,51 +3145,73 @@ else if (! isRoom (sender) && sender.match("@")){
     							
     						}
     					if (resources [i] [1] > maxPrio){
+    						//alert("ressource sup?rieure" + resources [i] [1]);
     						maxPrioIndex = i; 
     						maxPrio = resources [i] [1];
     						}
-    				}	
-    				if (type) 	 
-           		 		type = resources [maxPrioIndex][2];
-           		 	else
+    						
+    						
+    				}
+    				
+    				
+    				if (type){
+    					
+           		 		
+           		 		if (resources [maxPrioIndex][2] == "undefined")
+           		 		{	
+           		 			if (item)
+               					 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "online.png");
+                				 user [4] = "online.png";
+                 				var imghead = document.getElementById("imghead"+ user[0]);
+									if (imghead) 
+        						imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+           					 }	
+           		 		/*else{
+           		 			type = resources [maxPrioIndex][2];
+           		 			alert ("if type" + type);
+           		 		
+           		 			}*/
+           		 		}
+           		 		
+           		 	/*else{
+           		 		
            		 		show = resources [maxPrioIndex][3];
-        		}	*/
+           		 		alert (" show " + show);
+           		 		}*/
+        		}
         /**********************************************/
         
        		 if (type) {
+           		 
+           		 
            		 if (type == 'subscribe') {
-
-               	 authorizeContactSeeMe(sender);
-           			 }
+               		 authorizeContactSeeMe(sender);
+           			}
            		
            		
            		else if (type == 'subscribed') {
-           		suscribed = sender;
-           		window.open("chrome://messenger/content/suscribed.xul", "", "chrome,centerscreen,resizable");
+           			suscribed = sender;
+           			window.open("chrome://messenger/content/suscribed.xul", "", "chrome,centerscreen,resizable");
            		}
            	
 
             		presence += aJSJaCPacket.getType();
            		 //alert (type.substring(0,2));
            		 if (type.substring(0, 2) == "un") {
-           		 if (item)
-                item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "offline.png");
-                user [4] = "offline.png";
-                user [6] = "true";
-                 var imghead = document.getElementById("imghead"+ user[0]);
+           		 	if (item)
+              	  		item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "offline.png");
+                	user [4] = "offline.png";
+                	user [6] = "true";
+                 	var imghead = document.getElementById("imghead"+ user[0]);
 					if (imghead) 
         					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
                 		if (hideDecoUser){
-                			/*emptyList();
-   						    showUsers(users);
-						    refreshList();*/
-						    hideOrNotUsers();
+                			emptyList();
+						    showHide();
 						}
 				var elementList = document.getElementById (sender + "cell");
     	 		var label = elementList.getAttribute ("label");
-    	 		//var nbResources = label.substring (label.indexOf("(") + 1,label.length -1);
-    	 		//alert (nbResources);
-    	 		//var nb = parseInt(nbResources);
+    	 		
     	 		
     	 		user [7] --;
     	 		
@@ -3097,14 +3220,16 @@ else if (! isRoom (sender) && sender.match("@")){
     	 			elementList.setAttribute ("label",keepLogin(sender) + " " +  "(" + user[7] + ")");
     	 		}
     	 		else {
-    	 			alert ("user [7]< 1");
+    	 			alert ("user [7] <= 1");
     	 			elementList.setAttribute ("label",keepLogin(sender));
     	 			}
     	 			
-				var maxPrioIndex = 0;
+    	 	/***********************/
+    	 		if (resources && (resources.length > 1) ){	
+					var maxPrioIndex = 0;
     				
-    				/***********************/
-    				/*var maxPrio = priority;
+    				
+    				var maxPrio = priority;
     				
     				for  (var i = 0 ; i < resources.length ; i ++){
     						
@@ -3114,9 +3239,11 @@ else if (! isRoom (sender) && sender.match("@")){
     						}
     				}	
     				
-           		 		type = resources [maxPrioIndex][2];	
-           		 		show = resources [maxPrioIndex][3];	*/
-           		 		/**********************/
+           		 		type = resources [maxPrioIndex][2];
+           		 		alert ("type du max priority" + type);	
+           		 		show = resources [maxPrioIndex][3];
+           		 		}
+           /**********************/
            			 }
             if (type.substring(0, 2) == "in") {
             if (item)
@@ -3132,10 +3259,12 @@ else if (! isRoom (sender) && sender.match("@")){
         		
         		
         		}
-       			 else {
        			 
-       			
-
+       	
+       	// else it's a show packet 		 
+       	else {
+       			 
+       	
             		
             presence += aJSJaCPacket.getShow();
             //alert (show.substring(0,2));
@@ -3173,9 +3302,8 @@ else if (! isRoom (sender) && sender.match("@")){
     
     
    	if (hideDecoUser){
-    	/*emptyList();
-    	showUsers(users);*/
-    	hideOrNotUsers();
+   		emptyList();
+    	showHide();
     }
    
    } 

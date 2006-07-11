@@ -250,7 +250,7 @@ function retrieveVcard(iq){
 				if (street){
 					var streettext = document.getElementById("street");
 					streettext.setAttribute("value",street);
-					streettext.readonly = true;
+					
 				}
 	
 	tag = iq.getNode().getElementsByTagName('PCODE');
@@ -259,7 +259,7 @@ function retrieveVcard(iq){
 				if (zip){
 					var ziptext = document.getElementById("postal");
 					ziptext.setAttribute("value",zip);
-					ziptext.readonly = true;
+					
 				}
 	
 	tag = iq.getNode().getElementsByTagName('CTRY');
@@ -268,7 +268,7 @@ function retrieveVcard(iq){
 				if (country){
 					var countrytext = document.getElementById("country");
 					countrytext.setAttribute("value",country);
-					countrytext.readonly = true;
+					
 				}
 	
 	tag = iq.getNode().getElementsByTagName('LOCALITY');
@@ -277,7 +277,7 @@ function retrieveVcard(iq){
 				if (address){
 					var addresstext = document.getElementById("location");
 					addresstext.setAttribute("value",address);
-					addresstext.readonly = true;
+					
 				}
 				
 				
@@ -287,7 +287,7 @@ function retrieveVcard(iq){
 				if (extra){
 					var extratext = document.getElementById("extra");
 					extratext.setAttribute("value",extra);
-					extratext.readonly = true;
+					
 				}			
 	
 	
@@ -300,7 +300,7 @@ function retrieveVcard(iq){
 			if (number){
 				var numbertext = document.getElementById("phone");
 				numbertext.setAttribute("value",number);
-				numbertext.readonly = true;
+				
 				}
 				
 		tag = iq.getNode().getElementsByTagName('ORGUNIT');
@@ -309,7 +309,7 @@ function retrieveVcard(iq){
 			if (orgunit){
 				var unittext = document.getElementById("department");
 				unittext.setAttribute("value",orgunit);
-				unittext.readonly = true;
+				
 				}	
 				
 		tag = iq.getNode().getElementsByTagName('ROLE');
@@ -318,7 +318,7 @@ function retrieveVcard(iq){
 			if (role){
 				var roletext = document.getElementById("role");
 				roletext.setAttribute("value",role);
-				roletext.readonly = true;
+				
 				}			
 			
 	tag = iq.getNode().getElementsByTagName('ORGNAME');
@@ -327,7 +327,7 @@ function retrieveVcard(iq){
 				if (orgname){
 				var orgnametext = document.getElementById("company");
 				orgnametext.setAttribute("value",orgname);
-				orgnametext.readonly = true;
+				
 				}
 	
 	tag = iq.getNode().getElementsByTagName('EMAIL');
