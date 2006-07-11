@@ -9,12 +9,14 @@
  
  <!--<script type="application/x-javascript" src="JavaScript/settings.js"/> -->
 
-     <!--<script>
+     <script>
         var port = null;
+        var base = null;
         function initialize(){
         port = document.getElementById('chat.connection.port');
+        base = document.getElementById('chat.connection.base');
         }
-    </script> -->
+    </script> 
     <prefpane id="connection" label="Connection">
 
         <preferences>
@@ -85,7 +87,7 @@
                    <row style="visibility: hidden;" id="row-advance">
               
 					<label value="Connection : " control="connection"/>
-                    <checkbox id="polling" checked="false" label="Use HttpPolling" preference="chat.connection.polling" onclick='if(this.checked) document.getElementById("base").value = "http-bind"; else document.getElementById("base").value = "http-poll";'/>
+                    <checkbox id="polling" checked="false" label="Use HttpPolling" preference="chat.connection.polling" onclick='if(this.checked){ document.getElementById("base").value = "http-bind";base.value="http-bind";} else {document.getElementById("base").value = "http-poll"; base.value="http-poll";}'/>
 				</row> 
 
             </rows>

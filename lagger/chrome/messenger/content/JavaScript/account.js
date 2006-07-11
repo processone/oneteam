@@ -14,7 +14,7 @@ var pass = document.getElementById("pass");
 var query = iq.setQuery('jabber:iq:register');
 
 
-var username = iq.getDoc().createElement( "username");
+var username = iq.getDoc().createElement("username");
 
 username.appendChild (iq.getDoc().createTextNode (login.value));
 
@@ -27,7 +27,8 @@ query.appendChild (password);
 
  var oArgs = new Object();
 	
-    oArgs.httpbase = "http://" + server.value + "/http-poll/";
+    //oArgs.httpbase = "http://" + server.value +  "/http-poll/";
+    oArgs.httpbase = "http://" + server.value;
     //oArgs.httpbase = "/http-poll/";
     oArgs.timerval = 2000;
 
@@ -41,6 +42,15 @@ var oArg = new Object();
     oArg.register = true;
     
     con.connect(oArg);
+    
+     if (con.connected()) {
+        //alert ("I'm connected");
+       ;
+    }
+
+    else {
+        alert("connexion failed");
+    }
     
     con.send (iq);
     

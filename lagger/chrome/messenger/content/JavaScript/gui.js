@@ -321,7 +321,6 @@ function initGUI() {
     oArgs.timerval = 2000;
     //oArgs.oDbg = Debug;
 
-	
 	if(!polling)
 	con = new JSJaCHttpBindingConnection(oArgs);
 	else
@@ -1249,7 +1248,9 @@ for (var g = 0; g < groups.length; g++) {
             			if (user [4] == "offline.png"){
                 		//showUser(user);
                 		//userItem.setAttribute ("hidden","true");
-                		document.getElementById(user[0] + "cell").collapsed= true;
+                		//document.getElementById(user[0] + "cell").collapsed= true;
+                		//document.getElementById(user[0] + "cell").style.display="none";
+                		document.getElementById(user[0] + "cell").style.visibility='hidden';
                 		}
                 		else {
                 		countUser++;
@@ -1260,10 +1261,10 @@ for (var g = 0; g < groups.length; g++) {
                		 else {
                		 
                		 	if (user [4] == "offline.png"){
-                		document.getElementById(user[0] + "cell").collapsed=false;
+                		//document.getElementById(user[0] + "cell").collapsed=false;
                 		//userItem.setAttribute("hidden", '');
                			 //showUser(user);
-               			 
+               			 document.getElementById(user[0] + "cell").style.visibility='visible';
                			 }
                 		countUser ++;
                 		}
