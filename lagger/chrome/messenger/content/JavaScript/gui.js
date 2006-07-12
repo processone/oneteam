@@ -766,8 +766,8 @@ function getRoster(iq) {
                 
                 // Don't want msn gate in roster
                  if (items.item(i).getAttribute('jid').match ("@")){
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0);
-            //alert("new user " + items.item(i).getAttribute('jid') + items.item(i).getAttribute('subscription') + items.item(i).getAttribute('category') + group + name);
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png");
+            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources
             users.push(user);
             }
             
@@ -2877,7 +2877,7 @@ function handlePresence(aJSJaCPacket) {
     
     var item = document.getElementById(sender + "cell");
     var user;
-    
+   
    //alert (aJSJaCPacket.xml());
   
 	
@@ -2913,6 +2913,8 @@ function handlePresence(aJSJaCPacket) {
             
             }
     }
+    
+     var oldStatus = user [4];
 
     if (console) {
         cons.addInConsole("IN : " +  aJSJaCPacket.xml() + "\n");
@@ -3019,9 +3021,71 @@ else if (! isRoom (sender) && sender.match("@")){
 	var resources = findResourceByJid(sender);
 	//alert (resources);
 	
+	// NO MATTER THE STATUS
+	// Retrieve priority value and put resources values into resource array
+    		var priorityAnchor = aJSJaCPacket.getNode().getElementsByTagName('priority');
+    		
+    		
+    		if (priorityAnchor.item (0) && priorityAnchor.item (0).firstChild)
+    			priority = priorityAnchor.item (0).firstChild.nodeValue;
+    			
+    		
+    			
+    		var resource = new Array();
+    		resource [0] = clientId;
+    		
+    		if (priority)
+    			resource [1] = priority;
+    		else
+    			resource [1] = 15;
+    		
+    		var contains = false;
+    		for  (var i = 0 ; i < resources.length ; i ++){
+    		//alert (resources [i] [0]);
+    			if (resources [i] [0] == resource [0]){
+    				resources [i] [1] = resource [1];
+    				
+    				contains = true;
+    			}
+    			}
+    	
+    	if (!contains)
+    		resources.push(resource);
+    	
+    		
+    		//alert ("ressources" + resources);
+    	
+    		var nbResources = 0;
+    		user [7] = 0;	
+    			
+    				for  (var j = 0 ; j < resources.length ; j ++){	
+    						nbResources++;
+    						user [7]++;			
+    				}
+    				
+    				
+    	 	if (nbResources > 1){
+    	 	
+    	 		var elementList = document.getElementById (sender + "cell");
+    	 		
+    	 		var label = elementList.getAttribute ("label");
+    	 		
+    	 		//alert (label.charAt (label.length -3 ));
+    	 		//alert (label.substring (label.indexOf ("("),label.indexOf (")")));
+    	 		if (label.charAt (label.length -3 ) == "(") 
+    	 			 newLabel = label.substring (0,label.indexOf ("(") - 1) + " " +  "(" + nbResources + ")";
+    	 		else
+    	 			newLabel = label +  " " +  "(" + nbResources + ")";
+    	 			
+    	 		elementList.setAttribute ("label",newLabel);
+    	 		
+    	 	}
 	
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
+    
+   
+    
         presence = aJSJaCPacket.getFrom() + "has become available.";
         if (item)
         item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "online.png");
@@ -3046,64 +3110,44 @@ else if (! isRoom (sender) && sender.match("@")){
     	emptyList();
     	showHide();
     	}
-    		
-    		// Retrieve priority value and put resources values into resource array
-    		var priorityAnchor = aJSJaCPacket.getNode().getElementsByTagName('priority');
-    		
-    		
-    		if (priorityAnchor.item (0) && priorityAnchor.item (0).firstChild)
-    			priority = priorityAnchor.item (0).firstChild.nodeValue;
-    			
-    		
-    			
-    		var resource = new Array();
-    		resource [0] = clientId;
-    		
-    		if (priority)
-    			resource [1] = priority;
-    		else
-    			resource [1] = 5;
-    		
-    		var contains = false;
-    		for  (var i = 0 ; i < resources.length ; i ++){
-    			if (resources [i] [0] == resource [0]){
-    				resources [i] [1] = resource [1];
-    				contains = true;
+    
+    	
+    	
+    	
+    	if (resources && (resources.length > 1) ){
+    				
+    				var maxPrio = -1;
+    				
+    				for  (var i = 0 ; i < resources.length ; i ++){
+    					if (resources [i] [0] == clientId){
+    						priority = resources [i] [1];
+    				
+    				     }
+    				     
+    				     if  (resources [i] [1] > maxPrio)
+    				     	maxPrio = resources [i] [1];
     			}
-    			}
-    	
-    	if (!contains)
-    		resources.push(resource);
-    	
-    		
-    		//alert ("ressources" + resources);
-    	
-    		var nbResources = 0;
-    		user [7] = 0;	
     			
-    				for  (var j = 0 ; j < resources.length ; j ++){	
-    						nbResources++;
-    						user [7]++;			
-    				}
-    				
-    				
-    	 	if (nbResources > 1){
-    	 	//alert ("ressources > 1" + sender);
-    	 		var elementList = document.getElementById (sender + "cell");
-    	 		
-    	 		var label = elementList.getAttribute ("label");
-    	 		
-    	 		//alert (label.charAt (label.length -3 ));
-    	 		//alert (label.substring (label.indexOf ("("),label.indexOf (")")));
-    	 		if (label.charAt (label.length -3 ) == "(") 
-    	 			 newLabel = label.substring (0,label.indexOf ("(") - 1) + " " +  "(" + nbResources + ")";
-    	 		else
-    	 			newLabel = label +  " " +  "(" + nbResources + ")";
-    	 			
-    	 		elementList.setAttribute ("label",newLabel);
-    	 		
-    	 	}
-    				
+    			var newStatus = user [4];
+    			
+    			if (maxPrio > priority) {
+    			
+    				if (item)
+        				item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  oldStatus);
+       
+                               
+        			user [4] = oldStatus;
+         			var imghead = document.getElementById("imghead"+ user[0]);
+						if (imghead) 
+        						imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+    					
+    			}
+    			else{ 		
+           		user [8] = oldStatus; 
+           		//alert ("j'ai la priorit? lautre resource a pour  statut : " + user  [8]);
+           		}		
+        				
+   		}
     			
     } // endif !getType !getShow
     	
@@ -3121,65 +3165,9 @@ else if (! isRoom (sender) && sender.match("@")){
         var type = aJSJaCPacket.getType();
         var show = aJSJaCPacket.getShow();
         
-        for  (var i = 0 ; i < resources.length ; i ++){
-    			if (resources [i] [0] == clientId){
-    				priority = resources [i] [1];
-    				
-    				}
-    			}
         
-         // If sender own resources,take its max priority's one
-    			if (resources && (resources.length > 1) ){
-    			
-    			// Check to delete resource once user is offline
-    				
-    				var maxPrio = priority;
-    				var maxPrioIndex = 0;
-    				
-    				for  (var i = 0 ; i < resources.length ; i ++){
-    						if (resources [i] [0] == clientId){
-    							if (type)
-    								resources [i][2] = type.substring(0, 2);
-    							else
-    								resources [i][3] = show.substring(0, 2);
-    							
-    						}
-    					if (resources [i] [1] > maxPrio){
-    						//alert("ressource sup?rieure" + resources [i] [1]);
-    						maxPrioIndex = i; 
-    						maxPrio = resources [i] [1];
-    						}
-    						
-    						
-    				}
-    				
-    				
-    				if (type){
-    					
-           		 		
-           		 		if (resources [maxPrioIndex][2] == "undefined")
-           		 		{	
-           		 			if (item)
-               					 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "online.png");
-                				 user [4] = "online.png";
-                 				var imghead = document.getElementById("imghead"+ user[0]);
-									if (imghead) 
-        						imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
-           					 }	
-           		 		/*else{
-           		 			type = resources [maxPrioIndex][2];
-           		 			alert ("if type" + type);
-           		 		
-           		 			}*/
-           		 		}
-           		 		
-           		 	/*else{
-           		 		
-           		 		show = resources [maxPrioIndex][3];
-           		 		alert (" show " + show);
-           		 		}*/
-        		}
-        /**********************************************/
+        
+        
         
        		 if (type) {
            		 
@@ -3213,37 +3201,19 @@ else if (! isRoom (sender) && sender.match("@")){
     	 		var label = elementList.getAttribute ("label");
     	 		
     	 		
+    	 		
     	 		user [7] --;
     	 		
     	 		if (user [7] > 1){
-    	 			alert ("user [7]> 1");
+    	 			//alert ("user [7]> 1");
     	 			elementList.setAttribute ("label",keepLogin(sender) + " " +  "(" + user[7] + ")");
     	 		}
     	 		else {
-    	 			alert ("user [7] <= 1");
+    	 			//alert ("user [7] <= 1");
     	 			elementList.setAttribute ("label",keepLogin(sender));
     	 			}
     	 			
-    	 	/***********************/
-    	 		if (resources && (resources.length > 1) ){	
-					var maxPrioIndex = 0;
-    				
-    				
-    				var maxPrio = priority;
-    				
-    				for  (var i = 0 ; i < resources.length ; i ++){
-    						
-    					if (resources [i] [1] > maxPrio){
-    						maxPrioIndex = i; 
-    						maxPrio = resources [i] [1];
-    						}
-    				}	
-    				
-           		 		type = resources [maxPrioIndex][2];
-           		 		alert ("type du max priority" + type);	
-           		 		show = resources [maxPrioIndex][3];
-           		 		}
-           /**********************/
+    	 
            			 }
             if (type.substring(0, 2) == "in") {
             if (item)
@@ -3306,7 +3276,56 @@ else if (! isRoom (sender) && sender.match("@")){
     	showHide();
     }
    
-   } 
+   }
+   
+   if (resources && (resources.length > 1) ){
+    				
+    				var maxPrio = -1;
+    				
+    				for  (var i = 0 ; i < resources.length ; i ++){
+    					if (resources [i] [0] == clientId){
+    						priority = resources [i] [1];
+    				
+    				     }
+    				     
+    				     if  (resources [i] [1] > maxPrio)
+    				     	maxPrio = resources [i] [1];
+    			}
+    			
+    			var newStatus = user [4];
+    			
+    			// If i don't have priority , i keep the status of previous presence
+    			if (maxPrio > priority) {
+    			
+    				if (item)
+        				item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  oldStatus);
+       
+                              
+        			user [4] = oldStatus;
+         			var imghead = document.getElementById("imghead"+ user[0]);
+						if (imghead) 
+        						imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+    					
+    			}
+    			
+    			else {
+    			// If user online , take the status of other resource
+    				if (newStatus == "offline.png"){
+    				alert ("je rentre");		
+           		 	if (item)
+        				item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  user[8]);
+       
+                              
+        			user [4] = user[8];
+         			var imghead = document.getElementById("imghead"+ user[0]);
+						if (imghead) 
+        					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);	
+           		 		
+           		 		}
+        		}		
+   		}
+   		//user [8] = newStatus;
+   		
     
     } catch (e) {alert("handle presence" + e);}
     //alert (presence);
