@@ -42,7 +42,10 @@ var invitingJid;
 var invitingRoom;
 var invitingReason;
 
-var suscribed;
+var subscribe;
+var subscribed;
+var unsubscribe;
+var unsubscribed;
 
 var secs;
 var timerID = null;
@@ -2557,6 +2560,10 @@ function joinRoom() {
 // Function to close the window
 function closeWindows() {
 
+for (var i = 0 ; i < rooms.length ; i++){
+		exitRoom (rooms [i]);
+		}
+
    con.disconnect();
    
 Components.classes['@mozilla.org/toolkit/app-startup;1']
@@ -3037,7 +3044,7 @@ else if (! isRoom (sender) && sender.match("@")){
     		if (priority)
     			resource [1] = priority;
     		else
-    			resource [1] = 15;
+    			resource [1] = 0;
     		
     		var contains = false;
     		for  (var i = 0 ; i < resources.length ; i ++){
@@ -3178,10 +3185,19 @@ else if (! isRoom (sender) && sender.match("@")){
            		
            		
            		else if (type == 'subscribed') {
-           			suscribed = sender;
-           			window.open("chrome://messenger/content/suscribed.xul", "", "chrome,centerscreen,resizable");
+           			subscribed = sender;
+           			window.open("chrome://messenger/content/subscribed.xul", "", "chrome,centerscreen,resizable");
+           		}
+           		
+           		else if (type == 'unsubscribe') {
+           			unsubscribe = sender;
+           			window.open("chrome://messenger/content/unsuscribe.xul", "", "chrome,centerscreen,resizable");
            		}
            	
+           		else if (type == 'unsubscribed') {
+           			unsubscribed = sender;
+           			window.open("chrome://messenger/content/unsuscribed.xul", "", "chrome,centerscreen,resizable");
+           		}
 
             		presence += aJSJaCPacket.getType();
            		 //alert (type.substring(0,2));

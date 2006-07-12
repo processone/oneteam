@@ -32,7 +32,10 @@
     <script type="application/x-javascript" src="JavaScript/fileTransfert.js"/>
     <script type="application/x-javascript" src="JavaScript/changePriority.js"/>
     <script type="application/x-javascript" src="JavaScript/invite.js"/>
-    <script type="application/x-javascript" src="JavaScript/suscribed.js"/>
+    <script type="application/x-javascript" src="JavaScript/subscribed.js"/>
+    <script type="application/x-javascript" src="JavaScript/subscribe.js"/>
+    <script type="application/x-javascript" src="JavaScript/unsubscribed.js"/>
+    <script type="application/x-javascript" src="JavaScript/unsubscribe.js"/>
     
     <script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>

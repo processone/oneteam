@@ -45,8 +45,8 @@ query.appendChild (password);
 
  var oArgs = new Object();
 	
-    //oArgs.httpbase = "http://" + server.value +  "/http-poll/";
-    oArgs.httpbase = "http://" + server.value;
+    oArgs.httpbase = "http://" + server.value +  ":5280/http-poll/";
+    //oArgs.httpbase = "http://" + server.value;
     //oArgs.httpbase = "/http-poll/";
     oArgs.timerval = 2000;
    // oArgs.oDbg = Debug;
