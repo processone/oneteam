@@ -130,7 +130,7 @@
                         <menuitem label="&menulagger.joinConference;" oncommand="joinRoom();"/>
                         <menuseparator/>
                         <menuitem label="&menulagger.servicesDiscovery;" oncommand="openDisco();"/>
-                        <menuitem label="&menulagger.adminTools;"/>
+                       <!-- <menuitem label="&menulagger.adminTools;"/> -->
                         <menuseparator/>
                         <menuitem label="&menulagger.quitter;" oncommand="closeWindows();"/>
                     </menupopup>
@@ -287,7 +287,7 @@
                     <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
                 </popup>
                 <popup id="itemcontextgroup">
-                    <menuitem label="&listitemcontextgroup.Rename;" oncommand="renameGroup(event);"/>
+                    <menuitem label="&listitemcontextgroup.Rename;" oncommand='window.open("chrome://messenger/content/renameRoom.xul", "Change room name", "chrome,titlebar,toolbar,centerscreen,modal");'/>
                 	
                 </popup>
                 <popup id="itemcontextroom">

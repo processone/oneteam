@@ -2074,6 +2074,42 @@ if (namehead)
 
 }
 
+// Function to change the name of a room
+function changeRoomName (name){
+
+var oldValue = document.getElementById("liste_contacts").selectedItem.label;
+
+document.getElementById("liste_contacts").selectedItem.label = name;
+
+
+       for (var i = 0; i < users.length; i++) {
+
+            var user = users[i];
+            if (user [2] == oldValue){
+            
+            
+				var iq = new JSJaCIQ();
+       				 iq.setType('set');
+       					 var query = iq.setQuery('jabber:iq:roster');
+       				 var item = query.appendChild(iq.getDoc().createElement('item'));
+        			item.setAttribute('jid', user [0]);
+        			var group = item.appendChild(iq.getDoc().createElement('group'));
+       
+       				 group.appendChild(iq.getDoc().createTextNode(name));
+
+        //alert (iq.xml());
+        con.send(iq);
+        
+         if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+   	 }
+				}
+
+		}
+
+}
+
+
 // Function to create a room
 function createRoom() {
 
