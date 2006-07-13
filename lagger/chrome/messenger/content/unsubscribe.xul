@@ -16,12 +16,13 @@
 
 <script type="application/x-javascript" src="JavaScript/gui.js"/>
 <script type="application/x-javascript" src="JavaScript/unsubscribe.js"/>
+
         
 <vbox>
 
 <spacer height="30"/>
 
-<label id="messageSuscription" value="Cancel of authorisation has been sent"/>
+<label id="messageUnsubscription" value="Cancel of authorisation has been sent"/>
 
 <spacer height="20"/>
 

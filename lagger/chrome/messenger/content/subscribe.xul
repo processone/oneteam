@@ -21,7 +21,7 @@
 
 <spacer height="30"/>
 
-<label id="messageSuscription" value="authorisation ask sent"/>
+<label id="messageSubscribe"/>
 
 <spacer height="20"/>
 

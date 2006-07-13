@@ -600,6 +600,9 @@ function forbidToSeeMe (jid){
      if (console) {
         cons.addInConsole("OUT : " + aPresence.xml() + "\n");
     }
+    
+    var user = findUserByJid(jid);
+    user [7]--;
 
 }
 
@@ -3091,7 +3094,12 @@ else if (! isRoom (sender) && sender.match("@")){
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
     
-   
+   		user [4] = "online.png";
+   	
+   		if (hideDecoUser){
+    		emptyList();
+    		showHide();
+    	}
     
         presence = aJSJaCPacket.getFrom() + "has become available.";
         if (item)
@@ -3108,15 +3116,12 @@ else if (! isRoom (sender) && sender.match("@")){
                                
         
                                
-        user [4] = "online.png";
+        
          var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
     	
-    	if (hideDecoUser){
-    	emptyList();
-    	showHide();
-    	}
+    	
     
     	
     	
@@ -3181,6 +3186,7 @@ else if (! isRoom (sender) && sender.match("@")){
            		 
            		 if (type == 'subscribe') {
                		 authorizeContactSeeMe(sender);
+               		 window.open("chrome://messenger/content/subscribe.xul", "", "chrome,centerscreen,resizable");
            			}
            		
            		
@@ -3191,28 +3197,33 @@ else if (! isRoom (sender) && sender.match("@")){
            		
            		else if (type == 'unsubscribe') {
            			unsubscribe = sender;
-           			window.open("chrome://messenger/content/unsuscribe.xul", "", "chrome,centerscreen,resizable");
+           			window.open("chrome://messenger/content/unsubscribe.xul", "", "chrome,centerscreen,resizable");
            		}
            	
            		else if (type == 'unsubscribed') {
            			unsubscribed = sender;
-           			window.open("chrome://messenger/content/unsuscribed.xul", "", "chrome,centerscreen,resizable");
+           			window.open("chrome://messenger/content/unsubscribed.xul", "", "chrome,centerscreen,resizable");
            		}
 
             		presence += aJSJaCPacket.getType();
            		 //alert (type.substring(0,2));
            		 if (type.substring(0, 2) == "un") {
+           		 
+           		 	user [4] = "offline.png";
+           		 	
+           		 	if (hideDecoUser){
+                			emptyList();
+						    showHide();
+						}
+           		 
            		 	if (item)
               	  		item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  "offline.png");
-                	user [4] = "offline.png";
+                	
                 	user [6] = "true";
                  	var imghead = document.getElementById("imghead"+ user[0]);
 					if (imghead) 
         					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
-                		if (hideDecoUser){
-                			emptyList();
-						    showHide();
-						}
+                		
 				var elementList = document.getElementById (sender + "cell");
     	 		var label = elementList.getAttribute ("label");
     	 		
@@ -3222,19 +3233,24 @@ else if (! isRoom (sender) && sender.match("@")){
     	 		
     	 		if (user [7] > 1){
     	 			//alert ("user [7]> 1");
+    	 			if (elementList)
     	 			elementList.setAttribute ("label",keepLogin(sender) + " " +  "(" + user[7] + ")");
     	 		}
     	 		else {
     	 			//alert ("user [7] <= 1");
+    	 			if (elementList)
     	 			elementList.setAttribute ("label",keepLogin(sender));
     	 			}
     	 			
     	 
            			 }
             if (type.substring(0, 2) == "in") {
+            
+            user [4] = "invisible.png";
+            
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "invisible.png");
-                user [4] = "invisible.png";
+                
                  var imghead = document.getElementById("imghead"+ user[0]);
 				if (imghead) 
         				imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
