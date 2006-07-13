@@ -602,7 +602,7 @@ function forbidToSeeMe (jid){
     }
     
     var user = findUserByJid(jid);
-    user [7]--;
+    alert ("nb de ressources" + user [7]);
 
 }
 
@@ -3044,6 +3044,7 @@ else if (! isRoom (sender) && sender.match("@")){
     		var resource = new Array();
     		resource [0] = clientId;
     		
+    		
     		if (priority)
     			resource [1] = priority;
     		else
@@ -3059,7 +3060,7 @@ else if (! isRoom (sender) && sender.match("@")){
     			}
     			}
     	
-    	if (!contains)
+    	if (!contains && !(resource [0].match("@")))
     		resources.push(resource);
     	
     		
@@ -3072,7 +3073,8 @@ else if (! isRoom (sender) && sender.match("@")){
     						nbResources++;
     						user [7]++;			
     				}
-    				
+    		
+    		
     				
     	 	if (nbResources > 1){
     	 	
@@ -3087,6 +3089,7 @@ else if (! isRoom (sender) && sender.match("@")){
     	 		else
     	 			newLabel = label +  " " +  "(" + nbResources + ")";
     	 			
+    	 			if (elementList)
     	 		elementList.setAttribute ("label",newLabel);
     	 		
     	 	}
@@ -3225,6 +3228,8 @@ else if (! isRoom (sender) && sender.match("@")){
         					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
                 		
 				var elementList = document.getElementById (sender + "cell");
+				
+				if (elementList)
     	 		var label = elementList.getAttribute ("label");
     	 		
     	 		
@@ -3343,12 +3348,20 @@ else if (! isRoom (sender) && sender.match("@")){
     			else {
     			// If user online , take the status of other resource
     				if (newStatus == "offline.png"){
-    				alert ("je rentre");		
+    				//alert ("je rentre");
+    				
+    				user [4] = user[8];
+    				
+    				if (hideDecoUser){
+   						emptyList();
+    					showHide();
+   					 }
+    						
            		 	if (item)
         				item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") +  user[8]);
        
                               
-        			user [4] = user[8];
+        			
          			var imghead = document.getElementById("imghead"+ user[0]);
 						if (imghead) 
         					imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);	
