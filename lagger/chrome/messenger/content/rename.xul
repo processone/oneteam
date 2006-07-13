@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+
+<dialog id="changeName" title="Change Name"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        buttons="accept,cancel"
+        ondialogaccept="return doOK();"
+        ondialogcancel="return doCancel();">
+        
+        <script type="application/x-javascript" src="JavaScript/gui.js"/>
+         <script type="application/x-javascript" src="JavaScript/rename.js"/>
+
+
+<hbox>
+<description value="New Name : "/>
+<textbox id="name"/>
+</hbox>
+
+</dialog>

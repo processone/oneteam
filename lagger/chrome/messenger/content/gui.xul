@@ -139,8 +139,10 @@
                 <menu id="configuration-menu" label="&menuConfig.configuration;">
                     <menupopup id="config-popup">
                    		 <menuitem label="&menuConfig.editinfo;" oncommand="launchPersoInfoWindow ();"/>
+                   		 <menuseparator/>
                         <menuitem label="&menuConfig.plugins;" oncommand="launchExtWindow ();"/>
                         <menuitem label="&menuConfig.themes;" oncommand="launchThemeWindow ();"/>
+                        <menuseparator/>
                         <menuitem label="&menuConfig.preferences;" oncommand="launchPreferences();"/>
 
                     </menupopup>
@@ -245,19 +247,19 @@
             <popupset>
                 <popup id="itemcontext">
                     <menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
-                    <menuitem label="&listitemcontext.InviterConference;"/>
+                    <!--<menuitem label="&listitemcontext.InviterConference;"/>-->
                     <menuseparator/>
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
-                    <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
+                    <menuitem label="&listitemcontext.Rename;" oncommand='window.open("chrome://messenger/content/rename.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");'/>
                     <menuseparator/>
                       
          			 
-                    <menu label="Authorisation">
+                    <menu label="&listitemcontext.Authorisation;">
                     <menupopup id="auto-popup">
                     
-                    	<menuitem id="ask" label="Ask to see him" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
-                    <menuitem id="authorize" label="Authorize to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
-          				  <menuitem id="forbid" label="Forbid him to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);'/>
+                    	<menuitem id="ask" label="&listitemcontext.Ask;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
+                    <menuitem id="authorize" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
+          				  <menuitem id="forbid" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);'/>
           				  
          				 </menupopup>
          			</menu>
@@ -270,14 +272,14 @@
                     <menuitem label="&listitemcontext.InviterConference;"/>
                     <menuseparator/>
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
-                    <menuitem label="&listitemcontext.Rename;" oncommand="renameRosterElement();"/>
+                    <menuitem label="&listitemcontext.Rename;" oncommand='window.open("chrome://messenger/content/rename.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");'/>
                     <menuseparator/>
-                      <menu label="Authorisation">
+                      <menu label="&listitemcontext.Authorisation;">
                     <menupopup id="autotemp-popup">
                     
-                    	<menuitem id="asktemp" label="Ask to see him" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
-                    <menuitem id="authorizetemp" label="Authorize to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
-          				  <menuitem id="forbidtemp" label="Forbid him to see me" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);this.disabled=true;'/>
+                    	<menuitem id="asktemp" label="&listitemcontext.Ask;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
+                    <menuitem id="authorizetemp" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
+          				  <menuitem id="forbidtemp" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);this.disabled=true;'/>
           				  
          				 </menupopup>
          			</menu>

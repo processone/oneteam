@@ -20,6 +20,10 @@
 <!ENTITY listitemcontext.SupprimerContact "Supprimer le contact">
 <!ENTITY listitemcontext.InviterConference "Inviter a la conference">
 <!ENTITY listitemcontext.Rename "Renommer">
+<!ENTITY listitemcontext.Authorisation "Autorisation">
+<!ENTITY listitemcontext.Ask "Demander l'autorisation de le voir">
+<!ENTITY listitemcontext.Authorize "Autoriser à me voir">
+<!ENTITY listitemcontext.Forbid "Annuler l'autorisation">
 <!ENTITY listitemcontext.Infos "Infos">
 
 <!ENTITY listitemcontextgroup.Rename "Renommer">

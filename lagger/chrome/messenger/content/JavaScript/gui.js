@@ -174,7 +174,7 @@ function openConversation(event) {
        
         
         var namehead = document.createElement("label");
-        namehead.setAttribute("value", keepLogin(id));
+        namehead.setAttribute("value", document.getElementById(id + "cell").getAttribute("label"));
         namehead.setAttribute("id","namehead" + keepLogin(id));
        
         
@@ -192,7 +192,7 @@ function openConversation(event) {
         
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + id);
-        tab.setAttribute("label", (id).substring(0, (id).indexOf("@")));
+        tab.setAttribute("label",  document.getElementById(id + "cell").getAttribute("label"));
         tab.setAttribute("context", "tabcontext");
         tab.setAttribute("onfocus","tabfocused()");
         
@@ -2021,6 +2021,58 @@ if (console) {
     }
 }
 
+
+
+// Function to change name of a contact
+function changeName (name){
+
+var jid = document.getElementById ("liste_contacts").selectedItem.id;
+var server = jid.substring (jid.indexOf ("/") + 1, jid.length);
+var user = findUserByJid(jid);
+
+var oldLabel = document.getElementById(jid + "cell").getAttribute("label");
+
+var nbResources = user [7];
+
+if (nbResources > 1)
+	document.getElementById(jid + "cell").setAttribute("label",name + " (" + nbResources + ")");
+else
+	document.getElementById(jid + "cell").setAttribute("label",name);
+	
+var tab = document.getElementById("tab" + jid);
+
+if (tab)
+	tab.setAttribute ("label",name);
+	
+var namehead = document.getElementById("namehead" + keepLogin(jid));
+
+if (namehead)
+	namehead.setAttribute ("value",name);
+
+ try {
+        var iq = new JSJaCIQ();
+        iq.setType('set');
+        var query = iq.setQuery('jabber:iq:roster');
+        var item = query.appendChild(iq.getDoc().createElement('item'));
+        item.setAttribute('jid', jid);
+        item.setAttribute('name',name);
+        var group = item.appendChild(iq.getDoc().createElement('group'));
+        /*if (groups.selectedItem)
+            var chosenGroup = groups.selectedItem.id;*/
+        
+        group.appendChild(iq.getDoc().createTextNode(user[2]));
+
+        //alert (iq.xml());
+        con.send(iq);
+        
+         if (console) {
+        cons.addInConsole("IN : " + iq.xml() + "\n");
+   	 }
+   	 
+   	 }
+ catch (e) {alert ("change name : " + e);}
+
+}
 
 // Function to create a room
 function createRoom() {
