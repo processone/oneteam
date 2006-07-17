@@ -36,6 +36,7 @@
     <script type="application/x-javascript" src="JavaScript/subscribe.js"/>
     <script type="application/x-javascript" src="JavaScript/unsubscribed.js"/>
     <script type="application/x-javascript" src="JavaScript/unsubscribe.js"/>
+    <script type="application/x-javascript" src="JavaScript/status.js"/>
     
     <script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
@@ -323,6 +324,9 @@
                               oncommand="changeStatus('chat');"/>
                     <menuitem class="menuitem-iconic" label="&status.Dnd;"
                               oncommand="changeStatus('dnd');"/>
+                    <menuseparator/>
+                    <menuitem class="menuitem-iconic" label="&status.changeMessage;"
+                              oncommand='window.open("chrome://messenger/content/status.xul", "", "chrome,centerscreen");'/>
                 </menupopup>
             </menulist>
             

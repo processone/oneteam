@@ -2476,35 +2476,42 @@ function notifyWriting(jid) {
 
 
 // Function to change its  status
-function changeStatus(status) {
+function changeStatus(show) {
 
+	var presence = new JSJaCPresence();
 
     var liste = document.getElementById("status");
     var selected = liste.selectedItem.value;
 
     //alert(selected);
-    if (status == "dnd") {
-        myPresence.setShow('dnd');
+    if (show == "dnd") {
+        presence.setShow('dnd');
+        //presence.setStatus('dnd');
         //alert("mise a dnd");
     }
-    if (status == "chat") {
-        myPresence.setShow('chat');
+    if (show == "chat") {
+        presence.setShow('chat');
+        //presence.setStatus('chat');
         //alert("mise a chat");
     }
-    if (status == "away") {
-        myPresence.setShow('away');
+    if (show == "away") {
+        presence.setShow('away');
+        //presence.setStatus('away');
         //alert("away");
     }
-    if (status == "xa") {
-        myPresence.setShow('xa');
+    if (show == "xa") {
+        presence.setShow('xa');
+        //presence.setStatus('xa');
         //alert("xa");
     }
+    
+    presence.setPriority(myPresence.getPriority());
 
 
     // Specify presence to server
-    con.send(myPresence);
+    con.send(presence);
      if (console) {
-        cons.addInConsole("OUT : " + myPresence.xml() + "\n");
+        cons.addInConsole("OUT : " + presence.xml() + "\n");
     }
 }
 
@@ -3168,6 +3175,8 @@ else if (! isRoom (sender) && sender.match("@")){
     	 	
     	 		var elementList = document.getElementById (sender + "cell");
     	 		
+    	 		
+    	 		if (elementList){
     	 		var label = elementList.getAttribute ("label");
     	 		
     	 		//alert (label.charAt (label.length -3 ));
@@ -3177,8 +3186,9 @@ else if (! isRoom (sender) && sender.match("@")){
     	 		else
     	 			newLabel = label +  " " +  "(" + nbResources + ")";
     	 			
-    	 			if (elementList)
+    	 			
     	 		elementList.setAttribute ("label",newLabel);
+    	 		}
     	 		
     	 	}
 	

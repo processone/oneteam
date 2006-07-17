@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/status.dtd">
+
+
+<window id="Status Message"
+        title="&Status.message;"
+        orient="horizontal"
+      	
+        width="230"
+        height="280"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+    <script type="application/x-javascript" src="JavaScript/prefs.js"/>
+    <script type="application/x-javascript" src="JavaScript/shared.js"/>
+    <script type="application/x-javascript" src="JavaScript/gui.js"/>
+    <script type="application/x-javascript" src="JavaScript/status.js"/>
+
+   <vbox flex="1">
+   
+   <spacer height="20"/>
+   
+   <label value="&Status.enter;"/>
+   
+   <spacer height="10"/>
+   
+   <textbox id="statustext" height="60" flex="1"/>
+   
+    <spacer height="20"/>
+    
+     <label value="&Status.choose;"/>
+     
+      <spacer height="10"/>
+    
+     <menulist id="selectStatus" height="30" width="150">
+                <menupopup flex="1">
+                	<menuitem label=" "/>
+                    <menuitem label="&Status.brb;"/>
+                    <menuitem label="&Status.outside;"/>
+                    <menuitem label="&Status.sleeping;"/>
+                    <menuitem label="&Status.film;"/>
+                    <menuitem label="&Status.eating;"/>
+                    <menuitem label="&Status.working;"/>
+                  	<menuitem label="&Status.phoning;"/>
+                </menupopup>
+            </menulist>
+   
+    <spacer height="35"/>
+        
+        <hbox align="right">
+       		 <button label="OK" onclick="sendStatus();"/>
+       		 <button label="Cancel" onclick="self.close();"/>
+        </hbox>
+   
+   </vbox>
+
+</window>

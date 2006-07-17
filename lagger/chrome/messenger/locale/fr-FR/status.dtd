@@ -1,0 +1,11 @@
+<!ENTITY Status.message "Message d'état">
+<!ENTITY Status.enter "Entrez votre message d'état :">
+<!ENTITY Status.choose "Ou choisissez votre message d'état :">
+<!ENTITY Status.brb "Bientot de retour">
+<!ENTITY Status.outside "Dehors">
+<!ENTITY Status.sleeping "Dors">
+<!ENTITY Status.working "Travaille">
+<!ENTITY Status.film "Film">
+<!ENTITY Status.eating "Mange">
+<!ENTITY Status.phoning "Telephone">
+
