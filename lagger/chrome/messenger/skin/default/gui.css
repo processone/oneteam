@@ -40,3 +40,10 @@ list-style-image: url( "chrome://messenger/skin/images/away.png" );
  border: none;
  list-style-image: url("chrome://messenger/content/img/close.png");
 }
+
+
+
+#status {
+list-style-image: url( "chrome://messenger/content/img/online.png" );
+}
+

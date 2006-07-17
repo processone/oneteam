@@ -2505,6 +2505,10 @@ function changeStatus(show) {
         //alert("xa");
     }
     
+    if (show =="invisible"){
+    	presence.setType('invisible');
+    	}
+    
     presence.setPriority(myPresence.getPriority());
 
 
@@ -2515,6 +2519,22 @@ function changeStatus(show) {
     }
 }
 
+
+function changeIcone(img){
+
+if (img == "dnd.png")
+	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/dnd.png")';
+if (img == "online.png")
+	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/online.png")'; 
+if (img == "away.png")
+	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/away.png")'; 
+if (img == "xa.png")
+	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/xa.png")'; 
+if (img == "invisible.png")
+	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/invisible.png")'; 
+ 
+
+}
 
 
 /************************************ WINDOWS ******************************************/
@@ -2873,7 +2893,7 @@ function handleMessage(aJSJaCPacket) {
         text.setAttribute("type","content");
         text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
-        text.setAttribute("flex", "1");
+        text.setAttribute("flex", "5");
         vboxpanel.appendChild(text);
     }
 

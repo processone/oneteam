@@ -215,7 +215,7 @@
  			</tree> -->
  			
  			<!--  onselect='document.getElementById("liste_contacts").clearSelection();currentItem.selected(true);'-->
- 			 <listbox height="400" width="150"  minwidth="140" id="liste_conf" flex="1"  
+ 			 <listbox height="400" width="150"  minwidth="140" id="liste_conf" flex="5"  
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
@@ -315,15 +315,21 @@
             
             
               <!-- Personal status list -->
-            <menulist label="Available" id="status" height="50" width="150" flex="1" maxheight="50" minheight="30"
-                       minwidth="140" src="img/online.png">
-                <menupopup flex="1">
-                    <menuitem class="menuitem-iconic icon-away" label="&status.Away;"
-                              oncommand="changeStatus('away');"/>
+            <menulist label="Available" id="status" height="50" width="150" flex="5" maxheight="60" minheight="30"
+                       minwidth="140">
+                <menupopup flex="5">
+                    <menuitem id="away" class="menuitem-iconic" label="&status.Away;"
+                              oncommand='changeStatus("away");changeIcone("away.png");'/>
                     <menuitem class="menuitem-iconic" label="&status.Available;" selected="true"
-                              oncommand="changeStatus('chat');"/>
-                    <menuitem class="menuitem-iconic" label="&status.Dnd;"
-                              oncommand="changeStatus('dnd');"/>
+                              oncommand='changeStatus("chat");changeIcone("online.png");'/>
+                    <menuitem id="dnd" class="menuitem-iconic" label="&status.Dnd;"
+                              oncommand='changeStatus("dnd");changeIcone("dnd.png");'/>
+                    <menuitem id="xa" class="menuitem-iconic" label="&status.Undisponible;"
+                              oncommand='changeStatus("xa");changeIcone("xa.png");'/>
+                    <menuitem id="invisible" class="menuitem-iconic" label="&status.Invisible;"
+                              oncommand='changeStatus("invisible");changeIcone("invisible.png");'/>
+                   
+                    
                     <menuseparator/>
                     <menuitem class="menuitem-iconic" label="&status.changeMessage;"
                               oncommand='window.open("chrome://messenger/content/status.xul", "", "chrome,centerscreen");'/>

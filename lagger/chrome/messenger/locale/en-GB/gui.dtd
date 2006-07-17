@@ -44,4 +44,6 @@
 <!ENTITY status.Away "Away">
 <!ENTITY status.Available "Available">
 <!ENTITY status.Dnd "Busy">
+<!ENTITY status.Undisponible "Not available">
+<!ENTITY status.Invisible "Invisible">
 <!ENTITY status.changeMessage "Status message">
