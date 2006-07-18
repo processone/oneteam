@@ -168,7 +168,7 @@ function openConversation(event) {
         var imghead = document.createElement("image");
        imghead.setAttribute("id", "imghead"+ id);
         var status = findStatusByJid(id);
-        imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + status);
+        imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref('chat.general.iconsetdir') + status);
         
         
        
@@ -794,7 +794,7 @@ function getRoster(iq) {
     		
         showUsers(users);
         //loadServers();
-      //alert(iq.xml());
+      alert(iq.xml());
         
       
         //sendDiscoRoomRequest(conferences[0]);
@@ -1196,6 +1196,24 @@ function closeAllTab() {
 	 
 	 if (parent.firstChild.getAttribute("context") == "tabroomcontext"){
 		    var jid = parent.firstChild.id.substring(parent.firstChild.id.indexOf("b") + 1,parent.firstChild.id.length);
+	  		
+	  		var element = document.getElementById(jid);
+			
+			var cellConf = document.getElementById(jid + "cell");
+			cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+			
+			// mask all users in room
+			
+			var el= element.nextSibling;
+			if (el)
+			while (el.getAttribute("id").match(jid)){
+				//alert (el.id);
+					listconfs.removeChild(el);
+					el = element.nextSibling;
+					if (!el)
+					break;
+					}
+	  		
 	  		var nick;
 		
 			for (var i = 0 ; i < rooms.length ; i++){
@@ -2835,7 +2853,7 @@ function handleMessage(aJSJaCPacket) {
 		var imghead = document.createElement("image");
         imghead.setAttribute("id", "imghead"+ jid);
         var status = findStatusByJid(jid);
-        imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + status);
+        imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref('chat.general.iconsetdir') + status);
         hboxhead.appendChild (imghead);
         
         //}

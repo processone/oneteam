@@ -11,17 +11,23 @@ var selected = document.getElementById("selectStatus").value;
 
 var entered = document.getElementById("statustext").value;
 
+
+
 var presence = new JSJaCPresence();
 
 var myPresence = window.opener.myPresence;
 
 presence.setPriority (myPresence.getPriority());
 
-if (selected != " ")
-	presence.setStatus (selected);
-else
+if (selected != " "){
 	presence.setStatus (entered);
+
+	}
+else
+	{
+	presence.setStatus (selected);
 	
+	}
 	
 	con.send(presence);
         

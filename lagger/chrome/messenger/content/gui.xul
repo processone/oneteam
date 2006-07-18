@@ -298,7 +298,8 @@
                     <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>
                 		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>
                 		<menuseparator/>
-                		<menuitem label="&listitemcontextroom.Close;" oncommand="closeTab();"/>
+                		<!--  disabled="true" -->
+                		<menuitem id="closeRoom" label="&listitemcontextroom.Close;" oncommand="closeTab();"/>
                 </popup>
                 <popup id="itemcontextroomuser">
                 		<!--<menuitem label="&listitemcontextroomuser.InsertRoom;" oncommand="enterRoom(event);"/>
