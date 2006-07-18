@@ -25,8 +25,8 @@
 
 <spacer height="20"/>
 
-<button label="OK" width="50" oncommand="self.close();" />
-
+<button label="OK" width="20" oncommand="ok();" />
+<button label="Cancel" width="20" oncommand="self.close();" />
 </vbox>
 
 

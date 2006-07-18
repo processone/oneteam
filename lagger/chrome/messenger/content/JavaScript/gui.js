@@ -243,8 +243,8 @@ function openConversation(event) {
        
         try {
 		
-		if (event.target.getAttribute("context") == 'itemcontextroom' || event.target.getAttribute("context") == ""){
-	
+		//if (event.target.getAttribute("context") == 'itemcontextroom' || event.target.getAttribute("context") == ""){
+	if (event.target.getAttribute("context") == 'itemcontextroom'){
 		
 		tab.setAttribute("context", "tabroomcontext");
 		
@@ -566,6 +566,29 @@ function findUserByJid(jid){
 		}
 }
 
+function getContextNone (jid){
+
+	document.getElementById(jid).setAttribute("context","itemcontextsubnone");
+}
+
+
+function getContextTo (jid){
+
+	document.getElementById(jid).setAttribute("context","itemcontextsubto");
+
+}
+
+function getContextFrom (jid) {
+
+	document.getElementById(jid).setAttribute("context","itemcontextsubfrom");
+
+}
+
+
+function getContextBoth (jid) {
+	document.getElementById(jid).setAttribute("context","itemcontextsubboth");
+}
+
 // Function to ask authorisation for adding contact
 function authorizeSeeContact(jid) {
 
@@ -794,7 +817,7 @@ function getRoster(iq) {
     		
         showUsers(users);
         //loadServers();
-      alert(iq.xml());
+      //alert(iq.xml());
         
       
         //sendDiscoRoomRequest(conferences[0]);
@@ -1187,31 +1210,23 @@ function closeAllTab() {
 
     var parentbis = document.getElementById("tabpanels1");
     
-       
+    var tabbox = document.getElementById("tabbox");
+    
+    
 	
 	
 	 while (parent.hasChildNodes()){
-	  
-	  		
-	 
-	 if (parent.firstChild.getAttribute("context") == "tabroomcontext"){
+	  var jid = parent.firstChild.id.substring(parent.firstChild.id.indexOf("b") + 1,parent.firstChild.id.length);
+		var tab = document.getElementById("tab" + jid);
+		tabbox.selectedTab = tab;
+		closeTab();  		
+	 }
+	 /*if (parent.firstChild.getAttribute("context") == "tabroomcontext"){
 		    var jid = parent.firstChild.id.substring(parent.firstChild.id.indexOf("b") + 1,parent.firstChild.id.length);
+	  		alert (jid);
 	  		
-	  		var element = document.getElementById(jid);
-			
-			var cellConf = document.getElementById(jid + "cell");
-			cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
-			
-			// mask all users in room
-			
-			var el= element.nextSibling;
-			if (el)
-			while (el.getAttribute("id").match(jid)){
-				//alert (el.id);
-					listconfs.removeChild(el);
-					el = element.nextSibling;
-					if (!el)
-					break;
+	  		numbertab ++;
+	  		
 					}
 	  		
 	  		var nick;
@@ -1221,7 +1236,7 @@ function closeAllTab() {
 				nick = nicks[i];
 			}
         	exitRoom(jid + "/" + nick);
-        }
+        
         
         parent.removeChild(parent.firstChild);
         
@@ -1232,7 +1247,7 @@ function closeAllTab() {
         
     reduceGUI();
 
-    
+    alert ("noombre de tab" + numbertab ++);*/
 
 }
 
@@ -1624,7 +1639,16 @@ function showUser(user) {
      var item = document.createElement("listitem");
      item.setAttribute("ondblclick", "openConversation(event)");
      item.setAttribute("id", user[0]);
-  	 item.setAttribute("context", "itemcontext");
+      if (user [1] == "both")
+  	 	item.setAttribute("context", "itemcontextsubboth");
+  	 else if (user [1] == "from")
+  	 	item.setAttribute("context", "itemcontextsubfrom");
+  	 else if (user [1] == "to")
+  	 	item.setAttribute("context", "itemcontextsubto");
+  	 else if (user [1] == "none")
+  	 	item.setAttribute("context", "itemcontextsubnone");
+  	 else
+  	 	item.setAttribute("context", "itemcontextsubboth");
      
    /* var item = document.createElement("listitem");
     item.setAttribute("context", "itemcontext");
@@ -1637,7 +1661,9 @@ function showUser(user) {
     
     var cell =  document.createElement("listcell");
     
-    cell.setAttribute("context", "itemcontext");
+    if (user [1] == "both")
+    cell.setAttribute("context", "itemcontextsubboth");
+    
     cell.setAttribute("ondblclick", "openConversation(event)");
     cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);

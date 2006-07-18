@@ -246,7 +246,9 @@
 
             <!-- List Contact's context menu -->
             <popupset>
-                <popup id="itemcontext">
+                
+                
+                <popup id="itemcontextsubboth">
                     <menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
                     <!--<menuitem label="&listitemcontext.InviterConference;"/>-->
                     <menuseparator/>
@@ -258,9 +260,9 @@
                     <menu label="&listitemcontext.Authorisation;">
                     <menupopup id="auto-popup">
                     
-                    	<menuitem id="ask" label="&listitemcontext.Ask;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
-                    <menuitem id="authorize" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
-          				  <menuitem id="forbid" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);'/>
+                    	<menuitem id="ask" label="&listitemcontext.Ask;" disabled="true" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
+                    <menuitem id="authorize" label="&listitemcontext.Authorize;" disabled="true" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
+          				  <menuitem id="forbid" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);getContextNone(jid);'/>
           				  
          				 </menupopup>
          			</menu>
@@ -268,29 +270,91 @@
          			<menuseparator/>
                     <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
                 </popup>
-                 <popup id="itemcontexttempuser">
+                
+                
+                <popup id="itemcontextsubnone">
                     <menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
-                    <menuitem label="&listitemcontext.InviterConference;"/>
+                    <!--<menuitem label="&listitemcontext.InviterConference;"/>-->
                     <menuseparator/>
                     <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
                     <menuitem label="&listitemcontext.Rename;" oncommand='window.open("chrome://messenger/content/rename.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");'/>
                     <menuseparator/>
-                      <menu label="&listitemcontext.Authorisation;">
-                    <menupopup id="autotemp-popup">
+                      
+         			 
+                    <menu label="&listitemcontext.Authorisation;">
+                    <menupopup id="auto-popup">
                     
-                    	<menuitem id="asktemp" label="&listitemcontext.Ask;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
-                    <menuitem id="authorizetemp" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
-          				  <menuitem id="forbidtemp" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);this.disabled=true;'/>
+                    	<menuitem id="ask" label="&listitemcontext.Ask;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);getContextTo(jid);'/>
+                    	<menuitem id="authorize" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);getContextFrom(jid);'/>
+          				<menuitem id="forbid" disabled="true" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);'/>
           				  
          				 </menupopup>
          			</menu>
-                    <menuseparator/>
+         			
+         			<menuseparator/>
                     <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
                 </popup>
+               
+               
+               
+                <popup id="itemcontextsubfrom">
+                    <menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
+                    <!--<menuitem label="&listitemcontext.InviterConference;"/>-->
+                    <menuseparator/>
+                    <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
+                    <menuitem label="&listitemcontext.Rename;" oncommand='window.open("chrome://messenger/content/rename.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");'/>
+                    <menuseparator/>
+                      
+         			 
+                    <menu label="&listitemcontext.Authorisation;">
+                    <menupopup id="auto-popup">
+                    
+                    	<menuitem id="ask" label="&listitemcontext.Ask;"  oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);getContextBoth(jid);'/>
+                    <menuitem id="authorize" label="&listitemcontext.Authorize;" disabled="true" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);'/>
+          				  <menuitem id="forbid"  label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);getContextNone(jid);'/>
+          				  
+         				 </menupopup>
+         			</menu>
+         			
+         			<menuseparator/>
+                    <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
+                </popup>
+               
+               
+               
+               
+                <popup id="itemcontextsubto">
+                    <menuitem label="&listitemcontext.Communiquer;" oncommand="openConversation(event);"/>
+                    <!--<menuitem label="&listitemcontext.InviterConference;"/>-->
+                    <menuseparator/>
+                    <menuitem label="&listitemcontext.SupprimerContact;" oncommand="removeFromRoster();"/>
+                    <menuitem label="&listitemcontext.Rename;" oncommand='window.open("chrome://messenger/content/rename.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");'/>
+                    <menuseparator/>
+                      
+         			 
+                    <menu label="&listitemcontext.Authorisation;">
+                    <menupopup id="auto-popup">
+                    
+                    	<menuitem id="ask" label="&listitemcontext.Ask;" disabled="true" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
+                    <menuitem id="authorize" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);getContexBoth(jid);'/>
+          				  <menuitem id="forbid" disabled="true" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);'/>
+          				  
+         				 </menupopup>
+         			</menu>
+         			
+         			<menuseparator/>
+                    <menuitem label="&listitemcontext.Infos;" oncommand="launchInfoWindow();"/>
+                </popup>
+                
+                
+               
                 <popup id="itemcontextgroup">
                     <menuitem label="&listitemcontextgroup.Rename;" oncommand='window.open("chrome://messenger/content/renameRoom.xul", "Change room name", "chrome,titlebar,toolbar,centerscreen,modal");'/>
                 	
                 </popup>
+               
+               
+               
                 <popup id="itemcontextroom">
                 		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand='document.getElementById("liste_contacts").clearSelection();openConversation(event);'/>
                    		 <menuitem label="&listitemcontext.InviterConference;" oncommand='launchInviteWindow();'/>
@@ -301,12 +365,14 @@
                 		<!--  disabled="true" -->
                 		<menuitem id="closeRoom" label="&listitemcontextroom.Close;" oncommand="closeTab();"/>
                 </popup>
+               
                 <popup id="itemcontextroomuser">
                 		<!--<menuitem label="&listitemcontextroomuser.InsertRoom;" oncommand="enterRoom(event);"/>
                     <menuseparator/>
                     <menuitem label="&listitemcontextroomuser.Rename;" oncommand="renameGroup(event);"/>
                 		<menuitem label="&listitemcontextroomuser.Remove;" oncommand="removeRoom(event);"/> -->
                 </popup>
+               
                 <popup id="itemcontextroomme">
                 		<menuitem label="&listitemcontextroomme.ChangeNick;" oncommand="launchChangeNicknameWindow();"/>
                     <!-- <menuseparator/>
