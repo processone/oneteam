@@ -53,7 +53,7 @@
     <spacer height="35"/>
         
         <hbox align="right">
-       		 <button label="OK" onclick="sendStatus();"/>
+       		 <button label="OK" onclick="sendStatus();self.close();"/>
        		 <button label="Cancel" onclick="self.close();"/>
         </hbox>
    

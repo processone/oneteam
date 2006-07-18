@@ -297,6 +297,8 @@
                     <menuseparator/>
                     <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>
                 		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>
+                		<menuseparator/>
+                		<menuitem label="&listitemcontextroom.Close;" oncommand="closeTab();"/>
                 </popup>
                 <popup id="itemcontextroomuser">
                 		<!--<menuitem label="&listitemcontextroomuser.InsertRoom;" oncommand="enterRoom(event);"/>
@@ -318,12 +320,15 @@
             <menulist label="Available" id="status" height="50" width="150" flex="5" maxheight="60" minheight="30"
                        minwidth="140">
                 <menupopup flex="5">
-                    <menuitem id="away" class="menuitem-iconic" label="&status.Away;"
-                              oncommand='changeStatus("away");changeIcone("away.png");'/>
+                    
                     <menuitem class="menuitem-iconic" label="&status.Available;" selected="true"
-                              oncommand='changeStatus("chat");changeIcone("online.png");'/>
+                              oncommand='changeStatus("");changeIcone("online.png");'/>
+                    <menuitem class="menuitem-iconic" label="&status.AvailableChat;" selected="true"
+                              oncommand='changeStatus("chat");changeIcone("chat.png");'/>       
                     <menuitem id="dnd" class="menuitem-iconic" label="&status.Dnd;"
                               oncommand='changeStatus("dnd");changeIcone("dnd.png");'/>
+                    <menuitem id="away" class="menuitem-iconic" label="&status.Away;"
+                              oncommand='changeStatus("away");changeIcone("away.png");'/>
                     <menuitem id="xa" class="menuitem-iconic" label="&status.Undisponible;"
                               oncommand='changeStatus("xa");changeIcone("xa.png");'/>
                     <menuitem id="invisible" class="menuitem-iconic" label="&status.Invisible;"

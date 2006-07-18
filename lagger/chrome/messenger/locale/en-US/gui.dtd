@@ -31,6 +31,7 @@
 <!ENTITY listitemcontextroom.InsertRoom "Enter the room">
 <!ENTITY listitemcontextroom.Remove "Remove the room">
 <!ENTITY listitemcontextroom.Rename "Rename the room">
+<!ENTITY listitemcontextroom.Close "Close the room">
 
 <!ENTITY listitemcontextroomme.ChangeNick "Change nickname">
 
@@ -42,6 +43,7 @@
 
 <!ENTITY status.Away "Away">
 <!ENTITY status.Available "Available">
+<!ENTITY status.AvailableChat "Available for chat">
 <!ENTITY status.Dnd "Busy">
 <!ENTITY status.Undisponible "Not available">
 <!ENTITY status.Invisible "Invisible">

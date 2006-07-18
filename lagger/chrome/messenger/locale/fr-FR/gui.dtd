@@ -31,6 +31,7 @@
 <!ENTITY listitemcontextroom.InsertRoom "Entrer dans le salon">
 <!ENTITY listitemcontextroom.Remove "Supprimer le salon">
 <!ENTITY listitemcontextroom.Rename "Renommer le salon">
+<!ENTITY listitemcontextroom.Close "Fermer le salon">
 
 <!ENTITY listitemcontextroomme.ChangeNick "Change nickname">
 
@@ -43,6 +44,7 @@
 
 <!ENTITY status.Away "Absent">
 <!ENTITY status.Available "Disponible">
+<!ENTITY status.AvailableChat "Disponible pour discuter">
 <!ENTITY status.Dnd "Occupe">
 <!ENTITY status.Undisponible "Non disponible">
 <!ENTITY status.Invisible "Invisible">

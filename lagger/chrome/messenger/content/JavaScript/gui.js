@@ -306,6 +306,14 @@ function initGUI() {
     this.port = gPrefService.getIntPref("chat.connection.port");
     this.base = gPrefService.getCharPref("chat.connection.base");
     
+    var path = gPrefService.getCharPref('chat.general.iconsetdir') + "online.png";
+
+ var url = 'url("chrome://messenger/content/img/' + path + '")';
+
+	document.getElementById("status").style.listStyleImage=url; 
+    
+    
+    
     if (server == ""){
     	myjid = textbox_user;
     	//var us = gPrefService.getCharPref("chat.connection.username");
@@ -2522,17 +2530,12 @@ function changeStatus(show) {
 
 function changeIcone(img){
 
-if (img == "dnd.png")
-	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/dnd.png")';
-if (img == "online.png")
-	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/online.png")'; 
-if (img == "away.png")
-	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/away.png")'; 
-if (img == "xa.png")
-	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/xa.png")'; 
-if (img == "invisible.png")
-	document.getElementById("status").style.listStyleImage='url("chrome://messenger/content/img/invisible.png")'; 
- 
+var path = gPrefService.getCharPref('chat.general.iconsetdir') + img;
+
+ var url = 'url("chrome://messenger/content/img/' + path + '")';
+
+	document.getElementById("status").style.listStyleImage=url; 
+
 
 }
 
