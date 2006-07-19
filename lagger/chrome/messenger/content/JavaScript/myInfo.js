@@ -1,7 +1,12 @@
-var myFile;
+var myFile = null;
+
+var prefs = loadPrefs();
+
+
 
 // Function to publish infos
 function publishInfo(){
+
 
 
 try{
@@ -57,7 +62,8 @@ var emailnode = document.createTextNode(document.getElementById("email").value);
 
 var descnode = document.createTextNode(document.getElementById("about").value);
 
-var binvalnode = document.createTextNode(convertFileToBase64(myFile));
+        
+	
 
 
 fn.appendChild(fnnode);
@@ -131,7 +137,10 @@ elem.appendChild(email);
 desc.appendChild(descnode);
 elem.appendChild(desc);
 
-binval.appendChild(binvalnode);
+if (prefs.myphoto != null){
+	var binvalnode = document.createTextNode(convertFileToBase64(prefs.myphoto));
+	binval.appendChild(binvalnode);
+	}
 elem.appendChild(binval);
 
 window.opener.con.send(iq);
@@ -150,6 +159,7 @@ if (window.opener.console) {
 function retrieveInfos() {
 
 try {
+
 
 	var iq = new JSJaCIQ();
 	var elem = iq.getDoc().createElement('vCard');
@@ -410,9 +420,13 @@ try {
   var filePath = fp.file.path;
   
   
+  
    myFile = Components.classes["@mozilla.org/file/local;1"].createInstance();
 	if (myFile instanceof Components.interfaces.nsILocalFile)
   myFile.initWithPath(filePath);
+  
+  savePrefs({
+        myphoto : myFile });
   
   var image = document.getElementById("myphoto");
 				//image.setAttribute("src",filePath);				

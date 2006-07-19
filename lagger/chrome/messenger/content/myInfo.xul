@@ -14,6 +14,7 @@
         height="280"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
+        <script type="application/x-javascript" src="JavaScript/prefsFunctions.js"/>
     	    <script type="application/x-javascript" src="JavaScript/myInfo.js"/>
         <script type="application/x-javascript" src="JavaScript/gui.js"/>
         <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>

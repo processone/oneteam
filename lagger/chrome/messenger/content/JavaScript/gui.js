@@ -3272,21 +3272,26 @@ else if (! isRoom (sender) && sender.match("@")){
     
    		user [4] = "online.png";
    		
-   		if (user [1] == "both")
-  	 		item.setAttribute("context", "itemcontextsubboth");
-  	 	else if (user [1] == "from")
-  	 		item.setAttribute("context", "itemcontextsubfrom");
-  		 else if (user [1] == "to")
-  		 	item.setAttribute("context", "itemcontextsubto");
-  		 else if (user [1] == "none")
-  	 		item.setAttribute("context", "itemcontextsubnone");
-  		 else
-  	 		item.setAttribute("context", "itemcontextsubboth");
-   	
    		if (hideDecoUser){
     		emptyList();
     		showHide();
     	}
+   		
+   		if (item == null)
+   			item = document.getElementById(sender + "cell");
+   		
+   		if (user [1] == "both" && item)
+  	 		item.setAttribute("context", "itemcontextsubboth");
+  	 	else if (user [1] == "from" && item)
+  	 		item.setAttribute("context", "itemcontextsubfrom");
+  		 else if (user [1] == "to"&& item )
+  		 	item.setAttribute("context", "itemcontextsubto");
+  		 else if (user [1] == "none"&& item)
+  	 		item.setAttribute("context", "itemcontextsubnone");
+  		 else
+  	 		item.setAttribute("context", "itemcontextsubboth");
+   	
+   		
     
         presence = aJSJaCPacket.getFrom() + "has become available.";
         if (item)

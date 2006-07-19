@@ -5,7 +5,7 @@ function loadPrefs(pPrefs) {
     var branche = Components.classes["@mozilla.org/preferences-service;1"]
             .getService(Components.interfaces.nsIPrefBranch);
     var prefs = {registerLogin : false, user : null, pass : null, port : null, server : null,
-        lastConfig : null, askAgain : false, httpbase : null};
+        lastConfig : null, askAgain : false, httpbase : null, myphoto : null};
     if (pPrefs != null) {
         for (a in pPrefs) {
             /*for added parameters to get values*/

@@ -296,7 +296,7 @@ function retrieveVcard(iq){
 		if (tag && tag.item(0) && tag.item(0).firstChild )
 			var base64data = tag.item(0).firstChild.nodeValue.toString();
 				if (base64data){
-				var uri = "data:image/png;base64," + base64data;
+				var uri = "data:image/jpeg;base64," + base64data;
 					//alert (uri);
 	
 				var image = document.getElementById("photo");
@@ -340,5 +340,10 @@ function createPhotoFile(){
 function clear (){
  
  document.getElementById("about").value = "";
+ 
+ }
+ 
+ function resize(){
+ 
  
  }
