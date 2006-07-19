@@ -40,13 +40,13 @@
      <menulist id="selectStatus" height="30" width="150">
                 <menupopup flex="1">
                 	<menuitem label=" "/>
-                    <menuitem label="&Status.brb;"/>
-                    <menuitem label="&Status.outside;"/>
-                    <menuitem label="&Status.sleeping;"/>
-                    <menuitem label="&Status.film;"/>
-                    <menuitem label="&Status.eating;"/>
-                    <menuitem label="&Status.working;"/>
-                  	<menuitem label="&Status.phoning;"/>
+                    <menuitem label="&Status.brb;" value="&Status.brb;"/>
+                    <menuitem label="&Status.outside;" value="&Status.outside;"/>
+                    <menuitem label="&Status.sleeping;" value="&Status.sleeping;"/>
+                    <menuitem label="&Status.film;" value="&Status.film;"/>
+                    <menuitem label="&Status.eating;" value="&Status.eating;"/>
+                    <menuitem label="&Status.working;" value="&Status.working;"/>
+                  	<menuitem label="&Status.phoning;" value="&Status.phoning;"/>
                 </menupopup>
             </menulist>
    

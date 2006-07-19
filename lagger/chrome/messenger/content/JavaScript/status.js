@@ -13,13 +13,14 @@ var entered = document.getElementById("statustext").value;
 
 
 
+
 var presence = new JSJaCPresence();
 
 var myPresence = window.opener.myPresence;
 
 presence.setPriority (myPresence.getPriority());
 
-if (selected != " "){
+if (entered != ""){
 	presence.setStatus (entered);
 
 	}

@@ -803,8 +803,8 @@ function getRoster(iq) {
                 
                 // Don't want msn gate in roster
                  if (items.item(i).getAttribute('jid').match ("@")){
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png");
-            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png", "         Empty");
+            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message
             users.push(user);
             }
             
@@ -1630,16 +1630,45 @@ function refreshList() {
     }
 }
 
+
+function tooltiped(item,event)
+{
+try{
+
+	var desResources = document.getElementById("desResources");
+	var desStatus = document.getElementById("desStatus");
+	
+	var resources = findResourceByJid(event.target.id);
+	var user = findUserByJid(event.target.id);
+	//alert (resources);
+	var stringRes = "";
+	
+	for  (var i = 0 ; i < resources.length ; i ++){
+    		//alert (resources [i] [0]);
+    			stringRes = stringRes + resources [i] [0] + ",";
+    			}
+    desResources.setAttribute("value" , stringRes);			
+   desStatus.setAttribute("value" , user [9]);			
+	
+	
+}catch(E){alert("tooltiped "+E);}
+	
+}
+
+
 // Function to show a user in roster
 function showUser(user) {
 	
 	//alert ("je rentre dans show User");
+	
+	
 
     var liste = document.getElementById("liste_contacts");
      var item = document.createElement("listitem");
      item.setAttribute("ondblclick", "openConversation(event)");
      item.setAttribute("id", user[0]);
-      
+      item.setAttribute("tooltip","moretip");
+      item.setAttribute("onmouseover","tooltiped(this,event);");
      
    /* var item = document.createElement("listitem");
     item.setAttribute("context", "itemcontext");
@@ -3093,6 +3122,10 @@ function handlePresence(aJSJaCPacket) {
             
             }
     }
+    
+    
+    if (aJSJaCPacket.getStatus())
+    user [9] = aJSJaCPacket.getStatus();
     
      var oldStatus = user [4];
 

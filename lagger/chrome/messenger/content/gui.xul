@@ -229,6 +229,8 @@
             </tabpanels>
             </tabbox>
             
+         
+            
             <popup id="listcontext" >
 			<menuitem type="checkbox" label="&rosterContext.useFullNames;" oncommand="cmd_usefullname"/>
 			<menuseparator/>
@@ -365,6 +367,18 @@
                 		<!--  disabled="true" -->
                 		<menuitem id="closeRoom" label="&listitemcontextroom.Close;" oncommand="closeTab();"/>
                 </popup>
+                
+                  
+  		<tooltip id="moretip" orient="vertical" style="background-color: #33DD00;">
+    		<description value=" - Resources : " style="font-weight : bold;"/>
+    		<description value="" />
+    		<description id="desResources" value="        Empty" style="color: red;"/>
+    		<description value="" />
+    		<description value=" - Status Message : " style="font-weight : bold;"/>
+    		<description value="" />
+    		<description id="desStatus" value="        Empty" style="color: red;"/>
+  		</tooltip>
+
                
                 <popup id="itemcontextroomuser">
                 		<!--<menuitem label="&listitemcontextroomuser.InsertRoom;" oncommand="enterRoom(event);"/>
@@ -430,7 +444,7 @@
              </popup>
            </popupset>
 
-
+			
 
             The textbox toolbar
            <toolbox>
