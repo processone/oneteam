@@ -336,7 +336,7 @@
                     <menupopup id="auto-popup">
                     
                     	<menuitem id="ask" label="&listitemcontext.Ask;" disabled="true" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeSeeContact(jid);'/>
-                    <menuitem id="authorize" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);getContexBoth(jid);'/>
+                    <menuitem id="authorize" label="&listitemcontext.Authorize;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;authorizeContactSeeMe(jid);getContextBoth(jid);'/>
           				  <menuitem id="forbid" disabled="true" label="&listitemcontext.Forbid;" oncommand='var jid = document.getElementById("liste_contacts").selectedItem.id;forbidToSeeMe(jid);'/>
           				  
          				 </menupopup>

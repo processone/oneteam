@@ -67,12 +67,12 @@ var tag;
 
         	
         tag = iq.getNode().getElementsByTagName('version');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0) && tag.item(0).firstChild)	
 			var version = tag.item(0).firstChild.nodeValue;
 			
 			
 			 tag = iq.getNode().getElementsByTagName('os');
-		if (tag && tag.item(0)){	
+		if (tag && tag.item(0) && tag.item(0).firstChild){	
 			var os = tag.item(0).firstChild.nodeValue;
 			var ostext = document.getElementById("os");
 				ostext.setAttribute("value",os);
@@ -80,7 +80,7 @@ var tag;
 				}
 			
 			 tag = iq.getNode().getElementsByTagName('name');
-		if (tag && tag.item(0)){
+		if (tag && tag.item(0) && tag.item(0).firstChild){
 			var name = tag.item(0).firstChild.nodeValue;
 			var clienttext = document.getElementById("client");
 				clienttext.setAttribute("value",name + " " + version);
@@ -109,7 +109,7 @@ function retrieveVcard(iq){
 	
 	
 	tag = iq.getNode().getElementsByTagName('FN');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0) && tag.item(0).firstChild)	
 			var name = tag.item(0).firstChild.nodeValue;
 			if (name){
 				var nametext = document.getElementById("name");
@@ -118,7 +118,7 @@ function retrieveVcard(iq){
 				}
 				
 	tag = iq.getNode().getElementsByTagName('FAMILY');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0) && tag.item(0).firstChild)	
 			var fam = tag.item(0).firstChild.nodeValue;
 			if (fam){
 				var famtext = document.getElementById("family");
@@ -128,7 +128,7 @@ function retrieveVcard(iq){
 				
 				
 		tag = iq.getNode().getElementsByTagName('NICKNAME');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var nick = tag.item(0).firstChild.nodeValue;
 			if (nick){
 				var nicktext = document.getElementById("nickname");
@@ -140,7 +140,7 @@ function retrieveVcard(iq){
 	
 				
 	tag = iq.getNode().getElementsByTagName('URL');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0) && tag.item(0).firstChild)	
 			var url = tag.item(0).firstChild.nodeValue;
 			if (url){
 			var urltext = document.getElementById("url");
@@ -150,7 +150,7 @@ function retrieveVcard(iq){
 	
 	
 	tag = iq.getNode().getElementsByTagName('BDAY');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0) && tag.item(0).firstChild)	
 			var bday = tag.item(0).firstChild.nodeValue;
 			if (bday){
 			var bdaytext = document.getElementById("birthday");
@@ -160,7 +160,7 @@ function retrieveVcard(iq){
 			
 			
 	tag = iq.getNode().getElementsByTagName('USERID');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild )
 			var id = tag.item(0).firstChild.nodeValue;
 			if (id){
 				var labeljabberid = document.getElementById("userid");
@@ -175,7 +175,7 @@ function retrieveVcard(iq){
 			
 	
 	tag = iq.getNode().getElementsByTagName('STREET');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var street = tag.item(0).firstChild.nodeValue;	
 				if (street){
 					var streettext = document.getElementById("street");
@@ -184,7 +184,7 @@ function retrieveVcard(iq){
 				}
 	
 	tag = iq.getNode().getElementsByTagName('PCODE');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var zip = tag.item(0).firstChild.nodeValue;	
 				if (zip){
 					var ziptext = document.getElementById("postal");
@@ -193,7 +193,7 @@ function retrieveVcard(iq){
 				}
 	
 	tag = iq.getNode().getElementsByTagName('CTRY');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var country = tag.item(0).firstChild.nodeValue;	
 				if (country){
 					var countrytext = document.getElementById("country");
@@ -202,7 +202,7 @@ function retrieveVcard(iq){
 				}
 	
 	tag = iq.getNode().getElementsByTagName('LOCALITY');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var address = tag.item(0).firstChild.nodeValue;	
 				if (address){
 					var addresstext = document.getElementById("location");
@@ -212,7 +212,7 @@ function retrieveVcard(iq){
 				
 				
 	tag = iq.getNode().getElementsByTagName('EXTADD');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var extra = tag.item(0).firstChild.nodeValue;	
 				if (extra){
 					var extratext = document.getElementById("extra");
@@ -224,8 +224,17 @@ function retrieveVcard(iq){
 	/*************************** WORK *********************************/
 	
 	
+	tag = iq.getNode().getElementsByTagName('ORGNAME');
+		if (tag && tag.item(0) && tag.item(0).firstChild)
+			var orgname = tag.item(0).firstChild.nodeValue;	
+				if (orgname){
+				var orgnametext = document.getElementById("company");
+				orgnametext.setAttribute("value",orgname);
+				orgnametext.readonly = true;
+				}
+	
 	tag = iq.getNode().getElementsByTagName('NUMBER');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var number = tag.item(0).firstChild.nodeValue;
 			if (number){
 				var numbertext = document.getElementById("phone");
@@ -234,7 +243,7 @@ function retrieveVcard(iq){
 				}
 				
 		tag = iq.getNode().getElementsByTagName('ORGUNIT');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var orgunit = tag.item(0).firstChild.nodeValue;
 			if (orgunit){
 				var unittext = document.getElementById("department");
@@ -243,7 +252,7 @@ function retrieveVcard(iq){
 				}	
 				
 		tag = iq.getNode().getElementsByTagName('ROLE');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild)
 			var role = tag.item(0).firstChild.nodeValue;
 			if (role){
 				var roletext = document.getElementById("role");
@@ -251,17 +260,10 @@ function retrieveVcard(iq){
 				roletext.readonly = true;
 				}			
 			
-	tag = iq.getNode().getElementsByTagName('ORGNAME');
-		if (tag && tag.item(0))
-			var orgname = tag.item(0).firstChild.nodeValue;	
-				if (orgname){
-				var orgnametext = document.getElementById("company");
-				orgnametext.setAttribute("value",orgname);
-				orgnametext.readonly = true;
-				}
+	
 	
 	tag = iq.getNode().getElementsByTagName('EMAIL');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0) && tag.item(0).firstChild)	
 			var email = tag.item(0).firstChild.nodeValue;
 			if (email){
 			var emailtext = document.getElementById("email");
@@ -276,7 +278,7 @@ function retrieveVcard(iq){
 	
 	
 	tag = iq.getNode().getElementsByTagName('DESC');
-		if (tag && tag.item(0))	
+		if (tag && tag.item(0) && tag.item(0).firstChild)	
 			var desc = tag.item(0).firstChild.nodeValue;
 			if (desc){
 			var desctext = document.getElementById("about");
@@ -291,7 +293,7 @@ function retrieveVcard(iq){
 	
 	
 		tag = iq.getNode().getElementsByTagName('BINVAL');
-		if (tag && tag.item(0))
+		if (tag && tag.item(0) && tag.item(0).firstChild )
 			var base64data = tag.item(0).firstChild.nodeValue.toString();
 				if (base64data){
 				var uri = "data:image/png;base64," + base64data;
@@ -333,3 +335,10 @@ function createPhotoFile(){
       dest.createUnique(dest.NORMAL_FILE_TYPE, 0664);
 
 }
+
+
+function clear (){
+ 
+ document.getElementById("about").value = "";
+ 
+ }

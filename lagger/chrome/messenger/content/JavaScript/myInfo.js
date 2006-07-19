@@ -1,3 +1,5 @@
+var myFile;
+
 // Function to publish infos
 function publishInfo(){
 
@@ -55,7 +57,7 @@ var emailnode = document.createTextNode(document.getElementById("email").value);
 
 var descnode = document.createTextNode(document.getElementById("about").value);
 
-var binvalnode = document.createTextNode(document.getElementById("photo").getAttribute("src"));
+var binvalnode = document.createTextNode(convertFileToBase64(myFile));
 
 
 fn.appendChild(fnnode);
@@ -139,7 +141,7 @@ if (window.opener.console) {
     }
     
     }
-    catch(e){alert (e);}
+    catch(e){alert ("publish" + e);}
     
 }
 
@@ -365,7 +367,7 @@ function retrieveVcard(iq){
 				var uri = "data:image/png;base64," + base64data;
 					//alert (uri);
 	
-				var image = document.getElementById("photo");
+				var image = document.getElementById("myphoto");
 				image.setAttribute("src",uri);
 				image.setAttribute("height",50);
 				image.setAttribute("width",50);
@@ -398,18 +400,30 @@ try {
   var fp = Components.classes["@mozilla.org/filepicker;1"]
           .createInstance(nsIFilePicker);
   fp.init(window, "S?lectionner un fichier", nsIFilePicker.modeOpen);
-  fp.appendFilters(nsIFilePicker.filterText | nsIFilePicker.filterAll);
+  //fp.appendFilters(nsIFilePicker.filterText | nsIFilePicker.filterAll);
+  fp.appendFilters(nsIFilePicker.filterImages);
   if (fp.show() != nsIFilePicker.returnOK) {
     //alert("Vous avez annul? la s?lection");
     return;
   }
   else {
   var filePath = fp.file.path;
-  var image = document.getElementById("photo");
-				image.setAttribute("src",filePath);
+  
+  
+   myFile = Components.classes["@mozilla.org/file/local;1"].createInstance();
+	if (myFile instanceof Components.interfaces.nsILocalFile)
+  myFile.initWithPath(filePath);
+  
+  var image = document.getElementById("myphoto");
+				//image.setAttribute("src",filePath);				
+				//image.src = filePath;
+	//var url = 'url("chrome://messenger/content/img/Amedee.png")';
+	var url = 'url("file://' + filePath + '")';
+				
+				image.style.listStyleImage=url;
 				image.setAttribute("height",50);
 				image.setAttribute("width",50);
-  alert("Fichier s?lectionn? : " + filePath);
+  
   }
   
   }
@@ -420,5 +434,49 @@ try {
  
  function resize(){
 alert ("resize"); 
+ 
+ }
+ 
+ 
+ function convertFileToBase64(file){ //nsILocalFile  -> make better use of it!
+	
+	try {
+	
+	
+	    var ios = Components.classes["@mozilla.org/network/io-service;1"]
+            .getService(Components.interfaces.nsIIOService);
+		var uri = ios.newURI("file://"+file.path, null, null);
+		
+        var channel = ios.newChannelFromURI(uri);
+        
+        if (!channel)
+            throw new IOError("Reader.open: unable to create channel");
+
+        var cis = channel.open();
+
+        bis = Components.classes["@mozilla.org/binaryinputstream;1"].
+             createInstance(Components.interfaces.nsIBinaryInputStream);
+
+        bis.setInputStream(cis);
+
+        is = Components.classes["@mozilla.org/scriptableinputstream;1"].
+             createInstance(Components.interfaces.nsIScriptableInputStream);
+
+        is.init(cis);
+
+		var str = bis.readBytes(is.available());
+
+		cis.close();
+
+        return btoa(str);
+
+ }
+  catch (e) {alert ("dans convert" + e);}
+	}
+ 
+ 
+ function clear (){
+ 
+ document.getElementById("about").value = "";
  
  }

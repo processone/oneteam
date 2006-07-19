@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin/myInfo.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/myInfo.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/myInfo.dtd">
 
 <window id="myInfo"
@@ -153,7 +154,8 @@
                                 <hbox>
                                         <hbox>
                                         <!-- maxwidth="100"  maxheight="100" -->
-                                        <image id="photo" flex="1" style="border: 1px solid #aaa" onload="resize()"/>
+                                        <image id="myphoto" style="border: 1px solid #aaa" maxwidth="100"  maxheight="100" persist="style"/> 
+                                       
                                         </hbox>
                                         <hbox>
                                         <label class="text-link" style="-moz-user-focus:ignore;" value="&myInfo.ChangePicture;" onclick="changePicture()" flex="0"/>

@@ -633,7 +633,7 @@ function forbidToSeeMe (jid){
     }
     
     var user = findUserByJid(jid);
-    alert ("nb de ressources" + user [7]);
+    //alert ("nb de ressources" + user [7]);
 
 }
 
@@ -1639,16 +1639,7 @@ function showUser(user) {
      var item = document.createElement("listitem");
      item.setAttribute("ondblclick", "openConversation(event)");
      item.setAttribute("id", user[0]);
-      if (user [1] == "both")
-  	 	item.setAttribute("context", "itemcontextsubboth");
-  	 else if (user [1] == "from")
-  	 	item.setAttribute("context", "itemcontextsubfrom");
-  	 else if (user [1] == "to")
-  	 	item.setAttribute("context", "itemcontextsubto");
-  	 else if (user [1] == "none")
-  	 	item.setAttribute("context", "itemcontextsubnone");
-  	 else
-  	 	item.setAttribute("context", "itemcontextsubboth");
+      
      
    /* var item = document.createElement("listitem");
     item.setAttribute("context", "itemcontext");
@@ -1687,6 +1678,23 @@ function showUser(user) {
     item.appendChild(image);
     
     liste.appendChild(item);
+    
+    
+    
+    if (user [1] == "both")
+  	 	item.setAttribute("context", "itemcontextsubboth");
+  	 else if (user [1] == "from"){
+  	 	item.setAttribute("context", "itemcontextsubfrom");
+  	 	cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "requested.png");
+  	 	}
+  	 else if (user [1] == "to")
+  	 	item.setAttribute("context", "itemcontextsubto");
+  	 else if (user [1] == "none"){
+  	 	item.setAttribute("context", "itemcontextsubnone");
+  	 	cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "requested.png");
+  	 	}
+  	 else
+  	 	item.setAttribute("context", "itemcontextsubboth");
     
     /*var item = document.createElement("treeitem");
     var row = document.createElement("treerow");
@@ -3263,6 +3271,17 @@ else if (! isRoom (sender) && sender.match("@")){
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
     
    		user [4] = "online.png";
+   		
+   		if (user [1] == "both")
+  	 		item.setAttribute("context", "itemcontextsubboth");
+  	 	else if (user [1] == "from")
+  	 		item.setAttribute("context", "itemcontextsubfrom");
+  		 else if (user [1] == "to")
+  		 	item.setAttribute("context", "itemcontextsubto");
+  		 else if (user [1] == "none")
+  	 		item.setAttribute("context", "itemcontextsubnone");
+  		 else
+  	 		item.setAttribute("context", "itemcontextsubboth");
    	
    		if (hideDecoUser){
     		emptyList();
@@ -3353,22 +3372,25 @@ else if (! isRoom (sender) && sender.match("@")){
            		 
            		 
            		 if (type == 'subscribe') {
-               		 authorizeContactSeeMe(sender);
+               		 
                		 window.open("chrome://messenger/content/subscribe.xul", "", "chrome,centerscreen,resizable");
            			}
            		
            		
            		else if (type == 'subscribed') {
+           			getContextBoth (sender);
            			subscribed = sender;
            			window.open("chrome://messenger/content/subscribed.xul", "", "chrome,centerscreen,resizable");
            		}
            		
            		else if (type == 'unsubscribe') {
            			unsubscribe = sender;
+           			
            			window.open("chrome://messenger/content/unsubscribe.xul", "", "chrome,centerscreen,resizable");
            		}
            	
            		else if (type == 'unsubscribed') {
+           			getContextNone (sender);
            			unsubscribed = sender;
            			window.open("chrome://messenger/content/unsubscribed.xul", "", "chrome,centerscreen,resizable");
            		}
