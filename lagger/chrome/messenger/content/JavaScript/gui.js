@@ -47,6 +47,8 @@ var subscribed;
 var unsubscribe;
 var unsubscribed;
 
+var subscribeReason;
+
 var secs;
 var timerID = null;
 var timerRunning = false;
@@ -763,6 +765,8 @@ try{
 // Function to get roster
 function getRoster(iq) {
 
+	 //alert(iq.xml());
+
  try {
 		sendServerRequest();
 
@@ -817,7 +821,7 @@ function getRoster(iq) {
     		
         showUsers(users);
         //loadServers();
-      //alert(iq.xml());
+     
         
       
         //sendDiscoRoomRequest(conferences[0]);
@@ -1701,7 +1705,7 @@ function showUser(user) {
     //image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
     image.setAttribute("width", "20");
     image.setAttribute("height", "20");
-   	image.setAttribute("persist", "src");
+   	//image.setAttribute("persist", "src");
     image.setAttribute("id", "image" + user[0]);
     //alert ("image" + user[0]);
     item.appendChild(image);
@@ -3124,10 +3128,13 @@ function handlePresence(aJSJaCPacket) {
     }
     
     
+    if (user) {
+    
     if (aJSJaCPacket.getStatus())
     user [9] = aJSJaCPacket.getStatus();
     
      var oldStatus = user [4];
+     }
 
     if (console) {
         cons.addInConsole("IN : " +  aJSJaCPacket.xml() + "\n");
@@ -3231,7 +3238,13 @@ function handlePresence(aJSJaCPacket) {
    // Sender is a user
 else if (! isRoom (sender) && sender.match("@")){
 
+
 	var resources = findResourceByJid(sender);
+	
+	// in case of subscribe , user is not defined 
+	if (user) {
+	
+	
 	//alert (resources);
 	
 	// NO MATTER THE STATUS
@@ -3299,7 +3312,7 @@ else if (! isRoom (sender) && sender.match("@")){
     	 		}
     	 		
     	 	}
-	
+	}
   
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
     
@@ -3410,7 +3423,8 @@ else if (! isRoom (sender) && sender.match("@")){
            		 
            		 
            		 if (type == 'subscribe') {
-               		 
+           			 subscribeReason = aJSJaCPacket.getStatus();
+               		 subscribe = sender;
                		 window.open("chrome://messenger/content/subscribe.xul", "", "chrome,centerscreen,resizable");
            			}
            		

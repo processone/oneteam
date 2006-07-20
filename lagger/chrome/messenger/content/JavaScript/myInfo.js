@@ -431,8 +431,11 @@ try {
   var image = document.getElementById("myphoto");
 				//image.setAttribute("src",filePath);				
 				//image.src = filePath;
-	//var url = 'url("chrome://messenger/content/img/Amedee.png")';
-	var url = 'url("file://' + filePath + '")';
+	
+	//var url = 'url("file://' + filePath + '")';
+	
+	
+	alert (url);
 				
 				image.style.listStyleImage=url;
 				image.setAttribute("height",50);

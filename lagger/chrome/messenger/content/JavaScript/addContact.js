@@ -55,7 +55,7 @@ function performAddContact(event) {
         cons.addInConsole("IN : " + iq.xml() + "\n");
    	 }
 
-        var user = new Array(jid, "none", chosenGroup, login.value, "offline.png");
+        var user = new Array(jid, "none", chosenGroup, login.value, "requested.png",resources,"false",0,"offline.png", "         Empty");
 
         window.opener.users.push(user);
         window.opener.emptyList();

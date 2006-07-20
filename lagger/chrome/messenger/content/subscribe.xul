@@ -6,18 +6,25 @@
 		title="Subscribe"
         orient="horizontal"
         resizable="true" 
-        width="280"
+        width="300"
         onload="suscribeNotification();"
         onclose="self.close();"
-        height="150"
+        height="180"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 
 
 <script type="application/x-javascript" src="JavaScript/gui.js"/>
 <script type="application/x-javascript" src="JavaScript/subscribe.js"/>
+<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
+    <script type="application/x-javascript" src="JavaScript/prefs.js"/>
+    <script type="application/x-javascript" src="JavaScript/shared.js"/>
         
-<vbox>
+<vbox flex="1">
 
 <spacer height="30"/>
 
@@ -25,8 +32,16 @@
 
 <spacer height="20"/>
 
-<button label="OK" width="20" oncommand="ok();" />
+<textbox id="reasonStatus" height="30"/>
+
+<spacer height="20"/>
+
+
+<hbox align="right">
+<button label="OK" width="20" oncommand="doSubscribe();self.close();" />
 <button label="Cancel" width="20" oncommand="self.close();" />
+</hbox>
+
 </vbox>
 
 

@@ -22,7 +22,7 @@
 
 <spacer height="30"/>
 
-<label id="messageUnsubscription" value="Cancel of authorisation has been sent"/>
+<label id="messageUnsubscription"/>
 
 <spacer height="20"/>
 
