@@ -21,6 +21,6 @@ item.setAttribute("context","itemcontext");
 
 }
 
-catch (e) {alert ("suscribe" + e);}
+catch (e) {alert ("suscribed" + e);}
 
 }

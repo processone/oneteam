@@ -1,5 +1,6 @@
 <!ENTITY Login.titre "Connexion">
 <!ENTITY Login.login "Identifiant">
+<!ENTITY Login.NewAccount "Nouveau compte">
 <!ENTITY Login.server "Serveur">
 <!ENTITY Login.httpbase "Http-Base">
 <!ENTITY Login.password "Mot de Passe">

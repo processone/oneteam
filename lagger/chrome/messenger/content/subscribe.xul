@@ -7,8 +7,8 @@
 		title="&Subscribe.title;"
         orient="horizontal"
         resizable="true" 
-        width="320"
-        onload="suscribeNotification();"
+        width="370"
+        onload="subscribeNotification();"
         onclose="self.close();"
         height="180"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -41,7 +41,7 @@
 
 <hbox align="right">
 <button label="OK" width="20" oncommand="doSubscribe();self.close();" />
-<button label="Cancel" width="20" oncommand="self.close();" />
+<button label="Cancel" width="20" oncommand="doForbid();self.close();" />
 </hbox>
 
 </vbox>

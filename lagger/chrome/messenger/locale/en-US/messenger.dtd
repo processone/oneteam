@@ -1,5 +1,6 @@
 <!ENTITY Login.titre "Connection">
 <!ENTITY Login.login "Username">
+<!ENTITY Login.NewAccount "New Account">
 <!ENTITY Login.server "Server">
 <!ENTITY Login.httpbase "Http-Base">
 <!ENTITY Login.password "Password">

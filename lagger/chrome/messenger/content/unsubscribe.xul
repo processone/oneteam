@@ -6,7 +6,7 @@
 		title="&Unsubscribe.title;"
         orient="horizontal"
         resizable="true" 
-        width="320"
+        width="340"
         onload="unsuscribeNotification();"
         onclose="self.close();"
         height="150"

@@ -1,9 +1,31 @@
-<!ENTITY Info.name "Name : ">
-<!ENTITY Info.firstname "First Name : ">
-<!ENTITY Info.email "E-Mail : ">
-<!ENTITY Info.phone "Phone : ">
+<!ENTITY info.title "Edit your info">
+<!ENTITY info.General "General">
+<!ENTITY info.Location "Location">
+<!ENTITY info.Work "Work">
+<!ENTITY info.About "About">
+<!ENTITY info.Avatar "Avatar">
 
 
-<!ENTITY Info.organisation "Organisation : ">
-<!ENTITY Info.jabberid "ID : ">
-<!ENTITY Info.address "Address : ">
+<!ENTITY info.Name "Name :">
+<!ENTITY info.Family "Family :">
+<!ENTITY info.Nickname "Nickname :">
+<!ENTITY info.E-mail "E-mail :">
+<!ENTITY info.Homepage "Homepage :">
+<!ENTITY info.Birthday "Birthday :">
+
+<!ENTITY info.Street "Street :">
+<!ENTITY info.ExtraAddress "Extra Address :">
+<!ENTITY info.CityState "City State :">
+<!ENTITY info.PostalCode "Postal Code : ">
+<!ENTITY info.Country "Country :">
+
+
+<!ENTITY info.Company "Company :">
+<!ENTITY info.Department "Department :">
+<!ENTITY info.Role "Role :">
+<!ENTITY info.Phone "Phone :">
+<!ENTITY info.E-Mail "E-Mail :">
+
+
+<!ENTITY info.Steal "Make picture as mine">
+<!ENTITY info.Clear "Clear">
