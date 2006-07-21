@@ -15,13 +15,13 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
         <script type="application/x-javascript" src="JavaScript/prefsFunctions.js"/>
-    	    <script type="application/x-javascript" src="JavaScript/myInfo.js"/>
+    	<script type="application/x-javascript" src="JavaScript/myInfo.js"/>
         <script type="application/x-javascript" src="JavaScript/gui.js"/>
         <script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
-    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
+    	<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
  	    <script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
-    		<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
-    		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>    
+        <script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
+    	<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>    
                         
 	<vbox flex="1" align="center">
 	
@@ -155,7 +155,7 @@
                                 <hbox>
                                         <hbox>
                                         <!-- maxwidth="100"  maxheight="100" -->
-                                        <image id="myphoto" style="border: 1px solid #aaa" maxwidth="100"  maxheight="100" persist="style"/> 
+                                        <image id="myphoto" style="border: 1px solid #aaa" height="50" width="50" persist="style"/> 
                                        
                                         </hbox>
                                         <hbox>

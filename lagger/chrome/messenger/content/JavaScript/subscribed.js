@@ -12,7 +12,7 @@ var subscribed = window.opener.subscribed;
 
 var label = document.getElementById("messageSuscription");
 
-var message = subscribed + " authorized you to see him";
+var message = subscribed + label.value;
 
 label.setAttribute("value",message);
 

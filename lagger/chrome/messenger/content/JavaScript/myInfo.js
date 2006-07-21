@@ -432,7 +432,7 @@ try {
 				//image.setAttribute("src",filePath);				
 				//image.src = filePath;
 	
-	//var url = 'url("file://' + filePath + '")';
+	var url = 'url("file://' + filePath + '")';
 	
 	
 	alert (url);

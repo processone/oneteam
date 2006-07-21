@@ -296,6 +296,31 @@ function retrieveVcard(iq){
 		if (tag && tag.item(0) && tag.item(0).firstChild )
 			var base64data = tag.item(0).firstChild.nodeValue.toString();
 				if (base64data){
+				
+				var savefile = "." + cutResource(window.opener.infojid);
+				try {
+				netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+					} catch (e) {
+				alert("Permission to save file was denied.");
+				}
+				// get the path to the user's home (profile) directory
+				const DIR_SERVICE = new Components.Constructor("@mozilla.org/file/directory_service;1","nsIProperties");
+				try { 
+			path=(new DIR_SERVICE()).get("ProfD", Components.interfaces.nsIFile).path; 
+				} catch (e) {
+			alert("error");
+				}
+			// determine the file-separator
+				if (path.search(/\\/) != -1) {
+				path = path + "\\";
+				} else {
+				path = path + "/";
+				}
+				savefile = path+savefile;
+				
+				//alert (savefile);
+				saveInFile (base64data,savefile);
+				
 				var uri = "data:image/jpeg;base64," + base64data;
 					//alert (uri);
 	
@@ -308,7 +333,7 @@ function retrieveVcard(iq){
 				//alert ("image" + cutResource(window.opener.infojid));
 				var rosterimage = window.opener.document.getElementById("image" + cutResource(window.opener.infojid));
 				rosterimage.setAttribute("src",uri);
-				rosterimage.setAttribute("persist", "src");
+				rosterimage.persist="src";
 				}
 			
 	

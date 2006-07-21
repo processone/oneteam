@@ -10,7 +10,7 @@ var unsubscribed = window.opener.unsubscribed;
 
 var label = document.getElementById("messageUnSubscribed");
 
-var message = unsubscribed + " authorized you to see him";
+var message = unsubscribed + label.value;
 
 label.setAttribute("value",message);
 

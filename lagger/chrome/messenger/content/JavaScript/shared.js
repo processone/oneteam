@@ -1,3 +1,48 @@
+
+
+function saveInFile(string,dest){
+
+var file=Components.classes["@mozilla.org/file/local;1"]
+         .createInstance(Components.interfaces.nsILocalFile);
+file.initWithPath(dest);
+if ( file.exists() == false ) {
+		//alert( "Creating file... " );
+		file.create( Components.interfaces.nsIFile.NORMAL_FILE_TYPE, 420 );
+	}
+var fileStream = Components.classes['@mozilla.org/network/file-output-stream;1']
+                        .createInstance(Components.interfaces.nsIFileOutputStream);
+
+fileStream.init(file, 0x20 | 0x02, 777, null);
+fileStream.write(string,string.length);
+fileStream.close();
+}
+
+
+function read(path) {
+	try {
+		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+	} catch (e) {
+		alert("Permission to read file was denied.");
+	}
+	var file = Components.classes["@mozilla.org/file/local;1"]
+		.createInstance(Components.interfaces.nsILocalFile);
+	file.initWithPath( path );
+	if ( file.exists() == false ) {
+		//alert("File does not exist");
+		return;
+	}
+	var is = Components.classes["@mozilla.org/network/file-input-stream;1"]
+		.createInstance( Components.interfaces.nsIFileInputStream );
+	is.init( file,0x01, 00004, null);
+	var sis = Components.classes["@mozilla.org/scriptableinputstream;1"]
+		.createInstance( Components.interfaces.nsIScriptableInputStream );
+	sis.init( is );
+	var output = sis.read( sis.available() );
+	//document.getElementById('blog').value = output;
+	return output;
+}
+
+
 function getArgs() {
     passedArgs = new Array();
     search = self.location.href;

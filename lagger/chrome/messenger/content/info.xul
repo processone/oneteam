@@ -22,17 +22,17 @@
     		<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
     		<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
         
-       <vbox flex="1">
-       
-        <spacer height="15"/>
+    <vbox flex="1" align="center">
+	
+	 <spacer height="15"/>
         
         <tabbox id="tablist" flex="1">
           <tabs>
-                        <tab label="General"/>
-                        <tab label="Location"/>
-                        <tab label="Work"/>
-                        <tab label="About"/>
-                        <tab label="Avatar" id="avatartab"/>
+                        <tab label="&info.General;"/>
+                        <tab label="&info.Location;"/>
+                        <tab label="&info.Work;"/>
+                        <tab label="&info.About;"/>
+                        <tab label="&info.Avatar;" id="avatartab"/>
                         
           </tabs>
           <tabpanels flex="1">
@@ -45,29 +45,29 @@
                                 </columns>
                                 <rows>
                                         <row>
-                                                <label value="Name:" control="fn"/>
-                                                <textbox id="name" flex="1" readonly="true"/>
+                                                <label value="&info.Name;" control="fn"/>
+                                                <textbox persist="value" id="name" flex="1"/>
                                         </row>
                                         <row>
-                                                <label value="Family:" control="fn"/>
-                                                <textbox id="family" readonly="true"/>
+                                                <label value="&info.Family;" control="fn"/>
+                                                <textbox persist="value" id="family"/>
                                         </row>
                                         <row>
-                                                <label value="Nickname:" control="nickname"/>
-                                                <textbox id="nickname" readonly="true"/>
+                                                <label value="&info.Nickname;" control="nickname"/>
+                                                <textbox persist="value" id="nickname"/>
                                         </row>
                                         <row>
-                                                <label value="E-mail:" control="url"/>
-                                                <textbox id="userid" readonly="true"/>
+                                                <label value="&info.E-mail;" control="url"/>
+                                                <textbox persist="value" id="userid" />
                                         </row>
                                         <row>
-                                                <label value="Homepage:" control="url"/>
-                                                <textbox id="url" readonly="true"/>
+                                                <label value="&info.Homepage;" control="url"/>
+                                                <textbox persist="value" id="url" />
                                         </row>
                                         <row>
-                                                <label value="Birthday:" control="location"/>
+                                                <label value="&info.Birthday;" control="location"/>
                                                 <!--<datepicker id="location"/> -->
-                                                <textbox id="birthday" readonly="true"/>
+                                                <textbox persist="value" id="birthday"/>
                                         </row>
                                 </rows>
 
@@ -82,24 +82,24 @@
                                 <rows>
                                         
                                         <row>
-                                                <label value="Street:" control="nickname"/>
-                                                <textbox id="street" readonly="true"/>
+                                                <label value="&info.Street;" control="nickname"/>
+                                                <textbox persist="value" id="street"/>
                                         </row>
                                         <row>
-                                                <label value="Extra address:"/>
-                                                <textbox id="extra" readonly="true"/>
+                                                <label value="&info.ExtraAddress;"/>
+                                                <textbox persist="value" id="extra" />
                                         </row>
                                         <row>
-                                                <label value="City state:"/>
-                                                <textbox id="location" readonly="true"/>
+                                                <label value="&info.CityState;"/>
+                                                <textbox persist="value" id="location"/>
                                         </row>
                                          <row>
-                                                <label value="Postal Code:"/>
-                                                <textbox id="postal" readonly="true"/>
+                                                <label value="&info.PostalCode;"/>
+                                                <textbox persist="value" id="postal"/>
                                         </row>
                                         <row>
-                                                <label value="Country:"/>
-                                                <textbox id="country" readonly="true"/>
+                                                <label value="&info.Country;"/>
+                                                <textbox persist="value" id="country"/>
                                         </row>
                                 </rows>
 
@@ -114,25 +114,25 @@
                                 <rows>
                                         
                                         <row>
-                                                <label value="Company:"/>
-                                                <textbox id="company" readonly="true"/>
+                                                <label value="&info.Company;"/>
+                                                <textbox persist="value" id="company"/>
                                         </row>
                                         <row>
-                                                <label value="Department:"/>
-                                                <textbox id="department" readonly="true"/>
+                                                <label value="&info.Department;"/>
+                                                <textbox persist="value" id="department" />
                                         </row>
-                                       
+                                        
                                          <row>
-                                                <label value="Role:"/>
-                                                <textbox id="role" readonly="true"/>
+                                                <label value="&info.Role;"/>
+                                                <textbox persist="value" id="role"/>
                                         </row>
                                         <row>
-                                                <label value="Phone:"/>
-                                                <textbox id="phone" readonly="true"/>
+                                                <label value="&info.Phone;"/>
+                                                <textbox persist="value" id="phone"/>
                                         </row>
                                         <row>
-                                                <label value="E-Mail:"/>
-                                                <textbox id="email" readonly="true"/>
+                                                <label value="&info.E-Mail;"/>
+                                                <textbox persist="value" id="email"/>
                                         </row>
                                 </rows>
 
@@ -140,12 +140,12 @@
                         
                         <vbox>
                                 
-                                        <hbox>
-                                        <textbox multiline="true" readonly="true" width="240" height="130" id="about" style="border: 1px solid #aaa"/>
+                                        <hbox flex="1">
+                                        <textbox persist="value" multiline="true" width="240" height="130" id="about" flex="1" style="border: 1px solid #aaa"/>
                                         </hbox>
                                         <spacer height="20"/>
                                         <hbox>
-                                        <button label="Clear" width="60" height="30" onclick="clear()"/>
+                                        <button label="&info.Clear;" width="60" height="30" onclick="clear()"/>
                                         </hbox>
                                
                         </vbox>
@@ -153,10 +153,10 @@
                         <vbox >
                                 <hbox>
                                         <hbox>
-                                        <image id="photo" onload="resize();" maxwidth="100"  maxheight="100" style="border: 1px solid #aaa"/>
+                                        <image id="photo" onload="resize();" validate="never" maxwidth="100"  maxheight="100" style="border: 1px solid #aaa"/>
                                         </hbox>
                                         <hbox>
-                                        <label class="text-link" style="-moz-user-focus:ignore;" value="Change my picture" onclick="changePicture()" flex="0"/>
+                                        <label class="text-link" style="-moz-user-focus:ignore;" value="&info.Steal;" onclick="changePicture()" flex="0"/>
                                         </hbox>
                                        
                                 </hbox>

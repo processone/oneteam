@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/unsubscribed.dtd">
 
 <window id="Unsubscribed"
-		title="Unsubscribed"
+		title="&Unsubscribed.title;"
         orient="horizontal"
         resizable="true" 
-        width="280"
+        width="320"
         onload="unsuscribedNotification();"
         onclose="self.close();"
         height="150"
@@ -21,7 +21,7 @@
 
 <spacer height="30"/>
 
-<label id="messageUnsubscribed"/>
+<label id="messageUnsubscribed" value="&Unsubscribed.message;"/>
 
 <spacer height="20"/>
 

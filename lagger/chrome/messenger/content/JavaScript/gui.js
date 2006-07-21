@@ -1671,8 +1671,13 @@ function showUser(user) {
      var item = document.createElement("listitem");
      item.setAttribute("ondblclick", "openConversation(event)");
      item.setAttribute("id", user[0]);
-      item.setAttribute("tooltip","moretip");
-      item.setAttribute("onmouseover","tooltiped(this,event);");
+     
+    
+     //if (user [4] != "offline.png"){
+      //if (user [7] > 0) {	
+      	item.setAttribute("tooltip","moretip");
+     	item.setAttribute("onmouseover","tooltiped(this,event);");
+      //}
      
    /* var item = document.createElement("listitem");
     item.setAttribute("context", "itemcontext");
@@ -1701,11 +1706,38 @@ function showUser(user) {
     item.appendChild(cell);
     
     var image =  document.createElement("image");
-    // TO FIX : GIVE THE RIGHT SRC IF EXIST
-    //image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
+    
+    // Read in file to see if an avatar already exists
+    
+	var savefile = "." + user [0];
+	try {
+	netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+	} catch (e) {
+	alert("Permission to save file was denied.");
+	}
+	// get the path to the user's home (profile) directory
+	const DIR_SERVICE = new Components.Constructor("@mozilla.org/file/directory_service;1","nsIProperties");
+	try { 
+	path=(new DIR_SERVICE()).get("ProfD", Components.interfaces.nsIFile).path; 
+	} catch (e) {
+	alert("error");
+	}
+	// determine the file-separator
+	if (path.search(/\\/) != -1) {
+	path = path + "\\";
+	} else {
+	path = path + "/";
+	}
+	savefile = path+savefile;
+
+    
+    
+    var base64= read (savefile);
+    
+    image.setAttribute ("src","data:image/jpeg;base64," + base64);
     image.setAttribute("width", "20");
     image.setAttribute("height", "20");
-   	//image.setAttribute("persist", "src");
+   	image.setAttribute("persist", "src");
     image.setAttribute("id", "image" + user[0]);
     //alert ("image" + user[0]);
     item.appendChild(image);
