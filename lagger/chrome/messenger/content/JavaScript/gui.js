@@ -6,6 +6,7 @@ const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
 
 var users = new Array();
 var groups = new Array();
+var groupCounter = new Array();
 var nicks = new Array();
 var rooms = new Array();
 var roomUsers = new Array();
@@ -1424,33 +1425,27 @@ function showUsers(users) {
         //alert (group);
         var itemGroup = showGroup(group);
         var countUser = 0;
+        var onlineUser = 0;
 
         for (var i = 0; i < users.length; i++) {
 
             var user = users[i];
             if (user [2] == group){
-            /*		if (hideDecoUser){
-            			
-            			if (user [4] != "offline.png"){
+           
                 		showUser(user);
                 		countUser++;
-                		}
                 		
-                	}
-               		 else {
-                	
-               			 showUser(user);
-                		countUser ++;
-                		}*/
-                		showUser(user);
+                		if (user [4] != "offline.png")
+                			onlineUser++;
 			}
         }
         //end forUser
-   
-       	 	/*if (countUser > 0)
-       	 	  itemGroup.hidden=false;
-       	 	else
-       	 	  itemGroup.hidden=true;*/
+   		
+   		var counter = new Array();
+   		counter [0] = onlineUser;
+   		counter [1] = countUser;
+   		groupCounter [g] = counter;
+       	itemGroup.setAttribute ("label", itemGroup.getAttribute("label") + " (" + onlineUser + "/" + countUser + ")"); 	
         
 	
     }
@@ -1464,16 +1459,31 @@ function showUsers(users) {
 // Function to show a group in roster
 function showGroup(group) {
 
+try {
+
     var liste = document.getElementById("liste_contacts");
     var item = document.createElement("listitem");
     item.setAttribute("context", "itemcontextgroup");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("image", "chrome://messenger/content/img/tes.png");
-    item.setAttribute("label", group);
-    //item.setAttribute("value", "group");
+    
+    for (var g = 0; g < groups.length; g++) {  
+        	
+        	if (group == groups[g]){
+           
+           		
+				if (groupCounter [g])      
+					item.setAttribute ("label", group + " (" + (groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
+               	else
+        			item.setAttribute("label", group);
+			}
+        }
+    
+    //item.setAttribute("label", group);
+	item.setAttribute("class", "group");
     item.setAttribute("orient", "horizontal");
-    //item.setAttribute("id", "group" + group);
-    item.setAttribute("id", "group");
+    item.setAttribute("id", "group" + group);
+    //item.setAttribute("id", "group");
    
     liste.appendChild(item);
     
@@ -1487,6 +1497,8 @@ function showGroup(group) {
     liste.appendChild(item);*/
     
    	return item;
+   	
+   	} catch (e) {alert("showGroup" + e);}
     
 }
 
@@ -2048,7 +2060,7 @@ function sendMsg(event) {
             var msg = textEntry.value; //  + "\n"
             var login = keepLogin(myjid);
             frame.contentDocument.write("<p><u><FONT COLOR='#FF6633'>" + login + "</u>" +   " : " + "</font>");
-            frame.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.outgoingmessagecolor") + ">" + msgFormat(msg) +"</font>" + "</p>");
+            frame.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.outgoingmessagecolor") + ">" + msgFormat(htmlEnc(msg)) +"</font>" + "</p>");
       		frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
             textEntry.value = '';
             // alert (aMsg.xml());
@@ -3052,7 +3064,7 @@ function handleMessage(aJSJaCPacket) {
     		var tab = document.getElementById ("tab" + jid);
     		tab.setAttribute("style","color: #FF0000;");
     		tab.setAttribute("onclick",'this.style.color = "#000000";');
-    		textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" +msgFormat(aJSJaCPacket.getBody() + "\n") + "</font>" + "</p>");
+    		textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" + msgFormat(htmlEnc(aJSJaCPacket.getBody()) + "\n") + "</font>" + "</p>");
     		textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
    	}
@@ -3107,6 +3119,41 @@ var state = false;
 		
 		}
 		catch(e) {alert ("Dans showstate" + e);}
+}
+
+
+// Function to calculate the number of online
+function calculateOnline (user){
+
+try {
+
+
+ for (var g = 0; g < groups.length; g++) {  
+        var group = groups[g];
+       
+            if (user [2] == group){
+            
+            var itemGroup = document.getElementById("group" + group);
+           
+           		var groupName = itemGroup.getAttribute("label").substring (0,itemGroup.getAttribute("label").indexOf("("));
+        
+
+				if (user [4] == "online.png")
+		
+					itemGroup.setAttribute ("label", groupName + "(" + (++groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
+				
+		
+               else if (user [4] == "online.png")
+               		
+               		itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
+               
+			}
+        }
+        //end forGroup
+   		
+   		
+ } catch (e){alert ("calculateOnline" + e);}     	
+
 }
 
 // Callback on changing presence status Function
@@ -3299,6 +3346,9 @@ else if (! isRoom (sender) && sender.match("@")){
     			resource [1] = 0;
     		
     		var contains = false;
+    		
+    		if (resources){
+    		
     		for  (var i = 0 ; i < resources.length ; i ++){
     		//alert (resources [i] [0]);
     			if (resources [i] [0] == resource [0]){
@@ -3343,6 +3393,7 @@ else if (! isRoom (sender) && sender.match("@")){
     	 		elementList.setAttribute ("label",newLabel);
     	 		}
     	 		
+    	 	}
     	 	}
 	}
   
@@ -3430,6 +3481,11 @@ else if (! isRoom (sender) && sender.match("@")){
            		}		
         				
    		}
+    	
+    	// Else priority = 1 , we increment online users
+    	else {
+    		calculateOnline(user);
+    	}
     			
     } // endif !getType !getShow
     	
@@ -3516,6 +3572,8 @@ else if (! isRoom (sender) && sender.match("@")){
     	 			//alert ("user [7] <= 1");
     	 			if (elementList)
     	 			elementList.setAttribute ("label",keepLogin(sender));
+    	 			
+    	 			calculateOnline (user);
     	 			}
     	 			
     	 

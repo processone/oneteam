@@ -15,7 +15,7 @@ font-weight : bold;
 }
 
 
-#group {
+.group {
 color : rgb(15%, 15%, 70%);
 background: #CCCCFF;
 font-weight : bold;
@@ -39,10 +39,7 @@ list-style-image: url( "chrome://messenger/content/img/away.png" );
 }
 
 
-#away {
-
-list-style-image: url("chrome://messenger/content/img/away.png");
-	
+#xa {
+list-style-image: url("chrome://messenger/content/img/away.png");	
 }	
 
-}

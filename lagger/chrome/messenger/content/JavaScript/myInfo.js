@@ -1,8 +1,9 @@
 var myFile = null;
 
+const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
+		.getService(Components.interfaces.nsIPrefBranch);
+
 var prefs = loadPrefs();
-
-
 
 // Function to publish infos
 function publishInfo(){
@@ -138,10 +139,19 @@ desc.appendChild(descnode);
 elem.appendChild(desc);
 
 if (prefs.myphoto != null){
+	alert ("i have a photo!");
 	var binvalnode = document.createTextNode(convertFileToBase64(prefs.myphoto));
 	binval.appendChild(binvalnode);
+	elem.appendChild(binval);
 	}
-elem.appendChild(binval);
+else if (myFile) {
+	alert ("i have a photo!");
+	var binvalnode = document.createTextNode(convertFileToBase64(myFile));
+	binval.appendChild(binvalnode);
+	elem.appendChild(binval);
+}	
+	
+
 
 window.opener.con.send(iq);
 
@@ -425,8 +435,7 @@ try {
 	if (myFile instanceof Components.interfaces.nsILocalFile)
   myFile.initWithPath(filePath);
   
-  savePrefs({
-        myphoto : myFile });
+  savePrefs({myphoto : myFile });
   
   var image = document.getElementById("myphoto");
 				//image.setAttribute("src",filePath);				
