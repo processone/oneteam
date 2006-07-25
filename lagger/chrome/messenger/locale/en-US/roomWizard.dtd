@@ -1,0 +1,5 @@
+<!ENTITY roomWizard.titre "Room Wizard">
+<!ENTITY roomWizard.select "Select the operation you want to do : ">
+<!ENTITY roomWizard.default "Join default room  [ Beginners ]">
+<!ENTITY roomWizard.instant "Join instant room">
+<!ENTITY roomWizard.manage "Manage bookmarks">

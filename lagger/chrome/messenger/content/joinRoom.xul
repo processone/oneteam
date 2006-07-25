@@ -6,9 +6,8 @@
 <window id="Room"
         title="&Room.window;"
         orient="horizontal"
-        onload="loadServer();"
-        width="490"
-        height="290"
+        width="390"
+        height="250"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
         
         
@@ -24,27 +23,6 @@
     
     <hbox flex="1">
     
-    <vbox flex="1">
-    
-    <!-- <label value="Bookmarks"/> 
-   
-    <tree id="bookmarks" width="180" flex="1" hidecolumnpicker="true">
-      <treecols>
-           <treecol id="col1" flex="1" hideheader="true"/> 
-            
-     </treecols>
-     <treechildren id="servers">
-       
-     </treechildren>
- </tree>-->
- 
- <listbox context="listcontext" width="180" flex="1" id="servers" onselect="showProperties();"/>
- 
- <hbox>
-
- <button id="rem" label="Remove" onclick="removeBookmark();"/>
- </hbox>
- </vbox>
     
     <groupbox id="xf-config-Roombox" flex="1">
         <caption class="titre" label="&Room.titre;" />
@@ -78,19 +56,14 @@
                     <textbox persist="true" id="server"/>                  
                 </row>
                  <spacer height="10"/>
-				<row>
-                    <spacer height="10"/>
-                    <checkbox id="auto" label="Auto join"/>                  
-                </row>
-
+				
             </rows>
         </grid>
 
-        <hbox align="center">
+        <hbox align="right">
             <spacer flex="1"/>
             <button label="&Room.join;" oncommand='self.close();window.opener.createInstantRoom(document.getElementById("room").value + "@" + document.getElementById("server").value);'/>
-			<button id="add" label="Save bookmark" oncommand="addBookmark();"/>
-            <spacer flex="1"/>
+            <spacer width="10"/>
             <button label="&Room.cancel;" oncommand="sendBookmarkPacket();self.close();"/>
         </hbox>
     </groupbox>

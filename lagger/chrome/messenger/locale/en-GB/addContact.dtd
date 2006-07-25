@@ -1,4 +1,5 @@
 <!ENTITY Contact.titre "Add Contact">
-<!ENTITY Contact.login "User">
-<!ENTITY Contact.server "Server">
+<!ENTITY Contact.directive "Add person to your contacts">
+<!ENTITY Contact.added "Contact added">
+
 <!ENTITY Contact.group "Group">

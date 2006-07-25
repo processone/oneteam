@@ -17,7 +17,7 @@ var message = subscribed + label.value;
 label.setAttribute("value",message);
 
 var item = window.opener.document.getElementById(subscribed);
-item.setAttribute("context","itemcontext");
+item.setAttribute("context","itemcontextsubto");
 
 }
 

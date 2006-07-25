@@ -39,6 +39,7 @@ var deployedGUI = false;
 var console = false;
 var hideDecoUser = false;
 
+
 var invitingJid;
 var invitingRoom;
 var invitingReason;
@@ -660,7 +661,8 @@ function removeFromRoster()
             closeTab();
 
         }
-
+		
+		
 
         var iq = new JSJaCIQ();
         iq.setType('set');
@@ -669,6 +671,8 @@ function removeFromRoster()
         item.setAttribute('jid', iditem);
         item.setAttribute('subscription', 'remove');
 
+		var user = findUserByJid(iditem);
+		calculateOnline(user);
 
         con.send(iq);
          if (console) {
@@ -808,8 +812,8 @@ function getRoster(iq) {
                 
                 // Don't want msn gate in roster
                  if (items.item(i).getAttribute('jid').match ("@")){
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png", "         Empty");
-            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png", "         Empty",true);
+            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence
             users.push(user);
             }
             
@@ -1445,7 +1449,11 @@ function showUsers(users) {
    		counter [0] = onlineUser;
    		counter [1] = countUser;
    		groupCounter [g] = counter;
-       	itemGroup.setAttribute ("label", itemGroup.getAttribute("label") + " (" + onlineUser + "/" + countUser + ")"); 	
+   		
+   		var nameGroup = itemGroup.getAttribute("label").substring (0,itemGroup.getAttribute("label").indexOf ("("));
+       	if (!nameGroup)
+       		nameGroup = itemGroup.getAttribute("label");
+       	itemGroup.setAttribute ("label", nameGroup + " (" + onlineUser + "/" + countUser + ")"); 	
         
 	
     }
@@ -2802,8 +2810,8 @@ function addContact()
 // Function to join a room
 function joinRoom() {
 
-    window.open("chrome://messenger/content/joinRoom.xul", "Room Manager", "chrome,centerscreen");
-
+    //window.open("chrome://messenger/content/joinRoom.xul", "Room Manager", "chrome,centerscreen");
+window.open("chrome://messenger/content/roomWizard.xul", "Room Manager", "chrome,centerscreen");
 
 }
 
@@ -3133,21 +3141,37 @@ try {
        
             if (user [2] == group){
             
+            //alert (group);
             var itemGroup = document.getElementById("group" + group);
+           
            
            		var groupName = itemGroup.getAttribute("label").substring (0,itemGroup.getAttribute("label").indexOf("("));
         
 
-				if (user [4] == "online.png")
-		
-					itemGroup.setAttribute ("label", groupName + "(" + (++groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
+				if (user [4] == "online.png" || user [4] == "away.png" || user [4] == "dnd.png" || user [4] == "xa.png" || user [4] == "chat.png"){
+					if (itemGroup)
 				
-		
-               else if (user [4] == "online.png")
-               		
-               		itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
-               
+						itemGroup.setAttribute ("label", groupName + "(" + (++groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
+				
+				}
+               else if (user [4] == "offline.png"){
+               		if (itemGroup)
+               			if (groupCounter [g] [0] > 0)
+               				itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
+               			else
+               				itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
 			}
+			
+			else {
+			if (itemGroup)
+				if (groupCounter [g] [0] > 0)
+					itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
+				else if (groupCounter [g] [0] <= 0  && groupCounter [g] [1] > 0)
+					itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
+				else
+					itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (groupCounter [g] [1]) + ")");
+				}
+        }
         }
         //end forGroup
    		
@@ -3620,6 +3644,14 @@ else if (! isRoom (sender) && sender.match("@")){
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
          }
+         if (show.substring(0, 2) == "ch") {
+            if (item)
+                item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "chat.png");
+                user [4] = "chat.png";
+                 var imghead = document.getElementById("imghead"+ user[0]);
+			if (imghead) 
+        		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+         }
          if (show.substring(0, 2) == "aw") {
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "away.png");
@@ -3628,8 +3660,14 @@ else if (! isRoom (sender) && sender.match("@")){
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
          }
-      
-     			 }// else
+         
+         	if (user [10]){
+      			calculateOnline (user);
+      			user [10] = false;
+      			}
+     	
+     	
+     	}// else
      			 
      			 
         if (aJSJaCPacket.getStatus())

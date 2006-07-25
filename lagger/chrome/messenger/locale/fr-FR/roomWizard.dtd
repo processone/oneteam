@@ -1,0 +1,5 @@
+<!ENTITY roomWizard.titre "Assistant de conférences">
+<!ENTITY roomWizard.select "Selectionner l'opération à réaliser : ">
+<!ENTITY roomWizard.default "Rejoindre le salon par défaut  [ Débutant ]">
+<!ENTITY roomWizard.instant "Rejoindre un salon temporaire">
+<!ENTITY roomWizard.manage "Gérer les bookmarks">
