@@ -62,7 +62,8 @@
 
         <hbox align="right">
             <spacer flex="1"/>
-            <button label="&Room.join;" oncommand='self.close();window.opener.createInstantRoom(document.getElementById("room").value + "@" + document.getElementById("server").value);'/>
+             <button label="&Room.join;" oncommand='self.close();window.opener.createInstantRoom(document.getElementById("room").value + "@" + document.getElementById("server").value,document.getElementById("login").value,document.getElementById ("name").value);'/>
+           
             <spacer width="10"/>
             <button label="&Room.cancel;" oncommand="sendBookmarkPacket();self.close();"/>
         </hbox>

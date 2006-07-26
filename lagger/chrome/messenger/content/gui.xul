@@ -358,7 +358,7 @@
                
                
                 <popup id="itemcontextroom">
-                		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand='document.getElementById("liste_contacts").clearSelection();openConversation(event);'/>
+                		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand='document.getElementById("liste_contacts").clearSelection();var evt = document.createEvent("MouseEvents");var item = document.getElementById("liste_conf").selectedItem;evt.initEvent("dblclick", true, false);res = item.dispatchEvent(evt);'/>
                    		 <menuitem label="&listitemcontext.InviterConference;" oncommand='launchInviteWindow();'/>
                     <menuseparator/>
                     <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>

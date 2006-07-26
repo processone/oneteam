@@ -40,7 +40,7 @@ function loadGroups() {
 		
 		function doAdd(){
 			var s = jid.value;
-			if (s.indexOf("@") != -1 || true) {
+			if (s.indexOf("@") != -1) {
 				performAddContact();
 				endmessage.value= jid.value + ' was added to your list';
 				endpage.setAttribute("label", "Person added");
@@ -75,7 +75,8 @@ function performAddContact(event) {
         var group = item.appendChild(iq.getDoc().createElement('group'));
         /*if (groups.selectedItem)
             var chosenGroup = groups.selectedItem.id;*/
-        if  (!chosenGroup)
+            var chosenGroup = groups.value;
+        if  (!chosenGroup || chosenGroup =="")
             chosenGroup = listGroups[0];
         group.appendChild(iq.getDoc().createTextNode(chosenGroup));
 

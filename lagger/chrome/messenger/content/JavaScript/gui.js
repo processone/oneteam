@@ -260,6 +260,7 @@ function openConversation(event) {
 		for (var i = 0 ; i < rooms.length ; i++){
 		if (rooms [i] == id)
 			nick = nicks[i];
+		//alert (nick);	
 		}
 		
 		//myRoomNick
@@ -639,6 +640,14 @@ function forbidToSeeMe (jid){
     var user = findUserByJid(jid);
     //alert ("nb de ressources" + user [7]);
 
+}
+
+// Function to allow to  play sound
+function playSound() {
+	    var sound = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
+	    var url = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURL);
+	    //url.spec = "http://jslib.mozdev.org/test.wav";
+    	//sound.play(url);	
 }
 
 
@@ -1693,11 +1702,11 @@ function showUser(user) {
      item.setAttribute("id", user[0]);
      
     
-     //if (user [4] != "offline.png"){
+     if (user [4] != "offline.png"){
       //if (user [7] > 0) {	
       	item.setAttribute("tooltip","moretip");
      	item.setAttribute("onmouseover","tooltiped(this,event);");
-      //}
+      }
      
    /* var item = document.createElement("listitem");
     item.setAttribute("context", "itemcontext");
@@ -2407,25 +2416,25 @@ function invite(jid,room) {
 }
 
 // Function to create instant room
-function createInstantRoom(wholeRoom){
+function createInstantRoom(wholeRoom,nick,name){
 	
 	try{
 	
 	rooms.push(wholeRoom);
-	//alert (window.opener.rooms);
+	nicks.push (nick);
 	
 	var listconf = document.getElementById("liste_conf");
 	
 	//window.opener.document.getElementById("liste_contacts").clearSelection();
 	
 	var item = document.createElement("listitem");
-	item.setAttribute("label", wholeRoom.substring(0,wholeRoom.indexOf("@")));
+	item.setAttribute("label", name);
     item.setAttribute("id",wholeRoom);
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
      var cell = document.createElement("listcell");
-    cell.setAttribute("label", wholeRoom.substring(0,wholeRoom.indexOf("@")));
+    cell.setAttribute("label", name);
     cell.setAttribute("id",wholeRoom + "cell");
      cell.setAttribute("flex", "1");
     
@@ -2446,7 +2455,7 @@ function createInstantRoom(wholeRoom){
     
   
         }
-        catch (e){alert(e);}
+        catch (e){alert("create instant room GUI " + e);}
         
 }
 
@@ -3086,7 +3095,7 @@ var state = false;
 	try { 
  
  	var jid = cutResource(aJSJaCPacket.getFrom());
- 	//alert("je rentre " + aJSJaCPacket.getNode().getElementsByTagName('composing'));
+ 	//alert("show state " + aJSJaCPacket.getNode().getElementsByTagName('composing'));
  	
  	var writestate = document.getElementById("writestate" + jid);
  	if(aJSJaCPacket.getNode().getElementsByTagName('composing')){

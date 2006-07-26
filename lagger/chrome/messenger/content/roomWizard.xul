@@ -26,7 +26,7 @@
 
 	<wizardpage id="startpage" pageid="start" label="&roomWizard.titre;" >
 
-		<label value="&roomWizard.select;"/>
+		<label value="&roomWizard.select;" style="font-weight : bold;"/>
 		
 		
 		<spacer height="20"/>

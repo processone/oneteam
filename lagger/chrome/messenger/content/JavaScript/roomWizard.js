@@ -1,4 +1,4 @@
-var fileToOpen = "manageBookmarks.xul";
+var fileToOpen = "createdDefault.xul";
 
 function changePage(){
 
@@ -12,15 +12,16 @@ var wizard = document.getElementById("roomWizard");
 var startPage = document.getElementById("startpage");
 
 if (radio1.selected){
-	fileToOpen = "joinRoom.xul";
-	//startPage.setAttribute ("next","join");
+	
+	//startPage.setAttribute ("next","join
+	fileToOpen = "createdDefault.xul";
 	}
 else if (radio2.selected){
 	fileToOpen = "manageBookmarks.xul";
     //startPage.setAttribute ("next","manage");
 }
 else if (radio3.selected){
-	fileToOpen = "createdDefault.xul";
+	fileToOpen = "joinRoom.xul";
     //startPage.setAttribute ("next","manage");
 }
 
@@ -36,7 +37,9 @@ if (fileToOpen != "createdDefault.xul")
 
 window.opener.open("chrome://messenger/content/" + fileToOpen,"", "chrome,centerscreen");
 
-else
+else {
+	
+	window.opener.createInstantRoom ( "default@" + window.opener.mucs[0],keepLogin (window.opener.myjid),"Default");
 
-
+}
 }

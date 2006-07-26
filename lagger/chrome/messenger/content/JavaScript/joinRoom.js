@@ -438,7 +438,7 @@ var name = document.getElementById("name");
 
 var wholeRoom = roomname.value + "@" + server.value;
 window.opener.rooms.push(wholeRoom);
-alert (window.opener.rooms);
+//alert (window.opener.rooms);
 	
 	self.close();
 	
@@ -470,11 +470,7 @@ alert (window.opener.rooms);
 	evt.initEvent("dblclick", true, false);
 	
 	res = item.dispatchEvent(evt);
-	if ( res ) {
-    // None of the handlers called preventDefault
-    b.disabled = true;
-}
-
+	
 	//listconf.ondbclick
 	//window.opener.openConversation(event);
 	
@@ -528,7 +524,7 @@ alert (window.opener.rooms);
         window.opener.refreshList();
         	}*/
         }
-        catch (e){alert(e);}
+        catch (e){alert("create instant room join room" + e);}
         
 }
 

@@ -46,28 +46,28 @@
                                 <rows>
                                         <row>
                                                 <label value="&info.Name;" control="fn"/>
-                                                <textbox persist="value" id="name" flex="1"/>
+                                                <textbox id="name" flex="1"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Family;" control="fn"/>
-                                                <textbox persist="value" id="family"/>
+                                                <textbox  id="family"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Nickname;" control="nickname"/>
-                                                <textbox persist="value" id="nickname"/>
+                                                <textbox  id="nickname"/>
                                         </row>
                                         <row>
                                                 <label value="&info.E-mail;" control="url"/>
-                                                <textbox persist="value" id="userid" />
+                                                <textbox  id="userid" />
                                         </row>
                                         <row>
                                                 <label value="&info.Homepage;" control="url"/>
-                                                <textbox persist="value" id="url" />
+                                                <textbox  id="url" />
                                         </row>
                                         <row>
                                                 <label value="&info.Birthday;" control="location"/>
                                                 <!--<datepicker id="location"/> -->
-                                                <textbox persist="value" id="birthday"/>
+                                                <textbox  id="birthday"/>
                                         </row>
                                 </rows>
 
@@ -83,23 +83,23 @@
                                         
                                         <row>
                                                 <label value="&info.Street;" control="nickname"/>
-                                                <textbox persist="value" id="street"/>
+                                                <textbox id="street"/>
                                         </row>
                                         <row>
                                                 <label value="&info.ExtraAddress;"/>
-                                                <textbox persist="value" id="extra" />
+                                                <textbox  id="extra" />
                                         </row>
                                         <row>
                                                 <label value="&info.CityState;"/>
-                                                <textbox persist="value" id="location"/>
+                                                <textbox  id="location"/>
                                         </row>
                                          <row>
                                                 <label value="&info.PostalCode;"/>
-                                                <textbox persist="value" id="postal"/>
+                                                <textbox  id="postal"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Country;"/>
-                                                <textbox persist="value" id="country"/>
+                                                <textbox  id="country"/>
                                         </row>
                                 </rows>
 
@@ -115,24 +115,24 @@
                                         
                                         <row>
                                                 <label value="&info.Company;"/>
-                                                <textbox persist="value" id="company"/>
+                                                <textbox  id="company"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Department;"/>
-                                                <textbox persist="value" id="department" />
+                                                <textbox  id="department" />
                                         </row>
                                         
                                          <row>
                                                 <label value="&info.Role;"/>
-                                                <textbox persist="value" id="role"/>
+                                                <textbox  id="role"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Phone;"/>
-                                                <textbox persist="value" id="phone"/>
+                                                <textbox  id="phone"/>
                                         </row>
                                         <row>
                                                 <label value="&info.E-Mail;"/>
-                                                <textbox persist="value" id="email"/>
+                                                <textbox  id="email"/>
                                         </row>
                                 </rows>
 
@@ -141,7 +141,7 @@
                         <vbox>
                                 
                                         <hbox flex="1">
-                                        <textbox persist="value" multiline="true" width="240" height="130" id="about" flex="1" style="border: 1px solid #aaa"/>
+                                        <textbox  multiline="true" width="240" height="130" id="about" flex="1" style="border: 1px solid #aaa"/>
                                         </hbox>
                                         <spacer height="20"/>
                                         <hbox>

@@ -1,0 +1,39 @@
+.paneSelector {
+    display: -moz-box
+}
+
+#myExtensionOptions radio[pane] {
+    list-style-image: url( "chrome://messenger/skin/Options.png" );
+}
+
+radio[pane=general] {
+    -moz-image-region: rect( 0px, 32px, 32px, 0px )
+}
+
+radio[pane=general]:hover, radio[pane=general][selected="true"] {
+    -moz-image-region: rect( 32px, 32px, 64px, 0px )
+}
+
+radio[pane=advanced] {
+    -moz-image-region: rect( 0px, 160px, 32px, 128px )
+}
+
+radio[pane=advanced]:hover, radio[pane=advanced][selected="true"] {
+    -moz-image-region: rect( 32px, 160px, 64px, 128px )
+}
+
+radio[pane=editor] {
+    -moz-image-region: rect( 0px, 160px, 32px, 128px )
+}
+
+radio[pane=editor]:hover, radio[pane=editor][selected="true"] {
+    -moz-image-region: rect( 32px, 160px, 64px, 128px )
+}
+
+radio[pane=status] {
+    -moz-image-region: rect( 0px, 192px, 32px, 160px )
+}
+
+radio[pane=status]:hover, radio[pane=status][selected="true"] {
+    -moz-image-region: rect( 32px, 192px, 64px, 160px )
+}
