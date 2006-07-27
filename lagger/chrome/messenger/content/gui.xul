@@ -7,7 +7,7 @@
 <window id="Messenger"
         title="Lagger"
         orient="horizontal"
-        onload="initGUI();"
+        onload="if (event.target == document) initGUI();"
         width="170"
         onclose="closeWindows();"
         height="450"
@@ -410,7 +410,7 @@
                               oncommand='changeStatus("dnd");changeIcone("dnd.png");'/>
                     <menuitem id="away" class="menuitem-iconic" label="&status.Away;"
                               oncommand='changeStatus("away");changeIcone("away.png");'/>
-                    <menuitem id="xa" class="menuitem-iconic" label="&status.Undisponible;"
+                    <menuitem id="xa" class="menuitem-iconic icondnd" label="&status.Undisponible;"
                               oncommand='changeStatus("xa");changeIcone("xa.png");'/>
                     <menuitem id="invisible" class="menuitem-iconic" label="&status.Invisible;"
                               oncommand='changeStatus("invisible");changeIcone("invisible.png");'/>

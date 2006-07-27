@@ -2,16 +2,23 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences.css" type="text/css"?>
 
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/settings.dtd">
+
 <prefwindow id="myExtensionOptions"
             type="prefwindow"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
             buttons="accept, cancel"
             height="350"
             width="350"
-            	onload="loadFonts();"
+            onload="loadFonts();initialize()"
             title="Preferences">
             
+   
+       
+     
+            
 <script type="application/x-javascript" src="JavaScript/preferences.js"/>
+
 
 
     <prefpane id="general" label="General">
@@ -24,21 +31,26 @@
                         name="chat.roster.showoffline" type="bool"/>
             <preference id="chat.general.keepproperties"
                         name="chat.general.keepproperties" type="bool"/>
-            <preference id="chat.general.iconsetdir"
-                        name="chat.general.iconsetdir" type="string"/>
+            
             <preference id="chat.roster.sortbystatus"
                         name="chat.roster.sortbystatus" type="bool"/>
+            <preference id="chat.general.showavatars"
+                        name="chat.general.showavatars" type="bool"/>          
+            <preference id="chat.sounds"
+                        name="chat.sounds" type="bool"/>            
           
         </preferences>
 
-        <grid flex="1" id="grid-connection">
+        <grid flex="1" id="grid-general">
             <columns>
                 <column flex="1" minwidth="30"/>
                 <column flex="1"/>
             </columns>
             <rows id="rows-general">
+            <spacer height="10"/>
+            
                  <row>
-                    <label value="General options : " control="nickname"/>
+                    <label value="General options : " style="font-weight : bold"/>
                     <checkbox id="sort status" label="Sort contacts by status"
                               preference="chat.roster.sortbystatus"/>
                 </row>
@@ -62,22 +74,17 @@
                               preference="chat.general.keepproperties"/>
                 </row>
                 
-                <spacer height="20"/>
+                 
                 
                 <row>
-					<label value="Status inconset : " control="nickname"/>
-                    
-                    <menulist label="Available" id="status"  height="25" maxwidth="120" flex="1" 
-                        preference="chat.general.iconsetdir" oncommand="window.opener.refreshList();">
-                			<menupopup flex="1">
-                   			<menuitem class="menuitem-iconic" label="gajim" value="dcraven/"
-                              oncommand=""/>
-                    			<menuitem class="menuitem-iconic" label="ampoule" selected="true" value="crystal/"
-                              oncommand=""/>
-                 
-               		    </menupopup>
-            			</menulist>
-                </row>
+                	<spacer/>
+					<checkbox checked="true" preference="chat.sounds" label="Play sounds"/>
+					
+                </row>	
+                
+                <spacer height="20"/>
+                
+                
             </rows>
 
         </grid>
@@ -103,12 +110,12 @@
                         name="chat.editor.font" type="string"/>
         </preferences>
 
-        <grid flex="1" id="grid-connection">
+        <grid flex="1" id="grid-editor">
             <columns>
                 <column flex="1" minwidth="60"/>
                 <column flex="1"/>
             </columns>
-            <rows id="rows-muc">
+            <rows id="rows-editor">
 
                 <row>
                     <label  value="Incoming message : " control="nickname"/>
@@ -149,6 +156,8 @@
                     <label value="Outgoing console query : " control="nickname"/>
                     <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleoutmessagecolor"/>
                 </row>
+                
+               
 
 				<spacer height="20"/>
 				
@@ -168,32 +177,193 @@
         </grid>
     </prefpane>
 
-    <prefpane id="status" label="Status">
+    <prefpane id="statuspane" label="Status">
+		 
+		 <preferences>
+            <preference id="chat.general.iconsetdir"
+                        name="chat.general.iconsetdir" type="string"/>
+            <preference id="chat.status.autoaway"
+                        name="chat.status.autoaway" type="string"/>
+            <preference id="chat.status.autoxa"
+                        name="chat.status.autoxa" type="string"/>            
+        </preferences>
+        
+        <grid flex="1" id="grid-status">
+            <columns>
+                <column flex="1" minwidth="60"/>
+                <column flex="2"/>
+            </columns>
+            
+            
+            
+            <rows id="rows-status">
+            
+            	<spacer height="10"/>
+            
+           		 	
+            			<label value="Auto-status " style="font-weight : bold" control="nickname"/>
+            		
+            	 
+            
+            <spacer height="20"/>
+				<row>
+					<checkbox checked="true"/>
+					<label value="Be away after : "/>
+                	<textbox  color="#9999FF" height="22" width="50" preference="chat.status.autoaway"/>
+                	<label value="minutes"/> 
+                </row>
+                <row>
+					<checkbox checked="true"/>
+					<label value="Be unavailable after : "/>
+                	<textbox  color="#9999FF" height="22" width="50" preference="chat.status.autoxa"/>
+                	<label value="minutes"/>
+                </row>
+                
+                <spacer height="10"/>
+               
+               
+               		<label value="Status inconset : " style="font-weight : bold" control="nickname"/>
+               
+                
+               <spacer height="20"/> 
+                <row>
+					<spacer/>
+                    
+                    <menulist label="Available" id="status"  height="25" maxwidth="120" flex="1" 
+                        preference="chat.general.iconsetdir" oncommand="window.opener.refreshList();">
+                			<menupopup flex="1">
+                   			<menuitem class="menuitem-iconic" label="gajim" value="dcraven/"
+                              oncommand=""/>
+                    			<menuitem class="menuitem-iconic" label="ampoule" selected="true" value="crystal/"
+                              oncommand=""/>
+                 
+               		    </menupopup>
+            			</menulist>
+                </row>
+            </rows>
+
+        </grid>
+    </prefpane>
+    
+     <prefpane id="connection" label="Connection">
+
+        <preferences>
+
+            <preference id="chat.connection.host"
+                        name="chat.connection.host" type="string"/>
+            <preference id="chat.connection.port"
+                        name="chat.connection.port" type="int"/>
+            <preference id="chat.connection.ssl"
+                        name="chat.connection.ssl" type="bool"/>
+            <preference id="chat.connection.resource"
+                        name="chat.connection.resource" type="string"/>
+            <preference id="chat.connection.base"
+                        name="chat.connection.base" type="string"/>
+            <preference id="chat.connection.priority"
+                        name="chat.connection.priority" type="int"/>
+            <preference id="chat.connection.polling"
+                        name="chat.connection.polling" type="bool"/>           
+        </preferences>
 
         <grid flex="1" id="grid-connection">
             <columns>
                 <column flex="1" minwidth="60"/>
                 <column flex="2"/>
             </columns>
-            <rows id="rows-muc">
+            <rows id="rows-connection">
+                <row>
+                    <spacer/>
+                    <checkbox id="ssl" label="&Settings.ssl;" preference="chat.connection.ssl"
+                              onclick="if(this.checked) { port.value = 5280;} else {port.value = 5223; }"/>
+                </row>
+                <row>
+                    <label value="&Settings.port;" control="port"/>
+                    <textbox id="port" preference="chat.connection.port"/>
+                </row>
 
+
+                <spacer height="20"/>
+
+                <row>
+                    <label value="&Settings.host;" control="host"/>
+                    <textbox id="host" preference="chat.connection.host"/>
+                </row>
+
+                <spacer height="20"/>
+
+                <row>
+                    <label value="&Settings.base;" control="base"/>
+                    <textbox id="base" preference="chat.connection.base"/>
+                </row>
+				
+				<spacer height="20"/>
+				
+				<row>
+                    <spacer/>
+                    <checkbox id="advance" label="Advanced"  onclick='if(this.checked) {  document.getElementById("row-advance").style.visibility = "hidden";} else { document.getElementById("row-advance").style.visibility = "visible"; }'/>
+                </row>
                 
+                <spacer height="20"/>
+                
+                   <row style="visibility: hidden;" id="row-advance">
+              
+					<label value="Connection : " control="connection"/>
+                    <checkbox id="polling" checked="false" label="Use HttpPolling" preference="chat.connection.polling" onclick='if(this.checked){ document.getElementById("base").value = "http-bind";base.value="http-bind";} else {document.getElementById("base").value = "http-poll"; base.value="http-poll";}'/>
+				</row> 
+
             </rows>
 
         </grid>
+
+
+
     </prefpane>
+   
 
     <prefpane id="advanced" label="Advanced">
-
+    
+    <preferences>
+			<preference id="chat.advanced.browser"
+                        name="chat.advanced.browser" type="string"/>
+            <preference id="chat.advanced.mail"
+                        name="chat.advanced.mail" type="string"/>
+            <preference id="chat.advanced.fs"
+                        name="chat.advanced.fs" type="string"/>
+   </preferences>
 
         <grid flex="1" id="grid-adv">
             <columns>
                 <column flex="1" minwidth="60"/>
                 <column flex="2"/>
             </columns>
-            <rows id="rows-connection">
-
-               
+            <rows id="rows-advanced">
+            
+             <spacer height="10"/>
+            
+            
+            	<label value="Applications : " style="font-weight : bold"/>
+           
+            
+             <spacer height="10"/>
+            
+            	<row>
+					
+					<label value="Web browser : "/>
+                	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.browser"/>
+                	
+                </row>
+                <row>
+					
+					<label value="Mail software : "/>
+                	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.mail"/>
+                	
+                </row>
+                <row>
+					
+					<label value="File Handler : "/>
+                	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.fs"/>
+                	
+                </row>
                 
                 
             </rows>

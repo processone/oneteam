@@ -643,11 +643,11 @@ function forbidToSeeMe (jid){
 }
 
 // Function to allow to  play sound
-function playSound() {
+function playSound(path) {
 	    var sound = Components.classes["@mozilla.org/sound;1"].createInstance(Components.interfaces.nsISound);
 	    var url = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURL);
-	    //url.spec = "http://jslib.mozdev.org/test.wav";
-    	//sound.play(url);	
+	    url.spec = path;
+    	sound.play(url);	
 }
 
 
@@ -2059,6 +2059,8 @@ function sendMsg(event) {
             
             con.send(aMsg);
             
+            if (gPrefService.getBoolPref("chat.sounds"))
+          	playSound("chrome://messenger/content/sounds/sent.wav");
             }
             
             
@@ -3052,8 +3054,11 @@ function handleMessage(aJSJaCPacket) {
     var textToWrite = document.getElementById("text" + jid);
     
     
-    if (!isRoom(cutResource(origin)))
+    if (!isRoom(cutResource(origin))){
    showState (aJSJaCPacket);
+   		if (gPrefService.getBoolPref("chat.sounds") && aJSJaCPacket.getBody())
+          	playSound("chrome://messenger/content/sounds/message1.wav");
+ 	 }
   
     if (aJSJaCPacket.getBody() == null && !isRoom(origin))
     			;
@@ -3159,26 +3164,28 @@ try {
 
 				if (user [4] == "online.png" || user [4] == "away.png" || user [4] == "dnd.png" || user [4] == "xa.png" || user [4] == "chat.png"){
 					if (itemGroup)
-				
 						itemGroup.setAttribute ("label", groupName + "(" + (++groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
 				
 				}
                else if (user [4] == "offline.png"){
-               		if (itemGroup)
+               		if (itemGroup){
                			if (groupCounter [g] [0] > 0)
                				itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
                			else
                				itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
+					}
 			}
+				
 			
 			else {
-			if (itemGroup)
+			if (itemGroup){
 				if (groupCounter [g] [0] > 0)
 					itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
 				else if (groupCounter [g] [0] <= 0  && groupCounter [g] [1] > 0)
 					itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
 				else
 					itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (groupCounter [g] [1]) + ")");
+				}
 				}
         }
         }
@@ -3465,7 +3472,9 @@ else if (! isRoom (sender) && sender.match("@")){
  	alertsService.showAlertNotification("chrome://messenger/content/img/dcraven/online.png",
                                     user[3], "Is now available",
                                     false, "", null);
-           user [6] = "false";                         
+           user [6] = "false";
+          if (gPrefService.getBoolPref("chat.sounds"))
+          	playSound("chrome://messenger/content/sounds/connected.wav");                        
                                }
                                
         
@@ -3517,7 +3526,11 @@ else if (! isRoom (sender) && sender.match("@")){
     	
     	// Else priority = 1 , we increment online users
     	else {
+    		if (user [10]){
     		calculateOnline(user);
+    		user [10] = false;
+    		}
+    		
     	}
     			
     } // endif !getType !getShow
@@ -3606,7 +3619,10 @@ else if (! isRoom (sender) && sender.match("@")){
     	 			if (elementList)
     	 			elementList.setAttribute ("label",keepLogin(sender));
     	 			
+    	 			if (gPrefService.getBoolPref("chat.sounds"))
+          				playSound("chrome://messenger/content/sounds/disconnected.wav");
     	 			calculateOnline (user);
+    	 			user [10] = true;
     	 			}
     	 			
     	 

@@ -15,11 +15,11 @@ radio[pane=connection]:hover, radio[pane=connection][selected="true"] {
 }
 
 radio[pane=advanced] {
-    -moz-image-region: rect( 0px, 160px, 32px, 128px )
+    -moz-image-region: rect( 0px, 64px, 32px, 32px )
 }
 
 radio[pane=advanced]:hover, radio[pane=advanced][selected="true"] {
-    -moz-image-region: rect( 32px, 160px, 64px, 128px )
+    -moz-image-region: rect( 32px, 64px, 64px, 32px )
 }
 
 radio[pane=groupchat] {

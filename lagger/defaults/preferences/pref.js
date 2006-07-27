@@ -60,12 +60,12 @@ pref("chat.roster.showemptygroup", true);
 pref("chat.roster.filtergroups", false);
 pref("chat.roster.sortbystatus", false);
 
+pref("chat.sounds",true);
 
 pref("chat.muc.nickname", "");
 
 pref("chat.general.showavatars", false);
 pref("chat.general.showseparatedwindows",false);
-
 pref("chat.general.keepproperties", false);
 pref("chat.general.iconsetdir", "crystal/");
 
@@ -77,3 +77,11 @@ pref("chat.editor.consoleinmessagecolor", "");
 pref("chat.editor.consoleoutmessagecolor", "");
 
 pref("chat.editor.font", "");
+
+
+pref ("chat.advanced.browser","Default");
+pref ("chat.advanced.mail","Default");
+pref ("chat.advanced.fs","Default");
+
+pref("chat.status.autoaway","5");
+pref("chat.status.autoxa","10");

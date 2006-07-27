@@ -1,6 +1,16 @@
 const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
 		.getService(Components.interfaces.nsIPrefBranch);
 
+
+ var port = null;
+ var base = null;
+ 
+ 
+        function initialize(){
+        port = document.getElementById('chat.connection.port');
+        base = document.getElementById('chat.connection.base');
+        }
+
 //Function to load the fonts
 function loadFonts(){
 

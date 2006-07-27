@@ -7,19 +7,27 @@
 }
 
 radio[pane=general] {
-    -moz-image-region: rect( 0px, 32px, 32px, 0px )
+    -moz-image-region: rect( 0px, 96px, 32px, 64px )
 }
 
 radio[pane=general]:hover, radio[pane=general][selected="true"] {
-    -moz-image-region: rect( 32px, 32px, 64px, 0px )
+    -moz-image-region: rect( 32px, 96px, 64px, 64px )
+}
+
+radio[pane=connection] {
+    -moz-image-region: rect( 0px, 64px, 32px, 32px )
+}
+
+radio[pane=connection]:hover, radio[pane=advanced][selected="true"] {
+    -moz-image-region: rect( 32px, 64px, 64px, 32px )
 }
 
 radio[pane=advanced] {
-    -moz-image-region: rect( 0px, 160px, 32px, 128px )
+    -moz-image-region: rect( 0px, 128px, 32px, 96px )
 }
 
 radio[pane=advanced]:hover, radio[pane=advanced][selected="true"] {
-    -moz-image-region: rect( 32px, 160px, 64px, 128px )
+    -moz-image-region: rect( 32px, 128px, 64px, 96px )
 }
 
 radio[pane=editor] {
@@ -30,10 +38,10 @@ radio[pane=editor]:hover, radio[pane=editor][selected="true"] {
     -moz-image-region: rect( 32px, 160px, 64px, 128px )
 }
 
-radio[pane=status] {
+radio[pane=statuspane] {
     -moz-image-region: rect( 0px, 192px, 32px, 160px )
 }
 
-radio[pane=status]:hover, radio[pane=status][selected="true"] {
+radio[pane=statuspane]:hover, radio[pane=status][selected="true"] {
     -moz-image-region: rect( 32px, 192px, 64px, 160px )
 }
