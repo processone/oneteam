@@ -46,11 +46,11 @@
                                 <rows>
                                         <row>
                                                 <label value="&info.Name;" />
-                                                <textbox id="name" value="" flex="1"/>
+                                                <textbox readonly="true" id="name" value="" flex="1"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Family;"/>
-                                                <textbox value="" id="family"/>
+                                                <textbox readonly="true" value="" id="family"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Nickname;" />

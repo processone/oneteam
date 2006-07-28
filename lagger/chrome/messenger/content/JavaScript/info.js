@@ -108,18 +108,18 @@ function retrieveVcard(iq){
     /*********************** GENERAL *********************/
 	
 	
-	tag = iq.getNode().getElementsByTagName('FN');
-		if (tag && tag.item(0) && tag.item(0).firstChild)	
-			var name = tag.item(0).firstChild.nodeValue;
+	var tagfn = iq.getNode().getElementsByTagName('FN');
+		if (tagfn && tagfn.item(0) && tagfn.item(0).firstChild)	
+			var name = tagfn.item(0).firstChild.nodeValue;
 			if (name){
 				var nametext = document.getElementById("name");
 				nametext.setAttribute("value",name);
 				nametext.readonly=true;
 				}
 				
-	tag = iq.getNode().getElementsByTagName('FAMILY');
-		if (tag && tag.item(0) && tag.item(0).firstChild)	
-			var fam = tag.item(0).firstChild.nodeValue;
+	var tagfam = iq.getNode().getElementsByTagName('FAMILY');
+		if (tagfam && tagfam.item(0) && tagfam.item(0).firstChild)	
+			var fam = tagfam.item(0).firstChild.nodeValue;
 			if (fam){
 				var famtext = document.getElementById("family");
 				famtext.setAttribute("value",fam);
@@ -127,9 +127,9 @@ function retrieveVcard(iq){
 				}			
 				
 				
-		tag = iq.getNode().getElementsByTagName('NICKNAME');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var nick = tag.item(0).firstChild.nodeValue;
+		var tagnick = iq.getNode().getElementsByTagName('NICKNAME');
+		if (tagnick && tagnick.item(0) && tagnick.item(0).firstChild)
+			var nick = tagnick.item(0).firstChild.nodeValue;
 			if (nick){
 				var nicktext = document.getElementById("nickname");
 				nicktext.setAttribute("value",nick);
@@ -139,9 +139,9 @@ function retrieveVcard(iq){
 				
 	
 				
-	tag = iq.getNode().getElementsByTagName('URL');
-		if (tag && tag.item(0) && tag.item(0).firstChild)	
-			var url = tag.item(0).firstChild.nodeValue;
+	var tagurl = iq.getNode().getElementsByTagName('URL');
+		if (tagurl && tagurl.item(0) && tagurl.item(0).firstChild)	
+			var url = tagurl.item(0).firstChild.nodeValue;
 			if (url){
 			var urltext = document.getElementById("url");
 				urltext.readonly=true;
@@ -149,9 +149,9 @@ function retrieveVcard(iq){
 				}			
 	
 	
-	tag = iq.getNode().getElementsByTagName('BDAY');
-		if (tag && tag.item(0) && tag.item(0).firstChild)	
-			var bday = tag.item(0).firstChild.nodeValue;
+	var tagbday = iq.getNode().getElementsByTagName('BDAY');
+		if (tagbday && tagbday.item(0) && tagbday.item(0).firstChild)	
+			var bday = tagbday.item(0).firstChild.nodeValue;
 			if (bday){
 			var bdaytext = document.getElementById("birthday");
 				bdaytext.readonly=true;
@@ -159,9 +159,9 @@ function retrieveVcard(iq){
 				}							
 			
 			
-	tag = iq.getNode().getElementsByTagName('USERID');
-		if (tag && tag.item(0) && tag.item(0).firstChild )
-			var id = tag.item(0).firstChild.nodeValue;
+	var taguser = iq.getNode().getElementsByTagName('USERID');
+		if (taguser && taguser.item(0) && taguser.item(0).firstChild )
+			var id = taguser.item(0).firstChild.nodeValue;
 			if (id){
 				var labeljabberid = document.getElementById("userid");
 				labeljabberid.setAttribute("value",id);
@@ -174,36 +174,36 @@ function retrieveVcard(iq){
 	/**************************** LOCATION *************************/		
 			
 	
-	tag = iq.getNode().getElementsByTagName('STREET');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var street = tag.item(0).firstChild.nodeValue;	
+	var tagstreet = iq.getNode().getElementsByTagName('STREET');
+		if (tagstreet && tagstreet.item(0) && tagstreet.item(0).firstChild)
+			var street = tagstreet.item(0).firstChild.nodeValue;	
 				if (street){
 					var streettext = document.getElementById("street");
 					streettext.setAttribute("value",street);
 					streettext.readonly = true;
 				}
 	
-	tag = iq.getNode().getElementsByTagName('PCODE');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var zip = tag.item(0).firstChild.nodeValue;	
+	var tagcode = iq.getNode().getElementsByTagName('PCODE');
+		if (tagcode && tagcode.item(0) && tagcode.item(0).firstChild)
+			var zip = tagcode.item(0).firstChild.nodeValue;	
 				if (zip){
 					var ziptext = document.getElementById("postal");
 					ziptext.setAttribute("value",zip);
 					ziptext.readonly = true;
 				}
 	
-	tag = iq.getNode().getElementsByTagName('CTRY');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var country = tag.item(0).firstChild.nodeValue;	
+	var tagctry = iq.getNode().getElementsByTagName('CTRY');
+		if (tagctry && tagctry.item(0) && tagctry.item(0).firstChild)
+			var country = tagctry.item(0).firstChild.nodeValue;	
 				if (country){
 					var countrytext = document.getElementById("country");
 					countrytext.setAttribute("value",country);
 					countrytext.readonly = true;
 				}
 	
-	tag = iq.getNode().getElementsByTagName('LOCALITY');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var address = tag.item(0).firstChild.nodeValue;	
+	var taglocal = iq.getNode().getElementsByTagName('LOCALITY');
+		if (taglocal && taglocal.item(0) && taglocal.item(0).firstChild)
+			var address = taglocal.item(0).firstChild.nodeValue;	
 				if (address){
 					var addresstext = document.getElementById("location");
 					addresstext.setAttribute("value",address);
@@ -211,9 +211,9 @@ function retrieveVcard(iq){
 				}
 				
 				
-	tag = iq.getNode().getElementsByTagName('EXTADD');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var extra = tag.item(0).firstChild.nodeValue;	
+	var tagextadd = iq.getNode().getElementsByTagName('EXTADD');
+		if (tagextadd && tagextadd.item(0) && tagextadd.item(0).firstChild)
+			var extra = tagextadd.item(0).firstChild.nodeValue;	
 				if (extra){
 					var extratext = document.getElementById("extra");
 					extratext.setAttribute("value",extra);
@@ -224,36 +224,36 @@ function retrieveVcard(iq){
 	/*************************** WORK *********************************/
 	
 	
-	tag = iq.getNode().getElementsByTagName('ORGNAME');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var orgname = tag.item(0).firstChild.nodeValue;	
+	var tagorg = iq.getNode().getElementsByTagName('ORGNAME');
+		if (tagorg && tagorg.item(0) && tagorg.item(0).firstChild)
+			var orgname = tagorg.item(0).firstChild.nodeValue;	
 				if (orgname){
 				var orgnametext = document.getElementById("company");
 				orgnametext.setAttribute("value",orgname);
 				orgnametext.readonly = true;
 				}
 	
-	tag = iq.getNode().getElementsByTagName('NUMBER');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var number = tag.item(0).firstChild.nodeValue;
+	var tagnumber = iq.getNode().getElementsByTagName('NUMBER');
+		if (tagnumber && tagnumber.item(0) && tagnumber.item(0).firstChild)
+			var number = tagnumber.item(0).firstChild.nodeValue;
 			if (number){
 				var numbertext = document.getElementById("phone");
 				numbertext.setAttribute("value",number);
 				numbertext.readonly = true;
 				}
 				
-		tag = iq.getNode().getElementsByTagName('ORGUNIT');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var orgunit = tag.item(0).firstChild.nodeValue;
+		var tagunit = iq.getNode().getElementsByTagName('ORGUNIT');
+		if (tagunit && tagunit.item(0) && tagunit.item(0).firstChild)
+			var orgunit = tagunit.item(0).firstChild.nodeValue;
 			if (orgunit){
 				var unittext = document.getElementById("department");
 				unittext.setAttribute("value",orgunit);
 				unittext.readonly = true;
 				}	
 				
-		tag = iq.getNode().getElementsByTagName('ROLE');
-		if (tag && tag.item(0) && tag.item(0).firstChild)
-			var role = tag.item(0).firstChild.nodeValue;
+		var tagrole = iq.getNode().getElementsByTagName('ROLE');
+		if (tagrole && tagrole.item(0) && tagrole.item(0).firstChild)
+			var role = tagrole.item(0).firstChild.nodeValue;
 			if (role){
 				var roletext = document.getElementById("role");
 				roletext.setAttribute("value",role);
@@ -262,9 +262,9 @@ function retrieveVcard(iq){
 			
 	
 	
-	tag = iq.getNode().getElementsByTagName('EMAIL');
-		if (tag && tag.item(0) && tag.item(0).firstChild)	
-			var email = tag.item(0).firstChild.nodeValue;
+	var tagmail = iq.getNode().getElementsByTagName('EMAIL');
+		if (tagmail && tagmail.item(0) && tagmail.item(0).firstChild)	
+			var email = tagmail.item(0).firstChild.nodeValue;
 			if (email){
 			var emailtext = document.getElementById("email");
 				emailtext.setAttribute("value",email);
@@ -277,9 +277,9 @@ function retrieveVcard(iq){
 	/****************************** ABOUT *****************************/
 	
 	
-	tag = iq.getNode().getElementsByTagName('DESC');
-		if (tag && tag.item(0) && tag.item(0).firstChild)	
-			var desc = tag.item(0).firstChild.nodeValue;
+	var tagdesc = iq.getNode().getElementsByTagName('DESC');
+		if (tagdesc && tagdesc.item(0) && tagdesc.item(0).firstChild)	
+			var desc = tagdesc.item(0).firstChild.nodeValue;
 			if (desc){
 			var desctext = document.getElementById("about");
 				desctext.setAttribute("value",desc);
@@ -292,9 +292,9 @@ function retrieveVcard(iq){
 	/******************************* AVATAR **************************/
 	
 	
-		tag = iq.getNode().getElementsByTagName('BINVAL');
-		if (tag && tag.item(0) && tag.item(0).firstChild )
-			var base64data = tag.item(0).firstChild.nodeValue.toString();
+	var	tagbin = iq.getNode().getElementsByTagName('BINVAL');
+		if (tagbin && tagbin.item(0) && tagbin.item(0).firstChild )
+			var base64data = tagbin.item(0).firstChild.nodeValue.toString();
 				if (base64data){
 				
 				var savefile = "." + cutResource(window.opener.infojid);

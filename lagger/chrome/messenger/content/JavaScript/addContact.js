@@ -103,6 +103,8 @@ function performAddContact(event) {
         window.opener.emptyList();
         window.opener.showUsers(window.opener.users);
         //window.opener.refreshList();
+        
+        window.opener.authorizeSeeContact(jid.value);
 
         /*var item = document.createElement ("listitem");
        item.setAttribute("context","itemcontext");

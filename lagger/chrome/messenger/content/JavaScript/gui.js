@@ -56,6 +56,7 @@ var timerID = null;
 var timerRunning = false;
 var delay = 1000;
 var currentReceiver;
+var currentUser;
 
 var roomPanelObserver = {
  
@@ -140,11 +141,15 @@ function openConversation(event) {
         deployedGUI = true;
         self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
     }
+    
+    
 
     var liste = document.getElementById("liste_contacts");
 	var confs = document.getElementById("liste_conf");
 	
 	var id;
+	
+	 
 	
 	if (event.target.id){
 		id = event.target.id;
@@ -157,6 +162,9 @@ function openConversation(event) {
 		}
 		
 	//alert (id);
+	
+	
+   
 		
     if (document.getElementById("tab" + id) == null) {
 
@@ -178,7 +186,14 @@ function openConversation(event) {
        
         
         var namehead = document.createElement("label");
-        namehead.setAttribute("value", document.getElementById(id + "cell").getAttribute("label"));
+        
+        var name = document.getElementById(id + "cell").getAttribute("label");
+        if (name.indexOf("(") == -1){
+        	
+        	namehead.setAttribute("value",name);
+        	}
+        else
+        	namehead.setAttribute("value",name.substring (0,name.indexOf("(")));
         namehead.setAttribute("id","namehead" + keepLogin(id));
        
         
@@ -196,9 +211,13 @@ function openConversation(event) {
         
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + id);
-        tab.setAttribute("label",  document.getElementById(id + "cell").getAttribute("label"));
+        if (name.indexOf("(") == -1)
+        	tab.setAttribute("label",name);
+        else
+        	tab.setAttribute("label",name.substring (0,name.indexOf("(")));
+        
         tab.setAttribute("context", "tabcontext");
-        tab.setAttribute("onfocus","tabfocused()");
+        //tab.setAttribute("onfocus","tabfocused()");
         
 
         var childNodes = tabs.childNodes;
@@ -287,9 +306,27 @@ function openConversation(event) {
    
    
    //window.setCursor("crosshair");
+  
+  var evt = document.createEvent("MouseEvents");
+	evt.initEvent("click", true, false);
+	
+	document.getElementById("textbox").dispatchEvent(evt);
+	document.getElementById("textbox").focus();
 }
 
 
+// Function to reinitialize tab name on focus
+function initTabName (){
+
+
+var name = currentUser [3];
+
+var tab = document.getElementById("tab" + currentUser [0]);
+tab.setAttribute("label", name);
+tab.setAttribute("onfocus",";");
+
+currentUser[11] = 0;
+}
 
 // Function to get connexion and users roster
 function initGUI() {
@@ -489,9 +526,13 @@ function extendGUI() {
     textbox.setAttribute("flex", "5000");
     textbox.setAttribute("maxheight", "30");
     textbox.setAttribute("onkeypress", "sendMsg(event);");
+    /*textbox.setAttribute("style","-moz-user-focus: normal;");
+    textbox.focused="true";
+    textbox.focus();*/
     //textbox.setAttribute("oncommand","sendMsg(event)");
-    textbox.setAttribute("timeout","5");
-    textbox.setAttribute("type","timed");
+    //textbox.setAttribute("timeout","5");
+    //textbox.setAttribute("type","timed");
+    
     //textbox.setAttribute("oninput", "notifyWriting();");
 
 
@@ -820,8 +861,8 @@ function getRoster(iq) {
                 
                 // Don't want msn gate in roster
                  if (items.item(i).getAttribute('jid').match ("@")){
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png", "         Empty",true);
-            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png", "         Empty",true,0);
+            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages
             users.push(user);
             }
             
@@ -2210,6 +2251,8 @@ var namehead = document.getElementById("namehead" + keepLogin(jid));
 
 if (namehead)
 	namehead.setAttribute ("value",name);
+	
+	user [3] = name;
 
  try {
         var iq = new JSJaCIQ();
@@ -2558,6 +2601,9 @@ function tabfocused(){
 	var tabs = document.getElementById("tabs1");
 	var pattern = /conference/
 	var childNodes = tabs.childNodes;
+	
+
+	
 	
 for (var i = 0; i < childNodes.length; i++) {
   	var child = childNodes[i];
@@ -2964,10 +3010,8 @@ function handleMessage(aJSJaCPacket) {
     var name = keepLogin(origin);
     var jid = cutResource(origin);
 	var roomUserName = origin.substring(origin.indexOf("/")+ 1,origin.length); 
+	var user = findUserByJid(jid);
 	
-	//alert("origine" + origin);
-	//alert ("room User name" +  roomUserName);
-    //alert ("tab" + aJSJaCPacket.getFrom());
     
     
 
@@ -3014,7 +3058,10 @@ function handleMessage(aJSJaCPacket) {
         var tabs = document.getElementById("tabs1");
         var tab = document.createElement("tab");
         tab.setAttribute("id", "tab" + jid);
-        tab.setAttribute("label", name);
+        
+        
+        
+        	
         if(!isRoom(cutResource(origin)))
         	tab.setAttribute("context", "tabcontext");
        	else
@@ -3061,9 +3108,25 @@ function handleMessage(aJSJaCPacket) {
     
     
     if (!isRoom(cutResource(origin))){
-   showState (aJSJaCPacket);
-   		if (gPrefService.getBoolPref("chat.sounds") && aJSJaCPacket.getBody())
-          	playSound("chrome://messenger/content/sounds/message1.wav");
+   	showState (aJSJaCPacket);
+   	
+   		if (aJSJaCPacket.getBody()){
+   			if (gPrefService.getBoolPref("chat.sounds"))
+          		playSound("chrome://messenger/content/sounds/message1.wav");
+          	
+          	var tab = document.getElementById("tab" + jid);
+          	if (user) {
+        	user[11] ++;
+        	tab.setAttribute("label", name + " (" + user [11] + ")");
+        	
+        	currentUser = user;
+        	
+        	tab.setAttribute("onfocus","initTabName();");
+        	}   	
+       		 else	
+        	tab.setAttribute("label", name);
+          	
+          	}
  	 }
   
     if (aJSJaCPacket.getBody() == null && !isRoom(origin))
