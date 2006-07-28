@@ -340,6 +340,7 @@ function retrieveVcard(iq){
 	
 	if (window.opener.console) {
         window.opener.cons.addInConsole("TEST : " + base64data + "\n");
+    	window.opener.cons.addInConsole("IN : " + iq.xml() + "\n");
     }
 	
 	
