@@ -270,10 +270,6 @@ function openConversation(event) {
 		}
 		
 		
-			
-		
-		
-		
 		}
 		catch(e){alert("OPen conv" + e);}
     }
@@ -486,13 +482,16 @@ function extendGUI() {
     var textbox = document.createElement("textbox");
     textbox.setAttribute("id", "textentry");
     textbox.setAttribute("multiline", "true");
-    textbox.setAttribute("height", "50");
+    textbox.setAttribute("height", "30");
     textbox.setAttribute("width", "400");
-    textbox.setAttribute("maxwidth", "700");
-    textbox.setAttribute("flex", "5");
-    textbox.setAttribute("maxheight", "60");
     textbox.setAttribute("minheight", "30");
+    textbox.setAttribute("maxwidth", "700");
+    textbox.setAttribute("flex", "5000");
+    textbox.setAttribute("maxheight", "30");
     textbox.setAttribute("onkeypress", "sendMsg(event);");
+    //textbox.setAttribute("oncommand","sendMsg(event)");
+    textbox.setAttribute("timeout","5");
+    textbox.setAttribute("type","timed");
     //textbox.setAttribute("oninput", "notifyWriting();");
 
 
@@ -2001,6 +2000,14 @@ try {
 	catch (e){alert("sendFile" + e);}
  }
 
+
+// Function to send a pause
+function sendPause(){
+
+alert ("pause");
+
+}
+
 // Function to send a message
 function sendMsg(event) {
 
@@ -2013,8 +2020,7 @@ function sendMsg(event) {
 	var textEntry = document.getElementById("textentry");
 
 	try {
-	
-	
+
     
     // Message come from me
     //if (! receiver.match(pattern)){
@@ -2085,8 +2091,8 @@ function sendMsg(event) {
             // alert (aMsg.xml());
     
     }
-    
-    
+    //else 
+    //sendPause();
     writing = false;
     } catch (e) {alert (e);}
 }

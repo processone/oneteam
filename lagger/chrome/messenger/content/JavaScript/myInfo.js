@@ -5,6 +5,27 @@ const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
 
 var prefs = loadPrefs();
 
+// Function to init info with default photo
+function loadMyInfo(){
+;
+/*if (prefs.myphoto == null){
+ 	
+	myFile = Components.classes["@mozilla.org/file/local;1"].createInstance();
+	if (myFile instanceof Components.interfaces.nsILocalFile)
+  	myFile.initWithPath("file://../img/pingouin.jpg");
+  	savePrefs({myphoto : myFile });
+  	
+  	var url = 'url("file://../img/pingouin.jpg")';
+	
+	var image = document.getElementById("myphoto");			
+				image.style.listStyleImage=url;
+				image.setAttribute("height",50);
+				image.setAttribute("width",50);
+  	
+}*/
+
+}
+
 // Function to publish infos
 function publishInfo(){
 
@@ -66,12 +87,15 @@ var descnode = document.createTextNode(document.getElementById("about").value);
         
 	
 
-
+if (fnnode.nodeValue == "")
+fnnode.nodeValue = " ";
 fn.appendChild(fnnode);
 elem.appendChild(fn);
 
 var n = document.createElement('N');
 
+if (familynode.nodeValue == "")
+familynode.nodeValue = " ";
 family.appendChild(familynode);
 
 var given = document.createElement('GIVEN');
@@ -84,72 +108,106 @@ n.appendChild(middle);
 
 elem.appendChild(n);
 
+if (nicknamenode.nodeValue == "")
+nicknamenode.nodeValue = " ";
 nickname.appendChild(nicknamenode);
 elem.appendChild(nickname);
 
+if (urlnode.nodeValue == "")
+urlnode.nodeValue = " ";
 url.appendChild(urlnode);
 elem.appendChild(url);
 
+if (useridnode.nodeValue == "")
+useridnode.nodeValue = " ";
 userid.appendChild(useridnode);
 elem.appendChild(userid);
 
+if (bdaynode.nodeValue == "")
+bdaynode.nodeValue = " ";
 bday.appendChild(bdaynode);
 elem.appendChild(bday);
+
 
 var adr = document.createElement('ADR');
 elem.appendChild(adr);
 
+
 var home = document.createElement('HOME');
 adr.appendChild(home);
 
+if (streetnode.nodeValue == "")
+streetnode.nodeValue = " ";
 street.appendChild(streetnode);
 adr.appendChild(street);
 
+if (pcodenode.nodeValue == "")
+pcodenode.nodeValue = " ";
 pcode.appendChild(pcodenode);
 adr.appendChild(pcode);
 
+if (ctrynode.nodeValue == "")
+ctrynode.nodeValue = " ";
 ctry.appendChild(ctrynode);
 adr.appendChild(ctry);
 
+if (localitynode.nodeValue == "")
+localitynode.nodeValue = " ";
 locality.appendChild(localitynode);
 adr.appendChild(locality);
 
+
+if (extaddnode.nodeValue == "")
+extaddnode.nodeValue = " ";
 extadd.appendChild(extaddnode);
 adr.appendChild(extadd);
+
 
 var org = document.createElement('ORG');
 elem.appendChild(org);
 
+if (orgnamenode.nodeValue == "")
+orgnamenode.nodeValue = " ";
 orgname.appendChild(orgnamenode);
 org.appendChild(orgname);
 
+if (orgunitnode.nodeValue == "")
+orgunitnode.nodeValue = " ";
 orgunit.appendChild(orgunitnode);
 org.appendChild(orgunit);
 
+if (numbernode.nodeValue == "")
+numbernode.nodeValue = " ";
 number.appendChild(numbernode);
 elem.appendChild(number);
 
+if (rolenode.nodeValue == "")
+rolenode.nodeValue = " ";
 role.appendChild(rolenode);
 elem.appendChild(role);
 
+if (emailnode.nodeValue == "")
+emailnode.nodeValue = " ";
 email.appendChild(emailnode);
 elem.appendChild(email);
 
+if (descnode.nodeValue == "")
+descnode.nodeValue = " ";
 desc.appendChild(descnode);
 elem.appendChild(desc);
 
-if (prefs.myphoto != null){
+/*if (prefs.myphoto != null){
 	alert ("i have a photo!");
 	var binvalnode = document.createTextNode(convertFileToBase64(prefs.myphoto));
 	binval.appendChild(binvalnode);
 	elem.appendChild(binval);
-	}
-else if (myFile) {
+	}*/
+if (myFile) {
 	alert ("i have a photo!");
 	var binvalnode = document.createTextNode(convertFileToBase64(myFile));
 	binval.appendChild(binvalnode);
 	elem.appendChild(binval);
-}	
+}
 	
 
 
@@ -258,7 +316,7 @@ function retrieveVcard(iq){
 			if (id){
 				var labeljabberid = document.getElementById("userid");
 				labeljabberid.setAttribute("value",id);
-				labeljabberid.readonly = true;
+				
 				}
 			
 			
@@ -396,7 +454,7 @@ function retrieveVcard(iq){
 	
 	
 	if (window.opener.console) {
-        window.opener.cons.addInConsole("TEST : " + base64data + "\n");
+        window.opener.cons.addInConsole("IN : " + iq.xml() + "\n");
     }
 	
 	
@@ -430,7 +488,7 @@ try {
   var filePath = fp.file.path;
   
   
-  
+  alert (filePath);
    myFile = Components.classes["@mozilla.org/file/local;1"].createInstance();
 	if (myFile instanceof Components.interfaces.nsILocalFile)
   myFile.initWithPath(filePath);

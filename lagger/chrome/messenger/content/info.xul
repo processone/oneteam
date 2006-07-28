@@ -45,29 +45,29 @@
                                 </columns>
                                 <rows>
                                         <row>
-                                                <label value="&info.Name;" control="fn"/>
-                                                <textbox id="name" flex="1"/>
+                                                <label value="&info.Name;" />
+                                                <textbox id="name" value="" flex="1"/>
                                         </row>
                                         <row>
-                                                <label value="&info.Family;" control="fn"/>
-                                                <textbox  id="family"/>
+                                                <label value="&info.Family;"/>
+                                                <textbox value="" id="family"/>
                                         </row>
                                         <row>
-                                                <label value="&info.Nickname;" control="nickname"/>
-                                                <textbox  id="nickname"/>
+                                                <label value="&info.Nickname;" />
+                                                <textbox value="" id="nickname"/>
                                         </row>
                                         <row>
-                                                <label value="&info.E-mail;" control="url"/>
-                                                <textbox  id="userid" />
+                                                <label value="&info.E-mail;"/>
+                                                <textbox value="" id="userid" />
                                         </row>
                                         <row>
                                                 <label value="&info.Homepage;" control="url"/>
-                                                <textbox  id="url" />
+                                                <textbox value="" id="url" />
                                         </row>
                                         <row>
                                                 <label value="&info.Birthday;" control="location"/>
                                                 <!--<datepicker id="location"/> -->
-                                                <textbox  id="birthday"/>
+                                                <textbox value="" id="birthday"/>
                                         </row>
                                 </rows>
 
@@ -83,23 +83,23 @@
                                         
                                         <row>
                                                 <label value="&info.Street;" control="nickname"/>
-                                                <textbox id="street"/>
+                                                <textbox value="" id="street"/>
                                         </row>
                                         <row>
                                                 <label value="&info.ExtraAddress;"/>
-                                                <textbox  id="extra" />
+                                                <textbox value="" id="extra" />
                                         </row>
                                         <row>
                                                 <label value="&info.CityState;"/>
-                                                <textbox  id="location"/>
+                                                <textbox value="" id="location"/>
                                         </row>
                                          <row>
                                                 <label value="&info.PostalCode;"/>
-                                                <textbox  id="postal"/>
+                                                <textbox value="" id="postal"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Country;"/>
-                                                <textbox  id="country"/>
+                                                <textbox value="" id="country"/>
                                         </row>
                                 </rows>
 
@@ -115,24 +115,24 @@
                                         
                                         <row>
                                                 <label value="&info.Company;"/>
-                                                <textbox  id="company"/>
+                                                <textbox value="" id="company"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Department;"/>
-                                                <textbox  id="department" />
+                                                <textbox value="" id="department" />
                                         </row>
                                         
                                          <row>
                                                 <label value="&info.Role;"/>
-                                                <textbox  id="role"/>
+                                                <textbox value="" id="role"/>
                                         </row>
                                         <row>
                                                 <label value="&info.Phone;"/>
-                                                <textbox  id="phone"/>
+                                                <textbox value="" id="phone"/>
                                         </row>
                                         <row>
                                                 <label value="&info.E-Mail;"/>
-                                                <textbox  id="email"/>
+                                                <textbox value="" id="email"/>
                                         </row>
                                 </rows>
 
@@ -141,7 +141,7 @@
                         <vbox>
                                 
                                         <hbox flex="1">
-                                        <textbox  multiline="true" width="240" height="130" id="about" flex="1" style="border: 1px solid #aaa"/>
+                                        <textbox  multiline="true" value="" width="240" height="130" id="about" flex="1" style="border: 1px solid #aaa"/>
                                         </hbox>
                                         <spacer height="20"/>
                                         <hbox>

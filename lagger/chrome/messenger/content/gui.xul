@@ -398,7 +398,7 @@
             
             
               <!-- Personal status list -->
-            <menulist label="Available" id="status" height="50" width="150" flex="5" maxheight="60" minheight="30"
+            <menulist label="Available" id="status" height="30" width="150" flex="5" maxheight="30" minheight="30"
                        minwidth="140">
                 <menupopup flex="5">
                     
