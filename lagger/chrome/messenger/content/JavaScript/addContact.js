@@ -58,7 +58,7 @@ function performAddContact(event) {
 
     var con = window.opener.con;
     
-    var groups = document.getElementById("menuGroups");
+    //var groups = document.getElementById("menuGroups");
 
     var listGroups = window.opener.groups;
     //ADDED
@@ -75,7 +75,7 @@ function performAddContact(event) {
         var group = item.appendChild(iq.getDoc().createElement('group'));
         /*if (groups.selectedItem)
             var chosenGroup = groups.selectedItem.id;*/
-            var chosenGroup = groups.value;
+            //var chosenGroup = groups.value;
         if  (!chosenGroup || chosenGroup =="")
             chosenGroup = listGroups[0];
         group.appendChild(iq.getDoc().createTextNode(chosenGroup));
