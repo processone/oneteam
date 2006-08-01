@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<bindings 
+  xmlns="http://www.mozilla.org/xbl"
+  xmlns:xbl="http://www.mozilla.org/xbl"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml">
+  
+	<binding id="avatar">
+		
+		<content>
+			  <html:canvas id="canvas" width="32" height="32" style="min-height:32px;min-width:32px;border:0px dashed #ccc"/>
+		</content>
+		
+		<implementation>
+			<constructor>
+				this.canvas = document.getAnonymousElementByAttribute(this, "id", "canvas");
+				this.src = this.getAttribute("src");
+			</constructor>
+
+			<property name="src"><setter><![CDATA[
+				if (!val) {
+					//this.canvas.style.display = "none";
+				}	
+			
+				if (val.indexOf("data:") != 0)
+					val = "data:image/gif;base64," + val;
+				var ctx = this.canvas.getContext("2d");
+				var img = new Image();
+				img.src = val;
+				img.onload = function(){
+					var h = img.naturalHeight;
+					var w = img.naturalWidth;
+					var s = (h > w) ? h : w;
+					s = s / 32; h /= s; w /= s;
+					ctx.drawImage(img,0,0,h,w);
+				}	
+			]]></setter></property>
+
+		</implementation>
+
+	</binding>
+</bindings>

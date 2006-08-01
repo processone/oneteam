@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<bindings 
+  xmlns="http://www.mozilla.org/xbl"
+  xmlns:xbl="http://www.mozilla.org/xbl"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml">
+  	
+
+	
+	
+	<binding id="yesnopopup">
+		
+    <resources>
+      <stylesheet src="chrome://chat/skin/popups.css"/>
+    </resources>
+		
+	  <content class="popup" flex="1" orient="horizontal" label="Accept">
+			<xul:vbox flex="1">
+				<children/>
+				<xul:label flex="1"  class="text-link" xbl:inherits="hidden=noprompt value=label" id="ok"/>
+			</xul:vbox>
+		  
+			<xul:spacer flex="1"/>
+			
+			<xul:vbox>
+				<xul:image class="closebutton" id="cancel"/>
+			</xul:vbox>
+	  </content>
+	<implementation>		
+		<constructor>
+			<![CDATA[
+				const XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+				document.getAnonymousNodes(this)[0].childNodes[0].textContent = this.getAttribute("message");									
+				
+				new Animator().animate(this);				
+			]]>
+		</constructor>	
+		<property name="onChoose">
+		  <setter>
+			<![CDATA[
+			  this.handler = val; return val;
+			]]> 
+		  </setter>
+		</property>	
+		
+		<field name="data"/>
+		<field name="type"/>
+
+	</implementation>
+
+	<handlers>
+		<handler event="click"><![CDATA[
+			if(event.originalTarget.id == "ok"  || event.originalTarget.id == "cancel"){
+				var response = (event.originalTarget.id == "ok");
+				if(this.handler)
+					this.handler(response);
+				//this.hidden=true;//XXX TEMP
+			}
+			
+			event.preventBubble();
+		]]></handler>
+	</handlers>
+
+	</binding>
+</bindings>

@@ -35,6 +35,7 @@ function loadGroups() {
 			jid = document.getElementById('jids');
 			endpage = document.getElementById('done');
 	
+		
 			
 		}
 		

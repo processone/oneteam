@@ -203,3 +203,13 @@ function hrTime(ts) {
     var date = new Date(Date.UTC(ts.substring(0, 4), ts.substring(4, 6) - 1, ts.substring(6, 8), ts.substring(9, 11), ts.substring(12, 14), ts.substring(15, 17)));
     return date.toLocaleString();
 }
+
+
+Array.prototype.contains = function(value) {
+        for (var i in this) {
+                if (this[i] == value) {
+                        return true;
+                }
+        }
+        return false;
+};

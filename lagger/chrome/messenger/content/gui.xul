@@ -2,6 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/gui.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/gui.dtd">
 
 <window id="Messenger"
@@ -37,15 +38,19 @@
     <script type="application/x-javascript" src="JavaScript/unsubscribed.js"/>
     <script type="application/x-javascript" src="JavaScript/unsubscribe.js"/>
     <script type="application/x-javascript" src="JavaScript/status.js"/>
+    <script type="application/x-javascript" src="JavaScript/Animator.js"/>
     
     <script src="chrome://global/content/nsDragAndDrop.js"/>
 	<script src="chrome://global/content/nsTransferable.js"/>
    
    <script>
    
+   var start = null;
    
    var listObserver =
   {
+  
+  
   
   getSupportedFlavours : function() {
     var flavours = new FlavourSet();
@@ -56,7 +61,7 @@
   onDragStart: function(evt, transferData, action)
     {
    		 var plainText="Cabbage";
-   		 
+   		 start = document.getElementById(evt.target.id.substring(0,evt.target.id.length - 4));
    		 
       transferData.data=new TransferData();
       transferData.data.addDataForFlavour("text/unicode",plainText);
@@ -71,19 +76,20 @@
 	onDrop: function(evt, dropdata, session)
   {
  	  var liste = document.getElementById("liste_contacts");
-    
-      var startElement = liste.selectedItem;
+    	
+    	
+      var startElement = start;
       
       var startuser = findUserByJid(startElement.id);
       
-     
       
       if (evt.target.id == "group"){
      
       startuser [2] = evt.target.getAttribute("label");
       }
       else{
-      var dropuser = findUserByJid(evt.target.id);
+     
+      var dropuser = findUserByJid(evt.target.id.substring(0,evt.target.id.length - 4));
       startuser [2] = dropuser [2];
        }
       
@@ -172,7 +178,8 @@
                 </toolbarseparator>
 
                 <toolbarseparator id="s2">
-                    <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="openDisco();"/>
+                <!-- oncommand="openDisco();" -->
+                    <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="customGroups();"/>
                     <toolbarbutton id="Mask offline" label="" image="img/crystal/not_in_the_roster.png" oncommand="hideDecoUsers();"/>
                 </toolbarseparator>
 
@@ -193,17 +200,27 @@
          	 </tabs>
 			<tabpanels flex="1">
           
+          <tabpanel style="border : groove">
+          <vbox flex="1">
           
+          	<vbox id="notification-area">
+          	</vbox> 
            <!-- onselect='document.getElementById("liste_conf").clearSelection();currentItem.selected(true);'-->
-          	 <listbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1"
+          	 <richlistbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1" 
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
-         	  <listcols>
-    				<listcol/>
-  			 	   <listcol/>
-  		  	  </listcols>
-            </listbox>
+         	  <richlistcols>
+    				<richlistcol/>
+  			 	   <richlistcol/>
+  		  	  </richlistcols>
+            </richlistbox>
+            
+            </vbox>
+            
+            </tabpanel>
+            
+            <tabpanel>
             
            <!-- <tree id="book" width="180" flex="1" hidecolumnpicker="true" context="itemcontextroom" ondblclick="openConversation(event)">
      		 	<treecols>
@@ -215,7 +232,7 @@
  			</tree> -->
  			
  			<!--  onselect='document.getElementById("liste_contacts").clearSelection();currentItem.selected(true);'-->
- 			 <listbox height="400" width="150"  minwidth="140" id="liste_conf" flex="5"  
+ 			 <richlistbox height="400" width="150"  minwidth="140" id="liste_conf" flex="5" style="border : groove"
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
@@ -224,7 +241,9 @@
   			 	   <listcol/>
   		  	  </listcols>
             
-             </listbox>
+             </richlistbox>
+             
+             </tabpanel>
             
             </tabpanels>
             </tabbox>
@@ -351,7 +370,7 @@
                 
                
                 <popup id="itemcontextgroup">
-                    <menuitem label="&listitemcontextgroup.Rename;" oncommand='window.open("chrome://messenger/content/renameRoom.xul", "Change room name", "chrome,titlebar,toolbar,centerscreen,modal");'/>
+                    <menuitem label="&listitemcontextgroup.Rename;" oncommand='window.open("chrome://messenger/content/renameGroup.xul", "Change group name", "chrome,titlebar,toolbar,centerscreen,modal");'/>
                 	
                 </popup>
                
@@ -361,7 +380,7 @@
                 		<menuitem label="&listitemcontextroom.InsertRoom;" oncommand='document.getElementById("liste_contacts").clearSelection();var evt = document.createEvent("MouseEvents");var item = document.getElementById("liste_conf").selectedItem;evt.initEvent("dblclick", true, false);res = item.dispatchEvent(evt);'/>
                    		 <menuitem label="&listitemcontext.InviterConference;" oncommand='launchInviteWindow();'/>
                     <menuseparator/>
-                    <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/>
+                    <!-- <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/> -->
                 		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>
                 		<menuseparator/>
                 		<!--  disabled="true" -->

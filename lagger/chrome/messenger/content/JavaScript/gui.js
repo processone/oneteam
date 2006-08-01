@@ -6,6 +6,7 @@ const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
 
 var users = new Array();
 var groups = new Array();
+var oldGroups = new Array();
 var groupCounter = new Array();
 var nicks = new Array();
 var rooms = new Array();
@@ -38,6 +39,9 @@ var writing = false;
 var deployedGUI = false;
 var console = false;
 var hideDecoUser = false;
+
+var filterGroups = null;
+var filterOn = false;
 
 
 var invitingJid;
@@ -142,17 +146,20 @@ function openConversation(event) {
         self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
     }
     
-    
+     
 
     var liste = document.getElementById("liste_contacts");
 	var confs = document.getElementById("liste_conf");
 	
 	var id;
 	
-	 
+	
 	
 	if (event.target.id){
-		id = event.target.id;
+		if (event.target.id.match("cell"))
+				id = event.target.id.substring(0,event.target.id.length - 4);
+		else
+			id = event.target.id;
 		}
 	else if (liste.selectedItem){
 		id = liste.selectedItem.id;
@@ -161,7 +168,6 @@ function openConversation(event) {
 		id = confs.selectedItem.id;
 		}
 		
-	//alert (id);
 	
 	
    
@@ -240,6 +246,7 @@ function openConversation(event) {
         
        vboxpanel.appendChild(hboxhead);
        
+       
         
         tab.setAttribute("selected", "true");
         var tabbox = document.getElementById("tabbox");
@@ -256,18 +263,21 @@ function openConversation(event) {
         //text.setAttribute("width", "400");
         //text.setAttribute("readonly", "true");
         //alert ("text" + id);
+        text.setAttribute("onload","event.stopPropagation();");
         text.setAttribute("type","content");
         text.setAttribute("src","about:blank");
+        
         text.setAttribute("flex", "5");
         text.setAttribute("class","box-inset");
         vboxpanel.appendChild(text);
        
         //text.contentDocument.write("<div><table><tr><td>");
-       
-        try {
+      
+       try {
 		
 		//if (event.target.getAttribute("context") == 'itemcontextroom' || event.target.getAttribute("context") == ""){
 	if (event.target.getAttribute("context") == 'itemcontextroom'){
+		
 		
 		tab.setAttribute("context", "tabroomcontext");
 		
@@ -306,12 +316,15 @@ function openConversation(event) {
    
    
    //window.setCursor("crosshair");
+  event.stopPropagation();
   
-  var evt = document.createEvent("MouseEvents");
+  /*var evt = document.createEvent("MouseEvents");
 	evt.initEvent("click", true, false);
 	
-	document.getElementById("textbox").dispatchEvent(evt);
-	document.getElementById("textbox").focus();
+	document.getElementById("textbox").dispatchEvent(evt);*/
+	//document.getElementById("textbox").setAttribute("style","-moz-user-focus: normal;");
+	
+	//alert (document.commandDispatcher.focusedElement.tagName);
 }
 
 
@@ -526,9 +539,7 @@ function extendGUI() {
     textbox.setAttribute("flex", "5000");
     textbox.setAttribute("maxheight", "30");
     textbox.setAttribute("onkeypress", "sendMsg(event);");
-    /*textbox.setAttribute("style","-moz-user-focus: normal;");
-    textbox.focused="true";
-    textbox.focus();*/
+  
     //textbox.setAttribute("oncommand","sendMsg(event)");
     //textbox.setAttribute("timeout","5");
     //textbox.setAttribute("type","timed");
@@ -852,8 +863,10 @@ function getRoster(iq) {
                         if (groups[g] == group)
                             already = true;
                     }
-                    if (!already)
+                    if (!already){
                         groups.push(group);
+                        oldGroups.push(group);
+                        }
                 }
                 
               
@@ -1021,17 +1034,19 @@ for (var i = 0 ; i < conference.length ; i++){
    var elem = document.getElementById("confchild" + serveritem);
   
    elem.appendChild(item);*/
-	var item = document.createElement("listitem");
+	var item = document.createElement("richlistitem");
 	item.setAttribute("label", name);
     item.setAttribute("id",jid);
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
     
-     var cell = document.createElement("listcell");
+     var cell = document.createElement("richlistcell");
     cell.setAttribute("label", name);
     cell.setAttribute("id",jid + "cell");
+    cell.setAttribute("context","itemcontextroom");
      cell.setAttribute("flex", "1");
+     cell.setAttribute("ondblclick", "openConversation(event)");
      cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
     
@@ -1312,6 +1327,8 @@ function closeAllTab() {
 
 //Function to hide deconnected users
 function hideDecoUsers(){
+
+
 	
 	if (!hideDecoUser){ 
 	hideDecoUser = true;
@@ -1508,7 +1525,7 @@ function showUsers(users) {
     }
     //end forGroup
 
-} catch (e) {alert(e);}
+} catch (e) {alert("showUsers" + e);}
 
 }
 
@@ -1567,7 +1584,7 @@ function showRoom (room){
 	alert ("je rentre dans show room");
 	
 	var liste = document.getElementById("liste_contacts");
-    var item = document.createElement("listitem");
+    var item = document.createElement("richlistitem");
     item.setAttribute("context", "itemcontextroom");
     item.setAttribute("class", "listitem-iconic");
     item.setAttribute("ondblclick", "openConversation(event)");
@@ -1596,7 +1613,7 @@ function showRoomUser (roomUser){
 	var currentroom = document.getElementById(jidroom);
 	//alert ("show room user" + currentroom.getAttribute(name));
 	
-    var item = document.createElement("listitem");
+    var item = document.createElement("richlistitem");
     
     //item.setAttribute("label", roomUser[1]);
     
@@ -1612,7 +1629,7 @@ function showRoomUser (roomUser){
     image.setAttribute("height", "20");
    
  	
- 	var cell = document.createElement("listcell");
+ 	var cell = document.createElement("richlistcell");
  	cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
     cell.setAttribute("label", roomUser[1]);
@@ -1711,18 +1728,20 @@ try{
 	var desResources = document.getElementById("desResources");
 	var desStatus = document.getElementById("desStatus");
 	
-	var resources = findResourceByJid(event.target.id);
-	var user = findUserByJid(event.target.id);
+	
+	var resources = findResourceByJid(event.target.id.substring(0,event.target.id.length - 4));
+	var user = findUserByJid(event.target.id.substring(0,event.target.id.length - 4));
 	//alert (resources);
 	var stringRes = "";
 	
+	if (resources){
 	for  (var i = 0 ; i < resources.length ; i ++){
     		//alert (resources [i] [0]);
     			stringRes = stringRes + resources [i] [0] + ",";
     			}
     desResources.setAttribute("value" , stringRes);			
    desStatus.setAttribute("value" , user [9]);			
-	
+	}
 	
 }catch(E){alert("tooltiped "+E);}
 	
@@ -1737,8 +1756,8 @@ function showUser(user) {
 	
 
     var liste = document.getElementById("liste_contacts");
-     var item = document.createElement("listitem");
-     item.setAttribute("ondblclick", "openConversation(event)");
+     var item = document.createElement("richlistitem");
+     item.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textbox").focus();');
      item.setAttribute("id", user[0]);
      
     
@@ -1757,12 +1776,12 @@ function showUser(user) {
     item.setAttribute("id", user[0]);
     item.setAttribute("flex", "1");*/
     
-    var cell =  document.createElement("listcell");
+    var cell =  document.createElement("richlistcell");
     
     if (user [1] == "both")
     cell.setAttribute("context", "itemcontextsubboth");
     
-    cell.setAttribute("ondblclick", "openConversation(event)");
+    cell.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textbox").focus();');
     cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
     if (user [7] > 1)
@@ -2144,6 +2163,8 @@ function sendMsg(event) {
 function performJoinRoom(wholeRoom,jid, pass, nick) {
     try {
 		
+		
+		
 		var cell = document.getElementById(wholeRoom + "cell");
     	cell.setAttribute("image", "chrome://messenger/content/img/crystal/opened.png");
 		
@@ -2279,8 +2300,8 @@ if (namehead)
 
 }
 
-// Function to change the name of a room
-function changeRoomName (name){
+// Function to change the name of a group
+function changeGroupName (name){
 
 var oldValue = document.getElementById("liste_contacts").selectedItem.label;
 
@@ -2478,14 +2499,16 @@ function createInstantRoom(wholeRoom,nick,name){
 	
 	//window.opener.document.getElementById("liste_contacts").clearSelection();
 	
-	var item = document.createElement("listitem");
+	var item = document.createElement("richlistitem");
 	item.setAttribute("label", name);
     item.setAttribute("id",wholeRoom);
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
-     var cell = document.createElement("listcell");
+     var cell = document.createElement("richlistcell");
     cell.setAttribute("label", name);
+    cell.setAttribute("context","itemcontextroom");
+    cell.setAttribute("ondblclick", "openConversation(event)");
     cell.setAttribute("id",wholeRoom + "cell");
      cell.setAttribute("flex", "1");
     
@@ -3093,7 +3116,7 @@ function handleMessage(aJSJaCPacket) {
 		text.setAttribute ("ondragdrop","nsDragAndDrop.drop(event,roomPanelObserver);");
 		text.setAttribute ("ondragover","nsDragAndDrop.dragOver(event,roomPanelObserver);");
         text.setAttribute("id", "text" + jid);
-        
+        text.setAttribute("onload","event.stopPropagation();");
         text.setAttribute("type","content");
         text.setAttribute("src","about:blank");
         text.setAttribute("class","box-inset");
@@ -3159,6 +3182,7 @@ function handleMessage(aJSJaCPacket) {
     		textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    
    	}
+   	
    } catch(e) {alert ("Dans handle messsage" + e);}
 }
 
@@ -3213,6 +3237,90 @@ var state = false;
 }
 
 
+//Function to edit and customize shown groups
+function customGroups (){
+
+
+try {
+
+if (!filterOn){
+
+var n = document.createElement("checkboxpopup");
+var notif = document.getElementById("notification-area");
+
+		for (var i = 0 ; i < oldGroups.length ; i++){
+			var box = document.createElement("item");
+			box.setAttribute("value", oldGroups[i]);
+			//box.setAttribute("checked", (contactlist.filtergroups.some(function(ga){ return g == ga; }) ) );
+			n.appendChild(box);
+
+		}
+		/*var box = document.createElement("item");
+		box.setAttribute("value", "Ungrouped");
+		//box.setAttribute("checked", (contactlist.filtergroups.some(function(ga){ return "Ungrouped" == ga; }) ) );
+		box.setAttribute("checked","true");
+		n.appendChild(box);*/
+
+		notif.appendChild(n);
+		document.getElementById("liste_contacts").hidden = true;
+		n.setAttribute("label", "Save");
+		filterOn = true;
+		n.onChoose = function(answer){
+			if(answer){
+				
+				filterGroups = new Array();
+				answer.forEach(function(box){
+					if (box.getAttribute("checked") == "true") {
+					
+						filterGroups.push(box.getAttribute("label"));
+						
+					}
+				});
+				//contactlist.filtered = true;
+				//contactlist.visibleGroup = null;
+			}
+			
+			applyFilterOnGroups();
+			notif.removeChild(n);
+			document.getElementById("liste_contacts").removeAttribute("hidden");
+			emptyList();
+			showUsers(users);
+		}	
+		
+	}
+		
+		}
+		catch(e) {alert ("customGroups" + e);}
+		
+	}
+
+
+// Function to apply filter on groups
+function applyFilterOnGroups(){
+
+	
+for (var i = 0; i < filterGroups.length ; i++){
+
+	if (!groups.contains(filterGroups[i])){
+		groups.push(filterGroups[i]);
+	}
+	
+}	
+	
+for (var i = 0; i < groups.length ; i++){
+
+	if (filterGroups.contains(groups[i])){
+		;
+	}
+	else
+		groups.splice(i,1);
+}
+
+
+filterOn = false;
+
+}
+
 // Function to calculate the number of online
 function calculateOnline (user){
 
@@ -3227,27 +3335,28 @@ try {
             //alert (group);
             var itemGroup = document.getElementById("group" + group);
            
-           
+           		if (itemGroup){
+           		
            		var groupName = itemGroup.getAttribute("label").substring (0,itemGroup.getAttribute("label").indexOf("("));
         
 
 				if (user [4] == "online.png" || user [4] == "away.png" || user [4] == "dnd.png" || user [4] == "xa.png" || user [4] == "chat.png"){
-					if (itemGroup)
+					
 						itemGroup.setAttribute ("label", groupName + "(" + (++groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
 				
 				}
                else if (user [4] == "offline.png"){
-               		if (itemGroup){
+               		
                			if (groupCounter [g] [0] > 0)
                				itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
                			else
                				itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")"); 	
-					}
+					
 			}
 				
 			
 			else {
-			if (itemGroup){
+			
 				if (groupCounter [g] [0] > 0)
 					itemGroup.setAttribute ("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
 				else if (groupCounter [g] [0] <= 0  && groupCounter [g] [1] > 0)
@@ -3255,11 +3364,11 @@ try {
 				else
 					itemGroup.setAttribute ("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (groupCounter [g] [1]) + ")");
 				}
-				}
+				
         }
         }
         //end forGroup
-   		
+   		}
    		
  } catch (e){alert ("calculateOnline" + e);}     	
 

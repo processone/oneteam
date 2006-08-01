@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<bindings id="systrayBindings"
+          xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="systray">
+	  <!--
+    <resources>
+      <stylesheet src="chrome://jabberzilla2/skin/widgets/systray/systray.css"/>
+    </resources>
+		-->
+    <content>
+      <html:img anonid="image" xbl:inherits="src"
+        onload="this.parentNode._onload()" onerror="this.parentNode._onerror()"
+        style="display:none"/>
+      <xul:vbox hidden="true">
+        <children/>
+      </xul:vbox>
+    </content>
+
+    <implementation implements="jzISystrayListener">
+      <constructor>
+        <![CDATA[
+          try {
+            this._systray = Components.classes["@jabberzilla/systray;1"].
+              createInstance(Components.interfaces.jzISystray);
+            this._systray.init(this);
+
+            this._hidden = this.getAttribute("hidden") == "true";
+
+            this._image =
+              document.getAnonymousElementByAttribute(this, "anonid", "image");
+
+            this._image.src = this._image.src;
+          } catch (ex) {dumpln(ex);}
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          if (this._systray)
+            this._systray.hide();
+          if (this._win)
+            this._win.close();
+        ]]>
+      </destructor>
+
+      <property name="working" onget="return this._systray" readonly="true"/>
+
+      <property name="src">
+        <getter>
+          <![CDATA[
+            return this._image && this._image.src;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            if (this._image)
+              this._image.src = val;
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <property name="hidden">
+        <getter>
+          <![CDATA[
+            return this._hidden;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            if (!val != !this._hidden) {
+              this._hidden = val;
+              if (val)
+                this._systray.hide();
+              else
+                this._onload();
+            } else
+              this._hidden = val;
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <method name="_onload">
+        <body>
+          <![CDATA[
+            if (this._hidden)
+              return;
+
+            this._systray.show(this._image);
+          ]]>
+        </body>
+      </method>
+
+      <method name="_onerror">
+        <body/>
+      </method>
+
+      <method name="onClick">
+        <parameter name="x"/>
+        <parameter name="y"/>
+        <body>
+          <![CDATA[
+            var event = document.createEvent("MouseEvents");
+            event.initMouseEvent("click", true, true, null, 0, x, y, 0, 0,
+              false, false, false, false, 1, this);
+            this.dispatchEvent(event);
+          ]]>
+        </body>
+      </method>
+
+      <method name="onPopup">
+        <parameter name="x"/>
+        <parameter name="y"/>
+        <body>
+          <![CDATA[
+            if (!this.childNodes.length)
+              return;
+			  
+            if (!this._win || !this._win.showPopup) {
+			  
+			  var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"]
+				  	.getService(Components.interfaces.nsIWindowWatcher)
+              this._win = ww.openWindow(window,
+                "chrome://chat/content/systrayhelper.xul",
+                "_blank", "chrome,dependent,resizable=no,dialog=true,titlebar=no,popup=true",
+                this.childNodes, x, y);
+              
+			  var me = this;
+			  setTimeout(function(w){ 
+				  if (w.showPopup)
+				  w.showPopup(x, y); 
+				  else me.onPopup(x, y);
+			  },0, this._win);
+			  //this._win.showPopup(x, y);
+			  
+            } else {
+			  dumpln("XXX");
+              this._win.showPopup(x, y);
+			}
+
+          ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="systrayminimizer"
+           extends="chrome://chat/content/bindings/systray.xml#systray">
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          this._minimized = false;
+          this._showOnlyWhenMinimized = false;
+
+		  this._baseWindowDOM = window;
+          this._baseWindow = window.
+            QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+            getInterface(Components.interfaces.nsIWebNavigation).
+            QueryInterface(Components.interfaces.nsIDocShellTreeItem).
+            treeOwner.
+            QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+            getInterface(Components.interfaces.nsIBaseWindow);
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          if (this._minimized)
+            this._baseWindow.visibility = true;
+        ]]>
+      </destructor>
+
+      <property name="showOnlyWhenMinimized">
+        <getter>
+          <![CDATA[
+            return this._showOnlyWhenMinimized;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._showOnlyWhenMinimized = val;
+            this._syncVisisibilty();
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <property name="forcedShow">
+        <getter>
+          <![CDATA[
+            return this._forcedShow;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._forcedShow = val;
+
+            if (!this.working || !this._image.width)
+              return;
+
+            this._syncVisisibilty();
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <property name="minimized">
+        <getter>
+          <![CDATA[
+            return this._minimized;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._wantMinimize = val;
+            if (!this.working || !this._image.width)
+              return;
+
+            var prevVal = this._minimized;
+            this._minimized = val;
+
+            if (!prevVal != !val) {
+              var event = document.createEvent("Events");
+              event.initEvent("statechange", true, true);
+              if (!this.dispatchEvent(event)) {
+                this._wantMinimize = this._minimized = prevVal;
+                return val
+              }
+            }
+
+            this._baseWindow.visibility = !val;
+			  
+			 if (!val && this._baseWindowDOM.windowState == this._baseWindowDOM.STATE_MINIMIZED) {
+			  this._baseWindowDOM.restore();
+			 }
+			 if (!val) {
+				 // this._baseWindowDOM.focus();
+			   this._baseWindowDOM.zLevel  = 9;
+			 }
+			  
+            this._syncVisisibilty();
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <method name="_syncVisisibilty">
+        <body>
+          <![CDATA[
+            this.hidden = !this._forcedShow && !this._minimized &&
+              this._showOnlyWhenMinimized
+          ]]>
+        </body>
+      </method>
+
+      <method name="_onload">
+        <body>
+          <![CDATA[
+            if (this._wantMinimize)
+              this.minimized = true;
+            this.__proto__.__proto__._onload.call(this);
+
+            if (this.working)
+              this._syncVisisibilty();
+          ]]>
+        </body>
+      </method>
+
+      <method name="_onerror">
+        <body>
+          <![CDATA[
+            if (this._showOnlyWhenMinimized && this._minimized) {
+              this.minimized = false;
+              this._wantMinimize = true;
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="onClick">
+        <parameter name="x"/>
+        <parameter name="y"/>
+        <body>
+          <![CDATA[
+            var event = document.createEvent("MouseEvents");
+            event.initMouseEvent("click", true, true, null, 0, x, y, 0, 0,
+              false, false, false, false, 1, this);
+            if (this.dispatchEvent(event))
+              this.minimized = false;
+              //this.minimized = !this.minimized;
+          ]]>
+        </body>
+      </method>
+    </implementation>
+  </binding>
+</bindings>
+

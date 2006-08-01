@@ -290,23 +290,25 @@ var name = document.getElementById("name");
 	
 	//window.opener.document.getElementById("liste_contacts").clearSelection();
 	
-	var item = document.createElement("listitem");
+	var item = document.createElement("richlistitem");
 	item.setAttribute("label", name.value);
     item.setAttribute("id",roomname.value + "@" + server.value);
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
-     var cell = document.createElement("listcell");
+     var cell = document.createElement("richlistcell");
     cell.setAttribute("label", name.value);
     cell.setAttribute("id",  roomname.value + "@" + server.value + "cell");
      cell.setAttribute("flex", "1");
+     cell.setAttribute("context","itemcontextroom");
 	cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
     cell.setAttribute("class", "listitem-iconic");
     
     item.appendChild(cell);
     
     listconf.appendChild(item);
-    listconf.selectItem(item);
+    //listconf.selectItem(item);
+    listconf.selectedItem=item;
     
     var jid = roomname.value + "@" + server.value;
     window.opener.rooms.push(jid);
@@ -448,14 +450,15 @@ window.opener.rooms.push(wholeRoom);
 	
 	//window.opener.document.getElementById("liste_contacts").clearSelection();
 	
-	var item = document.createElement("listitem");
+	var item = document.createElement("richlistitem");
 	item.setAttribute("label", name.value);
     item.setAttribute("id",wholeRoom);
     item.setAttribute("context","itemcontextroom");
     item.setAttribute("ondblclick","openConversation(event)");
     
-     var cell = document.createElement("listcell");
+     var cell = document.createElement("richlistcell");
     cell.setAttribute("label", name.value);
+    cell.setAttribute("context","itemcontextroom");
     cell.setAttribute("id",wholeRoom + "cell");
      cell.setAttribute("flex", "1");
     

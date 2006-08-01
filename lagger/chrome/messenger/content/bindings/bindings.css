@@ -1,0 +1,42 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+avatar {
+  -moz-binding: url("chrome://messenger/content/bindings/avatar.xml#avatar");
+}
+
+messagebox {
+  -moz-binding: url("chrome://messenger/content/bindings/messagebox.xml#messagebox");
+}
+autosizetextbox {
+  -moz-binding: url("chrome://messenger/content/bindings/messagebox.xml#autosizetextbox");
+}
+
+chatbox {
+  -moz-binding: url("chrome://messenger/content/bindings/messagebox.xml#chatbox");
+}
+
+
+yesnoprompt {
+  -moz-binding: url("chrome://messenger/content/bindings/prompts.xml#yesnoprompt");
+}
+
+checkboxprompt {
+  -moz-binding: url("chrome://messenger/content/bindings/prompts.xml#checkboxprompt");
+}
+
+renameprompt {
+  -moz-binding: url("chrome://messenger/content/bindings/prompts.xml#renameprompt");
+}
+
+yesnopopup {
+  -moz-binding: url("chrome://messenger/content/bindings/popups.xml#yesnopopup");
+}
+
+checkboxpopup {
+  -moz-binding: url("chrome://messenger/content/bindings/prompts.xml#checkboxpopup");
+}
+
+
+systray {
+  -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systrayminimizer");
+}
