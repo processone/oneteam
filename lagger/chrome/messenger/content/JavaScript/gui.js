@@ -363,8 +363,12 @@ function initGUI() {
 
 	document.getElementById("status").style.listStyleImage=url; 
     
+    if (gPrefService.getBoolPref("chat.general.keepproperties"))
+    	document.getElementById("Messenger").setAttribute("persist","width height");
+    	
+    	
     
-    
+    	
     if (server == ""){
     	myjid = textbox_user;
     	//var us = gPrefService.getCharPref("chat.connection.username");
@@ -417,7 +421,7 @@ function initGUI() {
     else {
         alert("connexion failed");
     }*/
-
+	
 }
 catch(e) {
         alert("caught exception:" + e);
@@ -874,8 +878,8 @@ function getRoster(iq) {
                 
                 // Don't want msn gate in roster
                  if (items.item(i).getAttribute('jid').match ("@")){
-            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png", "         Empty",true,0);
-            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages
+            user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png",resources,"false",0,"offline.png", "         Empty",true,0,0);
+            //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages + nombre correspodant au statut (pour le tri)
             users.push(user);
             }
             
@@ -888,7 +892,8 @@ function getRoster(iq) {
     		
         showUsers(users);
         //loadServers();
-     
+     	if (gPrefService.getBoolPref("chat.roster.showoffline"))
+    	hideDecoUsers();
         
       
         //sendDiscoRoomRequest(conferences[0]);
@@ -2742,12 +2747,40 @@ function changeStatus(show) {
     
     presence.setPriority(myPresence.getPriority());
 
-
+	if (filterGroups){
+		
+	for (var i = 0 ; i < groups.length ; i++){
+	
+		for (var j = 0 ; j < users.length ; j++){
+		
+		 if (users [j] [2] == groups [i]){
+		 	presence.setTo (users [j] [0]);
+		 	con.send(presence);
+		 		
+		 		if (console) {
+        			cons.addInConsole("OUT : " + presence.xml() + "\n");
+   				 }
+		 	
+		 	
+		 	}
+		 	
+		
+		}
+		
+	}
+	}
+	else{
     // Specify presence to server
     con.send(presence);
+    
      if (console) {
         cons.addInConsole("OUT : " + presence.xml() + "\n");
     }
+    
+    }
+    
+    
+    myPresence = presence;
 }
 
 
@@ -3183,6 +3216,8 @@ function handleMessage(aJSJaCPacket) {
    
    	}
    	
+   	document.getElementById("text" + jid).webNavigation.stop(1);
+   	
    } catch(e) {alert ("Dans handle messsage" + e);}
 }
 
@@ -3298,11 +3333,21 @@ var notif = document.getElementById("notification-area");
 // Function to apply filter on groups
 function applyFilterOnGroups(){
 
+try {
 	
 for (var i = 0; i < filterGroups.length ; i++){
 
 	if (!groups.contains(filterGroups[i])){
 		groups.push(filterGroups[i]);
+		 for (var j = 0 ; j < users.length; j++){
+	 		if (users [j] [2] == filterGroups [i]){
+	 			con.send(myPresence);
+	 		
+	 			if (console) {
+        			cons.addInConsole("OUT : " + myPresence.xml() + "\n");
+   				 }
+	 		}
+	 	}
 	}
 	
 }	
@@ -3312,13 +3357,34 @@ for (var i = 0; i < groups.length ; i++){
 	if (filterGroups.contains(groups[i])){
 		;
 	}
-	else
+	else{
+	 // We delete the group and send unavailable presence status
+	 
+	 for (var j = 0 ; j < users.length; j++){
+	 	if (users [j] [2] == groups [i]){
+	 		var presence = new JSJaCPresence();
+	 		presence.setType('unavailable');
+    		presence.setPriority(myPresence.getPriority());
+	 		presence.setTo(users [j] [0]);
+	 		
+	 		con.send(presence);
+	 		
+	 		if (console) {
+        			cons.addInConsole("OUT : " + presence.xml() + "\n");
+   				 }
+	 	}
+	 
+	 }
+	 
 		groups.splice(i,1);
+		
+	}	
 }
 
 
 filterOn = false;
-
+}
+		catch(e) {alert ("applyFilterOnGroups" + e);}
 }
 
 // Function to calculate the number of online
@@ -3618,6 +3684,7 @@ else if (! isRoom (sender) && sender.match("@")){
     if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
     
    		user [4] = "online.png";
+   		user [12] = 6;
    		
    		if (hideDecoUser){
     		emptyList();
@@ -3764,6 +3831,7 @@ else if (! isRoom (sender) && sender.match("@")){
            		 if (type.substring(0, 2) == "un") {
            		 
            		 	user [4] = "offline.png";
+           		 	user [12] = 0;
            		 	
            		 	if (hideDecoUser){
                 			emptyList();
@@ -3808,7 +3876,7 @@ else if (! isRoom (sender) && sender.match("@")){
             if (type.substring(0, 2) == "in") {
             
             user [4] = "invisible.png";
-            
+            user [12] = 1;
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "invisible.png");
                 
@@ -3835,6 +3903,7 @@ else if (! isRoom (sender) && sender.match("@")){
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "xa.png");
                 user [4] = "xa.png";
+                user [12] = 2;
                  var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
@@ -3843,6 +3912,7 @@ else if (! isRoom (sender) && sender.match("@")){
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "dnd.png");
                 user [4] = "dnd.png";
+                user [12] = 4;
                  var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
@@ -3851,6 +3921,7 @@ else if (! isRoom (sender) && sender.match("@")){
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "chat.png");
                 user [4] = "chat.png";
+                user [12] = 5;
                  var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
@@ -3859,6 +3930,7 @@ else if (! isRoom (sender) && sender.match("@")){
             if (item)
                 item.setAttribute("image", "chrome://messenger/content/img/"+ gPrefService.getCharPref("chat.general.iconsetdir") + "away.png");
                 user [4] = "away.png";
+                user [12] = 3;
                  var imghead = document.getElementById("imghead"+ user[0]);
 			if (imghead) 
         		imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);

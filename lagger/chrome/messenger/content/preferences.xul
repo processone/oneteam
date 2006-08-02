@@ -3,6 +3,7 @@
 <?xml-stylesheet href="chrome://messenger/skin/preferences.css" type="text/css"?>
 
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/settings.dtd">
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/preferences.dtd">
 
 <prefwindow id="myExtensionOptions"
             type="prefwindow"
@@ -11,7 +12,7 @@
             height="350"
             width="350"
             onload="loadFonts();initialize()"
-            title="Preferences">
+            title="&Preferences.title;">
             
    
        
@@ -21,12 +22,11 @@
 
 
 
-    <prefpane id="general" label="General">
+    <prefpane id="general" label="&Preferences.general;">
 
         <preferences>
 
-            <preference id="chat.general.showemptygroups"
-                        name="chat.general.showemptygroups" type="bool"/>
+        
             <preference id="chat.roster.showoffline"
                         name="chat.roster.showoffline" type="bool"/>
             <preference id="chat.general.keepproperties"
@@ -51,34 +51,28 @@
             
                  <row>
                     <label value="General options : " style="font-weight : bold"/>
-                    <checkbox id="sort status" label="Sort contacts by status"
+                    <checkbox id="sort status" label="&Preferences.sort;"
                               preference="chat.roster.sortbystatus"/>
                 </row>
                
                <row>
                     <spacer/>
-                    <checkbox id="showoffline" label="Mask offline users"
-                              preference="chat.roster.showoffline"/>
+                    <checkbox id="showoffline" label="&Preferences.mask;"
+                              preference="chat.roster.showoffline" onclick="if(this.checked) { if (!window.opener.hideDecoUser) window.opener.hideDecoUser = true; window.opener.hideDecoUsers();} else {if (window.opener.hideDecoUser) window.opener.hideDecoUser = false; window.opener.hideDecoUsers();}"/>
                 </row>
                 
-				<row>
-                    <spacer/>
-                    <checkbox id="showemptygroup" label="Mask empty groups"
-                              preference="chat.general.showavatars"/>
-                              
-                </row>
-                
+	
                 <row>
                     <spacer/>
-                    <checkbox id="saveguiproperties" label="Keep interface properties"
-                              preference="chat.general.keepproperties"/>
+                    <checkbox id="saveguiproperties" label="&Preferences.interface;"
+                              preference="chat.general.keepproperties" onclick='if(this.checked) window.opener.document.getElementById("Messenger").removeAttribute("persist"); else window.opener.document.getElementById("Messenger").setAttribute("persist","width height");'/>
                 </row>
                 
                  
                 
                 <row>
                 	<spacer/>
-					<checkbox checked="true" preference="chat.sounds" label="Play sounds"/>
+					<checkbox checked="true" preference="chat.sounds" label=""/>
 					
                 </row>	
                 
@@ -92,7 +86,7 @@
 
     </prefpane>
 
-    <prefpane id="editor" label="Editor">
+    <prefpane id="editor" label="&Preferences.editor;">
         <preferences>
             <preference id="chat.editor.incomingmessagecolor"
                         name="chat.editor.incomingmessagecolor" type="string"/>
@@ -118,42 +112,42 @@
             <rows id="rows-editor">
 
                 <row>
-                    <label  value="Incoming message : " control="nickname"/>
+                    <label  value="&Preferences.incoming;" control="nickname"/>
                     <colorpicker id="test" type="button" color="#996633" height="25" maxwidth="50" preference="chat.editor.incomingmessagecolor" onchange="test();"/>
                 </row>
                 
                 <spacer height="10"/>
                 
                  <row>
-                    <label value="Outgoing message : " control="nickname"/>
+                    <label value="&Preferences.outgoing;" control="nickname"/>
                     <colorpicker type="button" color="#330000" height="25" maxwidth="50" preference="chat.editor.outgoingmessagecolor"/>
                 </row>
                 
                 <spacer height="10"/>
                 
                  <row>
-                    <label value="Status Message : " control="nickname"/>
+                    <label value="&Preferences.status;" control="nickname"/>
                     <colorpicker type="button" color="#66FF99" height="25" maxwidth="50" preference="chat.editor.statusmessagecolor"/>
                 </row>
                 
                 <spacer height="10"/>
                 
                  <row>
-                    <label value="URL : " control="nickname"/>
+                    <label value="&Preferences.url;" control="nickname"/>
                     <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.urlmessagecolor"/>
                 </row>
 				
 				<spacer height="10"/>
 				
 				<row>
-                    <label value="Incoming console query : " control="nickname"/>
+                    <label value="&Preferences.inconsole;" control="nickname"/>
                     <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleinmessagecolor"/>
                 </row>
                 
                 <spacer height="10"/>
                 
                 <row>
-                    <label value="Outgoing console query : " control="nickname"/>
+                    <label value="&Preferences.outconsole;" control="nickname"/>
                     <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleoutmessagecolor"/>
                 </row>
                 
@@ -162,7 +156,7 @@
 				<spacer height="20"/>
 				
 				<row>
-                    <label value="Font : " control="nickname"/>
+                    <label value="&Preferences.font" control="nickname"/>
                     
                 		<menulist id="fontchooser"  height="25" maxwidth="150" flex="1" 
                          preference="chat.editor.font" oncommand="">
@@ -177,7 +171,7 @@
         </grid>
     </prefpane>
 
-    <prefpane id="statuspane" label="Status">
+    <prefpane id="statuspane" label="&Preferences.statuspane;">
 		 
 		 <preferences>
             <preference id="chat.general.iconsetdir"
@@ -201,20 +195,20 @@
             	<spacer height="10"/>
             
            		 	
-            			<label value="Auto-status " style="font-weight : bold" control="nickname"/>
+            			<label value="&Preferences.auto;" style="font-weight : bold" control="nickname"/>
             		
             	 
             
             <spacer height="20"/>
 				<row>
 					<checkbox checked="true"/>
-					<label value="Be away after : "/>
+					<label value="&Preferences.away;"/>
                 	<textbox  color="#9999FF" height="22" width="50" preference="chat.status.autoaway"/>
                 	<label value="minutes"/> 
                 </row>
                 <row>
 					<checkbox checked="true"/>
-					<label value="Be unavailable after : "/>
+					<label value="&Preferences.unav;"/>
                 	<textbox  color="#9999FF" height="22" width="50" preference="chat.status.autoxa"/>
                 	<label value="minutes"/>
                 </row>
@@ -222,7 +216,7 @@
                 <spacer height="10"/>
                
                
-               		<label value="Status inconset : " style="font-weight : bold" control="nickname"/>
+               		<label value="&Preferences.inconset;" style="font-weight : bold" control="nickname"/>
                
                 
                <spacer height="20"/> 
@@ -245,7 +239,7 @@
         </grid>
     </prefpane>
     
-     <prefpane id="connection" label="Connection">
+     <prefpane id="connection" label="&Preferences.connection;">
 
         <preferences>
 
@@ -320,7 +314,7 @@
     </prefpane>
    
 
-    <prefpane id="advanced" label="Advanced">
+    <prefpane id="advanced" label="&Preferences.advanced;">
     
     <preferences>
 			<preference id="chat.advanced.browser"
@@ -341,26 +335,26 @@
              <spacer height="10"/>
             
             
-            	<label value="Applications : " style="font-weight : bold"/>
+            	<label value="&Preferences.applications;" style="font-weight : bold"/>
            
             
              <spacer height="20"/>
             
             	<row>
 					
-					<label value="Web browser : "/>
+					<label value="&Preferences.browser;"/>
                 	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.browser"/>
                 	
                 </row>
                 <row>
 					
-					<label value="Mail software : "/>
+					<label value="&Preferences.mail;"/>
                 	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.mail"/>
                 	
                 </row>
                 <row>
 					
-					<label value="File Handler : "/>
+					<label value="&Preferences.file;"/>
                 	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.fs"/>
                 	
                 </row>

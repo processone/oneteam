@@ -9,6 +9,7 @@
         title="Lagger"
         orient="horizontal"
         onload="if (event.target == document) initGUI();"
+        oncommand="setTimeouts();"
         width="170"
         onclose="closeWindows();"
         height="450"

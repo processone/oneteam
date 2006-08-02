@@ -27,6 +27,7 @@ function addInConsole(msg) {
       frame.contentDocument.write("<p>"+ "<FONT COLOR=" + gPrefService.getCharPref("chat.editor.consoleoutmessagecolor") + ">" + html_escape(msg) + "</font>" + "</p>");
       frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
     
+    consol.webNavigation.stop(1);
 
 }
 

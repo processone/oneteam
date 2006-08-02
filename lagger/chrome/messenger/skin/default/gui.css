@@ -1,6 +1,15 @@
 @import url( chrome://global/skin/ );
 
+/* only allow items to be focused if the richlistitem is selected */
+richlistitem > * {
+  -moz-user-focus: none;
+}
 
+richlistitem[selected="true"] > * {
+  -moz-user-focus: normal;
+  background: #FFCC66;
+color : rgb(26%, 31%, 35%);
+}
 
 #conference{
 color : rgb(26%, 31%, 35%);
@@ -25,6 +34,8 @@ listitem[selected = "true"] {
 background: #FFCC66;
 color : rgb(26%, 31%, 35%);
 }
+
+
 
 
 
