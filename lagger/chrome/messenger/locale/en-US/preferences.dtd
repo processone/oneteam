@@ -32,3 +32,7 @@
 <!ENTITY Preferences.mail "Mail software : ">
 <!ENTITY Preferences.file "File Handler : ">
 
+<!ENTITY Settings.ssl "Use SSL">
+<!ENTITY Settings.port "Port : ">
+<!ENTITY Settings.host "Host : ">
+<!ENTITY Settings.base "Base : ">
