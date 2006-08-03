@@ -27,24 +27,33 @@
 	<wizardpage id="info" pageid="info" next="done"
 		label="&Contact.directive;" onpageadvanced="doAdd()">
 
-		<description control="jids">
+		<!-- <description control="jids">
 			Enter Jabber ID of the contact you want to add. (ex.: foo@jabber.org)
-		</description>
+		</description> -->
+		
+		<vbox>
+		<label value="&Contact.label1;" />
+		<label value="&Contact.label2;"/>
+		</vbox>
 		<hbox>
 		<textbox flex="1" id="jids"/>
 		</hbox>
 		
 		<spacer height="30"/>
 		
-		<description control="jids">
+		<!--<description control="jids">
 			Enter the group in which you want to add the contact
-		</description>
+		</description> -->
+		<vbox>
+		<label value="&Contact.label3;" />
+		<label value="&Contact.label4;"/>
+		</vbox>
 		<hbox>
 		<textbox flex="1" id="groups"/>
 		</hbox>
 	</wizardpage>
 
-	<wizardpage id="done" pageid="done" label="Contact added">
+	<wizardpage id="done" pageid="done" label="&Contact.label5;">
 		<description id="endmessage"></description>
 
 	</wizardpage>

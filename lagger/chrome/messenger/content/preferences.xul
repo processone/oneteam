@@ -177,9 +177,9 @@
             <preference id="chat.general.iconsetdir"
                         name="chat.general.iconsetdir" type="string"/>
             <preference id="chat.status.autoaway"
-                        name="chat.status.autoaway" type="string"/>
+                        name="chat.status.autoaway" type="int"/>
             <preference id="chat.status.autoxa"
-                        name="chat.status.autoxa" type="string"/>            
+                        name="chat.status.autoxa" type="int"/>            
         </preferences>
         
         <grid flex="1" id="grid-status">

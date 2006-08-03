@@ -32,6 +32,8 @@ var port;
 var base;
 var infojid;
 
+var timer1 = null;
+var timer2 = null;
 
 var serversLoaded = false;
 var notifyWritingCount = true;
@@ -336,8 +338,8 @@ var name = currentUser [3];
 
 var tab = document.getElementById("tab" + currentUser [0]);
 tab.setAttribute("label", name);
-tab.setAttribute("onfocus",";");
-
+tab.removeAttribute("onfocus");
+tab.setAttribute("style", 'color : "#000000";');
 currentUser[11] = 0;
 }
 
@@ -346,6 +348,8 @@ function initGUI() {
 
 	try{
 	
+	myPresence = new JSJaCPresence();
+    myPresence.setPriority(gPrefService.getIntPref("chat.connection.priority").toString(10));
 	
     var prefs = loadPrefs();
     //if (prefs.user != null)
@@ -905,6 +909,51 @@ function getRoster(iq) {
     }
     //if (!gPrefService.getCharPref("chat.roster.showOffline"))
          	//hideDecoUsers();
+}
+
+
+// Function to get away ans xa status when inactivity
+function setTimeouts(){
+
+try{
+
+var menulist = document.getElementById("status");
+var away = document.getElementById("away");
+var online = document.getElementById("online");
+var xa = document.getElementById("xa");
+var items = menulist.firstChild.childNodes;
+
+if(menulist.selectedItem == online){
+
+
+if (timer1)
+	clearTimeout(timer1);
+	
+if (timer2)
+	clearTimeout(timer2);
+//alert ("lance le timout");
+
+timer1 = window.setTimeout('menulist.selectedItem = xa;',60000 * gPrefService.getIntPref("chat.status.autoaway"));
+timer2 = window.setTimeout('changeStatus("xa");menulist.selectedItem = away;changeIcone("xa.png");',60000 * gPrefService.getIntPref("chat.status.autoxa"));
+}
+
+else {
+
+alert ("arrete le timout");
+
+if (timer1)
+	window.clearTimeout(timer1);
+	
+if (timer2)
+	window.clearTimeout(timer2);
+	
+	changeStatus("online");
+	menulist.selectedItem = items[1];
+	changeIcone("online.png");
+	}
+	
+	}
+	catch (e){alert ("timout" + e);}
 }
 
 
@@ -1764,7 +1813,8 @@ function showUser(user) {
      var item = document.createElement("richlistitem");
      item.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textbox").focus();');
      item.setAttribute("id", user[0]);
-     
+     //item.setAttribute("onmouseover","this.style.backgroundColor='#E6E6FA';");
+     //item.setAttribute("onmouseout","this.style.backgroundColor='#FFFFFF';");
     
      if (user [4] != "offline.png"){
       //if (user [7] > 0) {	
@@ -2725,23 +2775,23 @@ function changeStatus(show) {
         //presence.setStatus('dnd');
         //alert("mise a dnd");
     }
-    if (show == "chat") {
+    else if (show == "chat") {
         presence.setShow('chat');
         //presence.setStatus('chat');
         //alert("mise a chat");
     }
-    if (show == "away") {
+    else if (show == "away") {
         presence.setShow('away');
         //presence.setStatus('away');
         //alert("away");
     }
-    if (show == "xa") {
+    else if (show == "xa") {
         presence.setShow('xa');
         //presence.setStatus('xa');
         //alert("xa");
     }
     
-    if (show =="invisible"){
+   else if (show =="invisible"){
     	presence.setType('invisible');
     	}
     
@@ -3171,12 +3221,13 @@ function handleMessage(aJSJaCPacket) {
           		playSound("chrome://messenger/content/sounds/message1.wav");
           	
           	var tab = document.getElementById("tab" + jid);
-          	if (user) {
+          	if (user && tab.selected == false) {
         	user[11] ++;
         	tab.setAttribute("label", name + " (" + user [11] + ")");
         	
         	currentUser = user;
-        	
+        	tab.setAttribute("style","color: #FF0000;");
+    		
         	tab.setAttribute("onfocus","initTabName();");
         	}   	
        		 else	
@@ -3209,8 +3260,7 @@ function handleMessage(aJSJaCPacket) {
     		textToWrite.contentDocument.write("<p><u><FONT COLOR='#3366CC'>" + name + "</u>" +   " : " + "</font>");
     
     		var tab = document.getElementById ("tab" + jid);
-    		tab.setAttribute("style","color: #FF0000;");
-    		tab.setAttribute("onclick",'this.style.color = "#000000";');
+    		
     		textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" + msgFormat(htmlEnc(aJSJaCPacket.getBody()) + "\n") + "</font>" + "</p>");
     		textToWrite.contentWindow.scrollTo(0,textToWrite.contentWindow.scrollMaxY+200);
    

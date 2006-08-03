@@ -83,5 +83,5 @@ pref ("chat.advanced.browser","Default");
 pref ("chat.advanced.mail","Default");
 pref ("chat.advanced.fs","Default");
 
-pref("chat.status.autoaway","5");
-pref("chat.status.autoxa","10");
+pref("chat.status.autoaway",5);
+pref("chat.status.autoxa",10);

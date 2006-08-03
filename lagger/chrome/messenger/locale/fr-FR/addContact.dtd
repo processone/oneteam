@@ -2,3 +2,9 @@
 <!ENTITY Contact.directive "Ajoutez une personne à vos contacts">
 <!ENTITY Contact.added "Contact ajouté">
 <!ENTITY Contact.group "Groupe">
+
+<!ENTITY Contact.label1 "Entrez le Jabber ID du contact à">
+<!ENTITY Contact.label2 "ajouter. (ex.: foo@jabber.org)">
+<!ENTITY Contact.label3 "Entrez le groupe dans lequel vous">
+<!ENTITY Contact.label4 "souhaitez ajouter le contact">
+<!ENTITY Contact.label5 "Contact ajouté">
