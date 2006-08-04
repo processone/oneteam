@@ -15,6 +15,9 @@ var roles = new Array();
 var conferences = new Array();
 var mucs = new Array();
 
+var awayFlag = false;
+var xaFlag = false;
+
 var transfertWindow;
 
 var index = 0;
@@ -926,20 +929,22 @@ var items = menulist.firstChild.childNodes;
 if(menulist.selectedItem == online){
 
 
-if (timer1)
+/*if (timer1)
 	clearTimeout(timer1);
 	
 if (timer2)
-	clearTimeout(timer2);
+	clearTimeout(timer2);*/
 //alert ("lance le timout");
 
-timer1 = window.setTimeout('menulist.selectedItem = xa;',60000 * gPrefService.getIntPref("chat.status.autoaway"));
-timer2 = window.setTimeout('changeStatus("xa");menulist.selectedItem = away;changeIcone("xa.png");',60000 * gPrefService.getIntPref("chat.status.autoxa"));
+timer1 = window.setTimeout('makeAway();',60000 * gPrefService.getIntPref("chat.status.autoaway"));
+timer2 = window.setTimeout('makeXa();',60000 * gPrefService.getIntPref("chat.status.autoxa"));
 }
 
 else {
 
-alert ("arrete le timout");
+//alert ("arrete le timout");
+
+if (xaFlag || awayFlag){
 
 if (timer1)
 	window.clearTimeout(timer1);
@@ -948,14 +953,39 @@ if (timer2)
 	window.clearTimeout(timer2);
 	
 	changeStatus("online");
-	menulist.selectedItem = items[1];
+	menulist.selectedItem = items[0];
 	changeIcone("online.png");
+	
+	xaFlag = false;
+	awayFlag = false;
 	}
+	
+}	
 	
 	}
 	catch (e){alert ("timout" + e);}
 }
 
+
+function makeAway(){
+changeStatus("away");
+changeIcone("away.png");
+var menulist = document.getElementById("status");
+var items = menulist.firstChild.childNodes;
+menulist.selectedItem = items[3];
+
+awayFlag = true;
+}
+
+function makeXa(){
+changeStatus("xa");
+changeIcone("xa.png");
+var menulist = document.getElementById("status");
+var items = menulist.firstChild.childNodes;
+menulist.selectedItem = items[4];
+
+xaFlag = true;
+}
 
 // Function to load server list
 function loadServers(){
@@ -2841,7 +2871,7 @@ var path = gPrefService.getCharPref('chat.general.iconsetdir') + img;
  var url = 'url("chrome://messenger/content/img/' + path + '")';
 
 	document.getElementById("status").style.listStyleImage=url; 
-
+	
 
 }
 

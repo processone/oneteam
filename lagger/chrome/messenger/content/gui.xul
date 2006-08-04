@@ -9,7 +9,8 @@
         title="Lagger"
         orient="horizontal"
         onload="if (event.target == document) initGUI();"
-        onclick="setTimeouts();"
+        onmousemove="setTimeouts();"
+        onkeypressed="setTimeouts();"
         width="170"
         onclose="closeWindows();"
         height="450"
@@ -423,7 +424,7 @@
                 <menupopup flex="5">
                     
                     <menuitem class="menuitem-iconic" id="online" label="&status.Available;"
-                              oncommand='changeStatus("");changeIcone("online.png");'/>
+                              oncommand='changeStatus("");changeIcone("online.png");' selected="true"/>
                     <menuitem class="menuitem-iconic" label="&status.AvailableChat;"
                               oncommand='changeStatus("chat");changeIcone("chat.png");'/>       
                     <menuitem id="dnd" class="menuitem-iconic" image="chrome://messenger/content/img/dnd.png" label="&status.Dnd;"
