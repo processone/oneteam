@@ -18,6 +18,7 @@ var mucs = new Array();
 var awayFlag = false;
 var xaFlag = false;
 
+var idle;
 var transfertWindow;
 
 var index = 0;
@@ -920,6 +921,9 @@ function setTimeouts(){
 
 try{
 
+idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
+
+
 var menulist = document.getElementById("status");
 var away = document.getElementById("away");
 var online = document.getElementById("online");
@@ -968,6 +972,12 @@ if (timer2)
 
 
 function makeAway(){
+
+try{
+
+//alert (idle.getIdleTime());
+if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+
 changeStatus("away");
 changeIcone("away.png");
 var menulist = document.getElementById("status");
@@ -977,7 +987,13 @@ menulist.selectedItem = items[3];
 awayFlag = true;
 }
 
+}
+	catch (e){alert ("makeaway" + e);}
+}
+
 function makeXa(){
+
+if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
 changeStatus("xa");
 changeIcone("xa.png");
 var menulist = document.getElementById("status");
@@ -985,6 +1001,7 @@ var items = menulist.firstChild.childNodes;
 menulist.selectedItem = items[4];
 
 xaFlag = true;
+}
 }
 
 // Function to load server list
@@ -1843,9 +1860,10 @@ function showUser(user) {
      var item = document.createElement("richlistitem");
      item.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textbox").focus();');
      item.setAttribute("id", user[0]);
-     //item.setAttribute("onmouseover","this.style.backgroundColor='#E6E6FA';");
-     //item.setAttribute("onmouseout","this.style.backgroundColor='#FFFFFF';");
-    
+     item.setAttribute("onmouseover","this.style.backgroundColor='#E6E6FA';");
+     item.setAttribute("onmouseout","this.style.backgroundColor='#FFFFFF';");
+     
+    	
      if (user [4] != "offline.png"){
       //if (user [7] > 0) {	
       	item.setAttribute("tooltip","moretip");
@@ -3304,6 +3322,7 @@ function handleMessage(aJSJaCPacket) {
 // Function to show the writing state 
 function showState(aJSJaCPacket){
  
+//alert ("showstate"); 
 var state = false;
 	try { 
  
