@@ -929,11 +929,11 @@ var items = menulist.firstChild.childNodes;
 if(menulist.selectedItem == online){
 
 
-/*if (timer1)
+if (timer1)
 	clearTimeout(timer1);
 	
 if (timer2)
-	clearTimeout(timer2);*/
+	clearTimeout(timer2);
 //alert ("lance le timout");
 
 timer1 = window.setTimeout('makeAway();',60000 * gPrefService.getIntPref("chat.status.autoaway"));
