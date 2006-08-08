@@ -301,7 +301,7 @@ function openConversation(event) {
 		//myRoomNick
 		performJoinRoom (id,myjid,'',nick);
 		
-		self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
+		//self.resizeTo(600, document.getElementById("Messenger").boxObject.height);
 		}
 		
 		
@@ -322,16 +322,14 @@ function openConversation(event) {
    
    
    //window.setCursor("crosshair");
-  event.stopPropagation();
+  //event.stopPropagation();
   
-  /*var evt = document.createEvent("MouseEvents");
-	evt.initEvent("click", true, false);
-	
-	document.getElementById("textbox").dispatchEvent(evt);*/
+  
 	//document.getElementById("textbox").setAttribute("style","-moz-user-focus: normal;");
 	
-	//alert (document.commandDispatcher.focusedElement.tagName);
+	
 }
+
 
 
 // Function to reinitialize tab name on focus
@@ -1004,6 +1002,8 @@ xaFlag = true;
 }
 }
 
+
+
 // Function to load server list
 function loadServers(){
 	
@@ -1139,7 +1139,7 @@ for (var i = 0 ; i < conference.length ; i++){
 	item.setAttribute("label", name);
     item.setAttribute("id",jid);
     item.setAttribute("context","itemcontextroom");
-    item.setAttribute("ondblclick","openConversation(event)");
+    item.setAttribute("ondblclick",'openConversation(event);document.getElementById("textentry").focus();');
     
     
      var cell = document.createElement("richlistcell");
@@ -1147,7 +1147,7 @@ for (var i = 0 ; i < conference.length ; i++){
     cell.setAttribute("id",jid + "cell");
     cell.setAttribute("context","itemcontextroom");
      cell.setAttribute("flex", "1");
-     cell.setAttribute("ondblclick", "openConversation(event)");
+     cell.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textentry").focus();');
      cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
     
@@ -1858,10 +1858,10 @@ function showUser(user) {
 
     var liste = document.getElementById("liste_contacts");
      var item = document.createElement("richlistitem");
-     item.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textbox").focus();');
+     item.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textentry").focus();');
      item.setAttribute("id", user[0]);
-     item.setAttribute("onmouseover","this.style.backgroundColor='#E6E6FA';");
-     item.setAttribute("onmouseout","this.style.backgroundColor='#FFFFFF';");
+     //item.setAttribute("onmouseover","this.style.backgroundColor='#E6E6FA';");
+     //item.setAttribute("onmouseout","this.style.backgroundColor='#FFFFFF';");
      
     	
      if (user [4] != "offline.png"){
@@ -1884,7 +1884,7 @@ function showUser(user) {
     if (user [1] == "both")
     cell.setAttribute("context", "itemcontextsubboth");
     
-    cell.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textbox").focus();');
+    cell.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textentry").focus();');
     cell.setAttribute("class", "listitem-iconic");
     cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
     if (user [7] > 1)

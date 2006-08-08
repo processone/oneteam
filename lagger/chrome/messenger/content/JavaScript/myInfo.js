@@ -61,6 +61,8 @@ var email = document.createElement("EMAIL");
 
 var desc = document.createElement("DESC");
 
+var photo = document.createElement("PHOTO");
+var type = document.createElement("TYPE");
 var binval = document.createElement("BINVAL");
 
 var fnnode = document.createTextNode(document.getElementById("name").value);
@@ -83,7 +85,7 @@ var rolenode = document.createTextNode(document.getElementById("role").value);
 var emailnode = document.createTextNode(document.getElementById("email").value);
 
 var descnode = document.createTextNode(document.getElementById("about").value);
-
+var typenode = document.createTextNode("image/jpeg");
         
 	
 
@@ -202,11 +204,15 @@ elem.appendChild(desc);
 	binval.appendChild(binvalnode);
 	elem.appendChild(binval);
 	}*/
+elem.appendChild (photo);
+photo.appendChild(type);
+type.appendChild (typenode);
+	
 if (myFile) {
 	alert ("i have a photo!");
 	var binvalnode = document.createTextNode(convertFileToBase64(myFile));
 	binval.appendChild(binvalnode);
-	elem.appendChild(binval);
+	photo.appendChild(binval);
 }
 	
 

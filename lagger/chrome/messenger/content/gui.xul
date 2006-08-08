@@ -250,9 +250,10 @@
             </tabpanels>
             </tabbox>
             
-         
+         <keyset>
+		</keyset>
             
-            <popup id="listcontext" >
+            <popup id="listcontext">
 			<menuitem type="checkbox" label="&rosterContext.useFullNames;" oncommand="cmd_usefullname"/>
 			<menuseparator/>
 			<menuitem type="checkbox" label="&rosterContext.maskOffline;" oncommand="hideDecoUsers();"/>
