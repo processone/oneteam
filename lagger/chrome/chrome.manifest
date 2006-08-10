@@ -7,4 +7,4 @@ locale  branding en-US 		file:messenger/locale/branding/en-US/
 
 skin    messenger default   file:messenger/skin/default/
 skin    messenger classic file:messenger/skin/default/
-skin    messenger theme2	file:messenger/skin/theme2/
+

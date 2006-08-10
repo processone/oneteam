@@ -177,11 +177,12 @@
                 <toolbarseparator id="s1">
                     <toolbarbutton id="Adduser" label="" image="img/user_role-add.gif" onclick="addContact();"/>
                     <toolbarbutton id="joinRoom" label="" image="img/user_role2-add.gif" onclick="joinRoom();"/>
+                	<toolbarbutton id="editGroups" label="" image="img/user-change.gif" oncommand="customGroups();"/>
                 </toolbarseparator>
 
                 <toolbarseparator id="s2">
-                <!-- oncommand="openDisco();" -->
-                    <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="customGroups();"/>
+                
+                    <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="openDisco();"/>
                     <toolbarbutton id="Mask offline" label="" image="img/crystal/not_in_the_roster.png" oncommand="hideDecoUsers();"/>
                 </toolbarseparator>
 
