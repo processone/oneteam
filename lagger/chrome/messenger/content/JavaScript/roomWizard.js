@@ -33,6 +33,7 @@ else if (radio3.selected){
 function openWindow (){
 
 
+
 if (fileToOpen != "createdDefault.xul")
 
 window.opener.open("chrome://messenger/content/" + fileToOpen,"", "chrome,centerscreen");

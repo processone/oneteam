@@ -49,3 +49,15 @@
 <!ENTITY status.Undisponible "Non disponible">
 <!ENTITY status.Invisible "Invisible">
 <!ENTITY status.changeMessage "Message d'état">
+
+<!ENTITY shortcurt.add "A">
+<!ENTITY shortcurt.join "J">
+<!ENTITY shortcurt.service "S">
+<!ENTITY shortcurt.quit "Q">
+
+<!ENTITY shortcurt.edit "E">
+<!ENTITY shortcurt.themes "T">
+<!ENTITY shortcurt.pref "P">
+
+<!ENTITY shortcurt.help "i">
+<!ENTITY shortcurt.console "C">

@@ -18,6 +18,8 @@ var mucs = new Array();
 var awayFlag = false;
 var xaFlag = false;
 
+var currentStatus = null;
+
 var idle;
 var transfertWindow;
 
@@ -652,7 +654,11 @@ function getContextFrom (jid) {
 
 
 function getContextBoth (jid) {
-	document.getElementById(jid).setAttribute("context","itemcontextsubboth");
+
+	var item = document.getElementById(jid);
+	
+	if (item)
+		item.setAttribute("context","itemcontextsubboth");
 }
 
 // Function to ask authorisation for adding contact
@@ -919,7 +925,7 @@ function setTimeouts(){
 
 try{
 
-//idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
+idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
 
 
 var menulist = document.getElementById("status");
@@ -974,7 +980,7 @@ function makeAway(){
 try{
 
 //alert (idle.getIdleTime());
-//if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
 
 changeStatus("away");
 changeIcone("away.png");
@@ -983,7 +989,7 @@ var items = menulist.firstChild.childNodes;
 menulist.selectedItem = items[3];
 
 awayFlag = true;
-//}
+}
 
 }
 	catch (e){alert ("makeaway" + e);}
@@ -991,7 +997,7 @@ awayFlag = true;
 
 function makeXa(){
 
-//if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
 changeStatus("xa");
 changeIcone("xa.png");
 var menulist = document.getElementById("status");
@@ -999,7 +1005,7 @@ var items = menulist.firstChild.childNodes;
 menulist.selectedItem = items[4];
 
 xaFlag = true;
-//}
+}
 }
 
 
@@ -1157,7 +1163,7 @@ for (var i = 0 ; i < conference.length ; i++){
     confs.appendChild(item);
     
     if (autojoin == "true"){
-    confs.selectItem(item);
+    confs.selectedItem = item;
     var evt = document.createEvent("MouseEvents");
 	evt.initEvent("dblclick", true, false);
 	
@@ -1754,7 +1760,7 @@ function showRoomUser (roomUser){
     else
     listconf.appendChild(item);
     
- 	} catch (e) {alert(e);}
+ 	} catch (e) {alert("show Room User" + e);}
 }
 
 // Function to mask a roomUser
@@ -2595,6 +2601,8 @@ function createInstantRoom(wholeRoom,nick,name){
 	
 	try{
 	
+	//alert (wholeRoom + " " + nick + " " + name); 
+	
 	rooms.push(wholeRoom);
 	nicks.push (nick);
 	
@@ -2606,19 +2614,21 @@ function createInstantRoom(wholeRoom,nick,name){
 	item.setAttribute("label", name);
     item.setAttribute("id",wholeRoom);
     item.setAttribute("context","itemcontextroom");
-    item.setAttribute("ondblclick","openConversation(event)");
+    item.setAttribute("ondblclick","openConversation(event);");
     
      var cell = document.createElement("richlistcell");
     cell.setAttribute("label", name);
     cell.setAttribute("context","itemcontextroom");
-    cell.setAttribute("ondblclick", "openConversation(event)");
+    cell.setAttribute("ondblclick", "openConversation(event);");
     cell.setAttribute("id",wholeRoom + "cell");
      cell.setAttribute("flex", "1");
+     cell.setAttribute("class", "listitem-iconic");
+    cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
     
     item.appendChild(cell);
     
     listconf.appendChild(item);
-    listconf.selectItem(item);
+    listconf.selectedItem = item;
 
 	var evt = document.createEvent("MouseEvents");
 	//evt.initMouseEvent("dblclick", true, true, window.opener,
@@ -2809,6 +2819,20 @@ function notifyWriting(jid) {
 }
 
 
+// Function to retrieve its status when getting status message
+
+function retrieveStatus(){
+
+if (currentStatus == null)
+	currentStatus = "online";
+
+var item = document.getElementById(currentStatus);
+var menulist = document.getElementById("status");
+
+menulist.selectedItem = item;
+
+}
+
 // Function to change its  status
 function changeStatus(show) {
 
@@ -2816,6 +2840,8 @@ function changeStatus(show) {
 
     var liste = document.getElementById("status");
     var selected = liste.selectedItem.value;
+    
+    currentStatus = show;
 
     //alert(selected);
     if (show == "dnd") {
@@ -3543,7 +3569,7 @@ try {
 function handlePresence(aJSJaCPacket) {
 /* HERE IS AN ERROR ATTEMPTING CREATING A ROOM */
 
-	//alert (aJSJaCPacket.xml());
+	alert (aJSJaCPacket.xml());
 
     var presence;
     var sender = cutResource(aJSJaCPacket.getFrom());
@@ -3661,7 +3687,7 @@ function handlePresence(aJSJaCPacket) {
       		  roomUser[3] = itemx.getAttribute('role');
       		  roomUser[4] = itemx.getAttribute('nick');
       		  roomUser[5] = itemx.getAttribute('jid');
-      		  if (item.getElementsByTagName('reason').item(0))
+      		  if (itemx.getElementsByTagName('reason').item(0))
        	     roomUser.reason = itemx.getElementsByTagName('reason').item(0).firstChild.nodeValue;
        
        	 if (actor = itemx.getElementsByTagName('actor').item(0)) {
@@ -3802,6 +3828,7 @@ else if (! isRoom (sender) && sender.match("@")){
   		 else if (user [1] == "none"&& item)
   	 		item.setAttribute("context", "itemcontextsubnone");
   		 else
+  		 	if (item)
   	 		item.setAttribute("context", "itemcontextsubboth");
    	
    		
@@ -3906,8 +3933,9 @@ else if (! isRoom (sender) && sender.match("@")){
                		 window.open("chrome://messenger/content/subscribe.xul", "", "chrome,centerscreen,resizable");
            			}
            		
-           		
+           			
            		else if (type == 'subscribed') {
+           			
            			getContextBoth (sender);
            			subscribed = sender;
            			window.open("chrome://messenger/content/subscribed.xul", "", "chrome,centerscreen,resizable");

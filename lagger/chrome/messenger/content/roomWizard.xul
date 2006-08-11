@@ -32,9 +32,9 @@
 		<spacer height="20"/>
 		
 		<radiogroup>
-			 <radio id="3" label="&roomWizard.default;" oncommand="changePage()" selected="true"/>
+			 <radio id="1" label="&roomWizard.default;" oncommand="changePage()" selected="true"/>
 			 <spacer height="15"/>
- 			 <radio id="1" label="&roomWizard.instant;" oncommand="changePage()"/>
+ 			 <radio id="3" label="&roomWizard.instant;" oncommand="changePage()"/>
  			 <spacer height="15"/>
   			 <radio id="2" label="&roomWizard.manage;"  oncommand="changePage()"/>
   			 

@@ -131,36 +131,36 @@
         <!-- The menus -->
         <toolbox>
             <menubar id="sample-menubar">
-                <menu id="lagger-menu" label="Lagger">
+                <menu id="lagger-menu" label="Lagger" accesskey="L">
                     <menupopup id="file-popup">
 
 
-                        <menuitem label="&menulagger.addContact;" oncommand="addContact();"/>
-                        <menuitem label="&menulagger.joinConference;" oncommand="joinRoom();"/>
+                        <menuitem label="&menulagger.addContact;" oncommand="addContact();" accesskey="&shortcurt.add;"/>
+                        <menuitem label="&menulagger.joinConference;" oncommand="joinRoom();" accesskey="&shortcurt.join;"/>
                         <menuseparator/>
-                        <menuitem label="&menulagger.servicesDiscovery;" oncommand="openDisco();"/>
+                        <menuitem label="&menulagger.servicesDiscovery;" oncommand="openDisco();" accesskey="&shortcurt.service;"/>
                        <!-- <menuitem label="&menulagger.adminTools;"/> -->
                         <menuseparator/>
-                        <menuitem label="&menulagger.quitter;" oncommand="closeWindows();"/>
+                        <menuitem label="&menulagger.quitter;" oncommand="closeWindows();" accesskey="&shortcurt.quit;"/>
                     </menupopup>
                 </menu>
 
                 <menu id="configuration-menu" label="&menuConfig.configuration;">
                     <menupopup id="config-popup">
-                   		 <menuitem label="&menuConfig.editinfo;" oncommand="launchPersoInfoWindow ();"/>
+                   		 <menuitem label="&menuConfig.editinfo;" oncommand="launchPersoInfoWindow ();" accesskey="&shortcurt.edit;"/>
                    		 <menuseparator/>
                         <menuitem label="&menuConfig.plugins;" oncommand="launchExtWindow ();"/>
-                        <menuitem label="&menuConfig.themes;" oncommand="launchThemeWindow ();"/>
+                        <menuitem label="&menuConfig.themes;" oncommand="launchThemeWindow ();" accesskey="&shortcurt.themes;"/>
                         <menuseparator/>
-                        <menuitem label="&menuConfig.preferences;" oncommand="launchPreferences();"/>
+                        <menuitem label="&menuConfig.preferences;" oncommand="launchPreferences();" accesskey="&shortcurt.pref;"/>
 
                     </menupopup>
                 </menu>
 
                 <menu id="help-menu" label="&menuAide.Aide;">
                     <menupopup id="help-popup">
-                        <menuitem label="&menuAide.aide_rapide;" oncommand="launchWizard();"/>
-                        <menuitem label="&menuAide.console;" oncommand="launchConsole();"/>
+                        <menuitem label="&menuAide.aide_rapide;" oncommand="launchWizard();" accesskey="&shortcurt.help;"/>
+                        <menuitem label="&menuAide.console;" oncommand="launchConsole();" accesskey="&shortcurt.console;"/>
                         <menuseparator/>
                         <menuitem label="&menuAide.apropos;" oncommand="launchAbout();"/>
                     </menupopup>
@@ -189,6 +189,18 @@
                 <toolbarseparator id="s3"/>
             </toolbar>
         </toolbox>
+	
+		<keyset>
+  			<key id="addcontact-key" modifiers="control" key="A" oncommand="addContact();"/>
+  			<key id="joinroom-key" modifiers="control" key="J" oncommand="joinRoom();"/>
+  			<key id="serviice-key" modifiers="control" key="S" oncommand="openDisco();"/>
+  			<key id="quit-key" modifiers="control" key="Q" oncommand="closeWindows();"/>
+  			<key id="edit-key" modifiers="control" key="E" oncommand="launchPersoInfoWindow ();"/>
+  			<key id="themes-key" modifiers="control" key="T" oncommand="launchThemeWindow ();"/>
+  			<key id="pref-key" modifiers="control" key="P" oncommand="launchPreferences();"/>
+  			<key id="help-key" modifiers="control" key="H" oncommand="launchWizard();"/>
+  			<key id="console-key" modifiers="control" key="C" oncommand="launchConsole();"/>
+		</keyset>
 
         <hbox flex="1">
             <!-- The contact list -->
@@ -251,8 +263,7 @@
             </tabpanels>
             </tabbox>
             
-         <keyset>
-		</keyset>
+       
             
             <popup id="listcontext">
 			<menuitem type="checkbox" label="&rosterContext.useFullNames;" oncommand="cmd_usefullname"/>
@@ -426,8 +437,8 @@
                 <menupopup flex="5">
                     
                     <menuitem class="menuitem-iconic" id="online" label="&status.Available;"
-                              oncommand='changeStatus("");changeIcone("online.png");' selected="true"/>
-                    <menuitem class="menuitem-iconic" label="&status.AvailableChat;"
+                              oncommand='changeStatus("online");changeIcone("online.png");' selected="true"/>
+                    <menuitem id="chat" class="menuitem-iconic" label="&status.AvailableChat;"
                               oncommand='changeStatus("chat");changeIcone("chat.png");'/>       
                     <menuitem id="dnd" class="menuitem-iconic" image="chrome://messenger/content/img/dnd.png" label="&status.Dnd;"
                               oncommand='changeStatus("dnd");changeIcone("dnd.png");'/>
@@ -441,7 +452,7 @@
                     
                     <menuseparator/>
                     <menuitem class="menuitem-iconic" label="&status.changeMessage;"
-                              oncommand='window.open("chrome://messenger/content/status.xul", "", "chrome,centerscreen");'/>
+                              oncommand='window.open("chrome://messenger/content/status.xul", "", "chrome,centerscreen");retrieveStatus();'/>
                 </menupopup>
             </menulist>
             
