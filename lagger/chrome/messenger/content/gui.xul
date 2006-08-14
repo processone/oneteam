@@ -175,15 +175,15 @@
                 <toolbarseparator id="s0"/>
 
                 <toolbarseparator id="s1">
-                    <toolbarbutton id="Adduser" label="" image="img/user_role-add.gif" onclick="addContact();"/>
-                    <toolbarbutton id="joinRoom" label="" image="img/user_role2-add.gif" onclick="joinRoom();"/>
-                	<toolbarbutton id="editGroups" label="" image="img/user-change.gif" oncommand="customGroups();"/>
+                    <toolbarbutton id="Adduser" label="" tooltip="tooltipadd" image="img/user_role-add.gif" onclick="addContact();"/>
+                    <toolbarbutton id="joinRoom" label="" tooltip="tooltipjoin" image="img/user_role2-add.gif" onclick="joinRoom();"/>
+                	<toolbarbutton id="editGroups" label="" tooltip="tooltipedit" image="img/user-change.gif" oncommand="customGroups();"/>
                 </toolbarseparator>
 
                 <toolbarseparator id="s2">
                 
-                    <toolbarbutton id="ServiceDiscovery" label="" image="img/General/script.gif" oncommand="openDisco();"/>
-                    <toolbarbutton id="Mask offline" label="" image="img/crystal/not_in_the_roster.png" oncommand="hideDecoUsers();"/>
+                    <toolbarbutton id="ServiceDiscovery" tooltip="tooltipservice" label="" image="img/General/script.gif" oncommand="openDisco();"/>
+                    <toolbarbutton id="Mask offline" tooltip="tooltipmask" label="" image="img/crystal/not_in_the_roster.png" oncommand="hideDecoUsers();"/>
                 </toolbarseparator>
 
                 <toolbarseparator id="s3"/>
@@ -411,6 +411,26 @@
     		<description value=" - Status Message : " style="font-weight : bold;"/>
     		<description value="" />
     		<description id="desStatus" value="        Empty" style="color: red;"/>
+  		</tooltip>
+  		
+  		<tooltip id="tooltipadd" orient="vertical" style="background-color: #33DD00;">
+    		<description value="&tooltip.add;" />
+  		</tooltip>
+  		
+  		<tooltip id="tooltipjoin" orient="vertical" style="background-color: #33DD00;">
+    		<description value="&tooltip.join;"/>
+  		</tooltip>
+  		
+  		<tooltip id="tooltipedit" orient="vertical" style="background-color: #33DD00;">
+    		<description value="&tooltip.edit;"/>
+  		</tooltip>
+  		
+  		<tooltip id="tooltipservice" orient="vertical" style="background-color: #33DD00;">
+    		<description value="&tooltip.service;"/>
+  		</tooltip>
+  		
+  		<tooltip id="tooltipmask" orient="vertical" style="background-color: #33DD00;">
+    		<description value="&tooltip.mask;"/>
   		</tooltip>
 
                

@@ -925,7 +925,7 @@ function setTimeouts(){
 
 try{
 
-idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
+//idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
 
 
 var menulist = document.getElementById("status");
@@ -980,7 +980,7 @@ function makeAway(){
 try{
 
 //alert (idle.getIdleTime());
-if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+//if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
 
 changeStatus("away");
 changeIcone("away.png");
@@ -989,7 +989,7 @@ var items = menulist.firstChild.childNodes;
 menulist.selectedItem = items[3];
 
 awayFlag = true;
-}
+//}
 
 }
 	catch (e){alert ("makeaway" + e);}
@@ -997,7 +997,7 @@ awayFlag = true;
 
 function makeXa(){
 
-if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+//if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
 changeStatus("xa");
 changeIcone("xa.png");
 var menulist = document.getElementById("status");
@@ -1005,7 +1005,7 @@ var items = menulist.firstChild.childNodes;
 menulist.selectedItem = items[4];
 
 xaFlag = true;
-}
+//}
 }
 
 
@@ -3569,7 +3569,7 @@ try {
 function handlePresence(aJSJaCPacket) {
 /* HERE IS AN ERROR ATTEMPTING CREATING A ROOM */
 
-	alert (aJSJaCPacket.xml());
+	//alert (aJSJaCPacket.xml());
 
     var presence;
     var sender = cutResource(aJSJaCPacket.getFrom());

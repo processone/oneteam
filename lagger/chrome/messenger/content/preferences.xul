@@ -92,10 +92,10 @@
                         name="chat.editor.incomingmessagecolor" type="string"/>
             <preference id="chat.editor.outgoingmessagecolor"
                         name="chat.editor.outgoingmessagecolor" type="string"/>
-            <preference id="chat.editor.statusmessagecolor"
+            <!--  <preference id="chat.editor.statusmessagecolor"
                         name="chat.editor.statusmessagecolor" type="string"/>
             <preference id="chat.editor.urlmessagecolor"
-                        name="chat.editor.urlmessagecolor" type="string"/>
+                        name="chat.editor.urlmessagecolor" type="string"/>-->
             <preference id="chat.editor.consoleinmessagecolor"
                         name="chat.editor.consoleinmessagecolor" type="string"/>
             <preference id="chat.editor.consoleoutmessagecolor"
@@ -125,7 +125,7 @@
                 
                 <spacer height="10"/>
                 
-                 <row>
+                <!--   <row>
                     <label value="&Preferences.status;" control="nickname"/>
                     <colorpicker type="button" color="#66FF99" height="25" maxwidth="50" preference="chat.editor.statusmessagecolor"/>
                 </row>
@@ -137,7 +137,7 @@
                     <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.urlmessagecolor"/>
                 </row>
 				
-				<spacer height="10"/>
+				<spacer height="10"/> -->
 				
 				<row>
                     <label value="&Preferences.inconsole;" control="nickname"/>

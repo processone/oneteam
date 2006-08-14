@@ -62,3 +62,11 @@
 
 <!ENTITY shortcurt.help "H">
 <!ENTITY shortcurt.console "C">
+
+
+<!ENTITY tooltip.add "Add a contact">
+<!ENTITY tooltip.join "Join a conference">
+<!ENTITY tooltip.edit "Group edition">
+<!ENTITY tooltip.service "Service discovery">
+<!ENTITY tooltip.mask "Mask offline users">
+

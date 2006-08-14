@@ -61,3 +61,10 @@
 
 <!ENTITY shortcurt.help "i">
 <!ENTITY shortcurt.console "C">
+
+<!ENTITY tooltip.add "Ajouter un contact">
+<!ENTITY tooltip.join "Joindre un salon">
+<!ENTITY tooltip.edit "Edition de groupe">
+<!ENTITY tooltip.service "Découverte de service">
+<!ENTITY tooltip.mask "Cacher les contacts hors-ligne">
+
