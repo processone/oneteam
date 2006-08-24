@@ -11,7 +11,7 @@ http://xulfr.org/wiki/XulRunner/Installation
 Running
 =======
 
-./messenger
+xulrunner application.ini
 
 To launch the application with a different locale:
-./messenger -UILocale fr-FR
+xulrunner -UILocale fr-FR application.ini
