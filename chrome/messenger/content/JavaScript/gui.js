@@ -2938,7 +2938,7 @@ function launchWizard() {
    
 	var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
- 	var uriToOpen = ioservice.newURI("http://www.process-one.net", null, null);
+ 	var uriToOpen = ioservice.newURI("http://www.process-one.net/", null, null);
  	var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
                       .getService(Components.interfaces.nsIExternalProtocolService);
  	extps.loadURI(uriToOpen, null);
