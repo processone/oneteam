@@ -47,7 +47,7 @@ pref("chat.connection.password", "");
 
 pref("chat.connection.priority", 5);
 pref("chat.connection.base", "http-bind");
-pref("chat.connection.resource", "maison");
+pref("chat.connection.resource", "OneTeam");
 pref("chat.connection.host", "process-one.net");
 pref("chat.connection.port", 5280);
 pref("chat.connection.ssl", false);
@@ -77,7 +77,6 @@ pref("chat.editor.consoleinmessagecolor", "");
 pref("chat.editor.consoleoutmessagecolor", "");
 
 pref("chat.editor.font", "");
-
 
 pref ("chat.advanced.browser","Default");
 pref ("chat.advanced.mail","Default");
