@@ -14,12 +14,12 @@
 
 <script type="application/x-javascript" src="JavaScript/changePriority.js"/>
 <script type="application/x-javascript" src="JavaScript/gui.js"/>     
-<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCConnection.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCPacket.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/xmlextras.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/sha1.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpPollingConnection.js"/>
-<script type="application/x-javascript" src="lib/jsjac-0.5/JSJaCHttpBindingConnection.js"/>   
+<script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
+<script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
+<script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
+<script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
+<script type="application/x-javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
         
 <vbox flex="1">
 
