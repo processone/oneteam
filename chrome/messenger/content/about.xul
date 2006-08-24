@@ -8,7 +8,8 @@
 <!-- TODO: Translate About and Release -->
 <!-- TODO: Font-style should be defined in CSS -->
 <!-- TODO: Logo should be defined in CSS -->
-
+<!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
+        Cabbage
 <dialog id="about"
         title="About &brandShortName;"
         buttons="accept"

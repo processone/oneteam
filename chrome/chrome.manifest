@@ -6,5 +6,5 @@ locale  messenger en-US     file:messenger/locale/en-US/
 locale  branding  en-US     file:messenger/locale/branding/
 
 skin    messenger default   file:messenger/skin/default/
-skin    messenger classic file:messenger/skin/default/
+skin    messenger classic   file:messenger/skin/default/
 

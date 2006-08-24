@@ -9,7 +9,7 @@ var endpage;
 
 function loadGroups() {
 
-   /* var groups = document.getElementById("groups");
+    /* var groups = document.getElementById("groups");
     var menugroups = document.getElementById("menuGroups");
     var listGroups = window.opener.groups;
     var item;
@@ -27,45 +27,34 @@ function loadGroups() {
 }
 
 
-		
-	
-		function initializeGroups(){
-			
-			endmessage = document.getElementById('endmessage');
-			jid = document.getElementById('jids');
-			endpage = document.getElementById('done');
-	
-		
-			
-		}
-		
-		function doAdd(){
-			var s = jid.value;
-			if (s.indexOf("@") != -1) {
-				performAddContact();
-				endmessage.value= jid.value + ' was added to your list';
-				endpage.setAttribute("label", "Person added");
-			} else {
-				endpage.setAttribute("label", "Error");
-				endmessage.value= "You did not enter a valid address";
-			}
-			
-		}
- 
-	
+function initializeGroups() {
+    endmessage = document.getElementById('endmessage');
+    jid = document.getElementById('jids');
+    endpage = document.getElementById('done');
+}
+
+function doAdd() {
+    var s = jid.value;
+    if (s.indexOf("@") != -1) {
+        performAddContact();
+        endmessage.value = jid.value + ' was added to your list';
+        endpage.setAttribute("label", "Person added");
+    } else {
+        endpage.setAttribute("label", "Error");
+        endmessage.value = "You did not enter a valid address";
+    }
+}
+
 
 // function to add a contact
 function performAddContact(event) {
+    con = window.opener.con;
 
-    var con = window.opener.con;
-    
     //var groups = document.getElementById("menuGroups");
 
     var listGroups = window.opener.groups;
     //ADDED
-	var chosenGroup = document.getElementById("groups").value;
-
-    
+    var chosenGroup = document.getElementById("groups").value;
 
     try {
         var iq = new JSJaCIQ();
@@ -73,38 +62,36 @@ function performAddContact(event) {
         var query = iq.setQuery('jabber:iq:roster');
         var item = query.appendChild(iq.getDoc().createElement('item'));
         item.setAttribute('jid', jid.value);
-        var group = item.appendChild(iq.getDoc().createElement('group'));
-        /*if (groups.selectedItem)
-            var chosenGroup = groups.selectedItem.id;*/
-            //var chosenGroup = groups.value;
-        if  (!chosenGroup || chosenGroup =="")
-            chosenGroup = listGroups[0];
-        group.appendChild(iq.getDoc().createTextNode(chosenGroup));
 
+        if (!chosenGroup || chosenGroup == "") {
+            // Does not add the contact in any group
+        } else {
+            var group = item.appendChild(iq.getDoc().createElement('group'));
+            chosenGroup = listGroups[0];
+            group.appendChild(iq.getDoc().createTextNode(chosenGroup));
+        }
         //alert (iq.xml());
         con.send(iq);
-        
-         if (console) {
-        cons.addInConsole("IN : " + iq.xml() + "\n");
-   	 }
 
+        if (console)
+            cons.addInConsole("IN : " + iq.xml() + "\n");
 
-		var resources = new Array();
-        var user = new Array(jid.value, "none", chosenGroup, keepLogin (jid.value) , "requested.png",resources,"false",0,"offline.png", "         Empty");
-		
-		var already = false;
-                    for (g = 0; g < window.opener.groups.length; g++) {
-                        if (window.opener.groups[g] == chosenGroup)
-                            already = true;
-                    }
-                    if (!already)
-                        window.opener.groups.push(chosenGroup);
-                        
+        var resources = new Array();
+        var user = new Array(jid.value, "none", chosenGroup, keepLogin(jid.value), "requested.png", resources, "false", 0, "offline.png", "         Empty");
+
+        var already = false;
+        for (g = 0; g < window.opener.groups.length; g++) {
+            if (window.opener.groups[g] == chosenGroup)
+                already = true;
+        }
+        if (!already)
+            window.opener.groups.push(chosenGroup);
+
         window.opener.users.push(user);
         window.opener.emptyList();
         window.opener.showUsers(window.opener.users);
         //window.opener.refreshList();
-        
+
         window.opener.authorizeSeeContact(jid.value);
 
         /*var item = document.createElement ("listitem");
