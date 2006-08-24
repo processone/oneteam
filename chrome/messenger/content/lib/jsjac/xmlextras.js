@@ -83,12 +83,14 @@ XmlHttp.create = function () {
 // XmlDocument factory
 function XmlDocument() {}
 
-XmlDocument.create = function () {
+XmlDocument.create = function (name,ns) {
+	name = name || "";
+	ns = ns || "";
 	try {
+		var doc;
 		// DOM2
 		if (document.implementation && document.implementation.createDocument) {
-			var doc = document.implementation.createDocument("", "", null);
-			
+			doc = document.implementation.createDocument("", "", null);
 			// some versions of Moz do not support the readyState property
 			// and the onreadystate event so we patch it!
 			if (doc.readyState == null) {
@@ -99,18 +101,34 @@ XmlDocument.create = function () {
 						doc.onreadystatechange();
 				}, false);
 			}
-			
-			return doc;
 		}
 		if (window.ActiveXObject)
-			return new ActiveXObject(getDomDocumentPrefix() + ".DomDocument");
+			doc = new ActiveXObject(getDomDocumentPrefix() + ".DomDocument");
+
+		try { 
+			if (ns != '')
+				doc.appendChild(doc.createElement(name)).setAttribute('xmlns',ns);
+			else
+				doc.appendChild(doc.createElement(name));
+		} catch (dex) { 
+			doc = document.implementation.createDocument(ns,name,null);
+			
+			if (doc.documentElement == null)
+				doc.appendChild(doc.createElement(name));
+
+			if (ns != '' && 
+			    doc.documentElement.getAttribute('xmlns') != ns) // fixes buggy opera 8.5x
+				doc.documentElement.setAttribute('xmlns',ns);
+		}
+
+		return doc;
 	}
-	catch (ex) {}
+	catch (ex) { }
 	throw new Error("Your browser does not support XmlDocument objects");
 };
 
 // Create the loadXML method 
-if (window.DOMParser) {
+if (typeof(Document) != 'undefined' && window.DOMParser) {
 
 	// XMLDocument did not extend the Document interface in some versions
 	// of Mozilla. Extend both!
@@ -148,15 +166,15 @@ if (window.XMLSerializer &&
 	 */
 	// XMLDocument did not extend the Document interface in some versions
 	// of Mozilla. Extend both!
-// 	XMLDocument.prototype.__defineGetter__("xml", function () {
-// 		return (new XMLSerializer()).serializeToString(this);
-// 	});
+ 	XMLDocument.prototype.__defineGetter__("xml", function () {
+																					 return (new XMLSerializer()).serializeToString(this);
+																				 });
 	Document.prototype.__defineGetter__("xml", function () {
-		return (new XMLSerializer()).serializeToString(this);
-	});
-
-	/* doesn't work correctly in mozi */
-// 	Node.prototype.__defineGetter__("xml", function () {
-// 		return (new XMLSerializer()).serializeToString(this);
-// 	});
+																				return (new XMLSerializer()).serializeToString(this);
+																			});
+	
+	/* doesn't work correctly in mozi, does it?  */
+ 	Node.prototype.__defineGetter__("xml", function () {
+																		return (new XMLSerializer()).serializeToString(this);
+																	});
 }

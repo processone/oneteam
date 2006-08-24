@@ -1,7 +1,11 @@
 JSJaC_HAVEKEYS = true;  // whether to use keys
-JSJaC_NKEYS    = 64;    // number of keys to generate
+JSJaC_NKEYS    = 16;    // number of keys to generate
+JSJAC_INACTIVITY = 300; // qnd hack to make suspend/resume work more smoothly with polling
+JSJAC_ERR_COUNT = 10;	// number of retries in case of connection errors
+
 
 JSJaC_CheckQueueInterval = 100; // msecs to poll send queue
+JSJaC_CheckInQueueInterval = 1; // msecs to poll in queue
 /* ******************************
  * JabberConnection 
  * somewhat abstract base class
@@ -9,40 +13,30 @@ JSJaC_CheckQueueInterval = 100; // msecs to poll send queue
 
 function JSJaCConnection(oArg) {
 	oCon = this; // remember reference to ourself
-	if (oArg.oDbg && oArg.oDbg.log)
+	if (oArg && oArg.oDbg && oArg.oDbg.log)
 		this.oDbg = oArg.oDbg; 
 	else {
 		this.oDbg = new Object(); // always initialise a debugger
 		this.oDbg.log = function() { };
 	}
 
-	this._httpbase = oArg.httpbase;
+	if (oArg && oArg.httpbase)
+	  this._httpbase = oArg.httpbase;
 
 	this._connected = false;
 	this._events = new Array();
 	this._keys = null;
 	this._ID = 0;
+	this._inQ = new Array();
 	this._pQueue = new Array();
 	this._regIDs = new Array();
 	this._req = new Array();
+	this._status = 'intialized';
+	this._errcnt = 0;
+	this._inactivity = JSJAC_INACTIVITY;
 
 	this.connected = function() { return this._connected; };
 	this.getPollInterval = function() { return this._timerval; };
-	this.handleEvent = function(event,arg) {
-		event = event.toLowerCase(); // don't be case-sensitive here
-		this.oDbg.log("incoming event '"+event+"'",3);
-		if (!this._events[event])
-			return;
-		this.oDbg.log("handling event '"+event+"'",2);
-		for (var i in this._events[event]) {
-			if (this._events[event][i]) {
-				if (arg)
-					this._events[event][i](arg);
-				else
-					this._events[event][i]();
-			}
-		}
-	};
 	this.registerHandler = function(event,handler) {
 		event = event.toLowerCase(); // don't be case-sensitive here
 		if (!this._events[event])
@@ -51,8 +45,33 @@ function JSJaCConnection(oArg) {
 			this._events[event] = this._events[event].concat(handler);
 		this.oDbg.log("registered handler for event '"+event+"'",2);
 	};
+	this.resume = function() {
+		var s = readCookie('s');
+
+		if (!s)
+			return false;
+
+		this.oDbg.log('read cookie: '+s,2);
+
+		s = s.parseJSON();
+
+		for (var i in s)
+			this[i] = s[i];
+
+		// copy keys - not being very generic here :-/
+		if (this._keys) {
+			this._keys2 = new JSJaCKeys();
+			var u = this._keys2._getSuspendVars();
+			for (var i=0; i<u.length; i++) 
+				this._keys2[u[i]] = this._keys[u[i]];
+			this._keys = this._keys2;
+		}
+		oCon = this;
+		if (this._connected)
+		  setTimeout("oCon._resume()",this.getPollInterval()); // don't poll too fast!
+		return this._connected;
+	}
 	this.send = JSJaCSend;
-	this.sendstr = JSJaCSendStr;
 	this.setPollInterval = function(timerval) {
 		if (!timerval || isNaN(timerval)) {
 			this.oDbg.log("Invalid timerval: " + timerval,1);
@@ -61,16 +80,51 @@ function JSJaCConnection(oArg) {
 		this._timerval = timerval;
 		return this._timerval;
 	};
-	this.setPollInterval(oArg.timerval);
+	if (oArg && oArg.timerval)
+		this.setPollInterval(oArg.timerval);
+	this.status = function() { return this._status; }
+	this.suspend = function() {
+		
+		// remove timers
+		clearTimeout(this._timeout);
+		clearInterval(this._interval);
+		clearInterval(this._inQto);
 
-	this._checkQueue = JSJaCHBCCheckQueue;
+		var u = ('_connected,_keys,_ID,_inQ,_pQueue,_regIDs,_errcnt,_inactivity,domain,username,resource,jid,fulljid,_sid,_httpbase,_timerval,_is_polling').split(',');
+		u = u.concat(this._getSuspendVars());
+		var s = new Object();
 
-	this._doReg = JSJaCReg;
-	this._doAuth = JSJaCAuth;
-	this._doAuth2 = JSJaCAuth2;
-	this._doAuth3 = JSJaCAuth3;
+		for (var i=0; i<u.length; i++) {
+			if (!this[u[i]]) continue; // hu? skip these!
+			if (this[u[i]]._getSuspendVars) {
+				var uo = this[u[i]]._getSuspendVars();
+				var o = new Object();
+				for (var j=0; j<uo.length; j++)
+					o[uo[j]] = this[u[i]][uo[j]];
+			} else
+				var o = this[u[i]];
 
-	this._doSASLAuth = JSJaCSASLAuth;
+			s[u[i]] = o;
+		}
+		
+		createCookie('s',s.toJSONString(),this._inactivity)
+
+		this._connected = false;
+
+		this._setStatus('suspending');
+	}
+
+
+	this._abort       = JSJaCAbort;
+	this._checkInQ    = JSJaCCheckInQ;
+	this._checkQueue  = JSJaCHBCCheckQueue;
+
+	this._doAuth      = JSJaCAuth;
+	this._doAuth2     = JSJaCAuth2;
+	this._doAuth3     = JSJaCAuth3;
+	this._doReg       = JSJaCReg;
+
+	this._doSASLAuth	= JSJaCSASLAuth;
 // 	this._doSASLAuthBind = JSJaCSASLAuthBind;
 // 	this._doSASLAuthSess = JSJaCSASLAuthSess;
 // 	this._doSASLAuthDone = JSJaCSASLAuthDone;
@@ -80,6 +134,23 @@ function JSJaCConnection(oArg) {
 	this._doSASLAnonAuthBind = JSJaCSASLAnonAuthBind;
 	this._doSASLAnonAuthSess = JSJaCSASLAnonAuthSess;
 	this._doSASLAnonAuthDone = JSJaCSASLAnonAuthDone;
+	this._handleEvent = function(event,arg) {
+		event = event.toLowerCase(); // don't be case-sensitive here
+		this.oDbg.log("incoming event '"+event+"'",3);
+		if (!this._events[event])
+			return;
+		this.oDbg.log("handling event '"+event+"'",2);
+		for (var i=0;i<this._events[event].length; i++) {
+			if (this._events[event][i]) {
+				try {
+					if (arg)
+						this._events[event][i](arg);
+					else
+						this._events[event][i]();
+				} catch (e) { this.oDbg.log(e.name+": "+ e.message); }
+			}
+		}
+	};
 	this._handlePID = function(aJSJaCPacket) {
 		if (!aJSJaCPacket.getID())
 			return false;
@@ -87,7 +158,9 @@ function JSJaCConnection(oArg) {
 			if (this._regIDs[i] && i == aJSJaCPacket.getID()) {
 				var pID = aJSJaCPacket.getID();
 				this.oDbg.log("handling "+pID,3);
-				this._regIDs[i].cb(aJSJaCPacket,this._regIDs[i].arg);
+				try {
+					this._regIDs[i].cb(aJSJaCPacket,this._regIDs[i].arg);
+				} catch (e) { this.oDbg.log(e.name+": "+ e.message); }
 				this._unregisterPID(pID);
 				return true;
 			}
@@ -107,6 +180,14 @@ function JSJaCConnection(oArg) {
 		return true;
 	};
 	this._sendEmpty = JSJaCSendEmpty;
+	this._setStatus = function(status) {
+		if (!status || status == '')
+			return;
+		if (status != this._status) { // status changed!
+			this._status = status;
+			this._handleEvent('status_changed', status);
+		}
+	}
 	this._unregisterPID = function(pID) {
 		if (!this._regIDs[pID])
 			return false;
@@ -114,6 +195,7 @@ function JSJaCConnection(oArg) {
 		this.oDbg.log("unregistered "+pID,3);
 		return true;
 	};
+
 }
 
 function JSJaCReg() {
@@ -127,7 +209,7 @@ function JSJaCReg() {
 	var query = iq.setQuery('jabber:iq:register');
 	query.appendChild(iq.getDoc().createElement('username')).appendChild(iq.getDoc().createTextNode(this.username));
 	query.appendChild(iq.getDoc().createElement('password')).appendChild(iq.getDoc().createTextNode(this.pass));
-		
+
 	this.send(iq,this._doAuth);
 }
 
@@ -135,12 +217,10 @@ function JSJaCAuth(iq) {
 	/* ***
 	 * Non-SASL Authentication as described in JEP-0078
 	 */
-
 	if (iq && iq.getType() == 'error') { // we failed to register
-		oCon.handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
+		oCon._handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
 		return;
 	}
-
 	var iq = new JSJaCIQ();
 	iq.setIQ(oCon.server,null,'get','auth1');
 	var query = iq.setQuery('jabber:iq:auth');
@@ -182,11 +262,11 @@ function JSJaCAuth2(iq) {
  */
 function JSJaCAuth3(iq) {
 	if (iq.getType() != 'result') { // auth' failed
-		oCon.disconnect();
 		if (iq.getType() == 'error')
-			oCon.handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
+			oCon._handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
+		oCon.disconnect();
 	} else
-		oCon.handleEvent('onconnect');
+		oCon._handleEvent('onconnect');
 }
 
 /* ***
@@ -239,17 +319,17 @@ function JSJaCSASLAnonAuth(doc) {
 					var slot = this._getFreeSlot();
 					this._req[slot] = this._setupRequest(true);
 
-					this._req[slot].onreadystatechange = function() {
+					this._req[slot].r.onreadystatechange = function() {
 						if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
 							return;
-						if (oCon._req[slot].readyState == 4) {
-							oCon.oDbg.log("async recv: "+oCon._req[slot].responseText,4);
+						if (oCon._req[slot].r.readyState == 4) {
+							oCon.oDbg.log("async recv: "+oCon._req[slot].r.responseText,4);
 							oCon._doSASLAnonAuthReinitStream(oCon._req[slot]);							
 						}
 					};
 					
-					if (typeof(this._req[slot].onerror) != 'undefined') {
-						this._req[slot].onerror = function(e) {
+					if (typeof(this._req[slot].r.onerror) != 'undefined') {
+						this._req[slot].r.onerror = function(e) {
 							if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
 								return;
 							oCon.oDbg.log('XmlHttpRequest error',1);
@@ -259,7 +339,7 @@ function JSJaCSASLAnonAuth(doc) {
 
 					var reqstr = this._getRequestString("<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='ANONYMOUS'/>");
 					this.oDbg.log("sending: " + reqstr,4);
-					this._req[slot].send(reqstr);
+					this._req[slot].r.send(reqstr);
 					return true; // stop here
 				}
 			break;
@@ -269,7 +349,7 @@ function JSJaCSASLAnonAuth(doc) {
 }
 
 function JSJaCSASLAnonAuthReinitStream(req) {
-	this.oDbg.log(req.responseText,2);
+	this.oDbg.log(req.r.responseText,2);
 	var doc = this._prepareResponse(req);
 	if (doc.getElementsByTagName("success").length == 0) {
 		this.oDgb.log("auth failed",1);
@@ -280,17 +360,17 @@ function JSJaCSASLAnonAuthReinitStream(req) {
 	var slot = this._getFreeSlot();
 	this._req[slot] = this._setupRequest(true);
 
-	this._req[slot].onreadystatechange = function() {
+	this._req[slot].r.onreadystatechange = function() {
 		if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
 			return;
-		if (oCon._req[slot].readyState == 4) {
-			oCon.oDbg.log("async recv: "+oCon._req[slot].responseText,4);
-			oCon._doSASLAnonAuthBind(oCon._req[slot]);							
+		if (oCon._req[slot].r.readyState == 4) {
+			oCon.oDbg.log("async recv: "+oCon._req[slot].r.responseText,4);
+			oCon._doSASLAnonAuthBind(oCon._req[slot].r);							
 		}
 	};
 					
-	if (typeof(this._req[slot].onerror) != 'undefined') {
-		this._req[slot].onerror = function(e) {
+	if (typeof(this._req[slot].r.onerror) != 'undefined') {
+		this._req[slot].r.onerror = function(e) {
 			if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
 				return;
 			oCon.oDbg.log('XmlHttpRequest error',1);
@@ -302,7 +382,7 @@ function JSJaCSASLAnonAuthReinitStream(req) {
 	var reqstr = this._getRequestString("<stream:stream xmlns:stream='http://etherx.jabber.org/streams' xmlns='jabber:client' to='"+this.domain+"' version='1.0'>");
 
 	this.oDbg.log("sending: " + reqstr,2);
-	this._req[slot].send(reqstr);
+	this._req[slot].r.send(reqstr);
 	return true;
 }
 
@@ -322,7 +402,7 @@ function JSJaCSASLAnonAuthSess(iq) {
 	if (iq.getType() != 'result' || iq.getType() == 'error') { // auth' failed
 		oCon.disconnect();
 		if (iq.getType() == 'error')
-			oCon.handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
+			oCon._handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
 		return;
 	}
 
@@ -341,10 +421,10 @@ function JSJaCSASLAnonAuthDone(iq) {
 	if (iq.getType() != 'result' || iq.getType() == 'error') { // auth' failed
 		oCon.disconnect();
 		if (iq.getType() == 'error')
-			oCon.handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
+			oCon._handleEvent('onerror',iq.getNode().getElementsByTagName('error').item(0));
 		return;
 	} else 
-		oCon.handleEvent('onconnect');
+		oCon._handleEvent('onconnect');
 }
 
 /* ***
@@ -392,14 +472,13 @@ function JSJaCProcess(timerval) {
 	if (slot < 0)
 		return;
 
-	if (typeof(this._req[slot]) != 'undefined' && this._req[slot].readyState != 4) {
+	if (typeof(this._req[slot]) != 'undefined' && typeof(this._req[slot].r) != 'undefined' && this._req[slot].r.readyState != 4) {
 		this.oDbg.log("Slot "+slot+" is not ready");
 		return;
 	}
 		
-	if (!this.isPolling() && this._pQueue.length == 0 && this._req[(slot+1)%2] && this._req[(slot+1)%2].readyState != 4) {
+	if (!this.isPolling() && this._pQueue.length == 0 && this._req[(slot+1)%2] && this._req[(slot+1)%2].r.readyState != 4)
 		return;
-	}
 
 	if (!this.isPolling())
 		this.oDbg.log("Found working slot at "+slot,2);
@@ -407,42 +486,49 @@ function JSJaCProcess(timerval) {
 	this._req[slot] = this._setupRequest(true);
 
 	/* setup onload handler for async send */
-	this._req[slot].onreadystatechange = function() {
+	this._req[slot].r.onreadystatechange = function() {
 		if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
 			return;
-		if (oCon._req[slot].readyState == 4) {
-			oCon.oDbg.log("async recv: "+oCon._req[slot].responseText,4);
+		if (oCon._req[slot].r.readyState == 4) {
+			oCon._setStatus('processing');
+			oCon.oDbg.log("async recv: "+oCon._req[slot].r.responseText,4);
 			oCon._handleResponse(oCon._req[slot]);
  			if (oCon._pQueue.length)
  				oCon._process();
-			else
-				oCon._timeout = setTimeout("oCon._process()",oCon.getPollInterval()); // schedule next tick
+			else // schedule next tick
+				oCon._timeout = setTimeout("oCon._process()",oCon.getPollInterval());
 
 		}
 	};
 
-	if (typeof(this._req[slot].onerror) != 'undefined') {
-		this._req[slot].onerror = function(e) {
+	if (typeof(this._req[slot].r.onerror) != 'undefined') {
+		this._req[slot].r.onerror = function(e) {
 			if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
 				return;
-			oCon.oDbg.log('XmlHttpRequest error',1);
-			if (oCon._pQueue.length)
-				oCon._process();
-			else
-				oCon._timeout = setTimeout("oCon._process()",oCon.getPollInterval()); // schedule next tick
+			oCon._errcnt++;
+			oCon.oDbg.log('XmlHttpRequest error ('+oCon._errcnt+')',1);
+			if (oCon._errcnt > JSJAC_ERR_COUNT) {
+
+			  // abort
+			  oCon._abort();
+			  return false;
+			}
+
+			oCon._setStatus('onerror_fallback');
+				
+			// schedule next tick
+			setTimeout("oCon._resume()",oCon.getPollInterval());
 			return false;
 		};
 	}
 
-	var xml = '';
-	while (this._pQueue.length) {
-		var curNode = this._pQueue[0];
-		xml += curNode;
-		this._pQueue = this._pQueue.slice(1,this._pQueue.length);
-	}
-	var reqstr = this._getRequestString(xml);
+	var reqstr = this._getRequestString();
+
+	if (typeof(this._rid) != 'undefined') // remember request id if any
+	  this._req[slot].rid = this._rid;
+
 	this.oDbg.log("sending: " + reqstr,4);
-	this._req[slot].send(reqstr);
+	this._req[slot].r.send(reqstr);
 }
 
 function JSJaCHBCCheckQueue() {
@@ -460,17 +546,17 @@ function JSJaCSendEmpty() {
 	this._req[slot] = this._setupRequest(true);
 
 	oCon = this;
-	this._req[slot].onreadystatechange = function() {
+	this._req[slot].r.onreadystatechange = function() {
 		if (typeof(oCon) == 'undefined' || !oCon)
 			return;
-		if (oCon._req[slot].readyState == 4) {
-			oCon.oDbg.log("async recv: "+oCon._req[slot].responseText,4);
+		if (oCon._req[slot].r.readyState == 4) {
+			oCon.oDbg.log("async recv: "+oCon._req[slot].r.responseText,4);
 			oCon._getStreamID(slot); // handle response
 		}
 	}
 
-	if (typeof(this._req[slot].onerror) != 'undefined') {
-		this._req[slot].onerror = function(e) {
+	if (typeof(this._req[slot].r.onerror) != 'undefined') {
+		this._req[slot].r.onerror = function(e) {
 			if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
 				return;
 			oCon.oDbg.log('XmlHttpRequest error',1);
@@ -480,35 +566,7 @@ function JSJaCSendEmpty() {
 
 	var reqstr = this._getRequestString();
 	this.oDbg.log("sending: " + reqstr,4);
-	this._req[slot].send(reqstr);
-}
-
-function JSJaCSendStr(str) {
-
-this._pQueue = this._pQueue.concat(str);
-	/*var slot = this._getFreeSlot();
-	this._req[slot] = this._setupRequest(true);
-
-        oCon = this;
-        this._req[slot].onreadystatechange = function() {
-                if (typeof(oCon) == 'undefined' || !oCon)
-                        return;
-                if (oCon._req[slot].readyState == 4) {
-                        oCon.oDbg.log("async recv: "+oCon._req[slot].responseText,4);
-                        oCon._getStreamID(slot); // handle response
-                }
-	        }
-						
-	        if (typeof(this._req[slot].onerror) != 'undefined') {
-	                this._req[slot].onerror = function(e) {
-                if (typeof(oCon) == 'undefined' || !oCon || !oCon.connected())
-                               return;
-              oCon.oDbg.log('XmlHttpRequest error',1);
-              return false;
-          };
-      }
-        this.oDbg.log("sending: " + str,4);
-        this._req[slot].send(str);*/
+	this._req[slot].r.send(reqstr);
 }
 
 function JSJaCHandleResponse(req) {
@@ -520,31 +578,45 @@ function JSJaCHandleResponse(req) {
 	this.oDbg.log("childNodes: "+rootEl.childNodes.length,3);
 	for (var i=0; i<rootEl.childNodes.length; i++) {
 		this.oDbg.log("rootEl.childNodes.item("+i+").nodeName: "+rootEl.childNodes.item(i).nodeName,3);
-		var aJSJaCPacket = JSJaCPWrapNode(rootEl.childNodes.item(i));
-		if (typeof(aJSJaCPacket.pType) == 'undefined') // didn't parse as proper XMPP packet
-			continue;
-		if (!this._handlePID(aJSJaCPacket))
-			this.handleEvent(aJSJaCPacket.pType(),aJSJaCPacket);
+		this._inQ = this._inQ.concat(rootEl.childNodes.item(i));
 	}
-
 	return null;
+}
+
+function JSJaCCheckInQ() {
+	for (var i=0; i<this._inQ.length && i<10; i++) {
+		var item = this._inQ[0];
+		this._inQ = this._inQ.slice(1,this._inQ.length);
+		var aJSJaCPacket = JSJaCPWrapNode(item);
+		if (typeof(aJSJaCPacket.pType) != 'undefined')
+			if (!this._handlePID(aJSJaCPacket))
+				this._handleEvent(aJSJaCPacket.pType(),aJSJaCPacket);
+	}
+// 	oCon = this;
+// 	this._inQto = setTimeout("oCon._checkInQ();",JSJaC_CheckInQueueInterval);
+}
+
+function JSJaCAbort() {
+  clearTimeout(this._timeout); // remove timer
+  this._connected = false;
+
+	this._setStatus('aborted');
+
+  this.oDbg.log("Disconnected.",1);
+  this._handleEvent('ondisconnect');
+  this._handleEvent('onerror',JSJaCError('500','cancel','service-unavailable'));
 }
 
 /* ***
  * an error packet for internal use
  */
 function JSJaCError(code,type,condition) {
-	var xmldoc = XmlDocument.create();
-	if (xmldoc.documentElement)
-		xmldoc.documentElement.appendChild(xmldoc.createElement('error'));
-	else 
-		xmldoc.appendChild(xmldoc.createElement('error'));
+	var xmldoc = XmlDocument.create("error","jsjac");
 
-	xmldoc.firstChild.setAttribute('code',code);
-	xmldoc.firstChild.setAttribute('type',type);
-	xmldoc.firstChild.appendChild(xmldoc.createElement(condition));
-	xmldoc.firstChild.firstChild.setAttribute('xmlns','urn:ietf:params:xml:ns:xmpp-stanzas');
-	return xmldoc.firstChild.cloneNode(true);
+	xmldoc.documentElement.setAttribute('code',code);
+	xmldoc.documentElement.setAttribute('type',type);
+	xmldoc.documentElement.appendChild(xmldoc.createElement(condition)).setAttribute('xmlns','urn:ietf:params:xml:ns:xmpp-stanzas');
+	return xmldoc.documentElement.cloneNode(true);
 }
 
 /* ***
@@ -557,15 +629,21 @@ function JSJaCKeys(func,oDbg) {
 	this._k[0] = seed.toString();
 	this.oDbg = oDbg;
 
-	for (var i=1; i<JSJaC_NKEYS; i++) {
-		this._k[i] = func(this._k[i-1]);
-		oDbg.log(i+": "+this._k[i],4);
+	if (func) {
+		for (var i=1; i<JSJaC_NKEYS; i++) {
+			this._k[i] = func(this._k[i-1]);
+			oDbg.log(i+": "+this._k[i],4);
+		}
 	}
 
-	this.indexAt = JSJaC_NKEYS-1;
+	this._indexAt = JSJaC_NKEYS-1;
 	this.getKey = function() { 
-		return this._k[this.indexAt--]; 
+		return this._k[this._indexAt--]; 
 	};
-	this.lastKey = function() { return (this.indexAt == 0); };
+	this.lastKey = function() { return (this._indexAt == 0); };
 	this.size = function() { return this._k.length; };
+
+	this._getSuspendVars = function() {
+	  return ('_k,_indexAt').split(',');
+	}
 }

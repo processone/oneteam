@@ -1,22 +1,19 @@
+var JSJACPACKET_USE_XMLNS = true;
+
 function JSJaCPacket(name) {
 	this.name = name;
 
-	/* [TODO]
-	 * For W3C Dom Level 3 compliant browsers we need to have an
-	 * XmlDocument.create that allows creating appropriate top-level
-	 * nodes as they may not be altered afterwards 
-	 */
-
-	this.doc = XmlDocument.create();
-
-	this.doc.appendChild(this.doc.createElement(name));
+ 	if (typeof(JSJACPACKET_USE_XMLNS) != 'undefined' && JSJACPACKET_USE_XMLNS)
+ 	  this.doc = XmlDocument.create(name,'jabber:client');
+ 	else
+ 	  this.doc = XmlDocument.create(name,'');
 
 	this.pType = function() { return this.name; };
 
 	this.getDoc = function() { return this.doc; };
-	this.getNode = function() {	return this.getDoc().firstChild; };
+	this.getNode = function() { return this.getDoc().documentElement; };
 
-	this.setTo = function(to) { 
+	this.setTo = function(to) {
 		if (!to || to == '')
 			this.getNode().removeAttribute('to');
 		else
@@ -51,45 +48,67 @@ function JSJaCPacket(name) {
 			this.getNode().setAttribute('xml:lang',xmllang);
 		return this;
 	};
-	this.setXMLNS = function(xmlns) {
-		if (!xmlns || xmlns == '')
-			this.getNode().removeAttribute('xmlns');
-		else
-			this.getNode().setAttribute('xmlns',xmlns); 
-		return this; 
-	};
-	this.setXMLNS('jabber:client');
+
 	this.getTo = function() { return this.getNode().getAttribute('to'); }
 	this.getFrom = function() { return this.getNode().getAttribute('from'); }
 	this.getID = function() { return this.getNode().getAttribute('id'); }
 	this.getType = function() { return this.getNode().getAttribute('type'); }
 	this.getXMLLang = function() { return this.getNode().getAttribute('xml:lang'); };
-	this.getXMLNS = function() { return this.getNode().getAttribute('xmlns',xmlns); };
+	this.getXMLNS = function() { return this.getNode().namespaceURI; };
 
 	this.xml = function() { 
-		return this.getDoc().xml ? this.getDoc().xml : (new XMLSerializer()).serializeToString(this.doc); 
+		if (this.getDoc().xml)
+			return this.getDoc().xml;
+		var xml = (new XMLSerializer()).serializeToString(this.getNode()); // opera needs the node
+		if (typeof(xml) != 'undefined') 
+			return xml;
+		return (new XMLSerializer()).serializeToString(this.doc); // oldschool
+
 	};
 
 	this._childElVal = function(nodeName) {
-		for (var i=0; i<this.getNode().childNodes.length; i++) {
-			if (this.getNode().childNodes.item(i).nodeName == nodeName) {
-				if (this.getNode().childNodes.item(i).firstChild)
-					return this.getNode().childNodes.item(i).firstChild.nodeValue;
-				else
-					return '';
-			}
-		}
-		return null;
+		var aNode = this._getChildNode(nodeName);
+		if (aNode && aNode.firstChild)
+		    return aNode.firstChild.nodeValue;
+		return '';
+	}
+
+	this._getChildNode = function(nodeName) {
+	  var children = this.getNode().childNodes;
+	  for (var i=0; i<children.length; i++)
+	    if (children.item(i).tagName == nodeName)
+	      return children.item(i);
+	  return null;
 	}
 
 	this._replaceNode = function(aNode) {
-		/* hot-fix for safari
-		 * don't ask - just shake heads
-		 */
-		if (this.getDoc().importNode)
-			this.getDoc().importNode(aNode,true);
-		return this.getDoc().replaceChild(aNode.cloneNode(true),this.getNode()); 
+		// copy attribs
+		for (var i=0; i<aNode.attributes.length; i++)
+			if (aNode.attributes.item(i).nodeName != 'xmlns')
+				this.getNode().setAttribute(aNode.attributes.item(i).nodeName,aNode.attributes.item(i).nodeValue);
+
+		// copy children
+		for (var i=0; i<aNode.childNodes.length; i++)
+			if (this.getDoc().importNode)
+				this.getNode().appendChild(this.getDoc().importNode(aNode.childNodes.item(i),true));
+			else
+				this.getNode().appendChild(aNode.childNodes.item(i).cloneNode(true));
+				
 	};
+
+	this._setChildNode = function(nodeName, nodeValue) {
+	  var aNode = this._getChildNode(nodeName);
+	  var tNode = this.getDoc().createTextNode(nodeValue);
+	  if (aNode)
+	    try {
+	      aNode.replaceChild(tNode,aNode.firstChild);
+	    } catch (e) { }
+	  else {
+	    aNode = this.getNode().appendChild(this.getDoc().createElement(nodeName));
+	    aNode.appendChild(tNode);
+	  }
+	  return aNode;
+	}
 
 	this.clone = function() { return JSJaCPWrapNode(this.getNode()); }
 } 
@@ -98,18 +117,16 @@ function JSJaCPresence() {
 	this.base = JSJaCPacket;
 	this.base('presence');
 
-	//	this.setXMLNS('jabber:client');
-
 	this.setStatus = function(status) {
-		this.getNode().appendChild(this.getDoc().createElement('status')).appendChild(this.getDoc().createTextNode(status));
+		this._setChildNode("status", status);
 		return this; 
 	};
 	this.setShow = function(show) {
-		this.getNode().appendChild(this.getDoc().createElement('show')).appendChild(this.getDoc().createTextNode(show));
+		this._setChildNode("show",show);
 		return this; 
 	};
 	this.setPriority = function(prio) {
-		this.getNode().appendChild(this.getDoc().createElement('priority')).appendChild(this.getDoc().createTextNode(prio));
+		this._setChildNode("priority", prio);
 		return this; 
 	};
 	this.setPresence = function(show,status,prio) {
@@ -143,8 +160,16 @@ function JSJaCIQ() {
 		return this; 
 	};
 	this.setQuery = function(xmlns) {
-		query = this.getNode().appendChild(this.getDoc().createElement('query'));
-		query.setAttribute('xmlns',xmlns);
+		var query;
+ 		try {
+ 			query = this.getDoc().createElementNS(xmlns,'query');
+ 		} catch (e) {
+			// fallback
+			query = this.getDoc().createElement('query');
+		}
+		if (query && query.getAttribute('xmlns') != xmlns) // fix opera 8.5x
+			query.setAttribute('xmlns',xmlns);
+		this.getNode().appendChild(query);
 		return query;
 	};
 
@@ -153,7 +178,7 @@ function JSJaCIQ() {
 	};
 	this.getQueryXMLNS = function() {
 		if (this.getQuery())
-			return this.getQuery().getAttribute('xmlns');
+			return this.getQuery().namespaceURI;
 		else
 			return null;
 	};
@@ -163,19 +188,19 @@ function JSJaCMessage() {
 	this.base = JSJaCPacket;
 	this.base('message');
 
-	//	this.setXMLNS('jabber:client');
-
 	this.setBody = function(body) {
-		var aNode = this.getNode().appendChild(this.getDoc().createElement('body'));
-		aNode.appendChild(this.getDoc().createTextNode(body));
+		this._setChildNode("body",body);
 		return this; 
 	};
 	this.setSubject = function(subject) {
-		var aNode = this.getNode().appendChild(this.getDoc().createElement('subject'));
-		aNode.appendChild(this.getDoc().createTextNode(subject));
+		this._setChildNode("subject",subject);
 		return this; 
 	};
-	
+	this.setThread = function(thread) {
+		this._setChildNode("thread", thread);
+		return this; 
+	};
+	this.getThread = function() { return this._childElVal('thread'); };
 	this.getBody = function() { return this._childElVal('body'); };
 	this.getSubject = function() { return this._childElVal('subject') };
 }
