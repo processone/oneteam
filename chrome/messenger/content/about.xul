@@ -1,34 +1,25 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
+<!-- TODO: Title should be translatable -->
+<!-- TODO: Font-style should be defined in CSS -->
+<!-- TODO: Logo should be defined in CSS -->
 
 <window id="About"
-		title="About"
+        title="About"
         orient="horizontal"
-        resizable="true" 
+        resizable="true"
         width="180"
         onclose="self.close();"
         height="290"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<vbox  style="background-color: white;" align="center" flex="1">
-
-<spacer height="30"/>
-
-<label value="Lagger" style="font-size: 20pt"/>
-
-<spacer height="40"/>
-
-<image src="img/logo.png"/>
-
-
-<spacer height="40"/>
-
-<label value="Release 1.0 Beta"/>
-
-
-</vbox>
-     
-     
-        
-</window>       
+    <vbox style="background-color: white;" align="center" flex="1">
+        <spacer height="30"/>
+        <label value="OneTeam" style="font-size: 20pt"/>
+        <spacer height="40"/>
+        <image src="img/logo.png"/>
+        <spacer height="40"/>
+        <label value="Release 1.0.0 beta 1"/>
+    </vbox>
+</window>
