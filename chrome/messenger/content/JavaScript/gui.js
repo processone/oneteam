@@ -2249,7 +2249,7 @@ function sendMsg(event) {
             //  + "\n"
             var login = keepLogin(myjid);
             frame.contentDocument.write("<p><u><FONT COLOR='#FF6633'>" + login + "</u>" + " : " + "</font>");
-            frame.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.outgoingmessagecolor") + ">" + msgFormat(htmlEnc(msg)) + "</font>" + "</p>");
+            frame.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.outgoingmessagecolor") + " SIZE=" + gPrefService.getCharPref("chat.editor.size") + " FACE=" + gPrefService.getCharPref("chat.editor.font") + ">" + msgFormat(htmlEnc(msg)) + "</font>" + "</p>");
             frame.contentWindow.scrollTo(0, frame.contentWindow.scrollMaxY + 200);
             textEntry.value = '';
             // alert (aMsg.xml());
@@ -3353,7 +3353,7 @@ if (aJSJaCPacket.getBody()) {
 
             var tab = document.getElementById("tab" + jid);
 
-            textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + ">" + msgFormat(htmlEnc(aJSJaCPacket.getBody()) + "\n") + "</font>" + "</p>");
+            textToWrite.contentDocument.write("<FONT COLOR=" + gPrefService.getCharPref("chat.editor.incomingmessagecolor") + " SIZE=" + gPrefService.getCharPref("chat.editor.size") + " FACE=" + gPrefService.getCharPref("chat.editor.font") + ">" + msgFormat(htmlEnc(aJSJaCPacket.getBody()) + "\n") + "</font>" + "</p>");
             textToWrite.contentWindow.scrollTo(0, textToWrite.contentWindow.scrollMaxY + 200);
 
         }

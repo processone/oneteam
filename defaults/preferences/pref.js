@@ -77,7 +77,7 @@ pref("chat.editor.consoleinmessagecolor", "#CC0000");
 pref("chat.editor.consoleoutmessagecolor", "#003399");
 
 pref("chat.editor.font", "serif");
-pref("chat.editor.size", "10");
+pref("chat.editor.size", "5");
 
 pref ("chat.advanced.browser","Default");
 pref ("chat.advanced.mail","Default");

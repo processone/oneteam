@@ -139,7 +139,7 @@
         <!-- The menus -->
         <toolbox>
             <menubar id="sample-menubar">
-                <menu id="lagger-menu" label="Lagger" accesskey="L">
+                <menu id="lagger-menu" label="OneTeam" accesskey="O">
                     <menupopup id="file-popup">
 
 

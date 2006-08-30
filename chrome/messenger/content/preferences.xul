@@ -118,7 +118,7 @@
                 <column flex="1"/>
             </columns>
             <rows id="rows-editor">
-					<spacer height="20"/>
+					<spacer height="10"/>
                 <row>
                     <label  value="&Preferences.incoming;" control="nickname"/>
                     <colorpicker id="test" type="button" color="#996633" height="25" maxwidth="50" preference="chat.editor.incomingmessagecolor" onchange="test();"/>
@@ -184,26 +184,20 @@
                        minwidth="60" maxwidth="60" preference="chat.editor.size">
                 <menupopup flex="1">
                     
-                    <menuitem id="9" label="9"/>
-                    <menuitem id="10" label="10"/>
-                    <menuitem id="11" label="11"/>
-                    <menuitem id="12" label="12"/>
-                    <menuitem id="13" label="13"/>
-                    <menuitem id="14" label="14"/>
-                    <menuitem id="15" label="15"/>
-                    <menuitem id="16" label="16"/>
-                    <menuitem id="17" label="17"/>
-                    <menuitem id="18" label="18"/>
-                    <menuitem id="19" label="19"/>
-                    <menuitem id="20" label="20"/>
-                    <menuitem id="21" label="21"/>
-                    <menuitem id="22" label="22"/>
-                    
-                    
-                    
+                    <menuitem id="size1" label="1"/>
+                    <menuitem id="size2" label="2"/>
+                    <menuitem id="size3" label="3"/>
+                    <menuitem id="size4" label="4"/>
+                    <menuitem id="size5" label="5"/>
+                    <menuitem id="size6" label="6"/>
+                    <menuitem id="size7" label="7"/>
+                    <menuitem id="size8" label="8"/>
+                    <menuitem id="size9" label="9"/>
+                  
                 </menupopup>
             </menulist>
                 </row>
+                 <spacer height="10"/>
                  
                 </groupbox>
            
