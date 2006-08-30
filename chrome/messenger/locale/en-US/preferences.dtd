@@ -1,5 +1,6 @@
 <!ENTITY Preferences.title "Preferences">
 <!ENTITY Preferences.general "General">
+<!ENTITY Preferences.options "General options">
 
 <!ENTITY Preferences.sort "Sort contacts by status">
 <!ENTITY Preferences.mask "Mask offline users">
@@ -8,6 +9,8 @@
 
 <!ENTITY Preferences.editor "Editor">
 
+<!ENTITY Preferences.cf "Colors and Fonts">
+
 <!ENTITY Preferences.incoming "Incoming message : ">
 <!ENTITY Preferences.outgoing "Outgoing message : ">
 <!ENTITY Preferences.status "Status Message : ">
@@ -15,6 +18,7 @@
 <!ENTITY Preferences.inconsole "Incoming console query : ">
 <!ENTITY Preferences.outconsole "Outgoing console query : ">
 <!ENTITY Preferences.font "Font : ">
+<!ENTITY Preferences.size "Size : ">
 
 <!ENTITY Preferences.statuspane "Status">
 

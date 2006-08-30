@@ -1,5 +1,6 @@
 <!ENTITY Preferences.title "Preferences">
 <!ENTITY Preferences.general "Général">
+<!ENTITY Preferences.options "Options générales">
 
 <!ENTITY Preferences.sort "Trier les contatcs par statut">
 <!ENTITY Preferences.mask "Chacher les utilisateurs déconnectés">
@@ -8,6 +9,8 @@
 
 <!ENTITY Preferences.editor "Editeur">
 
+<!ENTITY Preferences.cf "Couleurs et polices">
+
 <!ENTITY Preferences.incoming "Message entrant : ">
 <!ENTITY Preferences.outgoing "Message sortant : ">
 <!ENTITY Preferences.status "Message de statut : ">
@@ -15,6 +18,7 @@
 <!ENTITY Preferences.inconsole "Requete entrante (console) : ">
 <!ENTITY Preferences.outconsole "Requete sortante (console) : ">
 <!ENTITY Preferences.font "Police : ">
+<!ENTITY Preferences.size "Taille : ">
 
 <!ENTITY Preferences.statuspane "Statuts">
 

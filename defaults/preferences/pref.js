@@ -69,14 +69,15 @@ pref("chat.general.showseparatedwindows",false);
 pref("chat.general.keepproperties", false);
 pref("chat.general.iconsetdir", "crystal/");
 
-pref("chat.editor.incomingmessagecolor", "");
-pref("chat.editor.outgoingmessagecolor", "");
+pref("chat.editor.incomingmessagecolor", "#000000");
+pref("chat.editor.outgoingmessagecolor", "#CC33CC");
 pref("chat.editor.statusmessagecolor", "");
 pref("chat.editor.urlmessagecolor", "");
-pref("chat.editor.consoleinmessagecolor", "");
-pref("chat.editor.consoleoutmessagecolor", "");
+pref("chat.editor.consoleinmessagecolor", "#CC0000");
+pref("chat.editor.consoleoutmessagecolor", "#003399");
 
-pref("chat.editor.font", "");
+pref("chat.editor.font", "serif");
+pref("chat.editor.size", "10");
 
 pref ("chat.advanced.browser","Default");
 pref ("chat.advanced.mail","Default");

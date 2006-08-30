@@ -3147,8 +3147,8 @@ function handleConnected() {
 // Callback on disconnecting user fonction
 function handleDisconnected(iq) {
 
-alert("disconnected");
-   
+//alert("disconnected");
+  ; 
 }
 
 
@@ -3620,8 +3620,8 @@ function calculateOnline(user) {
 // Callback and status connection changes
 
 function handleStatusChange(status) {
-	alert("status changed: "+status);
-	
+	//alert("status changed: "+status);
+	;
 }
 
 
@@ -3907,7 +3907,7 @@ function handlePresence(aJSJaCPacket) {
 
                 var imghead = document.getElementById("imghead" + user[0]);
                 if (imghead)
-                    imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                    imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
 
                 if (resources && (resources.length > 1)) {
@@ -3935,7 +3935,7 @@ function handlePresence(aJSJaCPacket) {
                         user [4] = oldStatus;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
                     }
                     else {
@@ -4017,7 +4017,7 @@ function handlePresence(aJSJaCPacket) {
                         user [6] = "true";
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
                         var elementList = document.getElementById(sender + "cell");
 
@@ -4055,7 +4055,7 @@ function handlePresence(aJSJaCPacket) {
 
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
 
 
@@ -4075,7 +4075,7 @@ function handlePresence(aJSJaCPacket) {
                         user [12] = 2;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
                     if (show.substring(0, 2) == "dn") {
                         if (item)
@@ -4084,7 +4084,7 @@ function handlePresence(aJSJaCPacket) {
                         user [12] = 4;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
                     if (show.substring(0, 2) == "ch") {
                         if (item)
@@ -4093,7 +4093,7 @@ function handlePresence(aJSJaCPacket) {
                         user [12] = 5;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
                     if (show.substring(0, 2) == "aw") {
                         if (item)
@@ -4102,7 +4102,7 @@ function handlePresence(aJSJaCPacket) {
                         user [12] = 3;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
 
                     if (user [10]) {
@@ -4153,7 +4153,7 @@ function handlePresence(aJSJaCPacket) {
                 user [4] = oldStatus;
                 var imghead = document.getElementById("imghead" + user[0]);
                 if (imghead)
-                    imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                    imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
             }
 
@@ -4175,7 +4175,7 @@ function handlePresence(aJSJaCPacket) {
 
                     var imghead = document.getElementById("imghead" + user[0]);
                     if (imghead)
-                        imghead.setAttribute("src", "chrome://messenger/content/img/dcraven/" + user[4]);
+                        imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
                 }
             }
