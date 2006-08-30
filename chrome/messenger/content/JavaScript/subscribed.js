@@ -17,19 +17,28 @@ var message = subscribed + label.value;
 label.setAttribute("value",message);
 
 var item = window.opener.document.getElementById(subscribed);
+var user;
 
+if (item){
+user = window.opener.findUserByJid(subscribed);
+user [1] = "both";
+item.setAttribute("context","itemcontextsubboth");
 
-if (item)
-item.setAttribute("context","itemcontextsubto");
-
+}
 else {
  var resources = new Array();
-var user = new Array(subscribed, "both", "", keepLogin (subscribed), "offline.png",resources,"false",0,"offline.png", "         Empty",true,0,0);
+user = new Array(subscribed, "both", "", keepLogin (subscribed), "online.png",resources,"false",0,"offline.png", "         Empty",true,0,0);
 window.opener.users.push (user);
+
+
+}
+
+// ADDED (was first in else)
 window.opener.emptyList();
 window.opener.showUsers(window.opener.users);
 
-}
+//window.opener.calculateOnline(user);
+//window.opener.authorizeContactSeeMe(subscribed);
 }
 
 catch (e) {alert ("suscribed" + e);}

@@ -65,9 +65,11 @@ function performAddContact(event) {
 
         if (!chosenGroup || chosenGroup == "") {
             // Does not add the contact in any group
-        } else {
             var group = item.appendChild(iq.getDoc().createElement('group'));
             chosenGroup = listGroups[0];
+            group.appendChild(iq.getDoc().createTextNode(chosenGroup));
+        } else {
+            var group = item.appendChild(iq.getDoc().createElement('group'));
             group.appendChild(iq.getDoc().createTextNode(chosenGroup));
         }
         //alert (iq.xml());
@@ -90,9 +92,13 @@ function performAddContact(event) {
         window.opener.users.push(user);
         window.opener.emptyList();
         window.opener.showUsers(window.opener.users);
-        //window.opener.refreshList();
-
+        window.opener.refreshList();
+		
+		window.opener.authorizeContactSeeMe(jid.value);
         window.opener.authorizeSeeContact(jid.value);
+        
+        
+       
 
         /*var item = document.createElement ("listitem");
        item.setAttribute("context","itemcontext");

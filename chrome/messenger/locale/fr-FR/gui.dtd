@@ -1,5 +1,6 @@
 <!ENTITY menulagger.connexion "Se connecter en tant que...">
 <!ENTITY menulagger.quitter "Quitter">
+<!ENTITY menulagger.disconnect "Deconnecter">
 <!ENTITY menulagger.addContact "Ajouter un contact">
 <!ENTITY menulagger.joinConference "Rejoindre un salon">
 <!ENTITY menulagger.servicesDiscovery "Decouverte de service">

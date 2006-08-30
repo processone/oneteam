@@ -47,6 +47,8 @@ var writing = false;
 var deployedGUI = false;
 var console = false;
 var hideDecoUser = false;
+var justRemovedUser = false;
+
 
 var filterGroups = null;
 var filterOn = false;
@@ -382,6 +384,7 @@ function initGUI() {
         oArgs.timerval = 2000;
         //oArgs.oDbg = Debug;
 
+		//alert("polling == " + polling);
         if (!polling)
             con = new JSJaCHttpBindingConnection(oArgs);
         else
@@ -399,7 +402,9 @@ function initGUI() {
         con.registerHandler("presence", handlePresence);
         con.registerHandler("iq", handleEvent);
         con.registerHandler("onconnect", handleConnected);
+        con.registerHandler("ondisconnect", handleDisconnected);
         con.registerHandler('onerror', handleError);
+        con.registerHandler('status_changed',handleStatusChange);
 
         self.setCursor('default');
 
@@ -563,20 +568,26 @@ function reduceGUI() {
 
     var right = document.getElementById("right");
 
-    /*
-     var childNodes = right.childNodes;
+    
+    /* var childNodes = right.childNodes;
      for (i = 0; i < childNodes.length; i ++) {
         var child = childNodes[i];
         var littleChilds = child.childNodes;
         
+        for (j = 0; j < littleChilds.length; j ++) {
+        var littleChild = littleChilds[j];
+        child.removeChild(littleChild);
+        }
+        
         right.removeChild(child);
-    }
-    */
+        
+    }*/
+    
 
     right.setAttribute("flex", "0");
     self.resizeTo(170, document.getElementById("Messenger").boxObject.height);
 
-    while (right.childNodes != null) {
+   while (right.hasChildNodes()) {
         right.removeChild(right.firstChild);
     }
 
@@ -702,6 +713,7 @@ function playSound(path) {
 // Function to remove an element from roster
 function removeFromRoster() {
 
+		
     try {
         var list = document.getElementById("liste_contacts");
         var iditem = list.selectedItem.id;
@@ -724,15 +736,25 @@ function removeFromRoster() {
         item.setAttribute('subscription', 'remove');
 
         var user = findUserByJid(iditem);
+        //user [4] = "removed";
+        justRemovedUser = true;
         calculateOnline(user);
-
+        //other function is called and decrement one more time online users
+		
+		for (var i = 0 ; i < users.length ; i++){
+		if (users [i] == user)
+			users.splice(i,1);
+		}
+					
+       
+		
         con.send(iq);
         if (console) {
             cons.addInConsole("OUT : " + iq.xml() + "\n");
         }
     }
     catch (e) {
-        alert(e);
+        alert("removeFromRoster" + e);
     }
 }
 
@@ -897,7 +919,7 @@ function setTimeouts() {
 
     try {
 
-        //idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
+        idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
 
 
         var menulist = document.getElementById("status");
@@ -954,7 +976,7 @@ function makeAway() {
     try {
 
         //alert (idle.getIdleTime());
-        //if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+        if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
 
         changeStatus("away");
         changeIcone("away.png");
@@ -963,7 +985,7 @@ function makeAway() {
         menulist.selectedItem = items[3];
 
         awayFlag = true;
-        //}
+        }
 
     }
     catch (e) {
@@ -973,7 +995,7 @@ function makeAway() {
 
 function makeXa() {
 
-    //if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+    if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
     changeStatus("xa");
     changeIcone("xa.png");
     var menulist = document.getElementById("status");
@@ -981,7 +1003,7 @@ function makeXa() {
     menulist.selectedItem = items[4];
 
     xaFlag = true;
-    //}
+    }
 }
 
 
@@ -1211,6 +1233,8 @@ function isRoom(jid) {
 
 // Function which try to select a tab corresponding to jid (if exist)
 function selectTab(jid) {
+
+	try{
     var liste = document.getElementById("liste_contacts");
     var tabs = document.getElementById("tabs1");
 
@@ -1223,6 +1247,9 @@ function selectTab(jid) {
         child.setAttribute("selected", "false");
         tab.setAttribute("selected", "true");
     }
+    
+    }
+ catch(e) {alert("selectTab" + e);}
 
 }
 
@@ -1280,7 +1307,8 @@ function closeTab() {
             }
             exitRoom(tab.id.substring(tab.id.indexOf("b") + 1, tab.id.length) + "/" + nick);
         }
-
+		
+		
         reduceGUI();
    }
     else {
@@ -1569,7 +1597,7 @@ function showUsers(users) {
                     showUser(user);
                     countUser++;
 
-                    if (user [4] != "offline.png")
+                    if (user [4] != "offline.png" && user [4] != "requested.png")
                         onlineUser++;
                 }
             }
@@ -2187,7 +2215,15 @@ function sendMsg(event) {
 
                     var aMsg = new JSJaCMessage();
                     aMsg.setTo(receiver);
-                    aMsg.setBody(RTrim(textEntry.value));
+                    if (textEntry.value.substring(0,1) == '\n'){
+                    	aMsg.setBody(textEntry.value.substring(1,textEntry.value.length));
+                    	
+                    	}
+                    else {
+                    	aMsg.setBody(textEntry.value);
+                    	
+                    	}
+                    
                     aMsg.setType('chat');
                     var active = aMsg.getNode().appendChild(aMsg.getDoc().createElement('active'));
                     active.setAttribute('xmlns', 'http://jabber.org/protocol/chatstates');
@@ -2640,7 +2676,15 @@ function sendRoomMessage(roomName) {
         var aMsg = new JSJaCMessage();
         aMsg.setFrom(roomName + "/" + myRoomNick);
         aMsg.setTo(roomName);
-        aMsg.setBody(RTrim(textEntry.value));
+        if (textEntry.value.substring(0,1) == '\n'){
+                    	aMsg.setBody(textEntry.value.substring(1,textEntry.value.length));
+                    	
+                    	}
+        else {
+                    	aMsg.setBody(textEntry.value);
+                    	
+                    	}
+    
         aMsg.setType('groupchat');
         con.send(aMsg);
 
@@ -3012,16 +3056,33 @@ function joinRoom() {
 // Function to close the window
 function closeWindows() {
 
+	Components.classes['@mozilla.org/toolkit/app-startup;1']
+            .getService(Components.interfaces.nsIAppStartup)
+            .quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+
     for (var i = 0; i < rooms.length; i++) {
-        exitRoom(rooms [i]);
+    	var room = document.getElementById(rooms [i]);
+    	if (room.getAttribute("image", "chrome://messenger/content/img/crystal/opened.png"))
+        	exitRoom(rooms [i]);
     }
 
     con.disconnect();
 
-    Components.classes['@mozilla.org/toolkit/app-startup;1']
-            .getService(Components.interfaces.nsIAppStartup)
-            .quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+    
 
+
+}
+
+// Function to disconnect and restart with login window
+
+function disconnection (){
+
+closeWindows();
+
+var appStartup = Components.interfaces.nsIAppStartup;
+ Components.classes["@mozilla.org/toolkit/app-startup;1"]
+           .getService(appStartup)
+           .quit(appStartup.eRestart | appStartup.eAttemptQuit);
 
 }
 
@@ -3062,6 +3123,7 @@ function handleError(e) {
 // Callback on connecting user Function
 function handleConnected() {
 
+
     myPresence = new JSJaCPresence();
     myPresence.setPriority(gPrefService.getIntPref("chat.connection.priority").toString(10));
 
@@ -3082,6 +3144,14 @@ function handleConnected() {
 }
 
 
+// Callback on disconnecting user fonction
+function handleDisconnected(iq) {
+
+alert("disconnected");
+   
+}
+
+
 function handleEvent(iq) {
     //alert ("received packet!");
     if (console) {
@@ -3097,6 +3167,10 @@ function handleMessage(aJSJaCPacket) {
 
         var origin = aJSJaCPacket.getFrom();
         var mess = "Received Message from" + origin;
+	 	var name = keepLogin(origin);
+        var jid = cutResource(origin);
+        var roomUserName = origin.substring(origin.indexOf("/") + 1, origin.length);
+        var user = findUserByJid(jid);
 
 
         if (console) {
@@ -3129,6 +3203,8 @@ function handleMessage(aJSJaCPacket) {
 
         //alert("handle message");
 
+if (aJSJaCPacket.getBody()) {
+
         if (!deployedGUI) {
             extendGUI();
             deployedGUI = true;
@@ -3137,10 +3213,7 @@ function handleMessage(aJSJaCPacket) {
         //window.getAttention();
 
 
-        var name = keepLogin(origin);
-        var jid = cutResource(origin);
-        var roomUserName = origin.substring(origin.indexOf("/") + 1, origin.length);
-        var user = findUserByJid(jid);
+       
 
 
         if (document.getElementById("tab" + jid) == null) {
@@ -3233,7 +3306,7 @@ function handleMessage(aJSJaCPacket) {
 
 
         if (!isRoom(cutResource(origin))) {
-            showState(aJSJaCPacket);
+            
 
             if (aJSJaCPacket.getBody()) {
                 if (gPrefService.getBoolPref("chat.sounds"))
@@ -3286,6 +3359,13 @@ function handleMessage(aJSJaCPacket) {
         }
 
         document.getElementById("text" + jid).webNavigation.stop(1);
+        
+      }
+      
+      else {
+      	  showState(aJSJaCPacket);
+      	  
+      	}
 
     } catch(e) {
         alert("Dans handle messsage" + e);
@@ -3301,7 +3381,8 @@ function showState(aJSJaCPacket) {
 
         var jid = cutResource(aJSJaCPacket.getFrom());
         //alert("show state " + aJSJaCPacket.getNode().getElementsByTagName('composing'));
-
+		if (document.getElementById("tab" + jid) != null){
+		
         var writestate = document.getElementById("writestate" + jid);
         if (aJSJaCPacket.getNode().getElementsByTagName('composing')) {
             writestate.setAttribute("value", "is composing a message...");
@@ -3339,6 +3420,9 @@ function showState(aJSJaCPacket) {
             tab.setAttribute("style", 'color : #000000;');
         }
 
+	}
+	
+	
     }
     catch(e) {
         alert("Dans showstate" + e);
@@ -3469,7 +3553,7 @@ function applyFilterOnGroups() {
 function calculateOnline(user) {
 
     try {
-
+		//alert ("je rentre");
 
         for (var g = 0; g < groups.length; g++) {
             var group = groups[g];
@@ -3485,30 +3569,43 @@ function calculateOnline(user) {
 
 
                     if (user [4] == "online.png" || user [4] == "away.png" || user [4] == "dnd.png" || user [4] == "xa.png" || user [4] == "chat.png") {
-
-                        itemGroup.setAttribute("label", groupName + "(" + (++groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")");
-
+						
+						if (justRemovedUser)
+							itemGroup.setAttribute("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + --groupCounter [g] [1] + ")");
+						else
+                        	itemGroup.setAttribute("label", groupName + "(" + (++groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")");
+						
                     }
                     else if (user [4] == "offline.png") {
-
-                        if (groupCounter [g] [0] > 0)
-                            itemGroup.setAttribute("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")");
-                        else
-                            itemGroup.setAttribute("label", groupName + "(" + (groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")");
-
+						if (justRemovedUser)
+							itemGroup.setAttribute("label", groupName + "(" + (groupCounter [g] [0]) + "/" + --groupCounter [g] [1] + ")");
+						
+						else {
+                        	if (groupCounter [g] [0] > 0)
+                            	itemGroup.setAttribute("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")");
+                        	else
+                            	itemGroup.setAttribute("label", groupName + "(" + (groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")");
+							}
                     }
 
-
+					
                     else {
-
+						if (justRemovedUser)
+							itemGroup.setAttribute("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
+                        
+                        else{
+                        
                         if (groupCounter [g] [0] > 0)
                             itemGroup.setAttribute("label", groupName + "(" + (--groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
                         else if (groupCounter [g] [0] <= 0 && groupCounter [g] [1] > 0)
                             itemGroup.setAttribute("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (--groupCounter [g] [1]) + ")");
                         else
                             itemGroup.setAttribute("label", groupName + "(" + (groupCounter [g] [0]) + "/" + (groupCounter [g] [1]) + ")");
+                    	
+                    	}
                     }
-
+					
+					justRemovedUser = false;
                 }
             }
             //end forGroup
@@ -3519,6 +3616,14 @@ function calculateOnline(user) {
     }
 
 }
+
+// Callback and status connection changes
+
+function handleStatusChange(status) {
+	alert("status changed: "+status);
+	
+}
+
 
 // Callback on changing presence status Function
 function handlePresence(aJSJaCPacket) {
@@ -3795,6 +3900,7 @@ function handlePresence(aJSJaCPacket) {
                             false, "", null);
                     user [6] = "false";
                     if (gPrefService.getBoolPref("chat.sounds"))
+                    	if (!user[10])
                         playSound("chrome://messenger/content/sounds/connected.wav");
                 }
 
@@ -3932,6 +4038,7 @@ function handlePresence(aJSJaCPacket) {
                                 elementList.setAttribute("label", keepLogin(sender));
 
                             if (gPrefService.getBoolPref("chat.sounds"))
+                           		 if (!user[10])
                                 playSound("chrome://messenger/content/sounds/disconnected.wav");
                             calculateOnline(user);
                             user [10] = true;

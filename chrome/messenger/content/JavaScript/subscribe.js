@@ -56,6 +56,12 @@ function doSubscribe (){
 		window.opener.authorizeContactSeeMe(subscribe);
 		window.opener.authorizeSeeContact(subscribe);
 		
+		var item = window.opener.document.getElementById(subscribe);
+
+
+			if (item)
+				item.setAttribute("context","itemcontextsubboth");
+		
 		//var item = window.opener.document.getElementById(subscribe);
 		//item.setAttribute("context","itemcontextsubto");
 			

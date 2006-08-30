@@ -1,5 +1,6 @@
 <!ENTITY menulagger.connexion "Connect As ...">
 <!ENTITY menulagger.quitter "Quit">
+<!ENTITY menulagger.disconnect "Disconnect">
 <!ENTITY menulagger.addContact "Add Contact">
 <!ENTITY menulagger.joinConference "Join Chat Room">
 <!ENTITY menulagger.servicesDiscovery "Services Discovery">

@@ -6,7 +6,7 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/gui.dtd">
 
 <window id="Messenger"
-        title="Lagger"
+        title="OneTeam"
         orient="horizontal"
         onload="if (event.target == document) initGUI();"
         onmousemove="setTimeouts();"
@@ -107,9 +107,17 @@
         //alert (iq.xml());
         con.send(iq);
      
-      emptyList();
+      
+      //refreshList();
+      
+      if (hideDecoUser) {
+                emptyList();
+                showHide();
+            }
+       else {
+       emptyList();
       showUsers(users);
-      refreshList();
+      }
        
        if (console) {
         cons.addInConsole("IN : " + iq.xml() + "\n");
@@ -141,6 +149,7 @@
                         <menuitem label="&menulagger.servicesDiscovery;" oncommand="openDisco();" accesskey="&shortcurt.service;"/>
                        <!-- <menuitem label="&menulagger.adminTools;"/> -->
                         <menuseparator/>
+                        <menuitem label="&menulagger.disconnect;" oncommand="disconnection();"/>
                         <menuitem label="&menulagger.quitter;" oncommand="closeWindows();" accesskey="&shortcurt.quit;"/>
                     </menupopup>
                 </menu>
