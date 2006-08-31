@@ -15,7 +15,8 @@ var message = unsubscribed + label.value;
 label.setAttribute("value",message);
 
 var item = window.opener.document.getElementById(unsubscribed);
-item.setAttribute("context","itemcontextsubfrom");
+
+window.opener.getContextNone(unsubscribed);
 
 }
 

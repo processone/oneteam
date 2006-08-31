@@ -35,6 +35,10 @@ catch (e) {alert ("suscribe" + e);}
 function doSubscribe (){
 	
 	try {
+	
+	var item = window.opener.document.getElementById(subscribe);
+	
+	if (!item) {
 
 		var iq = new JSJaCIQ();
         iq.setType('set');
@@ -49,18 +53,19 @@ function doSubscribe (){
         //alert (iq.xml());
         con.send(iq);
         
-         if (console) {
+        if (console) {
         cons.addInConsole("IN : " + iq.xml() + "\n");
    	 	}
+		
+		}
+
+
+	
+				
+		window.opener.getContextBoth(subscribe);		 
 
 		window.opener.authorizeContactSeeMe(subscribe);
 		window.opener.authorizeSeeContact(subscribe);
-		
-		var item = window.opener.document.getElementById(subscribe);
-
-
-			if (item)
-				item.setAttribute("context","itemcontextsubboth");
 		
 		//var item = window.opener.document.getElementById(subscribe);
 		//item.setAttribute("context","itemcontextsubto");

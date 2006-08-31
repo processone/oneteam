@@ -18,7 +18,7 @@
 <script type="application/x-javascript" src="JavaScript/unsubscribe.js"/>
 
         
-<vbox>
+<vbox align="center" flex="1">
 
 <spacer height="30"/>
 

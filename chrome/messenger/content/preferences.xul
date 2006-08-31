@@ -166,11 +166,18 @@
 
 				<spacer height="20"/>
 				
-				 
+				 <grid flex="1">
+            <columns>
+                <column flex="1"/>
+                <column flex="8"/>
+                <column flex="1"/>
+                <column flex="0,5"/>
+            </columns>
+            <rows>
 				<row>
                     <label value="&Preferences.font;" control="nickname"/>
                     
-                		<menulist id="fontchooser"  height="25" maxwidth="150" flex="1" 
+                	<menulist id="fontchooser"  height="25" maxwidth="150" flex="1" 
                          preference="chat.editor.font">
                 			<menupopup flex="1" id="popfont">
                  
@@ -184,21 +191,25 @@
                        minwidth="60" maxwidth="60" preference="chat.editor.size">
                 <menupopup flex="1">
                     
-                    <menuitem id="size1" label="1"/>
-                    <menuitem id="size2" label="2"/>
-                    <menuitem id="size3" label="3"/>
-                    <menuitem id="size4" label="4"/>
-                    <menuitem id="size5" label="5"/>
-                    <menuitem id="size6" label="6"/>
-                    <menuitem id="size7" label="7"/>
-                    <menuitem id="size8" label="8"/>
-                    <menuitem id="size9" label="9"/>
+                    <menuitem id="size1" label="1" value="1"/>
+                    <menuitem id="size2" label="2" value="2"/>
+                    <menuitem id="size3" label="3" value="3"/>
+                    <menuitem id="size4" label="4" value="4"/>
+                    <menuitem id="size5" label="5" value="5"/>
+                    <menuitem id="size6" label="6" value="6"/>
+                    <menuitem id="size7" label="7" value="7"/>
+                    <menuitem id="size8" label="8" value="8"/>
+                    <menuitem id="size9" label="9" value="9"/>
                   
                 </menupopup>
             </menulist>
                 </row>
+                
                  <spacer height="10"/>
+                </rows>
+                
                  
+                 </grid>
                 </groupbox>
            
 

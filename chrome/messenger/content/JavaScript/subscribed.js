@@ -22,7 +22,7 @@ var user;
 if (item){
 user = window.opener.findUserByJid(subscribed);
 user [1] = "both";
-item.setAttribute("context","itemcontextsubboth");
+
 
 }
 else {
@@ -34,8 +34,11 @@ window.opener.users.push (user);
 }
 
 // ADDED (was first in else)
+window.opener.authorizeContactSeeMe(subscribed);
 window.opener.emptyList();
 window.opener.showUsers(window.opener.users);
+
+window.opener.getContextBoth(subscribed);
 
 //window.opener.calculateOnline(user);
 //window.opener.authorizeContactSeeMe(subscribed);

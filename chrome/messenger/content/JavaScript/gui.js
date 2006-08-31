@@ -628,27 +628,28 @@ function findUserByJid(jid) {
 }
 
 function getContextNone(jid) {
-    document.getElementById(jid).setAttribute("context", "itemcontextsubnone");
+    document.getElementById(jid + "cell").setAttribute("context", "itemcontextsubnone");
+	//alert ("mise de context ? none" + jid);
 }
 
 
 function getContextTo(jid) {
 
-    document.getElementById(jid).setAttribute("context", "itemcontextsubto");
-
+    document.getElementById(jid + "cell").setAttribute("context", "itemcontextsubto");
+	//alert ("mise de context ? to" + jid);
 }
 
 function getContextFrom(jid) {
 
-    document.getElementById(jid).setAttribute("context", "itemcontextsubfrom");
-
+    document.getElementById(jid + "cell").setAttribute("context", "itemcontextsubfrom");
+	//alert ("mise de context ? from" + jid);
 }
 
 
 function getContextBoth(jid) {
 
-    var item = document.getElementById(jid);
-
+    var item = document.getElementById(jid + "cell");
+	//alert ("mise de context ? both" + jid);
     if (item)
         item.setAttribute("context", "itemcontextsubboth");
 }
@@ -697,6 +698,7 @@ function forbidToSeeMe(jid) {
     }
 
     var user = findUserByJid(jid);
+    user [1] = "none";
     //alert ("nb de ressources" + user [7]);
 
 }
@@ -709,6 +711,33 @@ function playSound(path) {
     sound.play(url);
 }
 
+
+// Function to remove a room from roster
+function removeRoomFromRoster(){
+
+var list = document.getElementById("liste_conf");
+        var iditem = list.selectedItem.id;
+		var it = document.getElementById(iditem);
+        var tabitem = document.getElementById("tab" + iditem);
+
+
+		if (it.getAttribute("image")== "chrome://messenger/content/img/crystal/opened.png")
+			exitRoom(iditem);
+
+        list.removeChild(it);
+        
+        // Selects the tab and remove it if exist
+        if (tabitem) {
+            selectTab(iditem);
+            closeTab();
+        }
+        
+        for (var i = 0 ; i < rooms.length ; i++){
+		if (rooms [i] == user)
+			rooms.splice(i,1);
+		}
+        
+}
 
 // Function to remove an element from roster
 function removeFromRoster() {
@@ -3864,8 +3893,10 @@ function handlePresence(aJSJaCPacket) {
 
             if (!aJSJaCPacket.getType() && !aJSJaCPacket.getShow()) {
 
-                user [4] = "online.png";
-                user [12] = 6;
+				if (user){
+                	user [4] = "online.png";
+                	user [12] = 6;
+				}
 
                 if (hideDecoUser) {
                     emptyList();
@@ -3947,7 +3978,7 @@ function handlePresence(aJSJaCPacket) {
 
                 // Else priority = 1 , we increment online users
                 else {
-                    if (user [10]) {
+                    if (user && user [10]) {
                         calculateOnline(user);
                         user [10] = false;
                     }

@@ -92,9 +92,9 @@ function performAddContact(event) {
         window.opener.users.push(user);
         window.opener.emptyList();
         window.opener.showUsers(window.opener.users);
-        window.opener.refreshList();
+       // window.opener.refreshList();
 		
-		window.opener.authorizeContactSeeMe(jid.value);
+		
         window.opener.authorizeSeeContact(jid.value);
         
         

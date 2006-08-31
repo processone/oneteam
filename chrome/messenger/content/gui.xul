@@ -405,7 +405,7 @@
                    		 <menuitem label="&listitemcontext.InviterConference;" oncommand='launchInviteWindow();'/>
                     <menuseparator/>
                     <!-- <menuitem label="&listitemcontextroom.Rename;" oncommand="renameRosterElement();"/> -->
-                		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeFromRoster();"/>
+                		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeRoomFromRoster();"/>
                 		<menuseparator/>
                 		<!--  disabled="true" -->
                 		<menuitem id="closeRoom" label="&listitemcontextroom.Close;" oncommand="closeTab();"/>

@@ -17,7 +17,7 @@
 <script type="application/x-javascript" src="JavaScript/gui.js"/>
 <script type="application/x-javascript" src="JavaScript/unsubscribed.js"/>
         
-<vbox>
+<vbox align="center" flex="1">
 
 <spacer height="30"/>
 

@@ -21,9 +21,11 @@ var user = window.opener.findUserByJid (unsubscribe);
 user [4] = "requested.png";
 user [1] = "none";
 
+
 window.opener.emptyList();
 window.opener.showUsers(window.opener.users);
 
+window.opener.getContextNone(unsubscribe);
 }
 
 catch (e) {alert ("unsuscribe" + e);}
