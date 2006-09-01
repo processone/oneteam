@@ -1,39 +1,39 @@
-.paneSelector {
-    display: -moz-box
+.paneSelector  {
+	display: -moz-box
 }
 
 #settings radio[pane] {
-    list-style-image: url( "chrome://messenger/skin/Options.png" );
+  list-style-image: url("chrome://chat/skin/Options.png"); 
 }
 
 radio[pane=connection] {
-    -moz-image-region: rect( 0px, 32px, 32px, 0px )
+	-moz-image-region: rect(0px, 32px,  32px, 0px)
+}
+radio[pane=connection]:hover, radio[pane=connection][selected="true"]  {
+	-moz-image-region: rect(32px, 32px,  64px, 0px)
 }
 
-radio[pane=connection]:hover, radio[pane=connection][selected="true"] {
-    -moz-image-region: rect( 32px, 32px, 64px, 0px )
-}
+
 
 radio[pane=advanced] {
-    -moz-image-region: rect( 0px, 64px, 32px, 32px )
+	-moz-image-region: rect(0px, 160px, 32px, 128px)
+}
+radio[pane=advanced]:hover, radio[pane=advanced][selected="true"] {
+	-moz-image-region: rect(32px, 160px, 64px, 128px)
 }
 
-radio[pane=advanced]:hover, radio[pane=advanced][selected="true"] {
-    -moz-image-region: rect( 32px, 64px, 64px, 32px )
-}
+
 
 radio[pane=groupchat] {
-    -moz-image-region: rect( 0px, 160px, 32px, 128px )
+	-moz-image-region: rect(0px, 160px, 32px, 128px)
 }
-
 radio[pane=groupchat]:hover, radio[pane=groupchat][selected="true"] {
-    -moz-image-region: rect( 32px, 160px, 64px, 128px )
+	-moz-image-region: rect(32px, 160px, 64px, 128px)
 }
 
 radio[pane=appearance] {
-    -moz-image-region: rect( 0px, 192px, 32px, 160px )
+	-moz-image-region: rect(0px, 192px, 32px, 160px)
 }
-
 radio[pane=appearance]:hover, radio[pane=paneTabs][selected="true"] {
-    -moz-image-region: rect( 32px, 192px, 64px, 160px )
+	-moz-image-region: rect(32px, 192px, 64px, 160px)
 }

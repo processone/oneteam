@@ -1,0 +1,31 @@
+/*
+
+#list-container {
+	border: 1px solid #aaa;
+	background: #fff;
+	-moz-border-radius: 6px;
+	padding: 5px;
+	margin: 5px;
+}
+
+#list-container listbox {
+	border: 0;
+	background: transparent;
+	-moz-appearance: none;
+}
+
+*/
+
+
+#list-container, window {
+
+	background: #fff;
+
+}
+
+#list-container listbox {
+	border: 0;
+	background: transparent;
+	-moz-appearance: none;
+}
+

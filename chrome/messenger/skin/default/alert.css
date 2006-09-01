@@ -1,0 +1,13 @@
+* {font-size:12px;}
+
+#alertTextLabel{
+
+	height: 20px;
+	width:200px;
+	crop:right;
+	max-height:20px;
+	max-width:200px;
+	min-height:20px;
+	min-width:200px;
+
+}

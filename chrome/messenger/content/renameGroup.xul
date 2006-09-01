@@ -5,6 +5,7 @@
 <dialog id="Rename Group" title="Rename group"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         buttons="accept,cancel"
+        onload="initName();"
         ondialogaccept="return doOK();"
         ondialogcancel="return doCancel();">
         
@@ -14,7 +15,7 @@
 
 <hbox>
 <description value="New Name : "/>
-<textbox id="roomName"/>
+<textbox id="groupName"/>
 </hbox>
 
 </dialog>

@@ -49,6 +49,7 @@ var console = false;
 var hideDecoUser = false;
 var justRemovedUser = false;
 
+var lastSelectedGroup;
 
 var filterGroups = null;
 var filterOn = false;
@@ -1663,6 +1664,7 @@ function showGroup(group) {
         item.setAttribute("context", "itemcontextgroup");
         item.setAttribute("class", "listitem-iconic");
         item.setAttribute("image", "chrome://messenger/content/img/tes.png");
+        item.setAttribute("onclick", "lastSelectedGroup = event.target.id;");
 
         for (var g = 0; g < groups.length; g++) {
 
@@ -1788,11 +1790,17 @@ function showRoomUser(roomUser) {
 // Function to mask a roomUser
 function maskRoomUser(roomUserJid) {
 
+	try{
+
     var listconf = document.getElementById("liste_conf");
 
     var item = document.getElementById(roomUserJid);
 
-    listconf.removeItemAt(listconf.getIndexOfItem(item));
+    listconf.removeChild(item);
+    
+    } catch (e) {
+        alert("mask room user" + e);
+    }
 }
 
 
@@ -2436,15 +2444,43 @@ function changeName(name) {
 // Function to change the name of a group
 function changeGroupName(name) {
 
-    var oldValue = document.getElementById("liste_contacts").selectedItem.label;
+	try {		
+	
+    var oldValue = document.getElementById(lastSelectedGroup).label;
+	var cutCount = oldValue.substring (0, oldValue.indexOf("(") - 1);
+	
+	if (cutCount.indexOf(" ") != -1){
+		//alert(cutCount.indexOf(" "));
+		cutCount = cutCount.substring (0, cutCount.indexOf(" "));
+		
+		}
+		
+		//alert (cutCount + "test");
 
-    document.getElementById("liste_contacts").selectedItem.label = name;
+	for (var g = 0; g < groups.length; g++) {
 
+            if (cutCount == groups[g]) {
+
+				
+				groups[g] = name;
+				// Change reference also in oldGroups to take effect for customGroups
+				oldGroups [g] = name;
+				
+                if (groupCounter [g])
+                    document.getElementById(lastSelectedGroup).label = name + " (" + (groupCounter [g] [0]) + "/" + groupCounter [g] [1] + ")";
+                else
+                   document.getElementById(lastSelectedGroup).label = name ;
+                   
+                   document.getElementById(lastSelectedGroup).id = "group" + name;
+            }
+        }
+    
+	
 
     for (var i = 0; i < users.length; i++) {
 
         var user = users[i];
-        if (user [2] == oldValue) {
+        if (user [2] == cutCount) {
 
 
             var iq = new JSJaCIQ();
@@ -2462,10 +2498,15 @@ function changeGroupName(name) {
             if (console) {
                 cons.addInConsole("IN : " + iq.xml() + "\n");
             }
+            
+            user [2] = name;
         }
 
     }
 
+
+ }
+  catch (e) {alert ("changeGorup name" + e);}
 }
 
 
@@ -3469,10 +3510,19 @@ function customGroups() {
 
             var n = document.createElement("checkboxpopup");
             var notif = document.getElementById("notification-area");
-
+			
+			
+			
+			/*var box = document.createElement("item");
+                box.setAttribute("value", "Select all");		
+				n.appendChild(box);*/
+			
             for (var i = 0; i < oldGroups.length; i++) {
                 var box = document.createElement("item");
                 box.setAttribute("value", oldGroups[i]);
+                
+                if (document.getElementById("group" + oldGroups[i]))
+                box.setAttribute("checked", "true");
                 //box.setAttribute("checked", (contactlist.filtergroups.some(function(ga){ return g == ga; }) ) );
                 n.appendChild(box);
 
@@ -3489,7 +3539,15 @@ function customGroups() {
             filterOn = true;
             n.onChoose = function(answer) {
                 if (answer) {
+					/*var all = false;
+					answer.forEach(function(box) {
+                        if (box.getAttribute("checked") == "true" && box.getAttribute("value") == "Select all")) {
 
+                            all = true;
+
+                        }
+                    }*/   
+									
                     filterGroups = new Array();
                     answer.forEach(function(box) {
                         if (box.getAttribute("checked") == "true") {
@@ -3500,9 +3558,10 @@ function customGroups() {
                     });
                     //contactlist.filtered = true;
                     //contactlist.visibleGroup = null;
+                    applyFilterOnGroups();
                 }
 
-                applyFilterOnGroups();
+                filterOn = false;
                 notif.removeChild(n);
                 document.getElementById("liste_contacts").removeAttribute("hidden");
                 emptyList();
@@ -3571,7 +3630,7 @@ function applyFilterOnGroups() {
         }
 
 
-        filterOn = false;
+        
     }
     catch(e) {
         alert("applyFilterOnGroups" + e);
@@ -3797,11 +3856,12 @@ function handlePresence(aJSJaCPacket) {
                                     already = true;
                             }
 
-                            if (!already)
+                            if (!already){
                                 roles.push(role);
                             roomUsers.push(roomUser);
                             showRoomUser(roomUser);
-                        }
+	                        }
+	                        }
                     }
                 }
                 return;

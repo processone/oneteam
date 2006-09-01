@@ -4,6 +4,7 @@
 
 <dialog id="changeName" title="Change Name"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="initName();"
         buttons="accept,cancel"
         ondialogaccept="return doOK();"
         ondialogcancel="return doCancel();">

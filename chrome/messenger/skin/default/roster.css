@@ -1,0 +1,292 @@
+
+	#statuspopup {
+		-moz-appearance: none;
+		border:0;
+		background: transparent url(dropdown.png) no-repeat;
+		height: 10px;
+		margin-top: 4px;
+		margin-left: 3px;
+		min-width:10px;
+		cursor: pointer;
+		-moz-opacity: 0.7;
+	}
+	#statuspopup:hover {
+		-moz-opacity: 1;
+	}
+
+	#loginbox * {font-size:12px}
+	
+	#avatar {
+		margin-top: 2px;
+		margin-left:5px;
+		cursor: pointer;
+	}
+	
+	
+	
+	#customgroups {
+		
+		cursor: pointer;
+		list-style-image : url(chrome://chat/skin/wrench.png);
+		-moz-user-focus:ignore;
+		-moz-appearance:none;
+		min-height:16px;
+		background:transparent;
+		border:0;
+		min-width: 16px;
+		margin-top: -2px;
+		xdisplay:none;
+		-moz-opacity: 0.3;
+		margin-right: -5px
+	
+	}
+	#groupbox:hover #customgroups {
+		-moz-opacity: 1;
+		xdisplay:block
+	}
+	
+	#me:hover #avatar[empty="true"]{
+		background: url(chrome://chat/skin/head.png);
+		width:32px;
+		height:32px;
+		border: 1px dashed #aaa;
+		-moz-opacity: 0.4;
+	}
+	
+	.text-link {
+		color: #444;
+	}
+
+	#me {
+		padding: 5px;
+
+		background: #fff url(listitem_green.png) bottom;/*#339966;*/
+		padding-bottom: 8px;
+		xcolor: #ddd;
+		font-size: 13px;
+		
+
+
+	}
+	
+
+	#addcontact-link {
+		background : url(user_add.png) no-repeat;
+		height: 17px;
+		padding-left: 20px
+	}
+	
+	#searchtoggle {
+		-moz-user-focus:ignore;
+		cursor: pointer;
+		list-style-image : url(chrome://chat/skin/magnifier.png);
+		padding-left: 0px;
+		-moz-appearance:none;
+		min-height:16px;
+		background:transparent;
+		border:0;
+		margin:0;
+		min-width: 10px;
+		max-width: 20px;
+
+	}
+	
+	#show:hover, #name.link:hover, #groupselect:hover {
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	#show {
+		margin-left: 22px;
+		cursor: pointer;
+	}
+	
+	#showtext {
+		margin: 1px 0px 0px 21px !important;
+		
+	}
+	
+	#groupselect{
+		font-weight: bold;
+
+	}
+	
+	#groupbox {
+		margin-top:0;
+		background: #eaeaea;  /*url(sroupbar.png);*/
+		border-bottom: 1px solid #ddd;
+		padding: 5px 10px 5px 10px;
+		max-height:26px;
+		min-height:26px;
+
+	}
+	
+	/* State icon */
+	
+	#name {
+		padding-left: 23px;
+ 		margin-left:-1px;
+		background-repeat: no-repeat; 
+		background-position: 1px 1px; 
+
+	}
+		
+	
+	/* End State icon*/
+	
+	#popup-show{
+		text-decoration: none
+	}
+	
+	#name {
+		font-weight: bold;
+
+	}
+	
+	splitter {
+		border: 0; height: 2px !important; margin: 0; padding: 0; background: #fff;
+	}
+
+
+	window {
+		background: #fff;
+	}
+
+
+#popup-show .menu-text,
+#popup-show .menu-iconic-text {
+  padding-left: 6px !important;
+
+}
+
+
+#tooltip-contact {
+/*
+	-moz-appearance:none;
+	background: #eee !important;
+	border: 1px dotted #aaa !important;
+	color: #aaa;
+*/
+}
+
+
+
+/*
+	on OSX the statusbar still has a topborder
+*/
+
+#roster-status{
+	
+	background: #fff;
+	-moz-appearance:none;
+	border: 0 !important;
+	_border-top: 1px dotted #ddd;
+	
+	
+
+}
+
+#roster-status statusbarpanel{
+	-moz-appearance:none;
+	border: 0 !important;
+	padding:0 !important;
+
+}
+
+
+
+#findbar {
+	border-top: 1px solid #aaa;
+	background: buttonface !important;
+	padding: 2px 0 2px 2px;
+}
+.closebutton  {
+  border: 1px solid transparent;
+  padding: 0px 2px 2px 2px !important;
+  margin: 1px 0 0 0;
+  list-style-image: url("chrome://global/skin/icons/close.png");
+  -moz-appearance: none;
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+
+.closebutton:hover {
+  -moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+
+.closebutton:hover:active {
+  -moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+
+
+#loginbox, #roster{
+	background: #fff;
+}
+
+
+
+#error-message {
+
+	/*border: 1px dotted red;
+	background: #FFCCCC;*/
+	padding: 5px;
+	font-weight: bold;
+	margin-top: 10px;
+	color: red;
+	text-align: center;
+	height: 40px;
+	vertical-align: middle
+}
+
+
+
+#security-panel {
+	display:none;
+/*	background: transparent url(chrome://chat/skin/notsecure.png) no-repeat 4px 0px;*/
+}
+#security-panel.secure {
+	width: 16px;
+	height: 16px;
+	background: transparent url(chrome://chat/skin/secure.png) no-repeat 0px 2px;
+	display: -moz-box;
+
+}
+
+tab {
+	-moz-appearance: none;
+	background: #eee;
+	border: 1px dotted #ccc ;
+	border-bottom: 0;
+	-moz-opacity: 0.6;
+	-moz-border-radius: 0;
+	font-size: 11px;
+	-moz-border-radius-topleft : 1.8px !important;
+	-moz-border-radius-topright : 1.8px !important;
+}
+
+tab[selected="true"] {
+	background: #fff;
+	-moz-opacity: 1;
+}
+
+.text-link:hover {
+	color: #cc0000;
+}
+
+/* Glasspane like behaviour
+
+#loginbox {
+   background-color: gray;
+   z-index: 999;
+   position: fixed;
+   left: 0;
+   top: 0;
+   width: 100%;
+   height: 100%;
+   opacity: 0.8;
+   padding-top: 100px;
+   text-align: center;
+
+
+}
+
+
+*/

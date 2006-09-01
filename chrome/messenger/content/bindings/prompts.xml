@@ -9,7 +9,7 @@
 
 	
     <resources>
-      <stylesheet src="chrome://chat/skin/prompts.css"/>
+      <stylesheet src="chrome://messenger/skin/prompts.css"/>
     </resources>
 			
 	  <content class="prompt" orient="vertical">
