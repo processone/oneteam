@@ -1900,7 +1900,7 @@ function showUser(user) {
     //item.setAttribute("onmouseout","this.style.backgroundColor='#FFFFFF';");
 
 
-    if (user [4] != "offline.png") {
+    if (user [4] != "offline.png" || user [10] == true) {
         //if (user [7] > 0) {
         item.setAttribute("tooltip", "moretip");
         item.setAttribute("onmouseover", "tooltiped(this,event);");
@@ -3772,6 +3772,8 @@ function handlePresence(aJSJaCPacket) {
 
             if (aJSJaCPacket.getStatus())
                 user [9] = aJSJaCPacket.getStatus();
+            else 
+            	user [9] = "         Empty";
 
             var oldStatus = user [4];
         }
