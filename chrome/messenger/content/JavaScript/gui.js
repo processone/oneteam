@@ -917,8 +917,8 @@ function getRoster(iq) {
 
             // Don't want msn gate in roster
             if (items.item(i).getAttribute('jid').match("@")) {
-                user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png", resources, "false", 0, "offline.png", "         Empty", true, 0, 0);
-                //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages + nombre correspodant au statut (pour le tri)
+                user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png", resources, "false", 0, "offline.png", "         Empty", true, 0, 0, false);
+                //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages + nombre correspodant au statut (pour le tri) + message en cours??
                 users.push(user);
             }
 
@@ -2216,6 +2216,8 @@ function sendMsg(event) {
 
     var textEntry = document.getElementById("textentry");
 
+
+	
     try {
 
 
@@ -2249,7 +2251,7 @@ function sendMsg(event) {
 
                 if ((textEntry.value).split(" ") != "") {
 
-
+			
                     var aMsg = new JSJaCMessage();
                     aMsg.setTo(receiver);
                     if (textEntry.value.substring(0,1) == '\n'){
@@ -2295,6 +2297,7 @@ function sendMsg(event) {
         //else
         //sendPause();
         writing = false;
+        document.getElementById("text" + receiver).webNavigation.stop(1);
     } catch (e) {
         alert(e);
     }

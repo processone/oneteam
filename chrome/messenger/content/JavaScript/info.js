@@ -65,6 +65,7 @@ try {
 
 var tag;
 
+
         	
         tag = iq.getNode().getElementsByTagName('version');
 		if (tag && tag.item(0) && tag.item(0).firstChild)	
@@ -386,9 +387,12 @@ else {
 	/******************************* AVATAR **************************/
 	
 	
+	iq.getNode().normalize();
+	
 	var	tagbin = iq.getNode().getElementsByTagName('BINVAL');
 		if (tagbin && tagbin.item(0) && tagbin.item(0).firstChild )
 			var base64data = tagbin.item(0).firstChild.nodeValue.toString();
+			//alert (tagbin.item(0).firstChild.nodeValue.toString());
 				if (base64data){
 				
 				var savefile = "." + cutResource(window.opener.infojid);
@@ -413,15 +417,20 @@ else {
 				savefile = path+savefile;
 				
 				//alert (savefile);
-				saveInFile (base64data,savefile);
+				saveInFile (tagbin.item(0).firstChild.nodeValue.toString(),savefile);
 				
-				var uri = "data:image/jpeg;base64," + base64data;
+				var uri = "data:image/jpeg;base64," + tagbin.item(0).firstChild.nodeValue.toString();
 					//alert (uri);
 	
+	
+				//var image = document.createElement("avatar");
+            //var avat = document.getElementById("avat");
 				var image = document.getElementById("photo");
 				image.setAttribute("src",uri);
-				image.setAttribute("height",50);
-				image.setAttribute("width",50);
+				//image.removeAttribute("empty");
+				image.setAttribute("height",70);
+				image.setAttribute("width",70);
+				//avat.appendChild(image);
 				
 				
 				//alert ("image" + cutResource(window.opener.infojid));
@@ -431,12 +440,7 @@ else {
 				}
 			
 	
-	
-	if (window.opener.console) {
-        window.opener.cons.addInConsole("TEST : " + base64data + "\n");
-    	window.opener.cons.addInConsole("IN : " + iq.xml() + "\n");
-    }
-	
+
 	
 	
 	}
