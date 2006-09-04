@@ -55,6 +55,7 @@ function performAddContact(event) {
     var listGroups = window.opener.groups;
     //ADDED
     var chosenGroup = document.getElementById("groups").value;
+    var reason = document.getElementById("reason").value;
 
     try {
         var iq = new JSJaCIQ();
@@ -95,7 +96,7 @@ function performAddContact(event) {
        // window.opener.refreshList();
 		
 		
-        window.opener.authorizeSeeContact(jid.value);
+        window.opener.authorizeSeeContact(jid.value,reason);
         
         
        

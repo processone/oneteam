@@ -8,3 +8,5 @@
 <!ENTITY Contact.label3 "Enter the group in which you want">
 <!ENTITY Contact.label4 "to add the contact">
 <!ENTITY Contact.label5 "Contact added">
+
+<!ENTITY Contact.reason "Reason [Optional]">

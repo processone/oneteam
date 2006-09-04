@@ -656,13 +656,16 @@ function getContextBoth(jid) {
 }
 
 // Function to ask authorisation for adding contact
-function authorizeSeeContact(jid) {
+function authorizeSeeContact(jid,reason) {
 
     var aPresence = new JSJaCPresence();
     aPresence.setType('subscribe');
 
+	if (!reason)
+		reason = "I would like to add you in my contacts list";
 
     aPresence.setTo(jid);
+    aPresence.setStatus(reason);
 
     con.send(aPresence);
     if (console) {

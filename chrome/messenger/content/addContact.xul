@@ -7,7 +7,7 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         windowtype=""
         title="&Contact.titre;"
-        style="width: 27em; height: 25em"
+        style="width: 27em; height: 33em"
         buttons="accept,cancel"
 		onload="initializeGroups()">
 
@@ -50,6 +50,16 @@
 		</vbox>
 		<hbox>
 		<textbox flex="1" id="groups"/>
+		</hbox>
+		
+		<spacer height="30"/>
+		
+		<vbox>
+		<label value="&Contact.reason;" />
+		
+		</vbox>
+		<hbox>
+		<textbox flex="1" id="reason"/>
 		</hbox>
 	</wizardpage>
 
