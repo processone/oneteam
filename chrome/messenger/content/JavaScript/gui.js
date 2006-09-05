@@ -1900,7 +1900,7 @@ function showUser(user) {
     //item.setAttribute("onmouseout","this.style.backgroundColor='#FFFFFF';");
 
 
-    if (user [4] != "offline.png" || user [10] == true) {
+    if (user [4] != "offline.png" || user [10] == true ) {
         //if (user [7] > 0) {
         item.setAttribute("tooltip", "moretip");
         item.setAttribute("onmouseover", "tooltiped(this,event);");

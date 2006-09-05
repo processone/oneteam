@@ -155,7 +155,7 @@
                                 <hbox>
                                         <hbox>
                                         <!-- maxwidth="100"  maxheight="100" persist="style"-->
-                                        <image id="myphoto" style="border: 1px solid #aaa" height="50" width="50" /> 
+                                        <image id="myphoto" persist="src" style="border: 1px solid #aaa" height="70" width="70" /> 
                                        
                                         </hbox>
                                         <hbox>

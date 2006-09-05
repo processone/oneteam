@@ -209,7 +209,7 @@ photo.appendChild(type);
 type.appendChild (typenode);
 	
 if (myFile) {
-	alert ("i have a photo!");
+	//alert ("i have a photo!");
 	var binvalnode = document.createTextNode(convertFileToBase64(myFile));
 	binval.appendChild(binvalnode);
 	photo.appendChild(binval);
@@ -443,6 +443,7 @@ function retrieveVcard(iq){
 	
 	/******************************* AVATAR **************************/
 	
+		iq.getNode().normalize();
 	
 		tag = iq.getNode().getElementsByTagName('BINVAL')
 		if (tag && tag.item(0).firstChild)
@@ -453,8 +454,8 @@ function retrieveVcard(iq){
 	
 				var image = document.getElementById("myphoto");
 				image.setAttribute("src",uri);
-				image.setAttribute("height",50);
-				image.setAttribute("width",50);
+				image.setAttribute("height",70);
+				image.setAttribute("width",70);
 				}
 			
 	
@@ -494,7 +495,7 @@ try {
   var filePath = fp.file.path;
   
   
-  alert (filePath);
+  //alert (filePath);
    myFile = Components.classes["@mozilla.org/file/local;1"].createInstance();
 	if (myFile instanceof Components.interfaces.nsILocalFile)
   myFile.initWithPath(filePath);
@@ -508,11 +509,12 @@ try {
 	var url = 'url("file://' + filePath + '")';
 	
 	
-	alert (url);
+	//alert (url);
 				
-				image.style.listStyleImage=url;
-				image.setAttribute("height",50);
-				image.setAttribute("width",50);
+				//image.style.listStyleImage=url;
+				image.setAttribute("src","file://" + filePath);
+				image.setAttribute("height",70);
+				image.setAttribute("width",70);
   
   }
   
