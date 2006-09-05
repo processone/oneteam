@@ -155,9 +155,9 @@
                                         <hbox>
                                         <image id="photo" onload="resize();" validate="never" maxwidth="100"  maxheight="100" style="border: 1px solid #aaa"/>
                                         </hbox>
-                                        <hbox>
+                                        <!--  <hbox>
                                         <label class="text-link" style="-moz-user-focus:ignore;" value="&info.Steal;" onclick="changePicture()" flex="0"/>
-                                        </hbox>
+                                        </hbox>-->
                                        
                                 </hbox>
                                 

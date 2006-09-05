@@ -408,7 +408,7 @@
                 		<menuitem label="&listitemcontextroom.Remove;" oncommand="removeRoomFromRoster();"/>
                 		<menuseparator/>
                 		<!--  disabled="true" -->
-                		<menuitem id="closeRoom" label="&listitemcontextroom.Close;" oncommand="closeTab();"/>
+                		<menuitem id="closeRoom" label="&listitemcontextroom.Close;" oncommand="closeRoom();"/>
                 </popup>
                 
                   

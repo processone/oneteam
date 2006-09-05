@@ -329,14 +329,25 @@ function openConversation(event) {
 // Function to reinitialize tab name on focus
 function initTabName() {
 
+try {
 
     var name = currentUser [3];
-
+	
     var tab = document.getElementById("tab" + currentUser [0]);
     tab.setAttribute("label", name);
-    tab.removeAttribute("onfocus");
+    if (tab.getAttribute ("onfocus"))
+    	tab.removeAttribute("onfocus");
+    if (tab.getAttribute ("onselect"))
+    	tab.removeAttribute("onselect");
     tab.setAttribute("style", 'color : "#000000";');
     currentUser[11] = 0;
+    
+    }
+    
+     
+        catch(e) {
+            alert("initTabNAme" + e);
+        }
 }
 
 // Function to get connexion and users roster
@@ -1391,7 +1402,7 @@ function closeTab() {
         tabs.removeChild(tab);
         var tabspanel = document.getElementById("tabpanels1");
         var tabpanel = document.getElementById("tabpanel" + jid);
-
+	
 
         tabspanel.removeChild(tabpanel);
 
@@ -1405,8 +1416,125 @@ function closeTab() {
         }
     }
 
-
+	document.getElementById("textentry").focus();
     //} catch (e) {alert(" In closeTab" + e);}
+}
+
+
+// Function to close a room
+
+function closeRoom(){
+
+
+
+var liste = document.getElementById("liste_contacts");
+    var listconfs = document.getElementById("liste_conf");
+    
+    var jid = listconfs.selectedItem.id;
+
+	
+    var tabs = document.getElementById("tabs1");
+    var tab = document.getElementById("tab" + jid);
+    var index = tabs.selectedIndex;
+
+    var childNodes = tabs.childNodes;
+    var pattern = /conference/
+   
+   if (tab == tabs.selectedItem)
+   	closeTab();
+
+	else {
+    
+   
+
+    if (childNodes.length == 1) {
+
+        if (tab.getAttribute("context") == "tabroomcontext") {
+
+            //alert ("jid" + jid);
+            var element = document.getElementById(jid);
+            //alert ("id element" + element);
+
+
+            var cellConf = document.getElementById(jid + "cell");
+            cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+
+            // mask all users in room
+            var el = element.nextSibling;
+            //alert (el);
+            if (el)
+                while (el.getAttribute("id").match(jid)) {
+                    //alert (el.id);
+                    listconfs.removeChild(el);
+                    el = element.nextSibling;
+                    if (!el)
+                        break;
+                }
+
+            var nick;
+
+            for (var i = 0; i < rooms.length; i++) {
+                if (rooms [i] == jid)
+                    nick = nicks[i];
+            }
+            exitRoom(tab.id.substring(tab.id.indexOf("b") + 1, tab.id.length) + "/" + nick);
+        }
+		
+		
+        reduceGUI();
+   }
+    else {
+
+        var child;
+
+       /* if (tabs.selectedIndex == 0)
+            child = childNodes[tabs.selectedIndex++];
+        else
+            child = childNodes[tabs.selectedIndex--];*/
+
+
+        if (tab.getAttribute("context") == "tabroomcontext") {
+
+
+            //alert ("jid" + jid);
+            var element = document.getElementById(jid);
+
+            var cellConf = document.getElementById(jid + "cell");
+            cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+
+            // mask all users in room
+
+            var el = element.nextSibling;
+            if (el)
+                while (el.getAttribute("id").match(jid)) {
+                    //alert (el.id);
+                    listconfs.removeChild(el);
+                    el = element.nextSibling;
+                    if (!el)
+                        break;
+                }
+
+            var nick;
+
+            for (var i = 0; i < rooms.length; i++) {
+                if (rooms [i] == jid)
+                    nick = nicks[i];
+            }
+
+            exitRoom(jid + "/" + nick);
+
+        }
+
+
+        // Remove the tab and the corresponding tabpanel
+        tabs.removeChild(tab);
+        document.getElementById("textentry").focus();
+
+     
+    }
+
+}
+
 }
 
 
@@ -3389,6 +3517,7 @@ if (aJSJaCPacket.getBody()) {
                     playSound("chrome://messenger/content/sounds/message1.wav");
 
                 var tab = document.getElementById("tab" + jid);
+                var tabpanel = document.getElementById("tabpanel" + jid);
                 if (user && tab.selected == false) {
                     user[11] ++;
                     tab.setAttribute("label", name + " (" + user [11] + ")");
@@ -3397,6 +3526,7 @@ if (aJSJaCPacket.getBody()) {
                     tab.setAttribute("style", "color: #FF0000;");
 
                     tab.setAttribute("onfocus", "initTabName();");
+                    tab.setAttribute("onselect", "initTabName();");
                 }
                 else
                     tab.setAttribute("label", name);
