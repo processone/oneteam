@@ -63,7 +63,7 @@ for (var i = 0 ; i < list.getRowCount() ; i++){
 				var jid = longjid.substring (0 ,longjid.length - 4);
 				
 				var newItem = document.createElement ("listitem");
-				newItem.setAttribute ("label", keepLogin(jid));
+				newItem.setAttribute ("label", window.opener.document.getElementById(jid + "cell").getAttribute("label"));
 				newItem.setAttribute ("id", "invitable" + jid);
 				invitableList.appendChild (newItem);
 				

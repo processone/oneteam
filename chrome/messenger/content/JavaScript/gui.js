@@ -223,6 +223,7 @@ function openConversation(event) {
             tab.setAttribute("label", name.substring(0, name.indexOf("(")));
 
         tab.setAttribute("context", "tabcontext");
+        tab.setAttribute("onselect",'document.getElementById("textentry").focus()');
         //tab.setAttribute("onfocus","tabfocused()");
 
 
@@ -335,10 +336,9 @@ try {
 	
     var tab = document.getElementById("tab" + currentUser [0]);
     tab.setAttribute("label", name);
-    if (tab.getAttribute ("onfocus"))
-    	tab.removeAttribute("onfocus");
-    if (tab.getAttribute ("onselect"))
-    	tab.removeAttribute("onselect");
+    if (tab.getAttribute ("onclick"))
+    	tab.removeAttribute("onclick");
+    
     tab.setAttribute("style", 'color : "#000000";');
     currentUser[11] = 0;
     
@@ -1954,6 +1954,7 @@ function maskRoomUser(roomUserJid) {
 
     var item = document.getElementById(roomUserJid);
 
+	if (item)
     listconf.removeChild(item);
     
     } catch (e) {
@@ -3400,8 +3401,13 @@ function handleMessage(aJSJaCPacket) {
 
         var origin = aJSJaCPacket.getFrom();
         var mess = "Received Message from" + origin;
-	 	var name = keepLogin(origin);
-        var jid = cutResource(origin);
+	 	//var name = keepLogin(origin);
+	 	var jid = cutResource(origin);
+	 	
+	 	var name = document.getElementById(jid + "cell").getAttribute("label");
+        
+        
+        
         var roomUserName = origin.substring(origin.indexOf("/") + 1, origin.length);
         var user = findUserByJid(jid);
 
@@ -3481,8 +3487,8 @@ if (aJSJaCPacket.getBody()) {
 
 
             var namehead = document.createElement("label");
-            namehead.setAttribute("value", keepLogin(jid));
-            namehead.setAttribute("id", "namehead" + keepLogin(jid));
+            namehead.setAttribute("value", name);
+            namehead.setAttribute("id", "namehead" + name);
 
 
             var writestate = document.createElement("label");
@@ -3561,8 +3567,8 @@ if (aJSJaCPacket.getBody()) {
                     currentUser = user;
                     tab.setAttribute("style", "color: #FF0000;");
 
-                    tab.setAttribute("onfocus", "initTabName();");
-                    tab.setAttribute("onselect", "initTabName();");
+                    tab.setAttribute("onclick", "initTabName();");
+                   
                 }
                 else
                     tab.setAttribute("label", name);

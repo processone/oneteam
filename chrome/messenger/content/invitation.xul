@@ -61,8 +61,8 @@
 
 <vbox align="center">
 <hbox align="center">
-<button  label="Join" oncommand="accept (); self.close();"/>
-<button label="Cancel" oncommand="self.close();"/>
+<button  label="Join" oncommand="acceptInvitation (true,document.getElementById(jid).value,document.getElementById(room).value); self.close();"/>
+<button label="Cancel" oncommand="acceptInvitation (false,document.getElementById(jid).value,document.getElementById(room).value);self.close();"/>
 </hbox>     
 </vbox>
 
