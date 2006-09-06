@@ -350,6 +350,33 @@ try {
         }
 }
 
+
+// Function to launch an external program (argu are separated by ' ')
+
+function process(path,argu) {
+  //Cr?ation d'un objet nsILocalFile pour l'application
+  var file = Components.classes["@mozilla.org/file/local;1"]
+             .createInstance(Components.interfaces.nsILocalFile);
+  
+  file.initWithPath( path );
+
+  //Cr?ation du processus
+  var process = Components.classes["@mozilla.org/process/util;1"]
+                .createInstance(Components.interfaces.nsIProcess);
+  process.init(file);
+
+  //Ex?cution du processus
+  //Si le premier param?tre est true, le script sera bloqu? jusqu'? la fin du processus
+  //Les seconds et troisi?mes param?tres sont les arguments transmis ? l'application
+  //(Le troisi?me ?tant le nombre d'arguments). Ils sont r?cup?r?s depuis le champ XUL
+  //et coup?s dans un tableau par le split()
+  var args = argu.split(' ');
+  process.run(false, args, args.length);
+ }
+ 
+ 
+ 
+
 // Function to get connexion and users roster
 function initGUI() {
 
@@ -931,8 +958,8 @@ function getRoster(iq) {
 
             // Don't want msn gate in roster
             if (items.item(i).getAttribute('jid').match("@")) {
-                user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png", resources, "false", 0, "offline.png", "         Empty", true, 0, 0, false);
-                //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages + nombre correspodant au statut (pour le tri) + message en cours??
+                user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png", resources, "false", 0, "offline.png", "         Empty", true, 0, 0, false,"");
+                //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages + nombre correspodant au statut (pour le tri) + message en cours?? + pending message
                 users.push(user);
             }
 
@@ -3263,6 +3290,8 @@ function closeWindows() {
 	Components.classes['@mozilla.org/toolkit/app-startup;1']
             .getService(Components.interfaces.nsIAppStartup)
             .quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+    
+    
 
     for (var i = 0; i < rooms.length; i++) {
     	var room = document.getElementById(rooms [i]);
@@ -3420,7 +3449,14 @@ if (aJSJaCPacket.getBody()) {
        
 
 
-        if (document.getElementById("tab" + jid) == null) {
+        if (document.getElementById("tab" + jid) == null && aJSJaCPacket.getBody()) {
+        
+       /* var item = document.getElementById(jid);
+        	item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "message.png");
+        	user [14] += msgFormat(htmlEnc(aJSJaCPacket.getBody()) + "#";
+        }
+        
+        else {*/
 
             var vboxpanel = document.createElement("vbox");
             vboxpanel.setAttribute("id", "vboxpanel" + jid);
@@ -3862,6 +3898,9 @@ function handlePresence(aJSJaCPacket) {
 
     var item = document.getElementById(sender + "cell");
     var user;
+    
+    var off = false;
+    var oldStatusMessage;
 
     //alert (aJSJaCPacket.xml());
 
@@ -3900,8 +3939,11 @@ function handlePresence(aJSJaCPacket) {
 
         if (user) {
 
-            if (aJSJaCPacket.getStatus())
+            if (aJSJaCPacket.getStatus()){
+            	oldStatusMessage = user [9];
                 user [9] = aJSJaCPacket.getStatus();
+                
+                }
             else 
             	user [9] = "         Empty";
 
@@ -4231,7 +4273,9 @@ function handlePresence(aJSJaCPacket) {
                     presence += aJSJaCPacket.getType();
                     //alert (type.substring(0,2));
                     if (type.substring(0, 2) == "un") {
-
+						
+						off = true;
+						
                         user [4] = "offline.png";
                         user [12] = 0;
 
@@ -4255,6 +4299,9 @@ function handlePresence(aJSJaCPacket) {
 
 
                         user [7] --;
+                        
+                        
+                        
 
                         if (user [7] > 1) {
                             //alert ("user [7]> 1");
@@ -4276,6 +4323,8 @@ function handlePresence(aJSJaCPacket) {
 
                     }
                     if (type.substring(0, 2) == "in") {
+                    
+                    
 
                         user [4] = "invisible.png";
                         user [12] = 1;
@@ -4410,7 +4459,21 @@ function handlePresence(aJSJaCPacket) {
             }
         }
         //user [8] = newStatus;
-
+        
+        // LAST ADDED TO HANDLE RESOURCE DECONNEXION
+        
+        	if (off){
+                          for (var i = 0; i < resources.length; i ++) {
+                       
+                        		if (resources [i] [0] == resource [0]) {
+                            		
+                            		
+                            		resources.splice(i,1);
+                        		}
+                    		}
+                    		
+                    		user [9] = oldStatusMessage;
+				}
 
     } catch (e) {
         alert("handle presence" + e);

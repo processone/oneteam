@@ -212,6 +212,20 @@ bookmarks.splice([liste.selectedIndex -1],1);
 
 liste.removeChild(liste.currentItem);
 
+var login = document.getElementById("login");
+var server = document.getElementById("server");
+var roomname = document.getElementById("room");
+var pass = document.getElementById("pass");
+var autojoin = document.getElementById("auto");
+var name = document.getElementById("name");
+
+login.value = "";
+server.value ="";
+roomname.value ="";
+pass.value ="";
+autojoin.checked = false;
+name.value ="";
+
 
 
  } catch (e) {alert ("removeBookmark" + e);}

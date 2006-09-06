@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/joinRoom.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/joinRoom.dtd">
+
+<window id="Bookmarks"
+        title="&Room.window;"
+        orient="horizontal"
+        onload="loadServer();"
+        width="490"
+        height="290"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+        
+        
+    <script type="application/x-javascript" src="JavaScript/gui.js"/>
+    <script type="application/x-javascript" src="JavaScript/joinRoom.js"/>
+    <script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
+    <script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
+    <script type="application/x-javascript" src="lib/jsjac/JSJaC.js"/>
+    <script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
+    <script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
+    <script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
+
+    
+    
+    <hbox flex="1">
+    
+    <vbox flex="1">
+    
+    <!-- <label value="Bookmarks"/> 
+   
+    <tree id="bookmarks" width="180" flex="1" hidecolumnpicker="true">
+      <treecols>
+           <treecol id="col1" flex="1" hideheader="true"/> 
+            
+     </treecols>
+     <treechildren id="servers">
+       
+     </treechildren>
+ </tree>-->
+ 
+ <listbox context="listcontext" width="180" flex="1" id="servers" onselect="showProperties();"/>
+ 
+ <hbox>
+
+ <button id="rem" label="Remove" onclick="removeBookmark();"/>
+ </hbox>
+ </vbox>
+    
+    <groupbox id="xf-config-Roombox" flex="1">
+        <caption class="titre" label="&Room.titre;" />
+        
+         <spacer height="15"/>
+        
+        <grid flex="1">
+            <columns>
+                <column id="labels" flex="1"/>
+                <column id="fields" flex="1"/>
+            </columns>
+            <rows id="rows" flex="1">
+            	<row>
+                    <description value="&Room.name; :"/>
+                    <textbox persist="true" id="name"/>
+                </row>
+                <row>
+                    <description value="&Room.login; :"/>
+                    <textbox persist="true" id="login"/>
+                </row>
+                <row>
+                    <description value="&Room.pass; :"/>
+                    <textbox persist="true" id="pass"/>
+                </row>
+                <row>
+                    <description value="&Room.room; :"/>
+                    <textbox  persist="true" id="room"/>
+                </row>
+                <row>
+                    <description value="&Room.server; :"/>
+                    <textbox persist="true" id="server"/>                  
+                </row>
+                 <spacer height="10"/>
+				<row>
+                    <spacer height="10"/>
+                    <checkbox id="auto" label="Auto join"/>                  
+                </row>
+
+            </rows>
+        </grid>
+
+        <hbox align="center">
+            <spacer flex="1"/>
+            
+			<button id="add" label="Save bookmark" oncommand="addBookmark();"/>
+            <spacer flex="1"/>
+            <button label="&Room.cancel;" oncommand="sendBookmarkPacket();self.close();"/>
+        </hbox>
+    </groupbox>
+
+   
+    </hbox>
+
+</window>
