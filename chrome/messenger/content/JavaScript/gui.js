@@ -958,7 +958,7 @@ function getRoster(iq) {
 
             // Don't want msn gate in roster
             if (items.item(i).getAttribute('jid').match("@")) {
-                user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png", resources, "false", 0, "offline.png", "         Empty", true, 0, 0, false,"");
+                user = new Array(items.item(i).getAttribute('jid'), items.item(i).getAttribute('subscription'), group, name, "offline.png", resources, "false", 0, "offline.png", "", true, 0, 0, false,"");
                 //jid + subsription + groupe + nom + status + resources + visit?? + nbresources + oldStatus + status message + first presence + nb unread messages + nombre correspodant au statut (pour le tri) + message en cours?? + pending message
                 users.push(user);
             }
@@ -2016,23 +2016,45 @@ function refreshList() {
 function tooltiped(item, event)
 {
     try {
-
+		
+		var desIm = document.getElementById("desIm");
+		var desJid = document.getElementById("desJid");
         var desResources = document.getElementById("desResources");
         var desStatus = document.getElementById("desStatus");
+		var desName = document.getElementById("desName");
+		var desIns = document.getElementById("desIns");
 
-
-        var resources = findResourceByJid(event.target.id.substring(0, event.target.id.length - 4));
-        var user = findUserByJid(event.target.id.substring(0, event.target.id.length - 4));
+		var jid = event.target.id.substring(0, event.target.id.length - 4);
+        var resources = findResourceByJid(jid);
+        var user = findUserByJid(jid);
         //alert (resources);
         var stringRes = "";
-
+        
+        if (user && user [4])
+        var image = "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user [4];
+        
+        var name;
+        var ins;
+        
+        if (user && user [3])
+        	name = user [3];
+        else
+        	name = keepLogin(jid);
+        	
+        if (user && user [1])	
+			ins = user[1];
+			
         if (resources) {
             for (var i = 0; i < resources.length; i ++) {
                 //alert (resources [i] [0]);
                 stringRes = stringRes + resources [i] [0] + ",";
             }
-            desResources.setAttribute("value", stringRes);
-            desStatus.setAttribute("value", user [9]);
+            desIm.setAttribute("src",image);
+            desJid.setAttribute("value",jid);
+            desName.setAttribute("value",name);
+            desIns.setAttribute("value",ins);
+            desResources.setAttribute("value",stringRes);
+            desStatus.setAttribute("value",user [9]);
         }
 
     } catch(E) {
@@ -3411,11 +3433,11 @@ function handleMessage(aJSJaCPacket) {
         
         var name;
 		
-		if (document.getElementById(jid + "cell"))
-			name = document.getElementById(jid + "cell").getAttribute("label");
-		else
-			if (user)
-			name = user [3]; 
+		
+			if (user && user [3])
+				name = user [3]; 
+			else
+				name = keepLogin (jid);
 
         if (console) {
 
@@ -3956,7 +3978,7 @@ function handlePresence(aJSJaCPacket) {
                 
                 }
             else 
-            	user [9] = "         Empty";
+            	user [9] = "";
 
             var oldStatus = user [4];
         }
@@ -4170,6 +4192,14 @@ function handlePresence(aJSJaCPacket) {
                         item.setAttribute("context", "itemcontextsubboth");
 
 
+				var notif = aJSJaCPacket.getFrom() + "is now available";
+				var textToWrite = document.getElementById("text" + sender);
+				
+				if (document.getElementById("tab" + sender)){
+					textToWrite.contentDocument.write("<FONT COLOR=#339966" + " SIZE=" + gPrefService.getCharPref("chat.editor.size") + " FACE=" + gPrefService.getCharPref("chat.editor.font") + ">" + msgFormat(htmlEnc(notif) + "\n") + "</font>" + "</p>");
+            		textToWrite.contentWindow.scrollTo(0, textToWrite.contentWindow.scrollMaxY + 200);
+				}
+
                 presence = aJSJaCPacket.getFrom() + "has become available.";
                 if (item)
                     item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "online.png");
@@ -4289,6 +4319,14 @@ function handlePresence(aJSJaCPacket) {
 						
                         user [4] = "offline.png";
                         user [12] = 0;
+                        
+                        var notif = aJSJaCPacket.getFrom() + "is now offline";
+				var textToWrite = document.getElementById("text" + sender);
+				
+				if (document.getElementById("tab" + sender)){
+					textToWrite.contentDocument.write("<FONT COLOR=#339966" + " SIZE=" + gPrefService.getCharPref("chat.editor.size") + " FACE=" + gPrefService.getCharPref("chat.editor.font") + ">" + msgFormat(htmlEnc(notif) + "\n") + "</font>" + "</p>");
+            		textToWrite.contentWindow.scrollTo(0, textToWrite.contentWindow.scrollMaxY + 200);
+				}
 
                         if (hideDecoUser) {
                             emptyList();

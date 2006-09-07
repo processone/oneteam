@@ -413,13 +413,31 @@
                 
                   
   		<tooltip id="moretip" orient="vertical" style="background-color: #33DD00;">
-    		<description value=" - Resources : " style="font-weight : bold;"/>
-    		<description value="" />
-    		<description id="desResources" value="        Empty" style="color: red;"/>
-    		<description value="" />
-    		<description value=" - Status Message : " style="font-weight : bold;"/>
-    		<description value="" />
-    		<description id="desStatus" value="        Empty" style="color: red;"/>
+  			<hbox>
+  			<image id="desIm" height="16" width="16"/>
+  			<description id="desJid" style="font-weight : bold;"/>
+  			</hbox>
+  			
+  			<hbox>
+    		<label value="Name : "  style="font-weight : bold;"/>
+    		<label align="left" id="desName" style="color: red;"/>
+    		</hbox>
+    		
+    		
+    		<hbox>
+    		<label value="Inscription : "  style="font-weight : bold;"/>
+    		<label align="left" id="desIns" value="Empty" style="color: red;"/>
+    		</hbox>
+  			
+  			<hbox>
+    		<label value="Resources : " id="res" style="font-weight : bold;"/>
+    		<label align="left" id="desResources" value="Empty" style="color: red;"/>
+    		</hbox>
+    		
+    		<hbox>
+    		<label value="Status : " id="stat" style="font-weight : bold;"/>
+    		<label align="left" id="desStatus" value="" style="color: red;"/>
+  			</hbox>
   		</tooltip>
   		
   		<tooltip id="tooltipadd" orient="vertical" style="background-color: #33DD00;">
