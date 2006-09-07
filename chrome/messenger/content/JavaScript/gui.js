@@ -38,6 +38,8 @@ var port;
 var base;
 var infojid;
 
+var error;
+
 var timer1 = null;
 var timer2 = null;
 
@@ -72,6 +74,8 @@ var timerRunning = false;
 var delay = 1000;
 var currentReceiver;
 var currentUser;
+
+var showStateJid;
 
 var roomPanelObserver = {
 
@@ -3638,6 +3642,7 @@ if (aJSJaCPacket.getBody()) {
       }
       
       else {
+      		
       	  showState(aJSJaCPacket);
       	  
       	}
@@ -3650,9 +3655,10 @@ if (aJSJaCPacket.getBody()) {
 // Function to show the writing state 
 function showState(aJSJaCPacket) {
 
-    //alert ("showstate");
+   
     var state = false;
     try {
+    
 
         var jid = cutResource(aJSJaCPacket.getFrom());
         //alert("show state " + aJSJaCPacket.getNode().getElementsByTagName('composing'));
@@ -3690,9 +3696,10 @@ function showState(aJSJaCPacket) {
         }
 
         if (state) {
-            pause(500);
-            writestate.setAttribute('value', '');
-            tab.setAttribute("style", 'color : #000000;');
+        
+        	showStateJid = jid;
+           window.setTimeout('initNotif();',2000);
+           
         }
 
 	}
@@ -3704,6 +3711,17 @@ function showState(aJSJaCPacket) {
     }
 }
 
+
+function initNotif(){
+
+
+
+var writestate = document.getElementById("writestate" + showStateJid);
+var tab = document.getElementById("tab" + showStateJid);
+
+ 			writestate.setAttribute('value', '');
+            tab.setAttribute("style", 'color : #000000;');
+}
 
 //Function to edit and customize shown groups
 function customGroups() {
@@ -3939,6 +3957,16 @@ function handlePresence(aJSJaCPacket) {
 
 
     try {
+
+		var errorTag = aJSJaCPacket.getNode().getElementsByTagName('error');
+                if (errorTag){
+                	var text = aJSJaCPacket.getNode().getElementsByTagName('text');
+                		if (text)
+                			if (text && text.item(0) && text.item(0).firstChild){	
+			    				error = text.item(0).firstChild.nodeValue;
+			    				window.open("chrome://messenger/content/error.xul", "Error", "chrome,titlebar,toolbar,centerscreen,modal");
+			    				}
+			    	}
 
         if (myjid.match(sender)) {
 
@@ -4192,7 +4220,7 @@ function handlePresence(aJSJaCPacket) {
                         item.setAttribute("context", "itemcontextsubboth");
 
 
-				var notif = aJSJaCPacket.getFrom() + "is now available";
+				var notif = aJSJaCPacket.getFrom() + " is now available";
 				var textToWrite = document.getElementById("text" + sender);
 				
 				if (document.getElementById("tab" + sender)){
@@ -4320,7 +4348,7 @@ function handlePresence(aJSJaCPacket) {
                         user [4] = "offline.png";
                         user [12] = 0;
                         
-                        var notif = aJSJaCPacket.getFrom() + "is now offline";
+                        var notif = aJSJaCPacket.getFrom() + " is now offline";
 				var textToWrite = document.getElementById("text" + sender);
 				
 				if (document.getElementById("tab" + sender)){
