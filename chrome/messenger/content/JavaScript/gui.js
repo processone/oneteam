@@ -223,7 +223,7 @@ function openConversation(event) {
             tab.setAttribute("label", name.substring(0, name.indexOf("(")));
 
         tab.setAttribute("context", "tabcontext");
-        tab.setAttribute("onselect",'document.getElementById("textentry").focus()');
+        tab.setAttribute("onclick",'document.getElementById("textentry").focus()');
         //tab.setAttribute("onfocus","tabfocused()");
 
 
@@ -336,8 +336,8 @@ try {
 	
     var tab = document.getElementById("tab" + currentUser [0]);
     tab.setAttribute("label", name);
-    if (tab.getAttribute ("onclick"))
-    	tab.removeAttribute("onclick");
+    /*if (tab.getAttribute ("onclick"))
+    	tab.removeAttribute("onclick");*/
     
     tab.setAttribute("style", 'color : "#000000";');
     currentUser[11] = 0;
@@ -472,10 +472,10 @@ function extendGUI() {
 
 
     var right = document.getElementById("right");
-    right.setAttribute("flex", "5");
+    right.setAttribute("flex", "10");
 
     var tabbox = document.createElement("tabbox");
-    tabbox.setAttribute("flex", "5");
+    tabbox.setAttribute("flex", "10");
     tabbox.setAttribute("id", "tabbox");
 
     right.appendChild(tabbox);
@@ -487,7 +487,7 @@ function extendGUI() {
     tabbox.appendChild(tabs);
 
     var tabpanels = document.createElement("tabpanels");
-    tabpanels.setAttribute("flex", "5");
+    tabpanels.setAttribute("flex", "10");
     tabpanels.setAttribute("id", "tabpanels1");
 
     tabbox.appendChild(tabpanels);
@@ -575,8 +575,8 @@ function extendGUI() {
     textbox.setAttribute("height", "30");
     textbox.setAttribute("width", "400");
     textbox.setAttribute("minheight", "30");
-    textbox.setAttribute("maxwidth", "700");
-    textbox.setAttribute("flex", "5000");
+    //textbox.setAttribute("maxwidth", "700");
+    textbox.setAttribute("flex", "10");
     textbox.setAttribute("maxheight", "30");
     textbox.setAttribute("onkeypress", "sendMsg(event);");
 
@@ -3404,13 +3404,18 @@ function handleMessage(aJSJaCPacket) {
 	 	//var name = keepLogin(origin);
 	 	var jid = cutResource(origin);
 	 	
-	 	var name = document.getElementById(jid + "cell").getAttribute("label");
-        
-        
         
         var roomUserName = origin.substring(origin.indexOf("/") + 1, origin.length);
         var user = findUserByJid(jid);
-
+        
+        
+        var name;
+		
+		if (document.getElementById(jid + "cell"))
+			name = document.getElementById(jid + "cell").getAttribute("label");
+		else
+			if (user)
+			name = user [3]; 
 
         if (console) {
 

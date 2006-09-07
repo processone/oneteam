@@ -224,13 +224,13 @@
          	 </tabs>
 			<tabpanels flex="1">
           
-          <tabpanel style="border : groove">
+          <tabpanel style="border : groove" >
           <vbox flex="1">
           
           	<vbox id="notification-area">
           	</vbox> 
            <!-- onselect='document.getElementById("liste_conf").clearSelection();currentItem.selected(true);'-->
-          	 <richlistbox context="listcontext" height="400" width="150"  minwidth="140" id="liste_contacts" flex="1" 
+          	 <richlistbox context="listcontext" height="400" width="150"   minwidth="140" id="liste_contacts" flex="1" 
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
@@ -256,7 +256,7 @@
  			</tree> -->
  			
  			<!--  onselect='document.getElementById("liste_contacts").clearSelection();currentItem.selected(true);'-->
- 			 <richlistbox height="400" width="150"  minwidth="140" id="liste_conf" flex="5" style="border : groove"
+ 			 <richlistbox height="400" width="150"  minwidth="140"  id="liste_conf" flex="1" style="border : groove"
        	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
@@ -461,7 +461,7 @@
             
             
               <!-- Personal status list -->
-            <menulist label="Available" id="status" height="30" width="150" flex="5" maxheight="30" minheight="30"
+            <menulist label="Available" id="status" height="30" width="150" flex="1" maxheight="30" minheight="30"
                        minwidth="140">
                 <menupopup flex="5">
                     

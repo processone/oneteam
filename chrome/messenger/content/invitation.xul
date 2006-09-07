@@ -33,13 +33,13 @@
                                 </columns>
                                 <rows>
 <row>
-<label id="messageJid"/>
+<label id="messageJid" value="From :"/>
 <textbox id="jid" readonly="true" width="100" />
 
 </row>
 
 <row>
-<label id="messageRoom"/>
+<label id="messageRoom" value="to the Room :"/>
 <textbox id="room" readonly="true" />
 </row>
 
