@@ -1391,9 +1391,9 @@ function closeTab() {
         var child;
 
         if (tabs.selectedIndex == 0)
-            child = childNodes[tabs.selectedIndex++];
+            child = childNodes[++tabs.selectedIndex];
         else
-            child = childNodes[tabs.selectedIndex--];
+            child = childNodes[--tabs.selectedIndex];
 
 
         if (tab.getAttribute("context") == "tabroomcontext") {
@@ -1440,10 +1440,10 @@ function closeTab() {
         if (child) {
             child.setAttribute("selected", "true");
             var tabbox = document.getElementById("tabbox");
-            //var jid = child.getAttribute("id");
-            //alert (jid);
-            //var newTab = document.getElementById("tabpanel");
-            tabbox.selectedPanel = tabpanel;
+            var jid = child.getAttribute("id").substring (3,child.getAttribute("id").length);
+           
+            var newTabpanel = document.getElementById("tabpanel" + jid);
+            tabbox.selectedPanel = newTabpanel;
         }
     }
 
@@ -3655,9 +3655,13 @@ if (aJSJaCPacket.getBody()) {
 // Function to show the writing state 
 function showState(aJSJaCPacket) {
 
+
+try {
+
+   if (!isRoom(cutResource(aJSJaCPacket.getFrom()))){
    
     var state = false;
-    try {
+    
     
 
         var jid = cutResource(aJSJaCPacket.getFrom());
@@ -3705,6 +3709,8 @@ function showState(aJSJaCPacket) {
 	}
 	
 	
+	
+}	
     }
     catch(e) {
         alert("Dans showstate" + e);
