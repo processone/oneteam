@@ -231,7 +231,7 @@
           	</vbox> 
            <!-- onselect='document.getElementById("liste_conf").clearSelection();currentItem.selected(true);'-->
           	 <richlistbox context="listcontext" height="400" width="150"   minwidth="140" id="liste_contacts" flex="1" 
-       	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
+       	    ondraggesture="if(event.target.localName == 'richlistcell') nsDragAndDrop.startDrag(event,listObserver);"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
          	  <richlistcols>
@@ -257,7 +257,7 @@
  			
  			<!--  onselect='document.getElementById("liste_contacts").clearSelection();currentItem.selected(true);'-->
  			 <richlistbox height="400" width="150"  minwidth="140"  id="liste_conf" flex="1" style="border : groove"
-       	    ondraggesture="nsDragAndDrop.startDrag(event,listObserver)"
+       	    ondraggesture="if(event.target.localName == 'richlistcell') nsDragAndDrop.startDrag(event,listObserver);"
        	    ondragover="nsDragAndDrop.dragOver(event,listObserver)"
  			ondragdrop="nsDragAndDrop.drop(event,listObserver)">
  			<listcols>
