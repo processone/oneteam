@@ -1,0 +1,81 @@
+#ifndef _otMULTIVERSION_H_
+#define _otMULTIVERSION_H_
+
+#define OT_VERSION_TO_STR_1_8 "1.8"
+#define OT_VERSION_TO_STR_1_8_1 "1.8.1"
+#define OT_VERSION_TO_STR_1_9 "1.9"
+#define OT_VERSION_TO_STR_1_10 "1.10"
+#define OT_VERSION_TO_STR_2_0 "2.0"
+
+#ifdef OT_VERSION_AVAILABLE_1_8
+# define OT_ENABLE_WHEN_AVAILABLE_1_8(A) A
+#else
+# define OT_ENABLE_WHEN_AVAILABLE_1_8(A)
+#endif
+
+#ifdef OT_VERSION_AVAILABLE_1_8_1
+# define OT_ENABLE_WHEN_AVAILABLE_1_8_1(A) A
+#else
+# define OT_ENABLE_WHEN_AVAILABLE_1_8_1(A)
+#endif
+
+#ifdef OT_VERSION_AVAILABLE_1_9
+# define OT_ENABLE_WHEN_AVAILABLE_1_9(A) A
+#else
+# define OT_ENABLE_WHEN_AVAILABLE_1_9(A)
+#endif
+
+#ifdef OT_VERSION_AVAILABLE_1_10
+# define OT_ENABLE_WHEN_AVAILABLE_1_10(A) A
+#else
+# define OT_ENABLE_WHEN_AVAILABLE_1_10(A)
+#endif
+
+#ifdef OT_VERSION_AVAILABLE_2_0
+# define OT_ENABLE_WHEN_AVAILABLE_2_0(A) A
+#else
+# define OT_ENABLE_WHEN_AVAILABLE_2_0(A)
+#endif
+
+#define OT_COMBINE_TOKENS(A, B) A ## B
+#define OT_ENABLE_WHEN_AVAILABLE(V, A) \
+  OT_COMBINE_TOKENS(OT_ENABLE_WHEN_AVAILABLE_, V)(A)
+
+#define OT_VERSIONED_OBJECT_DEF_BEGIN(TYPE, RET, NAME) \
+  TYPE NAME() { \
+    TYPE OT_DEFAULT_RETURN_VALUE = RET; \
+    typedef TYPE OT_VERSIONED_OBJECT_TYPE();
+
+#define OT_VERSIONED_OBJECT_DEF_BEGIN1(TYPE, RET, NAME, ARG1) \
+  TYPE NAME(ARG1) { \
+    TYPE OT_DEFAULT_RETURN_VALUE = RET; \
+    typedef TYPE OT_VERSIONED_OBJECT_TYPE(ARG1);
+
+#define OT_VERSIONED_OBJECT_DEF_BEGIN2(TYPE, RET, NAME, ARG1, ARG2) \
+  TYPE NAME(ARG1, ARG2) { \
+    TYPE OT_DEFAULT_RETURN_VALUE = RET; \
+    typedef TYPE OT_VERSIONED_OBJECT_TYPE(ARG1, ARG2);
+
+#define OT_VERSIONED_OBJECT_CONS(VER, FUN) \
+  OT_ENABLE_WHEN_AVAILABLE(VER, OT_VERSIONED_OBJECT_TYPE FUN;\
+                           if (OT_CheckPlatformVersion(\
+                               OT_COMBINE_TOKENS(OT_VERSION_TO_STR_, VER))) \
+                             return FUN();)
+
+#define OT_VERSIONED_OBJECT_CONS1(VER, FUN, ARG1) \
+  OT_ENABLE_WHEN_AVAILABLE(VER, OT_VERSIONED_OBJECT_TYPE FUN;\
+                           if (OT_CheckPlatformVersion(\
+                               OT_COMBINE_TOKENS(OT_VERSION_TO_STR_, VER))) \
+                             return FUN(ARG1);)
+
+#define OT_VERSIONED_OBJECT_CONS2(VER, FUN, ARG1, ARG2) \
+  OT_ENABLE_WHEN_AVAILABLE(VER, OT_VERSIONED_OBJECT_TYPE FUN;\
+                           if (OT_CheckPlatformVersion(\
+                               OT_COMBINE_TOKENS(OT_VERSION_TO_STR_, VER))) \
+                             return FUN(ARG1, ARG2);)
+
+#define OT_VERSIONED_OBJECT_DEF_END return OT_DEFAULT_RETURN_VALUE; }
+
+PRBool OT_CheckPlatformVersion(const char*);
+
+#endif

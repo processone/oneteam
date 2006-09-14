@@ -1,4 +1,4 @@
-DEPTH=../..
+DEPTH=../../../../..
 topsrcdir=@top_srcdir@
 objdir=@objdir@
 srcdir=.
@@ -7,29 +7,33 @@ otdir=@otdir@
 
 include $(otdir)/config.mk
 
-ifdef OT_HAS_IDLE_UNIX
+ifdef OT_HAS_SYSTRAY_UNIX
 	OT_EXTRA_SRCS += \
-		otIdleBase.cpp \
-		otIdleUnix.cpp \
-		$(NULL)
+	    otSystrayGtk2.cpp \
+	    $(NULL)
 endif
 
-ifdef OT_HAS_IDLE_WIN
+ifdef OT_HAS_SYSTRAY_WIN
 	OT_EXTRA_SRCS += \
-		otIdleBase.cpp \
-		otIdleWin.cpp \
-	    	$(NULL)
+	    otSystrayWin.cpp \
+	    $(NULL)
 endif
 
 NO_DIST_INSTALL=1
 MODULE=onetalk
-LIBRARY_NAME=ot_idle_s
+LIBRARY_NAME=ot_systray_s
 REQUIRES= \
 	xpcom \
+	dom \
+	imglib2 \
+	gfx \
+	content \
+	layout \
 	$(OT_EXTRA_REQS) \
 	$(NULL)
 
 CPPSRCS= \
+	otSystrayBase.cpp \
 	$(OT_EXTRA_SRCS) \
 	$(NULL)
 
@@ -37,3 +41,7 @@ FORCE_STATIC_LIB = 1
 
 include $(otdir)/rules.mk
 
+INCLUDES+= \
+	-I$(otdir)/src/multiversion \
+	-I$(otdir)/src/systray \
+	$(NULL)

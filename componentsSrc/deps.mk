@@ -1,14 +1,19 @@
 ifeq "$(MOZ_WIDGET_TOOLKIT)" "gtk2"
-	OS_CXXFLAGS += -DOT_HAS_IDLE -DOT_HAS_IDLE_UNIX
-	OT_EXTRA_SHARED_LIBS += $(otdir)/src/idle/$(LIB_PREFIX)ot_idle_s.$(LIB_SUFFIX)
-	OT_EXTRA_SHARED_OS_LIBS += -lX11 -lXss
-	OT_HAS_IDLE=1
 	OT_HAS_IDLE_UNIX=1
+	OT_HAS_SYSTRAY_UNIX=1
+	OS_CXXFLAGS += -DOT_HAS_IDLE_UNIX -DOT_HAS_SYSTRAY_UNIX
+	OT_EXTRA_SHARED_REQS += imglib2 gfx
+	OT_EXTRA_SHARED_OS_LIBS += -lX11 -lXss
+	OT_EXTRA_SHARED_LIBS += \
+		$(otdir)/src/idle/$(LIB_PREFIX)ot_idle_s.$(LIB_SUFFIX) \
+		$(otdir)/src/systray/$(LIB_PREFIX)ot_systray_s.$(LIB_SUFFIX)
 endif
 
 ifeq "$(MOZ_WIDGET_TOOLKIT)" "windows"
-	OS_CXXFLAGS += -DOT_HAS_IDLE -DOT_HAS_IDLE_WIN
-	OT_EXTRA_SHARED_LIBS += $(otdir)//src/idle/$(LIB_PREFIX)ot_idle_s.$(LIB_SUFFIX)
-	OT_HAS_IDLE=1
 	OT_HAS_IDLE_WIN=1
+	OT_HAS_SYSTRAY_WIN=1
+	OS_CXXFLAGS += -DOT_HAS_IDLE_WIN -DOT_HAS_SYSTRAY_WIN
+	OT_EXTRA_SHARED_LIBS += \
+		$(otdir)/src/idle/$(LIB_PREFIX)ot_idle_s.$(LIB_SUFFIX) \
+		$(otdir)/src/systray/$(LIB_PREFIX)ot_systray_s.$(LIB_SUFFIX)
 endif

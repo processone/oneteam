@@ -9,6 +9,8 @@ include $(otdir)/config.mk
 
 DIRS = \
 	idle \
+	multiversion \
+	systray \
 	$(OT_EXTRA_DIRS) \
 	$(NULL)
 

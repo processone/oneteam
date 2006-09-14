@@ -10,7 +10,9 @@ include $(otdir)/config.mk
 MODULE=oneteam
 XPIDL_MODULE=oneteam
 
-XPIDLSRCS = otIIdle.idl \
+XPIDLSRCS = \
+	otIIdle.idl \
+	otISystray.idl \
 	$(OT_EXTRA_SRCS) \
 	$(NULL)
 

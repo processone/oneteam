@@ -1,0 +1,31 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(fb27dd34-99d2-4051-abc7-e633d9254a21)]
+interface otISystrayListener : nsISupports
+{
+    void onClick(in long x, in long y);
+    void onPopup(in long x, in long y);
+};
+
+[scriptable, uuid(f6536e27-b4e0-4b1b-a604-589da025b2c4)]
+interface otISystray : nsISupports
+{
+    void init(in otISystrayListener listener);
+    void show(in nsISupports icon);
+    void hide();
+};
+
+%{C++
+
+#define OT_SYSTRAY_CONTRACTID "@onetalk/systray;1"
+
+#define OT_SYSTRAY_CID \
+{ /* b9e86108-eece-4309-8465-4421d13343f6 */ \
+  0xb9e86108, \
+  0xeece, \
+  0x4309, \
+  {0x84, 0x65, 0x44, 0x21, 0xd1, 0x33, 0x43, 0xf6 } \
+}
+
+%}
+
