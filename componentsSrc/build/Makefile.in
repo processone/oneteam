@@ -1,0 +1,60 @@
+DEPTH=..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+
+include $(otdir)/config.mk
+
+MODULE = oneteam
+LIBRARY_NAME = oneteam
+#NO_DIST_INSTALL=1
+FORCE_SHARED_LIB=1
+
+REQUIRES= \
+	xpcom \
+	string \
+	pipnss \
+	dom \
+	necko \
+	expat \
+	content \
+	htmlparser \
+	xulapp \
+	caps \
+	$(OT_EXTRA_SHARED_REQS) \
+	$(NULL)
+
+IS_COMPONENT = 1
+
+CPPSRCS = \
+	otModule.cpp \
+	$(NULL)
+
+LOCAL_INCLUDES = \
+	-I$(otdir)/src/idle \
+	$(NULL)
+
+SHARED_LIBRARY_LIBS += \
+	$(OT_EXTRA_SHARED_LIBS) \
+	$(NULL)
+
+OS_LIBS += $(OT_EXTRA_SHARED_OS_LIBS)
+
+ifdef GNU_LD
+	EXTRA_DSO_LDOPTS += \
+	    -x --gc-sections --no-undefined -Wl,--as-needed -Wl,-Os \
+	    $(NULL)
+endif
+
+EXTRA_DSO_LDOPTS += \
+	$(XPCOM_GLUE_LDOPTS) \
+	$(XPCOM_FROZEN_LDOPTS) \
+	$(LIBS_DIR) \
+	$(EXTRA_DSO_LIBS) \
+	$(MOZ_COMPONENT_LIBS) \
+	$(OT_EXTRA_DYN_LIBS) \
+	$(NULL)
+
+include $(otdir)/rules.mk

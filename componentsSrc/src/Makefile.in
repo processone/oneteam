@@ -1,0 +1,16 @@
+DEPTH=..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+
+include $(otdir)/config.mk
+
+DIRS = \
+	idle \
+	$(OT_EXTRA_DIRS) \
+	$(NULL)
+
+include $(otdir)/rules.mk
+

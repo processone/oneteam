@@ -1,0 +1,17 @@
+DEPTH=../../../..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+
+include $(otdir)/config.mk
+
+MODULE=oneteam
+XPIDL_MODULE=oneteam
+
+XPIDLSRCS = otIIdle.idl \
+	$(OT_EXTRA_SRCS) \
+	$(NULL)
+
+include $(otdir)/rules.mk

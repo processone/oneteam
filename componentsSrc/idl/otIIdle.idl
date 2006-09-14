@@ -1,0 +1,33 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(fbf58533-8472-4e2c-b094-df8d23a83fb5)]
+interface otIIdleCallback : nsISupports
+{
+  void onScreenLock();
+  void onIdleTimeout(in unsigned long timeout);
+  void onUserActive();
+};
+
+[scriptable, uuid(4c62a247-b3d6-4c21-9718-d19e56f677b5)]
+interface otIIdleService : nsISupports
+{
+  attribute boolean enabled;
+
+  void init(in otIIdleCallback callback);
+  void setIdleTimeouts([array,size_is(count)] in unsigned long timeouts,
+                       in unsigned long count);
+};
+
+%{C++
+
+#define OT_IDLE_CONTRACTID "@process-one.net/idle;1"
+
+#define OT_IDLE_CID \
+{ /* 46963438-fa03-41df-85cd-10fca37ec07b */ \
+  0x46963438, \
+  0xfa03, \
+  0x41df, \
+  {0x85, 0xcd, 0x10, 0xfc, 0xa3, 0x7e, 0xc0, 0x7b } \
+}
+
+%}
