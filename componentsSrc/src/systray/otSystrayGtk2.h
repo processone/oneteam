@@ -2,8 +2,7 @@
 #define _otSYSTRAYGTK2_H_
 
 #include "otSystrayBase.h"
-
-struct ot_systray_info_t;
+#include <gtk/gtk.h>
 
 class otSystrayGtk2 : public otSystrayBase
 {
@@ -17,14 +16,19 @@ public:
 private:
   ~otSystrayGtk2();
 protected:
-  ot_systray_info_t *mTrayInfo;
-
-  static PRBool OnClick(otSystrayGtk2 *obj, PRInt32 button,
-                        PRInt32 x, PRInt32 y);
+  static PRBool OnClick(otSystrayGtk2 *obj, GdkEvent *ev);
+  static void OnReailze(otSystrayGtk2 *obj);
   nsresult ProcessImageData(PRInt32 width, PRInt32 height,
                             PRUint8 *rgbData, PRUint32 rgbStride,
                             PRUint32 rgbLen, PRUint8 *alphaData,
                             PRUint32 alphaStride, PRUint32 alphaBits);
+
+  GtkWidget *mPlug;
+  GtkWidget *mIcon;
+  GtkTooltips *mTooltips;
+
+  GdkAtom mAtomTrayId;
+  GdkAtom mAtomOpcode;
 };
 
 #endif

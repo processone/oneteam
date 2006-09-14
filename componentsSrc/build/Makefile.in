@@ -34,6 +34,8 @@ CPPSRCS = \
 
 LOCAL_INCLUDES = \
 	-I$(otdir)/src/idle \
+	-I$(otdir)/src/systray \
+	-I$(otdir)/src/multiversion \
 	$(NULL)
 
 SHARED_LIBRARY_LIBS += \
