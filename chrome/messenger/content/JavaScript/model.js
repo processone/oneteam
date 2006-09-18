@@ -29,7 +29,7 @@ _DECL_(Model).prototype =
     }
 }
 
-function Roster()
+function Account()
 {
     this.groups = {}
     this.allGroups = {}
@@ -43,7 +43,7 @@ function Roster()
     new Group("", "Contacts", true);
 }
 
-_DECL_(Roster, null, Model).prototype =
+_DECL_(Account, null, Model).prototype =
 {
     groupsIterator: function(predicate)
     {
@@ -87,7 +87,7 @@ function Group(name, visibleName, builtinGroup)
     this.availContacts = 0;
     this.builtinGroup = builtinGroup;
 
-    roster.allGroups[name] = this;
+    account.allGroups[name] = this;
 
     WALK.asceding.init(this);
 }
@@ -135,7 +135,7 @@ _DECL_(Group, null, Model).prototype =
         } else
             this.modelUpdated("contacts");
         if (this.contacts.length == 1)
-            roster._onGroupAdded(this);
+            account._onGroupAdded(this);
     },
 
     _onContactRemoved: function(contact)
@@ -147,9 +147,9 @@ _DECL_(Group, null, Model).prototype =
             this.modelUpdated("contacts");
 
         if (this.contacts.length == 0) {
-            roster._onGroupAdded(this);
+            account._onGroupAdded(this);
             if (!this.builtinGroup)
-                delete roster.allGroups[this.name];
+                delete account.allGroups[this.name];
         }
     },
 }
@@ -167,19 +167,19 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.subscription = subscription || "none";
         this.subscriptionAsk = !!subscriptionAsk;
 
-        groups = groups || [roster.allGroups[""]];
+        groups = groups || [account.allGroups[""]];
         this.groups = [];
         for (var i = 0; i < groups.length; i++) {
             var group = typeof(groups[i]) == "string" ?
-                roster.getOrCreateGroup(groups[i]) : groups[i];
+                account.getOrCreateGroup(groups[i]) : groups[i];
             this.groups.push(group);
             group._onContactAdded(this);
         }
 
         this.newItem = false;
-        roster.contacts[jid] = this;
+        account.contacts[jid] = this;
     }
-    roster.allContacts[jid] = this;
+    account.allContacts[jid] = this;
 
     WALK.asceding.init(this);
 }
@@ -366,9 +366,9 @@ _DECL_(Contact, null, Model).prototype =
 function Resource(jid)
 {
     this.jid = jid;
-    this.contact = roster.contacts[jid.replace(/\/.*/, "")];
+    this.contact = account.contacts[jid.replace(/\/.*/, "")];
 
-    roster.resources[jid] = this;
+    account.resources[jid] = this;
 
     WALK.asceding.init(this);
 
@@ -399,5 +399,5 @@ _DECL_(Resource, null, Model).prototype =
     },
 }
 
-var roster = new Roster();
+var account = new Account();
 
