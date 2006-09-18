@@ -41,21 +41,55 @@ function Account()
 
     // XXX use string bundle
     new Group("", "Contacts", true);
+
+    this.userPresence = this.currentPresence = {type: "unavailable"};
 }
 
 _DECL_(Account, null, Model).prototype =
 {
-    groupsIterator: function(predicate)
+    setPresence: function(type, status, profile, userSet)
+    {
+        var newPresence = {type: type, status: status, profile: profile};
+        var presence;
+
+        if (!profile) {
+            var presence = new JSJaCPresence();
+            if (type)
+                presence.setType(type);
+            if (status)
+                presence.setStatus(status);
+
+            con.send(presence);
+            this.currentPresence = newPresence;
+            if (userSet)
+                this.userPresence = newPresence;
+
+            return;
+        }
+
+        for (var c in this.contactsIterator())
+            if (presence = profile.getPresenceFor(c)) {
+                if (profile != this.currentPresence.profile)
+                    c._sendPresence(presence.type, presence.status);
+            } else
+                c._sendPresence(type, status);
+
+        this.currentPresence = newPresence;
+        if (userSet)
+            this.userPresence = newPresence;
+    },
+
+    groupsIterator: function(predicate, token)
     {
         for (var i = 0; i < this.groups.length; i++)
-            if (!predicate || predicate(this.groups[i]))
+            if (!predicate || predicate(this.groups[i], token))
                 yield groups[i];
     },
 
-    contactsIterator: function(predicate)
+    contactsIterator: function(predicate, token)
     {
         for (var i = 0; i < this.contacts.length; i++)
-            if (!predicate || predicate(this.copntacts[i]))
+            if (!predicate || predicate(this.copntacts[i], token))
                 yield contacts[i];
     },
 
@@ -228,17 +262,17 @@ _DECL_(Contact, null, Model).prototype =
         con.send(presence);
     },
 
-    groupsIterator: function(predicate)
+    groupsIterator: function(predicate, token)
     {
         for (var i = 0; i < this.groups.length; i++)
-            if (!predicate || predicate(this.groups[i]))
+            if (!predicate || predicate(this.groups[i], token))
                 yield groups[i];
     },
 
-    resourcesIterator: function(predicate)
+    resourcesIterator: function(predicate, token)
     {
         for (var i = 0; i < this.resources.length; i++)
-            if (!predicate || predicate(this.resources[i]))
+            if (!predicate || predicate(this.resources[i], token))
                 yield this.resources[i];
     },
 
