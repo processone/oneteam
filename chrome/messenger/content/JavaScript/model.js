@@ -45,6 +45,20 @@ function Roster()
 
 _DECL_(Roster, null, Model).prototype =
 {
+    groupsIterator: function(predicate)
+    {
+        for (var i = 0; i < this.groups.length; i++)
+            if (!predicate || predicate(this.groups[i]))
+                yield groups[i];
+    },
+
+    contactsIterator: function(predicate)
+    {
+        for (var i = 0; i < this.contacts.length; i++)
+            if (!predicate || predicate(this.copntacts[i]))
+                yield contacts[i];
+    },
+
     _onGroupAdded: function(group)
     {
         this.groups.push(group);
@@ -85,12 +99,6 @@ _DECL_(Group, null, Model).prototype =
         for (var i = 0; i < this.contacts.length; i++)
             if (!predicate || predicate(this.contacts[i]))
                 yield this.contacts[i];
-    },
-
-    forEachContact: function(fun, token, predicate)
-    {
-        for (var c in this.contactsIterator(predicate))
-            fun(c, token);
     },
 
     onRename: function(externalDialog)
@@ -227,23 +235,11 @@ _DECL_(Contact, null, Model).prototype =
                 yield groups[i];
     },
 
-    forEachGroup: function(fun, token, predicate)
-    {
-        for (var g in this.groupsIterator(predicate))
-            fun(g, token);
-    },
-
     resourcesIterator: function(predicate)
     {
         for (var i = 0; i < this.resources.length; i++)
             if (!predicate || predicate(this.resources[i]))
                 yield this.resources[i];
-    },
-
-    forEachResource: function(fun, token, predicate)
-    {
-        for (var r in this.resourcesIterator(predicate))
-            fun(r, token);
     },
 
     getVCard: function(callback, token, forceUpdate)
