@@ -210,6 +210,20 @@ var WALK = {}
 WALK.asceding = {
     __noSuchMethod__: function(name, args)
     {
+        var realArgs = Array.slice(args, 1);
         var chain = getInheritanceChain(args[0], name);
+        for (var i = 0; i < chain.length; i++)
+            args[0][name].apply(args[0], realArgs);
     }
 }
+
+WALK.desceding = {
+    __noSuchMethod__: function(name, args)
+    {
+        var realArgs = Array.slice(args, 1);
+        var chain = getInheritanceChain(args[0], name);
+        for (var i = chain.length-1; i >= 0; i--)
+            args[0][name].apply(args[0], realArgs);
+    }
+}
+
