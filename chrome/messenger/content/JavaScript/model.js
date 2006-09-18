@@ -220,6 +220,19 @@ _DECL_(Contact, null, Model).prototype =
         con.send(presence);
     },
 
+    groupsIterator: function(predicate)
+    {
+        for (var i = 0; i < this.groups.length; i++)
+            if (!predicate || predicate(this.groups[i]))
+                yield groups[i];
+    },
+
+    forEachGroup: function(fun, token, predicate)
+    {
+        for (var g in this.groupsIterator(predicate))
+            fun(g, token);
+    },
+
     resourcesIterator: function(predicate)
     {
         for (var i = 0; i < this.resources.length; i++)
@@ -302,7 +315,56 @@ _DECL_(Contact, null, Model).prototype =
 
     onStanza: function(stanza)
     {
-    }
+    },
+
+    _onResourceUpdated: function(resource, dontNotifyViews)
+    {
+        var res = this.resources[0];
+
+        for (var r in this.resourcesIterator())
+            if (r.priority > res.priority)
+                res = r;
+
+        if (res != this.activeResource) {
+            this.activeResource = res;
+            if (!dontNotifyViews)
+                this.modelUpdated("activeResource");
+            return true;;
+        }
+
+        return false;
+    },
+
+    _onResourceAdded: function(resource)
+    {
+        var notifyGroups = !this.activeResource;
+
+        this.resources.push(resource);
+        if (!this.activeResource || this.activeResource.priority < resource.priority) {
+            this.activeResource = resource;
+            this.modelUpdated("resources", "activeResource");
+        } else
+            this.modelUpdated("resources");
+        if (notifyGroups)
+            for (var g in this.groupsIterator())
+                g._onContactUpdated(this);
+    },
+
+    _onResourceRemoved: function(resource)
+    {
+        this.resources.splice(this.resources.indexOf(resource), 1);
+        if (!this.resources.length) {
+            this.activeResource = null;
+            this.modelUpdated("resources", "activeResource");
+            for (var g in this.groupsIterator())
+                g._onContactUpdated(this);
+            return;
+        }
+        if (this.activeResource == resource && this._onResourceUpdated(resource, true))
+            this.modelUpdated("resources", "activeResource");
+        else
+            this.modelUpdated("resources");
+    },
 }
 
 function Resource(jid)
@@ -313,6 +375,8 @@ function Resource(jid)
     roster.resources[jid] = this;
 
     WALK.asceding.init(this);
+
+    this.contact._onResourceAdded(this);
 }
 
 _DECL_(Resource, null, Model).prototype =
