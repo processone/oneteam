@@ -29,6 +29,21 @@ _DECL_(Model).prototype =
     }
 }
 
+function PresenceProfile()
+{
+}
+
+_DECL_(PresenceProfile).prototype =
+{
+    getPresenceFor: function(contact)
+    {
+    },
+
+    getNotificationSchemeFor: function(contact)
+    {
+    }
+}
+
 function Account()
 {
     this.groups = {}
@@ -36,13 +51,13 @@ function Account()
     this.contacts = {};
     this.allContacts = {};
     this.resources = {};
+    this._presenceObservers = [];
+    this.userPresence = this.currentPresence = {type: "unavailable"};
 
     WALK.asceding.init(this);
 
     // XXX use string bundle
     new Group("", "Contacts", true);
-
-    this.userPresence = this.currentPresence = {type: "unavailable"};
 }
 
 _DECL_(Account, null, Model).prototype =
@@ -59,6 +74,9 @@ _DECL_(Account, null, Model).prototype =
             if (status)
                 presence.setStatus(status);
 
+            for (var i = 0; i < this._presenceObservers; i++)
+                this._presenceObservers[i]._sendPresence(type, status);
+
             con.send(presence);
             this.currentPresence = newPresence;
             if (userSet)
@@ -73,6 +91,14 @@ _DECL_(Account, null, Model).prototype =
                     c._sendPresence(presence.type, presence.status);
             } else
                 c._sendPresence(type, status);
+
+        for (var i = 0; i < this._presenceObservers; i++)
+            if (presence = profile.getPresenceFor(this._presenceObservers[i])) {
+                if (profile != this.currentPresence.profile)
+                    this._presenceObservers[i]._sendPresence(presence.type,
+                                                             presence.status);
+            } else
+                this._presenceObservers[i]._sendPresence(type, status);
 
         this.currentPresence = newPresence;
         if (userSet)
