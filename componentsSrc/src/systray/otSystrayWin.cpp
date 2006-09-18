@@ -1,14 +1,4 @@
-#define nsIFrame_h___
-class nsIFrame;
-
 #include "otSystrayWin.h"
-#include "gfxIImageFrame.h"
-#include "imgIContainer.h"
-#include "imgIRequest.h"
-#include "nsIImage.h"
-#include "nsIImageLoadingContent.h"
-#include "nsIInterfaceRequestorUtils.h"
-
 #include <shellapi.h>
 
 #define OT_TRAYMSG      (WM_USER + 0x100)
@@ -21,8 +11,7 @@ ATOM otSystrayWin::myWinClass = 0;
 HWND otSystrayWin::myHWND = 0;
 otSystrayWin *otSystrayWin::systrays[] = {0};
 
-NS_IMPL_ISUPPORTS3(otSystrayWin, otISystray, imgIDecoderObserver,
-                   imgIContainerObserver)
+NS_IMPL_ISUPPORTS1(otSystrayWin, otISystray)
 
 otSystrayWin::otSystrayWin() : mNid(0)
 {

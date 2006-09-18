@@ -5,8 +5,7 @@
 #include <X11/Xutil.h>
 #include <X11/Xmd.h>
 
-NS_IMPL_ISUPPORTS3(otSystrayGtk2, otISystray, imgIDecoderObserver,
-                   imgIContainerObserver)
+NS_IMPL_ISUPPORTS1(otSystrayGtk2, otISystray)
 
 otSystrayGtk2::otSystrayGtk2() : mPlug(0), mIcon(0), mTooltips(0)
 {
