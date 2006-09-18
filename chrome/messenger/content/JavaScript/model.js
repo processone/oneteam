@@ -1,4 +1,33 @@
-var roster;
+function Model()
+{
+}
+
+_DECL_(Model).prototype =
+{
+    init: function()
+    {
+        this._views = [];
+    },
+
+    registerView: function(view)
+    {
+        this._views.push(view)
+    },
+
+    unregisterView: function(view)
+    {
+        this._views.splice(this._views.indexOf(view), 1);
+    },
+
+    modelUpdated: function()
+    {
+        var args = [this];
+        args.push.apply(args, arguments);
+
+        for (var i = 0; i < this._views.length; i++)
+            this._views[i].onModelUpdated.apply(this._views[i], args);
+    }
+}
 
 function Roster()
 {
@@ -310,5 +339,5 @@ _DECL_(Resource, null, Model).prototype =
     },
 }
 
-roster = new Roster();
+var roster = new Roster();
 
