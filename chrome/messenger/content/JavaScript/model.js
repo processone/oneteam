@@ -44,6 +44,101 @@ _DECL_(PresenceProfile).prototype =
     }
 }
 
+/**
+ * Class which encapsulate Jabber ID.
+ *
+ * @ctor
+ *
+ * Create new JID object.
+ *
+ * This constructor needs a node, domain and optional resource
+ * argument. Alternatively you can pass just one argument with jid in
+ * standard string format ("node@domain/resource").
+ *
+ * @tparam String node Node part of jid, or string with whole jid.
+ * @tparam String domain Domain part of jid.
+ * @tparam String resource Resource part of jid. <em>(optional)</em>
+ */
+function JID(node, domain, resource)
+{
+    if (arguments.length == 1) {
+        if (node instanceof JID)
+            return node;
+        if (this._cache[node])
+            return this._cache[node];
+
+        var atIdx = node.indexOf("@");
+        var slashIdx = ~(~node.indexOf("/", atIdx) || ~node.length);
+
+        [node, domain, resource] = [node.substring(0, atIdx),
+            node.substring(atIdx, slashIdx), node.substring(slashIdx)];
+    }
+    this.shortJID = (node ? node+"@" : "") + domain;
+    this.longJID = domain + (resource ? "/"+resource : "");
+
+    if (this._cache[this.longJID])
+        return this._cache[this.longJID];
+
+    this.node = node || null;
+    this.domain = domain;
+    this.resource = resource || null;
+    this._cache[this.longJID] = this;
+}
+
+JID.prototype =
+{
+    _cache: {},
+    /**
+     * Node part of jid.
+     * @type String
+     * @public
+     */
+    node: null,
+
+    /**
+     * Domain part of jid.
+     * @type String
+     * @public
+     */
+    domain: null,
+
+    /**
+     * Resource part of jid.
+     * @type String
+     * @public
+     */
+    resource: null,
+
+    /**
+     * Convert JID to string.
+     * @tparam String type If equals to \c "short" string format string
+     *   is returned i.e without resource part.
+     * @treturn String JID in string format. <em>(optional)</em>
+     * @public
+     */
+    toString: function(type)
+    {
+        if (type == "short")
+            return this.shortJID;
+        return this.longJID;
+    },
+
+    /**
+     * Returns JID object generated from this jid short form.
+     *
+     * @treturn  JID  Object generated from this jid short form or this
+     *   object if it is is short form already.
+     *
+     * @public
+     */
+    getShortJID: function()
+    {
+        if (!this.resource)
+            return this;
+        return new JID(this.node, this.domain);
+    }
+}
+
 function Account()
 {
     this.groups = {}
@@ -62,9 +157,15 @@ function Account()
 
 _DECL_(Account, null, Model).prototype =
 {
-    setPresence: function(type, status, profile, userSet)
+    bumpPriority: true,
+
+    setPresence: function(type, status, priority, profile, userSet)
     {
-        var newPresence = {type: type, status: status, profile: profile};
+        if (priority == null)
+            priority = prefSrv.getIntPref("chat.connection.priority");
+
+        var newPresence = {type: type, status: status, priority: priority,
+            profile: profile};
         var presence;
 
         if (!profile) {
@@ -73,9 +174,10 @@ _DECL_(Account, null, Model).prototype =
                 presence.setType(type);
             if (status)
                 presence.setStatus(status);
+            presence.setPriority(priority);
 
             for (var i = 0; i < this._presenceObservers; i++)
-                this._presenceObservers[i]._sendPresence(type, status);
+                this._presenceObservers[i]._sendPresence(type, status, priority);
 
             con.send(presence);
             this.currentPresence = newPresence;
@@ -88,17 +190,18 @@ _DECL_(Account, null, Model).prototype =
         for (var c in this.contactsIterator())
             if (presence = profile.getPresenceFor(c)) {
                 if (profile != this.currentPresence.profile)
-                    c._sendPresence(presence.type, presence.status);
+                    c._sendPresence(presence.type, presence.status, presence.priority);
             } else
-                c._sendPresence(type, status);
+                c._sendPresence(type, status, priority);
 
         for (var i = 0; i < this._presenceObservers; i++)
             if (presence = profile.getPresenceFor(this._presenceObservers[i])) {
                 if (profile != this.currentPresence.profile)
                     this._presenceObservers[i]._sendPresence(presence.type,
-                                                             presence.status);
+                                                             presence.status,
+                                                             presence.priority);
             } else
-                this._presenceObservers[i]._sendPresence(type, status);
+                this._presenceObservers[i]._sendPresence(type, status, priority);
 
         this.currentPresence = newPresence;
         if (userSet)
@@ -136,13 +239,70 @@ _DECL_(Account, null, Model).prototype =
         if (this.allGroups[name])
             return this.allGroups[name];
         return new Group(name);
-    }
+    },
+
+    getOrCreateContact: function(jid, name, groups)
+    {
+        if (this.allContacts[jid])
+            return this.allContacts[jid];
+        return new Contacts(jid, name, groups, null, null, true);
+    },
+
+    getOrCreateResource: function(jid)
+    {
+        if (this.resources[jid])
+            return this.resources[jid];
+
+        jid = new JID(jid);
+        if (!this.allContacts[jid.shortJID])
+            return null;
+
+        return this.allContacts[jid.shortJID].createResource(jid);
+    },
+
+    onPresence: function(packet)
+    {
+        // XXX: Shouldn't this show somehow show this in roster, instead in new window?
+        var errorTag = packet.getNode().getElementsByTagName('error');
+        if (errorTag) {
+            var text = errorTag.getElementsByTagName('text');
+            if (text)
+                window.openDialog("chrome://messenger/content/error.xul", "_blank",
+                                  "chrome,modal", text.textContent);
+            return;
+        }
+        var sender = packet.getFrom();
+
+        if (myjid.match(sender)) {
+            if (this.bumpPriority) {
+                var tag = packet.getNode().getElementsByTagName('priority');
+
+                if (+tag[0].textContent > this.currentPresence.priority)
+                    window.openDialog("chrome://messenger/content/changePriority.xul", "_blank",
+                                      "chrome,centerscreen", this);
+            }
+            return;
+        }
+
+        //Handle subscription requests
+        if (packet.getType() == 'subscribe') {
+            window.openDialog("chrome://messenger/content/subscribe.xul", "_blank",
+                              "chrome,centerscreen,resizable", this.getOrCreateContact(sender),
+                              packet.getStatus());
+            return;
+        }
+
+        // Delegate rest to respective handlers
+        var resource = this.getOrCreateResource(jid);
+        if (resource)
+            resource.onPresence(packet);
+    },
 }
 
 function Group(name, visibleName, builtinGroup)
 {
     this.name = name;
-    this.visibleName = name || visibleName || "XXXunnamed";
+    this.visibleName = visibleName || name || "XXXunnamed";
     this.contacts = [];
     this.availContacts = 0;
     this.builtinGroup = builtinGroup;
@@ -216,7 +376,7 @@ _DECL_(Group, null, Model).prototype =
 
 function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 {
-    this.jid = jid;
+    this.jid = new JID(jid);
     this.resources = [];
     if (newItem) {
         this._name = name;
@@ -276,7 +436,7 @@ _DECL_(Contact, null, Model).prototype =
         con.send(iq);
     },
 
-    _sendPresence: function(type, status)
+    _sendPresence: function(type, status, priority)
     {
         var presence = new JSJaCPresence();
         presence.setTo(jid);
@@ -284,6 +444,8 @@ _DECL_(Contact, null, Model).prototype =
             presence.setType(type);
         if (status)
             presence.setStatus(status);
+        if (priority != null)
+            presence.setPriority(priority);
 
         con.send(presence);
     },
@@ -369,8 +531,17 @@ _DECL_(Contact, null, Model).prototype =
         this._updateRoster();
     },
 
+    onShowChatWindow: function()
+    {
+    },
+
     onStanza: function(stanza)
     {
+    },
+
+    createResource: function(jid)
+    {
+        return new Resource(jid);
     },
 
     _onResourceUpdated: function(resource, dontNotifyViews)
@@ -425,7 +596,7 @@ _DECL_(Contact, null, Model).prototype =
 
 function Resource(jid)
 {
-    this.jid = jid;
+    this.jid = new JID(jid);
     this.contact = account.contacts[jid.replace(/\/.*/, "")];
 
     account.resources[jid] = this;
@@ -437,7 +608,7 @@ function Resource(jid)
 
 _DECL_(Resource, null, Model).prototype =
 {
-    onStanza: function(stanza)
+    onPresence: function(packet)
     {
     },
 
