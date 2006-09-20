@@ -95,8 +95,11 @@ _DECL_(PersistantCache).prototype =
             return null;
         }
 
-        if (this.getInt32(1) && !asFile)
-            return slurpFile(this.getStmt.getString(0));
+        if (this.getInt32(1)) {
+            if (!asFile)
+                return slurpFile(this.getStmt.getString(0));
+        } else if (asFile)
+            throw new GenericError("Unable to return data as file path");
 
         return this.getStmt.getString(0);
     },
