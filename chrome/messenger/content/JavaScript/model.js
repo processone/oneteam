@@ -1,144 +1,3 @@
-function Model()
-{
-}
-
-_DECL_(Model).prototype =
-{
-    init: function()
-    {
-        this._views = [];
-    },
-
-    registerView: function(view)
-    {
-        this._views.push(view)
-    },
-
-    unregisterView: function(view)
-    {
-        this._views.splice(this._views.indexOf(view), 1);
-    },
-
-    modelUpdated: function()
-    {
-        var args = [this];
-        args.push.apply(args, arguments);
-
-        for (var i = 0; i < this._views.length; i++)
-            this._views[i].onModelUpdated.apply(this._views[i], args);
-    }
-}
-
-function PresenceProfile()
-{
-}
-
-_DECL_(PresenceProfile).prototype =
-{
-    getPresenceFor: function(contact)
-    {
-    },
-
-    getNotificationSchemeFor: function(contact)
-    {
-    }
-}
-
-/**
- * Class which encapsulate Jabber ID.
- *
- * @ctor
- *
- * Create new JID object.
- *
- * This constructor needs a node, domain and optional resource
- * argument. Alternatively you can pass just one argument with jid in
- * standard string format ("node@domain/resource").
- *
- * @tparam String node Node part of jid, or string with whole jid.
- * @tparam String domain Domain part of jid.
- * @tparam String resource Resource part of jid. <em>(optional)</em>
- */
-function JID(node, domain, resource)
-{
-    if (arguments.length == 1) {
-        if (node instanceof JID)
-            return node;
-        if (this._cache[node])
-            return this._cache[node];
-
-        var atIdx = node.indexOf("@");
-        var slashIdx = ~(~node.indexOf("/", atIdx) || ~node.length);
-
-        [node, domain, resource] = [node.substring(0, atIdx),
-            node.substring(atIdx, slashIdx), node.substring(slashIdx)];
-    }
-    this.shortJID = (node ? node+"@" : "") + domain;
-    this.longJID = domain + (resource ? "/"+resource : "");
-
-    if (this._cache[this.longJID])
-        return this._cache[this.longJID];
-
-    this.node = node || null;
-    this.domain = domain;
-    this.resource = resource || null;
-    this._cache[this.longJID] = this;
-}
-
-JID.prototype =
-{
-    _cache: {},
-    /**
-     * Node part of jid.
-     * @type String
-     * @public
-     */
-    node: null,
-
-    /**
-     * Domain part of jid.
-     * @type String
-     * @public
-     */
-    domain: null,
-
-    /**
-     * Resource part of jid.
-     * @type String
-     * @public
-     */
-    resource: null,
-
-    /**
-     * Convert JID to string.
-     * @tparam String type If equals to \c "short" string format string
-     *   is returned i.e without resource part.
-     * @treturn String JID in string format. <em>(optional)</em>
-     * @public
-     */
-    toString: function(type)
-    {
-        if (type == "short")
-            return this.shortJID;
-        return this.longJID;
-    },
-
-    /**
-     * Returns JID object generated from this jid short form.
-     *
-     * @treturn  JID  Object generated from this jid short form or this
-     *   object if it is is short form already.
-     *
-     * @public
-     */
-    getShortJID: function()
-    {
-        if (!this.resource)
-            return this;
-        return new JID(this.node, this.domain);
-    }
-}
-
 function Account()
 {
     this.groups = {}
@@ -285,16 +144,22 @@ _DECL_(Account, null, Model).prototype =
         }
 
         //Handle subscription requests
-        if (packet.getType() == 'subscribe') {
+        switch (packet.getType()) {
+        case "subscribe": 
             window.openDialog("chrome://messenger/content/subscribe.xul", "_blank",
                               "chrome,centerscreen,resizable", this.getOrCreateContact(sender),
                               packet.getStatus());
             return;
+        case "subscribed":
+        case "unsubscribe":
+        case "unsubscribed":
+            this.notificationScheme.show("subscription", packet.getType(),
+                                         this.allContacts[sender.shortJID] || sender);
+            return;
         }
 
         // Delegate rest to respective handlers
-        var item = sender.resource ? this.getOrCreateResource(sender) :
-            this.allContacts[sender];
+        var item = sender.resource ? this.getOrCreateResource(sender) : null;
 
         if (item)
             item.onPresence(packet);
@@ -407,7 +272,20 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     WALK.asceding.init(this);
 }
 
-_DECL_(Contact, null, Model).prototype =
+_DECL_(Contact, null, Model,
+       XMPPDataAccesor("vcard", "VCard", function(){
+            var iq = new JSJaCIQ();
+            var elem = iq.getDoc().createElement('vCard');
+            iq.setIQ(this.jid, null, 'get', 'vcard');
+
+            iq.getNode().appendChild(elem).setAttribute('xmlns','vcard-temp');
+            return iq;
+/*
+        var ns = new Namespace("vcard-temp");
+        var photo = packet.ns::vCard.ns::PHOTO.ns::BINVAL;
+        if (photo.length())
+ */
+       })).prototype =
 {
     _updateRoster: function()
     {
@@ -467,47 +345,6 @@ _DECL_(Contact, null, Model).prototype =
                 yield this.resources[i];
     },
 
-    getVCard: function(callback, forceUpdate)
-    {
-        if (!callback)
-            return this.vcard;
-
-        if (!this.vcard || forceUpdate) {
-            this._vcardHandlers.push({callback: callback, args: Array.slice(arguments, 2)});
-            if (this._vcardHandlers.length > 1)
-                return null;
-
-            var iq = new JSJaCIQ();
-            var elem = iq.getDoc().createElement('vCard');
-            iq.setIQ(this.jid, null, 'get', 'vcard');
-
-            iq.getNode().appendChild(elem).setAttribute('xmlns','vcard-temp');
-
-            con.send(iq, function(packet, contact) { contact.onVCard(packet)}, this);
-        } else {
-            var args = Array.slice(arguments, 2);
-            args.unshift(this.vcard);
-            callback.apply(null, args);
-        }
-        return this.vcard;
-    },
-
-    onVCard: function(packet)
-    {
-        for (var i = 0; i < this._vcardHandlers.length; i++)
-            try {
-                var h = this._vcardHandlers[i];
-                h.args.unshift(packet);
-                h.callback.apply(null, h.args);
-            } catch (ex) {}
-        this.vcard = packet;
-/*
-        var ns = new Namespace("vcard-temp");
-        var photo = packet.ns::vCard.ns::PHOTO.ns::BINVAL;
-        if (photo.length())
- */
-    },
-
     allowToSeeMe: function()
     {
         this._sendPresence("subscribed");
@@ -556,10 +393,6 @@ _DECL_(Contact, null, Model).prototype =
     },
 
     onShowChatWindow: function()
-    {
-    },
-
-    onPresence: function(packet)
     {
     },
 
@@ -626,31 +459,52 @@ function Resource(jid)
     account.resources[jid] = this;
 
     WALK.asceding.init(this);
-
-    this.contact._onResourceAdded(this);
 }
 
-_DECL_(Resource, null, Model).prototype =
-{
-    onPresence: function(packet)
-    {
-    },
-
-    getVersion: function(callback, token, forceUpdate)
-    {
-        if (!callback)
-            return this.version;
-
-        if (!this.version || forceUpdate) {
+_DECL_(Resource, null, Model,
+       XMPPDataAccesor("version", "Version", function() {
             var iq = new JSJaCIQ();
             iq.setQuery('jabber:iq:version');
+            return iq;
+       })).prototype =
+{
+    _registered: false,
 
-            con.send(iq, function(packet, resource, callback, token) {
-                     resource.version = packet;
-                     callback(packet, token)},
-                this, callback, token);
-        } else
-            callback(this.version, token);
+    onPresence: function(packet, dontNotifyViews)
+    {
+        var [oldShow, oldPriority, oldStatus] = [this.show, this.priority, this.status];
+        var flags;
+
+        this.show = packet.getShow();
+        this.priority = packet.getPriority();
+        this.status = packet.getStatus();
+
+        if (this.show == "unavailable") {
+            if (this._registered)
+                this.contact._onResourceRemoved(this);
+            delete account.resources[this.jid];
+
+            account.notificationScheme.show("resource", this.packet.getShow() || "available",
+                                            this, oldShow);
+            return;
+        }
+
+        if (!this._registered) {
+            this.contact._onResourceAdded(this);
+            this._registered = true;
+        } else {
+            var flags = [oldShow != this.show && "show",
+                         oldPriority != this.priority && "priority",
+                         oldStatus != this.status && "status"].
+                             filter(function(el){return typeof el == "string"});
+        }
+
+        account.notificationScheme.show("resource", this.packet.getShow() || "available",
+                                        this, oldShow);
+        if (flags && !dontNotifyViews)
+            this.modelUpdated.apply(this, flags);
+
+        return flags;
     },
 }
 
