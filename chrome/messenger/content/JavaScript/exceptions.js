@@ -148,10 +148,7 @@ function GenericError(message, reason) {
     return exc;
 }
 
-GenericError.prototype =
-{
-    __proto__: Error.prototype
-};
+_DECL_NOW_(GenericError, Error);
 
 /**
  * Exception which should be thrown when invalid argument is passed.
@@ -169,10 +166,7 @@ function InvalidArgsError(message, reason) {
     return GenericError.call(this, message||"InvalidArgsError", reason);
 }
 
-InvalidArgsError.prototype =
-{
-    __proto__: GenericError.prototype,
-}
+_DECL_NOW_(InvalidArgsError, GenericError);
 
 //function registerExceptionCatcher() {
 //}

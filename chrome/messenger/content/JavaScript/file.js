@@ -21,7 +21,7 @@ function CharsetConverter(charset)
     }
 }
 
-CharsetConverter.prototype =
+_DECL_(CharsetConverter).prototype =
 {
     /**
      * Name of external encoding.
@@ -177,11 +177,7 @@ function CharsetConvertError(desc, reason)
     return GenericError.call(this, message||"CharsetConvertError", reason);
 }
 
-CharsetConvertError.prototype =
-{
-    __proto__: GenericError.prototype,
-}
-
+_DECL_NOW_(CharsetConvertError, GenericError);
 
 /**
  * Class created to read data from stream speficied by uri.
@@ -197,6 +193,9 @@ CharsetConvertError.prototype =
  */
 function Reader(uriString)
 {
+    const classes = Components.classes;
+    const interfaces = Components.interfaces;
+
     var ios, tmp, i;
 
     try {
@@ -239,7 +238,7 @@ function Reader(uriString)
     }
 }
 
-Reader.prototype =
+_DECL_(Reader).prototype =
 {
     __inputStream: null,
     __encoder: null,
@@ -271,6 +270,9 @@ Reader.prototype =
      */
     open: function(charset)
     {
+        const classes = Components.classes;
+        const interfaces = Components.interfaces;
+
         if (this.__inputStream)
             return;
 
@@ -382,10 +384,7 @@ function IOError(message, reason, ommit)
     return GenericError.call(this, message||"IOError", reason);
 }
 
-IOError.prototype =
-{
-    __proto__: GenericError.prototype
-}
+_DECL_NOW_(IOError, GenericError);
 
 /**
  * File access class.
@@ -441,10 +440,8 @@ function File(path)
     this.path = this.file.path;
 }
 
-File.prototype =
+_DECL_(File, Reader).prototype =
 {
-    __proto__: Reader.prototype,
-
     /**
      * Flag used by open() method.
      *
@@ -713,5 +710,14 @@ File.prototype =
             throw new IOError("File.remove: Unable to create directory", ex);
         }
     },
+}
+
+function slurpFile()
+{
+    var file = eval("new File("+Array.join(Array.map(arguments,function(a,i){
+        return "arguments["+i+"]"}), ",")+")");
+
+    file.open(null, 1);
+    return file.read();
 }
 
