@@ -271,9 +271,9 @@ _DECL_(Account, null, Model).prototype =
                                   "chrome,modal", text.textContent);
             return;
         }
-        var sender = packet.getFrom();
+        var sender = new JID(packet.getFrom());
 
-        if (myjid.match(sender)) {
+        if (this.myJID == sender) {
             if (this.bumpPriority) {
                 var tag = packet.getNode().getElementsByTagName('priority');
 
@@ -293,9 +293,11 @@ _DECL_(Account, null, Model).prototype =
         }
 
         // Delegate rest to respective handlers
-        var resource = this.getOrCreateResource(jid);
-        if (resource)
-            resource.onPresence(packet);
+        var item = sender.resource ? this.getOrCreateResource(sender) :
+            this.allContacts[sender];
+
+        if (item)
+            item.onPresence(packet);
     },
 }
 
@@ -399,6 +401,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.newItem = false;
         account.contacts[jid] = this;
     }
+    this._vcardHandlers = [];
     account.allContacts[jid] = this;
 
     WALK.asceding.init(this);
@@ -464,24 +467,45 @@ _DECL_(Contact, null, Model).prototype =
                 yield this.resources[i];
     },
 
-    getVCard: function(callback, token, forceUpdate)
+    getVCard: function(callback, forceUpdate)
     {
         if (!callback)
             return this.vcard;
 
         if (!this.vcard || forceUpdate) {
+            this._vcardHandlers.push({callback: callback, args: Array.slice(arguments, 2)});
+            if (this._vcardHandlers.length > 1)
+                return null;
+
             var iq = new JSJaCIQ();
             var elem = iq.getDoc().createElement('vCard');
             iq.setIQ(this.jid, null, 'get', 'vcard');
 
             iq.getNode().appendChild(elem).setAttribute('xmlns','vcard-temp');
 
-            con.send(iq, function(packet, contact, callback, token) {
-                     contact.vcard = packet;
-                     callback(packet, token)},
-                this, callback, token);
-        } else
-            callback(this.vcard, token);
+            con.send(iq, function(packet, contact) { contact.onVCard(packet)}, this);
+        } else {
+            var args = Array.slice(arguments, 2);
+            args.unshift(this.vcard);
+            callback.apply(null, args);
+        }
+        return this.vcard;
+    },
+
+    onVCard: function(packet)
+    {
+        for (var i = 0; i < this._vcardHandlers.length; i++)
+            try {
+                var h = this._vcardHandlers[i];
+                h.args.unshift(packet);
+                h.callback.apply(null, h.args);
+            } catch (ex) {}
+        this.vcard = packet;
+/*
+        var ns = new Namespace("vcard-temp");
+        var photo = packet.ns::vCard.ns::PHOTO.ns::BINVAL;
+        if (photo.length())
+ */
     },
 
     allowToSeeMe: function()
@@ -535,7 +559,7 @@ _DECL_(Contact, null, Model).prototype =
     {
     },
 
-    onStanza: function(stanza)
+    onPresence: function(packet)
     {
     },
 
