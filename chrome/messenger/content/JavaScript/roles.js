@@ -24,7 +24,7 @@ function _DECL_(obj, parent)
  * @public
  */
 function _DECL_NOW_(obj)
-{try{
+{
     if (arguments[1])
         obj.prototype.__proto__ = arguments[1].prototype;
 
@@ -49,7 +49,6 @@ function _DECL_NOW_(obj)
     }
     for (i = 0; i < requires.length; i++)
         checkReqs(obj, requires[i].name, requires[i].reqs, obj.prototype);
-    }catch(ex){dump(ex)}
 }
 
 /**
