@@ -150,7 +150,7 @@ _DECL_(PresenceProfile).prototype =
                 this.jidsHash[this.presences[i].jids[j]] =
                     this.presences[i].presence;
             if (this.presences[i].groups.length == 0 &&
-                this.presences[i].jids.length)
+                this.presences[i].jids.length == 0)
                 this.defaultPresence = this.presences[i].presence;
         }
     },
