@@ -124,14 +124,142 @@ _DECL_(Model).prototype =
     }
 }
 
-function PresenceProfile()
+function PresenceProfile(name, presences)
 {
+    this.name = name;
+    this.presences = presences;
+    this.groupsHash = {};
+    this.jidHash = {};
+
+    this._rehash();
 }
 
 _DECL_(PresenceProfile).prototype =
 {
+    profiles: [],
+
+    _rehash: function()
+    {
+        this.defaultPresence = null;
+
+        for (var i = 0; i < this.presences.length; i++) {
+            for (var j = 0; j < this.presences[i].groups.length; j++)
+                this.groupsHash[this.presences[i].groups[j]] =
+                    this.presences[i].presence;
+            for (var j = 0; j < this.presences[i].jids.length; j++)
+                this.jidsHash[this.presences[i].jids[j]] =
+                    this.presences[i].presence;
+            if (this.presences[i].groups.length == 0 &&
+                this.presences[i].jids.length)
+                this.defaultPresence = this.presences[i].presence;
+        }
+    },
+
+    /*<profiles>
+       <profile name="match">
+         <presence show="dnd" priority="4" status="dnd">
+           <group>test</group>
+           <jid>user@server</jid>
+         </presence>
+       </profile>
+       <profile name="revmatch">
+         <presence>
+           <group>work</group>
+         </presence>
+         <presence show="dnd" priority="4" status="dnd" />
+       </profile>
+     </profiles> */
+
+    loadFromServer: function()
+    {
+        const ns = "oneteam:presence-profiles";
+
+        var iq = new JSJaCIQ();
+        iq.setType("get")
+        var query = iq.setQuery("jabber:iq:private");
+        query.appendChild(iq.getDoc().createElementNS(ns, "profiles"));
+
+        con.send(iq,PresenceProfile._onPresenceProfiles);
+    },
+
+    storeOnServer: function()
+    {
+        const ns = "oneteam:presence-profiles";
+
+        var iq = new JSJaCIQ();
+        iq.setType("set")
+        var query = iq.setQuery("jabber:iq:private");
+        var profiles = query.appendChild(iq.getDoc().createElementNS(ns, "profiles"));
+
+        for (var i = 0; i < PresenceProfile.prototype.profiles.length; i++) {
+            var presence = PresenceProfile.prototype.profiles[i];
+            var profileTag = profiles.appendChild(iq.getDoc().createElementNS(ns, "profile"));
+            profileTag.setAttribute("name", p.name);
+
+            for (var j = 0; j < presence.presences.length; j++) {
+                var presence = presence.presences[j];
+                var presenceTag = profileTag.appendChild(
+                    iq.getDoc().createElementNS(ns, "presence"));
+
+                if (presence.presence) {
+                    if (presence.presence.type)
+                        presenceTag.setAttribute("show", presence.presence.type);
+                    if (presence.presence.priority != null)
+                        presenceTag.setAttribute("priority", presence.presence.priority);
+                    if (presence.presence.status)
+                        presenceTag.setAttribute("status", presence.presence.status);
+                }
+                for (k = 0; k < presence.groups.length; k++)
+                    presenceTag.appendChild(iq.getDoc().createElementNS(ns, "group")).
+                        appendChild(iq.getDoc().createTextNode(presence.groups[k]));
+                for (k = 0; k < presence.jids.length; k++)
+                    presenceTag.appendChild(iq.getDoc().createElementNS(ns, "jid")).
+                        appendChild(iq.getDoc().createTextNode(presence.jids[k]));
+            }
+        }
+
+        con.send(iq);
+    },
+
+    _onPresenceProfiles: function(packet)
+    {
+        if (packet.getType() != "result")
+            return;
+
+        var profiles = [];
+        var profileTags = packet.getNode().getElementsByTagName("profile");
+        for (var i = 0; i < profileTags.length; i++) {
+            var presences = [];
+            var presenceTags = profileTags[i].getElementsByTagName("presence");
+            for (j = 0; j < presenceTags.length; j++) {
+                var presence = {};
+                var [type, priority, status] = ["show", "priority", "status"].
+                    map(function(v){return presenceTags[j].getAttribute(v)});
+
+                if (type != null || priority != null || status != null)
+                    presence.presence = {type: type, priority: priority, status: status};
+
+                presence.groups = Array.map(presenceTags[j].getElementsByTagName("group"),
+                                            function(g){return g.textContent});
+                presence.jids = Array.map(presenceTags[j].getElementsByTagName("jid"),
+                                          function(g){return g.textContent});
+                presences.push(presence);
+            }
+            profiles.push(new PresenceProfile(profileTags[i].getAttribute("name"),
+                                              presences));
+        }
+        PresenceProfile.prototype.profiles = profiles;
+    },
+
     getPresenceFor: function(contact)
     {
+        if (contact.jid in this.jidsHash)
+            return this.jidsHash[contact.jid];
+        for (var i = 0; i < contact.groups.length; i++)
+           if (contact.groups[i] in this.groupsHash)
+               return this.groupsHash[contact.groups[i]];
+
+        return defaultPresence;
     },
 
     getNotificationSchemeFor: function(contact)
