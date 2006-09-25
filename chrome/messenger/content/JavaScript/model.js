@@ -1,3 +1,6 @@
+var gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
+        .getService(Components.interfaces.nsIPrefBranch);
+
 function Account()
 {
     this.groups = {}
@@ -8,7 +11,11 @@ function Account()
     this._presenceObservers = [];
     this.userPresence = this.currentPresence = {type: "unavailable"};
 
+    this.cache = new PersistantCache("oneteamCache");
+
     WALK.asceding.init(this);
+
+    self.account = this;
 
     // XXX use string bundle
     new Group("", "Contacts", true);
@@ -43,6 +50,7 @@ _DECL_(Account, null, Model).prototype =
             if (userSet)
                 this.userPresence = newPresence;
 
+            modelUpdated("currentPresence");
             return;
         }
 
@@ -65,6 +73,8 @@ _DECL_(Account, null, Model).prototype =
         this.currentPresence = newPresence;
         if (userSet)
             this.userPresence = newPresence;
+
+        modelUpdated("currentPresence");
     },
 
     groupsIterator: function(predicate, token)
@@ -119,6 +129,65 @@ _DECL_(Account, null, Model).prototype =
         return this.allContacts[jid.shortJID].createResource(jid);
     },
 
+    onAddContact: function()
+    {
+        window.openDialog("chrome://messenger/content/addContact.xul",
+                          "ot:addContact", "chrome,centerscreen");
+    },
+
+    onJoinRoom: function()
+    {
+        window.open("chrome://messenger/content/roomWizard.xul",
+                    "ot:joinRoom", "chrome,centerscreen");
+    },
+
+    showVCard: function()
+    {
+    },
+
+    showConsole: function()
+    {
+    },
+
+    onCustomPresence: function()
+    {
+        window.openDialog("chrome://messenger/content/status.xul",
+                          "ot:customPresence", "chrome,centerscreen");
+    },
+
+    connect: function(server, port, base, polling, user, pass)
+    {
+        var args = { httpbase: "http://" + server + ":" + port + "/" + base + "/",
+            timerval: 2000};
+
+        self.con = polling ? new JSJaCHttpBindingConnection(args) :
+            new JSJaCHttpPollingConnection(args);
+
+        con.registerHandler("message", function(p){account.onMessage(p)});
+        con.registerHandler("presence", function(p){account.onPresence(p)});
+        con.registerHandler("iq", function(p){account.onIQ(p)});
+        con.registerHandler("onconnect", function(p){account.onConnect(p)});
+        con.registerHandler("ondisconnect", function(p){account.onDisconnect(p)});
+        con.registerHandler('onerror', function(p){account.onError(p)});
+
+        args = { domain: server, user: user, pass: pass,
+            resource: gPrefService.getCharPref("chat.connection.resource")};
+
+        con.connect(args);
+    },
+
+    onConnect: function()
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(null, null, 'get');
+        iq.setQuery('jabber:iq:roster');
+        con.send(iq);
+    },
+
+    onDisconnect: function()
+    {
+    },
+
     onPresence: function(packet)
     {
         // XXX: Shouldn't this show somehow show this in roster, instead in new window?
@@ -164,6 +233,37 @@ _DECL_(Account, null, Model).prototype =
         if (item)
             item.onPresence(packet);
     },
+
+    onIQ: function(packet)
+    {
+        var ns, query = packet.getNode().childNodes;
+
+        for (var i = 0; i < query.length; i++)
+            if (query[i].nodeType == 1) {
+                query = query[i];
+                break;
+            }
+        if (!query.nodeType)
+            return;
+
+        switch (ns = query.namespaceURI) {
+        case "jabber:iq:roster":
+            var items = query.getElementsByTagNameNS(ns, "item");
+            for (i = 0; i < items.length; i++) {
+                var jid = items[i].getAttribute("jid");
+
+                if (this.allContacts[jid])
+                    this.allContacts[jid]._updateFromRoster(items[i]);
+                else
+                    new Contact(items[i]);
+            }
+            break;
+        }
+    },
+
+    onMessage: function(packet)
+    {
+    }
 }
 
 function Group(name, visibleName, builtinGroup)
@@ -234,7 +334,7 @@ _DECL_(Group, null, Model).prototype =
             this.modelUpdated("contacts");
 
         if (this.contacts.length == 0) {
-            account._onGroupAdded(this);
+            account._onGroupRemoved(this);
             if (!this.builtinGroup)
                 delete account.allGroups[this.name];
         }
@@ -243,6 +343,9 @@ _DECL_(Group, null, Model).prototype =
 
 function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 {
+    if (jid instanceof Node)
+        [jid, name, subscription, subscriptionAsk, groups] = this._parseNode(jid);
+
     this.jid = new JID(jid);
     this.resources = [];
     if (newItem) {
@@ -317,6 +420,61 @@ _DECL_(Contact, null, Model,
         con.send(iq);
     },
 
+    _updateFromRoster: function(node)
+    {
+        var groups, groupsHash;
+
+        var oldState = { name: this.name, subscription: this.subscription,
+            subscriptionAsk: this.subscriptionAsk};
+
+        [,this.name, this.subscription, this.subscriptionAsk, groups, groupsHash] =
+            this._parseNode(node, true);
+
+        for (var i = 0; i < this.groups.length; i++) {
+            if !((this.groups[i].name in groups)) {
+                this.groups[i]._onContactRemoved(this);
+                oldState.groups = 1;
+            }
+            delete groupsHash[this.groups[i].name];
+        }
+        for (i in groupsHash) {
+            groupsHash[i]._onContactAdded(this);
+            oldState.groups = 1;
+        }
+
+        this.groups = groups;
+
+        if (this.subscription == "remove") {
+            delete account.allContacts[this.jid]
+            delete account.contacts[this.jid]
+        } else if (this.newItem) {
+            this.newItem = false;
+            account.contacts[this.jid] = this;
+        }
+
+        this._modelUpdatedCheck(oldState);
+    },
+
+    _parseNode: function(node, wantGroupsHash)
+    {
+        jid = node.getAttribute("jid");
+        name = node.getAttribute("name");
+        subscription = node.getAttribute("subscription") || "none"
+        subscriptionAsk = node.getAttribute("ask") == "susbscribe";
+
+        groups = [];
+        groupsHash = {};
+        var groupTags = node.getElementsByTagName("group");
+        for (var i = 0; i < groupTags.length; i++) {
+            var group = accout.getOrCreateGroup(groupTags[i].textContent);
+            groups.push(group);
+            if (wantGroupsHash)
+                groupsHash[groupTags[i].textContent] = group;
+        }
+
+        return [jid, name, subscription, subscriptionAsk, groups, groupsHash];
+    }
+
     _sendPresence: function(type, status, priority)
     {
         var presence = new JSJaCPresence();
@@ -353,6 +511,12 @@ _DECL_(Contact, null, Model,
     disallowToSeeMe: function()
     {
         this._sendPresence("unsubscribe");
+    },
+
+    onAskForSubsription: function()
+    {
+        window.openDialog("chrome://messenger/content/subscribe.xul",
+                    "ot:subscribe", "chrome,centerscreen,resizable", this);
     },
 
     askForSubsription: function(reason)
@@ -392,13 +556,17 @@ _DECL_(Contact, null, Model,
         this._updateRoster();
     },
 
-    onShowChatWindow: function()
+    onOpenChat: function()
     {
     },
 
     createResource: function(jid)
     {
         return new Resource(jid);
+    },
+
+    showVCard: function()
+    {
     },
 
     _onResourceUpdated: function(resource, dontNotifyViews)
@@ -470,10 +638,14 @@ _DECL_(Resource, null, Model,
 {
     _registered: false,
 
+    onOpenChat: function()
+    {
+    },
+
     onPresence: function(packet, dontNotifyViews)
     {
-        var [oldShow, oldPriority, oldStatus] = [this.show, this.priority, this.status];
-        var flags;
+        var flags, oldState = { show: this.show, priority: this.priority,
+            status: this.status};
 
         this.show = packet.getShow();
         this.priority = packet.getPriority();
@@ -483,30 +655,21 @@ _DECL_(Resource, null, Model,
             if (this._registered)
                 this.contact._onResourceRemoved(this);
             delete account.resources[this.jid];
-
-            account.notificationScheme.show("resource", this.packet.getShow() || "available",
-                                            this, oldShow);
-            return;
-        }
-
-        if (!this._registered) {
+        } else if (!this._registered)
             this.contact._onResourceAdded(this);
-            this._registered = true;
-        } else {
-            var flags = [oldShow != this.show && "show",
-                         oldPriority != this.priority && "priority",
-                         oldStatus != this.status && "status"].
-                             filter(function(el){return typeof el == "string"});
-        }
 
         account.notificationScheme.show("resource", this.packet.getShow() || "available",
-                                        this, oldShow);
-        if (flags && !dontNotifyViews)
-            this.modelUpdated.apply(this, flags);
+                                        this, oldState.show);
+
+        if (this._registered)
+            flags = dontNotifyViews ? this._calcModificationFlags(oldShow) :
+                this._modelUpdatedCheck(flags);
+
+        this._registered = true;
 
         return flags;
     },
 }
 
-var account = new Account();
+account = new Account();
 

@@ -121,7 +121,24 @@ _DECL_(Model).prototype =
 
         for (var i = 0; i < this._views.length; i++)
             this._views[i].onModelUpdated.apply(this._views[i], args);
-    }
+    },
+
+    _calcModificationFlags: function(oldValues)
+    {
+        flags = [];
+        for (i in oldValues)
+            if (this[i] != oldValues[i])
+                flags.push(i);
+        return flags;
+    },
+
+    _modelUpdatedCheck: function(oldValues)
+    {
+        var flags = this._calcModificationFlags(oldValues);
+        this.modelUpdated.apply(this, flags);
+
+        return flags;
+    },
 }
 
 function PresenceProfile(name, presences)
