@@ -403,35 +403,29 @@ function File(path)
     const classes = Components.classes;
     const interfaces = Components.interfaces;
 
-    var uri, i;
-    var ios;
-
     try {
-        ios = classes["@mozilla.org/network/io-service;1"].
-            getService(interfaces.nsIIOService);
-
-        this.file = classes["@mozilla.org/file/local;1"].
-            createInstance(interfaces.nsILocalFile);
-
-        if (path instanceof File) {
-            this.file.initWithPath(path.path);
-
-            for (i = 1; i < arguments.length; i++)
-                this.file.append(arguments[i]);
-
-            this.uri = ios.newFileURI(this.file);
-        } else if (path.search(/\w+:\/\//) == -1) {
-            this.file.initWithPath(path);
-
-            for (i = 1; i < arguments.length; i++)
-                this.file.append(arguments[i]);
-
-            this.uri = ios.newFileURI(this.file);
+        if (path instanceof interfaces.nsIFile) {
+            this.file = path.QueryInterface(interfaces.nsILocalFile);
         } else {
-            Reader.call(arguments);
+            this.file = classes["@mozilla.org/file/local;1"].
+                createInstance(interfaces.nsILocalFile);
 
-            this.file.initWithPath(this.uri.
-                QueryInterface(interfaces.nsIFileURL).file.path);
+            if (path instanceof File)
+                this.file.initWithPath(path.path);
+            else if (path.search(/\w+:\/\//) == -1)
+                this.file.initWithPath(path);
+            else {
+                Reader.call(arguments);
+
+                this.file.initWithPath(this.uri.
+                    QueryInterface(interfaces.nsIFileURL).file.path);
+            }
+        }
+        if (!this.uri) {
+            for (var i = 1; i < arguments.length; i++)
+                this.file.append(arguments[i]);
+            this.uri = classes["@mozilla.org/network/io-service;1"].
+                getService(interfaces.nsIIOService).newFileURI(this.file);
         }
     } catch (ex) {
         throw new IOError("File: unable to create file object", ex);
