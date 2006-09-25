@@ -19,30 +19,32 @@ function PersistantCache(name)
         throw new GenericError("Unable to access PersistantCache database");
 
     var version = userVersionStmt.getInt32(0);
+    userVersionStmt.reset();
 
-    if (version > 1)
+    if (version > 1999)
         throw new GenericError("Unrecognized PersistantCache database version");
 
     this.db.createFunction("deleteFile", 1, StorageFunctionDelete);
-
+try{
     if (version == 0)
-        this.db.executeSimpleSQL("CREATE TABLE cache (key TEXT PRIMARY KEY, value TEXT, "+
-                                 "expiry_date INT(8), is_file INT(1)); "+
+        this.db.executeSimpleSQL("BEGIN IMMEDIATE TRANSACTION;"+
+            "CREATE TABLE cache (key TEXT PRIMARY KEY, value TEXT, "+
+            "expiry_date INT(8), is_file INT(1)); "+
 
-                                 "CREATE TRIGGER del_files_on_delete AFTER DELETE ON "+
-                                 "cache FOR EACH ROW WHEN is_file = 1 "+
-                                 "BEGIN SELECT deleteFile(old.value) WHEN NOT EXISTS ("+
-                                 "SELECT * FROM cache WHERE value = old.value); END;"+
+            "CREATE TRIGGER del_files_on_delete AFTER DELETE ON "+
+            "cache FOR EACH ROW WHEN old.is_file = 1 "+
+            "BEGIN SELECT deleteFile(old.value) WHERE NOT EXISTS ("+
+            "SELECT 1 FROM cache WHERE value = old.value); END;"+
 
-                                 "CREATE TRIGGER del_files_on_update AFTER UPDATE ON "+
-                                 "cache FOR EACH ROW WHEN old.is_file = 1 "+
-                                 "BEGIN SELECT deleteFile(old.value) WHEN NOT EXISTS ("+
-                                 "SELECT * FROM cache WHERE value = old.value); END;"+
+            "CREATE TRIGGER del_files_on_update AFTER UPDATE ON "+
+            "cache FOR EACH ROW WHEN old.is_file = 1 "+
+            "BEGIN SELECT deleteFile(old.value) WHERE NOT EXISTS ("+
+            "SELECT 1 FROM cache WHERE value = old.value); END;"+
 
-                                 "PRAGMA user_version = 1")
+            "PRAGMA user_version = 1001; COMMIT TRANSACTION");
     else
         this.db.executeSimpleSQL("DELETE FROM cache WHERE expiry_date < "+Date.now());
-
+}catch(ex){alert(this.db.lastErrorString); throw ex}
     this.getStmt = this.db.createStatement("SELECT value, is_file, expiry_date FROM cache "+
                                       "WHERE key = ?1");
     this.setStmt = this.db.createStatement("REPLACE INTO cache (key, value, is_file, "+
@@ -82,6 +84,7 @@ _DECL_(PersistantCache).prototype =
         this.setStmt.bindInt64Parameter(2, expiryDate.getTime());
         this.setStmt.bindInt32Parameter(3, storeAsFile ? 1 : 0);
         this.setStmt.execute();
+        this.setStmt.reset();
     },
 
     getValue: function(key, asFile)
@@ -89,19 +92,25 @@ _DECL_(PersistantCache).prototype =
         this.getStmt.reset();
         this.getStmt.bindStringParameter(0, key);
         if (!this.getStmt.executeStep())
+            this.getStmt.reset();
             return null;
         if (this.getStmt.getInt64(2) < Date.now()) {
+            this.getStmt.reset();
             this.db.executeSimpleSQL("DELETE FROM cache WHERE expiry_date < "+Date.now())
             return null;
         }
 
-        if (this.getInt32(1)) {
+        var value = this.getStmt.getString(0);
+        var type = this.getInt32(1);
+        this.getStmt.reset();
+
+        if (type) {
             if (!asFile)
-                return slurpFile(this.getStmt.getString(0));
+                return slurpFile(value);
         } else if (asFile)
             throw new GenericError("Unable to return data as file path");
 
-        return this.getStmt.getString(0);
+        return value;
     },
 
     bumpExpiryDate: function(key, expiryDate)
@@ -110,6 +119,7 @@ _DECL_(PersistantCache).prototype =
         this.bumpStmt.bindStringParameter(0, key);
         this.bumpStmt.bindStringParameter(1, expiryDate.getTime());
         this.bumpStmt.execute();
+        this.bumpStmt.reset();
     },
 }
 
