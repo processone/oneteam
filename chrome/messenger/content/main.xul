@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/gui.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/bindings.css" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % guiDTD SYSTEM "chrome://messenger/locale/gui.dtd">
+<!ENTITY % messengerDTD SYSTEM "chrome://messenger/locale/messenger.dtd">
+%guiDTD;
+%messengerDTD;
+]>
+
+<window id="Messenger" title="OneTeam" onload="onLoad()"
+    width="170" height="450"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
+  <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
+  <script type="text/javascript" src="lib/jsjac/sha1.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
+
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model.js"/>
+
+  <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+	<script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
+   
+  <script type="text/javascript;version=1.7"><![CDATA[
+    function updateContactContextMenu(menu)
+    {
+      self.activeItem = document.getElementById("contacts-list").selectedItem.model;
+      var cs = document.getElementById("contact-chat-single");
+      var cm = document.getElementById("contact-chat-multi");
+
+      cm.hidden = !(cs.hidden = activeItem.resources.length > 1);
+      if (cs.hidden) {
+        var list = cm.firestChild;
+        while (list.firstChild)
+          list.removeChild(list.firstChild);
+        for (var i = 0; i < activeItem.resources.length; i++) {
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", activeItem.resources[i].jid.resource+" ("+
+            activeItem.resources[i].priority+")");
+          item.setAttribute("oncommand", "this.onOpenChat()");
+          item.model = activeItem.resources[i];
+          list.appendChild(item);
+        }
+      }
+      var canSeeMe = activeItem.subscription == "both" || activeItem.subscription == "to";
+      var canSeeHim = activeItem.subscription == "both" || activeItem.subscription == "from";
+
+      document.getElementById("contact-authorisation-ask").disabled = !canSeeHim;
+      document.getElementById("contact-authorisation-allow").disabled = !canSeeMe;
+      document.getElementById("contact-authorisation-disallow").disabled = canSeeMe;
+    }
+
+    var setPresenceUpdater = {
+      onModelUpdated: function()
+      {
+        this.chooser.value=account.currentPresence.type;
+      },
+
+      onCommand: function()
+      {
+        if (this._skip)
+          return;
+
+        if (this.chooser.value)
+          account.setPresence(this.chooser.value);
+        else {
+          this._skip = true;
+          this.chooser.value = this.value;
+          this._skip = false;
+          account.onCustomPresence()
+        }
+        this.value = this.chooser.value;
+      },
+
+      init: function()
+      {
+        this.chooser = document.getElementById("setPresence-type-chooser");
+        this.value = this.chooser.value;
+      }
+    };
+
+    function onLoad() {
+      setPresenceUpdater.init();
+    }
+  ]]></script>
+
+  <comandset>
+    <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
+    <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
+    <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
+    <command id="cmd_disconnect" oncommand="account.disconnect()"/>
+    <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
+
+    <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
+    <command id="cmd_extensions" oncommand=""/>
+    <command id="cmd_themes" key="key_themes" oncommand=""/>
+    <command id="cmd_prefs" key="key_prefs" oncommand=""/>
+
+    <command id="cmd_help" key="key_help" oncommand=""/>
+    <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
+    <command id="cmd_about" oncommand=""/>
+
+    <command id="cmd_toggleShowOffline" key="key_toggleShowOffline" oncommand=""/>
+  </comandset>
+
+  <keyset>
+    <key id="key_addContact" modifiers="control" key="A" command="cmd_addContact"/>
+    <key id="key_joinRoom" modifiers="control" key="J" command="cmd_joinRoom"/>
+    <key id="key_disco" modifiers="control" key="S" command="cmd_disco"/>
+    <key id="key_quit" modifiers="control" key="Q" oncommand="cmd_quit"/>
+    <key id="key_ourVCard" modifiers="control" key="E" oncommand="cmd_ourVCard"/>
+    <key id="key_themes" modifiers="control" key="T" oncommand="cmd_themes"/>
+    <key id="key_prefs" modifiers="control" key="P" oncommand="cmd_prefs"/>
+    <key id="key_help" modifiers="control" key="H" oncommand="cmd_help"/>
+    <key id="key_xmlConsole" modifiers="control" key="C" oncommand="cmd_xmlConsole"/>
+    <key id="key_toggleShowOffline" modifiers="control" key="O" oncommand="cmd_toggleShowOffline"/>
+  </keyset>
+
+  <deck id="main-deck" flex="1" selectedIndex="1">
+    <vbox id="login-box" flex="1">
+      <groupbox align="center" flex="1">
+        <caption class="titre" label="&Login.titre;"/>
+        <spacer height="20"/>
+        <label popup="popup-tools" class="text-link" value="&Login.NewAccount;" align="right"
+          onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
+        <spacer height="40"/>
+        <label value="&Login.login; : " style="color:#777"/>
+        <spacer height="10"/>
+        <textbox id="user" width="180" preference="chat.connection.username"/>
+        <spacer height="20"/>
+        <label value="&Login.password; : " style="color:#777"/>
+        <spacer height="10"/>
+        <textbox id="pass" type="password" width="180" preference="chat.connection.password"/>
+        <spacer height="3"/>
+        <checkbox id="checkbox-password" checked="true" label="Remember password" oncommand="savePassword();"/>
+        <spacer height="20"/>
+        <button label="&Login.signin;" oncommand="doLogin(event);"/>
+        <spacer height="30"/>
+        <label popup="popup-tools" class="text-link" value="&Login.settings;" align="right" onclick="openSettings();"/>
+      </groupbox>
+    </vbox>
+    <vbox id="main-box" flex="1">
+      <toolbox>
+        <menubar>
+          <menu id="lagger-menu" label="OneTeam" accesskey="O">
+            <menupopup id="file-popup">
+              <menuitem label="&menulagger.addContact;" command="cmd_addContact"
+                  accesskey="&shortcurt.add;"/>
+              <menuitem label="&menulagger.joinConference;" command="cmd_joinRoom"
+                  accesskey="&shortcurt.join;"/>
+              <menuseparator/>
+              <menuitem label="&menulagger.servicesDiscovery;" command="cmd_disco"
+                  accesskey="&shortcurt.service;"/>
+          <!-- <menuitem label="&menulagger.adminTools;"/> -->
+              <menuseparator/>
+              <menuitem label="&menulagger.disconnect;" command="cmd_disconnect"/>
+              <menuitem label="&menulagger.quitter;" command="cmd_quit"
+                  accesskey="&shortcurt.quit;"/>
+            </menupopup>
+          </menu>
+          <menu id="configuration-menu" label="&menuConfig.configuration;">
+            <menupopup id="config-popup">
+              <menuitem label="&menuConfig.editinfo;" command="cmd_ourVCard()"
+                  accesskey="&shortcurt.edit;"/>
+              <menuseparator/>
+              <menuitem label="&menuConfig.plugins;" command="cmd_extensions"/>
+              <menuitem label="&menuConfig.themes;" command="cmd_themes()"
+                  accesskey="&shortcurt.themes;"/>
+              <menuseparator/>
+              <menuitem label="&menuConfig.preferences;" command="cmd_prefs"
+                  accesskey="&shortcurt.pref;"/>
+            </menupopup>
+          </menu>
+          <menu id="help-menu" label="&menuAide.Aide;">
+            <menupopup id="help-popup">
+              <menuitem label="&menuAide.aide_rapide;" command="cmd_help"
+                  accesskey="&shortcurt.help;"/>
+              <menuitem label="&menuAide.console;" command="cmd_xmlConsole"
+                  accesskey="&shortcurt.console;"/>
+              <menuseparator/>
+              <menuitem label="&menuAide.apropos;" command="cmd_about"/>
+            </menupopup>
+          </menu>
+        </menubar>
+        <toolbar id="icones-toolbar">
+          <toolbarbutton id="adduser-button" tooltiptext="adduser.tooltip"
+              command="cmd_addContact"/>
+          <toolbarbutton id="joinroom-button" tooltiptext="joinroom.tooltip"
+              command="cmd_joinRoom"/>
+          <toolbarbutton id="editgroups-button" tooltiptext="teditgroups.tooltip"
+              oncommand="customGroups()"/>
+          <toolbarseparator/>
+          <toolbarbutton id="disco-button" tooltiptext="disco.tooltip"
+              command="cmd_disco"/>
+          <toolbarbutton id="toggleshowoffline-button" tooltiptext="toggleshowoffline.tooltip"
+              command="cmd_toggleShowOffline"/>
+        </toolbar>
+      </toolbox>
+      <hbox flex="1">
+        <vbox flex="1">
+          <hbox id="setPresence-box">
+            <image id="setPresence-type-image"/>
+            <vbox flex="1">
+              <label value="Nick" id="setPresence-nick"/>
+              <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
+                <menupopup>
+                  <menuitem id="setPresence-type-available" label="&status.Available;"
+                      selected="true" value="available"/>
+                  <menuitem id="setPresence-type-availableChat" label="&status.AvailableChat;"
+                      value="chat"/>
+                  <menuitem id="setPresence-type-dnd" label="&status.Dnd;"
+                      value="dnd"/>
+                  <menuitem id="setPresence-type-away" label="&status.Away;"
+                      value="away"/>
+                  <menuitem id="setPresence-type-xa" label="&status.Undisponible;"
+                      value="xa"/>
+                  <menuitem id="setPresence-type-invisible" label="&status.Invisible;"
+                      value="invisible"/>
+                  <menuseparator/>
+                  <menuitem id="setPresence-type-custom" label="&status.changeMessage;"/>
+                </menupopup>
+              </menulist>
+              <hbox>
+                <checkbox id="setPresence-profile-enable"/>
+                <menulist id="setPresence-profile-chooser" flex="1">
+                  <menupopup>
+                    <menuseparator hidden="true"/>
+                    <menuitem id="setPresence-profile-create" label="Create new profile..."/>
+                  </menupopup>
+                </menulist>
+              </hbox>
+            </vbox>
+            <image id="setPresence-avatar-image"/>
+          </hbox>
+          <tabbox id="roster" flex="1">
+            <tabs>
+              <tab label="Contacts"/>
+              <tab label="Conferences"/>
+            </tabs>
+            <tabpanels flex="1">
+              <tabpanel>
+                <richlistbox id="contacts-list" flex="1"/>
+              </tabpanel>
+              <tabpanel>
+                <richlistbox id="conferences-list" flex="1"/>
+              </tabpanel>
+            </tabpanels>
+          </tabbox>
+        </vbox>
+        <splitter hidden="true"/>
+        <tabbox id="chats" hidden="true">
+          <tabs/>
+          <tabpanels  flex="1"/>
+        </tabbox>
+      </hbox>
+    </vbox>
+  </deck>
+  <popupset>
+    <popup id="contact-contexmenu" onpopupshowing="updateContactContextMenu(this)">
+      <menuitem id="contact-chat-single" label="&listitemcontext.Communiquer;"
+          oncommand="activeItem.onOpenChat()"/>
+      <menu id="contact-chat-multi" label="&listitemcontext.Communiquer;" hidden="true">
+        <menupopup/>
+      </menu>
+      <!--<menuitem label="&listitemcontext.InviterConference;"/>-->
+
+      <menuseparator/>
+
+      <menuitem label="&listitemcontext.SupprimerContact;" oncommand="activeItem.onRemove()"/>
+      <menuitem label="&listitemcontext.Rename;" oncommand="activeItem.onRename()"/>
+
+      <menuseparator/>
+
+      <menu label="&listitemcontext.Authorisation;">
+        <menupopup>
+          <menuitem id="contact-authorisation-ask" label="&listitemcontext.Ask;"
+              oncommand="activeItem.onAskForSubscription()"/>
+          <menuitem id="contact-authorisation-allow" label="&listitemcontext.Authorize;"
+              oncommand="activeItem.allowToSeeMe()"/>
+          <menuitem id="contact-authorisation-disallow" label="&listitemcontext.Forbid;"
+              oncommand="activeItem.disallowToSeeMe()"/>
+        </menupopup>
+      </menu>
+
+      <menuseparator/>
+
+      <menuitem label="&listitemcontext.Infos;" oncommand="activeItem.showVCard()"/>
+    </popup>
+  </popupset>
+</window>
