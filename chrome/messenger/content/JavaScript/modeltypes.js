@@ -128,8 +128,8 @@ function PresenceProfile(name, presences)
 {
     this.name = name;
     this.presences = presences;
-    this.groupsHash = {};
-    this.jidHash = {};
+    this._groupsHash = {};
+    this._jidsHash = {};
 
     this._rehash();
 }
@@ -140,18 +140,18 @@ _DECL_(PresenceProfile).prototype =
 
     _rehash: function()
     {
-        this.defaultPresence = null;
+        this._defaultPresence = null;
 
         for (var i = 0; i < this.presences.length; i++) {
             for (var j = 0; j < this.presences[i].groups.length; j++)
-                this.groupsHash[this.presences[i].groups[j]] =
+                this._groupsHash[this.presences[i].groups[j]] =
                     this.presences[i].presence;
             for (var j = 0; j < this.presences[i].jids.length; j++)
-                this.jidsHash[this.presences[i].jids[j]] =
+                this._jidsHash[this.presences[i].jids[j]] =
                     this.presences[i].presence;
             if (this.presences[i].groups.length == 0 &&
                 this.presences[i].jids.length == 0)
-                this.defaultPresence = this.presences[i].presence;
+                this._defaultPresence = this.presences[i].presence;
         }
     },
 
@@ -253,13 +253,13 @@ _DECL_(PresenceProfile).prototype =
 
     getPresenceFor: function(contact)
     {
-        if (contact.jid in this.jidsHash)
-            return this.jidsHash[contact.jid];
+        if (contact.jid in this._jidsHash)
+            return this._jidsHash[contact.jid];
         for (var i = 0; i < contact.groups.length; i++)
-           if (contact.groups[i] in this.groupsHash)
-               return this.groupsHash[contact.groups[i]];
+           if (contact.groups[i] in this._groupsHash)
+               return this._groupsHash[contact.groups[i]];
 
-        return defaultPresence;
+        return _defaultPresence;
     },
 
     getNotificationSchemeFor: function(contact)
