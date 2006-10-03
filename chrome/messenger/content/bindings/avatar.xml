@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="avatar">
+
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/avatar.css"/>
+    </resources>
+
+    <content>
+      <xul:hbox flex="1" align="center">
+        <xul:vbox style="background: white; padding: 1px; border: 1px solid #999">
+          <html:div>
+            <html:img id="image" width="1" height="1" style="display: block"/>
+          </html:div>
+        </xul:vbox>
+      </xul:hbox>
+    </content>
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          this._image = document.getAnonymousElementByAttribute(this, "id", "image");
+          this._container = this._image.parentNode.parentNode.parentNode;
+
+          this._image.src = "chrome://messenger/skin/default-avatar.png";
+        ]]>
+      </constructor>
+    </implementation>
+
+    <handlers>
+      <handler event="load"><![CDATA[
+        this._image.width = this._image.height = 1;
+        var height = this._container.boxObject.height - 4;
+
+        if (height > this._image.naturalHeight)
+          height = this._image.naturalHeight;
+
+        this._image.width = height*this._image.naturalWidth/this._image.naturalHeight;
+        this._image.height = height;
+      ]]></handler>
+      <handler event="error">
+        this._image.src = "chrome://messenger/skin/default-avatar.png"
+      </handler>
+    </handlers> 
+
+  </binding>
+
+</bindings>

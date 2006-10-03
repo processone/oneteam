@@ -18,8 +18,10 @@ var handlers =
     {
         if (Array.indexOf(arguments, "con") <= 0)
             return;
-        window.opener.con.registerHandler("onpacketsend", this.onPacketSend);
-        window.opener.con.registerHandler("onpacketrecv", this.onPacketRecv);
+        if (window.opener.con) {
+            window.opener.con.registerHandler("onpacketsend", this.onPacketSend);
+            window.opener.con.registerHandler("onpacketrecv", this.onPacketRecv);
+        }
     },
 
     unregister: function()

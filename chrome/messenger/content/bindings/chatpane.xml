@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="chatpane">
+
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/chatpane.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <xul:iframe id="output" flex="1"/>
+        <xul:hbox align="center">
+          <xul:iframe id="input" flex="1" style="height: 1.7em"/>
+          <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+
+      <property name="content" readonly="true"
+        onget="return this._editor.outputToString('text/plain', 0)" />
+
+      <constructor>
+        <![CDATA[
+          this.scrollSize = 0;
+          this.sendOnEnter = this.getAttribute("sendonenter") != "false";
+
+          this._msgs = [];
+
+          this._input = document.getAnonymousElementByAttribute(this, "id", "input");
+          this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+
+          setTimeout(function(body) { body.style.margin = "0"; }, 0,
+              this._input.contentDocument.body);
+          setTimeout(function(me) { me._init() }, 500, this);
+        ]]>
+      </constructor>
+
+      <method name="_init">
+        <body>
+          <![CDATA[
+            var me = this;
+            var doc = this._input.contentDocument;
+            var win = this._input.contentWindow;
+
+            doc.body.style.margin = "0"
+            this._input.boxObject.
+              QueryInterface(Components.interfaces.nsIContainerBoxObject).docShell.
+              QueryInterface(Components.interfaces.nsIWebNavigation).
+              QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+              getInterface(Components.interfaces.nsIEditingSession).
+              makeWindowEditable(win, "text", false);
+
+            this._editor = this._input.docShell.
+              QueryInterface(Components.interfaces.nsIEditorDocShell).editor;
+            this._editor instanceof Components.interfaces.nsIPlaintextEditor;
+
+            doc.body.style.background = "white";
+            doc.body.style.fontFamily = "Arial, Verdana, sans-serif";
+
+            this.maybeResize();
+
+            var ev = ["DOMNodeInserted", "DOMNodeRemoved", "DOMAttrModified",
+                      "DOMCharacterDataModified"];
+
+            var msgs = this._msgs;
+            this._msgs = null;
+            for (var i = 0; i < msgs.length; i++)
+              this.addMessage.apply(this, msgs[i]);
+
+            for (var i = 0; i < ev.length; i++)
+              doc.body.addEventListener(ev[i],
+                function (event) {
+                  if (!me.resizeTimeout)
+                    me.resizeTimeout = window.setTimeout(function(me){me.maybeResize()}, 0, me);
+                }, false);
+              win.addEventListener("resize",
+                function (event) {
+                  if (!me.resizeTimeout)
+                    me.resizeTimeout = window.setTimeout(function(me){me.maybeResize()}, 0, me);
+                }, false);
+
+            win.addEventListener("keypress",
+              function (event) {
+                if (event.keyCode == KeyEvent.DOM_VK_TAB)
+                  event.preventDefault();
+                if (event.keyCode == KeyEvent.DOM_VK_RETURN &&
+                    !event.shiftKey && me.sendOnEnter)
+                {
+                  me._send();
+
+                  event.stopPropagation();
+                  event.preventDefault();
+                  return false;
+                }
+                return true;
+              }, true);
+
+            window.addEventListener("focus",
+              function (event) {
+                if (event.target != me && event.target != document)
+                  me._input.contentWindow.focus();
+              }, true);
+
+              doc = win = null;
+          ]]>
+        </body>
+      </method>
+
+      <method name="_send">
+        <body>
+          <![CDATA[
+            if (!~this.content.search(/\S/))
+              return;
+            this.addMessage("me", this.content, "out");
+            var ev = document.createEvent("Events");
+            ev.initEvent("chat-send", true, false);
+            this.dispatchEvent(ev);
+            this.clear();
+          ]]>
+        </body>
+      </method>
+
+      <method name="focus">
+        <body>
+          <![CDATA[
+            this._input.contentWindow.focus();
+          ]]>
+        </body>
+      </method>
+
+      <method name="addMessage">
+        <parameter name="from"/>
+        <parameter name="body"/>
+        <parameter name="flags"/>
+        <body>
+          <![CDATA[
+            if (this._msgs) {
+              this._msgs.push([from, body, flags]);
+              return;
+            }
+            var doc = this._output.contentDocument;
+            var c = doc.createElement("div");
+            c.setAttribute("class", flags);
+
+            var e = doc.createElement("div");
+            e.setAttribute("class", "author");
+            e.appendChild(doc.createTextNode(from));
+            c.appendChild(e);
+
+            var e = doc.createElement("div");
+            e.setAttribute("class", "content");
+            e.appendChild(doc.createTextNode(body));
+            c.appendChild(e);
+
+            doc.body.appendChild(c);
+            c.scrollIntoView(true);
+          ]]>
+        </body>
+      </method>
+
+      <method name="clear">
+        <body>
+          <![CDATA[
+            this._editor.selectAll();
+            this._editor.deleteSelection(0);
+          ]]>
+        </body>
+      </method>
+
+      <method name="maybeResize">
+        <body>
+          <![CDATA[
+          var e = this._input.contentDocument.body.parentNode;
+          var w = this._input.contentWindow;
+          var h = e.offsetHeight;
+
+          this.resizeTimeout = null;
+
+          if (this.scrollSize <= 0) {
+            if (w.scrollMaxX)
+              this.scrollSize = w.scrollMaxY - e.offsetHeight - this.scrollSize;
+            else
+              this.scrollSize = -e.offsetHeight;
+          }
+
+          if (h > 0.3*window.innerHeight)
+            h = 0.3*window.innerHeight;
+
+          if (w.scrollMaxY ||
+              e.offsetHeight < w.innerHeight)
+            this._input.style.height =
+              (h + this._input.boxObject.height - w.innerHeight +
+              (w.scrollMaxX ? this.scrollSize : 0))+"px";
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
+</bindings>

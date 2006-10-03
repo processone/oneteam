@@ -154,24 +154,23 @@ function JSJaCConnection(oArg) {
 						this._events[event][i](arg);
 					else
 						this._events[event][i]();
-				} catch (e) { this.oDbg.log(e.name+": "+ e.message); }
+				} catch (e) { logExceptionInConsole(e);
+                    this.oDbg.log(e.name+": "+ e.message); }
 			}
 		}
 	};
 	this._handlePID = function(aJSJaCPacket) {
 		if (!aJSJaCPacket.getID())
 			return false;
-		for (var i in this._regIDs) {
-			if (this._regIDs[i] && i == aJSJaCPacket.getID()) {
-				var pID = aJSJaCPacket.getID();
-				this.oDbg.log("handling "+pID,3);
-				try {
-					this._regIDs[i].cb(aJSJaCPacket,this._regIDs[i].arg);
-				} catch (e) { this.oDbg.log(e.name+": "+ e.message); }
-				this._unregisterPID(pID);
-				return true;
-			}
-		}
+        var pID = aJSJaCPacket.getID();
+        if (this._regIDs[pID]) {
+            this.oDbg.log("handling "+pID,3);
+            try {
+                this._regIDs[pID].cb(aJSJaCPacket,this._regIDs[pID].arg);
+            } catch (e) { this.oDbg.log(e.name+": "+ e.message); }
+            this._unregisterPID(pID);
+            return true;
+        }
 		return false;
 	};
 	this._handleResponse = JSJaCHandleResponse;
@@ -592,9 +591,7 @@ function JSJaCHandleResponse(req) {
 }
 
 function JSJaCCheckInQ() {
-	for (var i=0; i<this._inQ.length && i<10; i++) {
-		var item = this._inQ[0];
-		this._inQ = this._inQ.slice(1,this._inQ.length);
+	for (var i=0,item; i<10 && (item = this._inQ.shift()); i++) {
 		var aJSJaCPacket = JSJaCPWrapNode(item);
 		if (typeof(aJSJaCPacket.pType) != 'undefined') {
 			this._handleEvent("onpacketrecv", aJSJaCPacket);

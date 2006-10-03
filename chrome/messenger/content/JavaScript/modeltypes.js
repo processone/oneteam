@@ -25,10 +25,10 @@ function JID(node, domain, resource)
         var slashIdx = ~(~node.indexOf("/", atIdx) || ~node.length);
 
         [node, domain, resource] = [node.substring(0, atIdx),
-            node.substring(atIdx, slashIdx), node.substring(slashIdx)];
+            node.substring(atIdx+1, slashIdx), node.substring(slashIdx+1)];
     }
     this.shortJID = (node ? node+"@" : "") + domain;
-    this.longJID = domain + (resource ? "/"+resource : "");
+    this.longJID = this.shortJID + (resource ? "/"+resource : "");
 
     if (this._cache[this.longJID])
         return this._cache[this.longJID];
@@ -101,28 +101,51 @@ _DECL_(Model).prototype =
 {
     init: function()
     {
-        this._views = [];
+        this._views = {};
     },
 
-    registerView: function(view)
+    registerView: function(view, method)
     {
-        this._views.push(view)
+        if (!method)
+            method = "onModelUpdated";
+        var flags = arguments.length <= 2 ? [''] : Array.slice(arguments, 2);
+        var record = [view, method]
+
+        for (var i = 0; i < flags.length; i++) {
+            if (!this._views[flags[i]])
+                this._views[flags[i]] = [record];
+            else
+                this._views[flags[i]].push(record);
+        }
     },
 
-    unregisterView: function(view)
+    unregisterView: function(view, method)
     {
-        var p = this._views.indexOf(view);
-        if (p >= 0)
-            this._views.splice(p, 1);
+        if (!method)
+            method = "onModelUpdated";
+        var flags = arguments.length <= 2 ? [''] : Array.slice(arguments, 2);
+
+        for (var i = 0; i < flags.length; i++)
+            for (var j = 0, v = this._views[flags[i]]; v && j < v.length; j++)
+                if (v[j][0] == view && v[j][1] == method) {
+                    v.splice(j, 1);
+                    break;
+                }
     },
 
     modelUpdated: function()
     {
-        var args = [this];
-        args.push.apply(args, arguments);
-
-        for (var i = 0; i < this._views.length; i++)
-            this._views[i].onModelUpdated.apply(this._views[i], args);
+        var records = [];
+        for (var i = 0; i < arguments.length; i+=2) {
+            var v = (this._views[arguments[i]] || []).concat(this._views[''] || []);
+            for (var j = 0; j < v.length; j++)
+                if (1||~records.indexOf(v[j])) {
+                    records.push(v[j]);
+                    try {
+                        v[j][0][v[j][1]].call(v[j][0], this, arguments[i], arguments[i+1]);
+                    } catch (ex) {alert(ex)}
+                }
+        }
     },
 
     _calcModificationFlags: function(oldValues)
@@ -130,7 +153,7 @@ _DECL_(Model).prototype =
         flags = [];
         for (i in oldValues)
             if (this[i] != oldValues[i])
-                flags.push(i);
+                flags.push(i, null);
         return flags;
     },
 

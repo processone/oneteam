@@ -1,0 +1,35 @@
+
+.group-view {
+  color : rgb(15%, 15%, 70%);
+  background: #CCCCFF;
+  font-weight : bold;
+}
+
+#adduser-button {
+  list-style-image: url(main-icons/adduser.png);
+}
+
+#joinroom-button {
+  list-style-image: url(main-icons/joinroom.png);
+}
+
+#editgroups-button {
+  list-style-image: url(main-icons/adduser.png);
+}
+
+#disco-button {
+  list-style-image: url(main-icons/disco.png);
+}
+
+#toggleshowoffline-button {
+  list-style-image: url(main-icons/toggleoffline.png);
+}
+
+#setPresence-box {
+  padding: 5px;
+}
+
+#setPresence-nick {
+  font-weight: bold;
+  font-size: 100%;
+}

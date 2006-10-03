@@ -1,0 +1,13 @@
+vbox {
+  background: white;
+}
+
+#output, #input {
+  margin: 3px;
+  border: 1px solid #7e9cb8 !important;
+}
+
+#send {
+  list-style-image: url(chatpane/send.png);
+  -moz-binding: url(chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image);
+}

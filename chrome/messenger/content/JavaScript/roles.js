@@ -205,6 +205,30 @@ function getInheritanceChain(obj, name)
           function(o){return name in o.__proto__});
 }
 
+function calculateWalkSequence(obj, name)
+{
+    var meta = obj.__proto__.__META__;
+    if (!meta.inheritanceChain)
+        meta.inheritanceChain = {};
+    if (meta.inheritanceChain[name])
+        return meta.inheritanceChain[name];
+
+    var c = [], p = obj.__proto__;
+    for (var i = 0; i <meta.roles.length; i++)
+    while (p && "__META__" in p) {
+        c.push(p.constructor);
+        for (var i = 0; i < p.__META__.roles.length; i++) {
+            var role = p.__META__.roles[i];
+            while (role && c.indexOf(role) >= 0) {
+                c.push(role);
+                role = role.prototype.__proto__.constructor;
+            }
+        }
+        p = p.__proto__;
+    }
+    obj.__proto__.__META__.inheritanceChain[''] = c;
+}
+
 var WALK = {}
 WALK.asceding = {
     __noSuchMethod__: function(name, args)

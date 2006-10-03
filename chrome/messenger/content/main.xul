@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/gui.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/main.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/bindings.css" type="text/css"?>
 
 <!DOCTYPE window [
@@ -11,8 +13,8 @@
 %messengerDTD;
 ]>
 
-<window id="Messenger" title="OneTeam" onload="onLoad()"
-    width="170" height="450"
+<window id="ot:main" title="OneTeam" onload="onLoad()" onclose="onClose()"
+    persist="width height" width="170" height="450"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
   <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
@@ -27,44 +29,63 @@
   <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/rosterviews.js"/>
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
    
   <script type="text/javascript;version=1.7"><![CDATA[
-    function updateContactContextMenu(menu)
+    function updateContactContextMenu(menu, event)
     {
-      self.activeItem = document.getElementById("contacts-list").selectedItem.model;
+      if (event.target != menu)
+        return;
+    try{
       var cs = document.getElementById("contact-chat-single");
       var cm = document.getElementById("contact-chat-multi");
 
+//      self.activeItem = document.getElementById("contacts-list").selectedItem.model;
+
       cm.hidden = !(cs.hidden = activeItem.resources.length > 1);
       if (cs.hidden) {
-        var list = cm.firestChild;
-        while (list.firstChild)
+        var list = cm.firstChild;
+        while (list && list.firstChild)
           list.removeChild(list.firstChild);
         for (var i = 0; i < activeItem.resources.length; i++) {
           var item = document.createElement("menuitem");
           item.setAttribute("label", activeItem.resources[i].jid.resource+" ("+
             activeItem.resources[i].priority+")");
-          item.setAttribute("oncommand", "this.onOpenChat()");
+          item.setAttribute("oncommand", "this.model.onOpenChat()");
           item.model = activeItem.resources[i];
           list.appendChild(item);
         }
       }
-      var canSeeMe = activeItem.subscription == "both" || activeItem.subscription == "to";
-      var canSeeHim = activeItem.subscription == "both" || activeItem.subscription == "from";
+      var canSeeMe = activeItem.subscription == "both" || activeItem.subscription == "from";
+      var canSeeHim = activeItem.subscription == "both" || activeItem.subscription == "to";
 
-      document.getElementById("contact-authorisation-ask").disabled = !canSeeHim;
-      document.getElementById("contact-authorisation-allow").disabled = !canSeeMe;
-      document.getElementById("contact-authorisation-disallow").disabled = canSeeMe;
+      document.getElementById("contact-authorisation-ask").
+        setAttribute("disabled", canSeeHim);
+      document.getElementById("contact-authorisation-allow").
+        setAttribute("disabled", canSeeMe);
+      document.getElementById("contact-authorisation-disallow").
+        setAttribute("disabled", !canSeeMe);
+      }catch(ex){dump(ex+"\n")}
     }
 
     var setPresenceUpdater = {
-      onModelUpdated: function()
+      onPresenceChange: function() {
+        this.chooser.value = account.currentPresence.type;
+      },
+
+      onConnect: function()
       {
-        this.chooser.value=account.currentPresence.type;
+        document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
+        document.getElementById("setPresence-nick").value = account.connectionInfo.user;
+        if (!this.rosterView)
+          this.rosterView = new RosterView(document.getElementById("contacts-list"));
+        if (!account.connected)
+          ChatPane.prototype.closeAllTabs();
       },
 
       onCommand: function()
@@ -80,18 +101,148 @@
           this._skip = false;
           account.onCustomPresence()
         }
-        this.value = this.chooser.value;
+        this.onIconSetChange();
+      },
+
+      onIconSetChange: function()
+      {
+        document.getElementById("setPresence-type-image").src =
+          presenceToIcon(account.currentPresence.type);
       },
 
       init: function()
       {
+        account.registerView(this, "onConnect", "connected");
+        account.registerView(this, "onPresenceChange", "currentPresence");
+        account.registerView(this, "onIconSetChange", "iconSet");
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.value = this.chooser.value;
+        this.onIconSetChange();
       }
     };
 
     function onLoad() {
       setPresenceUpdater.init();
+      document.getElementById("login-user").value = account.connectionInfo.user;
+      document.getElementById("login-pass").value = account.connectionInfo.pass;
+      document.getElementById("login-savePass").checked = account.connectionInfo.pass != null;
+    }
+
+    function onClose() {
+      ChatPane.prototype.closeAllTabs();
+      quit();
+    }
+
+    function quit() {
+      con.disconnect();
+    }
+
+    function connect() {
+      account.setUserAndPass(document.getElementById("login-user").value,
+        document.getElementById("login-pass").value,
+        document.getElementById("login-savePass").checked);
+      account.connect();
+    }
+
+    function ChatPane(contact) {
+        this.contact = contact;
+
+        const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+        this.tab = document.createElementNS(ns, "tab");
+        this.tab.setAttribute("label", contact.visibleName);
+        this.tab.setAttribute("onclosetab", "this.controler.close()");
+        this.tab.controler = this;
+
+        this.tabpanel = document.createElementNS(ns, "tabpanel");
+        this.tabpanel.setAttribute("flex", "1");
+
+        var vbox = document.createElement("vbox");
+        vbox.setAttribute("flex", "1");
+
+        var me = this;
+
+        this.chatPane = document.createElement("chatpane");
+        this.chatPane.setAttribute("flex", "1");
+        this.chatPane.addEventListener("chat-send", function(){me.onSend()}, false);
+
+        vbox.appendChild(this.chatPane);
+        this.tabpanel.appendChild(vbox)
+
+        this.chats = document.getElementById("chats");
+        this.chats._tabpanels.appendChild(this.tabpanel);
+        this.chats._tabs.appendChild(this.tab);
+
+        this.__proto__._allPanes.push(this);
+        if (this.__proto__._allPanes.length == 1) {
+          var splitter = document.getElementById("chats-splitter");
+          splitter.hidden = false;
+          this.chats.hidden = false;
+          splitter.previousSibling.flex = "0";
+          splitter.previousSibling.setAttribute("width", self.innerWidth);
+          self.resizeTo(self.outerWidth+(+splitter.getAttribute("rightWidth") || 500),
+                        self.outerHeight);
+        }
+        this.focus();
+    }
+
+    _DECL_(ChatPane).prototype =
+    {
+      _allPanes: [],
+
+      closed: false,
+
+      closeAllTabs: function()
+      {
+        var panes = ChatPane.prototype._allPanes;
+
+        for (var i = 0; i < panes.length; i++)
+          panes[i].close();
+      },
+
+      focus: function()
+      {
+        if (this.closed)
+          return;
+        this.chats.selectedPanel = this.tabpanel;
+        this.chats.selectedTab = this.tab;
+      },
+
+      close: function()
+      {
+        if (this.closed)
+          return;
+        this.tabpanel.parentNode.removeChild(this.tabpanel);
+        this.tab.parentNode.removeChild(this.tab);
+        this.closed = true;
+        this.tab = this.tabpanel = this.chats = null;
+
+        this.__proto__._allPanes.splice(this.__proto__._allPanes.indexOf(this),1);
+        if (this.__proto__._allPanes.length == 0) {
+          var splitter = document.getElementById("chats-splitter");
+          var width = +splitter.previousSibling.getAttribute("width");
+
+          try {
+            splitter.hidden = true;
+            this.chats.hidden = true;
+          } catch(ex){}
+          splitter.previousSibling.flex = "1";
+          splitter.setAttribute("rightWidth", self.outerWidth - width);
+
+          self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
+        }
+      },
+
+      onSend: function()
+      {
+        this.contact.sendMessage(this.chatPane.content);
+      },
+
+      addMessage: function(from, body, flags)
+      {
+        if (this.closed)
+          return;
+        this.chatPane.addMessage(from, body, flags)
+      }
     }
   ]]></script>
 
@@ -105,11 +256,11 @@
     <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
     <command id="cmd_extensions" oncommand=""/>
     <command id="cmd_themes" key="key_themes" oncommand=""/>
-    <command id="cmd_prefs" key="key_prefs" oncommand=""/>
+    <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
 
     <command id="cmd_help" key="key_help" oncommand=""/>
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
-    <command id="cmd_about" oncommand=""/>
+    <command id="cmd_about" oncommand="account.showAbout()"/>
 
     <command id="cmd_toggleShowOffline" key="key_toggleShowOffline" oncommand=""/>
   </comandset>
@@ -127,7 +278,7 @@
     <key id="key_toggleShowOffline" modifiers="control" key="O" oncommand="cmd_toggleShowOffline"/>
   </keyset>
 
-  <deck id="main-deck" flex="1" selectedIndex="1">
+  <deck id="main-deck" flex="1" selectedIndex="0">
     <vbox id="login-box" flex="1">
       <groupbox align="center" flex="1">
         <caption class="titre" label="&Login.titre;"/>
@@ -135,19 +286,20 @@
         <label popup="popup-tools" class="text-link" value="&Login.NewAccount;" align="right"
           onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
         <spacer height="40"/>
-        <label value="&Login.login; : " style="color:#777"/>
+        <label value="&Login.login;: " style="color:#777"/>
         <spacer height="10"/>
-        <textbox id="user" width="180" preference="chat.connection.username"/>
+        <textbox id="login-user" width="180"/>
         <spacer height="20"/>
-        <label value="&Login.password; : " style="color:#777"/>
+        <label value="&Login.password;: " style="color:#777"/>
         <spacer height="10"/>
-        <textbox id="pass" type="password" width="180" preference="chat.connection.password"/>
+        <textbox id="login-pass" type="password" width="180"/>
         <spacer height="3"/>
-        <checkbox id="checkbox-password" checked="true" label="Remember password" oncommand="savePassword();"/>
+        <checkbox id="login-savePass" checked="true" label="Remember password"/>
         <spacer height="20"/>
-        <button label="&Login.signin;" oncommand="doLogin(event);"/>
+        <button label="&Login.signin;" oncommand="connect()"/>
         <spacer height="30"/>
-        <label popup="popup-tools" class="text-link" value="&Login.settings;" align="right" onclick="openSettings();"/>
+        <label class="text-link" value="&Login.settings;" align="right"
+            onclick="openSettings();"/>
       </groupbox>
     </vbox>
     <vbox id="main-box" flex="1">
@@ -212,7 +364,7 @@
           <hbox id="setPresence-box">
             <image id="setPresence-type-image"/>
             <vbox flex="1">
-              <label value="Nick" id="setPresence-nick"/>
+              <label id="setPresence-nick"/>
               <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
                 <menupopup>
                   <menuitem id="setPresence-type-available" label="&status.Available;"
@@ -241,7 +393,7 @@
                 </menulist>
               </hbox>
             </vbox>
-            <image id="setPresence-avatar-image"/>
+            <avatar id="setPresence-avatar-image" flex="1"/>
           </hbox>
           <tabbox id="roster" flex="1">
             <tabs>
@@ -250,7 +402,8 @@
             </tabs>
             <tabpanels flex="1">
               <tabpanel>
-                <richlistbox id="contacts-list" flex="1"/>
+                <richlistbox id="contacts-list" flex="1"
+                    onselect="self.activeItem = this.selectedItem.model"/>
               </tabpanel>
               <tabpanel>
                 <richlistbox id="conferences-list" flex="1"/>
@@ -258,16 +411,16 @@
             </tabpanels>
           </tabbox>
         </vbox>
-        <splitter hidden="true"/>
-        <tabbox id="chats" hidden="true">
+        <splitter id="chats-splitter" hidden="true" persist="rightWidth"/>
+        <tabbox id="chats" hidden="true" flex="1">
           <tabs/>
-          <tabpanels  flex="1"/>
+          <tabpanels flex="1"/>
         </tabbox>
       </hbox>
     </vbox>
   </deck>
   <popupset>
-    <popup id="contact-contexmenu" onpopupshowing="updateContactContextMenu(this)">
+    <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
       <menuitem id="contact-chat-single" label="&listitemcontext.Communiquer;"
           oncommand="activeItem.onOpenChat()"/>
       <menu id="contact-chat-multi" label="&listitemcontext.Communiquer;" hidden="true">

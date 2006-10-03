@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/status.dtd">
+
+
+<dialog id="Remove" title="Contact removal" onload="onLoad()" ondialogaccept="onAccept()"
+    defaultButton="cancel" buttonlabelaccept="Remove"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript"><![CDATA[
+    var contact = window.arguments[0];
+
+    function onLoad() {
+      document.getElementById("nick").setAttribute("value", contact.name || contact.jid);
+      document.getElementById("jid").setAttribute("value", contact.jid);
+    }
+    function onAccept() {
+      contact.remove();
+    }
+  ]]></script>
+
+  <description>Do you want to remove this contact from your roster?</description>
+  <spacer/>
+  <label id="nick" value="Ki diabel"/>
+  <label id="jid"/>
+
+</dialog>

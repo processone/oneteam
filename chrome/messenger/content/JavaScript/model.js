@@ -1,9 +1,16 @@
-var gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
-        .getService(Components.interfaces.nsIPrefBranch);
+var gPrefService = Components.classes["@mozilla.org/preferences;1"].
+    getService(Components.interfaces.nsIPrefBranch2);
+
+function presenceToIcon(type)
+{
+    if (!type || type == "unavailable")
+        return account.iconSet+"offline.png";
+    return account.iconSet + (type == "available" ? "online" : type) + ".png";
+}
 
 function Account()
 {
-    this.groups = {}
+    this.groups = []
     this.allGroups = {}
     this.contacts = {};
     this.allContacts = {};
@@ -12,13 +19,29 @@ function Account()
     this.userPresence = this.currentPresence = {type: "unavailable"};
 
     this.cache = new PersistantCache("oneteamCache");
+    this.connected = false;
 
-    WALK.asceding.init(this);
+    this.init();
 
     self.account = this;
 
     // XXX use string bundle
     new Group("", "Contacts", true);
+
+    this.connectionInfo = {};
+    this.notificationScheme = new NotificationScheme();
+
+    this.observe(null, null, "chat.connection.host");
+    this.observe(null, null, "chat.connection.port");
+    this.observe(null, null, "chat.connection.base");
+    this.observe(null, null, "chat.connection.port");
+    this.observe(null, null, "chat.connection.user");
+    this.observe(null, null, "chat.connection.pass");
+
+    this.observe(null, null, "chat.general.iconsetdir");
+
+    gPrefService.addObserver("chat.connection", this, false);
+    gPrefService.addObserver("chat.general", this, false);
 }
 
 _DECL_(Account, null, Model).prototype =
@@ -28,7 +51,7 @@ _DECL_(Account, null, Model).prototype =
     setPresence: function(type, status, priority, profile, userSet)
     {
         if (priority == null)
-            priority = prefSrv.getIntPref("chat.connection.priority");
+            priority = gPrefService.getIntPref("chat.connection.priority");
 
         var newPresence = {type: type, status: status, priority: priority,
             profile: profile};
@@ -37,7 +60,7 @@ _DECL_(Account, null, Model).prototype =
         if (!profile) {
             var presence = new JSJaCPresence();
             if (type)
-                presence.setType(type);
+                presence.setShow(type);
             if (status)
                 presence.setStatus(status);
             presence.setPriority(priority);
@@ -50,7 +73,7 @@ _DECL_(Account, null, Model).prototype =
             if (userSet)
                 this.userPresence = newPresence;
 
-            modelUpdated("currentPresence");
+            this.modelUpdated("currentPresence");
             return;
         }
 
@@ -74,33 +97,33 @@ _DECL_(Account, null, Model).prototype =
         if (userSet)
             this.userPresence = newPresence;
 
-        modelUpdated("currentPresence");
+        this.modelUpdated("currentPresence");
     },
 
     groupsIterator: function(predicate, token)
     {
         for (var i = 0; i < this.groups.length; i++)
             if (!predicate || predicate(this.groups[i], token))
-                yield groups[i];
+                yield this.groups[i];
     },
 
     contactsIterator: function(predicate, token)
     {
         for (var i = 0; i < this.contacts.length; i++)
             if (!predicate || predicate(this.copntacts[i], token))
-                yield contacts[i];
+                yield this.contacts[i];
     },
 
     _onGroupAdded: function(group)
     {
         this.groups.push(group);
-        this.modelUpdated("groups");
+        this.modelUpdated("groups", {added: [group]});
     },
 
     _onGroupRemoved: function(group)
     {
         this.groups.splice(this.groups.indexOf(group), 1);
-        this.modelUpdated("groups");
+        this.modelUpdated("groups", {removed: [group]});
     },
 
     getOrCreateGroup: function(name)
@@ -114,7 +137,7 @@ _DECL_(Account, null, Model).prototype =
     {
         if (this.allContacts[jid])
             return this.allContacts[jid];
-        return new Contacts(jid, name, groups, null, null, true);
+        return new Contact(jid, name, groups, null, null, true);
     },
 
     getOrCreateResource: function(jid)
@@ -141,12 +164,24 @@ _DECL_(Account, null, Model).prototype =
                     "ot:joinRoom", "chrome,centerscreen");
     },
 
+    showAbout: function()
+    {
+        window.open("chrome://messenger/content/about.xul", "ot:about",
+                    "chrome,titlebar,toolbar,centerscreen,modal");
+    },
+
+    showPrefs: function()
+    {
+        window.open("settings.xul", "ot:prefs", "chrome,centerscreen,dialog,resizable");
+    },
+
     showVCard: function()
     {
     },
 
     showConsole: function()
     {
+        window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
     },
 
     onCustomPresence: function()
@@ -155,12 +190,55 @@ _DECL_(Account, null, Model).prototype =
                           "ot:customPresence", "chrome,centerscreen");
     },
 
-    connect: function(server, port, base, polling, user, pass)
+    observe: function(subject, topic, value)
     {
-        var args = { httpbase: "http://" + server + ":" + port + "/" + base + "/",
+        var val;
+        try {
+            if ((val = value.replace(/^chat\.connection\./, "")) != value) {
+                switch (val) {
+                case "host":
+                case "base":
+                case "user":
+                    this.connectionInfo[val] = gPrefService.getCharPref(value);
+                    break;
+                case "pass":
+                    if (gPrefService.getCharPref(value))
+                        this.connectionInfo[val] = gPrefService.getCharPref(value);
+                    break;
+                case "port":
+                    this.connectionInfo[val] = gPrefService.getIntPref(value);
+                    break;
+                case "polling":
+                    this.connectionInfo[val] = gPrefService.getBoolPref(value);
+                    break;
+                }
+                this.modelUpdated("connectionInfo");
+            } else if (value == "chat.general.iconsetdir") {
+                this.iconSet = "chrome://messenger/content/img/" +
+                    gPrefService.getCharPref(value) + "/";
+                this.modelUpdated("iconSet");
+            }
+        } catch (ex) {}
+    },
+
+    setUserAndPass: function(user, pass, savePass)
+    {
+        gPrefService.setCharPref("chat.connection.user", user);
+        if (savePass)
+            gPrefService.setCharPref("chat.connection.pass", pass);
+        else
+            gPrefService.clearUserPref("chat.connection.pass");
+        this.connectionInfo.pass = pass;
+    },
+
+    connect: function()
+    {
+        var args = {
+            httpbase: "http://"+this.connectionInfo.host+":"+this.connectionInfo.port+
+                "/"+this.connectionInfo.base+"/",
             timerval: 2000};
 
-        self.con = polling ? new JSJaCHttpBindingConnection(args) :
+        var con = this.connectionInfo.polling ? new JSJaCHttpBindingConnection(args) :
             new JSJaCHttpPollingConnection(args);
 
         con.registerHandler("message", function(p){account.onMessage(p)});
@@ -170,30 +248,47 @@ _DECL_(Account, null, Model).prototype =
         con.registerHandler("ondisconnect", function(p){account.onDisconnect(p)});
         con.registerHandler('onerror', function(p){account.onError(p)});
 
-        args = { domain: server, user: user, pass: pass,
+        args = {
+            domain: this.connectionInfo.host,
+            username: this.connectionInfo.user,
+            pass: this.connectionInfo.pass,
             resource: gPrefService.getCharPref("chat.connection.resource")};
 
+        self.con = con;
+        this.modelUpdated("con");
         con.connect(args);
     },
 
     onConnect: function()
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(null, null, 'get');
-        iq.setQuery('jabber:iq:roster');
-        con.send(iq);
+        var pkt = new JSJaCIQ();
+        pkt.setIQ(null, null, 'get');
+        pkt.setQuery('jabber:iq:roster');
+        con.send(pkt);
+
+        pkt = new JSJaCPresence();
+        con.send(pkt);
+
+        this.connected = true;
+
+        this.modelUpdated("connected");
     },
 
     onDisconnect: function()
     {
+        this.connected = false;
+        self.con = null;
+
+        this.modelUpdated("con", null, "connected");
     },
 
     onPresence: function(packet)
     {
-        // XXX: Shouldn't this show somehow show this in roster, instead in new window?
-        var errorTag = packet.getNode().getElementsByTagName('error');
+        var errorTag = packet.getNode().getElementsByTagName('error')[0];
         if (errorTag) {
-            var text = errorTag.getElementsByTagName('text');
+            // XXX: I don't think it is ideal solution, maybe show it it roster somehow?
+            // XXX: Disabled for now
+            var text = 0 && errorTag.getElementsByTagName('text');
             if (text)
                 window.openDialog("chrome://messenger/content/error.xul", "_blank",
                                   "chrome,modal", text.textContent);
@@ -263,6 +358,29 @@ _DECL_(Account, null, Model).prototype =
 
     onMessage: function(packet)
     {
+        var sender = new JID(packet.getFrom());
+        var invite = packet.getNode().getElementsByTagName("invite");
+
+        if (invite && invite.item(0)) {
+            var reason = packet.getNode().getElementsByTagName("reason")[0];
+
+            window.openDialog("chrome://messenger/content/invitation.xul", "ot:invitation",
+                              "chrome,centerscreen", sender,
+                              invite.getAttribute("from"), reason && reason.textContent);
+            return;
+        }
+
+        // Message come from me
+        if (sender == this.myJID)
+            return;
+
+        var item = sender.resource ? this.getOrCreateResource(sender) :
+            this.getOrCreateContact(sender);
+
+        if (!item)
+            item = this.getOrCreateContact(sender.getShortJID());
+
+        item.onMessage(packet);
     }
 }
 
@@ -276,7 +394,7 @@ function Group(name, visibleName, builtinGroup)
 
     account.allGroups[name] = this;
 
-    WALK.asceding.init(this);
+    this.init();
 }
 
 _DECL_(Group, null, Model).prototype =
@@ -308,9 +426,9 @@ _DECL_(Group, null, Model).prototype =
             if (c.activeResource)
                 this.availContacts++;
 
-        if (!dontNotifyViews && oldAvailCount != availContacts)
+        if (!dontNotifyViews && oldAvailCount != this.availContacts)
             this.modelUpdated("availContacts");
-        return oldAvailCount != availContacts;
+        return oldAvailCount != this.availContacts;
     },
 
     _onContactAdded: function(contact)
@@ -318,9 +436,9 @@ _DECL_(Group, null, Model).prototype =
         this.contacts.push(contact);
         if (contact.activeResource) {
             this.availContacts++;
-            this.modelUpdated("contacts", "availContacts");
+            this.modelUpdated("contacts", {added: [contact]}, "availContacts");
         } else
-            this.modelUpdated("contacts");
+            this.modelUpdated("contacts", {added: [contact]});
         if (this.contacts.length == 1)
             account._onGroupAdded(this);
     },
@@ -329,9 +447,9 @@ _DECL_(Group, null, Model).prototype =
     {
         this.contacts.splice(this.contacts.indexOf(contact), 1);
         if (this._onContactUpdated(contact, true))
-            this.modelUpdated("contacts", "availContacts");
+            this.modelUpdated("contacts", {removed: [contact]}, "availContacts");
         else
-            this.modelUpdated("contacts");
+            this.modelUpdated("contacts", {removed: [contact]});
 
         if (this.contacts.length == 0) {
             account._onGroupRemoved(this);
@@ -343,6 +461,7 @@ _DECL_(Group, null, Model).prototype =
 
 function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 {
+    this.init();
     if (jid instanceof Node)
         [jid, name, subscription, subscriptionAsk, groups] = this._parseNode(jid);
 
@@ -354,6 +473,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.newItem = true;
     } else {
         this.name = name;
+        this.visibleName = name || this.jid.shortJID;
         this.subscription = subscription || "none";
         this.subscriptionAsk = !!subscriptionAsk;
 
@@ -371,8 +491,6 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     }
     this._vcardHandlers = [];
     account.allContacts[jid] = this;
-
-    WALK.asceding.init(this);
 }
 
 _DECL_(Contact, null, Model,
@@ -425,13 +543,15 @@ _DECL_(Contact, null, Model,
         var groups, groupsHash;
 
         var oldState = { name: this.name, subscription: this.subscription,
-            subscriptionAsk: this.subscriptionAsk};
+            subscriptionAsk: this.subscriptionAsk, visibleName: this.visibleName};
 
         [,this.name, this.subscription, this.subscriptionAsk, groups, groupsHash] =
             this._parseNode(node, true);
 
+        this.visibleName = this.name || this.jid.shortJID;
+
         for (var i = 0; i < this.groups.length; i++) {
-            if !((this.groups[i].name in groups)) {
+            if (!(this.groups[i].name in groupsHash)) {
                 this.groups[i]._onContactRemoved(this);
                 oldState.groups = 1;
             }
@@ -466,14 +586,18 @@ _DECL_(Contact, null, Model,
         groupsHash = {};
         var groupTags = node.getElementsByTagName("group");
         for (var i = 0; i < groupTags.length; i++) {
-            var group = accout.getOrCreateGroup(groupTags[i].textContent);
+            var groupName = groupTags[i].textContent;
+            var group = account.getOrCreateGroup(groupName);
             groups.push(group);
-            if (wantGroupsHash)
-                groupsHash[groupTags[i].textContent] = group;
+            groupsHash[groupName] = group;
         }
 
+        if (groups.length == 0) {
+            groups.push(account.allGroups[""]);
+            groupsHash[""] = account.allGroups[""];
+        }
         return [jid, name, subscription, subscriptionAsk, groups, groupsHash];
-    }
+    },
 
     _sendPresence: function(type, status, priority)
     {
@@ -493,7 +617,7 @@ _DECL_(Contact, null, Model,
     {
         for (var i = 0; i < this.groups.length; i++)
             if (!predicate || predicate(this.groups[i], token))
-                yield groups[i];
+                yield this.groups[i];
     },
 
     resourcesIterator: function(predicate, token)
@@ -501,6 +625,23 @@ _DECL_(Contact, null, Model,
         for (var i = 0; i < this.resources.length; i++)
             if (!predicate || predicate(this.resources[i], token))
                 yield this.resources[i];
+    },
+
+    sendMessage: function(body)
+    {
+        var message = new JSJaCMessage();
+        message.setTo(this.jid);
+        message.setType("chat");
+        message.setBody(body)
+
+        con.send(message);
+    },
+
+    onMessage: function(packet)
+    {
+        if (!this.chatPane)
+            this.onOpenChat();
+        this.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
     },
 
     allowToSeeMe: function()
@@ -538,6 +679,8 @@ _DECL_(Contact, null, Model,
 
     onRemove: function()
     {
+        window.openDialog("chrome://messenger/content/removeContact.xul",
+                          "ot:addContact", "resizable=no,chrome,dialog,modal", this);
     },
 
     remove: function()
@@ -558,6 +701,10 @@ _DECL_(Contact, null, Model,
 
     onOpenChat: function()
     {
+        if (!this.chatPane || this.chatPane.closed)
+            this.chatPane = new ChatPane(this);
+        else
+            this.chatPane.focus();
     },
 
     createResource: function(jid)
@@ -574,7 +721,7 @@ _DECL_(Contact, null, Model,
         var res = this.resources[0];
 
         for (var r in this.resourcesIterator())
-            if (r.priority > res.priority)
+            if (res.cmp(r))
                 res = r;
 
         if (res != this.activeResource) {
@@ -592,11 +739,11 @@ _DECL_(Contact, null, Model,
         var notifyGroups = !this.activeResource;
 
         this.resources.push(resource);
-        if (!this.activeResource || this.activeResource.priority < resource.priority) {
+        if (!this.activeResource || this.activeResource.cmp(resource)) {
             this.activeResource = resource;
-            this.modelUpdated("resources", "activeResource");
+            this.modelUpdated("resources", {added: [resource]}, "activeResource");
         } else
-            this.modelUpdated("resources");
+            this.modelUpdated("resources", {added: [resource]});
         if (notifyGroups)
             for (var g in this.groupsIterator())
                 g._onContactUpdated(this);
@@ -607,26 +754,41 @@ _DECL_(Contact, null, Model,
         this.resources.splice(this.resources.indexOf(resource), 1);
         if (!this.resources.length) {
             this.activeResource = null;
-            this.modelUpdated("resources", "activeResource");
+            this.modelUpdated("resources", {removed: [resource]}, "activeResource");
             for (var g in this.groupsIterator())
                 g._onContactUpdated(this);
             return;
         }
         if (this.activeResource == resource && this._onResourceUpdated(resource, true))
-            this.modelUpdated("resources", "activeResource");
+            this.modelUpdated("resources", {removed: [resource]}, "activeResource");
         else
-            this.modelUpdated("resources");
+            this.modelUpdated("resources", {removed: [resource]});
     },
+
+    cmp: function(c)
+    {
+        const status2num = {chat: 6, available: 5, dnd: 4, away:3, xa: 2, offline: 1};
+
+        var kt = status2num[this.activeResource ? this.activeResource.show : "offline"];
+        var kc = status2num[c.activeResource ? c.activeResource.show : "offline"];
+
+        if (kt == kc) {
+            kt = this.name || this.jid;
+            kc = c.name || c.jid;
+        }
+
+        return kt == kc ? 0 : kt > kc ? 1 : -1;
+    }
 }
 
 function Resource(jid)
 {
     this.jid = new JID(jid);
-    this.contact = account.contacts[jid.replace(/\/.*/, "")];
+    this.contact = account.contacts[jid.shortJID];
 
     account.resources[jid] = this;
 
-    WALK.asceding.init(this);
+    this.init();
 }
 
 _DECL_(Resource, null, Model,
@@ -638,8 +800,17 @@ _DECL_(Resource, null, Model,
 {
     _registered: false,
 
+    get visibleName()
+    {
+        return this.contact.visibleName + "("+this.jid.resource+")";
+    },
+
     onOpenChat: function()
     {
+        if (!this.chatPane || this.chatPane.closed)
+            this.chatPane = new ChatPane(this);
+        else
+            this.chatPane.focus();
     },
 
     onPresence: function(packet, dontNotifyViews)
@@ -647,28 +818,62 @@ _DECL_(Resource, null, Model,
         var flags, oldState = { show: this.show, priority: this.priority,
             status: this.status};
 
-        this.show = packet.getShow();
+        this.show = packet.getShow() || "available";
         this.priority = packet.getPriority();
         this.status = packet.getStatus();
 
-        if (this.show == "unavailable") {
+        if (packet.getType() == "unavailable") {
             if (this._registered)
                 this.contact._onResourceRemoved(this);
             delete account.resources[this.jid];
         } else if (!this._registered)
             this.contact._onResourceAdded(this);
 
-        account.notificationScheme.show("resource", this.packet.getShow() || "available",
-                                        this, oldState.show);
+        this.contact._onResourceUpdated(this);
 
         if (this._registered)
-            flags = dontNotifyViews ? this._calcModificationFlags(oldShow) :
-                this._modelUpdatedCheck(flags);
+            flags = dontNotifyViews ? this._calcModificationFlags(oldState) :
+                this._modelUpdatedCheck(oldState);
+
+        account.notificationScheme.show("resource", packet.getShow() || "available",
+                                        this, oldState.show);
 
         this._registered = true;
 
         return flags;
     },
+
+    sendMessage: function(body)
+    {
+        var message = new JSJaCMessage();
+        message.setTo(this.jid);
+        message.setType("chat");
+        message.setBody(body)
+
+        con.send(message);
+    },
+
+    onMessage: function(packet)
+    {
+        if (!this.chatPane)
+            this.onOpenChat();
+        this.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
+    },
+
+    cmp: function(c)
+    {
+        const status2num = {chat: 6, available: 5, dnd: 4, away:3, xa: 2, offline: 1};
+
+        var kt = this.priority;
+        var kc = c.priority;
+
+        if (kt == kc) {
+            kt = status2num[this.show];
+            kc = status2num[c.show];
+        }
+
+        return kt == kc ? 0 : kt > kc ? 1 : -1;
+    }
 }
 
 account = new Account();
