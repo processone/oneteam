@@ -45,6 +45,13 @@ function JSJaCConnection(oArg) {
 			this._events[event] = this._events[event].concat(handler);
 		this.oDbg.log("registered handler for event '"+event+"'",2);
 	};
+	this.unregisterHandler = function(event,handler) {
+        var pos;
+		event = event.toLowerCase(); // don't be case-sensitive here
+		if (this._events[event] && ~(pos =this._events[event].indexOf(handler)))
+			this._events[event].splice(pos, 1)
+		this.oDbg.log("unregistered handler for event '"+event+"'",2);
+	};
 	this.resume = function() {
 		var s = readCookie('s');
 
@@ -445,6 +452,7 @@ function JSJaCSend(aJSJaCPacket,cb,arg) {
 	if (aJSJaCPacket) {
 		try {
 			this._pQueue = this._pQueue.concat(aJSJaCPacket.xml());
+			this._handleEvent("onpacketsend", aJSJaCPacket);
 		} catch (e) {
 			this.oDbg.log(e.toString(),1);
 		}
@@ -588,9 +596,11 @@ function JSJaCCheckInQ() {
 		var item = this._inQ[0];
 		this._inQ = this._inQ.slice(1,this._inQ.length);
 		var aJSJaCPacket = JSJaCPWrapNode(item);
-		if (typeof(aJSJaCPacket.pType) != 'undefined')
+		if (typeof(aJSJaCPacket.pType) != 'undefined') {
+			this._handleEvent("onpacketrecv", aJSJaCPacket);
 			if (!this._handlePID(aJSJaCPacket))
 				this._handleEvent(aJSJaCPacket.pType(),aJSJaCPacket);
+        }
 	}
 // 	oCon = this;
 // 	this._inQto = setTimeout("oCon._checkInQ();",JSJaC_CheckInQueueInterval);
