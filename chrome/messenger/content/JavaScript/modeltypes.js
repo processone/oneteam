@@ -111,7 +111,9 @@ _DECL_(Model).prototype =
 
     unregisterView: function(view)
     {
-        this._views.splice(this._views.indexOf(view), 1);
+        var p = this._views.indexOf(view);
+        if (p >= 0)
+            this._views.splice(p, 1);
     },
 
     modelUpdated: function()
