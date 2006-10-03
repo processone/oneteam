@@ -13,11 +13,11 @@
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	xmlns:html="http://www.w3.org/1999/xhtml">
 
-    <script type="application/x-javascript" src="chrome://messenger/content/utils/htmlformat.js"/>
-    <script type="application/x-javascript" src="JavaScript/shared.js"/>
+    <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
+    <script type="application/x-javascript" src="utils/htmlformat.js"/>
     <script type="application/x-javascript" src="JavaScript/gui.js"/>
+    <script type="application/x-javascript" src="JavaScript/shared.js"/>
     <script type="application/x-javascript" src="JavaScript/console.js"/>
-
 
     <vbox align="center" flex="1">
         <spacer flex="1"/>

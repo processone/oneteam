@@ -2,13 +2,44 @@ var consol;
 var inputEditor;
 var conn;
 
+var handlers =
+{
+    onPacketRecv: function(p)
+    {
+        addInConsole("IN: "+p.xml());
+    },
+    
+    onPacketSend: function(p)
+    {
+        addInConsole("OUT: "+p.xml());
+    },
 
+    onModelUpdated: function()
+    {
+        if (Array.indexOf(arguments, "con") <= 0)
+            return;
+        window.opener.con.registerHandler("onpacketsend", this.onPacketSend);
+        window.opener.con.registerHandler("onpacketrecv", this.onPacketRecv);
+    },
+
+    unregister: function()
+    {
+        window.opener.account.unregisterView(handlers);
+        if (window.opener.con) {
+            window.opener.con.registerHandler("onpacketsend", this.onPacketSend);
+            window.opener.con.registerHandler("onpacketrecv", this.onPacketRecv);
+        }
+    }
+};
 
 function startConsole() {
     consol = document.getElementById("textconsole");
     inputEditor = document.getElementById("texttemplates");
-    conn = window.opener.con;
-    self.setCursor('pointer');
+
+    window.opener.account.registerView(handlers);
+
+    if (window.opener.con)
+        handlers.onModelUpdated(null, "con");
 }
 
 // Initialisation function
@@ -85,11 +116,12 @@ function writeXMLMessageHeadline() {
 function sendToServer() {
     var str = inputEditor.value;
 
-    // TODO: This does not seem to work yet. I do not know why:
-    conn.sendstr(str);
+    var dp = new DOMParser();
+    var node = dp.parseFromString("<q xmlns='jabber:client'>"+str+"</q>", "text/xml").
+        firstChild.firstChild;
+    window.opener.con.send(window.opener.JSJaCPWrapNode(node));
 
     inputEditor.value = "";
-    addInConsole("OUT : " + str + "\n");
 }
 
 // Function to clear the console
@@ -100,11 +132,7 @@ function clearConsole(){
 
 // Function to close the window
 function closeConsole() {
-
-window.opener.console = false;     
-    self.close();
-
-
+    handlers.unregister();
 }
 
 
