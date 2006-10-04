@@ -93,6 +93,71 @@ JID.prototype =
     }
 }
 
+function View()
+{
+}
+
+_DECL_(View).prototype =
+{
+    ROLE_REQUIRES: ["show", "destroy"]
+}
+
+function ContainerView()
+{
+}
+
+_DECL_(ContainerView).prototype =
+{
+    ROLE_REQUIRES: ["containerNode", "afterlastItemNode", "itemComparator"],
+
+    onItemAdded: function(item)
+    {
+        var a = 0, b = this.items.length-1, mid;
+        while (a <= b) {
+            mid = (a+b)>>1;
+            val = this.itemComparator(item, this.items[mid]);
+            if (val == 0) {
+                a = mid;
+                break;
+            }
+            if (val < 0)
+                b = mid-1;
+            else
+                a = mid+1;
+        }
+        this.items.splice(a, 0, item);
+        item.show(this.containerNode, this.items[a+1] ? this.items[a+1].node :
+                                                        this.afterlastItemNode);
+    },
+
+    onItemRemoved: function(model)
+    {
+        for (var i = 0; i < this.items.length && this.items[i].model != model; i++)
+            ;
+
+        this.items[i].destroy();
+        this.items.splice(i, 1);
+    },
+
+    onItemUpdated: function(item)
+    {
+        this.items.splice(this.items.indexOf(item), 1);
+        this.onItemAdded(item);
+    },
+
+    getNextItemNode: function(item)
+    {
+        var idx = this.items.indexOf(item)+1;
+        return this.items[idx] ? this.items[idx].node : this.afterlastItemNode;
+    },
+
+    destroy: function()
+    {
+        for (var i = 0; i < this.items.length; i++)
+            this.items[i].destroy();
+    }
+}
+
 function Model()
 {
 }

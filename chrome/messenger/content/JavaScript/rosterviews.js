@@ -1,34 +1,41 @@
 function RosterView(node)
 {
-    this.node = node;
-    this.groups = {};
+    this.containerNode = node;
+    this.items = [];
     this.model = account;
 
     this.onModelUpdated(null, "groups", {added: account.groups});
     this.model.registerView(this, null, "groups");
 }
 
-_DECL_(RosterView).prototype =
+_DECL_(RosterView, null, ContainerView).prototype =
 {
+    afterlastItemNode: null,
+    containerNode: null,
+
+    itemComparator: function(a, b)
+    {
+        a = a.model.visibleName.toLowerCase();
+        b = b.model.visibleName.toLowerCase();
+
+        return a > b ? -1 : a == b ? 0 : 1;
+    },
+
     onModelUpdated: function(model, type, data)
     {
         for (var i = 0; data.added && i < data.added.length; i++)
-            this.groups[data.added[i].name] =
-                new GroupView(this.node, data.added[i], this);
+            this.onItemAdded(new GroupView(data.added[i], this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++) {
-            this.groups[data.removed[i].name].destroy();
-            delete this.groups[data.removed[i].name];
-        }
+        for (i = 0; data.removed && i < data.removed.length; i++)
+            this.onItemRemoved(data.removed[i]);
     }
 }
 
-function GroupView(parentNode, model, parentView)
+function GroupView(model, parentView)
 {
-    this.parentNode = parentNode;
     this.model = model;
     this.parentView = parentView;
-    this.contacts = {};
+    this.contacts = [];
 
     this.node = document.createElement("richlistitem");
     this.label = document.createElement("label");
@@ -38,47 +45,61 @@ function GroupView(parentNode, model, parentView)
     this.node.model = this.model;
     this.node.view = this;
 
-    this.onModelUpdated(null, "contacts", {added: model.contacts},
-                        "availContacts");
-
     this.node.appendChild(this.label);
-    this.parentNode.appendChild(this.node);
 
     this.model.registerView(this, null, "contacts");
 }
 
-_DECL_(GroupView).prototype =
+_DECL_(GroupView, null, ContainerView).prototype =
 {
+    containerNode: null,
+
+    get afterlastItemNode()
+    {
+        return this.parentView.getNextItemNode(this);
+    },
+
+    itemComparator: function(a, b)
+    {
+        return a.model.cmp(b.model);
+    },
+
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++)
-            this.contacts[data.added[i].jid] =
-                new ContactView(this.parentNode, data.added[i], this);
+        if (!this.items)
+            return;
 
-        for (i = 0; data.removed && i < data.removed.length; i++) {
-            this.contacts[data.removed[i].name].destroy();
-            delete this.contacts[data.removed[i].name];
+        for (var i = 0; data.added && i < data.added.length; i++)
+            this.onItemAdded(new ContactView(data.added[i], this));
+
+        for (i = 0; data.removed && i < data.removed.length; i++)
+            this.onItemRemoved(data.removed[i]);
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        this.containerNode = rootNode;
+        rootNode.insertBefore(this.node, insertBefore);
+
+        if (!this.items) {
+            this.items = [];
+            this.onModelUpdated(this.model, "contacts", {added: this.model.contacts});
         }
     },
 
     destroy: function()
     {
-        for each (contact in this.contacts)
-            contact.destroy();
-
-        this.node.parentNode.removeChild(this.node);
         this.model.unregisterView(this, null, "contacts");
-    },
 
-    findNewContactPlace: function(contact)
-    {
-        for each (var c in this.contacts) {
-        }
-    }
+        if (!this.items)
+            return;
+        ContainerView.prototype.destroy.call(this);
+        this.containerNode.removeChild(this.node);
+    },
 }
 
 
-function ContactView(parentNode, model, parentView)
+function ContactView(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
@@ -99,7 +120,6 @@ function ContactView(parentNode, model, parentView)
 
     this.node.appendChild(this.statusIcon);
     this.node.appendChild(this.label);
-    parentNode.appendChild(this.node);
 
     this.model.registerView(this, "onNameChange", "name");
     this.model.registerView(this, "onActiveResourceChange", "activeResource");
@@ -111,6 +131,7 @@ _DECL_(ContactView).prototype =
     onNameChange: function()
     {
         this.label.value = this.model.name;
+        this.parentView.onItemUpdated(this);
     },
 
     onActiveResourceChange: function()
@@ -124,11 +145,19 @@ _DECL_(ContactView).prototype =
     {
         this.statusIcon.setAttribute("src", presenceToIcon(this.model.activeResource &&
                                                            this.model.activeResource.show));
+        this.parentView.onItemUpdated(this);
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        rootNode.insertBefore(this.node, insertBefore);
     },
 
     destroy: function()
     {
-        this.node.parentNode.removeChild(this.node);
+        if (this.node.parentNode)
+            this.node.parentNode.removeChild(this.node);
+
         if (this.model.activeResource)
             this.model.activeResource.unregisterView(this, null, "show");
 

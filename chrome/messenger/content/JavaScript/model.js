@@ -767,14 +767,14 @@ _DECL_(Contact, null, Model,
 
     cmp: function(c)
     {
-        const status2num = {chat: 6, available: 5, dnd: 4, away:3, xa: 2, offline: 1};
+        const status2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
 
         var kt = status2num[this.activeResource ? this.activeResource.show : "offline"];
         var kc = status2num[c.activeResource ? c.activeResource.show : "offline"];
 
         if (kt == kc) {
-            kt = this.name || this.jid;
-            kc = c.name || c.jid;
+            kt = this.visibleName;
+            kc = c.visibleName;
         }
 
         return kt == kc ? 0 : kt > kc ? 1 : -1;
