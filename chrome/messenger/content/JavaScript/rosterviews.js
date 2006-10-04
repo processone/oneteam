@@ -101,7 +101,6 @@ _DECL_(GroupView, null, ContainerView).prototype =
 
 function ContactView(model, parentView)
 {
-    dump("CVC\n");
     this.model = model;
     this.parentView = parentView;
 

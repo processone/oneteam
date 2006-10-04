@@ -40,8 +40,11 @@
         <![CDATA[
           this._image = document.getAnonymousElementByAttribute(this, "id", "image");
           this._container = this._image.parentNode.parentNode.parentNode;
-          if (this.model)
+          if (this.model) {
+            this._model = this.model;
             this.model.registerView(this, "onAvatarChange", "avatar");
+          }
+          this.onAvatarChange();
         ]]>
       </constructor>
 
@@ -54,18 +57,22 @@
 
       <method name="onAvatarChange">
         <body><![CDATA[
-          dump("OAC\n");
-          this._image.setAttribute("src", "file://"+this.model.avatar);
+          if (!this._model || !this._model.avatar)
+            this._src = "chrome://messenger/skin/default-avatar.png";
+          else
+            this._src = "file://"+this._model.avatar;
+          this._image.setAttribute("src", this._src);
         ]]></body>
       </method>
     </implementation>
 
     <handlers>
       <handler event="load"><![CDATA[
-        if (this._src == this._image.src)
+        if (this._src != this._image.src) {
+          this._image.src = this._src;
           return;
-        this._src = this._image.src;
-        dump("AVLOAD: "+this._image.src+"\n");
+        }
+
         this._image.width = this._image.height = 1;
         var height = this._container.boxObject.height - 4;
 
@@ -74,9 +81,6 @@
 
         this._image.width = height*this._image.naturalWidth/this._image.naturalHeight;
         this._image.height = height;
-      ]]></handler>
-      <handler event="error"><![CDATA[
-        dump("AVERROR: "+this._image.src+"\n");
       ]]></handler>
     </handlers> 
 
