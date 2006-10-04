@@ -391,7 +391,7 @@
                 </menulist>
               </hbox>
             </vbox>
-            <avatar id="setPresence-avatar-image" flex="1"/>
+            <avatar id="setPresence-avatar-image" showBlankAvatar="true" flex="1"/>
           </hbox>
           <tabbox id="roster" flex="1">
             <tabs>

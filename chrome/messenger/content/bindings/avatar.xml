@@ -14,10 +14,10 @@
 
     <content>
       <xul:hbox flex="1" align="center">
-        <xul:vbox style="background: white; padding: 1px; border: 1px solid #999">
+        <xul:vbox style="background: white; padding: 1px; border: 1px solid #999"
+            hidden="true">
           <html:div>
-            <html:img id="image" width="1" height="1" style="display: block"
-              src="chrome://messenger/skin/default-avatar.png"/>
+            <html:img id="image" width="1" height="1" style="display: block"/>
           </html:div>
         </xul:vbox>
       </xul:hbox>
@@ -57,11 +57,18 @@
 
       <method name="onAvatarChange">
         <body><![CDATA[
-          if (!this._model || !this._model.avatar)
-            this._src = "chrome://messenger/skin/default-avatar.png";
-          else
-            this._src = "file://"+this._model.avatar;
-          this._image.setAttribute("src", this._src);
+          if (this.getAttribute("showBlankAvatar") != "true" && 
+                (!this._model || !this._model.avatar)) {
+              this._container.firstChild.hidden = true;
+              this._src = null;
+            } else {
+              this._container.firstChild.hidden = false;
+              if (this._model && this._model.avatar)
+                this._src = "file://"+this._model.avatar;
+              else
+                this._src = "chrome://messenger/skin/default-avatar.png";
+              this._image.setAttribute("src", this._src);
+            }
         ]]></body>
       </method>
     </implementation>

@@ -798,6 +798,10 @@ _DECL_(Contact, null, Model,
                 this.getVCard(true, function(){});
                 return;
             }
+            try{
+            account.cache.bumpExpiryDate("avatar-"+avatarHash,
+                                         new Date(Date.now()+30*24*60*60*1000));
+            }catch(ex){alert(ex)}
         }
 
         this.avatar = avatar;
@@ -922,5 +926,5 @@ _DECL_(Resource, null, Model,
 }
 
 account = new Account();
-//account.showConsole();
+account.showConsole();
 
