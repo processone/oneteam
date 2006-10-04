@@ -12,7 +12,7 @@ chatpane {
   -moz-binding: url("chrome://messenger/content/bindings/chatpane.xml#chatpane");
 }
 
-tab[onclosetab] {
+tab[hasclosebutton="true"] {
   -moz-binding: url("chrome://messenger/content/bindings/tabwithclosebutton.xml#tab");
 }
 

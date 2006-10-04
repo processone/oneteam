@@ -10,7 +10,7 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <binding id="tab" extends="chrome://global/content/bindings/tabbox.xml#tab">
+  <binding id="tab" extends="chrome://global/content/bindings/tabbox.xml#tab" display="xul:box">
     <resources>
       <stylesheet src="chrome://messenger/skin/tabwithclosebutton.css"/>
     </resources>
@@ -21,7 +21,7 @@
         <xul:image class="tab-icon" xbl:inherits="validate,src=image"/>
         <xul:label class="tab-text" xbl:inherits="value=label,accesskey,crop,disabled" flex="1"/>
       </xul:hbox>
-      <xul:toolbarbutton tabindex="-1" class="closebutton" onmouseover="alert(2)"/>
+      <xul:toolbarbutton tabindex="-1" class="closebutton"/>
     </content>
   </binding>
 </bindings>

@@ -45,8 +45,6 @@
       var cs = document.getElementById("contact-chat-single");
       var cm = document.getElementById("contact-chat-multi");
 
-//      self.activeItem = document.getElementById("contacts-list").selectedItem.model;
-
       cm.hidden = !(cs.hidden = activeItem.resources.length > 1);
       if (cs.hidden) {
         var list = cm.firstChild;
@@ -150,7 +148,8 @@
         const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
         this.tab = document.createElementNS(ns, "tab");
         this.tab.setAttribute("label", contact.visibleName);
-        this.tab.setAttribute("onclosetab", "this.controler.close()");
+        this.tab.setAttribute("hasclosebutton", "true");
+        this.tab.setAttribute("oncommand", "this.controler.close()");
         this.tab.controler = this;
 
         this.tabpanel = document.createElementNS(ns, "tabpanel");
@@ -214,22 +213,20 @@
         this.tabpanel.parentNode.removeChild(this.tabpanel);
         this.tab.parentNode.removeChild(this.tab);
         this.closed = true;
-        this.tab = this.tabpanel = this.chats = null;
 
         this.__proto__._allPanes.splice(this.__proto__._allPanes.indexOf(this),1);
         if (this.__proto__._allPanes.length == 0) {
           var splitter = document.getElementById("chats-splitter");
           var width = +splitter.previousSibling.getAttribute("width");
 
-          try {
-            splitter.hidden = true;
-            this.chats.hidden = true;
-          } catch(ex){}
+          splitter.hidden = true;
+          this.chats.hidden = true;
           splitter.previousSibling.flex = "1";
           splitter.setAttribute("rightWidth", self.outerWidth - width);
 
           self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
         }
+        this.tab = this.tabpanel = this.chats = null;
       },
 
       onSend: function()
