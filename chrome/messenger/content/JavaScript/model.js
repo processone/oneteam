@@ -16,7 +16,7 @@ function Account()
     this.allContacts = {};
     this.resources = {};
     this._presenceObservers = [];
-    this.userPresence = this.currentPresence = {type: "unavailable"};
+    this.currentPresence = {type: "unavailable"};
 
     this.cache = new PersistantCache("oneteamCache");
     this.connected = false;
@@ -50,23 +50,29 @@ _DECL_(Account, null, Model).prototype =
 
     setPresence: function(type, status, priority, profile, userSet)
     {
-        if (priority == null)
-            priority = gPrefService.getIntPref("chat.connection.priority");
+        var presence, newPresence;
 
-        var newPresence = {type: type, status: status, priority: priority,
-            profile: profile};
-        var presence;
+        if (type instanceof Object)
+            newPresence = type;
+        else
+            newPresence = {type: type, status: status, priority: priority,
+                           profile: profile};
 
-        if (!profile) {
-            var presence = new JSJaCPresence();
-            if (type)
-                presence.setShow(type);
-            if (status)
-                presence.setStatus(status);
-            presence.setPriority(priority);
+        if (!newPresence.priority)
+            newPresence.priority = gPrefService.getIntPref("chat.connection.priority");
+
+        if (!newPresence.profile) {
+            presence = new JSJaCPresence();
+            if (newPresence.type)
+                presence.setShow(newPresence.type);
+            if (newPresence.status)
+                presence.setStatus(newPresence.status);
+            presence.setPriority(newPresence.priority);
 
             for (var i = 0; i < this._presenceObservers; i++)
-                this._presenceObservers[i]._sendPresence(type, status, priority);
+                this._presenceObservers[i]._sendPresence(newPresence.type,
+                                                         newPresence.status,
+                                                         newPresence.priority);
 
             con.send(presence);
             this.currentPresence = newPresence;
@@ -74,6 +80,7 @@ _DECL_(Account, null, Model).prototype =
                 this.userPresence = newPresence;
 
             this.modelUpdated("currentPresence");
+
             return;
         }
 
@@ -91,7 +98,9 @@ _DECL_(Account, null, Model).prototype =
                                                              presence.status,
                                                              presence.priority);
             } else
-                this._presenceObservers[i]._sendPresence(type, status, priority);
+                this._presenceObservers[i]._sendPresence(newPresence.type,
+                                                         newPresence.status,
+                                                         newPresence.priority);
 
         this.currentPresence = newPresence;
         if (userSet)
@@ -266,10 +275,12 @@ _DECL_(Account, null, Model).prototype =
         pkt.setQuery('jabber:iq:roster');
         con.send(pkt);
 
-        pkt = new JSJaCPresence();
-        con.send(pkt);
-
         this.connected = true;
+
+        if (this.userPresence)
+            this.setPresence(this.userPresence);
+        else
+            this.setPresence();
 
         this.modelUpdated("connected");
     },

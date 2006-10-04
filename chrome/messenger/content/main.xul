@@ -73,7 +73,8 @@
 
     var setPresenceUpdater = {
       onPresenceChange: function() {
-        this.chooser.value = account.currentPresence.type;
+        this.chooser.value = account.currentPresence.type || "available";
+        this.onIconSetChange();
       },
 
       onConnect: function()
@@ -99,13 +100,12 @@
           this._skip = false;
           account.onCustomPresence()
         }
-        this.onIconSetChange();
       },
 
       onIconSetChange: function()
       {
         document.getElementById("setPresence-type-image").src =
-          presenceToIcon(account.currentPresence.type);
+          presenceToIcon(account.currentPresence.type||"available");
       },
 
       init: function()
@@ -115,7 +115,6 @@
         account.registerView(this, "onIconSetChange", "iconSet");
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.value = this.chooser.value;
-        this.onIconSetChange();
       }
     };
 
@@ -247,7 +246,7 @@
     <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
     <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
-    <command id="cmd_disconnect" oncommand="account.disconnect()"/>
+    <command id="cmd_disconnect" oncommand="con.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
 
     <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
@@ -359,7 +358,9 @@
       <hbox flex="1">
         <vbox flex="1">
           <hbox id="setPresence-box">
-            <image id="setPresence-type-image"/>
+            <vbox pack="start">
+              <image id="setPresence-type-image"/>
+            </vbox>
             <vbox flex="1">
               <label id="setPresence-nick"/>
               <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
