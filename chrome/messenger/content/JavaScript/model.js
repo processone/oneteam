@@ -496,16 +496,9 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 _DECL_(Contact, null, Model,
        XMPPDataAccesor("vcard", "VCard", function(){
             var iq = new JSJaCIQ();
-            var elem = iq.getDoc().createElement('vCard');
-            iq.setIQ(this.jid, null, 'get', 'vcard');
-
-            iq.getNode().appendChild(elem).setAttribute('xmlns','vcard-temp');
+            iq.setIQ(this.jid, null, 'get');
+            iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
             return iq;
-/*
-        var ns = new Namespace("vcard-temp");
-        var photo = packet.ns::vCard.ns::PHOTO.ns::BINVAL;
-        if (photo.length())
- */
        })).prototype =
 {
     _updateRoster: function()
@@ -765,6 +758,42 @@ _DECL_(Contact, null, Model,
             this.modelUpdated("resources", {removed: [resource]});
     },
 
+    _handleVCard: META.after=function(packet)
+    {
+        photo = packet.getNode().getElementsByTagName("PHOTO")[0];
+        if (!photo) return;
+        photo = photo.getElementsByTagName("BINVAL")[0];
+        if (!photo) return;
+        photo = photo.textContent.replace(/\s/g,"");
+        if (!photo) return;
+
+        photo = atob(photo);
+        this.avatar = account.cache.setValue("avatar-"+this.avatarHash, photo,
+                                             new Date(Date.now()+30*24*60*60*1000), true);
+        this.modelUpdated("avatar");
+    },
+
+    onAvatarChange: function(avatarHash)
+    {
+        var avatar;
+
+        if (avatarHash == this.avatarHash)
+            return;
+
+        if (avatarHash) {
+            avatar = account.cache.getValue("avatar-"+avatarHash);
+            if (!avatar) {
+                this.avatarHash = avatarHash;
+                this.getVCard(true, function(){});
+                return;
+            }
+        }
+
+        this.avatar = avatar;
+        this.avatarHash = avatarHash;
+        this.onModelUpdated("avatar");
+    },
+
     cmp: function(c)
     {
         const status2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
@@ -831,6 +860,11 @@ _DECL_(Resource, null, Model,
 
         this.contact._onResourceUpdated(this);
 
+        var avatarHash = packet.getNode().
+            getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
+        if (avatarHash)
+            this.contact.onAvatarChange(avatarHash.textContent);
+
         if (this._registered)
             flags = dontNotifyViews ? this._calcModificationFlags(oldState) :
                 this._modelUpdatedCheck(oldState);
@@ -877,4 +911,5 @@ _DECL_(Resource, null, Model,
 }
 
 account = new Account();
+//account.showConsole();
 

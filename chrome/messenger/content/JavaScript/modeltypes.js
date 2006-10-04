@@ -379,10 +379,11 @@ function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
     fun.prototype["get"+CCname] = eval("(function(forceUpdate, callback) {"+
                                        "if (!callback) return this."+name+"Value;"+
                                        "if (!this."+name+"Value || forceUpdate) {"+
+                                       "if (!this._"+name+"Callbacks)this._"+name+"Callbacks=[];"+
                                        "this._"+name+"Callbacks.push({callback: callback,"+
                                        "args: Array.slice(arguments, 2)});"+
                                        "if (this._"+name+"Callbacks.length > 1) return null;"+
-                                       "con.send(arguments.callee.generate(), "+
+                                       "con.send(arguments.callee.generate.call(this), "+
                                        "function(p,t){t._handle"+CCname+"(p)}, this)}else{"+
                                        "var a=Array.slice(arguments, 2);"+
                                        "a.unshift(this."+name+"Value);"+
@@ -390,7 +391,7 @@ function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
     fun.prototype["get"+CCname].generate = packetGenerator;
 
     fun.prototype["_handle"+CCname] = eval("(function(packet) {"+
-        (packetParser ? "packet = arguments.callee.parse(packet);" : "")+
+        (packetParser ? "packet = arguments.callee.parse.call(this,packet);" : "")+
         "for (var i = 0; i < this._"+name+"Callbacks.length; i++)"+
             "try {"+
                 "var h = this._"+name+"Callbacks[i];"+

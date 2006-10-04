@@ -24,24 +24,44 @@ function PersistantCache(name)
     if (version > 1999)
         throw new GenericError("Unrecognized PersistantCache database version");
 
-    this.db.createFunction("deleteFile", 1, StorageFunctionDelete);
+    this.db.createFunction("deleteFile", 1, new StorageFunctionDelete());
 try{
     if (version == 0)
-        this.db.executeSimpleSQL("BEGIN IMMEDIATE TRANSACTION;"+
-            "CREATE TABLE cache (key TEXT PRIMARY KEY, value TEXT, "+
-            "expiry_date INT(8), is_file INT(1)); "+
+        this.db.executeSimpleSQL(<sql>
+    BEGIN IMMEDIATE TRANSACTION;
 
-            "CREATE TRIGGER del_files_on_delete AFTER DELETE ON "+
-            "cache FOR EACH ROW WHEN old.is_file = 1 "+
-            "BEGIN SELECT deleteFile(old.value) WHERE NOT EXISTS ("+
-            "SELECT 1 FROM cache WHERE value = old.value); END;"+
+    CREATE TABLE cache (key TEXT PRIMARY KEY, value TEXT, expiry_date INT(8), is_file INT(1));
+    CREATE TABLE removed_files (file TEXT);
 
-            "CREATE TRIGGER del_files_on_update AFTER UPDATE ON "+
-            "cache FOR EACH ROW WHEN old.is_file = 1 "+
-            "BEGIN SELECT deleteFile(old.value) WHERE NOT EXISTS ("+
-            "SELECT 1 FROM cache WHERE value = old.value); END;"+
+    CREATE TRIGGER clean_insert_before BEFORE INSERT ON cache
+    BEGIN
+        INSERT INTO removed_files
+            SELECT value FROM cache WHERE key = new.key AND is_file = 1;
+    END;
 
-            "PRAGMA user_version = 1001; COMMIT TRANSACTION");
+    CREATE TRIGGER clean_insert_after AFTER INSERT ON cache
+    BEGIN
+        SELECT deleteFile(file) FROM removed_files WHERE NOT
+            EXISTS (SELECT 1 FROM cache WHERE value = file);
+        DELETE FROM removed_files;
+    END;
+
+    CREATE TRIGGER clean_update AFTER UPDATE ON cache WHEN old.is_file = 1
+    BEGIN
+        SELECT deleteFile(old.value) WHERE NOT 
+            EXISTS (SELECT 1 FROM cache WHERE value = old.value);
+    END;
+
+    CREATE TRIGGER clean_delete AFTER DELETE ON cache WHEN old.is_file = 1
+    BEGIN
+        SELECT deleteFile(old.value) WHERE NOT 
+            EXISTS (SELECT 1 FROM cache WHERE value = old.value);
+    END;
+
+    PRAGMA user_version = 1001;
+
+    COMMIT TRANSACTION;
+        </sql>.toString());
     else
         this.db.executeSimpleSQL("DELETE FROM cache WHERE expiry_date < "+Date.now());
 }catch(ex){alert(this.db.lastErrorString); throw ex}
@@ -49,6 +69,7 @@ try{
                                       "WHERE key = ?1");
     this.setStmt = this.db.createStatement("REPLACE INTO cache (key, value, is_file, "+
                                            "expiry_date) VALUES(?1, ?2, ?3, ?4)");
+    this.removeStmt = this.db.createStatement("DELETE FROM cache WHERE key = ?1");
     this.bumpStmt = this.db.createStatement("UPDATE cache SET expiry_date = ?2 WHERE key = ?1");
 }
 
@@ -66,7 +87,7 @@ _DECL_(PersistantCache).prototype =
             do {
                 var name = "";
                 for (var i = 0; i < 10; ++i)
-                    name += charSet.charAt(Math.floor(Math.random() * charSet.length));
+                    name += charset.charAt(Math.floor(Math.random() * charset.length));
 
                 file = new File(this.fileCacheDir, name);
                 try {
@@ -78,22 +99,22 @@ _DECL_(PersistantCache).prototype =
             file.write(value);
             value = file.path;
         }
-        this.setStmt.reset();
         this.setStmt.bindStringParameter(0, key);
         this.setStmt.bindStringParameter(1, value);
-        this.setStmt.bindInt64Parameter(2, expiryDate.getTime());
-        this.setStmt.bindInt32Parameter(3, storeAsFile ? 1 : 0);
+        this.setStmt.bindInt32Parameter(2, storeAsFile ? 1 : 0);
+        this.setStmt.bindInt64Parameter(3, expiryDate ? expiryDate.getTime() : 0x7fffffffffff);
         this.setStmt.execute();
-        this.setStmt.reset();
+
+        return value;
     },
 
     getValue: function(key, asFile)
     {
-        this.getStmt.reset();
         this.getStmt.bindStringParameter(0, key);
-        if (!this.getStmt.executeStep())
+        if (!this.getStmt.executeStep()) {
             this.getStmt.reset();
             return null;
+        }
         if (this.getStmt.getInt64(2) < Date.now()) {
             this.getStmt.reset();
             this.db.executeSimpleSQL("DELETE FROM cache WHERE expiry_date < "+Date.now())
@@ -101,7 +122,7 @@ _DECL_(PersistantCache).prototype =
         }
 
         var value = this.getStmt.getString(0);
-        var type = this.getInt32(1);
+        var type = this.getStmt.getInt32(1);
         this.getStmt.reset();
 
         if (type) {
@@ -113,13 +134,17 @@ _DECL_(PersistantCache).prototype =
         return value;
     },
 
+    removeValue: function(key)
+    {
+        this.removeStmt.bindStringParameter(0, key);
+        this.removeStmt.execute();
+    },
+
     bumpExpiryDate: function(key, expiryDate)
     {
-        this.bumpStmt.reset();
         this.bumpStmt.bindStringParameter(0, key);
         this.bumpStmt.bindStringParameter(1, expiryDate.getTime());
         this.bumpStmt.execute();
-        this.bumpStmt.reset();
     },
 }
 
@@ -131,7 +156,7 @@ _DECL_(StorageFunctionDelete).prototype =
 {
     onFunctionCall: function(args)
     {
-        f = new File(args.getString(0));
+        var f = new File(args.getString(0));
         f.remove();
     }
 }

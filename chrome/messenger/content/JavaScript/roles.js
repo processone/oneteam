@@ -229,6 +229,66 @@ function calculateWalkSequence(obj, name)
     obj.__proto__.__META__.inheritanceChain[''] = c;
 }
 
+function lookupForParentMethod(obj, fun)
+{
+    for (var name in obj)
+        if (obj[name] == fun)
+            break;
+
+    var parentMethod;
+    if (obj.__proto__.__proto__ && obj.__proto__.__proto__[name])
+        parentMethod = "this.__proto__.__proto__";
+    else if (obj.__proto__.__META__ && obj.__proto__.__META__.roles) {
+        var roles = obj.__proto__.__META__.roles;
+        for (var i = 0; i < roles.length; i++)
+            if (roles[i].prototype[name])
+                parentMethod = "this.__proto__.__META__.roles["+i+"].prototype";
+    }
+    return [name, parentMethod ? parentMethod+"["+uneval(name)+"]" : null];
+}
+
+var META = {
+    set after(after) {
+        var fun = function() {
+            var [name, parent] = lookupForParentMethod(this, arguments.callee);
+
+            this[name] = parent ?
+                new Function("", "var ret="+parent+".apply(this, arguments);"+
+                             "arguments.callee.after.apply(this, arguments);return ret") :
+                arguments.callee.after;
+            this[name].after = arguments.callee.after;
+            this[name].apply(this, arguments);
+        };
+
+        fun.after = after;
+        return fun;
+    },
+
+    set before(before) {
+        var fun = function() {
+            var [name, parent] = lookupForParentMethod(this, arguments.callee);
+
+            this[name] = parent ?
+                new Function("", "arguments.callee.before.apply(this, arguments);"+
+                             "return "+parent+".apply(this, arguments)") :
+                arguments.callee.before;
+            this[name].before = arguments.callee.before;
+            this[name].apply(this, arguments);
+        };
+
+        fun.before = before;
+        return fun;
+    },
+
+    next: function(obj)
+    {
+        if (!arguments.callee.caller.next)
+            [,arguments.callee.caller.next] =
+                lookupForParentMethod(obj, arguments.callee.caller);
+        return arguments.callee.caller.next(obj, Array.slice(arguments, 1));
+    }
+}
+
 var WALK = {}
 WALK.asceding = {
     __noSuchMethod__: function(name, args)
