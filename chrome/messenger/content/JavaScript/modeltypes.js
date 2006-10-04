@@ -126,8 +126,9 @@ _DECL_(ContainerView).prototype =
                 a = mid+1;
         }
         this.items.splice(a, 0, item);
-        item.show(this.containerNode, this.items[a+1] ? this.items[a+1].node :
-                                                        this.afterlastItemNode);
+        var insertBefore = this.items[a+1] ? this.items[a+1].node : this.afterlastItemNode;
+        if (!item.node.parentNode || item.node.nextSibling != insertBefore)
+            item.show(this.containerNode, insertBefore);
     },
 
     onItemRemoved: function(model)

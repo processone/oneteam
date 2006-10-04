@@ -101,12 +101,15 @@ _DECL_(GroupView, null, ContainerView).prototype =
 
 function ContactView(model, parentView)
 {
+    dump("CVC\n");
     this.model = model;
     this.parentView = parentView;
 
     this.node = document.createElement("richlistitem");
     this.statusIcon = document.createElement("image");
     this.label = document.createElement("label");
+    var avatar = document.createElement("avatar");
+    avatar.model = this.model;
 
     this.node.setAttribute("class", "contact-view");
     this.node.setAttribute("context", "contact-contextmenu");
@@ -114,12 +117,15 @@ function ContactView(model, parentView)
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
     this.statusIcon.setAttribute("src", account.iconSet + "offline.png");
     this.label.setAttribute("value", model.name || model.jid);
+    this.label.setAttribute("flex", "1");
     this.label.setAttribute("crop", "end");
+
     this.node.model = this.model;
     this.node.view = this;
 
     this.node.appendChild(this.statusIcon);
     this.node.appendChild(this.label);
+    this.node.appendChild(avatar);
 
     this.model.registerView(this, "onNameChange", "name");
     this.model.registerView(this, "onActiveResourceChange", "activeResource");

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+
 <bindings xmlns="http://www.mozilla.org/xbl"
     xmlns:xbl="http://www.mozilla.org/xbl"
     xmlns:html="http://www.w3.org/1999/xhtml"
@@ -15,25 +16,56 @@
       <xul:hbox flex="1" align="center">
         <xul:vbox style="background: white; padding: 1px; border: 1px solid #999">
           <html:div>
-            <html:img id="image" width="1" height="1" style="display: block"/>
+            <html:img id="image" width="1" height="1" style="display: block"
+              src="chrome://messenger/skin/default-avatar.png"/>
           </html:div>
         </xul:vbox>
       </xul:hbox>
     </content>
 
     <implementation>
+
+      <property name="model">
+        <setter><![CDATA[
+          if (this._model)
+            this._model.unregisterView(this, "onAvatarChange", "avatar");
+
+          if (model) {
+            this._model = val;
+            this._model.registerView(this, "onAvatarChange", "avatar");
+          }
+        ]]></setter>
+      </property>
       <constructor>
         <![CDATA[
           this._image = document.getAnonymousElementByAttribute(this, "id", "image");
           this._container = this._image.parentNode.parentNode.parentNode;
-
-          this._image.src = "chrome://messenger/skin/default-avatar.png";
+          if (this.model)
+            this.model.registerView(this, "onAvatarChange", "avatar");
         ]]>
       </constructor>
+
+      <destructor>
+        <![CDATA[
+          if (this.model)
+            this._model.unregisterView(this, "onAvatarChange", "avatar");
+        ]]>
+      </destructor>
+
+      <method name="onAvatarChange">
+        <body><![CDATA[
+          dump("OAC\n");
+          this._image.setAttribute("src", "file://"+this.model.avatar);
+        ]]></body>
+      </method>
     </implementation>
 
     <handlers>
       <handler event="load"><![CDATA[
+        if (this._src == this._image.src)
+          return;
+        this._src = this._image.src;
+        dump("AVLOAD: "+this._image.src+"\n");
         this._image.width = this._image.height = 1;
         var height = this._container.boxObject.height - 4;
 
@@ -43,9 +75,9 @@
         this._image.width = height*this._image.naturalWidth/this._image.naturalHeight;
         this._image.height = height;
       ]]></handler>
-      <handler event="error">
-        this._image.src = "chrome://messenger/skin/default-avatar.png"
-      </handler>
+      <handler event="error"><![CDATA[
+        dump("AVERROR: "+this._image.src+"\n");
+      ]]></handler>
     </handlers> 
 
   </binding>

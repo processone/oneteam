@@ -781,7 +781,7 @@ _DECL_(Contact, null, Model,
             return;
 
         if (avatarHash) {
-            avatar = account.cache.getValue("avatar-"+avatarHash);
+            avatar = account.cache.getValue("avatar-"+avatarHash, true);
             if (!avatar) {
                 this.avatarHash = avatarHash;
                 this.getVCard(true, function(){});
@@ -791,7 +791,7 @@ _DECL_(Contact, null, Model,
 
         this.avatar = avatar;
         this.avatarHash = avatarHash;
-        this.onModelUpdated("avatar");
+        this.modelUpdated("avatar");
     },
 
     cmp: function(c)
@@ -911,5 +911,5 @@ _DECL_(Resource, null, Model,
 }
 
 account = new Account();
-//account.showConsole();
+account.showConsole();
 
