@@ -1,77 +1,77 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/addContact.dtd">
+<?xml-stylesheet href="chrome://messenger/skin/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
+<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/addContact.dtd">
 
-<wizard id="addContact"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-        windowtype=""
-        title="&Contact.titre;"
-        style="width: 27em; height: 33em"
-        buttons="accept,cancel"
-		onload="initializeGroups()">
+<dialog id="addContact"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" buttonlabelaccept="Add"
+  ondialogaccept="return addContact()" title="&Contact.titre;" buttons="accept,cancel">
 
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
-    <script type="application/x-javascript" src="JavaScript/prefs.js"/>
-    <script type="application/x-javascript" src="JavaScript/shared.js"/>
-    <script type="application/x-javascript" src="JavaScript/gui.js"/>
-    <script type="application/x-javascript" src="JavaScript/addContact.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    function addContact() {
+      var jid = document.getElementById("jid").value;
 
+      if (!~jid.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
+        alert("Please give correct Jabber ID");
+        return false;
+      }
+      if (window.opener.account.contacts[jid]) {
+        alert("Contact with this Jabber ID already exists");
+        return false;
+      }
+      var nick = document.getElementById("nick").value;
+      var groups = document.getElementById("groups").choosen;
+      var reason = document.getElementById("reason").value;
 
+      var contact = opener.account.getOrCreateContact(jid, nick, groups);
 
+      contact.addToRoster();
+      contact.askForSubsription(reason);
+      contact.allowToSeeMe();
+      return true;
+    }
+  ]]></script>
 
-	<wizardpage id="info" pageid="info" next="done"
-		label="&Contact.directive;" onpageadvanced="doAdd()">
+  <dialogheader title="Add Contact"/>
 
-		<!-- <description control="jids">
-			Enter Jabber ID of the contact you want to add. (ex.: foo@jabber.org)
-		</description> -->
+  <grid>
+    <columns>
+      <column/>
+      <column flex="1"/>
+    </columns>
+    <rows>
+      <row align="center">
+        <label value="Jabber ID:" control="jid"/>
+        <textbox id="jid"/>
+      </row>
+      <description class="field-desc">Enter Jabber ID of the contact you want to add.
+        (ex.: foo@jabber.org)</description>
+
+      <spacer/>
+
+      <row align="center">
+        <label value="Nickname:" control="nick"/>
+        <textbox id="nick"/>
+      </row>
+      <description class="field-desc">Enter contact's nickname which will be displayed
+        in roster window.</description>
+    </rows>
+  </grid>
+
+  <spacer/>
+
+  <label value="Groups:" control="groups"/>
+  <groupselector id="groups" rows="4"/>
 		
-		<vbox>
-		<label value="&Contact.label1;" />
-		<label value="&Contact.label2;"/>
-		</vbox>
-		<hbox>
-		<textbox flex="1" id="jids"/>
-		</hbox>
-		
-		<spacer height="30"/>
-		
-		<!--<description control="jids">
-			Enter the group in which you want to add the contact
-		</description> -->
-		<vbox>
-		<label value="&Contact.label3;" />
-		<label value="&Contact.label4;"/>
-		</vbox>
-		<hbox>
-		<textbox flex="1" id="groups"/>
-		</hbox>
-		
-		<spacer height="30"/>
-		
-		<vbox>
-		<label value="&Contact.reason;" />
-		
-		</vbox>
-		<hbox>
-		<textbox flex="1" id="reason"/>
-		</hbox>
-	</wizardpage>
+  <spacer/>
 
-	<wizardpage id="done" pageid="done" label="&Contact.label5;">
-		<description id="endmessage"></description>
-
-	</wizardpage>
-
-
-
-
-</wizard>
+  <label value="&Contact.reason;" />
+  <textbox id="reason" multiline="true" rows="4"/>
+</dialog>
 
 
 
