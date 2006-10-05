@@ -1,4 +1,7 @@
 pref("toolkit.defaultChromeURI", "chrome://messenger/content/messenger.xul");
+pref("toolkit.defaultChromeURI", "chrome://messenger/content/main.xul");
+//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/chatpane.xul");
+//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/tabwithclose.xul");
 
 /* debugging prefs */
 
@@ -67,7 +70,7 @@ pref("chat.muc.nickname", "");
 pref("chat.general.showavatars", false);
 pref("chat.general.showseparatedwindows",false);
 pref("chat.general.keepproperties", false);
-pref("chat.general.iconsetdir", "crystal/");
+pref("chat.general.iconsetdir", "crystal");
 
 pref("chat.editor.incomingmessagecolor", "#000000");
 pref("chat.editor.outgoingmessagecolor", "#CC33CC");
