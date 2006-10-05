@@ -21,7 +21,7 @@
 
   <description>Do you want to remove this contact from your roster?</description>
   <spacer/>
-  <label id="nick" value="Ki diabel"/>
+  <label id="nick"/>
   <label id="jid"/>
 
 </dialog>
