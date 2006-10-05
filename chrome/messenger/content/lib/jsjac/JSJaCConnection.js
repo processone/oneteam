@@ -29,7 +29,7 @@ function JSJaCConnection(oArg) {
 	this._ID = 0;
 	this._inQ = new Array();
 	this._pQueue = new Array();
-	this._regIDs = new Array();
+	this._regIDs = {};
 	this._req = new Array();
 	this._status = 'intialized';
 	this._errcnt = 0;
@@ -163,7 +163,7 @@ function JSJaCConnection(oArg) {
 		if (!aJSJaCPacket.getID())
 			return false;
         var pID = aJSJaCPacket.getID();
-        if (this._regIDs[pID]) {
+        if (Object.hasOwnProperty.call(this._regIDs, pID)) {
             this.oDbg.log("handling "+pID,3);
             try {
                 this._regIDs[pID].cb(aJSJaCPacket,this._regIDs[pID].arg);
@@ -197,7 +197,7 @@ function JSJaCConnection(oArg) {
 	this._unregisterPID = function(pID) {
 		if (!this._regIDs[pID])
 			return false;
-		this._regIDs[pID] = null;
+		delete this._regIDs[pID];
 		this.oDbg.log("unregistered "+pID,3);
 		return true;
 	};
