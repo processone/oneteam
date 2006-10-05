@@ -482,6 +482,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this._name = name;
         this._groups = groups || [];
         this.newItem = true;
+        this.groups = [];
     } else {
         this.name = name;
         this.visibleName = name || this.jid.shortJID;
@@ -520,7 +521,7 @@ _DECL_(Contact, null, Model,
         var item = query.appendChild(iq.getDoc().createElement('item'));
         item.setAttribute('jid', this.jid);
 
-        if (this._subscription != remove) {
+        if (this._subscription != "remove") {
             if (this._name || this.name)
                 item.setAttribute('name', this._name || this.name);
             var groups = this._groups || this.groups;
@@ -596,7 +597,7 @@ _DECL_(Contact, null, Model,
             groupsHash[groupName] = group;
         }
 
-        if (groups.length == 0) {
+        if (groups.length == 0 && subscription != "remove") {
             groups.push(account.allGroups[""]);
             groupsHash[""] = account.allGroups[""];
         }
@@ -606,7 +607,7 @@ _DECL_(Contact, null, Model,
     _sendPresence: function(type, status, priority)
     {
         var presence = new JSJaCPresence();
-        presence.setTo(jid);
+        presence.setTo(this.jid);
         if (type)
             presence.setType(type);
         if (status)
@@ -646,6 +647,12 @@ _DECL_(Contact, null, Model,
         if (!this.chatPane)
             this.onOpenChat();
         this.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
+    },
+
+    addToRoster: function()
+    {
+        if (this.newItem)
+            this._updateRoster();
     },
 
     allowToSeeMe: function()
@@ -926,5 +933,5 @@ _DECL_(Resource, null, Model,
 }
 
 account = new Account();
-account.showConsole();
+//account.showConsole();
 
