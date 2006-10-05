@@ -25,7 +25,7 @@
     </content>
 
     <implementation>
-      <property name="choosen">
+      <property name="choosenGroups">
         <getter><![CDATA[
           var count = this._listbox.getRowCount();
           var groups = [];
@@ -36,6 +36,20 @@
           }
           return groups;
         ]]></getter>
+        <setter><![CDATA[
+          var valHash = {};
+          var count = this._listbox.getRowCount();
+
+          for (var i = 0; i < val.length; i++) {
+            valHash[val[i].name || val[i]] = true;
+          }
+
+          for (i = 0; i < count; i++) {
+            var item = this._listbox.getItemAtIndex(i);
+            item.checked = !!valHash[item.value];
+          }
+          return val;
+        ]]></setter>
       </property>
 
       <constructor>

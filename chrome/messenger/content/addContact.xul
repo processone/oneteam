@@ -24,7 +24,7 @@
         return false;
       }
       var nick = document.getElementById("nick").value;
-      var groups = document.getElementById("groups").choosen;
+      var groups = document.getElementById("groups").choosenGroups;
       var reason = document.getElementById("reason").value;
 
       var contact = opener.account.getOrCreateContact(jid, nick, groups);
