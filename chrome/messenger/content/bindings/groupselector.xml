@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="groupselector">
+
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/avatar.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <xul:hbox flex="1">
+          <xul:textbox id="name-textbox" flex="1"/>
+          <xul:button id="add-button" label="Add"
+            oncommand="this.parentNode.parentNode.parentNode.onAddGroup()"/>
+        </xul:hbox>
+        <xul:listbox id="groups-listbox" xbl:inherits="rows">
+        </xul:listbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <property name="choosen">
+        <getter><![CDATA[
+          var count = this._listbox.getRowCount();
+          var groups = [];
+          for (var i = 0; i < count; i++) {
+            var item = this._listbox.getItemAtIndex(i);
+            if (item.checked)
+              groups.push(item.value);
+          }
+          return groups;
+        ]]></getter>
+      </property>
+
+      <constructor>
+        <![CDATA[
+          this._listbox = document.getAnonymousElementByAttribute(this, "id", "groups-listbox");
+          this._textbox = document.getAnonymousElementByAttribute(this, "id", "name-textbox");
+
+          var account = window;
+          while (account && !account.account)
+            account = account.opener;
+          if (account) {
+            account = account.account;
+            for (group in account.groupsIterator(function(a){return a.name})) {
+              var item = this._listbox.appendItem(group.visibleName, group.name);
+              item.setAttribute("type", "checkbox");
+            }
+          }
+        ]]>
+      </constructor>
+
+      <method name="onAddGroup">
+        <body><![CDATA[
+          if (!this._textbox.value)
+            return;
+          var item = document.createElement("listitem");
+          item.setAttribute("type", "checkbox");
+          item.setAttribute("checked", "true");
+          item.setAttribute("label", this._textbox.value);
+          item.setAttribute("value", this._textbox.value);
+
+          this._textbox.value = "";
+
+          this._listbox.appendChild(item);
+          this._listbox.ensureElementIsVisible(item);
+        ]]></body>
+      </method>
+
+    </implementation>
+
+  </binding>
+
+</bindings>

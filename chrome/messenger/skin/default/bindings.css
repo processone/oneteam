@@ -19,3 +19,7 @@ tab[hasclosebutton="true"] {
 avatar {
   -moz-binding: url("chrome://messenger/content/bindings/avatar.xml#avatar");
 }
+
+groupselector {
+  -moz-binding: url("chrome://messenger/content/bindings/groupselector.xml#groupselector");
+}
