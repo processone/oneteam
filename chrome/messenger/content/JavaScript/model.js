@@ -291,6 +291,20 @@ _DECL_(Account, null, Model).prototype =
         self.con = null;
 
         this.modelUpdated("con", null, "connected");
+
+        var groups = this.groups;
+
+        this.groups = []
+        this.allGroups = {}
+        this.contacts = {};
+        this.allContacts = {};
+        this.resources = {};
+
+        this.modelUpdated("groups", {removed: groups});
+
+        for (var i = 0; i < groups.length; i++)
+            if (groups[i].builtinGroup)
+                groups[i]._clean();
     },
 
     onPresence: function(packet)
@@ -359,7 +373,7 @@ _DECL_(Account, null, Model).prototype =
                 var jid = items[i].getAttribute("jid");
 
                 if (this.allContacts[jid])
-                    this.allContacts[jid]._updateFromRoster(items[i]);
+                    this.allContacts[jid]._updateFromServer(items[i]);
                 else
                     new Contact(items[i]);
             }
@@ -426,6 +440,14 @@ _DECL_(Group, null, Model).prototype =
         this._name = name;
         for (var c in this.contactsIterator())
             c._updateRoster();
+    },
+
+    _clean: function()
+    {
+        this.contacts = [];
+        this.availContacts = 0;
+        account.allGroups[this.name] = this;
+        this.init();
     },
 
     _onContactUpdated: function(contact, dontNotifyViews)
@@ -513,6 +535,14 @@ _DECL_(Contact, null, Model,
             return iq;
        })).prototype =
 {
+    get canSeeMe() {
+        return this.subscription == "both" || this.subscription == "from";
+    },
+
+    get canSeeHim() {
+      return this.subscription == "both" || this.subscription == "to";
+    },
+
     _updateRoster: function()
     {
         var iq = new JSJaCIQ();
@@ -543,9 +573,10 @@ _DECL_(Contact, null, Model,
         con.send(iq);
     },
 
-    _updateFromRoster: function(node)
+    _updateFromServer: function(node)
     {
         var groups, groupsHash;
+        var canSeeHim = this.canSeeHim;
 
         var oldState = { name: this.name, subscription: this.subscription,
             subscriptionAsk: this.subscriptionAsk, visibleName: this.visibleName};
@@ -575,6 +606,11 @@ _DECL_(Contact, null, Model,
         } else if (this.newItem) {
             this.newItem = false;
             account.contacts[this.jid] = this;
+        }
+
+        if (this.subscription == "remove" || (canSeeHim && !this.canSeeHim)) {
+            for (i = 0; i < this.resources.length; i++)
+                this.resources[i]._remove();
         }
 
         this._modelUpdatedCheck(oldState);
@@ -665,13 +701,7 @@ _DECL_(Contact, null, Model,
         this._sendPresence("unsubscribe");
     },
 
-    onAskForSubsription: function()
-    {
-        window.openDialog("chrome://messenger/content/subscribe.xul",
-                    "ot:subscribe", "chrome,centerscreen,resizable", this);
-    },
-
-    askForSubsription: function(reason)
+    askForSubscription: function(reason)
     {
         // TODO use string bundle.
         this._sendPresence("subscribe", reason ||
@@ -805,10 +835,8 @@ _DECL_(Contact, null, Model,
                 this.getVCard(true, function(){});
                 return;
             }
-            try{
             account.cache.bumpExpiryDate("avatar-"+avatarHash,
                                          new Date(Date.now()+30*24*60*60*1000));
-            }catch(ex){alert(ex)}
         }
 
         this.avatar = avatar;
@@ -873,11 +901,9 @@ _DECL_(Resource, null, Model,
         this.priority = packet.getPriority();
         this.status = packet.getStatus();
 
-        if (packet.getType() == "unavailable") {
-            if (this._registered)
-                this.contact._onResourceRemoved(this);
-            delete account.resources[this.jid];
-        } else if (!this._registered)
+        if (packet.getType() == "unavailable")
+            this._remove()
+        else if (!this._registered)
             this.contact._onResourceAdded(this);
 
         this.contact._onResourceUpdated(this);
@@ -897,6 +923,13 @@ _DECL_(Resource, null, Model,
         this._registered = true;
 
         return flags;
+    },
+
+    _remove: function()
+    {
+        if (this._registered)
+            this.contact._onResourceRemoved(this);
+        delete account.resources[this.jid];
     },
 
     sendMessage: function(body)

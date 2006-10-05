@@ -41,7 +41,7 @@
     {
       if (event.target != menu)
         return;
-    try{
+
       var cs = document.getElementById("contact-chat-single");
       var cm = document.getElementById("contact-chat-multi");
 
@@ -59,16 +59,12 @@
           list.appendChild(item);
         }
       }
-      var canSeeMe = activeItem.subscription == "both" || activeItem.subscription == "from";
-      var canSeeHim = activeItem.subscription == "both" || activeItem.subscription == "to";
-
       document.getElementById("contact-authorisation-ask").
-        setAttribute("disabled", canSeeHim);
+        setAttribute("disabled", activeItem.canSeeHim);
       document.getElementById("contact-authorisation-allow").
-        setAttribute("disabled", canSeeMe);
+        setAttribute("disabled", activeItem.canSeeMe);
       document.getElementById("contact-authorisation-disallow").
-        setAttribute("disabled", !canSeeMe);
-      }catch(ex){dump(ex+"\n")}
+        setAttribute("disabled", !activeItem.canSeeMe);
     }
 
     var setPresenceUpdater = {
@@ -436,7 +432,7 @@
       <menu label="&listitemcontext.Authorisation;">
         <menupopup>
           <menuitem id="contact-authorisation-ask" label="&listitemcontext.Ask;"
-              oncommand="activeItem.onAskForSubscription()"/>
+              oncommand="activeItem.askForSubscription()"/>
           <menuitem id="contact-authorisation-allow" label="&listitemcontext.Authorize;"
               oncommand="activeItem.allowToSeeMe()"/>
           <menuitem id="contact-authorisation-disallow" label="&listitemcontext.Forbid;"

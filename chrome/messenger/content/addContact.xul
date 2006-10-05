@@ -30,7 +30,7 @@
       var contact = opener.account.getOrCreateContact(jid, nick, groups);
 
       contact.addToRoster();
-      contact.askForSubsription(reason);
+      contact.askForSubscription(reason);
       contact.allowToSeeMe();
       return true;
     }

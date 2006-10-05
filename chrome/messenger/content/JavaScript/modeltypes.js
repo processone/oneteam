@@ -230,6 +230,15 @@ _DECL_(Model).prototype =
 
         return flags;
     },
+
+    _getViewsInfo: function()
+    {
+        var info = [];
+        for (var i in this._views)
+            if (this._views[i].length)
+                info.push(i+": "+this._views[i].length);
+        return info.join(", ");
+    }
 }
 
 function PresenceProfile(name, presences)
