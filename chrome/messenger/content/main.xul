@@ -128,6 +128,9 @@
 
     function quit() {
       con.disconnect();
+      Components.classes['@mozilla.org/toolkit/app-startup;1'].
+        getService(Components.interfaces.nsIAppStartup).
+          quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
     }
 
     function connect() {
