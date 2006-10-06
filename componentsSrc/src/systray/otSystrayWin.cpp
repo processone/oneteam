@@ -1,5 +1,6 @@
 #include "otSystrayWin.h"
 #include <shellapi.h>
+#include <strsafe.h>
 
 #define OT_TRAYMSG      (WM_USER + 0x100)
 #define SYSTRAYS_COUNT  sizeof(systrays)/sizeof(systrays[0])
@@ -43,6 +44,27 @@ otSystrayWin::Hide()
   }
 
   return rv;
+}
+
+NS_IMETHODIMP
+otSystrayWin::SetTooltip(const nsAString &tooltip)
+{
+  otSystrayBase::SetTooltip(tooltip);
+
+  if (mNid) {
+    NOTIFYICONDATA nid;
+
+    nid.cbSize = sizeof(nid);
+    nid.hWnd = GetHWND();
+    nid.uFlags = NIF_TIP;
+    nid.uID = mNid;
+
+    StringCchCopy(nid.szTip, 64, mTooltip.get());
+
+    Shell_NotifyIcon(NIM_MODIFY, &nid);
+  }
+
+  return NS_OK;
 }
 
 nsresult
@@ -187,6 +209,11 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
   nid.uCallbackMessage = OT_TRAYMSG;
   nid.hIcon = hIcon;
 
+  if (!mTooltip.Empty()) {
+    nid.uFlags |= NIF_TIP;
+    StringCchCopy(nid.szTip, 64, mTooltip.get());
+  }
+
   if (!mNid) {
     systrays[nid.uID] = this;
     nid.uID += 100;
@@ -213,13 +240,49 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
 LRESULT CALLBACK
 otSystrayWin::WinProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+  PRInt16 button;
+  PRInt32 clicksCount = 1;
+  POINT point;
+
   switch(msg) {
     case WM_CREATE:
       return FALSE;
     case WM_NCCREATE:
       return TRUE;
+    case OT_TRAYMSG:
+      switch (lParam) {
+        case WM_LBUTTONDOWN:
+          button = 0;
+          break;
+        case WM_MBUTTONDOWN:
+          button = 1;
+          break;
+        case WM_RBUTTONDOWN:
+          button = 2;
+          break;
+        case WM_LBUTTONDBLCLK:
+          button = 0;
+          clicksCount = 1;
+          break;
+        case WM_MBUTTONDBLCLK:
+          button = 1;
+          clicksCount = 1;
+          break;
+        case WM_RBUTTONDBLCLK:
+          button = 2;
+          clicksCount = 1;
+          break;
+      }
+      GetCursorPos(&point);
+      systrays[wParam-100]->mListener->
+        OnMouseClick(point.x, point.y, 0, 0,
+                     clicksCount, GetKeyState(VK_CONTROL) < 0,
+                     GetKeyState(VK_MENU) < 0, GetKeyState(VK_SHIFT) < 0,
+                     PR_FALSE, button);
+      PostMessage(hwnd, WM_NULL, 0, 0);
+      return FALSE;
   }
-
+  
   return ::CallWindowProc(DefWindowProc, hwnd, msg, wParam, lParam);
 }
 

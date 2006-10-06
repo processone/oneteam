@@ -30,7 +30,7 @@ otSystrayGtk2::Init(otISystrayListener *listener)
   mTooltips = gtk_tooltips_new();
 
   gtk_widget_add_events(GTK_WIDGET(mPlug), GDK_PROPERTY_CHANGE_MASK |
-                        GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
+                        GDK_BUTTON_PRESS_MASK);
   g_signal_connect_swapped(G_OBJECT(mPlug), "button-press-event",
                             G_CALLBACK(OnClick), (gpointer)this);
   g_signal_connect_swapped(G_OBJECT(mPlug), "realize", G_CALLBACK(OnReailze),
@@ -40,7 +40,6 @@ otSystrayGtk2::Init(otISystrayListener *listener)
   gtk_object_unref(GTK_OBJECT(mTooltips));
 
   gtk_container_add (GTK_CONTAINER(mPlug), mIcon);
-  gtk_tooltips_set_tip(mTooltips, mPlug, "My title in tooltip", NULL);
 
   gchar trayId[32];
   GdkScreen *screen = gtk_widget_get_screen(mPlug);
@@ -64,6 +63,14 @@ otSystrayGtk2::Hide()
     gtk_widget_hide(mPlug);
 
   return rv;
+}
+
+NS_IMETHODIMP
+otSystrayGtk2::SetTooltip(const nsAString &tooltip)
+{
+  gtk_tooltips_set_tip(mTooltips, mPlug, NS_ConvertUTF16toUTF8(tooltip).get(), NULL);
+
+  return otSystrayBase::SetTooltip(tooltip);
 }
 
 static void
@@ -145,14 +152,17 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
 }
 
 PRBool
-otSystrayGtk2::OnClick(otSystrayGtk2 *obj, GdkEvent *ev)
+otSystrayGtk2::OnClick(otSystrayGtk2 *obj, GdkEventButton *ev)
 {
-/*  if (button == 1)
-    obj->mListener->OnClick(x, y);
-  else if (button == 3)
-    obj->mListener->OnPopup(x, y);
-  else
-    return PR_FALSE;*/
+  obj->mListener->OnMouseClick((PRInt32)ev->x_root, (PRInt32)ev->y_root,
+                               (PRInt32)ev->x, (PRInt32)ev->y,
+                               ev->type == GDK_BUTTON_PRESS ? 1 :
+                                 ev->type == GDK_2BUTTON_PRESS ? 2 : 3,
+                               (ev->state & GDK_CONTROL_MASK) != 0,
+                               (ev->state & GDK_MOD1_MASK) != 0,
+                               (ev->state & GDK_SHIFT_MASK) != 0,
+                               (ev->state & GDK_MOD2_MASK) != 0,
+                               ev->button - 1);
 
   return PR_TRUE;
 }

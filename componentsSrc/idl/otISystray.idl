@@ -3,15 +3,20 @@
 [scriptable, uuid(fb27dd34-99d2-4051-abc7-e633d9254a21)]
 interface otISystrayListener : nsISupports
 {
-    void onClick(in long x, in long y);
-    void onPopup(in long x, in long y);
+    void onMouseClick(in long screenX, in long screenY, in long windowX, in long windowY,
+                      in long clicksCount, in boolean ctrlKey, in boolean altKey,
+                      in boolean shiftKey, in boolean metaKey, in unsigned short button);
 };
 
 [scriptable, uuid(f6536e27-b4e0-4b1b-a604-589da025b2c4)]
 interface otISystray : nsISupports
 {
+    attribute nsISupports icon;
+    attribute AString tooltip;
+
     void init(in otISystrayListener listener);
-    void show(in nsISupports icon);
+
+    void show();
     void hide();
 };
 

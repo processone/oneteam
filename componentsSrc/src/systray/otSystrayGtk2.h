@@ -13,10 +13,11 @@ public:
 
   NS_IMETHOD Init(otISystrayListener *listener);
   NS_IMETHOD Hide();
+  NS_IMETHOD SetTooltip(const nsAString &tooltip);
 private:
   ~otSystrayGtk2();
 protected:
-  static PRBool OnClick(otSystrayGtk2 *obj, GdkEvent *ev);
+  static PRBool OnClick(otSystrayGtk2 *obj, GdkEventButton *ev);
   static void OnReailze(otSystrayGtk2 *obj);
   nsresult ProcessImageData(PRInt32 width, PRInt32 height,
                             PRUint8 *rgbData, PRUint32 rgbStride,

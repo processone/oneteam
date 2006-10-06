@@ -13,6 +13,7 @@ public:
   otSystrayWin();
 
   NS_IMETHOD Hide();
+  NS_IMETHOD SetTooltip(const nsAString &tooltip);
   nsresult ProcessImageData(PRInt32 width, PRInt32 height,
                             PRUint8 *rgbData, PRUint32 rgbStride,
                             PRUint32 rgbLen, PRUint8 *alphaData,

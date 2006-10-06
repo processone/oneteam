@@ -1,7 +1,7 @@
 #include "otSystrayBase.h"
 #include "otMultiVersion.h"
 
-otSystrayBase::otSystrayBase()
+otSystrayBase::otSystrayBase() : mShown(PR_FALSE)
 {
 }
 
@@ -31,12 +31,18 @@ otSystrayBase::Init(otISystrayListener *listener)
 }
 
 NS_IMETHODIMP
-otSystrayBase::Show(nsISupports *image)
+otSystrayBase::Show()
 {
   if (!mListener)
     return NS_ERROR_NOT_INITIALIZED;
 
-  return mObserver->Load(image, this);
+  if (!mShown && mIcon) {
+    mShown = PR_TRUE;
+    return mObserver->Load(mIcon, this);
+  }
+
+  mShown = PR_TRUE;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -45,6 +51,46 @@ otSystrayBase::Hide()
   if (!mListener)
     return NS_ERROR_NOT_INITIALIZED;
 
+  mShown = PR_FALSE;
+
   return mObserver->AbortLoad();
+}
+
+NS_IMETHODIMP
+otSystrayBase::GetIcon(nsISupports **icon)
+{
+  *icon = mIcon;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otSystrayBase::SetIcon(nsISupports *icon)
+{
+  if (!mListener)
+    return NS_ERROR_NOT_INITIALIZED;
+
+  mIcon = icon;
+
+  if (mShown)
+    return mObserver->Load(icon, this);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otSystrayBase::GetTooltip(nsAString &tooltip)
+{
+  tooltip.Assign(mTooltip);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otSystrayBase::SetTooltip(const nsAString &tooltip)
+{
+  mTooltip.Assign(tooltip);
+
+  return NS_OK;
 }
 
