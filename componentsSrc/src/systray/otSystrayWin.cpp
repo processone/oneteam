@@ -71,7 +71,8 @@ nsresult
 otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
                                PRUint8 *rgbData, PRUint32 rgbStride,
                                PRUint32 rgbLen, PRUint8 *alphaData,
-                               PRUint32 alphaStride, PRUint32 alphaBits)
+                               PRUint32 alphaStride, PRUint32 alphaBits,
+                               PRBool packedPixel)
 {
   ICONINFO ii;
   NOTIFYICONDATA nid;
@@ -145,24 +146,33 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
 
   w = dex - dsx;
 
-  rgbPixel = rgbData + rgbStride*ssy + ssx*3;
+  rgbPixel = rgbData + rgbStride*ssy + ssx*(packedPixel ? 4 : 3);
 
   if (alphaBits == 8) {
-    colorBits += (ICON_WIDTH*dsy + dsx)*4;
-    alphaPixel = alphaData + alphaStride*ssy + ssx;
-    for (y = dsy; y < dey; ++y) {
-      for (x = dsx; x < dex; ++x) {
-        colorBits[0] = rgbPixel[0];
-        colorBits[1] = rgbPixel[1];
-        colorBits[2] = rgbPixel[2];
-        colorBits[3] = alphaPixel[0];
-        rgbPixel+=3;
-        alphaPixel++;
-        colorBits+=4;
+    if (packedPixel) {
+      colorBits += (ICON_WIDTH*dsy + dsx)*4;
+      for (y = dsy; y < dey; ++y) {
+        memcpy(colorBits, rgbPixel, (dex-dsx)*4);
+        rgbPixel += rgbStride;
+        colorBits += ICON_WIDTH*4;
       }
-      rgbPixel += rgbStride - w*3;
-      alphaPixel += alphaStride - w;
-      colorBits += ICON_WIDTH*4 - w*4;
+    } else{
+      colorBits += (ICON_WIDTH*dsy + dsx)*4;
+      alphaPixel = alphaData + alphaStride*ssy + ssx;
+      for (y = dsy; y < dey; ++y) {
+        for (x = dsx; x < dex; ++x) {
+          colorBits[0] = rgbPixel[0];
+          colorBits[1] = rgbPixel[1];
+          colorBits[2] = rgbPixel[2];
+          colorBits[3] = alphaPixel[0];
+          rgbPixel+=3;
+          alphaPixel++;
+          colorBits+=4;
+        }
+        rgbPixel += rgbStride - w*3;
+        alphaPixel += alphaStride - w;
+        colorBits += ICON_WIDTH*4 - w*4;
+      }
     }
   } else {
     colorBits += (ICON_WIDTH*dsy + dsx)*3;
