@@ -23,3 +23,12 @@ avatar {
 groupselector {
   -moz-binding: url("chrome://messenger/content/bindings/groupselector.xml#groupselector");
 }
+
+otsystray {
+  -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systray");
+}
+
+otsystray[type="minimizer"] {
+  -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systray-minimizer");
+}
+

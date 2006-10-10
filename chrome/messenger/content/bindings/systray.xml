@@ -1,0 +1,242 @@
+<?xml version="1.0"?>
+
+<bindings id="systrayBindings"
+          xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="systray">
+
+    <content>
+      <xul:vbox hidden="true">
+        <children/>
+      </xul:vbox>
+    </content>
+
+    <implementation implements="otISystrayListener">
+      <constructor>
+        <![CDATA[
+          try {
+            this._systray = Components.classes["@process-one.net/systray;1"].
+              createInstance(Components.interfaces.otISystray);
+            this._systray.init(this);
+
+            this._reallyHidden = true;
+            this._hidden = this.getAttribute("hidden") == "true";
+            this.icon = this.getAttribute("icon");
+//            this._win = window.openDialog("systrayhelper.xul", "_blank",
+//                                          "chrome=yes,dialog=no,popup=yes");
+          } catch (ex) {alert(ex)}
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          if (this._systray)
+            this._systray.hide();
+          if (this._win)
+            this._win.close();
+        ]]>
+      </destructor>
+
+      <property name="icon">
+        <getter>
+          <![CDATA[
+            return this._icon;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._icon = val;
+
+            if (val && this._systray) {
+              try{
+                var img = document.createElementNS("http://www.w3.org/1999/xhtml", "img");
+                img.src = val;
+                this._systray.icon = img;
+                this.hidden = this._hidden;
+              } catch(ex) {alert(ex)}
+            }
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <property name="hidden">
+        <getter>
+          <![CDATA[
+            return this._hidden;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            //alert("VISCH1: "+this._icon +", "+!val +", "+!this._reallyHidden);
+            if (this._icon && !val != !this._reallyHidden) {
+            //alert("VISCH");
+              this._reallyHidden = !!val;
+              if (val)
+                this._systray.hide();
+              else
+                this._systray.show();
+              if (this._systrayVisibilityToggle)
+                this._systrayVisibilityToggle();
+            }
+            this._hidden = val;
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <method name="onMouseClick">
+        <parameter name="screenX"/>
+        <parameter name="screenY"/>
+        <parameter name="windowX"/>
+        <parameter name="windowY"/>
+        <parameter name="clicksCount"/>
+        <parameter name="ctrlKey"/>
+        <parameter name="altKey"/>
+        <parameter name="shiftKey"/>
+        <parameter name="metaKey"/>
+        <parameter name="button"/>
+        <body>
+          <![CDATA[
+            var event = document.createEvent("MouseEvents");
+            event.initMouseEvent("click", true, true, window, clicksCount, screenX, screenY,
+                                 windowX, windowY, ctrlKey, altKey, shiftKey, metaKey,
+                                 button, this);
+            return this.dispatchEvent(event);
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="click" button="2"><![CDATA[
+        if (!this.childNodes.length)
+          return;
+
+        this._win.showPopup(this.childNodes, x, y);
+      ]]></handler>
+    </handlers>
+  </binding>
+
+  <binding id="systray-minimizer"
+    extends="chrome://messenger/content/bindings/systray.xml#systray">
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          this._baseWindow = window.
+            QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+            getInterface(Components.interfaces.nsIWebNavigation).
+            QueryInterface(Components.interfaces.nsIDocShellTreeItem).
+            treeOwner.
+            QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+            getInterface(Components.interfaces.nsIBaseWindow);
+
+          this._showOnlyWhenMinimized = this.getAttribute("showOnlyWhenMinimized") == "true";
+          this.minimized = this.getAttribute("minimized") == "true";
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          if (this.minimized)
+            this._baseWindow.visibility = true;
+        ]]>
+      </destructor>
+
+      <property name="showOnlyWhenMinimized">
+        <getter>
+          <![CDATA[
+            return this._showOnlyWhenMinimized;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._showOnlyWhenMinimized = val;
+            this._syncVisisibilty();
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <property name="minimizedOverride">
+        <getter>
+          <![CDATA[
+            return this._minimizedOverride;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            this._minimizedOverride = val;
+            this._syncVisisibilty();
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <property name="minimized">
+        <getter>
+          <![CDATA[
+            return this._minimized;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            var oldVal = this._minimized;
+            this._minimized = val;
+
+            if (!oldVal != !val) {
+              var event = document.createEvent("Events");
+              event.initEvent("statechange", true, true);
+              if (!this.dispatchEvent(event)) {
+                this._minimized = oldVal;
+                return val;
+              }
+            }
+
+            this._syncVisisibilty();
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <method name="_syncVisisibilty">
+        <body>
+          <![CDATA[
+            if (this._icon) {
+              var minimized = this._minimized && !this._minimizedOverride;
+
+              this.hidden = this._showOnlyWhenMinimized && !minimized;
+              this._baseWindow.visibility = !minimized;
+            }
+          ]]>
+        </body>
+      </method>
+
+      <method name="_systrayVisibilityToggle">
+        <body>
+          <![CDATA[
+            this._syncVisisibilty();
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="click" button="0"><![CDATA[
+        this.minimized = !this.minimized;
+      ]]></handler>
+    </handlers>
+  </binding>
+</bindings>
+

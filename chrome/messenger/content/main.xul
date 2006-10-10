@@ -101,7 +101,7 @@
       onIconSetChange: function()
       {
         document.getElementById("setPresence-type-image").src =
-          presenceToIcon(account.currentPresence.type||"available");
+          this.systray.icon = presenceToIcon(account.currentPresence.type||"available");
       },
 
       init: function()
@@ -110,6 +110,8 @@
         account.registerView(this, "onPresenceChange", "currentPresence");
         account.registerView(this, "onIconSetChange", "iconSet");
         this.chooser = document.getElementById("setPresence-type-chooser");
+        this.systray = document.getElementById("systray");
+        this.systray.icon = presenceToIcon(account.currentPresence.type||"available");
         this.value = this.chooser.value;
       }
     };
@@ -448,4 +450,6 @@
       <menuitem label="&listitemcontext.Infos;" oncommand="activeItem.showVCard()"/>
     </popup>
   </popupset>
+
+  <otsystray id="systray" type="minimizer"/>
 </window>
