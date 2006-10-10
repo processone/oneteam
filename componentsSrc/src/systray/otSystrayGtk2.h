@@ -22,7 +22,8 @@ protected:
   nsresult ProcessImageData(PRInt32 width, PRInt32 height,
                             PRUint8 *rgbData, PRUint32 rgbStride,
                             PRUint32 rgbLen, PRUint8 *alphaData,
-                            PRUint32 alphaStride, PRUint32 alphaBits);
+                            PRUint32 alphaStride, PRUint32 alphaBits,
+                            PRBool packedPixel);
 
   GtkWidget *mPlug;
   GtkWidget *mIcon;

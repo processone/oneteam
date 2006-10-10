@@ -143,7 +143,7 @@ otPr0nObserver18::FrameChanged(imgIContainer *aContainer,
   rv |= imageFrame->GetImageData(&rgbData, &rgbLen);
   if (NS_SUCCEEDED(rv))
     rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
-                                     alphaData, alphaStride, alphaBits);
+                                     alphaData, alphaStride, alphaBits, PR_FALSE);
 
   if (alphaData)
     imageFrame->UnlockAlphaData();

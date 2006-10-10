@@ -128,9 +128,14 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
   rv = imageFrame->GetImageBytesPerRow(&rgbStride);
   rv |= imageFrame->GetImageData(&rgbData, &rgbLen);
   if (NS_SUCCEEDED(rv)) {
-  DEBUG_DUMP("otPr0nObserver19::FrameChanged (6)");
+    DEBUG_DUMP("otPr0nObserver19::FrameChanged (6)");
+#ifdef MOZ_CAIRO_GFX
     rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
-                                     alphaData, alphaStride, alphaBits);
+                                     alphaData, alphaStride, alphaBits, PR_TRUE);
+#else
+    rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
+                                     alphaData, alphaStride, alphaBits, PR_FALSE);
+#endif
   }
 
   if (alphaData)
