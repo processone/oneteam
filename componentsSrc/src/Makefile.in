@@ -7,6 +7,10 @@ otdir=@otdir@
 
 include $(otdir)/config.mk
 
+ifdef OT_HAS_DEBUG
+	OT_EXTRA_DIRS += debug
+endif
+
 DIRS = \
 	idle \
 	multiversion \

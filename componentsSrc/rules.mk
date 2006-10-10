@@ -2,7 +2,7 @@ _MOZ_VERSION=$(subst b, ,$(subst a, ,$(subst ., ,$(MOZILLA_VERSION))))
 _MOZILLA_VERSION:=$(word 1,$(_MOZ_VERSION)).$(word 2,$(_MOZ_VERSION))
 
 OS_CXXFLAGS += $(foreach ver,$(MOZILLA_VERSIONS),\
-	-DOR_VERSION_AVAILABLE_$(subst .,_,$(ver)))
+	-DOT_VERSION_AVAILABLE_$(subst .,_,$(ver)))
 
 ABI=$(OS_TARGET)_$(TARGET_XPCOM_ABI)
 PC_DIR=$(otdir)/..
@@ -37,6 +37,7 @@ endif
 
 INCLUDES += \
 	-I $(otdir)/idl/$(XPIDL_GEN_DIR) \
+	-I $(otdir)/src/debug \
 	$(NULL)
 
 ifdef MODULE

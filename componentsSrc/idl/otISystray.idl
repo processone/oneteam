@@ -22,7 +22,7 @@ interface otISystray : nsISupports
 
 %{C++
 
-#define OT_SYSTRAY_CONTRACTID "@onetalk/systray;1"
+#define OT_SYSTRAY_CONTRACTID "@process-one.net/systray;1"
 
 #define OT_SYSTRAY_CID \
 { /* b9e86108-eece-4309-8465-4421d13343f6 */ \

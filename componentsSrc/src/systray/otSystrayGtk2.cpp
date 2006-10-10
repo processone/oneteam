@@ -1,4 +1,5 @@
 #include "otSystrayGtk2.h"
+#include "otDebug.h"
 #include "prmem.h"
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
@@ -20,10 +21,10 @@ otSystrayGtk2::~otSystrayGtk2()
 NS_IMETHODIMP
 otSystrayGtk2::Init(otISystrayListener *listener)
 {
-  NS_ENSURE_ARG_POINTER(listener);
+  nsresult rv = otSystrayBase::Init(listener);
 
-  if (mListener)
-    return NS_ERROR_ALREADY_INITIALIZED;
+  if (NS_FAILED(rv))
+    return rv;
 
   mPlug = gtk_plug_new(0);
   mIcon = GTK_WIDGET(gtk_image_new());
@@ -48,8 +49,6 @@ otSystrayGtk2::Init(otISystrayListener *listener)
              gdk_screen_get_number(screen));
   mAtomTrayId = gdk_atom_intern(trayId, FALSE);
   mAtomOpcode = gdk_atom_intern("_NET_SYSTEM_TRAY_OPCODE", FALSE);
-
-  mListener = listener;
 
   return NS_OK;
 }
@@ -85,6 +84,7 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
                                 PRUint32 rgbLen, PRUint8 *alphaData,
                                 PRUint32 alphaStride, PRUint32 alphaBits)
 {
+  DEBUG_DUMP("otSystrayGtk2::ProcessImageData (ENTER)");
   if (!rgbData)
     return NS_ERROR_INVALID_ARG;
 
@@ -93,17 +93,31 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
   if (!pixels)
     return NS_ERROR_OUT_OF_MEMORY;
 
-  memcpy(pixels, rgbData, rgbLen);
-
+#ifdef MOZ_CAIRO_GFX
+  // XXXpfx: will it work on little endian?
+  for (PRUint32 i = 0; i < rgbLen/4; i++) {
+    pixels[i*4+0] = rgbData[i*4+2];
+    pixels[i*4+1] = rgbData[i*4+1];
+    pixels[i*4+2] = rgbData[i*4+0];
+    pixels[i*4+3] = alphaBits ? rgbData[i*4+3] : 0xff;
+  }
   GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(pixels, GDK_COLORSPACE_RGB,
-                                               PR_FALSE, 8, width, height,
+                                               1, 8, width, height,
+                                               rgbStride, pixbuf_free, 0);
+#else
+  memcpy(pixels, rgbData, rgbLen);
+  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(pixels, GDK_COLORSPACE_RGB,
+                                               0, 8, width, height,
                                                rgbStride, pixbuf_free, 0);
 
+#endif
+
   if (!pixbuf) {
-    free(pixels);
+    PR_Free(pixels);
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
+#ifndef MOZ_CAIRO_GFX
   if (alphaBits) {
     GdkPixbuf *alphaPixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
@@ -143,6 +157,7 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
       maskRow += alphaStride;
     }
   }
+#endif
 
   gtk_image_set_from_pixbuf(GTK_IMAGE(mIcon), pixbuf);
   g_object_unref(G_OBJECT(pixbuf));

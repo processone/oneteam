@@ -19,3 +19,9 @@ ifeq "$(MOZ_WIDGET_TOOLKIT)" "windows"
 		$(otdir)/src/systray/$(LIB_PREFIX)ot_systray_s.$(LIB_SUFFIX) \
 		$(otdir)/src/multiversion/$(LIB_PREFIX)ot_multiversion_s.$(LIB_SUFFIX)
 endif
+
+ifdef MOZ_DEBUG                                                                                     
+	OT_HAS_DEBUG=1
+	OT_EXTRA_SHARED_LIBS += \
+		$(otdir)/src/debug/$(LIB_PREFIX)ot_debug_s.$(LIB_SUFFIX)
+endif

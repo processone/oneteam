@@ -8,7 +8,7 @@ otdir=@otdir@
 include $(otdir)/config.mk
 
 NO_DIST_INSTALL=1
-MODULE=onetalk
+MODULE=oneteam
 LIBRARY_NAME=ot_multiversion_s
 
 REQUIRES= \

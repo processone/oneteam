@@ -23,3 +23,5 @@ conf.mk:
 libtoolize: conf.mk
 	@perl tools/libtoolize.pl --force --root-dir=.
 
+debug-build:
+	$(MAKE) all MOZ_DEBUG=1 STRIP=echo 

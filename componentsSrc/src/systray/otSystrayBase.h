@@ -4,8 +4,20 @@
 #include "nsStringAPI.h"
 #include "otISystray.h"
 #include "nsCOMPtr.h"
+#include "nsAutoPtr.h"
 
 class otPr0nObserver;
+class otSystrayBase;
+
+class otPr0nObserver : public nsISupports
+{
+public:
+  virtual ~otPr0nObserver() {};
+
+  virtual nsresult Load(nsISupports *image, otSystrayBase *listener) = 0;
+  virtual nsresult AbortLoad() = 0;
+};
+
 
 class otSystrayBase : public otISystray
 {
@@ -25,7 +37,7 @@ public:
 
 protected:
   virtual ~otSystrayBase();
-  nsCOMPtr<otPr0nObserver> mObserver;
+  nsRefPtr<otPr0nObserver> mObserver;
   nsCOMPtr<otISystrayListener> mListener;
 
   nsString mTooltip;
@@ -38,15 +50,6 @@ public:
                                     PRUint32 rgbLen, PRUint8 *alphaData,
                                     PRUint32 alphaStride,
                                     PRUint32 alphaBits) = 0;
-};
-
-class otPr0nObserver : public nsISupports
-{
-public:
-  virtual ~otPr0nObserver() {};
-
-  virtual nsresult Load(nsISupports *image, otSystrayBase *listener) = 0;
-  virtual nsresult AbortLoad() = 0;
 };
 
 #endif

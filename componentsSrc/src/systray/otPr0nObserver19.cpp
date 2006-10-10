@@ -2,6 +2,7 @@
 class nsIFrame;
 
 #include "otSystrayBase.h"
+#include "otDebug.h"
 #include "gfxIImageFrame.h"
 #include "imgIContainer.h"
 #include "imgIRequest.h"
@@ -31,6 +32,7 @@ NS_IMPL_ISUPPORTS2(otPr0nObserver19, imgIDecoderObserver, imgIContainerObserver)
 nsresult
 otPr0nObserver19::Load(nsISupports *image, otSystrayBase *listener)
 {
+  DEBUG_DUMP("otPr0nObserver19::Load (entered)");
   nsresult rv;
 
   mListener = listener;
@@ -78,6 +80,7 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
                                gfxIImageFrame *imageFrame,
                                nsIntRect * aDirtyRect)
 {
+  DEBUG_DUMP("otPr0nObserver19::FrameChanged (entered)");
   nsresult rv;
   PRUint8 *alphaData, *rgbData;
   PRUint32 alphaLen, rgbLen, alphaBits;
@@ -88,6 +91,8 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
   if (!mImgRequest)
     return NS_OK;
 
+  DEBUG_DUMP("otPr0nObserver19::FrameChanged (1)");
+
   alphaData = rgbData = 0;
 
   imageFrame->GetWidth(&width);
@@ -96,13 +101,17 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
 
   alphaBits = format > 3 ? 8 : format > 1 ? 1 : 0;
 
+  DEBUG_DUMP_N(("otPr0nObserver19::FrameChanged width=%x, height=%x, format=%x",
+               width,height,format));
   rv = imageFrame->LockImageData();
   if (NS_FAILED(rv))
     return rv;
 
+#ifndef MOZ_CAIRO_GFX
   if (alphaBits) {
     rv = imageFrame->LockAlphaData();
     if (NS_FAILED(rv)) {
+    DEBUG_DUMP1("otPr0nObserver19::FrameChanged (2.1) rv=%x",rv);
       imageFrame->UnlockImageData();
       return rv;
     }
@@ -114,12 +123,15 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
       return rv;
     }
   }
+#endif
 
   rv = imageFrame->GetImageBytesPerRow(&rgbStride);
   rv |= imageFrame->GetImageData(&rgbData, &rgbLen);
-  if (NS_SUCCEEDED(rv))
+  if (NS_SUCCEEDED(rv)) {
+  DEBUG_DUMP("otPr0nObserver19::FrameChanged (6)");
     rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
                                      alphaData, alphaStride, alphaBits);
+  }
 
   if (alphaData)
     imageFrame->UnlockAlphaData();
@@ -131,12 +143,14 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
 NS_IMETHODIMP
 otPr0nObserver19::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
 {
+  DEBUG_DUMP("otPr0nObserver19::OnStopFrame (entered)");
   return FrameChanged(nsnull, aFrame, nsnull);
 }
 
 NS_IMETHODIMP
 otPr0nObserver19::OnStartDecode(imgIRequest *aRequest)
 {
+  DEBUG_DUMP("otPr0nObserver19::OnStartDecode (entered)");
   return NS_OK;
 }
 
@@ -175,12 +189,14 @@ otPr0nObserver19::OnStopDecode(imgIRequest *aRequest, nsresult status,
 NS_IMETHODIMP
 otPr0nObserver19::OnStartRequest(imgIRequest* aRequest)
 {
+  DEBUG_DUMP("otPr0nObserver19::OnStartRequest (entered)");
   return NS_OK;
 }
 
 NS_IMETHODIMP
 otPr0nObserver19::OnStopRequest(imgIRequest* aRequest, PRBool finish)
 {
+  DEBUG_DUMP("otPr0nObserver19::OnStopRequest (entered)");
   return NS_OK;
 }
 

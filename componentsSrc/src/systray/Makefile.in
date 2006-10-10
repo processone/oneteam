@@ -20,7 +20,7 @@ ifdef OT_HAS_SYSTRAY_WIN
 endif
 
 NO_DIST_INSTALL=1
-MODULE=onetalk
+MODULE=oneteam
 LIBRARY_NAME=ot_systray_s
 REQUIRES= \
 	xpcom \
