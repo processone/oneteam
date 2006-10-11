@@ -88,13 +88,14 @@
         if (this._skip)
           return;
 
-        if (this.chooser.value)
+        if (this.chooser.value) {
           account.setPresence(this.chooser.value);
-        else {
+          this.value = this.chooser.value;
+        } else {
           this._skip = true;
           this.chooser.value = this.value;
           this._skip = false;
-          account.onCustomPresence()
+          account.onCustomPresence(this.value)
         }
       },
 

@@ -193,10 +193,10 @@ _DECL_(Account, null, Model).prototype =
         window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
     },
 
-    onCustomPresence: function()
+    onCustomPresence: function(presence)
     {
         window.openDialog("chrome://messenger/content/status.xul",
-                          "ot:customPresence", "chrome,centerscreen");
+                          "ot:customPresence", "chrome,centerscreen", presence);
     },
 
     observe: function(subject, topic, value)

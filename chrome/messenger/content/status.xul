@@ -1,62 +1,94 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/status.dtd">
 
+<!DOCTYPE dialog [
+  <!ENTITY % guiDTD SYSTEM "chrome://messenger/locale/gui.dtd">
+  <!ENTITY % statusDTD SYSTEM "chrome://messenger/locale/status.dtd">
+%guiDTD;
+%statusDTD;
+]>         
 
-<window id="Status Message"
-        title="&Status.message;"
-        orient="horizontal"
-      	
-        width="230"
-        height="280"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog id="Status Message" title="&Status.message;" orient="vertical"
+  onload="onLoad()" ondialogaccept="return onAccept();" buttons="accept,cancel"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
-    <script type="application/x-javascript" src="JavaScript/prefs.js"/>
-    <script type="application/x-javascript" src="JavaScript/shared.js"/>
-    <script type="application/x-javascript" src="JavaScript/gui.js"/>
-    <script type="application/x-javascript" src="JavaScript/status.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var messages;
+    var listControl, typeControl, textControl;
 
-   <vbox flex="1">
-   
-   <spacer height="20"/>
-   
-   <label value="&Status.enter;"/>
-   
-   <spacer height="10"/>
-   
-   <textbox id="statustext" height="60" flex="1"/>
-   
-    <spacer height="20"/>
-    
-     <label value="&Status.choose;"/>
-     
-      <spacer height="10"/>
-    
-     <menulist id="selectStatus" height="30" width="150">
-                <menupopup flex="1">
-                	<menuitem label=" "/>
-                    <menuitem label="&Status.brb;" value="&Status.brb;"/>
-                    <menuitem label="&Status.outside;" value="&Status.outside;"/>
-                    <menuitem label="&Status.sleeping;" value="&Status.sleeping;"/>
-                    <menuitem label="&Status.film;" value="&Status.film;"/>
-                    <menuitem label="&Status.eating;" value="&Status.eating;"/>
-                    <menuitem label="&Status.working;" value="&Status.working;"/>
-                  	<menuitem label="&Status.phoning;" value="&Status.phoning;"/>
-                </menupopup>
-            </menulist>
-   
-    <spacer height="35"/>
-        
-        <hbox align="right">
-       		 <button label="OK" onclick="sendStatus();self.close();"/>
-       		 <button label="Cancel" onclick="self.close();"/>
-        </hbox>
-   
-   </vbox>
+    function onLoad() {
+      listControl = document.getElementById("savedMessages");
+      typeControl = document.getElementById("presenceType");
+      textControl = document.getElementById("statusText");
 
-</window>
+      messages = window.opener.account.cache.getValue("statusMessages");
+
+      if (messages) {
+        messages = messages.split(/\n/);
+        for (var i = 0; i < messages.length; i++)
+          messages[i] = messages[i].replace(/([^\\]|(?:\\\\)+)\\n/g, "$1\n").
+            replace(/\\\\/g,"\\")
+      } else {
+        // XXX pfx: use string bundle.
+        messages = ["Sleeping", "Working", "Eating"];
+      }
+      listControl.appendItem("", "");
+      for (var i = 0; i < messages.length; i++) {
+        var pos = messages[i].lastIndexOf(" ", 31);
+        listControl.appendItem(messages[i].length < 33? messages[i] :
+          messages[i].slice(0, ~(~pos||~30))+"...", messages[i]);
+      }
+      listControl.selectedIndex = 0;
+      typeControl.selectedIndex = 0;
+
+      var items = typeControl.firstChild.childNodes;
+      for (i = 0; i < items.length; i++)
+        if (items[i].value == window.arguments[0]) {
+          typeControl.selectedIndex = i;
+          break;
+        }
+    }
+
+    function onAccept() {
+      var msg = listControl.value;
+
+      if (document.getElementById("saveMessage").checked) {
+        messages.push(textControl.value.replace(/^\s+|\s+$/g, ""));
+        for (var i = 0; i < messages.length; i++)
+          messages[i] = messages[i].replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
+        window.opener.account.cache.setValue("statusMessages", messages.join("\n"));
+      }
+      window.opener.account.setPresence(typeControl.value, listControl.value);
+
+      return true;
+    }
+
+    function onSelect() {
+      textControl.value = listControl.value;
+      textControl.focus();
+    }
+  ]]></script>
+  <menulist id="presenceType">
+    <menupopup>
+      <menuitem id="type-available" label="&status.Available;"
+        value="available"/>
+      <menuitem id="type-availableChat" label="&status.AvailableChat;"
+        value="chat"/>
+      <menuitem id="type-dnd" label="&status.Dnd;" value="dnd"/>
+      <menuitem id="type-away" label="&status.Away;" value="away"/>
+      <menuitem id="type-xa" label="&status.Undisponible;" value="xa"/>
+      <menuitem id="type-invisible" label="&status.Invisible;" value="invisible"/>
+    </menupopup>
+  </menulist>
+  <spacer/>
+  <label value="Status message:" control="statusText"/>
+  <textbox id="statusText" multiline="true" rows="4" flex="1"/>
+  <hbox pack="end">
+    <checkbox id="saveMessage" label="Save message"/>
+  </hbox>
+  <spacer/>
+
+  <label value="Saved messages:"/>
+  <menulist id="savedMessages" onselect="onSelect()"/>
+
+</dialog>
