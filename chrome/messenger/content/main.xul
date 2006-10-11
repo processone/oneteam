@@ -296,7 +296,7 @@
         <button label="&Login.signin;" oncommand="connect()"/>
         <spacer height="30"/>
         <label class="text-link" value="&Login.settings;" align="right"
-            onclick="openSettings();"/>
+            onclick="account.showPrefs();"/>
       </groupbox>
     </vbox>
     <vbox id="main-box" flex="1">
