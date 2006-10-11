@@ -18,6 +18,7 @@ ifeq "$(MOZ_WIDGET_TOOLKIT)" "windows"
 		$(otdir)/src/idle/$(LIB_PREFIX)ot_idle_s.$(LIB_SUFFIX) \
 		$(otdir)/src/systray/$(LIB_PREFIX)ot_systray_s.$(LIB_SUFFIX) \
 		$(otdir)/src/multiversion/$(LIB_PREFIX)ot_multiversion_s.$(LIB_SUFFIX)
+	OT_EXTRA_SHARED_OS_LIBS += shell32.lib
 endif
 
 ifdef MOZ_DEBUG                                                                                     

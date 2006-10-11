@@ -59,7 +59,7 @@ otSystrayWin::SetTooltip(const nsAString &tooltip)
     nid.uFlags = NIF_TIP;
     nid.uID = mNid;
 
-    StringCchCopy(nid.szTip, 64, mTooltip.get());
+    StringCchCopy(nid.szTip, 64, NS_ConvertUTF16toUTF8(mTooltip).get());
 
     Shell_NotifyIcon(NIM_MODIFY, &nid);
   }
@@ -219,9 +219,9 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
   nid.uCallbackMessage = OT_TRAYMSG;
   nid.hIcon = hIcon;
 
-  if (!mTooltip.Empty()) {
+  if (!mTooltip.IsEmpty()) {
     nid.uFlags |= NIF_TIP;
-    StringCchCopy(nid.szTip, 64, mTooltip.get());
+    StringCchCopy(nid.szTip, 64, NS_ConvertUTF16toUTF8(mTooltip).get());
   }
 
   if (!mNid) {

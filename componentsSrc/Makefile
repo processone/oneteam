@@ -14,6 +14,11 @@ clean:
 	@$(MAKE) -C src clean
 	@$(MAKE) -C build clean
 
+distclean:
+	@$(MAKE) -C idl distclean
+	@$(MAKE) -C src distclean
+	@$(MAKE) -C build distclean
+
 %/Makefile: %/Makefile.in
 	perl tools/libtoolize.pl --root-dir=.
 

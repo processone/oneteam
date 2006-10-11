@@ -3,6 +3,8 @@
 #define _WIN32_WINNT 0x0500
 #include <windows.h>
 
+typedef BOOL (*GETLASTINPUTINFO)(PLASTINPUTINFO plii);
+
 static HMODULE gUser32Handle = 0;
 static GETLASTINPUTINFO gGetLastInputInfo = 0;
 static PRPackedBool gInitialized;
@@ -20,8 +22,6 @@ otIdleServiceWin::~otIdleServiceWin()
 NS_IMETHODIMP
 otIdleServiceWin::Init(otIIdleCallback *callback)
 {
-  nsresult rv;
-
   if (mCallback)
     return NS_ERROR_ALREADY_INITIALIZED;
 
