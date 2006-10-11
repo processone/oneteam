@@ -710,6 +710,8 @@ _DECL_(Contact, null, Model,
 
     onRename: function(externalDialog)
     {
+        window.openDialog("chrome://messenger/content/rename.xul",
+                          "ot:renameContact", "resizable=no,chrome,dialog,modal", this);
     },
 
     rename: function(newName)
@@ -721,7 +723,7 @@ _DECL_(Contact, null, Model,
     onRemove: function()
     {
         window.openDialog("chrome://messenger/content/removeContact.xul",
-                          "ot:addContact", "resizable=no,chrome,dialog,modal", this);
+                          "ot:removeContact", "resizable=no,chrome,dialog,modal", this);
     },
 
     remove: function()
