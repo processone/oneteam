@@ -89,3 +89,4 @@ override AUTOCONF_TOOLS=$(otdir)/tools/libtoolize.pl --root-dir=$(otdir) --
 debug-build:
 	$(MAKE) all MOZ_DEBUG=1 STRIP=echo
 
+Makefile: $(otdir)/conf.mk
