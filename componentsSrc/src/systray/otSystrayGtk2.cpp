@@ -34,21 +34,15 @@ otSystrayGtk2::Init(otISystrayListener *listener)
                         GDK_BUTTON_PRESS_MASK);
   g_signal_connect_swapped(G_OBJECT(mPlug), "button-press-event",
                             G_CALLBACK(OnClick), (gpointer)this);
-  g_signal_connect_swapped(G_OBJECT(mPlug), "realize", G_CALLBACK(OnReailze),
+  g_signal_connect_swapped(G_OBJECT(mPlug), "realize", G_CALLBACK(OnRealize),
+                           (gpointer)this);
+  g_signal_connect_swapped(G_OBJECT(mPlug), "unrealize", G_CALLBACK(OnUnrealize),
                            (gpointer)this);
 
   g_object_ref(G_OBJECT(mTooltips));
   gtk_object_unref(GTK_OBJECT(mTooltips));
 
   gtk_container_add (GTK_CONTAINER(mPlug), mIcon);
-
-  gchar trayId[32];
-  GdkScreen *screen = gtk_widget_get_screen(mPlug);
-
-  g_snprintf(trayId, sizeof(trayId), "_NET_SYSTEM_TRAY_S%d",
-             gdk_screen_get_number(screen));
-  mAtomTrayId = gdk_atom_intern(trayId, FALSE);
-  mAtomOpcode = gdk_atom_intern("_NET_SYSTEM_TRAY_OPCODE", FALSE);
 
   return NS_OK;
 }
@@ -180,30 +174,100 @@ otSystrayGtk2::OnClick(otSystrayGtk2 *obj, GdkEventButton *ev)
 }
 
 void
-otSystrayGtk2::OnReailze(otSystrayGtk2 *obj)
+otSystrayGtk2::OnRealize(otSystrayGtk2 *obj)
 {
-  GdkDisplay *display = gtk_widget_get_display(obj->mPlug);
+  DEBUG_DUMP("REALIZE");
+  gchar trayId[32];
+  GdkScreen *screen = gtk_widget_get_screen(obj->mPlug);
+
+  g_snprintf(trayId, sizeof(trayId), "_NET_SYSTEM_TRAY_S%d",
+             gdk_screen_get_number(screen));
+  obj->mAtomTrayId = gdk_atom_intern(trayId, FALSE);
+  obj->mAtomOpcode = gdk_atom_intern("_NET_SYSTEM_TRAY_OPCODE", FALSE);
+  obj->mAtomManager = gdk_atom_intern("MANAGER", FALSE);
+
+  obj->UpdateManager();
+
+  GdkWindow *root = gdk_screen_get_root_window(gtk_widget_get_screen(obj->mPlug));
+  gdk_window_add_filter(root, (GdkFilterFunc)EventFilter, obj);
+}
+
+void
+otSystrayGtk2::OnUnrealize(otSystrayGtk2 *obj)
+{
+  DEBUG_DUMP("UNREALIZE");
+  GdkWindow *root = gdk_screen_get_root_window(gtk_widget_get_screen(obj->mPlug));
+
+  gdk_window_remove_filter(root, (GdkFilterFunc)EventFilter, obj);
+  if (obj->mManagerWindow) {
+    gdk_window_remove_filter(obj->mManagerWindow, (GdkFilterFunc)EventFilter, obj);
+  }
+}
+
+GdkFilterReturn
+otSystrayGtk2::EventFilter(GdkXEvent *xevent, GdkEvent *event,
+                           otSystrayGtk2 *obj)
+{
+  XEvent *xev = (XEvent*)xevent;
+
+  DEBUG_DUMP_N(("NEW EVENT %d %d %d", xev->xany.type, ClientMessage, DestroyNotify));
+  if (xev->xany.type == ClientMessage &&
+      xev->xclient.message_type == gdk_x11_atom_to_xatom(obj->mAtomManager) &&
+      xev->xclient.data.l[1] == gdk_x11_atom_to_xatom(obj->mAtomTrayId))
+  {
+    DEBUG_DUMP("NEW MANAGER");
+    obj->UpdateManager();
+  } else if (xev->xany.type == DestroyNotify &&
+             xev->xany.window == obj->mManagerNativeWindow)
+  {
+    DEBUG_DUMP("MANAGER DESTROYED");
+    gdk_window_remove_filter(obj->mManagerWindow, (GdkFilterFunc)EventFilter, obj);
+    obj->mManagerWindow = 0;
+    obj->mManagerNativeWindow = 0;
+    gtk_widget_realize(obj->mPlug);
+    obj->UpdateManager();
+  }
+
+  return GDK_FILTER_CONTINUE;
+}
+
+void
+otSystrayGtk2::UpdateManager()
+{
+  DEBUG_DUMP("UPDATE MANAGER");
+  GdkDisplay *display = gtk_widget_get_display(mPlug);
 
   gdk_x11_display_grab(display);
 
-  Window tray = XGetSelectionOwner(GDK_DISPLAY_XDISPLAY(display),
-                                   gdk_x11_atom_to_xatom(obj->mAtomTrayId));
+  mManagerNativeWindow =
+    (GdkNativeWindow)XGetSelectionOwner(GDK_DISPLAY_XDISPLAY(display),
+                                        gdk_x11_atom_to_xatom(mAtomTrayId));
 
-  if (tray)
-    XSelectInput (GDK_DISPLAY_XDISPLAY(display), tray, StructureNotifyMask);
-  //    gdk_window_set_events(tray, GDK_STRUCTURE_MASK);
+  if (mManagerNativeWindow)
+    XSelectInput(GDK_DISPLAY_XDISPLAY(display), mManagerNativeWindow,
+                 StructureNotifyMask);
 
   gdk_x11_display_ungrab(display);
 
-  if (!tray)
-    return;
+  if (mManagerNativeWindow) {
+    mManagerWindow = gdk_window_lookup_for_display(display, mManagerNativeWindow);
+    gdk_window_add_filter(mManagerWindow, (GdkFilterFunc)EventFilter, this);
+    RegisterInManager();
+  }
+}
+
+void
+otSystrayGtk2::RegisterInManager()
+{
+  DEBUG_DUMP("REGISTER IN MANAGER");
+  GdkDisplay *display = gtk_widget_get_display(mPlug);
 
   GdkEvent *ev = gdk_event_new(GDK_CLIENT_EVENT);
-  ev->client.message_type = gdk_atom_intern("_NET_SYSTEM_TRAY_OPCODE", FALSE);
+  ev->client.message_type = mAtomOpcode;
   ev->client.data_format = 32;
-  ev->client.data.l[0] = gdk_x11_get_server_time(obj->mPlug->window);
-  ev->client.data.l[2] = gtk_plug_get_id(GTK_PLUG(obj->mPlug));
-  gdk_event_send_client_message_for_display(display, ev, tray);
+  ev->client.data.l[0] = gdk_x11_get_server_time(mPlug->window);
+  ev->client.data.l[2] = gtk_plug_get_id(GTK_PLUG(mPlug));
+  gdk_event_send_client_message_for_display(display, ev, mManagerNativeWindow);
   gdk_event_free(ev);
 }
 
