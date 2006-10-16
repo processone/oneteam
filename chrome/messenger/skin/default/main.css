@@ -112,3 +112,15 @@ richlistbox {
   color: white !important;
 }
 
+/* Presence box */
+
+#setPresence-type-chooser, #setPresence-profile-chooser {
+  font-size: 80%;
+  margin: 0 !important;
+  padding: 0 !important;
+  -smoz-appearance: none;
+}
+
+#setPresence-type-chooser:hover {
+  -smoz-appearance: menulist
+}

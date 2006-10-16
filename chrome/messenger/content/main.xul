@@ -148,15 +148,20 @@
     function ChatPane(contact) {
         this.contact = contact;
 
+        var id = "panel"+(++this.__proto__.idx);
+
         const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+        this.tabpanel = document.createElementNS(ns, "tabpanel");
+        this.tabpanel.setAttribute("id", id)
+        this.tabpanel.setAttribute("flex", "1");
+        this.tabpanel.controler = this;
+
         this.tab = document.createElementNS(ns, "tab");
         this.tab.setAttribute("label", contact.visibleName);
         this.tab.setAttribute("hasclosebutton", "true");
         this.tab.setAttribute("oncommand", "this.controler.close()");
+        this.tab.setAttribute("linkedpanel", id)
         this.tab.controler = this;
-
-        this.tabpanel = document.createElementNS(ns, "tabpanel");
-        this.tabpanel.setAttribute("flex", "1");
 
         var vbox = document.createElement("vbox");
         vbox.setAttribute("flex", "1");
@@ -189,6 +194,8 @@
 
     _DECL_(ChatPane).prototype =
     {
+      idx: 0,
+
       _allPanes: [],
 
       closed: false,
@@ -205,8 +212,8 @@
       {
         if (this.closed)
           return;
-        this.chats.selectedPanel = this.tabpanel;
         this.chats.selectedTab = this.tab;
+//        this.chats.selectedPanel = this.tabpanel;
         this.chatPane.focus();
       },
 
@@ -214,9 +221,25 @@
       {
         if (this.closed)
           return;
+
+        var nextTab = this.tab.selected ? this.tab.nextSibling || this.tab.previousSibling :
+          this.chats.selectedTab;
+
+        if (nextTab) {
+          nextTab.selected = false;
+          nextTab.controler.focus();
+          nextTab.selected = true;
+        }
+
         this.tabpanel.parentNode.removeChild(this.tabpanel);
         this.tab.parentNode.removeChild(this.tab);
         this.closed = true;
+
+        if (nextTab) {
+          nextTab.selected = false;
+          nextTab.controler.focus();
+          nextTab.selected = true;
+        }
 
         this.__proto__._allPanes.splice(this.__proto__._allPanes.indexOf(this),1);
         if (this.__proto__._allPanes.length == 0) {
@@ -423,7 +446,7 @@
           </tabbox>
         </vbox>
         <splitter id="chats-splitter" hidden="true" persist="rightWidth"/>
-        <tabbox id="chats" hidden="true" flex="1">
+        <tabbox id="chats" hidden="true" flex="1" onselect="this.selectedPanel.controler.focus()">
           <tabs/>
           <tabpanels flex="1"/>
         </tabbox>

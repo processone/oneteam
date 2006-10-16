@@ -23,5 +23,19 @@
       </xul:hbox>
       <xul:toolbarbutton tabindex="-1" class="closebutton"/>
     </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        this._closebutton = document.getAnonymousElementByAttribute(this, "class", "closebutton");
+      ]]></constructor>
+    </implementation>
+
+    <handlers>
+      <handler event="mousedown" button="0" phase="capturing"><![CDATA[
+        if (event.originalTarget == this._closebutton) {
+          event.stopPropagation();
+        }
+      ]]></handler>
+    </handlers>
   </binding>
 </bindings>

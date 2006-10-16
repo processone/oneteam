@@ -31,6 +31,7 @@
           this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 
           this._msgs = [];
+          this._firstFocus = true;
 
           this._input = document.getAnonymousElementByAttribute(this, "id", "input");
           this._output = document.getAnonymousElementByAttribute(this, "id", "output");
@@ -101,12 +102,6 @@
                 return true;
               }, true);
 
-            window.addEventListener("focus",
-              function (event) {
-                if (event.target != me && event.target != document)
-                  me._input.contentWindow.focus();
-              }, true);
-
               doc = win = null;
           ]]>
         </body>
@@ -129,7 +124,8 @@
       <method name="focus">
         <body>
           <![CDATA[
-            this._input.contentWindow.focus();
+          window.setTimeout(function(a, b){b._firstFocus = false;a.focus()},
+            this._firstFocus ? 500 : 0, this._input.contentWindow, this);
           ]]>
         </body>
       </method>
