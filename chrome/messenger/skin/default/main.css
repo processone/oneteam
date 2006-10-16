@@ -1,7 +1,42 @@
+/* Roster */
+
+.group-view, .contact-view {
+  color: #000;
+  padding: 1px;
+}
+
 .group-view {
-  color : rgb(15%, 15%, 70%);
-  background: #CCCCFF;
+  background: #DDD;
   font-weight : bold;
+}
+
+.group-view[selected=true] {
+  background: #DDF;
+}
+
+.contact-view[selected=true] {
+  background: #EEF;
+}
+
+.contact-view[offlineContact=true] {
+  color: #aaa;
+}
+
+tabpanels {
+  -moz-appearance: none;
+  background: white;
+  padding: 2px;
+  -moz-border-top-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  border: 1px solid #999;
+}
+
+richlistbox {
+  margin: 4px;
+  padding; 0;
+  border: 1px solid #79b;
 }
 
 #contacts-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
@@ -10,6 +45,7 @@
   display: none
 }
 
+/* Toolbar icons */
 #adduser-button {
   list-style-image: url(images/main/adduser.png);
 }
@@ -30,6 +66,7 @@
   list-style-image: url(images/main/toggleoffline.png);
 }
 
+/* Login pane */
 #setPresence-box {
   padding: 5px;
 }

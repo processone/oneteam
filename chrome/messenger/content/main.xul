@@ -2,7 +2,6 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/gui.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/main.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/bindings.css" type="text/css"?>
 
@@ -402,7 +401,7 @@
                 </menulist>
               </hbox>
             </vbox>
-            <avatar id="setPresence-avatar-image" showBlankAvatar="true" flex="1"/>
+            <avatar id="setPresence-avatar-image" showBlankAvatar="true"/>
           </hbox>
           <tabbox id="roster" flex="1">
             <tabs>
