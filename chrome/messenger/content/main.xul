@@ -180,15 +180,7 @@
         this.chats._tabs.appendChild(this.tab);
 
         this.__proto__._allPanes.push(this);
-        if (this.__proto__._allPanes.length == 1) {
-          var splitter = document.getElementById("chats-splitter");
-          splitter.hidden = false;
-          this.chats.hidden = false;
-          splitter.previousSibling.flex = "0";
-          splitter.previousSibling.setAttribute("width", self.innerWidth);
-          self.resizeTo(self.outerWidth+(+splitter.getAttribute("rightWidth") || 500),
-                        self.outerHeight);
-        }
+        this._resizeWindow(true);
         this.focus();
     }
 
@@ -203,6 +195,8 @@
       closeAllTabs: function()
       {
         var panes = ChatPane.prototype._allPanes;
+        ChatPane.prototype._allPanes = [];
+        ChatPane.prototype._resizeWindow();
 
         for (var i = 0; i < panes.length; i++)
           panes[i].close();
@@ -213,7 +207,6 @@
         if (this.closed)
           return;
         this.chats.selectedTab = this.tab;
-//        this.chats.selectedPanel = this.tabpanel;
         this.chatPane.focus();
       },
 
@@ -242,18 +235,34 @@
         }
 
         this.__proto__._allPanes.splice(this.__proto__._allPanes.indexOf(this),1);
-        if (this.__proto__._allPanes.length == 0) {
-          var splitter = document.getElementById("chats-splitter");
+        this.tab = this.tabpanel = this.chats = null;
+        this._resizeWindow(false);
+      },
+
+      _resizeWindow: function(paneAdded)
+      {
+        var splitter = document.getElementById("chats-splitter");
+        var chats = document.getElementById("chats");
+
+        if (paneAdded) {
+          if (ChatPane.prototype._allPanes.length != 1)
+            return;
+          splitter.collapsed = false;
+          chats.collapsed = false;
+          splitter.previousSibling.flex = "0";
+          splitter.previousSibling.setAttribute("width", self.innerWidth);
+          self.resizeTo(self.outerWidth+(+splitter.getAttribute("rightWidth") || 500),
+                        self.outerHeight);
+        } else if (ChatPane.prototype._allPanes.length == 0) {
           var width = +splitter.previousSibling.getAttribute("width");
 
-          splitter.hidden = true;
-          this.chats.hidden = true;
+          splitter.collapsed = true;
+          chats.collapsed = true;
           splitter.previousSibling.flex = "1";
           splitter.setAttribute("rightWidth", self.outerWidth - width);
 
           self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
         }
-        this.tab = this.tabpanel = this.chats = null;
       },
 
       onSend: function()
@@ -445,8 +454,9 @@
             </tabpanels>
           </tabbox>
         </vbox>
-        <splitter id="chats-splitter" hidden="true" persist="rightWidth"/>
-        <tabbox id="chats" hidden="true" flex="1" onselect="this.selectedPanel.controler.focus()">
+        <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
+        <tabbox id="chats" collapsed="true" flex="1"
+            onselect="this.selectedPanel.controler.focus()">
           <tabs/>
           <tabpanels flex="1"/>
         </tabbox>
