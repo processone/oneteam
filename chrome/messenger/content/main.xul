@@ -352,13 +352,13 @@
               command="cmd_addContact"/>
           <toolbarbutton id="joinroom-button" tooltiptext="joinroom.tooltip"
               command="cmd_joinRoom"/>
-          <toolbarbutton id="editgroups-button" tooltiptext="teditgroups.tooltip"
-              oncommand="customGroups()"/>
           <toolbarseparator/>
-          <toolbarbutton id="disco-button" tooltiptext="disco.tooltip"
-              command="cmd_disco"/>
           <toolbarbutton id="toggleshowoffline-button" tooltiptext="toggleshowoffline.tooltip"
               command="cmd_toggleShowOffline"/>
+          <toolbarbutton id="disco-button" tooltiptext="disco.tooltip"
+              command="cmd_disco"/>
+          <toolbarbutton id="editgroups-button" tooltiptext="teditgroups.tooltip"
+              oncommand="customGroups()"/>
         </toolbar>
       </toolbox>
       <hbox flex="1">
