@@ -207,6 +207,7 @@
           return;
         this.chats.selectedPanel = this.tabpanel;
         this.chats.selectedTab = this.tab;
+        this.chatPane.focus();
       },
 
       close: function()
@@ -392,10 +393,12 @@
                 </menupopup>
               </menulist>
               <hbox>
-                <checkbox id="setPresence-profile-enable"/>
+                <checkbox id="setPresence-profile-enable" disabled="true"/>
                 <menulist id="setPresence-profile-chooser" flex="1">
                   <menupopup>
-                    <menuseparator hidden="true"/>
+                    <menuitem id="setPresence-profile-create" label="No profiles configured"
+                      disabled="true"/>
+                    <menuseparator/>
                     <menuitem id="setPresence-profile-create" label="Create new profile..."/>
                   </menupopup>
                 </menulist>
