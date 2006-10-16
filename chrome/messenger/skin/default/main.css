@@ -4,6 +4,12 @@
   font-weight : bold;
 }
 
+#contacts-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
+#contacts-list[hideOffline=true] .contact-view[offlineContact=true]
+{
+  display: none
+}
+
 #adduser-button {
   list-style-image: url(images/main/adduser.png);
 }
@@ -68,3 +74,4 @@
 #login-settings-box > label {
   color: white !important;
 }
+

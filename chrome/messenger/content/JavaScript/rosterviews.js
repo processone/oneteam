@@ -13,6 +13,17 @@ _DECL_(RosterView, null, ContainerView).prototype =
     afterlastItemNode: null,
     containerNode: null,
 
+    set hideOffline(val)
+    {
+        this.containerNode.setAttribute("hideOffline", !!val);
+        return val;
+    },
+
+    get hideOffline()
+    {
+        return this.containerNode.getAttribute("hideOffline") == "true"
+    },
+
     itemComparator: function(a, b)
     {
         a = a.model.visibleName.toLowerCase();
@@ -41,13 +52,15 @@ function GroupView(model, parentView)
     this.label = document.createElement("label");
 
     this.node.setAttribute("class", "group-view");
-    this.label.setAttribute("value", model.visibleName);
     this.node.model = this.model;
     this.node.view = this;
+
+    this.onAvailUpdated();
 
     this.node.appendChild(this.label);
 
     this.model.registerView(this, null, "contacts");
+    this.model.registerView(this, "onAvailUpdated", "availContacts");
 }
 
 _DECL_(GroupView, null, ContainerView).prototype =
@@ -64,6 +77,14 @@ _DECL_(GroupView, null, ContainerView).prototype =
         return a.model.cmp(b.model);
     },
 
+    onAvailUpdated: function()
+    {
+        this.node.setAttribute("onlyOfflineContacts", this.model.availContacts == 0);
+        this.label.setAttribute("value", this.model.visibleName+" ("+
+                                this.model.availContacts+
+                                "/"+this.model.contacts.length+")");
+    },
+
     onModelUpdated: function(model, type, data)
     {
         if (!this.items)
@@ -74,6 +95,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
 
         for (i = 0; data.removed && i < data.removed.length; i++)
             this.onItemRemoved(data.removed[i]);
+        this.onAvailUpdated();
     },
 
     show: function(rootNode, insertBefore)
@@ -90,6 +112,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
     destroy: function()
     {
         this.model.unregisterView(this, null, "contacts");
+        this.model.unregisterView(this, "onAvailUpdated", "availContacts");
 
         if (!this.items)
             return;
@@ -114,13 +137,14 @@ function ContactView(model, parentView)
     this.node.setAttribute("context", "contact-contextmenu");
     this.node.setAttribute("onmousedown", "self.activeItem = this.model");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
-    this.statusIcon.setAttribute("src", account.iconSet + "offline.png");
     this.label.setAttribute("value", model.name || model.jid);
     this.label.setAttribute("flex", "1");
     this.label.setAttribute("crop", "end");
 
     this.node.model = this.model;
     this.node.view = this;
+
+    this.onActiveResourceChange();
 
     this.node.appendChild(this.statusIcon);
     this.node.appendChild(this.label);
@@ -144,6 +168,7 @@ _DECL_(ContactView).prototype =
         if (this.model.activeResource)
             this.model.activeResource.registerView(this, null, "show");
         this.onModelUpdated();
+        this.node.setAttribute("offlineContact", this.model.activeResource == null);
     },
 
     onModelUpdated: function()

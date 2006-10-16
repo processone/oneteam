@@ -77,8 +77,11 @@
       {
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
         document.getElementById("setPresence-nick").value = account.connectionInfo.user;
-        if (!this.rosterView)
+        if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
+          document.getElementById("cmd_toggleShowOffline").
+            setAttribute("checked", this.rosterView.hideOffline);
+        }
         if (!account.connected)
           ChatPane.prototype.closeAllTabs();
       },
@@ -260,7 +263,9 @@
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
     <command id="cmd_about" oncommand="account.showAbout()"/>
 
-    <command id="cmd_toggleShowOffline" key="key_toggleShowOffline" oncommand=""/>
+    <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
+      oncommand="this.setAttribute('checked', setPresenceUpdater.rosterView.hideOffline =
+        !setPresenceUpdater.rosterView.hideOffline)"/>
   </comandset>
 
   <keyset>
@@ -406,7 +411,7 @@
             </tabs>
             <tabpanels flex="1">
               <tabpanel>
-                <richlistbox id="contacts-list" flex="1"
+                <richlistbox id="contacts-list" flex="1" persist="hideOffline"
                     onselect="self.activeItem = this.selectedItem.model"/>
               </tabpanel>
               <tabpanel>
