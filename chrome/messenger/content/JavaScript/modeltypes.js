@@ -142,7 +142,11 @@ _DECL_(ContainerView).prototype =
 
     onItemUpdated: function(item)
     {
-        this.items.splice(this.items.indexOf(item), 1);
+        var idx = this.items.indexOf(item);
+        if (idx < 0)
+            return;
+
+        this.items.splice(idx, 1);
         this.onItemAdded(item);
     },
 

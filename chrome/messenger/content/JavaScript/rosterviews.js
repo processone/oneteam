@@ -167,8 +167,8 @@ _DECL_(ContactView).prototype =
     {
         if (this.model.activeResource)
             this.model.activeResource.registerView(this, null, "show");
-        this.onModelUpdated();
         this.node.setAttribute("offlineContact", this.model.activeResource == null);
+        this.onModelUpdated();
     },
 
     onModelUpdated: function()
