@@ -5,23 +5,23 @@
 }
 
 #adduser-button {
-  list-style-image: url(main-icons/adduser.png);
+  list-style-image: url(images/main/adduser.png);
 }
 
 #joinroom-button {
-  list-style-image: url(main-icons/joinroom.png);
+  list-style-image: url(images/main/joinroom.png);
 }
 
 #editgroups-button {
-  list-style-image: url(main-icons/adduser.png);
+  list-style-image: url(images/main/adduser.png);
 }
 
 #disco-button {
-  list-style-image: url(main-icons/disco.png);
+  list-style-image: url(images/main/disco.png);
 }
 
 #toggleshowoffline-button {
-  list-style-image: url(main-icons/toggleoffline.png);
+  list-style-image: url(images/main/toggleoffline.png);
 }
 
 #setPresence-box {
@@ -31,4 +31,40 @@
 #setPresence-nick {
   font-weight: bold;
   font-size: 100%;
+}
+
+#login-box {
+  background: url(images/login/background.png) 20% 100%;
+  background-repeat: repeat-x;
+}
+
+#login-logo {
+  list-style-image: url(chrome://branding/locale/logo.png);
+  padding-top: 3em;
+  padding-bottom: 4em;
+}
+
+#login-pass-box, #login-user-box {
+  padding-left: 2em;
+  padding-right: 2em;
+}
+
+#login-pass-box {
+  padding-top: 1em;
+}
+
+#login-signin {
+  margin-top: 2em;
+}
+
+#login-box spacer {
+  -moz-box-flex: 1;
+}
+
+#login-settings-box {
+  -moz-box-pack: center;
+}
+
+#login-settings-box > label {
+  color: white !important;
 }

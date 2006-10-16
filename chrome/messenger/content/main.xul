@@ -277,28 +277,32 @@
   </keyset>
 
   <deck id="main-deck" flex="1" selectedIndex="0">
-    <vbox id="login-box" flex="1">
-      <groupbox align="center" flex="1">
-        <caption class="titre" label="&Login.titre;"/>
-        <spacer height="20"/>
-        <label popup="popup-tools" class="text-link" value="&Login.NewAccount;" align="right"
-          onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
-        <spacer height="40"/>
-        <label value="&Login.login;: " style="color:#777"/>
-        <spacer height="10"/>
-        <textbox id="login-user" width="180"/>
-        <spacer height="20"/>
-        <label value="&Login.password;: " style="color:#777"/>
-        <spacer height="10"/>
-        <textbox id="login-pass" type="password" width="180"/>
-        <spacer height="3"/>
+    <vbox id="login-box">
+      <hbox pack="center">
+        <image id="login-logo"/>
+      </hbox>
+      <vbox id="login-user-box">
+        <label control="login-user" value="&Login.login;"/>
+        <textbox id="login-user" flex="1"/>
+      </vbox>
+      <vbox id="login-pass-box">
+        <label control="login-pass" value="&Login.password;"/>
+        <textbox id="login-pass" type="password"/>
+      </vbox>
+      <hbox pack="center">
         <checkbox id="login-savePass" checked="true" label="Remember password"/>
-        <spacer height="20"/>
-        <button label="&Login.signin;" oncommand="connect()"/>
-        <spacer height="30"/>
-        <label class="text-link" value="&Login.settings;" align="right"
-            onclick="account.showPrefs();"/>
-      </groupbox>
+      </hbox>
+      <hbox pack="center">
+        <button id="login-signin" label="&Login.signin;" oncommand="connect()"/>
+      </hbox>
+      <spacer/>
+      <hbox id="login-settings-box">
+        <label crop="end" class="text-link" value="&Login.settings;"
+          onclick="account.showPrefs();"/>
+        <label value="|"/>
+        <label crop="end" class="text-link" value="&Login.NewAccount;"
+          onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
+      </hbox>
     </vbox>
     <vbox id="main-box" flex="1">
       <toolbox>
