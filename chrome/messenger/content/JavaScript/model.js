@@ -26,7 +26,7 @@ function Account()
     self.account = this;
 
     // XXX use string bundle
-    new Group("", "Contacts", true);
+    this.defaultGroup = new Group(null, "Contacts", true);
 
     this.connectionInfo = {};
     this.notificationScheme = new NotificationScheme();
@@ -161,10 +161,10 @@ _DECL_(Account, null, Model).prototype =
         return this.allContacts[jid.shortJID].createResource(jid);
     },
 
-    onAddContact: function()
+    onAddContact: function(contact)
     {
         window.openDialog("chrome://messenger/content/addContact.xul",
-                          "ot:addContact", "chrome,centerscreen");
+                          "ot:addContact", "chrome,centerscreen", contact);
     },
 
     onJoinRoom: function()
@@ -417,7 +417,8 @@ function Group(name, visibleName, builtinGroup)
     this.availContacts = 0;
     this.builtinGroup = builtinGroup;
 
-    account.allGroups[name] = this;
+    if (!builtinGroup)
+        account.allGroups[name] = this;
 
     this.init();
 }
@@ -446,7 +447,6 @@ _DECL_(Group, null, Model).prototype =
     {
         this.contacts = [];
         this.availContacts = 0;
-        account.allGroups[this.name] = this;
         this.init();
     },
 
@@ -511,7 +511,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.subscription = subscription || "none";
         this.subscriptionAsk = !!subscriptionAsk;
 
-        groups = groups || [account.allGroups[""]];
+        groups = groups || [account.defaultGroup];
         this.groups = [];
         for (var i = 0; i < groups.length; i++) {
             var group = typeof(groups[i]) == "string" ?
@@ -634,8 +634,8 @@ _DECL_(Contact, null, Model,
         }
 
         if (groups.length == 0 && subscription != "remove") {
-            groups.push(account.allGroups[""]);
-            groupsHash[""] = account.allGroups[""];
+            groups.push(account.defaultGroup);
+            groupsHash[""] = account.defaultGroup;
         }
         return [jid, name, subscription, subscriptionAsk, groups, groupsHash];
     },

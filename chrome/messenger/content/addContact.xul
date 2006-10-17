@@ -8,26 +8,38 @@
 
 <dialog id="addContact"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" buttonlabelaccept="Add"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Add"
   ondialogaccept="return addContact()" title="&Contact.titre;" buttons="accept,cancel">
 
   <script type="text/javascript;version=1.7"><![CDATA[
+    var contact = window.arguments[0];
+
+    function onLoad() {
+      if (contact) {
+        var jid = document.getElementById("jid");
+
+        document.getElementById("nick").value = contact.jid.node;
+        jid.value = contact.jid;
+        jid.disabled = true;
+      }
+    }
     function addContact() {
       var jid = document.getElementById("jid").value;
-
-      if (!~jid.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-        alert("Please give correct Jabber ID");
-        return false;
-      }
-      if (window.opener.account.contacts[jid]) {
-        alert("Contact with this Jabber ID already exists");
-        return false;
-      }
       var nick = document.getElementById("nick").value;
       var groups = document.getElementById("groups").choosenGroups;
       var reason = document.getElementById("reason").value;
 
-      var contact = opener.account.getOrCreateContact(jid, nick, groups);
+      if (!contact) {
+        if (!~jid.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
+          alert("Please give correct Jabber ID");
+          return false;
+        }
+        if (window.opener.account.contacts[jid]) {
+          alert("Contact with this Jabber ID already exists");
+          return false;
+        }
+        contact = opener.account.getOrCreateContact(jid, nick, groups);
+      }
 
       contact.addToRoster();
       contact.askForSubscription(reason);

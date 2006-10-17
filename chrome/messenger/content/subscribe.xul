@@ -1,50 +1,58 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/subscribe.dtd">
+<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/subscribe.dtd">
 
 
-<window id="Subscribe"
-		title="&Subscribe.title;"
-        orient="horizontal"
-        resizable="true" 
-        width="370"
-        onload="subscribeNotification();"
-        onclose="self.close();"
-        height="180"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog id="ot:subscribe" title="&Subscribe.title;" buttons="accept,cancel,extra1,extra2"
+  ondialogaccept="return subscribeContact()" ondialogextra2="return denySubscription()"
+  onload="onLoad()" xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var contact = window.arguments[0]
+    var reason = window.arguments[1];
 
+    function subscribeContact() {
+      contact.allowToSeeMe();
+      if (contact.newItem) {
+        window.opener.account.onAddContact(contact);
+      } else if (contact.canSeeHim) {
+        contact.askForSubscription();
+      }
+      return true;
+    }
 
-<script type="application/x-javascript" src="JavaScript/gui.js"/>
-<script type="application/x-javascript" src="JavaScript/subscribe.js"/>
-<script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
-<script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
-<script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
-<script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
-<script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
-<script type="application/x-javascript" src="JavaScript/prefs.js"/>
-<script type="application/x-javascript" src="JavaScript/shared.js"/>
-        
-<vbox flex="1" align="center">
+    function denySubscription() {
+      contact.disallowToSeeMe();
+      return true;
+    }
 
-<spacer height="30"/>
+    function onLoad() {
+      document.getElementById("contactJid").
+        appendChild(document.createTextNode(contact.jid));
+      document.getElementById("reason").value = reason;
+    }
+  ]]></script>
 
-<!-- <label id="messageSubscribe" value="&Subscribe.message;"/> -->
-<label id="messageSubscribe" value="&Subscribe.message;"/>
+  <dialogheader title="Subscription Request"/>
 
-<spacer height="20"/>
+  <vbox flex="1">
+    <description id="contactInfo">You received subscription request from:
+      <html:span id="contactJid" style="font-weight: bold"></html:span></description>
+    <textbox id="reason" multiline="true" rows="4" flex="1" disabled="true"/>
 
-<textbox id="reasonStatus" height="30"/>
+    <spacer style="height: 1.5em"/>
 
-<spacer height="20"/>
-
-
-<hbox align="right">
-<button label="OK" width="20" oncommand="doSubscribe();self.close();" />
-<button label="Cancel" width="20" oncommand="doForbid();self.close();" />
-</hbox>
-
-</vbox>
-
-
-</window>
+    <hbox align="end" pack="end">
+      <button dlgtype="extra1" label="Extra Actions" type="menu">
+        <menupopup>
+          <menuitem label="Show VCard" oncommand="contact.showVCard()"/>
+          <menuitem label="Open Chat" oncommand="contact.onOpenChat()"/>
+        </menupopup>
+      </button>
+      <button dlgtype="extra2" label="Deny Subscription"/>
+      <button dlgtype="cancel" label="Cancel"/>
+      <button dlgtype="accept" label="Subscribe"/>
+    </hbox>
+  </vbox>
+</dialog>
