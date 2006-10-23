@@ -44,7 +44,7 @@ function Account()
     gPrefService.addObserver("chat.general", this, false);
 }
 
-_DECL_(Account, null, Model).prototype =
+_DECL_(Account, null, Model, DiscoItem).prototype =
 {
     bumpPriority: true,
 
@@ -186,6 +186,8 @@ _DECL_(Account, null, Model).prototype =
 
     showVCard: function()
     {
+        window.open("chrome://messenger/content/myinfo.xul", "ot:myinfo",
+                    "chrome,centerscreen");
     },
 
     showConsole: function()
@@ -193,10 +195,16 @@ _DECL_(Account, null, Model).prototype =
         window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
     },
 
+    showDisco: function()
+    {
+        window.open("chrome://messenger/content/disco.xul", "ot:disco",
+                    "chrome,centerscreen");
+    },
+
     onCustomPresence: function(presence)
     {
         window.openDialog("chrome://messenger/content/status.xul",
-                          "ot:customPresence", "chrome,centerscreen", presence);
+                          "ot:customPresence", "chrome,centerscreen,modal", presence);
     },
 
     observe: function(subject, topic, value)
@@ -263,6 +271,8 @@ _DECL_(Account, null, Model).prototype =
             pass: this.connectionInfo.pass,
             resource: gPrefService.getCharPref("chat.connection.resource")};
 
+        this.jid = this.connectionInfo.host;
+
         self.con = con;
         this.modelUpdated("con");
         con.connect(args);
@@ -283,6 +293,8 @@ _DECL_(Account, null, Model).prototype =
             this.setPresence();
 
         this.modelUpdated("connected");
+
+        this.getDiscoItemsByCategory("conference", "text", false, function(){});
     },
 
     onDisconnect: function()
@@ -872,7 +884,7 @@ function Resource(jid)
     this.init();
 }
 
-_DECL_(Resource, null, Model,
+_DECL_(Resource, null, Model, DiscoItem,
        XMPPDataAccesor("version", "Version", function() {
             var iq = new JSJaCIQ();
             iq.setQuery('jabber:iq:version');

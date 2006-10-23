@@ -418,3 +418,184 @@ function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
     return fun;
 }
 
+function DiscoCacheEntry(jid)
+{
+    if (DiscoCacheEntry.prototype.cache[jid])
+        return DiscoCacheEntry.prototype.cache[jid]
+    this.jid = jid;
+    DiscoCacheEntry.prototype.cache[jid] = this;
+}
+
+_DECL_(DiscoCacheEntry).prototype =
+{
+    cache: {},
+
+    requestDiscoItems: function(forceUpdate, callback, args)
+    {
+        if (!callback)
+            return this.discoItems;
+
+        if (!this.discoItems || forceUpdate) {
+            if (!this.discoItemsCallbacks) {
+                var iq = new JSJaCIQ();
+                iq.setIQ(this.jid, null, "get");
+                iq.setQuery("http://jabber.org/protocol/disco#items");
+                con.send(iq, function(pkt, _this) { _this.gotDiscoItems(pkt) }, this);
+                this.discoItemsCallbacks = [args];
+            } else
+                this.discoItemsCallbacks.push(args);
+            return null;
+        }
+        args[0] = this.discoItems;
+        callback.apply(null, args);
+
+        return this.discoItems;
+    },
+
+    requestDiscoInfo: function(name, forceUpdate, callback, args)
+    {
+        if (!callback)
+            return name ? this.discoFeatures ? name in this.discoFeatures : null :
+                this.discoIdentity;
+
+        if (!this.discoFeatures || forceUpdate) {
+            if (!this.discoInfoCallbacks) {
+                var iq = new JSJaCIQ();
+                iq.setIQ(this.jid, null, "get");
+                iq.setQuery("http://jabber.org/protocol/disco#info");
+                con.send(iq, function(pkt, _this) { _this.gotDiscoInfo(pkt) }, this);
+                this.discoInfoCallbacks = [[name, args]];
+            } else
+                this.discoInfoCallbacks.push([name, args]);
+            return null;
+        }
+        args[0] = name ? this.discoFeatures ? name in this.discoFeatures : null :
+            this.discoIdentity;
+        callback.apply(null, args);
+
+        return args[0];
+    },
+
+    gotDiscoItems: function(pkt)
+    {
+        var items = pkt.getQuery().
+            getElementsByTagNameNS("http://jabber.org/protocol/disco#items", "item");
+
+        this.discoItems = [];
+        for (var i = 0; i < items.length; i++)
+            this.discoItems.push(new DiscoItem(items[i].getAttribute("jid")));
+
+        for (var i = 0; i < this.discoItemsCallbacks.length; i++) {
+            var args = this.discoItemsCallbacks[i];
+            var call = args[0];
+
+            args[0] = this.discoItems;
+            call.apply(null, args);
+        }
+        delete this.discoItemsCallbacks;
+    },
+
+    gotDiscoInfo: function(pkt)
+    {
+        var features = pkt.getQuery().getElementsByTagName("feature");
+        var identity = pkt.getQuery().getElementsByTagName("identity")[0];
+
+        if (identity)
+            this.discoIdentity = {
+                name: identity.getAttribute("name"),
+                type: identity.getAttribute("type"),
+                category: identity.getAttribute("category")
+            };
+
+        this.discoFeatures = {};
+        for (var i = 0; i < features.length; i++)
+            this.discoFeatures[features[i].getAttribute("var")] = 1;
+
+        for (i = 0; i < this.discoInfoCallbacks.length; i++) {
+            var [name, args] = this.discoInfoCallbacks[i];
+            var call = args[0];
+
+            args[0] = name ? this.discoFeatures ? name in this.discoFeatures : null :
+                this.discoIdentity;
+
+            call.apply(null, args);
+        }
+        delete this.discoInfoCallbacks;
+    }
+}
+
+function DiscoItem(jid)
+{
+    this.jid = jid;
+}
+
+_DECL_(DiscoItem).prototype =
+{
+    hasDiscoFeature: function(name, forceUpdate, callback)
+    {
+        if (!this._discoCacheEntry)
+            this._discoCacheEntry = new DiscoCacheEntry(this.jid);
+        return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate,
+            callback, Array.slice(arguments, 2));
+    },
+
+    getDiscoIdentity: function(forceUpdate, callback)
+    {
+        if (!this._discoCacheEntry)
+            this._discoCacheEntry = new DiscoCacheEntry(this.jid);
+        return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate,
+            callback, Array.slice(arguments, 1));
+    },
+
+    getDiscoItems: function(forceUpdate, callback)
+    {
+        if (!this._discoCacheEntry)
+            this._discoCacheEntry = new DiscoCacheEntry(this.jid);
+        return this._discoCacheEntry.requestDiscoItems(forceUpdate, callback,
+            Array.slice(arguments, 1));
+    },
+
+    getDiscoItemsByCategory: function(category, type, forceUpdate, callback)
+    {
+        if (callback)
+            this.getDiscoItems(forceUpdate,
+                function(items, _this){_this._gotDiscoItems.apply(_this, arguments)},
+                this, category, type, forceUpdate, Array.slice(arguments, 3));
+        
+        return this._getDiscoItemsByCategory(category);
+    },
+
+    _gotDiscoItems: function(items, _this, category, type, forceUpdate, args)
+    {
+        this._discoInfosToGet = items.length;
+        for (var i = 0; i < items.length; i++)
+            items[i].getDiscoIdentity(forceUpdate,
+                function(identity, _this){_this._gotDiscoIdentity.apply(_this, arguments)},
+                this, category, type, args);
+    },
+
+    _gotDiscoIdentity: function(identity, _this, category, type, args)
+    {
+        if (--this._discoInfosToGet == 0) {
+            var call = args[0];
+            args[0] = this._getDiscoItemsByCategory(category, type);
+            call.apply(null, args);
+        }
+    },
+
+    _getDiscoItemsByCategory: function(category, type)
+    {
+        if (!this.getDiscoItems())
+            return [];
+
+        var i, ret = [], items = this.getDiscoItems();
+        for (i = 0; i < items.length; i++) {
+            var id = items[i].getDiscoIdentity();
+            if (id && (category == null || id.category == category) &&
+                    (type == null || id.type == type))
+                ret.push(items[i]);
+        }
+        return ret;
+    }
+}
+
