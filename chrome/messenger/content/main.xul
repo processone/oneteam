@@ -196,7 +196,8 @@
       {
         var panes = ChatPane.prototype._allPanes;
         ChatPane.prototype._allPanes = [];
-        ChatPane.prototype._resizeWindow();
+        if (panes.length)
+          ChatPane.prototype._resizeWindow();
 
         for (var i = 0; i < panes.length; i++)
           panes[i].close();
