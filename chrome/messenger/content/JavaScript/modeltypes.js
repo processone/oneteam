@@ -90,6 +90,11 @@ JID.prototype =
         if (!this.resource)
             return this;
         return new JID(this.node, this.domain);
+    },
+
+    createFullJID: function(resource)
+    {
+        return new JID(this.node, this.domain, resource);
     }
 }
 
@@ -203,6 +208,17 @@ _DECL_(Model).prototype =
                 }
     },
 
+    unregisterViewFully: function(view)
+    {
+        for each (var view in this._views) {
+            for (var j = 0; j < view.length; j++)
+                if (view[j][0] == view) {
+                    view.splice(j, 1);
+                    j--;
+                }
+        }
+    },
+
     modelUpdated: function()
     {
         var records = [];
@@ -245,6 +261,35 @@ _DECL_(Model).prototype =
     }
 }
 
+function Callback(callback, argsStart, _this)
+{
+    var ret = new Function("", "return arguments.callee.apply(this, arguments)");
+    ret.call = function(_this) {
+        var args = Array.slice(arguments,1).concat(this.args);
+        return this.callback.apply(_this == self ? this._this || _this : _this || this._this, args)
+    };
+    ret.apply = function(_this, _args) {
+        var args = Array.slice(_args).concat(this.args);
+        return this.callback.apply(_this == self ? this._this || _this : _this || this._this, args)
+    }
+    ret._this = _this;
+    if (typeof(callback) == "function") {
+        ret.callback = callback;
+        ret.args = argsStart < 0 ? [] : Array.slice(arguments.callee.caller.arguments, argsStart);
+    } else if (argsStart < 0 || typeof(arguments.callee.caller.arguments[argsStart]) != "function")
+        throw "Invalid callback";
+    else {
+        ret._this = callback;
+        ret.callback = arguments.callee.caller.arguments[argsStart];
+        ret.args = Array.slice(arguments.callee.caller.arguments, argsStart+1);
+    }
+
+    if (arguments.length > 3)
+        ret.args = Array.splice(arguments, 3).concat(ret.args);
+
+    return ret;
+}
+
 function PresenceProfile(name, presences)
 {
     this.name = name;
@@ -252,14 +297,14 @@ function PresenceProfile(name, presences)
     this._groupsHash = {};
     this._jidsHash = {};
 
-    this._rehash();
+    this._recalcHashes();
 }
 
 _DECL_(PresenceProfile).prototype =
 {
     profiles: [],
 
-    _rehash: function()
+    _recalcHashes: function()
     {
         this._defaultPresence = null;
 
@@ -430,7 +475,7 @@ _DECL_(DiscoCacheEntry).prototype =
 {
     cache: {},
 
-    requestDiscoItems: function(forceUpdate, callback, args)
+    requestDiscoItems: function(forceUpdate, callback)
     {
         if (!callback)
             return this.discoItems;
@@ -438,21 +483,20 @@ _DECL_(DiscoCacheEntry).prototype =
         if (!this.discoItems || forceUpdate) {
             if (!this.discoItemsCallbacks) {
                 var iq = new JSJaCIQ();
-                iq.setIQ(this.jid, null, "get");
+                iq.setIQ(this.discoJID || this.jid, null, "get");
                 iq.setQuery("http://jabber.org/protocol/disco#items");
                 con.send(iq, function(pkt, _this) { _this.gotDiscoItems(pkt) }, this);
-                this.discoItemsCallbacks = [args];
+                this.discoItemsCallbacks = [callback];
             } else
-                this.discoItemsCallbacks.push(args);
+                this.discoItemsCallbacks.push(callback);
             return null;
         }
-        args[0] = this.discoItems;
-        callback.apply(null, args);
+        callback(this.discoItems);
 
         return this.discoItems;
     },
 
-    requestDiscoInfo: function(name, forceUpdate, callback, args)
+    requestDiscoInfo: function(name, forceUpdate, callback)
     {
         if (!callback)
             return name ? this.discoFeatures ? name in this.discoFeatures : null :
@@ -461,19 +505,19 @@ _DECL_(DiscoCacheEntry).prototype =
         if (!this.discoFeatures || forceUpdate) {
             if (!this.discoInfoCallbacks) {
                 var iq = new JSJaCIQ();
-                iq.setIQ(this.jid, null, "get");
+                iq.setIQ(this.discoJID || this.jid, null, "get");
                 iq.setQuery("http://jabber.org/protocol/disco#info");
                 con.send(iq, function(pkt, _this) { _this.gotDiscoInfo(pkt) }, this);
-                this.discoInfoCallbacks = [[name, args]];
+                this.discoInfoCallbacks = [[name, callback]];
             } else
-                this.discoInfoCallbacks.push([name, args]);
+                this.discoInfoCallbacks.push([name, callback]);
             return null;
         }
-        args[0] = name ? this.discoFeatures ? name in this.discoFeatures : null :
+        var ret = name ? this.discoFeatures ? name in this.discoFeatures : null :
             this.discoIdentity;
-        callback.apply(null, args);
+        callback(ret);
 
-        return args[0];
+        return ret;
     },
 
     gotDiscoItems: function(pkt)
@@ -485,13 +529,9 @@ _DECL_(DiscoCacheEntry).prototype =
         for (var i = 0; i < items.length; i++)
             this.discoItems.push(new DiscoItem(items[i].getAttribute("jid")));
 
-        for (var i = 0; i < this.discoItemsCallbacks.length; i++) {
-            var args = this.discoItemsCallbacks[i];
-            var call = args[0];
+        for (var i = 0; i < this.discoItemsCallbacks.length; i++)
+            this.discoItemsCallbacks[i].call(null, this.discoItems);
 
-            args[0] = this.discoItems;
-            call.apply(null, args);
-        }
         delete this.discoItemsCallbacks;
     },
 
@@ -512,13 +552,10 @@ _DECL_(DiscoCacheEntry).prototype =
             this.discoFeatures[features[i].getAttribute("var")] = 1;
 
         for (i = 0; i < this.discoInfoCallbacks.length; i++) {
-            var [name, args] = this.discoInfoCallbacks[i];
-            var call = args[0];
+            var [name, callback] = this.discoInfoCallbacks[i];
 
-            args[0] = name ? this.discoFeatures ? name in this.discoFeatures : null :
-                this.discoIdentity;
-
-            call.apply(null, args);
+            callback(name ? this.discoFeatures ? name in this.discoFeatures : null :
+                     this.discoIdentity);
         }
         delete this.discoInfoCallbacks;
     }
@@ -536,7 +573,7 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.jid);
         return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate,
-            callback, Array.slice(arguments, 2));
+            new Callback(callback, 3));
     },
 
     getDiscoIdentity: function(forceUpdate, callback)
@@ -544,43 +581,39 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.jid);
         return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate,
-            callback, Array.slice(arguments, 1));
+            new Callback(callback, 2));
     },
 
     getDiscoItems: function(forceUpdate, callback)
     {
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.jid);
-        return this._discoCacheEntry.requestDiscoItems(forceUpdate, callback,
-            Array.slice(arguments, 1));
+        return this._discoCacheEntry.requestDiscoItems(forceUpdate,
+            new Callback(callback, 2));
     },
 
     getDiscoItemsByCategory: function(category, type, forceUpdate, callback)
     {
         if (callback)
             this.getDiscoItems(forceUpdate,
-                function(items, _this){_this._gotDiscoItems.apply(_this, arguments)},
-                this, category, type, forceUpdate, Array.slice(arguments, 3));
+                new Callback(this._gotDiscoItems, -1, this, category, type,
+                             forceUpdate, new Callback(callback, 4)));
         
         return this._getDiscoItemsByCategory(category);
     },
 
-    _gotDiscoItems: function(items, _this, category, type, forceUpdate, args)
+    _gotDiscoItems: function(items, category, type, forceUpdate, callback)
     {
         this._discoInfosToGet = items.length;
         for (var i = 0; i < items.length; i++)
             items[i].getDiscoIdentity(forceUpdate,
-                function(identity, _this){_this._gotDiscoIdentity.apply(_this, arguments)},
-                this, category, type, args);
+                new Callback(this._gotDiscoIdentity, 1, this));
     },
 
-    _gotDiscoIdentity: function(identity, _this, category, type, args)
+    _gotDiscoIdentity: function(identity, category, type, forceUpdate, callback)
     {
-        if (--this._discoInfosToGet == 0) {
-            var call = args[0];
-            args[0] = this._getDiscoItemsByCategory(category, type);
-            call.apply(null, args);
-        }
+        if (--this._discoInfosToGet == 0)
+            callback(this._getDiscoItemsByCategory(category, type));
     },
 
     _getDiscoItemsByCategory: function(category, type)
