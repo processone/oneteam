@@ -1,75 +1,153 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/joinRoom.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/joinRoom.dtd">
+<?xml-stylesheet href="chrome://messenger/skin/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<window id="Room"
-        title="&Room.window;"
-        orient="horizontal"
-        width="390"
-        height="250"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/joinRoom.dtd">
+
+<dialog id="joinRoom"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Join"
+  ondialogaccept="return joinRoom()" title="Join Room" buttons="accept,cancel">
         
-        
-      <script type="application/x-javascript" src="JavaScript/gui.js"/>
-    <script type="application/x-javascript" src="JavaScript/joinRoom.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conference = window.arguments[0];
+    var autoJoin = window.arguments[1];
+    var conf;
 
-    
-    
-    <hbox flex="1">
-    
-    
-    <groupbox id="xf-config-Roombox" flex="1">
-        <caption class="titre" label="&Room.titre;" />
-        
-         <spacer height="15"/>
-        
-        <grid flex="1">
-            <columns>
-                <column id="labels" flex="1"/>
-                <column id="fields" flex="1"/>
-            </columns>
-            <rows id="rows" flex="1">
-            	<row>
-                    <description value="&Room.name; :"/>
-                    <textbox persist="true" id="name"/>
-                </row>
-                <row>
-                    <description value="&Room.login; :"/>
-                    <textbox persist="true" id="login"/>
-                </row>
-                <row>
-                    <description value="&Room.pass; :"/>
-                    <textbox persist="true" id="pass"/>
-                </row>
-                <row>
-                    <description value="&Room.room; :"/>
-                    <textbox  persist="true" id="room"/>
-                </row>
-                <row>
-                    <description value="&Room.server; :"/>
-                    <textbox persist="true" id="server"/>                  
-                </row>
-                 <spacer height="10"/>
-				
-            </rows>
-        </grid>
+    var room, server, nick, password, bookmark, bookmarkName, progressmeter;
 
-        <hbox align="right">
-            <spacer flex="1"/>
-             <button label="&Room.join;" oncommand='self.close();window.opener.createInstantRoom(document.getElementById("room").value + "@" + document.getElementById("server").value,document.getElementById("login").value,document.getElementById ("name").value);'/>
-           
-            <spacer width="10"/>
-            <button label="&Room.cancel;" oncommand="self.close();"/>
-        </hbox>
-    </groupbox>
+    function onLoad() {
+      for each (i in "room server nick password bookmark bookmarkName progressmeter".split(" "))
+        eval(i+" = document.getElementById("+uneval(i)+")");
 
-   
-    </hbox>
+      if (conference) {
+        room.value = conference.jid.node;
+        server.value = conference.jid.domain;
+        nick.value = conference.nick || "";
+        password.value = conference.password || "";
 
-</window>
+        bookmarkName.value = conference.bookmarkName || "";
+
+        room.disabled = room.previousSibling.disabled =
+        server.disabled = server.previousSibling.disabled = true;
+      } else {
+        server.value = window.opener.account.defaultConferenceServer || "";
+      }
+    }
+
+    function joinRoom() {
+      conf = conference;
+
+      if (!conference) {
+        if (!room.value) {
+          alert("Please give room name");
+          return false;
+        }
+
+        if (!~server.value.search(/(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
+          alert("Please give correct server address");
+          return false;
+        }
+
+        if (!nick.value) {
+          alert("Please give nick name");
+          return false;
+        }
+
+        if (bookmark.checked && !bookmarkName.value) {
+          alert("Please give bookmark name");
+          return false;
+        }
+
+        if (bookmark.checked && !conference && 
+            window.opener.account.bookmarks.getBookmarkByName(bookmarkName.value))
+        {
+          alert("Bookmark with that name already exists");
+          return false;
+        } 
+
+        conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value,
+          nick.value, password.value);
+      }
+
+      if (bookmark.checked) {
+        conf.bookmark(bookmarkName.value, false);
+      }
+
+      progressmeter.mode = "undetermined";
+      conf.joinRoom(joinRoomResponse);
+
+      return false;
+    }
+
+    function joinRoomResponse(pkt, errorTag) {
+      progressmeter.mode = "determined";
+      if (pkt.getType() == "error") {
+        const errorCodesMap = {
+          401: "This room requires password",
+          403: "You are banned from this room",
+          404: "This room doesn't exist",
+          405: "This room doesn't exist, and can be created only by administrator",
+          406: "This room can be accessed only by registered persons",
+          407: "You are not member of this room",
+          409: "You nick name is already used, try another nick",
+          503: "This room reached maximum number of uses"
+        };
+        var msg = errorTag && errorCodesMap[+errorTag.getAttribute("code")];
+        alert(msg || "Joining that room failed");
+        return;
+      }
+      conf.onOpenChat();
+      window.close();
+    }
+  ]]></script>
+
+  <dialogheader title="Join Room"/>
+
+  <grid>
+    <columns>
+      <column/>
+      <column flex="1"/>
+    </columns>
+    <rows>
+      <row align="center">
+        <label value="Room:" control="room"/>
+        <textbox id="room"/>
+      </row>
+
+      <row align="center">
+        <label value="Server:" control="server"/>
+        <textbox id="server"/>
+      </row>
+
+      <row align="center">
+        <label value="Nickname:" control="nick"/>
+        <textbox id="nick"/>
+      </row>
+
+      <row align="center">
+        <label value="Password:" control="password"/>
+        <textbox id="password" type="password"/>
+      </row>
+
+      <spacer/>
+
+      <checkbox label="Bookmark this room" id="bookmark"
+          oncommand="bookmarkName.disabled = bookmarkName.previousSibling.disabled = !this.checked"/>
+      <row align="center">
+        <label value="Name:" control="bookmarkName" disabled="true"/>
+        <textbox id="bookmarkName" disabled="true"/>
+      </row>
+    </rows>
+  </grid>
+
+  <spacer/>
+
+  <progressmeter id="progressmeter"/>
+
+  <spacer/>
+</dialog>
+
+

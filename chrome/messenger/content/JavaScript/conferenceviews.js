@@ -42,7 +42,7 @@ function BookmarkMenuItemView(model, parentView)
     this.node = document.createElement("menuitem");
 
     this.node.setAttribute("class", "conference-bookmark-view");
-    this.node.setAttribute("oncommand", "this.model.onJoinRoom()");
+    this.node.setAttribute("oncommand", "account.onJoinRoom(this.model)");
     this.node.setAttribute("label", model.bookmarkName);
 
     this.node.model = this.model;

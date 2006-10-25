@@ -54,14 +54,6 @@ _DECL_(Conference, Contact).prototype =
             account.bookmarks._syncServerBookmarks();
     },
 
-    onJoinRoom: function()
-    {
-    },
-
-    onManageBookmarks: function()
-    {
-    },
-
     joinRoom: function(callback)
     {
         var [type, status, priority] = account.getPresenceFor(this);
@@ -100,22 +92,25 @@ _DECL_(Conference, Contact).prototype =
 
     onPresence: function(pkt)
     {
-        if (this.getType() == "error") {
+        if (pkt.getType() == "error") {
             if (this.joined || !this._callback)
                 return;
             var errorTag = packet.getNode().getElementsByTagName('error')[0];
-            this._callback.call(null, errorTag);
+            this._callback.call(null, pkt, errorTag);
 
             return;
         }
 
         var x = pkt.getNode().
-            getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x");
-        var statusCodesTags = x.getElementsByTagName("status");
-        var statusCodes = {};
+            getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
 
-        for (i = 0; i < statusCodesTags.length; i++)
-            statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
+        var statusCodes = {};
+        if (x) {
+            var statusCodesTags = x.getElementsByTagName("status");
+
+            for (i = 0; i < statusCodesTags.length; i++)
+                statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
+        }
 
         if (303 in statusCodes) { // Nick change confirmation
             delete account.resources[this.jid + "/" + this.nick];
@@ -136,11 +131,14 @@ _DECL_(Conference, Contact).prototype =
             return;
         }
 
-        var item = x.getElementsByTagName("item")[0];
-        if (item) {
-            this.affiliation = item.getAttribute("affiliation");
-            this.role = item.getAttribute("role");
+        if (x) {
+            var item = x.getElementsByTagName("item")[0];
+            if (item) {
+                this.affiliation = item.getAttribute("affiliation");
+                this.role = item.getAttribute("role");
+            }
         }
+        this._callback.call(null, pkt);
     },
 
     onMessage: function(packet)
@@ -253,6 +251,15 @@ function ConferenceBookmarks()
 
 _DECL_(ConferenceBookmarks, null, Model).prototype = 
 {
+    getBookmarkByName: function(name)
+    {
+        for (var i = 0; i < this.bookmarks.length; i++)
+            if (this.bookmarks[i].bookmarkName == name)
+                return this.bookmarks[i];
+
+        return null;
+    },
+
     _syncServerBookmarks: function()
     {
         var iq = new JSJaCIQ();
@@ -262,20 +269,27 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
             "storage:bookmarks", "storage"));
 
         for (var i = 0; i < this.bookmarks.length; i++) {
-            var bookmark = storage.appendChild(iq.getDoc().createElement(
-                "conference"));
-            bookmark.setAttribute("name", this.bookmark[i].bookmarkName);
+            var bookmark = storage.appendChild(iq.getDoc().createElementNS(
+                "storage:bookmarks", "conference"));
+            bookmark.setAttribute("name", this.bookmarks[i].bookmarkName);
             bookmark.setAttribute("jid", this.bookmarks[i].jid);
             if (this.bookmarks[i].autoJoin)
                 bookmark.setAttribute("autojoin", "true");
 
-            bookmarks.appendChild(iq.getDoc().createElement("nick")).
+            bookmark.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "nick")).
                 appendChild(iq.getDoc().createTextNode(this.bookmarks[i].nick));
             if (this.bookmarks[i].password)
-                bookmarks.appendChild(iq.getDoc().createElement("password")).
+                bookmark.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "password")).
                     appendChild(iq.getDoc().createTextNode(this.bookmarks[i].password));
         }
         con.send(iq);
+    },
+
+    _clean: function()
+    {
+        var bookmarks = this.bookmarks;
+        this.bookmarks = [];
+        this.modelUpdated("bookmarks", {removed: bookmarks});
     },
 
     retrieve: function()

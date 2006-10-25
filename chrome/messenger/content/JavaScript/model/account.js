@@ -186,10 +186,16 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                           "ot:addContact", "chrome,centerscreen", contact);
     },
 
-    onJoinRoom: function()
+    onJoinRoom: function(bookmark)
     {
-        window.open("chrome://messenger/content/roomWizard.xul",
-                    "ot:joinRoom", "chrome,centerscreen");
+        window.openDialog("chrome://messenger/content/joinRoom.xul",
+                          "ot:joinRoom", "chrome,centerscreen", bookmark);
+    },
+
+    onManageBookmarks: function()
+    {
+        window.open("chrome://messenger/content/manageBookmarks.xul",
+                    "ot:manageBookmarks", "chrome,centerscreen");
     },
 
     showAbout: function()
@@ -329,15 +335,20 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         this.modelUpdated("con", null, "connected");
 
         var groups = this.groups;
+        var conferences = this.conferences;
 
         this.groups = []
         this.allGroups = {}
         this.contacts = {};
         this.allContacts = {};
         this.resources = {};
+        this.conferences = {};
+        this.allConferences = {};
 
         this.modelUpdated("groups", {removed: groups});
+        this.modelUpdated("conferences", {removed: conferences});
 
+        this.bookmarks._clean();
         for (var i = 0; i < groups.length; i++)
             if (groups[i].builtinGroup)
                 groups[i]._clean();
