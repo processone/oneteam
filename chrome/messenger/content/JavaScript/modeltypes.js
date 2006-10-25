@@ -277,7 +277,7 @@ function Callback(callback, argsStart, _this)
         ret.callback = callback;
         ret.args = argsStart < 0 ? [] : Array.slice(arguments.callee.caller.arguments, argsStart);
     } else if (argsStart < 0 || typeof(arguments.callee.caller.arguments[argsStart]) != "function")
-        throw "Invalid callback";
+        throw new InvalidArgsError("Invalid callback");
     else {
         ret._this = callback;
         ret.callback = arguments.callee.caller.arguments[argsStart];
@@ -573,7 +573,7 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.jid);
         return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate,
-            new Callback(callback, 3));
+            callback && new Callback(callback, 3));
     },
 
     getDiscoIdentity: function(forceUpdate, callback)
@@ -581,7 +581,7 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.jid);
         return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate,
-            new Callback(callback, 2));
+            callback && new Callback(callback, 2));
     },
 
     getDiscoItems: function(forceUpdate, callback)
@@ -589,7 +589,7 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.jid);
         return this._discoCacheEntry.requestDiscoItems(forceUpdate,
-            new Callback(callback, 2));
+            callback && new Callback(callback, 2));
     },
 
     getDiscoItemsByCategory: function(category, type, forceUpdate, callback)
@@ -613,7 +613,7 @@ _DECL_(DiscoItem).prototype =
     _gotDiscoIdentity: function(identity, category, type, forceUpdate, callback)
     {
         if (--this._discoInfosToGet == 0)
-            callback(this._getDiscoItemsByCategory(category, type));
+            callback.call(null, this._getDiscoItemsByCategory(category, type));
     },
 
     _getDiscoItemsByCategory: function(category, type)

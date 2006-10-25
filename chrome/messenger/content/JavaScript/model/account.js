@@ -21,6 +21,7 @@ function Account()
     this.currentPresence = {type: "unavailable"};
 
     this.cache = new PersistantCache("oneteamCache");
+    this.bookmarks = new ConferenceBookmarks();
     this.connected = false;
 
     this.init();
@@ -312,7 +313,12 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
         this.modelUpdated("connected");
 
-        this.getDiscoItemsByCategory("conference", "text", false, function(){});
+        this.bookmarks.retrieve();
+        this.getDiscoItemsByCategory("conference", "text", false,
+                                     function(items) {
+                                        if (items.length)
+                                           account.defaultConferenceServer = items[0].jid;
+                                     });
     },
 
     onDisconnect: function()
