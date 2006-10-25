@@ -12,16 +12,19 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         var storage = query.appendChild(iq.getDoc().createElementNS(
             "storage:bookmarks", "storage"));
 
-        for (var name in this.bookmarks) {
+        for (var i = 0; i < this.bookmarks.length; i++) {
             var bookmark = storage.appendChild(iq.getDoc().createElement(
                 "conference"));
-            bookmark.setAttribute("name", name);
-            bookmark.setAttribute("jid", this.bookmarks[name].jid);
+            bookmark.setAttribute("name", this.bookmark[i].bookmarkName);
+            bookmark.setAttribute("jid", this.bookmarks[i].jid);
+            if (this.bookmarks[i].autoJoin)
+                bookmark.setAttribute("autojoin", "true");
+
             bookmarks.appendChild(iq.getDoc().createElement("nick")).
-                appendChild(iq.getDoc().createTextNode(this.bookmarks[name].nick));
-            if (this.bookmarks[name].password)
+                appendChild(iq.getDoc().createTextNode(this.bookmarks[i].nick));
+            if (this.bookmarks[i].password)
                 bookmarks.appendChild(iq.getDoc().createElement("password")).
-                    appendChild(iq.getDoc().createTextNode(this.bookmarks[name].password));
+                    appendChild(iq.getDoc().createTextNode(this.bookmarks[i].password));
         }
         con.send(iq);
     },
@@ -39,35 +42,36 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
     {
         var bookmarksTags = pkt.getNode().
             getElementsByTagNameNS("storage:bookmarks", "conference");
-        this.bookmarks = {};
+        this.bookmarks = [];
 
         for (var i = 0; i < bookmarksTags.length; i++) {
             var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
             var password = bookmarksTags[i].getElementsByTagName("password")[0];
-            this.bookmarks[bookmarksTags[i].getAttribute("name")] =
-                new Conference(bookmarksTags[i].getAttribute("jid"),
-                               nick && nick.textContent,
-                               password && password.textContent);
+            var conference = account.getOrCreateConference(
+                bookmarksTags[i].getAttribute("jid"), nick && nick.textContent,
+                password && password.textContent);
+
+            conference.bookmark(bookmarksTags[i].getAttribute("name"),
+                                bookmarksTags[i].getAttribute("autojoin") == "true",
+                                true);
+
+            this.bookmarks.push(conference);
         }
+        this.modelUpdated("bookmarks", {added: this.bookmarks});
     },
 
-    addConference: function(name, conference)
+    _onConferenceAdded: function(conference)
     {
-        var update = name in this.bookmarks;
-        this.bookmarks[name] = conference;
+        this.bookmarks.push(conference);
         this._syncServerBookmarks();
-        if (!update)
-            this.modelUpdated("bookmarks", {added: [name]});
+        this.modelUpdated("bookmarks", {added: [conference]});
     },
 
-    removeConference: function(name)
+    _onConferenceRemoved: function(conference)
     {
-        if (!(name in this.bookmarks))
-            return;
-        delete this.bookmarks[name];
-
+        this.bookmarks.splice(this.bookmarks.indexOf(conference), 1);
         this._syncServerBookmarks();
-        this.modelUpdated("bookmarks", {removed: [name]})
+        this.modelUpdated("bookmarks", {removed: [conference]})
     },
 }
 
@@ -105,6 +109,26 @@ _DECL_(Conference, Contact).prototype =
                 appendChild(presence.getDoc().createTextNode(this.password));
 
         con.send(presence);
+    },
+
+    bookmark: function(bookmarkName, autoJoin, internal)
+    {
+        var oldState = { bookmarkName: this.bookmarkName, autoJoin: this.autoJoin };
+        [this.bookmarkName, this.autoJoin] = [bookmarkName, !!autoJoin];
+
+        // XXX handle autojoin somehow?
+        if (!internal && bookmarkName != oldState.bookmarkName) {
+            if (!bookmarkName) {
+                account.bookmarks._onConferenceRemoved(this);
+                return;
+            } else if (!oldState.bookmarkName) {
+                account.bookmarks._onConferenceAdded(this);
+                return;
+            }
+        }
+        
+        if (this._modelUpdatedCheck(oldState).length && !internal)
+            account.bookmarks._syncServerBookmarks();
     },
 
     joinRoom: function(callback)
