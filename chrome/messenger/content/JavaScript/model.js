@@ -15,6 +15,8 @@ function Account()
     this.contacts = {};
     this.allContacts = {};
     this.resources = {};
+    this.conferences = {};
+    this.allConferences = {};
     this._presenceObservers = [];
     this.currentPresence = {type: "unavailable"};
 
@@ -47,6 +49,15 @@ function Account()
 _DECL_(Account, null, Model, DiscoItem).prototype =
 {
     bumpPriority: true,
+
+    getPresenceFor: function(contact)
+    {
+        var presence = this.currentPresence.profile ?
+            this.currentPresence.profile.getPresenceFor(contact) :
+            this.currentPresence;
+
+        return [presence.type, presence.status, presence.priority];
+    },
 
     setPresence: function(type, status, priority, profile, userSet)
     {
@@ -155,10 +166,17 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             return this.resources[jid];
 
         jid = new JID(jid);
-        if (!this.allContacts[jid.shortJID])
-            return null;
+        if (this.allContacts[jid.shortJID])
+            return this.allContacts[jid.shortJID].createResource(jid);
+        else if (this.allConferences[jid.shortJID])
+            return this.allConferences[jid.shortJID].createResource(jid);
+    },
 
-        return this.allContacts[jid.shortJID].createResource(jid);
+    getOrCreateConference: function(jid, nick, password)
+    {
+        if (this.allConferences[jid])
+            return this.allConferences[jid];
+        return new Conference(jid, nick, password);
     },
 
     onAddContact: function(contact)
@@ -321,16 +339,6 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
     onPresence: function(packet)
     {
-        var errorTag = packet.getNode().getElementsByTagName('error')[0];
-        if (errorTag) {
-            // XXX: I don't think it is ideal solution, maybe show it it roster somehow?
-            // XXX: Disabled for now
-            var text = 0 && errorTag.getElementsByTagName('text');
-            if (text)
-                window.openDialog("chrome://messenger/content/error.xul", "_blank",
-                                  "chrome,modal", text.textContent);
-            return;
-        }
         var sender = new JID(packet.getFrom());
 
         if (this.myJID == sender) {
@@ -360,7 +368,8 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         }
 
         // Delegate rest to respective handlers
-        var item = sender.resource ? this.getOrCreateResource(sender) : null;
+        var item = sender.resource ? this.getOrCreateResource(sender) :
+            this.conferences[sender];
 
         if (item)
             item.onPresence(packet);
@@ -535,7 +544,6 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.newItem = false;
         account.contacts[jid] = this;
     }
-    this._vcardHandlers = [];
     account.allContacts[jid] = this;
 }
 
@@ -692,9 +700,10 @@ _DECL_(Contact, null, Model,
 
     onMessage: function(packet)
     {
-        if (!this.chatPane)
+        if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
-        this.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
+        if (packet.getBody())
+            this.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
     },
 
     addToRoster: function()
@@ -860,10 +869,10 @@ _DECL_(Contact, null, Model,
 
     cmp: function(c)
     {
-        const status2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
+        const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
 
-        var kt = status2num[this.activeResource ? this.activeResource.show : "offline"];
-        var kc = status2num[c.activeResource ? c.activeResource.show : "offline"];
+        var kt = show2num[this.activeResource ? this.activeResource.show : "offline"];
+        var kc = show2num[c.activeResource ? c.activeResource.show : "offline"];
 
         if (kt == kc) {
             kt = this.visibleName;
@@ -908,6 +917,19 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     onPresence: function(packet, dontNotifyViews)
     {
+        if (packet.getType() == "error") {
+            var errorTag = packet.getNode().getElementsByTagName('error')[0];
+            if (errorTag) {
+                // XXX: I don't think it is ideal solution, maybe show it it roster somehow?
+                // XXX: Disabled for now
+                var text = 0 && errorTag.getElementsByTagName('text');
+                if (text)
+                    window.openDialog("chrome://messenger/content/error.xul", "_blank",
+                                    "chrome,modal", text.textContent);
+                return;
+            }
+        }
+
         var flags, oldState = { show: this.show, priority: this.priority,
             status: this.status};
 
@@ -965,14 +987,233 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     cmp: function(c)
     {
-        const status2num = {chat: 6, available: 5, dnd: 4, away:3, xa: 2, offline: 1};
+        const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
 
         var kt = this.priority;
         var kc = c.priority;
 
         if (kt == kc) {
-            kt = status2num[this.show];
-            kc = status2num[c.show];
+            kt = show2num[this.show];
+            kc = show2num[c.show];
+        }
+
+        return kt == kc ? 0 : kt > kc ? 1 : -1;
+    }
+}
+
+function Conference(jid, nick, password)
+{
+    this.init();
+
+    this.jid = new JID(jid);
+    this.nick = nick;
+    this.password = password;
+    this.name = this.jid.shortJID;
+    this.visibleName = this.jid.node + " on " + this.jid.domain;
+    this.resources = [];
+
+    account.allConferences[this.jid] = this;
+}
+
+_DECL_(Conference, Contact).prototype =
+{
+    _sendPresence: function(type, status, priority)
+    {
+        var presence = new JSJaCPresence();
+        presence.setTo(this.jid + "/" + (this._nick || this.nick));
+        if (type)
+            presence.setType(type);
+        if (status)
+            presence.setStatus(status);
+        if (priority != null)
+            presence.setPriority(priority);
+
+        var x = presence.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
+
+        if (this.password)
+            x.appendChild(presence.getDoc().createElement("password")).
+                appendChild(presence.getDoc().createTextNode(this.password));
+
+        con.send(presence);
+    },
+
+    joinRoom: function(callback)
+    {
+        var [type, status, priority] = account.getPresenceFor(this);
+
+        if (!this.joined) {
+            this._callback = new Callback(callback, 1);
+            account.resources[this.jid + "/" + this.nick] = this;
+            account.conferences[this.jid] = this;
+        }
+        this._sendPresence(type, status, priority);
+    },
+
+    changeNick: function(newNick)
+    {
+        if (this.nick == newNick)
+            return;
+
+        this._nick = newNick;
+        this.joinRoom();
+    },
+
+    sendMessage: function(body)
+    {
+        var message = new JSJaCMessage();
+        message.setTo(this.jid);
+        message.setType("groupchat");
+        message.setBody(body)
+
+        con.send(message);
+    },
+
+    createResource: function(jid)
+    {
+        return new ConferenceMember(jid);
+    },
+
+    onPresence: function(pkt)
+    {
+        if (this.getType() == "error") {
+            if (this.joined || !this._callback)
+                return;
+            var errorTag = packet.getNode().getElementsByTagName('error')[0];
+            this._callback.call(null, errorTag);
+
+            return;
+        }
+
+        var x = pkt.getNode().
+            getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x");
+        var statusCodesTags = x.getElementsByTagName("status");
+        var statusCodes = {};
+
+        for (i = 0; i < statusCodesTags.length; i++)
+            statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
+
+        if (303 in statusCodes) { // Nick change confirmation
+            delete account.resources[this.jid + "/" + this.nick];
+            this.nick = item.getAttribute("nick");
+            account.resources[this.jid + "/" + this.nick] = this;
+            delete this._nick;
+            this.modelUpdated("nick");
+            return;
+        } else if (pkt.getType() == "unavailable") {
+            this.joined = false;
+            this.affiliation = this.role = null;
+            delete account.resources[this.jid + "/" + this.nick];
+            delete account.conferences[this.jid];
+            delete this._nick;
+
+            // TODO: Notify about kick, ban, etc.
+
+            return;
+        }
+
+        var item = x.getElementsByTagName("item")[0];
+        if (item) {
+            this.affiliation = item.getAttribute("affiliation");
+            this.role = item.getAttribute("role");
+        }
+    },
+
+    onMessage: function(packet)
+    {
+        if (packet.getSubject() != this.subject) {
+            this.subject = packet.getSubject();
+            this.modelUpdated("subject");
+        }
+        if (packet.getBody()) {
+            if (!this.chatPane || this.chatPane.closed)
+                this.onOpenChat();
+            this.chatPane.addMessage(this.visibleName, packet.getBody(), "in sysmsg");
+        }
+    },
+
+    cmp: function(c)
+    {
+        var kt = this.joined ? 0 : 1;
+        var kc = c.joined ? 0 : 1;
+
+        if (kt == kc) {
+            kt = this.name;
+            kc = c.name;
+        }
+
+        return kt == kc ? 0 : kt > kc ? 1 : -1;
+    }
+}
+
+function ConferenceMember(jid)
+{
+    Resource.call(this, jid);
+    this.contact = account.conferences[jid.shortJID];
+    this.name = this.jid.resource;
+    this.visibleName =  this.name + " from " + this.jid.shortJID;
+}
+
+_DECL_(ConferenceMember, Resource).prototype =
+{
+    visibleName: null,
+
+    onPresence: function(pkt)
+    {
+        if (this.getType() == "error")
+            return;
+
+        var x = pkt.getNode().
+            getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x");
+        var statusCodesTags = x.getElementsByTagName("status");
+        var statusCodes = {};
+
+        for (i = 0; i < statusCodesTags.length; i++)
+            statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
+
+        if (303 in statusCodes) { // Nick change
+            delete account.resources[this.jid];
+            this.name = item.getAttribute("nick")
+            this.visibleName =  this.name + " from " + this.jid.shortJID;
+            this.jid = this.jid.createFullJID(this.name);
+            account.resources[this.jid] = this;
+            this.modelUpdated("jid", null, "name", null, "visibleName");
+            return;
+        }
+
+        Resource.prototype.onPresence.call(this, pkt);
+
+        var item = x.getElementsByTagName("item")[0];
+        if (item) {
+            this.affiliation = item.getAttribute("affiliation");
+            this.role = item.getAttribute("role");
+        }
+    },
+
+    onMessage: function(packet)
+    {
+        if (packet.getSubject() != this.subject) {
+            this.contact.subject = packet.getSubject();
+            this.contact.modelUpdated("subject");
+        }
+        if (packet.getType() == "groupchat") {
+            if (packet.getBody()) {
+                if (!this.contact.chatPane || this.contact.chatPane.closed)
+                    this.contact.onOpenChat();
+                this.contact.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
+            }
+        } else
+            Resource.call(this, packet);
+    },
+
+    cmp: function(c)
+    {
+        const affiliation2num = {owner: 1, admin: 2, member: 3, none: 4, outcast: 5};
+        var kt = affiliation2num[this.affiliation];
+        var kc = affiliation2num[c.affiliation];
+
+        if (kt == kc) {
+            kt = this.name;
+            kc = this.name;
         }
 
         return kt == kc ? 0 : kt > kc ? 1 : -1;
