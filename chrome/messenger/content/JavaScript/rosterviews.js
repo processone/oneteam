@@ -121,7 +121,6 @@ _DECL_(GroupView, null, ContainerView).prototype =
     },
 }
 
-
 function ContactView(model, parentView)
 {
     this.model = model;

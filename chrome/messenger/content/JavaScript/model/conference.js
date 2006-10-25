@@ -1,80 +1,3 @@
-function ConferenceBookmarks()
-{
-}
-
-_DECL_(ConferenceBookmarks, null, Model).prototype = 
-{
-    _syncServerBookmarks: function()
-    {
-        var iq = new JSJaCIQ();
-        iq.setType("set");
-        query = iq.setQuery("jabber:iq:private");
-        var storage = query.appendChild(iq.getDoc().createElementNS(
-            "storage:bookmarks", "storage"));
-
-        for (var i = 0; i < this.bookmarks.length; i++) {
-            var bookmark = storage.appendChild(iq.getDoc().createElement(
-                "conference"));
-            bookmark.setAttribute("name", this.bookmark[i].bookmarkName);
-            bookmark.setAttribute("jid", this.bookmarks[i].jid);
-            if (this.bookmarks[i].autoJoin)
-                bookmark.setAttribute("autojoin", "true");
-
-            bookmarks.appendChild(iq.getDoc().createElement("nick")).
-                appendChild(iq.getDoc().createTextNode(this.bookmarks[i].nick));
-            if (this.bookmarks[i].password)
-                bookmarks.appendChild(iq.getDoc().createElement("password")).
-                    appendChild(iq.getDoc().createTextNode(this.bookmarks[i].password));
-        }
-        con.send(iq);
-    },
-
-    retrieve: function()
-    {
-        var iq = new JSJaCIQ();
-        iq.setType("get");
-        query = iq.setQuery("jabber:iq:private");
-        query.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "storage"));
-        con.send(iq, new Callback(this.onBookmarkRetrieved, -1, this));
-    },
-
-    onBookmarkRetrieved: function(pkt)
-    {
-        var bookmarksTags = pkt.getNode().
-            getElementsByTagNameNS("storage:bookmarks", "conference");
-        this.bookmarks = [];
-
-        for (var i = 0; i < bookmarksTags.length; i++) {
-            var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
-            var password = bookmarksTags[i].getElementsByTagName("password")[0];
-            var conference = account.getOrCreateConference(
-                bookmarksTags[i].getAttribute("jid"), nick && nick.textContent,
-                password && password.textContent);
-
-            conference.bookmark(bookmarksTags[i].getAttribute("name"),
-                                bookmarksTags[i].getAttribute("autojoin") == "true",
-                                true);
-
-            this.bookmarks.push(conference);
-        }
-        this.modelUpdated("bookmarks", {added: this.bookmarks});
-    },
-
-    _onConferenceAdded: function(conference)
-    {
-        this.bookmarks.push(conference);
-        this._syncServerBookmarks();
-        this.modelUpdated("bookmarks", {added: [conference]});
-    },
-
-    _onConferenceRemoved: function(conference)
-    {
-        this.bookmarks.splice(this.bookmarks.indexOf(conference), 1);
-        this._syncServerBookmarks();
-        this.modelUpdated("bookmarks", {removed: [conference]})
-    },
-}
-
 function Conference(jid, nick, password)
 {
     this.init();
@@ -129,6 +52,14 @@ _DECL_(Conference, Contact).prototype =
         
         if (this._modelUpdatedCheck(oldState).length && !internal)
             account.bookmarks._syncServerBookmarks();
+    },
+
+    onJoinRoom: function()
+    {
+    },
+
+    onManageBookmarks: function()
+    {
     },
 
     joinRoom: function(callback)
@@ -312,5 +243,84 @@ _DECL_(ConferenceMember, Resource).prototype =
 
         return kt == kc ? 0 : kt > kc ? 1 : -1;
     }
+}
+
+function ConferenceBookmarks()
+{
+    this.bookmarks = [];
+    this.init();
+}
+
+_DECL_(ConferenceBookmarks, null, Model).prototype = 
+{
+    _syncServerBookmarks: function()
+    {
+        var iq = new JSJaCIQ();
+        iq.setType("set");
+        query = iq.setQuery("jabber:iq:private");
+        var storage = query.appendChild(iq.getDoc().createElementNS(
+            "storage:bookmarks", "storage"));
+
+        for (var i = 0; i < this.bookmarks.length; i++) {
+            var bookmark = storage.appendChild(iq.getDoc().createElement(
+                "conference"));
+            bookmark.setAttribute("name", this.bookmark[i].bookmarkName);
+            bookmark.setAttribute("jid", this.bookmarks[i].jid);
+            if (this.bookmarks[i].autoJoin)
+                bookmark.setAttribute("autojoin", "true");
+
+            bookmarks.appendChild(iq.getDoc().createElement("nick")).
+                appendChild(iq.getDoc().createTextNode(this.bookmarks[i].nick));
+            if (this.bookmarks[i].password)
+                bookmarks.appendChild(iq.getDoc().createElement("password")).
+                    appendChild(iq.getDoc().createTextNode(this.bookmarks[i].password));
+        }
+        con.send(iq);
+    },
+
+    retrieve: function()
+    {
+        var iq = new JSJaCIQ();
+        iq.setType("get");
+        query = iq.setQuery("jabber:iq:private");
+        query.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "storage"));
+        con.send(iq, new Callback(this.onBookmarkRetrieved, -1, this));
+    },
+
+    onBookmarkRetrieved: function(pkt)
+    {
+        var bookmarksTags = pkt.getNode().
+            getElementsByTagNameNS("storage:bookmarks", "conference");
+        this.bookmarks = [];
+
+        for (var i = 0; i < bookmarksTags.length; i++) {
+            var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
+            var password = bookmarksTags[i].getElementsByTagName("password")[0];
+            var conference = account.getOrCreateConference(
+                bookmarksTags[i].getAttribute("jid"), nick && nick.textContent,
+                password && password.textContent);
+
+            conference.bookmark(bookmarksTags[i].getAttribute("name"),
+                                bookmarksTags[i].getAttribute("autojoin") == "true",
+                                true);
+
+            this.bookmarks.push(conference);
+        }
+        this.modelUpdated("bookmarks", {added: this.bookmarks});
+    },
+
+    _onConferenceAdded: function(conference)
+    {
+        this.bookmarks.push(conference);
+        this._syncServerBookmarks();
+        this.modelUpdated("bookmarks", {added: [conference]});
+    },
+
+    _onConferenceRemoved: function(conference)
+    {
+        this.bookmarks.splice(this.bookmarks.indexOf(conference), 1);
+        this._syncServerBookmarks();
+        this.modelUpdated("bookmarks", {removed: [conference]})
+    },
 }
 

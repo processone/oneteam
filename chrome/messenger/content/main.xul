@@ -33,6 +33,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/rosterviews.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/conferenceviews.js"/>
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
@@ -80,6 +81,8 @@
         document.getElementById("setPresence-nick").value = account.connectionInfo.user;
         if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
+          this.bookmarksMenuView =
+            new BookmarksMenuView(document.getElementById("conference-menu-separator"));
           document.getElementById("cmd_toggleShowOffline").
             setAttribute("checked", this.rosterView.hideOffline);
         }
@@ -114,6 +117,7 @@
         account.registerView(this, "onConnect", "connected");
         account.registerView(this, "onPresenceChange", "currentPresence");
         account.registerView(this, "onIconSetChange", "iconSet");
+
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.systray = document.getElementById("systray");
         this.systray.icon = presenceToIcon(account.currentPresence.type||"available");
@@ -351,8 +355,16 @@
             <menupopup id="file-popup">
               <menuitem label="&menulagger.addContact;" command="cmd_addContact"
                   accesskey="&shortcurt.add;"/>
-              <menuitem label="&menulagger.joinConference;" command="cmd_joinRoom"
-                  accesskey="&shortcurt.join;"/>
+
+              <menu label="&menulagger.joinConference;"
+                  accesskey="&shortcurt.join;">
+                <menupopup>
+                  <menuitem label="&menulagger.joinConference;" command="cmd_joinRoom"/>
+                  <menuseparator/>
+                  <menuseparator id="conference-menu-separator" hidden="true"/>
+                  <menuitem label="Manage Bookmarks" accesskey="M" command="cmd_manageRooms"/>
+                </menupopup>
+              </menu>
               <menuseparator/>
               <menuitem label="&menulagger.servicesDiscovery;" command="cmd_disco"
                   accesskey="&shortcurt.service;"/>

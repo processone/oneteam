@@ -266,11 +266,11 @@ function Callback(callback, argsStart, _this)
     var ret = new Function("", "return arguments.callee.apply(this, arguments)");
     ret.call = function(_this) {
         var args = Array.slice(arguments,1).concat(this.args);
-        return this.callback.apply(_this == self ? this._this || _this : _this || this._this, args)
+        return this.callback.apply(this._this ? this._this : _this, args)
     };
     ret.apply = function(_this, _args) {
         var args = Array.slice(_args).concat(this.args);
-        return this.callback.apply(_this == self ? this._this || _this : _this || this._this, args)
+        return this.callback.apply(this._this ? this._this : _this, args)
     }
     ret._this = _this;
     if (typeof(callback) == "function") {
