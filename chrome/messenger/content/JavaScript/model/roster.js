@@ -228,16 +228,18 @@ _DECL_(Contact, null, Model,
         return [jid, name, subscription, subscriptionAsk, groups, groupsHash];
     },
 
-    _sendPresence: function(type, status, priority)
+    _sendPresence: function(show, status, priority, type)
     {
         var presence = new JSJaCPresence();
         presence.setTo(this.jid);
-        if (type)
-            presence.setType(type);
+        if (show)
+            presence.setShow(show);
         if (status)
             presence.setStatus(status);
         if (priority != null)
             presence.setPriority(priority);
+        if (type)
+            presence.setType(type);
 
         con.send(presence);
     },
@@ -282,19 +284,19 @@ _DECL_(Contact, null, Model,
 
     allowToSeeMe: function()
     {
-        this._sendPresence("subscribed");
+        this._sendPresence(null, null, null, "subscribed");
     },
 
     disallowToSeeMe: function()
     {
-        this._sendPresence("unsubscribe");
+        this._sendPresence(null, null, null, "unsubscribe");
     },
 
     askForSubscription: function(reason)
     {
         // TODO use string bundle.
-        this._sendPresence("subscribe", reason ||
-                           "I would like to add you in my contacts list");
+        this._sendPresence(null, reason || "I would like to add you in my contacts list",
+                           null, "subscribe");
     },
 
     onRename: function(externalDialog)
@@ -505,7 +507,7 @@ _DECL_(Resource, null, Model, DiscoItem,
         this.priority = packet.getPriority();
         this.status = packet.getStatus();
 
-        if (packet.getType() == "unavailable")
+        if (packet.getShow() == "unavailable")
             this._remove()
         else if (!this._registered)
             this.contact._onResourceAdded(this);

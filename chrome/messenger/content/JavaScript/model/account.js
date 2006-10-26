@@ -1,11 +1,11 @@
 var gPrefService = Components.classes["@mozilla.org/preferences;1"].
     getService(Components.interfaces.nsIPrefBranch2);
 
-function presenceToIcon(type)
+function presenceToIcon(show)
 {
-    if (!type || type == "unavailable")
+    if (!show || show == "unavailable")
         return account.iconSet+"offline.png";
-    return account.iconSet + (type == "available" ? "online" : type) + ".png";
+    return account.iconSet + (show == "available" ? "online" : show) + ".png";
 }
 
 function Account()
@@ -15,10 +15,10 @@ function Account()
     this.contacts = {};
     this.allContacts = {};
     this.resources = {};
-    this.conferences = {};
+    this.conferences = [];
     this.allConferences = {};
     this._presenceObservers = [];
-    this.currentPresence = {type: "unavailable"};
+    this.currentPresence = {show: "unavailable"};
 
     this.cache = new PersistantCache("oneteamCache");
     this.bookmarks = new ConferenceBookmarks();
@@ -57,17 +57,17 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             this.currentPresence.profile.getPresenceFor(contact) :
             this.currentPresence;
 
-        return [presence.type, presence.status, presence.priority];
+        return [presence.show, presence.status, presence.priority];
     },
 
-    setPresence: function(type, status, priority, profile, userSet)
+    setPresence: function(show, status, priority, profile, userSet)
     {
         var presence, newPresence;
 
-        if (type instanceof Object)
-            newPresence = type;
+        if (show instanceof Object)
+            newPresence = show;
         else
-            newPresence = {type: type, status: status, priority: priority,
+            newPresence = {show: show, status: status, priority: priority,
                            profile: profile};
 
         if (!newPresence.priority)
@@ -75,14 +75,14 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
         if (!newPresence.profile) {
             presence = new JSJaCPresence();
-            if (newPresence.type)
-                presence.setShow(newPresence.type);
+            if (newPresence.show)
+                presence.setShow(newPresence.show);
             if (newPresence.status)
                 presence.setStatus(newPresence.status);
             presence.setPriority(newPresence.priority);
 
-            for (var i = 0; i < this._presenceObservers; i++)
-                this._presenceObservers[i]._sendPresence(newPresence.type,
+            for (var i = 0; i < this._presenceObservers.length; i++)
+                this._presenceObservers[i]._sendPresence(newPresence.show,
                                                          newPresence.status,
                                                          newPresence.priority);
 
@@ -99,18 +99,18 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         for (var c in this.contactsIterator())
             if (presence = profile.getPresenceFor(c)) {
                 if (profile != this.currentPresence.profile)
-                    c._sendPresence(presence.type, presence.status, presence.priority);
+                    c._sendPresence(presence.show, presence.status, presence.priority);
             } else
-                c._sendPresence(type, status, priority);
+                c._sendPresence(show, status, priority);
 
-        for (var i = 0; i < this._presenceObservers; i++)
+        for (var i = 0; i < this._presenceObservers.length; i++)
             if (presence = profile.getPresenceFor(this._presenceObservers[i])) {
                 if (profile != this.currentPresence.profile)
-                    this._presenceObservers[i]._sendPresence(presence.type,
+                    this._presenceObservers[i]._sendPresence(presence.show,
                                                              presence.status,
                                                              presence.priority);
             } else
-                this._presenceObservers[i]._sendPresence(newPresence.type,
+                this._presenceObservers[i]._sendPresence(newPresence.show,
                                                          newPresence.status,
                                                          newPresence.priority);
 
@@ -171,6 +171,18 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             return this.allContacts[jid.shortJID].createResource(jid);
         else if (this.allConferences[jid.shortJID])
             return this.allConferences[jid.shortJID].createResource(jid);
+    },
+
+    _onConferenceAdded: function(conference)
+    {
+        this.conferences.push(conference);
+        this.modelUpdated("conferences", {added: [conference]});
+    },
+
+    _onConferenceRemoved: function(conference)
+    {
+        this.conferences.splice(this.conferences.indexOf(conference), 1);
+        this.modelUpdated("conferences", {removed: [conference]});
     },
 
     getOrCreateConference: function(jid, nick, password)
@@ -342,7 +354,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         this.contacts = {};
         this.allContacts = {};
         this.resources = {};
-        this.conferences = {};
+        this.conferences = [];
         this.allConferences = {};
 
         this.modelUpdated("groups", {removed: groups});

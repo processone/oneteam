@@ -210,10 +210,10 @@ _DECL_(Model).prototype =
 
     unregisterViewFully: function(view)
     {
-        for each (var view in this._views) {
-            for (var j = 0; j < view.length; j++)
-                if (view[j][0] == view) {
-                    view.splice(j, 1);
+        for each (var v in this._views) {
+            for (var j = 0; j < v.length; j++)
+                if (v[j][0] == view) {
+                    v.splice(j, 1);
                     j--;
                 }
         }
@@ -368,8 +368,8 @@ _DECL_(PresenceProfile).prototype =
                     iq.getDoc().createElementNS(ns, "presence"));
 
                 if (presence.presence) {
-                    if (presence.presence.type)
-                        presenceTag.setAttribute("show", presence.presence.type);
+                    if (presence.presence.show)
+                        presenceTag.setAttribute("show", presence.presence.show);
                     if (presence.presence.priority != null)
                         presenceTag.setAttribute("priority", presence.presence.priority);
                     if (presence.presence.status)
@@ -399,11 +399,11 @@ _DECL_(PresenceProfile).prototype =
             var presenceTags = profileTags[i].getElementsByTagName("presence");
             for (j = 0; j < presenceTags.length; j++) {
                 var presence = {};
-                var [type, priority, status] = ["show", "priority", "status"].
+                var [show, priority, status] = ["show", "priority", "status"].
                     map(function(v){return presenceTags[j].getAttribute(v)});
 
-                if (type != null || priority != null || status != null)
-                    presence.presence = {type: type, priority: priority, status: status};
+                if (show != null || priority != null || status != null)
+                    presence.presence = {show: show, priority: priority, status: status};
 
                 presence.groups = Array.map(presenceTags[j].getElementsByTagName("group"),
                                             function(g){return g.textContent});

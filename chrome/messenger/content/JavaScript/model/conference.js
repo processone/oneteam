@@ -8,24 +8,39 @@ function Conference(jid, nick, password)
     this.name = this.jid.shortJID;
     this.visibleName = this.jid.node;
     this.resources = [];
+    this.groups = [];
 
     account.allConferences[this.jid] = this;
 }
 
 _DECL_(Conference, Contact).prototype =
 {
-    _sendPresence: function(type, status, priority)
+    get fullJID()
+    {
+        if (this._nick)
+            return this.jid.createFullJID(resource);
+
+        if (this.myResource)
+            return this.myResource.jid;
+
+        return this.jid.createFullJID(this.nick);
+    },
+
+    _sendPresence: function(show, status, priority, type)
     {
         var presence = new JSJaCPresence();
-        presence.setTo(this.jid + "/" + (this._nick || this.nick));
-        if (type)
-            presence.setType(type);
+        presence.setTo(this.fullJID);
+        if (show)
+            presence.setShow(show);
         if (status)
             presence.setStatus(status);
         if (priority != null)
             presence.setPriority(priority);
+        if (type != null)
+            presence.setType(type);
 
         var x = presence.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
+        presence.getNode().appendChild(x);
 
         if (this.password)
             x.appendChild(presence.getDoc().createElement("password")).
@@ -42,10 +57,10 @@ _DECL_(Conference, Contact).prototype =
         // XXX handle autojoin somehow?
         if (!internal && bookmarkName != oldState.bookmarkName) {
             if (!bookmarkName) {
-                account.bookmarks._onConferenceRemoved(this);
+                account.bookmarks._onBookmarkRemoved(this);
                 return;
             } else if (!oldState.bookmarkName) {
-                account.bookmarks._onConferenceAdded(this);
+                account.bookmarks._onBookmarkAdded(this);
                 return;
             }
         }
@@ -60,15 +75,21 @@ _DECL_(Conference, Contact).prototype =
 
         if (!this.joined) {
             this._callback = new Callback(callback, 1);
-            account.resources[this.jid + "/" + this.nick] = this;
-            account.conferences[this.jid] = this;
+            account._onConferenceAdded(this);
+            account._presenceObservers.push(this);
         }
         this._sendPresence(type, status, priority);
     },
 
+    exitRoom: function()
+    {
+        this._sendPresence(null, null, null, "unavailable");
+        this.joined = false;
+    },
+
     changeNick: function(newNick)
     {
-        if (this.nick == newNick)
+        if (this.fullJID.resource == newNick)
             return;
 
         this._nick = newNick;
@@ -87,19 +108,16 @@ _DECL_(Conference, Contact).prototype =
 
     createResource: function(jid)
     {
-        return new ConferenceMember(jid);
+        var resource = new ConferenceMember(jid);
+        if (!this.myResource && jid.resource == this.nick)
+            this.myResource = resource;
+
+        return resource;
     },
 
     onPresence: function(pkt)
     {
-        if (pkt.getType() == "error") {
-            if (this.joined || !this._callback)
-                return;
-            var errorTag = packet.getNode().getElementsByTagName('error')[0];
-            this._callback.call(null, pkt, errorTag);
-
-            return;
-        }
+        var errorTag;
 
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
@@ -112,18 +130,10 @@ _DECL_(Conference, Contact).prototype =
                 statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
         }
 
-        if (303 in statusCodes) { // Nick change confirmation
-            delete account.resources[this.jid + "/" + this.nick];
-            this.nick = item.getAttribute("nick");
-            account.resources[this.jid + "/" + this.nick] = this;
-            delete this._nick;
-            this.modelUpdated("nick");
-            return;
-        } else if (pkt.getType() == "unavailable") {
+        if (!(303 in statusCodes) && pkt.getType() == "unavailable") {
             this.joined = false;
-            this.affiliation = this.role = null;
-            delete account.resources[this.jid + "/" + this.nick];
-            delete account.conferences[this.jid];
+            account._onConferenceRemoved(this);
+            account._presenceObservers.splice(account._presenceObservers.indexOf(this), 1);
             delete this._nick;
 
             // TODO: Notify about kick, ban, etc.
@@ -131,14 +141,16 @@ _DECL_(Conference, Contact).prototype =
             return;
         }
 
-        if (x) {
-            var item = x.getElementsByTagName("item")[0];
-            if (item) {
-                this.affiliation = item.getAttribute("affiliation");
-                this.role = item.getAttribute("role");
-            }
-        }
-        this._callback.call(null, pkt);
+        if (this.joined || !this._callback)
+            return;
+
+        if (pkt.getType() == "error")
+            errorTag = packet.getNode().getElementsByTagName('error')[0];
+        else
+            this.joined = true;
+
+        this._callback.call(null, pkt, errorTag);
+        this._callback = null;
     },
 
     onMessage: function(packet)
@@ -171,9 +183,9 @@ _DECL_(Conference, Contact).prototype =
 function ConferenceMember(jid)
 {
     Resource.call(this, jid);
-    this.contact = account.conferences[jid.shortJID];
+    this.contact = account.allConferences[jid.shortJID];
     this.name = this.jid.resource;
-    this.visibleName =  this.name + " from " + this.jid.visibleName;
+    this.visibleName =  this.name + " from " + this.jid.node;
 }
 
 _DECL_(ConferenceMember, Resource).prototype =
@@ -182,21 +194,27 @@ _DECL_(ConferenceMember, Resource).prototype =
 
     onPresence: function(pkt)
     {
-        if (this.getType() == "error")
+        if (this.contact.myResource == this)
+            this.contact.onPresence(pkt);
+
+        if (pkt.getType() == "error")
             return;
 
         var x = pkt.getNode().
-            getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x");
-        var statusCodesTags = x.getElementsByTagName("status");
-        var statusCodes = {};
+            getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
 
-        for (i = 0; i < statusCodesTags.length; i++)
-            statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
+        var statusCodes = {};
+        if (x) {
+            var statusCodesTags = x.getElementsByTagName("status");
+
+            for (i = 0; i < statusCodesTags.length; i++)
+                statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
+        }
 
         if (303 in statusCodes) { // Nick change
             delete account.resources[this.jid];
             this.name = item.getAttribute("nick")
-            this.visibleName =  this.name + " from " + this.jid.visibleName;
+            this.visibleName =  this.name + " from " + this.jid.node;
             this.jid = this.jid.createFullJID(this.name);
             account.resources[this.jid] = this;
             this.modelUpdated("jid", null, "name", null, "visibleName");
@@ -205,10 +223,18 @@ _DECL_(ConferenceMember, Resource).prototype =
 
         Resource.prototype.onPresence.call(this, pkt);
 
-        var item = x.getElementsByTagName("item")[0];
-        if (item) {
-            this.affiliation = item.getAttribute("affiliation");
-            this.role = item.getAttribute("role");
+        if (x) {
+            var item = x.getElementsByTagName("item")[0];
+            if (item) {
+                var oldState = {affiliation: this.affiliation, role: this.role,
+                                realJID: this.realJID};
+
+                this.affiliation = item.getAttribute("affiliation");
+                this.role = item.getAttribute("role");
+                this.realJID = item.getAttribute("jid");
+
+                this._modelUpdatedCheck(oldState);
+            }
         }
     },
 
@@ -323,14 +349,14 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         this.modelUpdated("bookmarks", {added: this.bookmarks});
     },
 
-    _onConferenceAdded: function(conference)
+    _onBookmarkAdded: function(conference)
     {
         this.bookmarks.push(conference);
         this._syncServerBookmarks();
         this.modelUpdated("bookmarks", {added: [conference]});
     },
 
-    _onConferenceRemoved: function(conference)
+    _onBookmarkRemoved: function(conference)
     {
         this.bookmarks.splice(this.bookmarks.indexOf(conference), 1);
         this._syncServerBookmarks();

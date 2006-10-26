@@ -71,7 +71,7 @@
 
     var setPresenceUpdater = {
       onPresenceChange: function() {
-        this.chooser.value = account.currentPresence.type || "available";
+        this.chooser.value = account.currentPresence.show || "available";
         this.onIconSetChange();
       },
 
@@ -81,6 +81,7 @@
         document.getElementById("setPresence-nick").value = account.connectionInfo.user;
         if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
+          this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
           this.bookmarksMenuView =
             new BookmarksMenuView(document.getElementById("conference-menu-separator"));
           document.getElementById("cmd_toggleShowOffline").
@@ -109,7 +110,7 @@
       onIconSetChange: function()
       {
         document.getElementById("setPresence-type-image").src =
-          this.systray.icon = presenceToIcon(account.currentPresence.type||"available");
+          this.systray.icon = presenceToIcon(account.currentPresence.show||"available");
       },
 
       init: function()
@@ -120,7 +121,7 @@
 
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.systray = document.getElementById("systray");
-        this.systray.icon = presenceToIcon(account.currentPresence.type||"available");
+        this.systray.icon = presenceToIcon(account.currentPresence.show||"available");
         this.value = this.chooser.value;
       }
     };
@@ -239,6 +240,10 @@
           nextTab.selected = false;
           nextTab.controler.focus();
           nextTab.selected = true;
+        }
+
+        if (this.contact instanceof Conference) {
+          this.contact.exitRoom();
         }
 
         this.__proto__._allPanes.splice(this.__proto__._allPanes.indexOf(this),1);
@@ -465,7 +470,8 @@
                     onselect="self.activeItem = this.selectedItem.model"/>
               </tabpanel>
               <tabpanel>
-                <richlistbox id="conferences-list" flex="1"/>
+                <richlistbox id="conferences-list" flex="1"
+                    onselect="this.view.activeItem = this.selectedItem.model"/>
               </tabpanel>
             </tabpanels>
           </tabbox>
