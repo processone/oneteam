@@ -187,11 +187,11 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         this.modelUpdated("conferences", {removed: [conference]});
     },
 
-    getOrCreateConference: function(jid, nick, password)
+    getOrCreateConference: function(jid)
     {
         if (this.allConferences[jid])
             return this.allConferences[jid];
-        return new Conference(jid, nick, password);
+        return new Conference(jid);
     },
 
     onAddContact: function(contact)

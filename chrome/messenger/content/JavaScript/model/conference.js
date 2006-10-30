@@ -1,10 +1,8 @@
-function Conference(jid, nick, password)
+function Conference(jid)
 {
     this.init();
 
     this.jid = new JID(jid);
-    this.nick = nick;
-    this.password = password;
     this.name = this.jid.shortJID;
     this.visibleName = this.jid.node;
     this.resources = [];
@@ -15,21 +13,11 @@ function Conference(jid, nick, password)
 
 _DECL_(Conference, Contact).prototype =
 {
-    get fullJID()
-    {
-        if (this._nick)
-            return this.jid.createFullJID(resource);
-
-        if (this.myResource)
-            return this.myResource.jid;
-
-        return this.jid.createFullJID(this.nick);
-    },
-
     _sendPresence: function(show, status, priority, type)
     {
         var presence = new JSJaCPresence();
-        presence.setTo(this.fullJID);
+        presence.setTo(this.jid + "/" + this._nick);
+
         if (show)
             presence.setShow(show);
         if (status)
@@ -42,17 +30,19 @@ _DECL_(Conference, Contact).prototype =
         var x = presence.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
         presence.getNode().appendChild(x);
 
-        if (this.password)
+        if (this._password)
             x.appendChild(presence.getDoc().createElement("password")).
-                appendChild(presence.getDoc().createTextNode(this.password));
+                appendChild(presence.getDoc().createTextNode(this._password));
 
         con.send(presence);
     },
 
-    bookmark: function(bookmarkName, autoJoin, internal)
+    bookmark: function(bookmarkName, autoJoin, nick, password, internal)
     {
-        var oldState = { bookmarkName: this.bookmarkName, autoJoin: this.autoJoin };
-        [this.bookmarkName, this.autoJoin] = [bookmarkName, !!autoJoin];
+        var oldState = { bookmarkName: this.bookmarkName, autoJoin: this.autoJoin,
+            bookmarkNick: this.bookmarkNick, bookmarkPassword: this.bookmarkPassword};
+        [this.bookmarkName, this.autoJoin, this.bookmarkNick, this.bookmarkPassword] =
+            [bookmarkName, !!autoJoin, nick, password];
 
         // XXX handle autojoin somehow?
         if (!internal && bookmarkName != oldState.bookmarkName) {
@@ -74,8 +64,11 @@ _DECL_(Conference, Contact).prototype =
         account.onJoinRoom(this);
     },
 
-    joinRoom: function(callback)
+    joinRoom: function(callback, nick, password)
     {
+        this._nick = nick;
+        this._password = password;
+
         var [type, status, priority] = account.getPresenceFor(this);
 
         if (!this.joined) {
@@ -138,7 +131,7 @@ _DECL_(Conference, Contact).prototype =
 
     changeNick: function(newNick)
     {
-        if (this.fullJID.resource == newNick)
+        if (this._nick == newNick)
             return;
 
         this._nick = newNick;
@@ -158,7 +151,7 @@ _DECL_(Conference, Contact).prototype =
     createResource: function(jid)
     {
         var resource = new ConferenceMember(jid);
-        if (!this.myResource && jid.resource == this.nick)
+        if (!this.myResource && jid.resource == this._nick)
             this.myResource = resource;
 
         return resource;
@@ -183,7 +176,6 @@ _DECL_(Conference, Contact).prototype =
             this.joined = false;
             account._onConferenceRemoved(this);
             account._presenceObservers.splice(account._presenceObservers.indexOf(this), 1);
-            delete this._nick;
 
             // TODO: Notify about kick, ban, etc.
 
@@ -191,15 +183,17 @@ _DECL_(Conference, Contact).prototype =
         }
 
         if (this.joined || !this._callback)
-            return;
+            return false;
 
         if (pkt.getType() == "error")
-            errorTag = packet.getNode().getElementsByTagName('error')[0];
+            errorTag = pkt.getNode().getElementsByTagName('error')[0];
         else
             this.joined = true;
 
         this._callback.call(null, pkt, errorTag);
         this._callback = null;
+
+        return true;
     },
 
     onMessage: function(packet)
@@ -246,8 +240,8 @@ _DECL_(ConferenceMember, Resource).prototype =
 
     onPresence: function(pkt)
     {
-        if (this.contact.myResource == this)
-            this.contact.onPresence(pkt);
+        if (this.contact.myResource == this && this.contact.onPresence(pkt))
+            return;
 
         if (pkt.getType() == "error")
             return;
@@ -270,6 +264,8 @@ _DECL_(ConferenceMember, Resource).prototype =
             this.jid = this.jid.createFullJID(this.name);
             account.resources[this.jid] = this;
             this.modelUpdated("jid", null, "name", null, "visibleName");
+            this.contact._nick = this.name;
+
             return;
         }
 
@@ -369,10 +365,10 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
                 bookmark.setAttribute("autojoin", "true");
 
             bookmark.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "nick")).
-                appendChild(iq.getDoc().createTextNode(this.bookmarks[i].nick));
-            if (this.bookmarks[i].password)
+                appendChild(iq.getDoc().createTextNode(this.bookmarks[i].bookmarkNick));
+            if (this.bookmarks[i].bookmarkPassword)
                 bookmark.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "password")).
-                    appendChild(iq.getDoc().createTextNode(this.bookmarks[i].password));
+                    appendChild(iq.getDoc().createTextNode(this.bookmarks[i].bookmarkPassword));
         }
         con.send(iq);
     },
@@ -402,12 +398,13 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         for (var i = 0; i < bookmarksTags.length; i++) {
             var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
             var password = bookmarksTags[i].getElementsByTagName("password")[0];
-            var conference = account.getOrCreateConference(
-                bookmarksTags[i].getAttribute("jid"), nick && nick.textContent,
-                password && password.textContent);
+            var conference = account.
+                getOrCreateConference(bookmarksTags[i].getAttribute("jid"));
 
             conference.bookmark(bookmarksTags[i].getAttribute("name"),
                                 bookmarksTags[i].getAttribute("autojoin") == "true",
+                                nick && nick.textContent,
+                                password && password.textContent,
                                 true);
 
             this.bookmarks.push(conference);
