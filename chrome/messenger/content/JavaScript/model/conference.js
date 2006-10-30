@@ -88,6 +88,8 @@ _DECL_(Conference, Contact).prototype =
 
     exitRoom: function()
     {
+        if (this.chatPane)
+            this.chatPane.close();
         this._sendPresence(null, null, null, "unavailable");
         this.joined = false;
     },
@@ -126,6 +128,12 @@ _DECL_(Conference, Contact).prototype =
             appendChild(pkt.getDoc().createTextNode(reason || "Sorry i can't join now"));
         
         con.send(pkt);
+    },
+
+    onChangeNick: function()
+    {
+        window.openDialog("chrome://messenger/content/changeNick.xul",
+                          "ot:invite", "chrome,centerscreen", this);
     },
 
     changeNick: function(newNick)

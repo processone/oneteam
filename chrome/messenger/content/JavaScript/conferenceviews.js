@@ -116,6 +116,8 @@ function ConferenceView(model, parentView)
     this.label = document.createElement("label");
 
     this.node.setAttribute("class", "conference-view");
+    this.node.setAttribute("context", "conference-contextmenu");
+    this.node.setAttribute("onmousedown", "this.view.parentView.activeItem = this.model");
     this.node.model = this.model;
     this.node.view = this;
 

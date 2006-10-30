@@ -103,6 +103,7 @@
             new BookmarksMenuView(document.getElementById("conference-menu-separator"));
           document.getElementById("cmd_toggleShowOffline").
             setAttribute("checked", this.rosterView.hideOffline);
+          document.getElementById("conference-contextmenu").view = this.conferencesView;
         }
         if (!account.connected)
           ChatPane.prototype.closeAllTabs();
@@ -534,6 +535,20 @@
       <menuseparator/>
 
       <menuitem label="&listitemcontext.Infos;" oncommand="activeItem.showVCard()"/>
+    </popup>
+
+    <popup id="conference-contextmenu">
+      <menuitem id="conference-invite" label="Invite contacts to this room..."
+          oncommand="this.parentNode.view.activeItem.onInvite()"/>
+      <menuitem id="conference-changeNick" label="Change nick..."
+          oncommand="this.parentNode.view.activeItem.onChangeNick()"/>
+      <menuitem id="conference-changeSubject" label="Change subject..."
+          oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
+
+      <menuseparator/>
+
+      <menuitem id="conference-leave" label="Leave conference"
+          oncommand="this.parentNode.view.activeItem.exitRoom()"/>
     </popup>
   </popupset>
 

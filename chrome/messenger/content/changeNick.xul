@@ -1,42 +1,33 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<window id="Nick"
-		title="Impossible to connect"
-        orient="horizontal"
-        resizable="true" 
-        width="350"
-        onload="loadNick();"
-        onclose="self.close();"
-        height="150"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog id="changeNick" title="Change Nick"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  onload="onLoad()"  ondialogaccept="return onAccept();" buttons="accept,cancel">
 
-<script type="application/x-javascript" src="JavaScript/changeNick.js"/>
-<script type="application/x-javascript" src="JavaScript/gui.js"/>        
-        
-<vbox flex="1">
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conference = window.arguments[0];
 
-<spacer height="10"/>
+    function onLoad() {
+      document.getElementById("nick").value = conference.fullJID.resource;
+    }
 
- <hbox>
-  <description>
-    Nickname is already used.Please choose another one.
-  </description>
- </hbox>
-  
-  <spacer height="20"/>
-  
-    <textbox id="text-nickname" value=""/>
-  
-<spacer height="20"/>
+    function onAccept() {
+      var nick = document.getElementById("nick").value;
+      if (!nick) {
+        alert("Nick cannot be empty!")
+        return false;
+      }
+      conference.changeNick(nick);
+      return true;
+    }
+  ]]></script>
 
-  <hbox>
-    <spacer flex="1"/>
-
-    <button  label="OK" oncommand="connectWithNewNickname();"/>
-    <button label="Cancel" oncommand="self.close();window.opener.closeTab();"/>
+  <hbox class="entry">
+    <description value="New Nick:"/>
+    <textbox id="nick"/>
   </hbox>
-</vbox>        
-        
- </window> 
+
+</dialog>

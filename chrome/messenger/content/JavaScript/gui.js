@@ -994,7 +994,9 @@ function setTimeouts() {
 
     try {
 
-        idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
+//        idle = Components.classes["@procees-one.net/idle;1"].
+//            createInstance(Components.interfaces.otIIdle);
+//        idle = Components.classes["@mozilla.org/idle;1"].createInstance(Components.interfaces.nsIIdle);
 
 
         var menulist = document.getElementById("status");
@@ -1051,7 +1053,7 @@ function makeAway() {
     try {
 
         //alert (idle.getIdleTime());
-        if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+        if (0 && idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
 
         changeStatus("away");
         changeIcone("away.png");
@@ -1070,7 +1072,7 @@ function makeAway() {
 
 function makeXa() {
 
-    if (idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
+    if (0 && idle.getIdleTime() > (60000 * (gPrefService.getIntPref("chat.status.autoaway")) - 100)){
     changeStatus("xa");
     changeIcone("xa.png");
     var menulist = document.getElementById("status");
