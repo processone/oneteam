@@ -25,8 +25,8 @@
       if (conference) {
         room.value = conference.jid.node;
         server.value = conference.jid.domain;
-        nick.value = conference.nick || "";
-        password.value = conference.password || "";
+        nick.value = conference.bookmarkNick || "";
+        password.value = conference.bookmarkPassword || "";
 
         bookmarkName.value = conference.bookmarkName || "";
 
@@ -68,16 +68,14 @@
           return false;
         } 
 
-        conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value,
-          nick.value, password.value);
+        conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value);
       }
 
-      if (bookmark.checked) {
-        conf.bookmark(bookmarkName.value, false);
-      }
+      if (bookmark.checked)
+        conf.bookmark(bookmarkName.value, false, nick.value, password.value);
 
       progressmeter.mode = "undetermined";
-      conf.joinRoom(joinRoomResponse);
+      conf.joinRoom(joinRoomResponse, nick.value, password.value);
 
       return false;
     }
