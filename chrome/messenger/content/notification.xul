@@ -1,0 +1,73 @@
+<?xml version="1.0"?> 
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/notification.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+
+<window id="ot:popupnotification" windowtype="ot:notification" onload="onLoad()"
+  onunload="notificationScheme._updatePositions(window, true)"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var [notificationScheme, _title, clickHandler] = window.arguments;
+    var msg = window.arguments[3] == "message";
+
+    function onLoad() {
+      window.setTimeout("window.close()", 5000);
+      document.getElementById("titleContent").innerHTML = _title;
+      document.getElementById("contactInfo").hidden = msg;
+      document.getElementById("messageInfo").hidden = !msg;
+
+      if (msg) {
+        var [,,,,message, icon] = window.arguments;
+
+        document.getElementById("messageContent").innerHTML = message;
+        document.getElementById("messageImg").src = icon;
+      } else {
+        var [,,,,model] = window.arguments;
+
+        document.getElementById("avatar").model = model;
+        document.getElementById("jid").value = model.jid;
+
+        if (model.name)
+          document.getElementById("nick").value = model.name;
+        else
+          document.getElementById("nick").hidden = true;
+      }
+      sizeChange();
+    }
+
+    function sizeChange() {
+      if (window.outerHeight > 1)
+        notificationScheme._updatePositions(window, false);
+      else
+        window.setTimeout(sizeChange, 50);
+    }
+
+    function onClick() {
+      if (window.arguments[1])
+        window.arguments[1].call();
+      window.close();
+    }
+  ]]></script>
+
+  <vbox onclick="onClick()">
+    <description id="title">
+      <span xmlns="http://www.w3.org/1999/xhtml" id="titleContent"/>
+    </description>
+    <hbox id="contactInfo">
+      <avatar id="avatar"/>
+      <vbox flex="1">
+        <label id="nick" value="a"/>
+        <label id="jid" value="b"/>
+      </vbox>
+    </hbox>
+    <hbox id="messageInfo" align="center">
+      <image id="messageImg"/>
+      <description id="message">
+        <span xmlns="http://www.w3.org/1999/xhtml" id="messageContent"/>
+      </description>
+    </hbox>
+  </vbox>
+
+</window>

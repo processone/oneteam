@@ -26,14 +26,24 @@
     <implementation>
 
       <property name="model">
+        <getter><![CDATA[
+          return this._model;
+        ]]></getter>
+
         <setter><![CDATA[
+          if (this._model == val)
+            return val;
+
           if (this._model)
             this._model.unregisterView(this, "onAvatarChange", "avatar");
 
-          if (model) {
+          if (val) {
             this._model = val;
             this._model.registerView(this, "onAvatarChange", "avatar");
           }
+          this.onAvatarChange();
+
+          return val;
         ]]></setter>
       </property>
       <constructor>
@@ -42,7 +52,7 @@
           this._container = this._image.parentNode.parentNode.parentNode;
           if (this.model) {
             this._model = this.model;
-            this.model.registerView(this, "onAvatarChange", "avatar");
+            this._model.registerView(this, "onAvatarChange", "avatar");
           }
           this.onAvatarChange();
         ]]>
@@ -50,8 +60,7 @@
 
       <destructor>
         <![CDATA[
-          if (this.model)
-            this._model.unregisterView(this, "onAvatarChange", "avatar");
+          this.model = null;
         ]]>
       </destructor>
 
@@ -82,6 +91,7 @@
 
         this._image.width = this._image.height = 1;
         var height = this._container.boxObject.height - 4;
+        dump(window.title+", "+height+"\n");
 
         if (height > this._image.naturalHeight)
           height = this._image.naturalHeight;

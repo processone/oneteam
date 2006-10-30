@@ -473,6 +473,7 @@ _DECL_(Resource, null, Model, DiscoItem,
        })).prototype =
 {
     _registered: false,
+    show: "unavailable",
 
     get visibleName()
     {
@@ -509,9 +510,10 @@ _DECL_(Resource, null, Model, DiscoItem,
         this.priority = packet.getPriority();
         this.status = packet.getStatus();
 
-        if (packet.getShow() == "unavailable")
-            this._remove()
-        else if (!this._registered)
+        if (packet.getType() == "unavailable") {
+            this._remove();
+            this.show = "unavailable";
+        } else if (!this._registered)
             this.contact._onResourceAdded(this);
 
         this.contact._onResourceUpdated(this);
@@ -525,7 +527,7 @@ _DECL_(Resource, null, Model, DiscoItem,
             flags = dontNotifyViews ? this._calcModificationFlags(oldState) :
                 this._modelUpdatedCheck(oldState);
 
-        account.notificationScheme.show("resource", packet.getShow() || "available",
+        account.notificationScheme.show("resource", this.show,
                                         this, oldState.show);
 
         this._registered = true;
