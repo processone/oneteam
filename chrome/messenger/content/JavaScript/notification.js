@@ -49,7 +49,7 @@ _DECL_(NotificationScheme).prototype =
 
             for (var i = 0; i < this._wins.length; i++) {
                 _top -= this._wins[i].outerHeight + 1;
-                this._wins[i].moveTo(_left - win.outerWidth, _top);
+                this._wins[i].moveTo(_left - this._wins[i].outerWidth, _top);
             }
             this._top = _top;
         } else {
