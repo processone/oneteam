@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/main.css" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 
 <!DOCTYPE window [
 <!ENTITY % guiDTD SYSTEM "chrome://messenger/locale/gui.dtd">
