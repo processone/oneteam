@@ -69,6 +69,11 @@ _DECL_(Conference, Contact).prototype =
             account.bookmarks._syncServerBookmarks();
     },
 
+    onJoinRoom: function()
+    {
+        account.onJoinRoom(this);
+    },
+
     joinRoom: function(callback)
     {
         var [type, status, priority] = account.getPresenceFor(this);
@@ -85,6 +90,12 @@ _DECL_(Conference, Contact).prototype =
     {
         this._sendPresence(null, null, null, "unavailable");
         this.joined = false;
+    },
+
+    onInvite: function()
+    {
+        window.openDialog("chrome://messenger/content/invite.xul",
+                          "ot:invite", "chrome,centerscreen", this);
     },
 
     invite: function(jid, reason)

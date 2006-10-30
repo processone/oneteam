@@ -24,6 +24,10 @@ groupselector {
   -moz-binding: url("chrome://messenger/content/bindings/groupselector.xml#groupselector");
 }
 
+contactselector {
+  -moz-binding: url("chrome://messenger/content/bindings/contactselector.xml#contactselector");
+}
+
 otsystray {
   -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systray");
 }

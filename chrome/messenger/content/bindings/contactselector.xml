@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="contactselector">
+
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/avatar.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <xul:hbox flex="1">
+          <xul:textbox id="name-textbox" flex="1"/>
+          <xul:button id="add-button" label="Add"
+            oncommand="this.parentNode.parentNode.parentNode.onAddContact()"/>
+        </xul:hbox>
+        <xul:listbox id="contacts-listbox" xbl:inherits="rows">
+        </xul:listbox>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <property name="choosenContacts">
+        <getter><![CDATA[
+          var count = this._listbox.getRowCount();
+          var contacts = [];
+          var contactsHash = {};
+          for (var i = 0; i < count; i++) {
+            var item = this._listbox.getItemAtIndex(i);
+            if (item.checked && item.value && !contactsHash[item.value]) {
+              contactsHash[item.value] = 1;
+              contacts.push(item.value);
+            }
+          }
+          return contacts;
+        ]]></getter>
+      </property>
+
+      <constructor>
+        <![CDATA[
+          this._listbox = document.getAnonymousElementByAttribute(this, "id", "contacts-listbox");
+          this._textbox = document.getAnonymousElementByAttribute(this, "id", "name-textbox");
+
+          var account = window;
+          while (account && !account.account)
+            account = account.opener;
+          if (account) {
+            account = account.account;
+            contactsHash = {};
+            for (var group in account.groupsIterator()) {
+              var groupItem = this._listbox.appendItem(group.visibleName, "");
+              groupItem.setAttribute("type", "checkbox");
+              groupItem.contacts = [];
+              groupItem.checkedCount = 0;
+              for (var contact in group.contactsIterator()) {
+                var contactItem = this._listbox.appendItem("  "+contact.visibleName, contact.jid);
+                contactItem.setAttribute("type", "checkbox");
+                contactItem.group = groupItem;
+                (contactItem.dups = contactsHash[contact.jid] = contactsHash[contact.jid] || []).
+                  push(contactItem);
+                groupItem.contacts.push(contactItem);
+              }
+            }
+          }
+        ]]>
+      </constructor>
+
+      <method name="onAddContact">
+        <body><![CDATA[
+          if (!this._textbox.value)
+            return;
+          if (!~this._textbox.value.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
+            alert("Please give correct Jabber ID");
+            return;
+          }
+
+          var item = document.createElement("listitem");
+          item.setAttribute("type", "checkbox");
+          item.setAttribute("checked", "true");
+          item.setAttribute("label", this._textbox.value);
+          item.setAttribute("value", this._textbox.value);
+
+          this._textbox.value = "";
+
+          this._listbox.appendChild(item);
+          this._listbox.ensureElementIsVisible(item);
+        ]]></body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="CheckboxStateChange"><![CDATA[
+        if (this._internal)
+          return;
+
+        var item = event.originalTarget;
+        if (item.contacts) {
+          for (var i = 0; i < item.contacts.length; i++)
+            item.contacts[i].checked = item.checked;
+        } else if (item.dups) {
+          this._internal = true;
+
+          for (var i = 0; i < item.dups.length; i++) {
+            if (item.dups[i].lastChecked == item.checked)
+              continue;
+
+            item.dups[i].lastChecked = item.checked;
+
+            if (item != item.dups[i])
+              item.dups[i].checked = item.checked;
+            if (item.checked) {
+              if (++item.dups[i].group.checkedCount == item.dups[i].group.contacts.length)
+                item.dups[i].group.checked = true;
+            } else if (item.dups[i].group.checkedCount-- == item.dups[i].group.contacts.length)
+                item.dups[i].group.checked = false;
+          }
+
+          this._internal = false;
+        }
+      ]]></handler>
+    </handlers>
+
+  </binding>
+
+</bindings>

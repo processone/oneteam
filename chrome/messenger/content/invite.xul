@@ -1,150 +1,42 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
+<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/invite.dtd">
 
-<window id="invite"
-		title="Invite users"
-        orient="horizontal"
-        resizable="true" 
-        width="430"
-        onload="loadContactList();"
-        onclose="self.close();"
-        height="450"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog id="addContact"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Invite"
+  ondialogaccept="return invite()" title="Invite users" buttons="accept,cancel">
 
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conference = window.arguments[0];
 
-<script type="application/x-javascript" src="JavaScript/invite.js"/>
-<script type="application/x-javascript" src="JavaScript/gui.js"/>     
-<script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
-<script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
-<script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
-<script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
-<script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
-<script type="application/x-javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
-<script type="application/x-javascript" src="JavaScript/shared.js"/>
-
-<script src="chrome://global/content/nsDragAndDrop.js"/>
-<script src="chrome://global/content/nsTransferable.js"/>
-
-<script>
-   
-   
-   var invitableObserver =
-  {
-  
-  getSupportedFlavours : function() {
-    var flavours = new FlavourSet();
-    flavours.appendFlavour("text/unicode");
-    return flavours;
-  },
-
-  onDragStart: function(evt, transferData, action)
-    {
-   		 var plainText="Cabbage";
-   		 
-   		
-   		 
-      transferData.data=new TransferData();
-      transferData.data.addDataForFlavour("text/unicode",plainText);
+    function onLoad() {
+      document.getElementById("header").setAttribute("title",
+        "Invite users to room "+conference.jid);
     }
-    
-  };
-  
-  
-   var invitedObserver =
-  {
-  
-  getSupportedFlavours : function() {
-    var flavours = new FlavourSet();
-    flavours.appendFlavour("text/unicode");
-    return flavours;
-  },
 
-    
-    onDragOver: function(evt,flavour,session){
-   
-   	
-    
-    },
+    function invite() {
+      var contacts = document.getElementById("contacts").choosenContacts;
+      var reason = document.getElementById("reason").value;
 
-	onDrop: function(evt, dropdata, session)
-  {
-  
-  
- 	  
- 	  var list = document.getElementById("invitable");
-    
-      var startElement = list.selectedItem;
-      
-      var index = list.getIndexOfItem(startElement);
-      
-      var newList = document.getElementById("invited");
-      
-      newList.appendChild (startElement);
- 	  
- 	  //list.removeItemAt (index);
- 	  
- 	
+      for (var i = 0; i < contacts.length; i++)
+        conference.invite(contacts[i], reason);
+      return true;
     }
- };
-  
-  </script>  
-    
+  ]]></script>
 
-<groupbox class="invite-group" flex="1">
- 
- <caption label="Invite contacts"/>
+  <dialogheader id="header"/>
 
-<vbox  flex="1">
-
-<spacer height="30"/>
-
-<hbox id="head">
-
-<vbox>
-<label value="Contacts to invite"/>
-<spacer height="10"/>
-<listbox  height="240" width="150"  minwidth="140" id="invitable" flex="1" seltype="multiple"
-ondraggesture="nsDragAndDrop.startDrag(event,invitableObserver)"/>
-
-</vbox>
-
-<vbox flex="1">
-
-<spacer height="100"/>
-<button label="Invite all" oncommand='document.getElementById ("invitable").selectAll();makeInvited();'/>
-<spacer height="40"/>
-<button label="--->" oncommand="makeInvited();"/>
-
-
-</vbox>
-
-<vbox>
-<label value="Invited contacts"/>
-<spacer height="10"/>
-<listbox  height="240" width="150"  minwidth="140" id="invited" flex="1"
-ondragover="nsDragAndDrop.dragOver(event,invitedObserver)"
-ondragdrop="nsDragAndDrop.drop(event,invitedObserver)"/>
+  <label value="Contacts:" control="contacts"/>
+  <contactselector id="contacts" rows="6"/>
 		
-</vbox>
+  <spacer/>
 
-</hbox>
+  <label value="Reason:" />
+  <textbox id="reason" multiline="true" rows="2"/>
+</dialog>
 
-<spacer height="20"/>
-
-<hbox>
-<label value="Reason [Optional] : "/>
-<textbox id="reason" flex="1"/>
-</hbox>
-
-<spacer height="30"/>
-
-<hbox align="right">
-<button  label="OK" oncommand="inviteUsers();self.close();"/>
-<button label="Cancel" oncommand="self.close();"/>
-</hbox>
-
-</vbox>
-</groupbox>
-       
- </window>       
