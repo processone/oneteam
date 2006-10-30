@@ -158,6 +158,8 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
     {
         if (this.allContacts[jid])
             return this.allContacts[jid];
+        if (this.allConferences[jid])
+            return this.allConferences[jid];
         return new Contact(jid, name, groups, null, null, true);
     },
 
@@ -434,14 +436,20 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
     onMessage: function(packet)
     {
         var sender = new JID(packet.getFrom());
-        var invite = packet.getNode().getElementsByTagName("invite");
+        var invite = packet.getNode().
+                getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "invite")[0];
 
-        if (invite && invite.item(0)) {
-            var reason = packet.getNode().getElementsByTagName("reason")[0];
+        if (invite) {
+            var conference = this.getOrCreateConference(sender);
+            var reason = invite.getElementsByTagName("reason")[0];
+
+            if (conference.joined)
+                return;
 
             window.openDialog("chrome://messenger/content/invitation.xul", "ot:invitation",
-                              "chrome,centerscreen", sender,
-                              invite.getAttribute("from"), reason && reason.textContent);
+                              "chrome,centerscreen", conference,
+                              new JID(invite.getAttribute("from")),
+                              reason && reason.textContent);
             return;
         }
 

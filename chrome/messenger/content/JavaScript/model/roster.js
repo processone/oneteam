@@ -270,6 +270,8 @@ _DECL_(Contact, null, Model,
 
     onMessage: function(packet)
     {
+        if (packet.getType() == "error")
+            return;
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
         if (packet.getBody())

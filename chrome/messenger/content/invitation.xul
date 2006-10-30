@@ -1,72 +1,45 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-
-<window id="invitation"
-		title="Invitation to a conference"
-        orient="horizontal"
-        resizable="true" 
-        width="390"
-        onload="loadInviteMessage();"
-        onclose="self.close();"
-        height="210"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog id="invitation" title="Invitation to a conference"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Accept"
+  ondialogaccept="return acceptInvitation()" buttonlabelcancel="Decline"
+  ondialogcancel="return declineInvitation()" buttons="accept,cancel">
         
-         <script type="application/x-javascript" src="JavaScript/gui.js"/>
-		<script type="application/x-javascript" src="JavaScript/invitation.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var [conference, by, reason] = window.arguments;
 
+    function onLoad()
+    {
+      document.getElementById("msg").innerHTML = "You have been invited to room <b>"+
+        conference.jid+"</b> by <b>"+by.shortJID+"</b>";
+      if (reason)
+        document.getElementById("reason").value = reason;
+      else
+        document.getElementById("reason").hidden = true;
+    }
 
+    function acceptInvitation()
+    {
+      window.opener.account.onJoinRoom(conference);
+      return true;
+    }
 
+    function declineInvitation()
+    {
+      conference.declineInvitation(by);
+      window.close();
+    }
+  ]]></script>
 
-<groupbox class="invitation-group" flex="1">
- 
- <caption label="Invitation"/>
- 
- <spacer height="30"/>
-<vbox  flex="1">
+  <dialogheader title="Invitation to a conference"/>
 
-<grid flex="1">
+  <description><span id="msg" xmlns="http://www.w3.org/1999/xhtml"/></description>
+  <spacer/>
+  <textbox multiline="true" rows="4" id="reason" disabled="true"/>
 
-                                <columns>
-                                        <column flex="1"/>
-                                        <column flex="3"/>
-                                </columns>
-                                <rows>
-<row>
-<label id="messageJid" value="From :"/>
-<textbox id="jid" readonly="true" width="100" />
-
-</row>
-
-<row>
-<label id="messageRoom" value="to the Room :"/>
-<textbox id="room" readonly="true" />
-</row>
-
-<row>
-<label  value="Reason : "/>
-<textbox id="reason" readonly="true" />
-</row>
-
-</rows>
-
-</grid>
-
-
-
-<spacer height="20"/>
-
-
-</vbox>   
-
-<vbox align="center">
-<hbox align="center">
-<button  label="Join" oncommand="acceptInvitation (true,document.getElementById(jid).value,document.getElementById(room).value); self.close();"/>
-<button label="Cancel" oncommand="acceptInvitation (false,document.getElementById(jid).value,document.getElementById(room).value);self.close();"/>
-</hbox>     
-</vbox>
-
-
-</groupbox>
-        
-</window>
+</dialog>

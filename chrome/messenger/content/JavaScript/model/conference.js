@@ -87,6 +87,36 @@ _DECL_(Conference, Contact).prototype =
         this.joined = false;
     },
 
+    invite: function(jid, reason)
+    {
+        const ns = "http://jabber.org/protocol/muc#user";
+        var pkt = new JSJaCMessage();
+        var x = pkt.getNode().appendChild(pkt.getDoc().createElementNS(ns, "x"));
+        var node = x.appendChild(pkt.getDoc().createElementNS(ns, "invite"));
+
+        pkt.setTo(this.jid);
+        node.setAttribute('to', jid);
+        node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
+            appendChild(pkt.getDoc().createTextNode(reason || "Please join that room"));
+        
+        con.send(pkt);
+    },
+
+    declineInvitation: function(from, reason)
+    {
+        const ns = "http://jabber.org/protocol/muc#user";
+        var pkt = new JSJaCMessage();
+        var x = pkt.getNode().appendChild(pkt.getDoc().createElementNS(ns, "x"));
+        var node = x.appendChild(pkt.getDoc().createElementNS(ns, "decline"));
+
+        pkt.setTo(this.jid);
+        node.setAttribute('to', from);
+        node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
+            appendChild(pkt.getDoc().createTextNode(reason || "Sorry i can't join now"));
+        
+        con.send(pkt);
+    },
+
     changeNick: function(newNick)
     {
         if (this.fullJID.resource == newNick)
@@ -155,6 +185,9 @@ _DECL_(Conference, Contact).prototype =
 
     onMessage: function(packet)
     {
+        if (packet.getType() == "error")
+            return;
+
         if (packet.getSubject() != this.subject) {
             this.subject = packet.getSubject();
             this.modelUpdated("subject");
@@ -240,6 +273,20 @@ _DECL_(ConferenceMember, Resource).prototype =
 
     onMessage: function(packet)
     {
+        if (packet.getType() == "error")
+            return;
+
+        if (this.contact.myResource == this) {
+            var decline = packet.getNode().
+                getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "decline")[0];
+            if (decline) {
+                var reason = decline.getElementsByTagName("reason")[0];
+                this.notificationScheme.show("invitation", "decline", this.contact, reason,
+                                             decline.getAttribute("from"));
+                return;
+            }
+        }
+
         if (packet.getSubject() != this.subject) {
             this.contact.subject = packet.getSubject();
             this.contact.modelUpdated("subject");
