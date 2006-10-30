@@ -429,8 +429,6 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                 else
                     new Contact(items[i]);
             }
-            var c = new Conference("test@muc.prefiks.ath.cx", "kaban");
-            c.onInvite();
             break;
         }
     },

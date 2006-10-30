@@ -46,6 +46,7 @@
 
       var cs = document.getElementById("contact-chat-single");
       var cm = document.getElementById("contact-chat-multi");
+      var im = document.getElementById("contact-invite");
 
       cm.hidden = !(cs.hidden = activeItem.resources.length > 1);
       if (cs.hidden) {
@@ -61,6 +62,22 @@
           list.appendChild(item);
         }
       }
+
+      im.hidden = !account.conferences.length;
+      if (!im.hidden) {
+        list = im.firstChild;
+        while (list && list.firstChild)
+          list.removeChild(list.firstChild);
+        for (var i = 0; i < account.conferences.length; i++) {
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", account.conferences[i].jid);
+          item.setAttribute("oncommand", "this.model.invite(this.contact)");
+          item.model = account.conferences[i];
+          item.contact = activeItem.jid;
+          list.appendChild(item);
+        }
+      }
+
       document.getElementById("contact-authorisation-ask").
         setAttribute("disabled", activeItem.canSeeHim);
       document.getElementById("contact-authorisation-allow").
@@ -492,7 +509,9 @@
       <menu id="contact-chat-multi" label="&listitemcontext.Communiquer;" hidden="true">
         <menupopup/>
       </menu>
-      <!--<menuitem label="&listitemcontext.InviterConference;"/>-->
+      <menu id="contact-invite" label="Invite to" hidden="true">
+        <menupopup/>
+      </menu>
 
       <menuseparator/>
 
