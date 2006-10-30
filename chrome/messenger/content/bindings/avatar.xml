@@ -91,7 +91,6 @@
 
         this._image.width = this._image.height = 1;
         var height = this._container.boxObject.height - 4;
-        dump(window.title+", "+height+"\n");
 
         if (height > this._image.naturalHeight)
           height = this._image.naturalHeight;

@@ -45,8 +45,8 @@
     }
 
     function onClick() {
-      if (window.arguments[1])
-        window.arguments[1].call();
+      if (clickHandler)
+        clickHandler.call();
       window.close();
     }
   ]]></script>

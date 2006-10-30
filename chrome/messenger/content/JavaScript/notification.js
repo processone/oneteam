@@ -45,7 +45,7 @@ _DECL_(NotificationScheme).prototype =
         var _left = window.screen.availWidth + window.screen.availLeft;
 
         if (closing) {
-            this._wins.shift();
+            this._wins.splice(this._wins.indexOf(win), 1);
 
             for (var i = 0; i < this._wins.length; i++) {
                 _top -= this._wins[i].outerHeight + 1;
