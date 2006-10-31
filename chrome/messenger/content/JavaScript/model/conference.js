@@ -56,7 +56,7 @@ _DECL_(Conference, Contact).prototype =
         }
         
         if (this._modelUpdatedCheck(oldState).length && !internal)
-            account.bookmarks._syncServerBookmarks();
+            account.bookmarks._onBookmarkUpdated(this);
     },
 
     onJoinRoom: function()
@@ -412,17 +412,53 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         this.modelUpdated("bookmarks", {added: this.bookmarks});
     },
 
+    startBatchUpdate: function()
+    {
+        this._batchUpdate = true;
+    },
+
+    stopBatchUpdate: function()
+    {
+        this._batchUpdate = false;
+        if (this._changed)
+            this._syncServerBookmarks();
+        this._changed = false;
+    },
+
     _onBookmarkAdded: function(conference)
     {
+        for (var i = 0; i < this.bookmarks.length; i++)
+            if (this.bookmarks[i].bookmarkName == conference.bookmarkName &&
+                this.bookmarks[i] != conference)
+            {
+                this.bookmarks[i].bookmark(null, null, null, null, true);
+                this.bookmarks.splice(i, 1);
+                break;
+            }
+
         this.bookmarks.push(conference);
-        this._syncServerBookmarks();
+        if (this._batchUpdate)
+            this._changed = true;
+        else
+            this._syncServerBookmarks();
         this.modelUpdated("bookmarks", {added: [conference]});
+    },
+
+    _onBookmarkUpdated: function(conference)
+    {
+        if (this._batchUpdate)
+            this._changed = true;
+        else
+            this._syncServerBookmarks();
     },
 
     _onBookmarkRemoved: function(conference)
     {
         this.bookmarks.splice(this.bookmarks.indexOf(conference), 1);
-        this._syncServerBookmarks();
+        if (this._batchUpdate)
+            this._changed = true;
+        else
+            this._syncServerBookmarks();
         this.modelUpdated("bookmarks", {removed: [conference]})
     },
 }

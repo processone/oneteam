@@ -1,102 +1,156 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/joinRoom.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/joinRoom.dtd">
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<window id="Bookmarks"
-        title="&Room.window;"
-        orient="horizontal"
-        onload="loadServer();"
-        width="490"
-        height="290"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-        
-        
-    <script type="application/x-javascript" src="JavaScript/gui.js"/>
-    <script type="application/x-javascript" src="JavaScript/joinRoom.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaC.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
-    <script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
+<dialog id="manageBookmarks"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
+  ondialogaccept="return saveBookmarks()" title="Bookmark manager" buttons="accept,cancel">
 
-    
-    
-    <hbox flex="1">
-    
-    <vbox flex="1">
-    
-    <!-- <label value="Bookmarks"/> 
-   
-    <tree id="bookmarks" width="180" flex="1" hidecolumnpicker="true">
-      <treecols>
-           <treecol id="col1" flex="1" hideheader="true"/> 
-            
-     </treecols>
-     <treechildren id="servers">
-       
-     </treechildren>
- </tree>-->
- 
- <listbox context="listcontext" width="180" flex="1" id="servers" onselect="showProperties();"/>
- 
- <hbox>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var selectedItem;
+    var textBoxes = {};
+    var removedItems = [];
+    var list;
 
- <button id="rem" label="Remove" onclick="removeBookmark();"/>
- </hbox>
- </vbox>
-    
-    <groupbox id="xf-config-Roombox" flex="1">
-        <caption class="titre" label="&Room.titre;" />
-        
-         <spacer height="15"/>
-        
-        <grid flex="1">
-            <columns>
-                <column id="labels" flex="1"/>
-                <column id="fields" flex="1"/>
-            </columns>
-            <rows id="rows" flex="1">
-            	<row>
-                    <description value="&Room.name; :"/>
-                    <textbox persist="true" id="name"/>
-                </row>
-                <row>
-                    <description value="&Room.login; :"/>
-                    <textbox persist="true" id="login"/>
-                </row>
-                <row>
-                    <description value="&Room.pass; :"/>
-                    <textbox persist="true" id="pass"/>
-                </row>
-                <row>
-                    <description value="&Room.room; :"/>
-                    <textbox  persist="true" id="room"/>
-                </row>
-                <row>
-                    <description value="&Room.server; :"/>
-                    <textbox persist="true" id="server"/>                  
-                </row>
-                 <spacer height="10"/>
-				<row>
-                    <spacer height="10"/>
-                    <checkbox id="auto" label="Auto join"/>                  
-                </row>
+    function onLoad()
+    {
+      list = document.getElementById("list");
+      for each (var id in "name room server nick pass autoJoin".split(/ /)) {
+        textBoxes[id] = document.getElementById(id);
+      }
+      var bookmarks = window.opener.account.bookmarks.bookmarks;
+      for (var i = 0; i < bookmarks.length; i++) {
+        var item = list.appendItem(bookmarks[i].bookmarkName);
+        item.model = bookmarks[i];
+        item["val-room"] = bookmarks[i].jid.node;
+        item["val-server"] = bookmarks[i].jid.domain;
+        item["val-nick"] = bookmarks[i].bookmarkNick || "";
+        item["val-pass"] = bookmarks[i].bookmarkPassword || "";
+        item["val-autoJoin"] = bookmarks[i].autoJoin;
+      }
+      if (i)
+        list.selectedIndex = 0;
+    }
 
-            </rows>
-        </grid>
+    function updateName(newName)
+    {
+      if (selectedItem)
+        selectedItem.label = newName;
+    }
 
-        <hbox align="center">
-            <spacer flex="1"/>
-            
-			<button id="add" label="Save bookmark" oncommand="addBookmark();"/>
-            <spacer flex="1"/>
-            <button label="&Room.cancel;" oncommand="sendBookmarkPacket();self.close();"/>
-        </hbox>
-    </groupbox>
+    function newRoom()
+    {
+      var item = list.appendItem("New Room");
+      for each (var id in "room server nick pass autoJoin".split(/ /))
+        item["val-"+id] = "";
+      list.selectedItem = item;
+      textBoxes.name.focus();
+    }
 
-   
-    </hbox>
+    function removeRoom()
+    {
+      if (!selectedItem)
+        return;
 
-</window>
+      if (selectedItem.model)
+        removedItems.push(selectedItem.model);
+      list.removeChild(selectedItem);
+    }
+
+    function saveBookmarks()
+    {
+      window.opener.account.bookmarks.startBatchUpdate();
+
+      for (var i = 0; i < removedItems.length; i++)
+        removedItems[i].bookmark();
+      for (i = 0; i < list.childNodes.length; i++) {
+        var item = list.childNodes[i];
+        var conference = window.opener.
+          getOrCreateConference(item["val-room"]+"@"+item[i]["val-server"]);
+
+        conference.bookmark(item["val-name"], item["val-autoJoin"],
+                            item["val-nick"] || null, item["val-pass"] || null);
+      }
+      window.opener.account.bookmarks.stopBatchUpdate();
+
+      return true;
+    }
+
+    function roomChange(list)
+    {
+      if (selectedItem) {
+        for each (var id in "name room server nick pass".split(/ /))
+          selectedItem[id == "name" ? "label" : "val-"+id] = textBoxes[id].value;
+        selectedItem["val-autoJoin"] = textBoxes["autoJoin"].checked;
+      }
+
+      selectedItem = list.selectedItem;
+      if (selectedItem) {
+        for each (id in "name room server nick pass autoJoin".split(/ /))
+          textBoxes[id].value = selectedItem[id == "name" ? "label" : "val-"+id];
+        textBoxes["autoJoin"].checked = selectedItem["val-autoJoin"];
+      } else
+        setTimeout("list.selectedIndex = 0", 0);
+    }
+  ]]></script>
+
+  <dialogheader title="Bookmark Manager"/>
+  <hbox flex="1">
+    <vbox>
+      <listbox id="list" flex="1" onselect="roomChange(this)"/>
+      <hbox>
+        <button label="New" oncommand="newRoom()"/>
+        <button label="Remove" oncommand="removeRoom()"/>
+      </hbox>
+    </vbox>
+
+    <grid>
+      <columns>
+        <column/>
+        <column flex="1"/>
+      </columns>
+      <rows>
+        <row align="center">
+          <label value="Name:" control="name"/>
+          <textbox id="name" oninput="updateName(this.value)"/>
+        </row>
+
+        <spacer/>
+
+        <row align="center">
+          <label value="Room:" control="room"/>
+          <textbox id="room"/>
+        </row>
+
+        <spacer/>
+
+        <row align="center">
+          <label value="Server:" control="server"/>
+          <textbox id="server"/>
+        </row>
+
+        <spacer/>
+
+        <row align="center">
+          <label value="Nickname:" control="nick"/>
+          <textbox id="nick"/>
+        </row>
+
+        <spacer/>
+
+        <row align="center">
+          <label value="Password:" control="pass"/>
+          <textbox id="pass" type="password"/>
+        </row>
+
+        <spacer/>
+
+        <checkbox label="Auto join" id="autoJoin"/>
+      </rows>
+    </grid>
+  </hbox>
+</dialog>
+
