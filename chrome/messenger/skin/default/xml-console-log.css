@@ -1,0 +1,75 @@
+@namespace url("http://www.w3.org/1999/xhtml");
+
+body {
+    margin: 0px;
+    font-family: monospace, sans-serif;
+    background-color: white;
+    font-size: 13px;
+}
+
+.wrap:before {
+    display: inline;
+    content: "\21b2\a";
+    color: red;
+}
+
+.message {
+    display: block;
+    margin: 2px;
+    border: 1px solid #aaa;
+}
+
+.message.recv {
+    background-color: #fee;
+}
+
+.message.send {
+    background-color: #efe;
+}
+
+.message.sys {
+    background-color: #eff;
+}
+
+.tag {
+    display: block;
+    margin-left: 2em;
+}
+
+.tag-start {
+    display: block;
+    margin-left: 4em;
+    text-indent: -4em;
+}
+
+.tag-end {
+    display: block;
+    margin-left: 0px;
+}
+
+.text {
+    display: block;
+    margin-left: 2em;
+}
+
+.message > .tag {
+    margin-left: 0px;
+}
+
+.message > .text{
+    margin-left: 0px;
+}
+
+.tag-name {
+    font-weight: bold;
+    color: #939;
+}
+
+.attrib-name {
+    font-weight: bold;
+}
+
+.attrib-value {
+    color: blue;
+}
+

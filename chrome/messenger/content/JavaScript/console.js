@@ -1,23 +1,37 @@
-var consol;
+var console;
 var inputEditor;
-var conn;
+
+const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
+                .getService(Components.interfaces.nsIPrefBranch);
 
 var handlers =
 {
     onPacketRecv: function(p)
     {
-        addInConsole("IN: "+p.xml());
+        var msg = prettyPrintDOM(p.getNode());
+        var div = console.contentDocument.createElement("div");
+        div.setAttribute("class", "message recv");
+
+        msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
+        div.innerHTML = msg;
+        console.contentDocument.body.appendChild(div);
+        console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
     },
     
     onPacketSend: function(p)
     {
-        addInConsole("OUT: "+p.xml());
+        var msg = prettyPrintDOM(p.getNode());
+        var div = console.contentDocument.createElement("div");
+        div.setAttribute("class", "message send");
+
+        msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
+        div.innerHTML = msg;
+        console.contentDocument.body.appendChild(div);
+        console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
     },
 
     onModelUpdated: function()
     {
-        if (Array.indexOf(arguments, "con") <= 0)
-            return;
         if (window.opener.con) {
             window.opener.con.registerHandler("onpacketsend", this.onPacketSend);
             window.opener.con.registerHandler("onpacketrecv", this.onPacketRecv);
@@ -26,61 +40,42 @@ var handlers =
 
     unregister: function()
     {
-        window.opener.account.unregisterView(handlers);
+        window.opener.account.unregisterView(handlers, "onModelUpdated", "con");
         if (window.opener.con) {
-            window.opener.con.registerHandler("onpacketsend", this.onPacketSend);
-            window.opener.con.registerHandler("onpacketrecv", this.onPacketRecv);
+            window.opener.con.unregisterHandler("onpacketsend", this.onPacketSend);
+            window.opener.con.unregisterHandler("onpacketrecv", this.onPacketRecv);
         }
     }
 };
 
-function startConsole() {
-    consol = document.getElementById("textconsole");
+function onLoad() {
+    console = document.getElementById("textconsole");
     inputEditor = document.getElementById("texttemplates");
 
-    window.opener.account.registerView(handlers);
-
+    var link = console.contentDocument.createElement("link");
+    link.setAttribute("href", "chrome://messenger/skin/xml-console-log.css");
+    link.setAttribute("rel", "stylesheet");
+    console.contentDocument.documentElement.getElementsByTagName("HEAD")[0].appendChild(link);
+    
+    window.opener.account.registerView(handlers, "onModelUpdated", "con");
     if (window.opener.con)
-        handlers.onModelUpdated(null, "con");
+        handlers.onModelUpdated();
 }
 
-// Initialisation function
-function addInConsole(msg) {
-
-     //consol.value += msg + "\n";
-    // var frame = document.getAnonymousNodes(consol)[0];
-    var frame = consol;
-
-     // TODO: Use well formed HTML by directly manipulating the DOM tree.
-     //if(!frame.contentDocument.textContent)
-     //       frame.contentDocument.write("<html><head><link rel='stylesheet' type='text/css' href='chrome://chat/skin/chat.css'/></head><body>");
-      if(msg.substring(0,2) == "IN")
-      frame.contentDocument.write("<p>" + "<FONT COLOR=" + gPrefService.getCharPref("chat.editor.consoleinmessagecolor") + ">" + html_escape(msg) + "</font>" + "</p>");
-      else
-      frame.contentDocument.write("<p>"+ "<FONT COLOR=" + gPrefService.getCharPref("chat.editor.consoleoutmessagecolor") + ">" + html_escape(msg) + "</font>" + "</p>");
-      frame.contentWindow.scrollTo(0,frame.contentWindow.scrollMaxY+200);
-    
-    consol.webNavigation.stop(1);
-
+function onClose() {
+    handlers.unregister();
 }
 
 function writeXMLPresence() {
-        inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';  
-}
+    inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';}
 
 function writeXMLPresenceA() {
-  
-        inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';
-  
+    inputEditor.value = '<presence><show></show><status></status><priority></priority></presence>';
 }
 
 function writeXMLPresenceU() {
-  
-        inputEditor.value = '<presence to="" type="unavailable"><status> </status></presence>';
-  
+    inputEditor.value = '<presence to="" type="unavailable"><status> </status></presence>';
 }
-
-
 
 function writeXMLIQ() {
     inputEditor.value = '<iq to="" type=""><query xmlns=""></query></iq>';
@@ -98,14 +93,9 @@ function writeXMLIQLast() {
     inputEditor.value = '<iq to="" type="get" id=""><query xmlns="jabber:iq:last"/></iq>';
 }
 
-
-
-
-
 function writeXMLMessage() {
     inputEditor.value = '<message to="" type=""><body></body></message>';
 }
-
 
 function writeXMLMessageChat() {
     inputEditor.value = '<message to="" type="chat"><body> </body> </message>';
@@ -126,16 +116,58 @@ function sendToServer() {
     inputEditor.value = "";
 }
 
-// Function to clear the console
 function clearConsole(){
-	consol.contentDocument.close();
-	consol.contentDocument.open();
+    console.contentDocument.body.innerHTML = "";
 }
 
-// Function to close the window
-function closeConsole() {
-    handlers.unregister();
+function prettyPrintDOM(dom)
+{
+    if (dom.nodeType == dom.ELEMENT_NODE) {
+        var ret, i;
+
+        if (dom.stanzaType == 2)
+            return "<span class='tag'><span class='tag-end'>&lt;/<span class='tag-name'>"+
+		dom.nodeName+"</span>&gt;</span></span>";
+
+        ret = "<span class='tag'><span class='tag-start'>&lt;<span class='tag-name'>"+
+    	    dom.nodeName+"</span>";
+
+        for (i = 0; i < dom.attributes.length; i++) {
+            ret += " <span class='attrib-name'>"+ dom.attributes[i].nodeName +
+                "</span>=<span class='attrib-value'>'" +
+                encodeEntity(dom.attributes[i].nodeValue) +
+                "'</span>";
+        }
+
+        if (dom.hasChildNodes()) {
+            ret += "&gt;</span>";
+
+            for (i = 0; i < dom.childNodes.length; i++)
+                ret += prettyPrintDOM(dom.childNodes[i]);
+
+            if (dom.stanzaType != 1)
+                ret += "<span class='tag-end'>&lt;/<span class='tag-name'>"+
+        		    dom.nodeName+"</span>&gt;</span></span>";
+        } else if (dom.stanzaType == 1)
+            ret += "&gt;</span></span>";
+        else
+            ret += "/&gt;</span></span>";
+        return ret;
+    } else if (dom.nodeType == dom.DOCUMENT_NODE) {
+        ret = "";
+        for (i = 0; i < dom.childNodes.length; i++)
+            ret += prettyPrintDOM(dom.childNodes[i]);
+        return ret;
+    } else
+        return "<span class='text'>"+encodeEntity(dom.nodeValue)+"</span>";
 }
 
-
+function encodeEntity(string)
+{
+    return string.replace(/&/g,"&amp;").
+                  replace(/</g,"&lt;").
+                  replace(/>/g,"&gt;").
+                  replace(/\'/g,"&apos;").
+                  replace(/\"/g,"&quot;");
+}
 

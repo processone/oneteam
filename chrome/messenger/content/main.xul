@@ -157,7 +157,8 @@
     }
 
     function quit() {
-      con.disconnect();
+      if (window.con)
+        window.con.disconnect();
       Components.classes['@mozilla.org/toolkit/app-startup;1'].
         getService(Components.interfaces.nsIAppStartup).
           quit(Components.interfaces.nsIAppStartup.eAttemptQuit);

@@ -1,67 +1,52 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/xml-console.css" type="text/css"?>
 
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
 
-<window id="Console"
-        title="&Console.title;"
-        orient="horizontal"
-        width="450"
-        height="550"
-        onload="if (event.target == document) startConsole();"
-        onclose="closeConsole();"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+<window id="Console" title="&Console.title;" width="640" height="550"
+    onload="onLoad()" onclose="onClose();"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    
+  <script type="application/x-javascript" src="JavaScript/console.js"/>
 
-    <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
-    <script type="application/x-javascript" src="utils/htmlformat.js"/>
-    <script type="application/x-javascript" src="JavaScript/gui.js"/>
-    <script type="application/x-javascript" src="JavaScript/shared.js"/>
-    <script type="application/x-javascript" src="JavaScript/console.js"/>
+  <vbox align="center" flex="1">
+    <label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
+    <iframe id="textconsole"  height="250" width="1024"/>
 
-    <vbox align="center" flex="1">
-        <spacer flex="1"/>
-        <label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
+    <spacer flex="1"/>
 
-		
-      <iframe id="textconsole"  height="250" width="1024"/>
-       
-        <spacer flex="1"/>
-        
-        <button label="&Console.clear;" oncommand="clearConsole();" flex="1"/>
-        
-        <spacer flex="10"/>
+    <button label="&Console.clear;" oncommand="clearConsole();" flex="1"/>
 
-        <label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
-        <textbox id="texttemplates" style="color: #FF6600;" multiline="true" height="150" width="1024" flex="1"/>
+    <spacer flex="10"/>
 
-        <hbox align="center" flex="1">
-            <menulist label="IQ  ">
-                <menupopup flex="1">
-                    <menuitem label="IQ" oncommand="writeXMLIQ();"/>
-                    <menuitem label="Time IQ" oncommand="writeXMLIQTime();"/>
-                    <menuitem label="Version IQ" oncommand="writeXMLIQVersion();"/>
-                    <menuitem label="Last IQ" oncommand="writeXMLIQLast();"/>
-                </menupopup>
-            </menulist>
-            <menulist label="Presence  ">
-                <menupopup flex="1">
-                    <menuitem label="Presence" oncommand="writeXMLPresence();"/>
-                    <menuitem label="Available" oncommand="writeXMLPresenceA();"/>
-                    <menuitem label="Unavailable" oncommand="writeXMLPresenceU();"/>
-                </menupopup>
-            </menulist>
-            <menulist label="Message  ">
-                <menupopup flex="1">
-                    <menuitem label="Message" oncommand="writeXMLMessage();"/>
-                    <menuitem label="Chat" oncommand="writeXMLMessageChat();"/>
-                    <menuitem label="Headline" oncommand="writeXMLMessageHeadline();"/>
-                </menupopup>
-            </menulist>
-
-            <button label="&Console.send;" oncommand="sendToServer();"/>
-        </hbox>
-
-    </vbox>
-
+    <label value="&Console.templates;" style="font-weight: bold;" flex="1"/>
+    <textbox id="texttemplates" style="color: #FF6600;" multiline="true"
+      height="150" width="1024" flex="1"/>
+    <hbox align="center" flex="1">
+      <menulist label="IQ  ">
+        <menupopup flex="1">
+          <menuitem label="IQ" oncommand="writeXMLIQ();"/>
+          <menuitem label="Time IQ" oncommand="writeXMLIQTime();"/>
+          <menuitem label="Version IQ" oncommand="writeXMLIQVersion();"/>
+          <menuitem label="Last IQ" oncommand="writeXMLIQLast();"/>
+        </menupopup>
+      </menulist>
+      <menulist label="Presence  ">
+        <menupopup flex="1">
+          <menuitem label="Presence" oncommand="writeXMLPresence();"/>
+          <menuitem label="Available" oncommand="writeXMLPresenceA();"/>
+          <menuitem label="Unavailable" oncommand="writeXMLPresenceU();"/>
+        </menupopup>
+      </menulist>
+      <menulist label="Message  ">
+        <menupopup flex="1">
+          <menuitem label="Message" oncommand="writeXMLMessage();"/>
+          <menuitem label="Chat" oncommand="writeXMLMessageChat();"/>
+          <menuitem label="Headline" oncommand="writeXMLMessageHeadline();"/>
+        </menupopup>
+      </menulist>
+      <button label="&Console.send;" oncommand="sendToServer();"/>
+    </hbox>
+  </vbox>
 </window>

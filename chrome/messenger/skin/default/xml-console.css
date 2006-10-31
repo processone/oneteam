@@ -1,0 +1,14 @@
+window {
+    margin: 3px
+}
+
+#textconsole {
+    border: 2px solid;
+    -moz-border-top-colors: ThreeDShadow ThreeDFace;
+    -moz-border-right-colors: ThreeDShadow ThreeDFace;
+    -moz-border-bottom-colors: ThreeDShadow ThreeDFace;
+    -moz-border-left-colors: ThreeDShadow ThreeDFace;
+
+    margin: 6px 4px 4px 6px;
+}
+

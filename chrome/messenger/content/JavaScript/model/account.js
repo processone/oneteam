@@ -468,5 +468,5 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 }
 
 account = new Account();
-//account.showConsole();
+account.showConsole();
 
