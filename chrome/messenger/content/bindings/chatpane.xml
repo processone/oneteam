@@ -12,6 +12,10 @@
 
     <content>
       <xul:vbox flex="1">
+        <xul:hbox align="center" hidden="true">
+          <xul:button label="Subject:"/>
+          <xul:description id="subject" flex="1">TEST</xul:description>
+        </xul:hbox>
         <xul:iframe id="output" flex="1"/>
         <xul:hbox align="center">
           <xul:iframe id="input" flex="1" style="height: 1.7em"/>
@@ -25,6 +29,14 @@
       <property name="content" readonly="true"
         onget="return this._editor.outputToString('text/plain', 0)" />
 
+      <property name="hasSubject"
+        onset="this._subject.parentNode.hidden = !val; return val"
+        onget="return !this._subject.parentNode.hidden" />
+
+      <property name="subject"
+        onset="return this._subject.value = val"
+        onget="return this._subject.value" />
+
       <constructor>
         <![CDATA[
           this.scrollSize = 0;
@@ -35,10 +47,17 @@
 
           this._input = document.getAnonymousElementByAttribute(this, "id", "input");
           this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+          this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
 
-          setTimeout(function(body) { body.style.margin = "0"; }, 0,
-              this._input.contentDocument.body);
-          setTimeout(function(me) { me._init() }, 500, this);
+          var me = this;
+          this._input.contentWindow.addEventListener("load",
+            function(event) { me._init() }, false);
+          this._output.contentWindow.addEventListener("load", function(event) {
+            var link = event.target.createElement("link");
+            link.setAttribute("href", "chrome://messenger/skin/chatpane-content.css");
+            link.setAttribute("rel", "stylesheet");
+            event.target.getElementsByTagName("HEAD")[0].appendChild(link);
+          }, false);
         ]]>
       </constructor>
 
@@ -60,7 +79,8 @@
             this._editor = this._input.docShell.
               QueryInterface(Components.interfaces.nsIEditorDocShell).editor;
             this._editor instanceof Components.interfaces.nsIPlaintextEditor;
-
+            
+            doc.body.style.margin = "0";
             doc.body.style.background = "white";
             doc.body.style.fontFamily = "Arial, Verdana, sans-serif";
 
@@ -110,12 +130,11 @@
       <method name="_send">
         <body>
           <![CDATA[
-            if (!~this.content.search(/\S/))
-              return;
-            this.addMessage("me", this.content, "out");
-            var ev = document.createEvent("Events");
-            ev.initEvent("chat-send", true, false);
-            this.dispatchEvent(ev);
+            if (~this.content.search(/\S/)) {
+              var ev = document.createEvent("Events");
+              ev.initEvent("chat-send", true, false);
+              this.dispatchEvent(ev);
+            }
             this.clear();
           ]]>
         </body>
@@ -133,29 +152,51 @@
       <method name="addMessage">
         <parameter name="from"/>
         <parameter name="body"/>
-        <parameter name="flags"/>
+        <parameter name="authorId"/>
+        <parameter name="timeStamp"/>
         <body>
           <![CDATA[
             if (this._msgs) {
-              this._msgs.push([from, body, flags]);
+              this._msgs.push([from, body, authorId, timeStamp]);
               return;
             }
+
             var doc = this._output.contentDocument;
-            var c = doc.createElement("div");
-            c.setAttribute("class", flags);
+            var mc;
+            
+            if (!this._mc || this._authorId != authorId) {
+              this._mc = mc = doc.createElement("div");
+              this._authorId = authorId;
+              mc.setAttribute("class", "messageChunk");
+              mc.setAttribute("author-id", authorId);
+              doc.body.appendChild(mc)
+            } else
+              mc = this._mc;
+
+            var m = doc.createElement("div");
+            m.setAttribute("class", "message");
+            mc.appendChild(m);
+
+            var h = doc.createElement("div");
+            h.setAttribute("class", "header");
+            m.appendChild(h);
 
             var e = doc.createElement("div");
             e.setAttribute("class", "author");
             e.appendChild(doc.createTextNode(from));
-            c.appendChild(e);
+            h.appendChild(e);
 
             var e = doc.createElement("div");
-            e.setAttribute("class", "content");
-            e.appendChild(doc.createTextNode(body));
-            c.appendChild(e);
+            e.setAttribute("class", "date");
+            e.appendChild(doc.createTextNode("12:10"));
+            h.appendChild(e);
 
-            doc.body.appendChild(c);
-            c.scrollIntoView(true);
+            var e = doc.createElement("div");
+            e.setAttribute("class", "body");
+            e.appendChild(doc.createTextNode(body));
+            m.appendChild(e);
+
+            m.scrollIntoView(true);
           ]]>
         </body>
       </method>

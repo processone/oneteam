@@ -81,15 +81,10 @@ _DECL_(PersistantCache).prototype =
             if (!this.fileCacheDir.exists)
                 this.fileCacheDir.createDirectory();
 
-            var charset = "0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
             var file;
 
             do {
-                var name = "";
-                for (var i = 0; i < 10; ++i)
-                    name += charset.charAt(Math.floor(Math.random() * charset.length));
-
-                file = new File(this.fileCacheDir, name);
+                file = new File(this.fileCacheDir, generateRandomName("10"));
                 try {
                     file.open(null, 0x02|0x08|0x80);
                 } catch (ex) { file = null; }
@@ -161,3 +156,10 @@ _DECL_(StorageFunctionDelete).prototype =
     }
 }
 
+function generateRandomName(length)
+{
+    const charset = "0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+    var name = "";
+    for (var i = 0; i < length; ++i)
+        name += charset.charAt(Math.floor(Math.random() * charset.length));
+}

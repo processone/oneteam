@@ -270,12 +270,12 @@ _DECL_(Contact, null, Model,
 
     onMessage: function(packet)
     {
-        if (packet.getType() == "error")
+        if (packet.getType() == "error" || !packet.getBody())
             return;
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
-        if (packet.getBody())
-            this.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
+
+        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you");
     },
 
     addToRoster: function()
@@ -554,9 +554,12 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     onMessage: function(packet)
     {
-        if (!this.chatPane)
+        if (packet.getType() == "error" || !packet.getBody())
+            return;
+        if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
-        this.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
+
+        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you");
     },
 
     cmp: function(c)

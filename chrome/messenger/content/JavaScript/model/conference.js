@@ -208,7 +208,7 @@ _DECL_(Conference, Contact).prototype =
         if (packet.getBody()) {
             if (!this.chatPane || this.chatPane.closed)
                 this.onOpenChat();
-            this.chatPane.addMessage(this.visibleName, packet.getBody(), "in sysmsg");
+            this.chatPane.addSpecialMessage(packet.getBody());
         }
     },
 
@@ -307,12 +307,17 @@ _DECL_(ConferenceMember, Resource).prototype =
             this.contact.modelUpdated("subject");
         }
         if (packet.getType() == "groupchat") {
-            if (packet.getBody()) {
-                if (!this.contact.chatPane || this.contact.chatPane.closed)
-                    this.contact.onOpenChat();
-                this.contact.chatPane.addMessage(this.visibleName, packet.getBody(), "in");
+            if (!packet.getBody())
+                return;
+
+            if (!this.contact.chatPane || this.contact.chatPane.closed)
+                this.contact.onOpenChat();
+            if (!this._authorId)
+                this._authorId = this.contact.myResource == this ? "me" :
+                    "c-"+generateRandomName(10);
+            this.contact.chatPane.addMessage(this.visibleName, packet.getBody(),
+                                             this._authorId);
             }
-        } else
             Resource.call(this, packet);
     },
 

@@ -1,0 +1,81 @@
+body {
+    background: white;
+    font-family: Arial, Verdana, sans-serif;
+    margin: 0;
+}
+
+.messageChunk {
+    margin: 8px;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.header {
+    margin: 1px;
+    padding: 1px 6px;
+    background: url(chatpane/header-gradient.png);
+    color: white;
+}
+
+.message:not(:first-child) {
+    border-width: 0px;
+    border-top-width: 1px;
+    border-style: solid;
+}
+
+.message:not(:first-child) > .header {
+    display: none;
+}
+
+.author {
+    font-weight: bold;
+    float: left;
+}
+
+.date {
+    float: right;
+    font-size: 90%;
+    opacity: 0.85;
+}
+
+.body {
+   padding: 3px 6px;
+}
+
+.header::after {
+    font-size: 1%;
+    line-height: 1%;
+    display: block;
+    content: " ";
+    clear: both;
+}
+
+
+
+
+
+.messageChunk[author-id="me"] {
+    background: #fff0f0
+}
+
+.messageChunk[author-id="me"], .messageChunk[author-id="me"] .message {
+    border-color: #ffb3b3
+}
+
+.messageChunk[author-id="me"] .header {
+    background-color: #ff0000
+}
+
+.messageChunk[author-id="you"] {
+    background: #f6f7f9
+}
+
+.messageChunk[author-id="you"], .messageChunk[author-id="you"] .message {
+    border-color: #d2d7e3
+}
+
+.messageChunk[author-id="you"] .header {
+    background-color: #6978a3
+}
+
+

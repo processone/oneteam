@@ -205,6 +205,8 @@
         this.chats._tabpanels.appendChild(this.tabpanel);
         this.chats._tabs.appendChild(this.tab);
 
+        //this.chatPane.hasSubject = contact instanceof Conference;
+
         this.__proto__._allPanes.push(this);
         this._resizeWindow(true);
         this.focus();
@@ -298,14 +300,17 @@
 
       onSend: function()
       {
+        if (!(this.contact instanceof Conference))
+          this.chatPane.addMessage("me", this.chatPane.content, "me");
+
         this.contact.sendMessage(this.chatPane.content);
       },
 
-      addMessage: function(from, body, flags)
+      addMessage: function(from, body, authorId)
       {
         if (this.closed)
           return;
-        this.chatPane.addMessage(from, body, flags)
+        this.chatPane.addMessage(from, body, authorId)
       }
     }
   ]]></script>
