@@ -50,9 +50,7 @@ body {
     clear: both;
 }
 
-
-
-
+/* Default colors for normal chat */
 
 .messageChunk[author-id="me"] {
     background: #fff0f0

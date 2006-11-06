@@ -561,13 +561,20 @@ _DECL_(Resource, null, Model, DiscoItem,
     },
 
     onMessage: function(packet)
-    {
+    {try{
         if (packet.getType() == "error" || !packet.getBody())
             return;
         if (!this.chatPane || this.chatPane.closed)
-            this.onOpenChat();
+            if (this.contact.chatPane && !this.contact.chatPane.closed &&
+                this.contact.chatPane.contact == this.contact)
+            {
+                this.chatPane = this.contact.chatPane;
+                this.chatPane.updateContact(this);
+            } else
+                this.onOpenChat();
 
         this.chatPane.addMessage(this.visibleName, packet.getBody(), "you");
+        }catch(ex){alert(ex)}
     },
 
     cmp: function(c)

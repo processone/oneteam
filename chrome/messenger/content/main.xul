@@ -220,6 +220,12 @@
 
       closed: false,
 
+      updateContact: function(contact)
+      {
+        this.contact = contact;
+        this.tab.setAttribute("label", contact.visibleName);
+      },
+
       closeAllTabs: function()
       {
         var panes = ChatPane.prototype._allPanes;
