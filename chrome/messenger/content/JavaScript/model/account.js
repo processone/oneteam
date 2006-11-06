@@ -310,7 +310,8 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             pass: this.connectionInfo.pass,
             resource: gPrefService.getCharPref("chat.connection.resource")};
 
-        this.jid = this.connectionInfo.host;
+        this.myJID = new JID(this.connectionInfo.user, this.connectionInfo.host,
+                           this.connectionInfo.resource);
 
         self.con = con;
         this.modelUpdated("con");
@@ -372,7 +373,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
     {
         var sender = new JID(packet.getFrom());
 
-        if (this.myJID == sender) {
+        if (this.myJID.shortJID == sender.shortJID) {
             if (this.bumpPriority) {
                 var tag = packet.getNode().getElementsByTagName('priority');
 

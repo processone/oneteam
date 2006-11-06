@@ -131,6 +131,10 @@ _DECL_(Contact, null, Model,
       return this.subscription == "both" || this.subscription == "to";
     },
 
+    get interlocutorName() {
+        return account.myJID.node;
+    },
+
     _updateRoster: function()
     {
         var iq = new JSJaCIQ();
@@ -474,6 +478,10 @@ _DECL_(Resource, null, Model, DiscoItem,
 {
     _registered: false,
     show: "unavailable",
+
+    get interlocutorName() {
+        return account.myJID.node;
+    },
 
     get visibleName()
     {

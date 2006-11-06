@@ -301,7 +301,8 @@
       onSend: function()
       {
         if (!(this.contact instanceof Conference))
-          this.chatPane.addMessage("me", this.chatPane.content, "me");
+          this.chatPane.addMessage(this.contact.interlocutorName,
+            this.chatPane.content, "me");
 
         this.contact.sendMessage(this.chatPane.content);
       },

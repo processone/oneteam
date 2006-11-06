@@ -13,6 +13,10 @@ function Conference(jid)
 
 _DECL_(Conference, Contact).prototype =
 {
+    get interlocutorName() {
+        return this._nick;
+    },
+
     _sendPresence: function(show, status, priority, type)
     {
         var presence = new JSJaCPresence();
@@ -179,7 +183,7 @@ _DECL_(Conference, Contact).prototype =
 
             // TODO: Notify about kick, ban, etc.
 
-            return;
+            return false;
         }
 
         if (this.joined || !this._callback)
@@ -193,7 +197,7 @@ _DECL_(Conference, Contact).prototype =
         this._callback.call(null, pkt, errorTag);
         this._callback = null;
 
-        return true;
+        return false;
     },
 
     onMessage: function(packet)
@@ -236,12 +240,16 @@ function ConferenceMember(jid)
 
 _DECL_(ConferenceMember, Resource).prototype =
 {
+    get interlocutorName() {
+        return this.contact._nick;
+    },
+
     visibleName: null,
 
     onPresence: function(pkt)
     {
-        if (this.contact.myResource == this && this.contact.onPresence(pkt))
-            return;
+        if (this.contact.myResource == this)
+            this.contact.onPresence(pkt);
 
         if (pkt.getType() == "error")
             return;
@@ -315,10 +323,10 @@ _DECL_(ConferenceMember, Resource).prototype =
             if (!this._authorId)
                 this._authorId = this.contact.myResource == this ? "me" :
                     "c-"+generateRandomName(10);
-            this.contact.chatPane.addMessage(this.visibleName, packet.getBody(),
+            this.contact.chatPane.addMessage(this.name, packet.getBody(),
                                              this._authorId);
-            }
-            Resource.call(this, packet);
+        } else
+            Resource.prototype.onMessage.call(this, packet);
     },
 
     cmp: function(c)
