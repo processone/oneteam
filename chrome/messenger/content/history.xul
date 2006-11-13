@@ -8,6 +8,8 @@
     onload="onLoad()" persist="width height"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
+
   <script type="text/javascript;version=1.7"><![CDATA[
     function TreeView(results) {
       this.wrappedJSObject = this;
@@ -32,7 +34,8 @@
       get rowCount() { return this._results ? this._results.length : 0 },
       getCellText : function(row, column)
       {
-        return column.id == "jid" ? this._results[row].jid : this._results[row].time;
+        return column.id == "jid" ? this._results[row].jid :
+          formatDate(this._results[row].time, null, "short", "long");
       },
       setTree: function(tree) { this._tree = tree; },
       isContainer: function(row) { return false; },
@@ -84,7 +87,7 @@
       view.clear();
 
       for (var msg in window.opener.account.historyMgr.getThreadMessagesIterator(threadId)) {
-        view.addMessage(msg.nick, msg.body, msg.flags ? "you" : "me", msg.time);
+        view.addMessage(msg.nick, msg.body, msg.flags ? "you" : "me", msg.jid, msg.time);
       }
     }
   ]]></script>

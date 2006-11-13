@@ -26,6 +26,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
@@ -316,15 +317,15 @@
         this.contact.sendMessage(body);
       },
 
-      addMessage: function(from, body, authorId, jid)
+      addMessage: function(from, body, authorId, jid, time)
       {
         this.threadId = account.historyMgr.addMessage(jid,
           this.contact instanceof Conference ? 1 : 0, authorId == "me" ? 0 : 1,
-          body, from, null, this.threadId, this.contact.jid.shortJID);
+          body, from, time, this.threadId, this.contact.jid.shortJID);
 
         if (this.closed)
           return;
-        this.chatPane.addMessage(from, body, authorId);
+        this.chatPane.addMessage(from, body, authorId, jid, time);
       }
     }
   ]]></script>

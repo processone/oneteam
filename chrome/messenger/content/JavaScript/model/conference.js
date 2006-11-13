@@ -318,13 +318,17 @@ _DECL_(ConferenceMember, Resource).prototype =
             if (!packet.getBody())
                 return;
 
+            var stamp = packet.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
+            if (stamp)
+                stamp = utcStringToDate(stamp.textContent);
+
             if (!this.contact.chatPane || this.contact.chatPane.closed)
                 this.contact.onOpenChat();
             if (!this._authorId)
                 this._authorId = this.contact.myResource == this ? "me" :
                     "c-"+generateRandomName(10);
             this.contact.chatPane.addMessage(this.name, packet.getBody(),
-                                             this._authorId, packet.getFrom());
+                                             this._authorId, packet.getFrom(), stamp);
         } else
             Resource.prototype.onMessage.call(this, packet);
     },

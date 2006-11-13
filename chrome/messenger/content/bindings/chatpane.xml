@@ -38,11 +38,12 @@
         <parameter name="from"/>
         <parameter name="body"/>
         <parameter name="authorId"/>
+        <parameter name="jid"/>
         <parameter name="timeStamp"/>
         <body>
           <![CDATA[
             if (this._msgs) {
-              this._msgs.push([from, body, authorId, timeStamp]);
+              this._msgs.push([from, body, authorId, jid, timeStamp]);
               return;
             }
 
@@ -73,7 +74,7 @@
 
             var e = doc.createElement("div");
             e.setAttribute("class", "date");
-            e.appendChild(doc.createTextNode("12:10"));
+            e.appendChild(doc.createTextNode(readableTimestamp(timeStamp||new Date())));
             h.appendChild(e);
 
             var e = doc.createElement("div");

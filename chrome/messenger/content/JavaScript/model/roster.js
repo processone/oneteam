@@ -279,8 +279,12 @@ _DECL_(Contact, null, Model,
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
 
+        var stamp = packet.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
+        if (stamp)
+            stamp = utcStringToDate(stamp.textContent);
+
         this.chatPane.addMessage(this.visibleName, packet.getBody(), "you",
-                                 packet.getFrom());
+                                 packet.getFrom(), stamp);
     },
 
     addToRoster: function()
@@ -574,8 +578,12 @@ _DECL_(Resource, null, Model, DiscoItem,
             } else
                 this.onOpenChat();
 
+        var stamp = packet.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
+        if (stamp)
+            stamp = utcStringToDate(stamp.textContent);
+
         this.chatPane.addMessage(this.visibleName, packet.getBody(), "you",
-                                 packet.getFrom());
+                                 packet.getFrom(), stamp);
     },
 
     cmp: function(c)
