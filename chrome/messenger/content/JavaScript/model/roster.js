@@ -279,7 +279,8 @@ _DECL_(Contact, null, Model,
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
 
-        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you");
+        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you",
+                                 packet.getFrom());
     },
 
     addToRoster: function()
@@ -561,7 +562,7 @@ _DECL_(Resource, null, Model, DiscoItem,
     },
 
     onMessage: function(packet)
-    {try{
+    {
         if (packet.getType() == "error" || !packet.getBody())
             return;
         if (!this.chatPane || this.chatPane.closed)
@@ -573,8 +574,8 @@ _DECL_(Resource, null, Model, DiscoItem,
             } else
                 this.onOpenChat();
 
-        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you");
-        }catch(ex){alert(ex)}
+        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you",
+                                 packet.getFrom());
     },
 
     cmp: function(c)

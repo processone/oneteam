@@ -3,6 +3,105 @@
           xmlns:html="http://www.w3.org/1999/xhtml"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <binding id="chatpane-view">
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/chatpane.css"/>
+    </resources>
+
+    <content>
+      <xul:iframe id="output" flex="1"/>
+    </content>
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var me = this;
+
+          this._msgs = [];
+          this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+
+          this._output.contentWindow.addEventListener("load", function(event) {
+            var link = event.target.createElement("link");
+            link.setAttribute("href", "chrome://messenger/skin/chatpane-content.css");
+            link.setAttribute("rel", "stylesheet");
+            event.target.getElementsByTagName("HEAD")[0].appendChild(link);
+            var msgs = me._msgs;
+            me._msgs = null;
+            for (var i = 0; i < msgs.length; i++)
+              me.addMessage.apply(me, msgs[i]);
+          }, false);
+        ]]>
+      </constructor>
+
+      <method name="addMessage">
+        <parameter name="from"/>
+        <parameter name="body"/>
+        <parameter name="authorId"/>
+        <parameter name="timeStamp"/>
+        <body>
+          <![CDATA[
+            if (this._msgs) {
+              this._msgs.push([from, body, authorId, timeStamp]);
+              return;
+            }
+
+            var doc = this._output.contentDocument;
+            var mc;
+
+            if (!this._mc || this._authorId != authorId) {
+              this._mc = mc = doc.createElement("div");
+              this._authorId = authorId;
+              mc.setAttribute("class", "messageChunk");
+              mc.setAttribute("author-id", authorId);
+              doc.body.appendChild(mc)
+            } else
+              mc = this._mc;
+
+            var m = doc.createElement("div");
+            m.setAttribute("class", "message");
+            mc.appendChild(m);
+
+            var h = doc.createElement("div");
+            h.setAttribute("class", "header");
+            m.appendChild(h);
+
+            var e = doc.createElement("div");
+            e.setAttribute("class", "author");
+            e.appendChild(doc.createTextNode(from));
+            h.appendChild(e);
+
+            var e = doc.createElement("div");
+            e.setAttribute("class", "date");
+            e.appendChild(doc.createTextNode("12:10"));
+            h.appendChild(e);
+
+            var e = doc.createElement("div");
+            e.setAttribute("class", "body");
+            e.appendChild(doc.createTextNode(body));
+            m.appendChild(e);
+
+            m.scrollIntoView(true);
+          ]]>
+        </body>
+      </method>
+
+      <method name="clear">
+        <body>
+          <![CDATA[
+            var doc = this._output.contentDocument;
+            var body = doc.body;
+
+            body.parentNode.replaceChild(doc.createElement("body"), body);
+
+            this._mc = this._authorId = null;
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
+
   <binding id="chatpane">
 
     <resources>
@@ -16,7 +115,7 @@
           <xul:button label="Subject:"/>
           <xul:description id="subject" flex="1">TEST</xul:description>
         </xul:hbox>
-        <xul:iframe id="output" flex="1"/>
+        <xul:chatpane-view id="output-pane" flex="1"/>
         <xul:hbox align="center">
           <xul:iframe id="input" flex="1" style="height: 1.7em"/>
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
@@ -39,27 +138,45 @@
 
       <constructor>
         <![CDATA[
-          this.scrollSize = 0;
+          this._scrollSize = 0;
           this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 
-          this._msgs = [];
           this._firstFocus = true;
 
           this._input = document.getAnonymousElementByAttribute(this, "id", "input");
-          this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+          this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
           this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
 
           var me = this;
           this._input.contentWindow.addEventListener("load",
             function(event) { me._init() }, false);
-          this._output.contentWindow.addEventListener("load", function(event) {
-            var link = event.target.createElement("link");
-            link.setAttribute("href", "chrome://messenger/skin/chatpane-content.css");
-            link.setAttribute("rel", "stylesheet");
-            event.target.getElementsByTagName("HEAD")[0].appendChild(link);
-          }, false);
         ]]>
       </constructor>
+
+      <method name="clear">
+        <body>
+          <![CDATA[
+            this._editor.selectAll();
+            this._editor.deleteSelection(0);
+          ]]>
+        </body>
+      </method>
+
+      <method name="addMessage">
+        <body>
+          <![CDATA[
+            this._output.addMessage.apply(this._output, arguments);
+          ]]>
+        </body>
+      </method>
+
+      <method name="clearView">
+        <body>
+          <![CDATA[
+            this._output.clear();
+          ]]>
+        </body>
+      </method>
 
       <method name="_init">
         <body>
@@ -88,11 +205,6 @@
 
             var ev = ["DOMNodeInserted", "DOMNodeRemoved", "DOMAttrModified",
                       "DOMCharacterDataModified"];
-
-            var msgs = this._msgs;
-            this._msgs = null;
-            for (var i = 0; i < msgs.length; i++)
-              this.addMessage.apply(this, msgs[i]);
 
             for (var i = 0; i < ev.length; i++)
               doc.body.addEventListener(ev[i],
@@ -149,67 +261,6 @@
         </body>
       </method>
 
-      <method name="addMessage">
-        <parameter name="from"/>
-        <parameter name="body"/>
-        <parameter name="authorId"/>
-        <parameter name="timeStamp"/>
-        <body>
-          <![CDATA[
-            if (this._msgs) {
-              this._msgs.push([from, body, authorId, timeStamp]);
-              return;
-            }
-
-            var doc = this._output.contentDocument;
-            var mc;
-            
-            if (!this._mc || this._authorId != authorId) {
-              this._mc = mc = doc.createElement("div");
-              this._authorId = authorId;
-              mc.setAttribute("class", "messageChunk");
-              mc.setAttribute("author-id", authorId);
-              doc.body.appendChild(mc)
-            } else
-              mc = this._mc;
-
-            var m = doc.createElement("div");
-            m.setAttribute("class", "message");
-            mc.appendChild(m);
-
-            var h = doc.createElement("div");
-            h.setAttribute("class", "header");
-            m.appendChild(h);
-
-            var e = doc.createElement("div");
-            e.setAttribute("class", "author");
-            e.appendChild(doc.createTextNode(from));
-            h.appendChild(e);
-
-            var e = doc.createElement("div");
-            e.setAttribute("class", "date");
-            e.appendChild(doc.createTextNode("12:10"));
-            h.appendChild(e);
-
-            var e = doc.createElement("div");
-            e.setAttribute("class", "body");
-            e.appendChild(doc.createTextNode(body));
-            m.appendChild(e);
-
-            m.scrollIntoView(true);
-          ]]>
-        </body>
-      </method>
-
-      <method name="clear">
-        <body>
-          <![CDATA[
-            this._editor.selectAll();
-            this._editor.deleteSelection(0);
-          ]]>
-        </body>
-      </method>
-
       <method name="maybeResize">
         <body>
           <![CDATA[
@@ -219,11 +270,11 @@
 
           this.resizeTimeout = null;
 
-          if (this.scrollSize <= 0) {
+          if (this._scrollSize <= 0) {
             if (w.scrollMaxX)
-              this.scrollSize = w.scrollMaxY - e.offsetHeight - this.scrollSize;
+              this._scrollSize = w.scrollMaxY - e.offsetHeight - this._scrollSize;
             else
-              this.scrollSize = -e.offsetHeight;
+              this._scrollSize = -e.offsetHeight;
           }
 
           if (h > 0.3*window.innerHeight)
@@ -233,7 +284,7 @@
               e.offsetHeight < w.innerHeight)
             this._input.style.height =
               (h + this._input.boxObject.height - w.innerHeight +
-              (w.scrollMaxX ? this.scrollSize : 0))+"px";
+              (w.scrollMaxX ? this._scrollSize : 0))+"px";
           ]]>
         </body>
       </method>

@@ -324,7 +324,7 @@ _DECL_(ConferenceMember, Resource).prototype =
                 this._authorId = this.contact.myResource == this ? "me" :
                     "c-"+generateRandomName(10);
             this.contact.chatPane.addMessage(this.name, packet.getBody(),
-                                             this._authorId);
+                                             this._authorId, packet.getFrom());
         } else
             Resource.prototype.onMessage.call(this, packet);
     },

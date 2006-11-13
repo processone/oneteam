@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
+
+<window id="ot:histroy" title="History Manager" width="640" height="550"
+    onload="onLoad()" persist="width height"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    function TreeView(results) {
+      this.wrappedJSObject = this;
+      this._results = results;
+    }
+
+    TreeView.prototype =
+    {
+      _update: function(results)
+      {
+        var len1 = this._results ? this._results.length : 0;
+        this._results = results;
+        if (this._tree) {
+          var len2 = results.length;
+          if (len1 > len2)
+            this._tree.rowCountChanged(len1, len1 - len2);
+          else
+            this._tree.rowCountChanged(len2, len2 - len1);
+          this._tree.invalidate()
+        }
+      },
+      get rowCount() { return this._results ? this._results.length : 0 },
+      getCellText : function(row, column)
+      {
+        return column.id == "jid" ? this._results[row].jid : this._results[row].time;
+      },
+      setTree: function(tree) { this._tree = tree; },
+      isContainer: function(row) { return false; },
+      isSeparator: function(row) { return false; },
+      isSorted: function() { return true; },
+      getLevel: function(row) { return 0; },
+      getImageSrc: function(row,col) { return null; },
+      getRowProperties: function(row,props) {},
+      getCellProperties: function(row,col,props) {},
+      getColumnProperties: function(colid,col,props) {},
+    };
+
+    var searchThreads, contactsList, contactsThreads,
+      conferencesList, conferencesThreads;
+
+    function onLoad() {
+      searchThreads = document.getElementById("search-threads").view =
+        new TreeView();
+
+      contactsList = document.getElementById("contacts-list").view =
+        new TreeView(window.opener.account.historyMgr.getThreadJids(0));
+      contactsThreads = document.getElementById("contacts-threads").view =
+        new TreeView();
+
+      conferencesList = document.getElementById("conferences-list").view =
+        new TreeView(window.opener.account.historyMgr.getThreadJids(1));
+      conferencesThreads = document.getElementById("conferences-threads").view =
+        new TreeView();
+    }
+
+    function updateSearch(ev, val)
+    {
+      if (ev.keyCode != KeyEvent.DOM_VK_RETURN)
+        return;
+      searchThreads._update(window.opener.account.historyMgr.findMessages(val));
+    }
+
+    function updateThreads(tree, view)
+    {
+      view._update(window.opener.account.historyMgr.getThreadsForJidIds(
+        tree.view.wrappedJSObject._results[tree.currentIndex].id));
+    }
+
+    function updateMessages(tree, view)
+    {
+      var threadId = tree.view.wrappedJSObject._results[tree.currentIndex].threadId;
+
+      view = document.getElementById(view);
+      view.clear();
+
+      for (var msg in window.opener.account.historyMgr.getThreadMessagesIterator(threadId)) {
+        view.addMessage(msg.nick, msg.body, msg.flags ? "you" : "me", msg.time);
+      }
+    }
+  ]]></script>
+
+  <tabbox flex="1">
+    <tabs>
+      <tab label="Search"/>
+      <tab label="Chats"/>
+      <tab label="Conferences"/>
+    </tabs>
+    <tabpanels flex="1">
+      <tabpanel>
+        <vbox flex="1">
+          <hbox align="center">
+            <label value="Search:"/>
+            <textbox id="search" flex="1" onkeypress="updateSearch(event, this.value)"/>
+          </hbox>
+          <tree id="search-threads" height="100" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, 'search-view')">
+            <treecols>
+              <treecol primary="true" flex="1" label="JID" id="jid"/>
+              <splitter class="tree-splitter"/>
+              <treecol flex="1" label="Date" id="date"/>
+            </treecols>
+            <treechildren/>
+          </tree>
+          <splitter/>
+          <chatpane-view id="search-view" flex="1"/>
+        </vbox>
+      </tabpanel>
+      <tabpanel>
+        <hbox flex="1">
+          <tree id="contacts-list" width="150" persist="width" hidecolumnpicker="true"
+              seltype="single" onselect="updateThreads(this, contactsThreads)">
+            <treecols>
+              <treecol primary="true" flex="1" id="jid" hideheader="true"/>
+            </treecols>
+            <treechildren/>
+          </tree>
+          <splitter/>
+          <vbox flex="1">
+            <tree id="contacts-threads" height="100" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, 'contacts-view')">
+              <treecols>
+                <treecol primary="true" flex="1" label="JID" id="jid"/>
+                <splitter class="tree-splitter"/>
+                <treecol flex="1" label="Date" id="date"/>
+              </treecols>
+              <treechildren/>
+            </tree>
+            <splitter/>
+            <chatpane-view id="contacts-view" flex="1"/>
+          </vbox>
+        </hbox>
+      </tabpanel>
+      <tabpanel>
+        <hbox flex="1">
+          <tree id="conferences-list" width="150" persist="width" hidecolumnpicker="true"
+              seltype="single" onselect="updateThreads(this, conferencesThreads)">
+            <treecols>
+              <treecol primary="true" flex="1" id="jid" hideheader="true"/>
+            </treecols>
+            <treechildren/>
+          </tree>
+          <splitter/>
+          <vbox flex="1">
+            <tree id="conferences-threads" height="100" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, 'conferences-view')">
+              <treecols>
+                <treecol primary="true" flex="1" label="JID" id="jid"/>
+                <splitter class="tree-splitter"/>
+                <treecol flex="1" label="Date" id="date"/>
+              </treecols>
+              <treechildren/>
+            </tree>
+            <splitter/>
+            <chatpane-view id="conferences-view" flex="1"/>
+          </vbox>
+        </hbox>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+
+</window>

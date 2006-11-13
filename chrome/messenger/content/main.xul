@@ -27,6 +27,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
@@ -306,18 +307,24 @@
 
       onSend: function()
       {
-        if (!(this.contact instanceof Conference))
-          this.chatPane.addMessage(this.contact.interlocutorName,
-            this.chatPane.content, "me");
+        var body = this.chatPane.content.replace(/\n$/, "");
 
-        this.contact.sendMessage(this.chatPane.content);
+        if (!(this.contact instanceof Conference))
+          this.addMessage(this.contact.interlocutorName, body,
+            "me", this.contact.jid);
+
+        this.contact.sendMessage(body);
       },
 
-      addMessage: function(from, body, authorId)
+      addMessage: function(from, body, authorId, jid)
       {
+        this.threadId = account.historyMgr.addMessage(jid,
+          this.contact instanceof Conference ? 1 : 0, authorId == "me" ? 0 : 1,
+          body, from, null, this.threadId, this.contact.jid.shortJID);
+
         if (this.closed)
           return;
-        this.chatPane.addMessage(from, body, authorId)
+        this.chatPane.addMessage(from, body, authorId);
       }
     }
   ]]></script>
@@ -326,6 +333,7 @@
     <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
     <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
     <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
+    <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
     <command id="cmd_disconnect" oncommand="con.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
@@ -348,13 +356,14 @@
     <key id="key_addContact" modifiers="control" key="A" command="cmd_addContact"/>
     <key id="key_joinRoom" modifiers="control" key="J" command="cmd_joinRoom"/>
     <key id="key_disco" modifiers="control" key="S" command="cmd_disco"/>
-    <key id="key_quit" modifiers="control" key="Q" oncommand="cmd_quit"/>
-    <key id="key_ourVCard" modifiers="control" key="E" oncommand="cmd_ourVCard"/>
-    <key id="key_themes" modifiers="control" key="T" oncommand="cmd_themes"/>
-    <key id="key_prefs" modifiers="control" key="P" oncommand="cmd_prefs"/>
-    <key id="key_help" modifiers="control" key="H" oncommand="cmd_help"/>
-    <key id="key_xmlConsole" modifiers="control" key="C" oncommand="cmd_xmlConsole"/>
-    <key id="key_toggleShowOffline" modifiers="control" key="O" oncommand="cmd_toggleShowOffline"/>
+    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
+    <key id="key_ourVCard" modifiers="control" key="E" command="cmd_ourVCard"/>
+    <key id="key_themes" modifiers="control" key="T" command="cmd_themes"/>
+    <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
+    <key id="key_help" modifiers="control" key="H" command="cmd_help"/>
+    <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
+    <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
+    <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
   </keyset>
 
   <deck id="main-deck" flex="1" selectedIndex="0">
@@ -406,6 +415,8 @@
               <menuitem label="&menulagger.servicesDiscovery;" command="cmd_disco"
                   accesskey="&shortcurt.service;"/>
           <!-- <menuitem label="&menulagger.adminTools;"/> -->
+              <menuitem label="Histroy Manager" command="cmd_history"
+                  accesskey="H"/>
               <menuseparator/>
               <menuitem label="&menulagger.disconnect;" command="cmd_disconnect"/>
               <menuitem label="&menulagger.quitter;" command="cmd_quit"

@@ -138,7 +138,7 @@ _DECL_(PersistantCache).prototype =
     bumpExpiryDate: function(key, expiryDate)
     {
         this.bumpStmt.bindStringParameter(0, key);
-        this.bumpStmt.bindStringParameter(1, expiryDate.getTime());
+        this.bumpStmt.bindInt64Parameter(1, expiryDate.getTime());
         this.bumpStmt.execute();
     },
 }

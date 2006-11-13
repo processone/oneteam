@@ -21,6 +21,7 @@ function Account()
     this.currentPresence = {show: "unavailable"};
 
     this.cache = new PersistantCache("oneteamCache");
+    this.historyMgr = new HistoryManager();
     this.bookmarks = new ConferenceBookmarks();
     this.connected = false;
 
@@ -210,6 +211,12 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
     {
         window.open("chrome://messenger/content/manageBookmarks.xul",
                     "ot:manageBookmarks", "chrome,centerscreen");
+    },
+
+    showHistoryManager: function()
+    {
+        window.open("chrome://messenger/content/history.xul", "ot:histroy",
+                    "chrome,centerscreen");
     },
 
     showAbout: function()
