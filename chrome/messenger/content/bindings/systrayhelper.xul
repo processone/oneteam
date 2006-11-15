@@ -38,7 +38,7 @@
         pn.appendChild(item);
       }
 
-      pn.showPopup(document.firstChild, x, y, "context", "", "");
+      pn.showPopup(document.documentElement, x, y, "context", "", "");
     }
 
     hideWindow();

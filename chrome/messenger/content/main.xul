@@ -12,7 +12,7 @@
 %messengerDTD;
 ]>
 
-<window id="ot:main" title="OneTeam" onload="onLoad()" onclose="onClose()"
+<window id="ot:main" title="OneTeam" onload="onLoad()" onclose="return onClose()"
     persist="width height" width="170" height="450"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
@@ -154,8 +154,8 @@
     }
 
     function onClose() {
-      ChatPane.prototype.closeAllTabs();
-      quit();
+      setPresenceUpdater.systray.minimized = true;
+      return false;
     }
 
     function quit() {
