@@ -15,16 +15,18 @@
     <content>
       <xul:vbox flex="1">
         <xul:hbox flex="1">
-          <xul:textbox id="name-textbox" flex="1"/>
-          <xul:button id="add-button" label="Add"
-            oncommand="this.parentNode.parentNode.parentNode.onAddContact()"/>
+          <xul:textbox id="name-textbox" flex="1" xbl:inherits="disabled"/>
+          <xul:button id="add-button" label="Add" xbl:inherits="disabled"/>
         </xul:hbox>
-        <xul:listbox id="contacts-listbox" xbl:inherits="rows">
+        <xul:listbox id="contacts-listbox" xbl:inherits="disabled,rows">
         </xul:listbox>
       </xul:vbox>
     </content>
 
     <implementation>
+      <property name="disabled" onget="return this.getAttribute('disabled') == 'true'"
+        onset="this.setAttribute('disabled', !!val); return val;"/>
+
       <property name="choosenContacts">
         <getter><![CDATA[
           var count = this._listbox.getRowCount();
@@ -39,6 +41,38 @@
           }
           return contacts;
         ]]></getter>
+
+        <setter><![CDATA[
+          var valHash = {};
+          var count = this._listbox.getRowCount();
+
+          for (var i = 0; i < val.length; i++)
+            valHash[val[i].name || val[i]] = true;
+
+          this._internal = true;
+          for (i = 0; i < count; i++) {
+            var item = this._listbox.getItemAtIndex(i);
+            item.checked = false;
+            if ("checkedCount" in item)
+              item.checkedCount = 0;
+            else
+              item.lastChecked = false;
+          }
+          this._internal = false;
+
+          for (i = 0; i < count; i++) {
+            var item = this._listbox.getItemAtIndex(i);
+            if (item.value && valHash[item.value]) {
+              item.checked = !!valHash[item.value];
+              delete valHashSeen[item.value];
+            }
+          }
+
+          for (i in valHash)
+            this.addContact(i, false);
+
+          return val;
+        ]]></setter>
       </property>
 
       <constructor>
@@ -70,31 +104,53 @@
         ]]>
       </constructor>
 
-      <method name="onAddContact">
+      <method name="addContact">
+        <parameter name="jid"/>
+        <parameter name="scroll"/>
         <body><![CDATA[
-          if (!this._textbox.value)
+          if (!jid)
             return;
-          if (!~this._textbox.value.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-            alert("Please give correct Jabber ID");
-            return;
+
+          var count = this._listbox.getRowCount(), item;
+          for (var i = 0; i < count; i++) {
+            item = this._listbox.getItemAtIndex(i);
+            if (item.value == jid) {
+              item.checked = true;
+              if (scroll)
+                this._listbox.ensureElementIsVisible(item);
+              return;
+            }
           }
 
-          var item = document.createElement("listitem");
+          item = document.createElement("listitem");
           item.setAttribute("type", "checkbox");
           item.setAttribute("checked", "true");
-          item.setAttribute("label", this._textbox.value);
-          item.setAttribute("value", this._textbox.value);
-
-          this._textbox.value = "";
+          item.setAttribute("label", jid);
+          item.setAttribute("value", jid);
 
           this._listbox.appendChild(item);
-          this._listbox.ensureElementIsVisible(item);
+          if (scroll)
+            this._listbox.ensureElementIsVisible(item);
         ]]></body>
       </method>
-
     </implementation>
 
     <handlers>
+      <handler event="command"><![CDATA[
+        if (event.originalTarget.id != "add-button")
+          return;
+
+        if (!this._textbox.value)
+          return;
+        if (!~this._textbox.value.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
+          alert("Please give correct Jabber ID");
+          return;
+        }
+
+        this.addContact(this._textbox.value, true);
+        this._textbox.value = "";
+      ]]></handler>
+
       <handler event="CheckboxStateChange"><![CDATA[
         if (this._internal)
           return;

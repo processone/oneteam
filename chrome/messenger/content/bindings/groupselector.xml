@@ -15,16 +15,19 @@
     <content>
       <xul:vbox flex="1">
         <xul:hbox flex="1">
-          <xul:textbox id="name-textbox" flex="1"/>
-          <xul:button id="add-button" label="Add"
+          <xul:textbox id="name-textbox" flex="1" xbl:inherits="disabled"/>
+          <xul:button id="add-button" label="Add" xbl:inherits="disabled"
             oncommand="this.parentNode.parentNode.parentNode.onAddGroup()"/>
         </xul:hbox>
-        <xul:listbox id="groups-listbox" xbl:inherits="rows">
+        <xul:listbox id="groups-listbox" xbl:inherits="disabled,rows">
         </xul:listbox>
       </xul:vbox>
     </content>
 
     <implementation>
+      <property name="disabled" onget="return this.getAttribute('disabled') == 'true'"
+        onset="this.setAttribute('disabled', !!val); return val;"/>
+
       <property name="choosenGroups">
         <getter><![CDATA[
           var count = this._listbox.getRowCount();
@@ -36,18 +39,23 @@
           }
           return groups;
         ]]></getter>
+
         <setter><![CDATA[
           var valHash = {};
           var count = this._listbox.getRowCount();
 
-          for (var i = 0; i < val.length; i++) {
+          for (var i = 0; i < val.length; i++)
             valHash[val[i].name || val[i]] = true;
-          }
 
           for (i = 0; i < count; i++) {
             var item = this._listbox.getItemAtIndex(i);
             item.checked = !!valHash[item.value];
+            delete valHash[item.value];
           }
+
+          for (i in valHash)
+            this.addGroup(i);
+
           return val;
         ]]></setter>
       </property>
@@ -72,15 +80,32 @@
 
       <method name="onAddGroup">
         <body><![CDATA[
-          if (!this._textbox.value)
+          this.addGroup(this._textbox.value);
+          this._textbox.value = "";
+        ]]></body>
+      </method>
+
+      <method name="addGroup">
+        <parameter name="name"/>
+        <body><![CDATA[
+          if (!name)
             return;
-          var item = document.createElement("listitem");
+
+          var count = this._listbox.getRowCount(), item;
+          for (var i = 0; i < count; i++) {
+            item = this._listbox.getItemAtIndex(i);
+            if (item.value == name) {
+              item.checked = true;
+              this._listbox.ensureElementIsVisible(item);
+              return;
+            }
+          }
+
+          item = document.createElement("listitem");
           item.setAttribute("type", "checkbox");
           item.setAttribute("checked", "true");
-          item.setAttribute("label", this._textbox.value);
-          item.setAttribute("value", this._textbox.value);
-
-          this._textbox.value = "";
+          item.setAttribute("label", name);
+          item.setAttribute("value", name);
 
           this._listbox.appendChild(item);
           this._listbox.ensureElementIsVisible(item);
