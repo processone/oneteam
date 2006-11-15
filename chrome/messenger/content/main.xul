@@ -31,6 +31,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/presenceProfiles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
@@ -103,6 +104,9 @@
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
           this.bookmarksMenuView =
             new BookmarksMenuView(document.getElementById("conference-menu-separator"));
+          this.presenceProfilesView =
+            new PresenceProfilesView(document.getElementById("setPresence-profile-dummy"),
+                                     this.profileEnable);
           document.getElementById("cmd_toggleShowOffline").
             setAttribute("checked", this.rosterView.hideOffline);
           document.getElementById("conference-contextmenu").view = this.conferencesView;
@@ -117,14 +121,51 @@
           return;
 
         if (this.chooser.value) {
-          account.setPresence(this.chooser.value);
-          this.value = this.chooser.value;
+          this.presence = this.chooser.value;
+          account.setPresence(this.presence, null, null,
+            this.profileEnable.checked ? this.profile : null, true);
         } else {
           this._skip = true;
-          this.chooser.value = this.value;
+          this.chooser.value = this.presence;
           this._skip = false;
-          account.onCustomPresence(this.value)
+          account.onCustomPresence(this.presence,
+            this.profileEnable.checked ? this.profile : null);
         }
+      },
+
+      get profile()
+      {
+        if (this.profileEnable.checked)
+          return this.profileChooser.selectedItem && this.profileChooser.selectedItem.model;
+        return null;
+      },
+
+      onProfileCommand: function()
+      {
+        if (this._skip)
+          return;
+        if (this.profileChooser.value) {
+          this.profileValue = this.profileChooser.value;
+
+          if (this.profileEnable.checked)
+            account.setPresence(this.presence, null, null, this.profile, true);
+        } else {
+          this._skip = true;
+          this.profileChooser.value = this.profileValue;
+          this._skip = false;
+
+          account.onEditPresenceProfiles();
+        }
+      },
+
+      onProfileEnable: function(enabled)
+      {
+          account.setPresence(this.presence, null, null,
+            this.profileEnable.checked ? this.profile : null, true);
+      },
+
+      onProfilesChange: function()
+      {
       },
 
       onIconSetChange: function()
@@ -141,8 +182,10 @@
 
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.systray = document.getElementById("systray");
+        this.profileChooser = document.getElementById("setPresence-profile-chooser");
+        this.profileEnable = document.getElementById("setPresence-profile-enable");
         this.systray.icon = presenceToIcon(account.currentPresence.show||"available");
-        this.value = this.chooser.value;
+        this.presence = this.chooser.value;
       }
     };
 
@@ -489,13 +532,15 @@
                 </menupopup>
               </menulist>
               <hbox>
-                <checkbox id="setPresence-profile-enable" disabled="true"/>
-                <menulist id="setPresence-profile-chooser" flex="1">
+                <checkbox id="setPresence-profile-enable" disabled="true"
+                  oncommand="setPresenceUpdater.onProfileEnable()"/>
+                <menulist id="setPresence-profile-chooser" flex="1"
+                  oncommand="setPresenceUpdater.onProfileCommand()">
                   <menupopup>
-                    <menuitem id="setPresence-profile-create" label="No profiles configured"
-                      disabled="true"/>
+                    <menuitem id="setPresence-profile-dummy" label="No profiles configured"
+                      disabled="true" value="dummy-profile"/>
                     <menuseparator/>
-                    <menuitem id="setPresence-profile-create" label="Create new profile..."/>
+                    <menuitem id="setPresence-profile-create" label="Edit profiles..."/>
                   </menupopup>
                 </menulist>
               </hbox>

@@ -23,6 +23,7 @@ function Account()
     this.cache = new PersistantCache("oneteamCache");
     this.historyMgr = new HistoryManager();
     this.bookmarks = new ConferenceBookmarks();
+    this.presenceProfiles = new PresenceProfiles();
     this.connected = false;
 
     this.init();
@@ -96,13 +97,14 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
             return;
         }
-
-        for (var c in this.contactsIterator())
+try{
+        for (var c in this.contactsIterator()) {
             if (presence = profile.getPresenceFor(c)) {
                 if (profile != this.currentPresence.profile)
                     c._sendPresence(presence.show, presence.status, presence.priority);
             } else
-                c._sendPresence(show, status, priority);
+                c._sendPresence(newPresence.show, newPresence.status, newPresence.priority);
+        }
 
         for (var i = 0; i < this._presenceObservers.length; i++)
             if (presence = profile.getPresenceFor(this._presenceObservers[i])) {
@@ -114,7 +116,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                 this._presenceObservers[i]._sendPresence(newPresence.show,
                                                          newPresence.status,
                                                          newPresence.priority);
-
+}catch(ex){alert(ex)}
         this.currentPresence = newPresence;
         if (userSet)
             this.userPresence = newPresence;
@@ -131,9 +133,9 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
     contactsIterator: function(predicate, token)
     {
-        for (var i = 0; i < this.contacts.length; i++)
-            if (!predicate || predicate(this.copntacts[i], token))
-                yield this.contacts[i];
+        for each (var contact in this.contacts)
+            if (!predicate || predicate(contact, token))
+                yield contact;
     },
 
     _onGroupAdded: function(group)
@@ -253,6 +255,12 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                           "ot:customPresence", "chrome,centerscreen,modal", presence);
     },
 
+    onEditPresenceProfiles: function()
+    {
+        window.openDialog("chrome://messenger/content/presenceProfiles.xul",
+                          "ot:presenceProfiles", "chrome,centerscreen,modal");
+    },
+
     observe: function(subject, topic, value)
     {
         var val;
@@ -347,6 +355,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                                         if (items.length)
                                            account.defaultConferenceServer = items[0].jid;
                                      });
+        this.presenceProfiles.loadFromServer();
     },
 
     onDisconnect: function()

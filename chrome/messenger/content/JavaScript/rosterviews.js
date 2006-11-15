@@ -196,3 +196,90 @@ _DECL_(ContactView).prototype =
     },
 }
 
+function PresenceProfilesView(node, checkbox)
+{
+    this.containerNode = node.parentNode;
+    this.dummyNode = node;
+    this.afterlastItemNode = node.nextSibling;
+    this.items = [];
+    this.model = account.presenceProfiles;
+    this.checkbox = checkbox;
+
+    this.onModelUpdated(null, "profiles", {added: this.model.profiles});
+    this.model.registerView(this, null, "profiles");
+}
+
+_DECL_(PresenceProfilesView, null, ContainerView).prototype =
+{
+    afterlastItemNode: null,
+    containerNode: null,
+
+    itemComparator: function(a, b)
+    {
+        a = a.model.name.toLowerCase();
+        b = b.model.name.toLowerCase();
+
+        return a > b ? -1 : a == b ? 0 : 1;
+    },
+
+    onModelUpdated: function(model, type, data)
+    {
+        for (var i = 0; data.added && i < data.added.length; i++)
+            this.onItemAdded(new PresenceProfileView(data.added[i], this));
+
+        for (i = 0; data.removed && i < data.removed.length; i++)
+            this.onItemRemoved(data.removed[i]);
+
+        if (this.model.profiles.length == 0) {
+            this.containerNode.insertBefore(this.dummyNode, this.afterlastItemNode);
+            this.containerNode.parentNode.selectedIndex = 0;
+            this.checkbox.disabled = true;
+        } else if (this.dummyNode.parentNode) {
+            this.containerNode.removeChild(this.dummyNode);
+            this.containerNode.parentNode.selectedIndex = 0;
+            this.checkbox.disabled = false;
+        }
+    }
+}
+
+function PresenceProfileView(model, parentView)
+{
+    this.model = model;
+    this.parentView = parentView;
+
+    this.node = document.createElement("menuitem");
+
+    this.node.setAttribute("class", "setPresence-profile-view");
+    this.node.setAttribute("label", model.name);
+    this.node.setAttribute("value", "presenceProfile-"+(PresenceProfileView.prototype._id++));
+
+    this.node.model = this.model;
+    this.node.view = this;
+
+    this.model.registerView(this, "onNameChange", "name");
+}
+
+_DECL_(PresenceProfileView).prototype =
+{
+    _id: 0,
+
+    onNameChange: function()
+    {
+        this.node.setAttribute("label", this.model.bookmarkName);
+        this.parentView.onItemUpdated(this);
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        rootNode.insertBefore(this.node, insertBefore);
+    },
+
+    destroy: function()
+    {
+        if (this.node.parentNode)
+            this.node.parentNode.removeChild(this.node);
+
+        this.model.unregisterView(this, "onNameChange", "name");
+    },
+}
+

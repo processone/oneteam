@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % guiDTD SYSTEM "chrome://messenger/locale/gui.dtd">
+  <!ENTITY % statusDTD SYSTEM "chrome://messenger/locale/status.dtd">
+%guiDTD;
+%statusDTD;
+]>
+
+<dialog id="ot:presenceProfiles"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
+  ondialogaccept="return saveProfiles()" title="Presence Profiles" buttons="accept,cancel">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var selectedItem;
+    var controls = {};
+    var list;
+    var removedItems = [];
+
+    function onLoad()
+    {
+      list = document.getElementById("list");
+
+      var profiles = window.opener.account.presenceProfiles.profiles;
+      for (var i = 0; i < profiles.length; i++) {
+        var item = list.appendItem(profiles[i].name);
+        item.model = profiles[i];
+
+        for (var j = 0; j < profiles[i].presences.length; j++) {
+          var pp = profiles[i].presences[j];
+          if (pp.presence) {
+            item["val-presenceShow"] = pp.presence.show;
+            item["val-statusMessage"] = pp.presence.status;
+            item["val-matchType"] = pp.groups.length || pp.jids.length;
+          }
+          if (pp.groups.length || pp.jids.length) {
+            item["val-groups"] = pp.groups;
+            item["val-contacts"] = pp.jids;
+          }
+        }
+      }
+
+      for each (var id in "name presenceShow statusMessage matchType groups contacts".split(/ /)) {
+        controls[id] = document.getElementById(id);
+        if (!profiles.length)
+          controls[id].disabled = true;
+      }
+      if (profiles.length)
+        list.selectedIndex = 0;
+    }
+
+    function updateName(newName)
+    {
+      if (selectedItem)
+        selectedItem.label = newName;
+    }
+
+    function newProfile()
+    {
+      var item = list.appendItem("New Profile");
+      item["val-matchType"] = true;
+      item["val-presenceShow"] = "available";
+      item["val-statusMessage"] = "";
+      item["val-groups"] = item["val-contacts"] = [];
+
+      for each (var id in "name presenceShow statusMessage matchType groups contacts".split(/ /))
+        controls[id].disabled = false;
+
+      list.selectedItem = item;
+      controls.name.focus();
+    }
+
+    function removeProile()
+    {
+      if (!selectedItem)
+        return;
+
+      if (selectedItem.model)
+        removedItems.push(selectedItem.model);
+
+      list.removeChild(selectedItem);
+    }
+
+    function profileChanged()
+    {
+      if (selectedItem) {
+        for each (var id in "presenceShow statusMessage".split(/ /))
+          selectedItem["val-"+id] = controls[id].value;
+
+        selectedItem["val-matchType"] = controls["matchType"].value != "false";
+        selectedItem["val-groups"] = controls["groups"].choosenGroups;
+        selectedItem["val-contacts"] = controls["contacts"].choosenContacts;
+      }
+
+      selectedItem = list.selectedItem;
+      if (selectedItem) {
+        for each (var id in "presenceShow statusMessage".split(/ /))
+          controls[id].value = selectedItem["val-"+id];
+
+        controls["matchType"].value = !!selectedItem["val-matchType"];
+        controls.name.value = selectedItem.label;
+        controls["groups"].choosenGroups = selectedItem["val-groups"];
+        controls["contacts"].choosenContacts = selectedItem["val-contacts"];
+      } else
+        setTimeout("list.selectedIndex = 0", 0);
+    }
+
+    function saveProfiles()
+    {
+      profileChanged();
+
+      var newProfiles = [];
+      for (i = 0; i < list.childNodes.length; i++) {
+        var item = list.childNodes[i];
+
+        var presence = { show: item["val-presenceShow"], status: item["val-statusMessage"],
+          priority: 0};
+        var presenceData = {groups: item["val-groups"], jids: item["val-contacts"]};
+        var presences;
+
+        if (item["val-matchType"]) {
+          presenceData.presence = presence;
+          presences = [presenceData];
+        } else {
+          presences = [presenceData, {presence: presence, jids: [], groups: []}];
+        }
+        if (item.model)
+          item.model.update(item.label, presences);
+        else
+          newProfiles.push(new window.opener.PresenceProfile(item.label, presences));
+      }
+
+      if (newProfiles.length || removedItems.length)
+        window.opener.account.presenceProfiles.update(newProfiles, removedItems);
+      else
+        window.opener.account.presenceProfiles.storeOnServer();
+
+      return true;
+    }
+  ]]></script>
+
+  <dialogheader title="Presence Profiles"/>
+  <hbox flex="1">
+    <vbox>
+      <listbox id="list" flex="1" onselect="profileChanged(this)"/>
+      <hbox>
+        <button label="New" oncommand="newProfile()"/>
+        <button label="Remove" oncommand="removeProile()"/>
+      </hbox>
+    </vbox>
+
+    <vbox flex="1">
+      <hbox class="entry">
+        <label value="Name:" control="name"/>
+        <textbox id="name" oninput="updateName(this.value)"/>
+      </hbox>
+
+      <groupbox>
+        <caption label="Presence"/>
+        <menulist id="presenceShow">
+          <menupopup>
+            <menuitem id="type-available" label="&status.Available;"
+              value="available"/>
+            <menuitem id="type-availableChat" label="&status.AvailableChat;"
+              value="chat"/>
+            <menuitem id="type-dnd" label="&status.Dnd;" value="dnd"/>
+            <menuitem id="type-away" label="&status.Away;" value="away"/>
+            <menuitem id="type-xa" label="&status.Undisponible;" value="xa"/>
+            <menuitem id="type-invisible" label="&status.Invisible;" value="invisible"/>
+          </menupopup>
+        </menulist>
+
+        <label value="Status message:" control="statusMessage"/>
+        <textbox id="statusMessage" multiline="true" rows="2" flex="1"/>
+      </groupbox>
+
+      <description>Use this presence when contact 
+        <menulist id="matchType">
+          <menupopup>
+            <menuitem label="is" value="true"/>
+            <menuitem label="isn't" value="false"/>
+          </menupopup>
+        </menulist>
+        in selected groups/one of selected contacts.
+      </description>
+
+      <groupbox>
+        <caption label="Rules"/>
+        <label value="Groups:" control="groups"/>
+        <groupselector id="groups" rows="3"/>
+
+        <spacer/>
+
+        <label value="Contacts:" control="contacts"/>
+        <contactselector id="contacts" rows="4"/>
+      </groupbox>
+
+    </vbox>
+  </hbox>
+</dialog>
+

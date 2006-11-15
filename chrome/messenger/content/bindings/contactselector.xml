@@ -64,7 +64,7 @@
             var item = this._listbox.getItemAtIndex(i);
             if (item.value && valHash[item.value]) {
               item.checked = !!valHash[item.value];
-              delete valHashSeen[item.value];
+              delete valHash[item.value];
             }
           }
 
