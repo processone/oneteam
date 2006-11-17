@@ -389,6 +389,7 @@
 
     <command id="cmd_help" key="key_help" oncommand=""/>
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
+    <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
     <command id="cmd_about" oncommand="account.showAbout()"/>
 
     <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
@@ -406,6 +407,7 @@
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
     <key id="key_help" modifiers="control" key="H" command="cmd_help"/>
     <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
+    <key id="key_jsConsole" modifiers="control" key="M" command="cmd_jsConsole"/>
     <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
     <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
   </keyset>
@@ -486,6 +488,7 @@
                   accesskey="&shortcurt.help;"/>
               <menuitem label="&menuAide.console;" command="cmd_xmlConsole"
                   accesskey="&shortcurt.console;"/>
+              <menuitem label="JavaScript Console" command="cmd_jsConsole"/>
               <menuseparator/>
               <menuitem label="&menuAide.apropos;" command="cmd_about"/>
             </menupopup>
