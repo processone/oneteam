@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<window
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        xmlns:html="http://www.w3.org/1999/xhtml"
+        width="640" height="480"
+        screenX="10" screenY="10"
+        onload="onload()"
+        persist="screenX screenY width height sizemode">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>                            
+  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
+
+    <script type="application/x-javascript;version=1.7"><![CDATA[
+        function flushChrome() {
+            var prefSvc = Components.classes["@mozilla.org/preferences-service;1"].
+                    getService(Components.interfaces.nsIPrefBranch);
+
+            prefSvc.setBoolPref("nglayout.debug.disable_xul_cache", true);
+            prefSvc.setBoolPref("nglayout.debug.disable_xul_cache", false);
+        }
+
+        function exec() {
+            var ret = document.getElementById("output");
+            ret.value = "";
+
+            try {
+                dump("\n***RESULT***\n\n" +
+		        eval(document.getElementById("inputexec").value));
+            } catch (ex) {
+                dump("\n***EXCEPTION***\n\n"+
+                        exceptionToString(ex, ""));
+            }
+        }
+
+        function dump(value) {
+            var ret = document.getElementById("output");
+            ret.value += value+"\n";
+        }
+
+        function dumps() {
+            var i;
+
+            for (i = 0; i < arguments.length; i++)
+                dump("arguments["+i+"] = "+uneval(arguments[i]));
+        }
+
+        function onload() {
+            document.getElementById("inputexec").focus();
+        }
+	var ev;
+
+	function keypress(e) {
+	    if (e.keyCode == KeyEvent.DOM_VK_RETURN && e.shiftKey) {
+		e.stopPropagation();
+		e.preventDefault();
+		exec();
+	    }
+	    return false;
+	}
+
+    ]]></script>
+    <vbox flex="1">
+        <textbox flex="1" id="output" readonly="true" multiline="true"/>
+        <textbox flex="1" id="inputexec" multiline="true"
+	     onkeypress="keypress(event)"/>
+     <hbox may="F">
+       <drakiew></drakiew>
+       <sud></sud>
+            <spacer flex="1"/>
+            <button label="exec" oncommand="exec()"/>
+            <spacer flex="1"/>
+        </hbox>
+    </vbox>
+</window>
