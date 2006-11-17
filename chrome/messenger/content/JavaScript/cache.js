@@ -162,4 +162,5 @@ function generateRandomName(length)
     var name = "";
     for (var i = 0; i < length; ++i)
         name += charset.charAt(Math.floor(Math.random() * charset.length));
+    return name;
 }
