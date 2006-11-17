@@ -27,8 +27,10 @@
             ret.value = "";
 
             try {
-                dump("\n***RESULT***\n\n" +
-		        eval(document.getElementById("inputexec").value));
+                var val = document.getElementById("inputexec").value;
+                with ({__proto__: window.opener, dump: dump})
+                    val = eval(val);
+                dump("\n***RESULT***\n\n" + val);
             } catch (ex) {
                 dump("\n***EXCEPTION***\n\n"+
                         exceptionToString(ex, ""));
@@ -50,16 +52,17 @@
         function onload() {
             document.getElementById("inputexec").focus();
         }
-	var ev;
 
-	function keypress(e) {
-	    if (e.keyCode == KeyEvent.DOM_VK_RETURN && e.shiftKey) {
-		e.stopPropagation();
-		e.preventDefault();
-		exec();
-	    }
-	    return false;
-	}
+        var ev;
+
+        function keypress(e) {
+            if (e.keyCode == KeyEvent.DOM_VK_RETURN && e.shiftKey) {
+                e.stopPropagation();
+                e.preventDefault();
+                exec();
+            }
+            return false;
+        }
 
     ]]></script>
     <vbox flex="1">
