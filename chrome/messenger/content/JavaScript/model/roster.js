@@ -334,13 +334,16 @@ _DECL_(Contact, null, Model,
         this._updateRoster();
     },
 
-    onEditGroups: function()
+    onEditContact: function()
     {
+        window.openDialog("chrome://messenger/content/editContact.xul",
+                          "ot:editContact", "resizable=no,chrome,dialog,modal", this);
     },
 
-    editGroups: function(newGroups)
+    editContact: function(newName, newGroups)
     {
-        this._groups = groups;
+        this._name = newName;
+        this._groups = newGroups;
         this._updateRoster();
     },
 
@@ -412,7 +415,7 @@ _DECL_(Contact, null, Model,
 
     _handleVCard: META.after=function(packet)
     {
-        photo = packet.getNode().getElementsByTagName("PHOTO")[0];
+        var photo = packet.getNode().getElementsByTagName("PHOTO")[0];
         if (!photo) return;
         photo = photo.getElementsByTagName("BINVAL")[0];
         if (!photo) return;

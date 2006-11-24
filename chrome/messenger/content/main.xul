@@ -593,6 +593,7 @@
 
       <menuitem label="&listitemcontext.SupprimerContact;" oncommand="activeItem.onRemove()"/>
       <menuitem label="&listitemcontext.Rename;" oncommand="activeItem.onRename()"/>
+      <menuitem label="Edit contact..." oncommand="activeItem.onEditContact()"/>
 
       <menuseparator/>
 

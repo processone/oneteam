@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+
+<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/editContact.dtd">
+
+<dialog id="editContact"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Change"
+  ondialogaccept="return editContact()" title="Edit Contact" buttons="accept,cancel">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var contact = window.arguments[0];
+
+    function onLoad() {
+      document.getElementById("nick").value = contact._name || contact.name || "";
+      document.getElementById("groups").choosenGroups = contact.groups;
+    }
+    function editContact() {
+      contact.editContact(document.getElementById("nick").value,
+        document.getElementById("groups").choosenGroups);
+
+      return true;
+    }
+  ]]></script>
+
+  <dialogheader title="Edit Contact"/>
+
+  <spacer/>
+  <hbox class="entry">
+    <label value="Nickname:" control="nick"/>
+    <textbox id="nick"/>
+  </hbox>
+
+  <spacer/>
+
+  <label value="Groups:" control="groups"/>
+  <groupselector id="groups" rows="4"/>
+</dialog>
+
