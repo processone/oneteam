@@ -325,9 +325,6 @@ try{
             pass: this.connectionInfo.pass,
             resource: gPrefService.getCharPref("chat.connection.resource")};
 
-        this.myJID = new JID(this.connectionInfo.user, this.connectionInfo.host,
-                           this.connectionInfo.resource);
-
         self.con = con;
         this.modelUpdated("con");
         con.connect(args);
@@ -341,6 +338,9 @@ try{
         con.send(pkt);
 
         this.connected = true;
+
+        this.myJID = new JID(con.fulljid);
+        this.discoJID = new JID(this.myJID.domain);
 
         if (this.userPresence)
             this.setPresence(this.userPresence);
