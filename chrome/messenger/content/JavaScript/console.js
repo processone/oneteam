@@ -132,6 +132,14 @@ function prettyPrintDOM(dom)
         ret = "<span class='tag'><span class='tag-start'>&lt;<span class='tag-name'>"+
     	    dom.nodeName+"</span>";
 
+        var i = dom.prefix ? "xmlns:"+dom.prefix : "xmlns";
+        if (!dom.hasAttribute(i) && (!dom.parentNode || dom.prefix != dom.parentNode.prefix ||
+                                     dom.namespaceURI != dom.parentNode.namespaceURI))
+            ret += " <span class='attrib-name'>"+ i +
+                "</span>=<span class='attrib-value'>'" +
+                encodeEntity(dom.namespaceURI) +
+                "'</span>";            
+
         for (i = 0; i < dom.attributes.length; i++) {
             ret += " <span class='attrib-name'>"+ dom.attributes[i].nodeName +
                 "</span>=<span class='attrib-value'>'" +
