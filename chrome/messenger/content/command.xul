@@ -27,11 +27,14 @@
             ret.value = "";
 
             try {
-              var val = document.getElementById("inputexec").value;
+                var val = document.getElementById("inputexec").value;
 
-              window.opener.__EXTRA_SCOPE__ = {dump: dump};
-              val = eval("with(__EXTRA_SCOPE__){(function(){return "+val+"}).call(window)}",
-                         window.opener);
+                window.opener.__CONSOLE_ARGS__ = {
+                    scope: {dump: dump}, expr: val };
+                val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
+                              "return eval(__CONSOLE_ARGS__.expr)}).call(window)}",
+                           window.opener);
+
                 dump("\n***RESULT***\n\n" + val);
             } catch (ex) {
                 dump("\n***EXCEPTION***\n\n"+

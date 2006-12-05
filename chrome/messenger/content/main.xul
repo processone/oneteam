@@ -16,10 +16,12 @@
     persist="width height" width="170" height="450"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
+  <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
+  <script type="text/javascript" src="lib/jsjac/crypt.js"/>
+  <script type="text/javascript" src="lib/jsjac/json.js"/>
+  <script type="text/javascript" src="lib/jsjac/qm_cookie.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
-  <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
-  <script type="text/javascript" src="lib/jsjac/sha1.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
 
@@ -31,12 +33,14 @@
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/presenceProfiles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/rosterviews.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/conferenceviews.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/views/conference.js"/>
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
@@ -50,6 +54,9 @@
       var cs = document.getElementById("contact-chat-single");
       var cm = document.getElementById("contact-chat-multi");
       var im = document.getElementById("contact-invite");
+      var sf = document.getElementById("contact-send-file");
+
+      sf.hidden = !activeItem.activeResource;
 
       cm.hidden = !(cs.hidden = activeItem.resources.length > 1);
       if (cs.hidden) {
@@ -378,6 +385,7 @@
     <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
     <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
     <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
+    <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
     <command id="cmd_disconnect" oncommand="con.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
@@ -412,6 +420,7 @@
     <key id="key_cmdConsole" modifiers="control" key="N" command="cmd_cmdConsole"/>
     <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
     <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
+    <key id="key_transfers" modifiers="control" key="T" command="cmd_transfers"/>
   </keyset>
 
   <deck id="main-deck" flex="1" selectedIndex="0">
@@ -465,6 +474,8 @@
           <!-- <menuitem label="&menulagger.adminTools;"/> -->
               <menuitem label="Histroy Manager" command="cmd_history"
                   accesskey="H"/>
+              <menuitem label="File Transfers" command="cmd_transfers"
+                  accesskey="T"/>
               <menuseparator/>
               <menuitem label="&menulagger.disconnect;" command="cmd_disconnect"/>
               <menuitem label="&menulagger.quitter;" command="cmd_quit"
@@ -611,6 +622,8 @@
       <menuseparator/>
 
       <menuitem label="&listitemcontext.Infos;" oncommand="activeItem.showVCard()"/>
+      <menuitem id="contact-send-file" label="Send file..."
+          oncommand="activeItem.onSendFile()"/>
     </popup>
 
     <popup id="conference-contextmenu">

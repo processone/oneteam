@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
+
+
+<window id="fileTransferManager" title="File transfers" onload="onLoad()" onclose="onClose()"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/views/filetransfers.js"/>
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var model;
+
+    function onLoad()
+    {
+      model = new FileTransfersView(document.getElementById("richlist"));
+    }
+
+    function onClose()
+    {
+      model.destroy();
+    }
+
+    function cleanUp()
+    {
+      var transfers = window.opener.fileTransferService.fileTransfers;
+      for (var i = transfers.length-1; i >= 0; i--)
+        if (transfers[i].finished)
+          transfers[i].remove();
+    }
+  ]]></script>
+
+  <vbox flex="1">
+    <richlist id="richlist" orient="vertical" flex="1" style="background: white"/>
+    <hbox>
+      <spacer flex="1"/>
+      <button label="Clean up" oncommand="cleanUp()"/>
+    </hbox>
+  </vbox>
+  
+</window>

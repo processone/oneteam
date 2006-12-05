@@ -221,6 +221,12 @@ try{
                     "chrome,centerscreen");
     },
 
+    showTransfersManager: function()
+    {
+        window.open("chrome://messenger/content/fileTransfers.xul", "ot:fileTransfers",
+                    "chrome,centerscreen");
+    },
+
     showAbout: function()
     {
         window.open("chrome://messenger/content/about.xul", "ot:about",
@@ -446,6 +452,12 @@ try{
                 else
                     new Contact(items[i]);
             }
+            break;
+        case "http://jabber.org/protocol/si":
+            fileTransferService.onIQ(packet);
+            break;
+        case "http://jabber.org/protocol/bytestreams":
+            socks5Service.onIQ(packet);
             break;
         }
     },

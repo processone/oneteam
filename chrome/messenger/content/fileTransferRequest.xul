@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+
+<dialog id="fileTransfer" title="File transfer request"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Accept"
+  ondialogaccept="return acceptFileTransfer()" buttonlabelcancel="Reject"
+  ondialogcancel="return rejectFileTransfer()" buttons="accept,cancel">
+        
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var [fileTransfer, fileName] = window.arguments;
+
+    function onLoad()
+    {
+      document.getElementById("msg").innerHTML =
+        "<b>"+fileTransfer.jid+"</b> wants to send you file";
+
+      document.getElementById("name").value = fileName;
+      document.getElementById("size").value = fileTransfer.ppSize;
+    }
+
+    function acceptFileTransfer()
+    {
+      const nsIFilePicker = Components.interfaces.nsIFilePicker;
+      var picker = Components.classes["@mozilla.org/filepicker;1"].
+        createInstance(nsIFilePicker);
+
+      picker.init(window, "Select a File", nsIFilePicker.modeSave);
+      picker.defaultString = fileName;
+
+      if (picker.show() != nsIFilePicker.returnCancel) {
+        fileTransfer.accept(picker.file.path);
+        return true;
+      }
+
+      return false;
+    }
+
+    function rejectFileTransfer()
+    {
+      fileTransfer.reject();
+      window.close();
+    }
+  ]]></script>
+
+  <dialogheader title="File transfer request"/>
+
+  <description><span id="msg" xmlns="http://www.w3.org/1999/xhtml"/></description>
+  <spacer/>
+  <grid>
+    <cols>
+      <col/>
+      <col flex="1"/>
+    </cols>
+    <rows>
+      <row>
+        <label value="Name:"/>
+        <label id="name"/>
+      </row>
+      <row>
+        <label value="Size:"/>
+        <label id="size"/>
+      </row>
+    </rows>
+  </grid>
+
+</dialog>

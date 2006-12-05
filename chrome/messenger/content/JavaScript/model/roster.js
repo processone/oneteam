@@ -364,6 +364,28 @@ _DECL_(Contact, null, Model,
     {
     },
 
+    onSendFile: function()
+    {
+        if (!this.activeResource)
+            return;
+
+        const nsIFilePicker = Components.interfaces.nsIFilePicker;
+        var picker = Components.classes["@mozilla.org/filepicker;1"].
+            createInstance(nsIFilePicker);
+
+        picker.init(window, "Select a File", nsIFilePicker.modeOpen);
+
+        if (picker.show() != nsIFilePicker.returnCancel)
+            this.sendFile(picker.file.path);
+    },
+
+    sendFile: function(path)
+    {
+        if (!this.activeResource)
+            return;
+        fileTransferService.sendFile(this.activeResource.jid, path);
+    },
+
     _onResourceUpdated: function(resource, dontNotifyViews)
     {
         var res = this.resources[0];
