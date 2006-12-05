@@ -27,9 +27,11 @@
             ret.value = "";
 
             try {
-                var val = document.getElementById("inputexec").value;
-                with ({__proto__: window.opener, dump: dump})
-                    val = eval(val);
+              var val = document.getElementById("inputexec").value;
+
+              window.opener.__EXTRA_SCOPE__ = {dump: dump};
+              val = eval("with(__EXTRA_SCOPE__){(function(){return "+val+"}).call(window)}",
+                         window.opener);
                 dump("\n***RESULT***\n\n" + val);
             } catch (ex) {
                 dump("\n***EXCEPTION***\n\n"+
