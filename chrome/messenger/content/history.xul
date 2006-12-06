@@ -5,7 +5,7 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
 
 <window id="ot:histroy" title="History Manager" width="640" height="550"
-    onload="onLoad()" persist="width height"
+    onload="onLoad()" persist="width height" windowtype="ot:history"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>

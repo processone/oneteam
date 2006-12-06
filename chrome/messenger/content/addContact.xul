@@ -6,7 +6,7 @@
 
 <!DOCTYPE dialog SYSTEM "chrome://messenger/locale/addContact.dtd">
 
-<dialog id="addContact"
+<dialog id="addContact" windowtype="ot:addContact"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Add"
   ondialogaccept="return addContact()" title="&Contact.titre;" buttons="accept,cancel">

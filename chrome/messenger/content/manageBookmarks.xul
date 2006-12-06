@@ -4,7 +4,7 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<dialog id="manageBookmarks"
+<dialog id="manageBookmarks" windowtype="ot:manageBookmarks"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
   ondialogaccept="return saveBookmarks()" title="Bookmark manager" buttons="accept,cancel">

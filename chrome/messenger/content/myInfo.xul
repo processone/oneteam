@@ -4,7 +4,7 @@
 <?xml-stylesheet href="chrome://messenger/skin/myInfo.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/myInfo.dtd">
 
-<window id="myInfo"
+<window id="myInfo" windowtype="ot:myInfo"
 		title="&myInfo.title;"
         orient="horizontal"
         onload="loadMyInfo();"

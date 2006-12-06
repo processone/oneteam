@@ -6,7 +6,7 @@
 
 <!DOCTYPE dialog SYSTEM "chrome://messenger/locale/joinRoom.dtd">
 
-<dialog id="joinRoom"
+<dialog id="joinRoom" windowtype="ot:joinRoom"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Join"
   ondialogaccept="return joinRoom()" title="Join Room" buttons="accept,cancel">

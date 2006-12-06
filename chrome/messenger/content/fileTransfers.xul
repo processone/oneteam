@@ -3,7 +3,9 @@
 <?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
 
 
-<window id="fileTransferManager" title="File transfers" onload="onLoad()" onclose="onClose()"
+<window id="fileTransfers" windowtype="ot:fileTransfers"
+    title="File transfers" onload="onLoad()" onclose="onClose()"
+    width="500" height="250" persist="width height"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>

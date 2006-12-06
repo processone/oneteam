@@ -10,7 +10,7 @@
 <!-- TODO: Logo should be defined in CSS -->
 <!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
         
-<dialog id="about"
+<dialog id="about" windowtype="ot:about"
         title="About &brandShortName;"
         buttons="accept"
         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

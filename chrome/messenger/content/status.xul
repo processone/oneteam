@@ -10,6 +10,7 @@
 
 <dialog id="Status Message" title="&Status.message;" orient="vertical"
   onload="onLoad()" ondialogaccept="return onAccept();" buttons="accept,cancel"
+  windowtype="ot:status"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7"><![CDATA[

@@ -97,7 +97,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
             return;
         }
-try{
+
         for (var c in this.contactsIterator()) {
             if (presence = profile.getPresenceFor(c)) {
                 if (profile != this.currentPresence.profile)
@@ -116,7 +116,6 @@ try{
                 this._presenceObservers[i]._sendPresence(newPresence.show,
                                                          newPresence.status,
                                                          newPresence.priority);
-}catch(ex){alert(ex)}
         this.currentPresence = newPresence;
         if (userSet)
             this.userPresence = newPresence;
@@ -199,72 +198,68 @@ try{
 
     onAddContact: function(contact)
     {
-        window.openDialog("chrome://messenger/content/addContact.xul",
-                          "ot:addContact", "chrome,centerscreen", contact);
+        openDialogUniq("ot:addContact", "addContact.xul",
+                       "chrome,centerscreen,modal", contact);
     },
 
     onJoinRoom: function(bookmark)
     {
-        window.openDialog("chrome://messenger/content/joinRoom.xul",
-                          "ot:joinRoom", "chrome,centerscreen", bookmark);
+        openDialogUniq("ot:joinRoom", "joinRoom.xul",
+                       "chrome,centerscreen,modal", bookmark);
     },
 
     onManageBookmarks: function()
     {
-        window.open("chrome://messenger/content/manageBookmarks.xul",
-                    "ot:manageBookmarks", "chrome,centerscreen");
+        openDialogUniq("ot:manageBookmarks", "manageBookmarks.xul",
+                       "chrome,centerscreen,modal");
     },
 
     showHistoryManager: function()
     {
-        window.open("chrome://messenger/content/history.xul", "ot:histroy",
-                    "chrome,centerscreen");
+        openDialogUniq("ot:history", "history.xul", "chrome,centerscreen,dialog=no");
     },
 
     showTransfersManager: function()
     {
-        window.open("chrome://messenger/content/fileTransfers.xul", "ot:fileTransfers",
-                    "chrome,centerscreen");
+        openDialogUniq("ot:fileTransfers", "fileTransfers.xul",
+                       "chrome,centerscreen,dialog=no");
     },
 
     showAbout: function()
     {
-        window.open("chrome://messenger/content/about.xul", "ot:about",
-                    "chrome,titlebar,toolbar,centerscreen,modal");
+        openDialogUniq("ot:about", "about.xul", "chrome,centerscreen");
     },
 
     showPrefs: function()
     {
-        window.open("settings.xul", "ot:prefs", "chrome,centerscreen,dialog,resizable");
+        openDialogUniq("ot:settings", "settings.xul", "chrome,centerscreen");
     },
 
     showVCard: function()
     {
-        window.open("chrome://messenger/content/myinfo.xul", "ot:myinfo",
-                    "chrome,centerscreen");
+        openDialogUniq("ot:myInfo", "myInfo.xul", "chrome,centerscreen,dialog=no");
     },
 
     showConsole: function()
     {
-        window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
+        openDialogUniq("ot:console", "console.xul", "chrome,centerscreen,dialog=no");
     },
 
     showDisco: function()
     {
-        window.open("chrome://messenger/content/disco.xul", "ot:disco",
-                    "chrome,centerscreen");
+        openDialogUniq("ot:disco", "disco.xul", "chrome,centerscreen,dialog=no");
     },
 
     onCustomPresence: function(presence)
     {
-        window.openDialog("chrome://messenger/content/status.xul",
-                          "ot:customPresence", "chrome,centerscreen,modal", presence);
+        openDialogUniq("ot:status", "status.xul", "chrome,centerscreen,modal",
+                       presence);
     },
 
     onEditPresenceProfiles: function()
     {
-        window.openDialog("chrome://messenger/content/presenceProfiles.xul",
-                          "ot:presenceProfiles", "chrome,centerscreen,modal");
+        openDialogUniq("ot:presenceProfiles", "presenceProfiles.xul",
+                       "chrome,centerscreen,modal");
     },
 
     observe: function(subject, topic, value)

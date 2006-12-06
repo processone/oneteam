@@ -14,6 +14,7 @@
 <dialog id="ot:presenceProfiles"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
+  windowtype="ot:presenceProfiles"
   ondialogaccept="return saveProfiles()" title="Presence Profiles" buttons="accept,cancel">
 
   <script type="text/javascript;version=1.7"><![CDATA[

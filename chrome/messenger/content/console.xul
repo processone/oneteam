@@ -5,7 +5,7 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
 
 <window id="Console" title="&Console.title;" width="640" height="550"
-    onload="onLoad()" onclose="onClose();"
+    onload="onLoad()" onclose="onClose();" windowtype="ot:console"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     
   <script type="application/x-javascript" src="JavaScript/console.js"/>

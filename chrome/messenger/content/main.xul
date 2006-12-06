@@ -29,6 +29,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>

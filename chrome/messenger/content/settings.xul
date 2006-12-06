@@ -5,7 +5,7 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/settings.dtd">
 
 <prefwindow xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            title="Settings" id="settings" onload="initialize()">
+    title="Settings" id="settings" onload="initialize()" windowtype="ot:settings">
  
  <!--<script type="application/x-javascript" src="JavaScript/settings.js"/> -->
 
