@@ -39,7 +39,7 @@ _DECL_(FileTransferService, null, Model).prototype =
         this.fileTransfers.push(fileTransfer);
         this.modelUpdated("fileTransfers", {added: [fileTransfer]});
 
-        con.send(pkt, new Callback(this._sendFileStep, -1, this), fileTransfer);
+        con.send(pkt, new Callback(this._sendFileStep, this), fileTransfer);
     },
 
     _sendFileStep: function(pkt, fileTransfer)

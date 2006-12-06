@@ -31,7 +31,7 @@ _DECL_(PresenceProfiles, null, Model).prototype =
         var query = iq.setQuery("jabber:iq:private");
         query.appendChild(iq.getDoc().createElementNS(ns, "profiles"));
 
-        con.send(iq, new Callback(this._onPresenceProfiles, -1, this));
+        con.send(iq, new Callback(this._onPresenceProfiles, this));
     },
 
     storeOnServer: function()

@@ -261,33 +261,46 @@ _DECL_(Model).prototype =
     }
 }
 
-function Callback(callback, argsStart, _this)
-{
-    var ret = new Function("", "return arguments.callee.apply(this, arguments)");
-    ret.call = function(_this) {
-        var args = Array.slice(arguments,1).concat(this.args);
-        return this.callback.apply(this._this ? this._this : _this, args)
+function Callback(fun, obj) {
+    if (fun._isaCallback) {
+        fun._consArgs = arguments.callee.caller.arguments;
+        return fun;
+    }
+
+    var cb = new Function("", "return arguments.callee.apply(this, arguments)");
+    cb.apply = function(_this, _args) {
+        delete this._consArgs;
+        var args = this._args.slice();
+        if (this._callArgs && !this._callArgs.length)
+            this._callArgs = [[0,0,Infinity]];
+        for (var i = this._callArgs.length-1; i >= 0; i--) {
+            var a = Array.slice(_args, this._callArgs[i][1], this._callArgs[i][2]);
+            a.unshift(this._callArgs[i][0], 0);
+            args.splice.apply(args, a);
+        }
+        return this._fun.apply(this._obj, args);
+    }
+    cb._fun = fun;
+    cb._obj = obj;
+    cb._args = [];
+    cb._consArgs = arguments.callee.caller.arguments;
+    cb._callArgs = [];
+    cb._isaCallback = true;
+    cb.addArgs = function() { this._args.push.apply(this._args, arguments); return this; };
+    cb.fromCons = function(start, stop) {
+        this._args.push.apply(this._args, Array.slice(this._consArgs, start,
+                                                      stop == null ? Infinity : stop));
+        return this;
     };
-    ret.apply = function(_this, _args) {
-        var args = Array.slice(_args).concat(this.args);
-        return this.callback.apply(this._this ? this._this : _this, args)
-    }
-    ret._this = _this;
-    if (typeof(callback) == "function") {
-        ret.callback = callback;
-        ret.args = argsStart < 0 ? [] : Array.slice(arguments.callee.caller.arguments, argsStart);
-    } else if (argsStart < 0 || typeof(arguments.callee.caller.arguments[argsStart]) != "function")
-        throw new InvalidArgsError("Invalid callback");
-    else {
-        ret._this = callback;
-        ret.callback = arguments.callee.caller.arguments[argsStart];
-        ret.args = Array.slice(arguments.callee.caller.arguments, argsStart+1);
-    }
-
-    if (arguments.length > 3)
-        ret.args = Array.splice(arguments, 3).concat(ret.args);
-
-    return ret;
+    cb.fromCall = function(start, stop) {
+        if (!this._callArgs || start < 0) {
+            delete this._callArgs;
+            return this;
+        }
+        this._callArgs.push([this._args.length,  start || 0, stop == null ? Infinity : stop]);
+        return this;
+    };
+    return cb;
 }
 
 function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
@@ -439,7 +452,7 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.discoJID || this.jid);
         return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate,
-            callback && new Callback(callback, 3));
+            callback && new Callback(callback).fromCons(3));
     },
 
     getDiscoIdentity: function(forceUpdate, callback)
@@ -447,7 +460,7 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.discoJID || this.jid);
         return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate,
-            callback && new Callback(callback, 2));
+            callback && new Callback(callback).fromCons(2));
     },
 
     getDiscoItems: function(forceUpdate, callback)
@@ -455,30 +468,31 @@ _DECL_(DiscoItem).prototype =
         if (!this._discoCacheEntry)
             this._discoCacheEntry = new DiscoCacheEntry(this.discoJID || this.jid);
         return this._discoCacheEntry.requestDiscoItems(forceUpdate,
-            callback && new Callback(callback, 2));
+            callback && new Callback(callback).fromCons(2));
     },
 
     getDiscoItemsByCategory: function(category, type, forceUpdate, callback)
     {
         if (callback)
             this.getDiscoItems(forceUpdate,
-                new Callback(this._gotDiscoItems, -1, this, category, type,
-                             forceUpdate, new Callback(callback, 4)));
+                new Callback(this._gotDiscoItems, this).fromCons(0,3).
+                    addArgs(new Callback(callback).fromCons(4)));
         
         return this._getDiscoItemsByCategory(category);
     },
 
     _gotDiscoItems: function(items, category, type, forceUpdate, callback)
     {
-        this._discoInfosToGet = items.length;
+        var count = {value: items.length};
         for (var i = 0; i < items.length; i++)
             items[i].getDiscoIdentity(forceUpdate,
-                new Callback(this._gotDiscoIdentity, 1, this));
+                new Callback(this._gotDiscoIdentity, this).
+                    addArgs(category, type, callback, count));
     },
 
-    _gotDiscoIdentity: function(identity, category, type, forceUpdate, callback)
+    _gotDiscoIdentity: function(identity, category, type, callback, count)
     {
-        if (--this._discoInfosToGet == 0)
+        if (--count.value == 0)
             callback.call(null, this._getDiscoItemsByCategory(category, type));
     },
 

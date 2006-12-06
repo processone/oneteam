@@ -76,7 +76,7 @@ _DECL_(Conference, Contact).prototype =
         var [type, status, priority] = account.getPresenceFor(this);
 
         if (!this.joined) {
-            this._callback = new Callback(callback, 1);
+            this._callback = new Callback(callback).fromCons(1);
             account._onConferenceAdded(this);
             account._presenceObservers.push(this);
         }
@@ -403,7 +403,7 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         iq.setType("get");
         query = iq.setQuery("jabber:iq:private");
         query.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "storage"));
-        con.send(iq, new Callback(this.onBookmarkRetrieved, -1, this));
+        con.send(iq, new Callback(this.onBookmarkRetrieved, this));
     },
 
     onBookmarkRetrieved: function(pkt)

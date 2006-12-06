@@ -6,7 +6,7 @@ _DECL_(SOCKS5Service).prototype =
 {
     ipAddresses: [],
     transfers: {},
-    proxies: {"proxy.netlab.cz": {host: "82.208.10.89", port: 7777}},
+    proxies: {},
 
     sendFile: function(fileTransfer, rangeOffset, rangeLength)
     {
@@ -45,7 +45,7 @@ _DECL_(SOCKS5Service).prototype =
         pkt.setIQ(fileTransfer.jid, null, "set");
         pkt.getNode().appendChild(E4XtoDOM(xml, pkt.getDoc()));
 
-        con.send(pkt, new Callback(this._sendFileStep, -1, this), token);
+        con.send(pkt, new Callback(this._sendFileStep, this), token);
 
         return token;
     },
@@ -182,7 +182,7 @@ _DECL_(SOCKS5Service).prototype =
                     <activate>{token.fileTransfer.jid}</activate>
                 </query>, pkt.getDoc()));
 
-            con.send(pkt, new Callback(this._sendFileStep2, -1, this), token);
+            con.send(pkt, new Callback(this._sendFileStep2, this), token);
             return;
         }
 

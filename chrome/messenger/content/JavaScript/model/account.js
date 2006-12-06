@@ -308,6 +308,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         var args = {
             httpbase: "http://"+this.connectionInfo.host+":"+this.connectionInfo.port+
                 "/"+this.connectionInfo.base+"/",
+//            oDbg: {log: function(a){dump(a+"\n")}},
             timerval: 2000};
 
         var con = this.connectionInfo.polling ? new JSJaCHttpBindingConnection(args) :
@@ -318,7 +319,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         con.registerHandler("iq", function(p){account.onIQ(p)});
         con.registerHandler("onconnect", function(p){account.onConnect(p)});
         con.registerHandler("ondisconnect", function(p){account.onDisconnect(p)});
-        con.registerHandler('onerror', function(p){account.onError(p)});
+        con.registerHandler("onerror", function(p){account.onError(p)});
 
         args = {
             domain: this.connectionInfo.host,
@@ -356,7 +357,30 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                                         if (items.length)
                                            account.defaultConferenceServer = items[0].jid;
                                      });
+        this.getDiscoItemsByCategory("proxy", "bytestreams", false,
+                                     function(items) {
+                                        for (var i = 0; i < items.length; i++) {
+                                            var bsp = new JSJaCIQ();
+                                            bsp.setIQ(items[i].jid, null, "get");
+                                            bsp.setQuery("http://jabber.org/protocol/bytestreams");
+                                            con.send(bsp, account._proxyAddress);
+                                        }
+                                     });
         this.presenceProfiles.loadFromServer();
+    },
+
+    _proxyAddress: function(pkt)
+    {
+        var sh = pkt.getNode().getElementsByTagNameNS(
+          "http://jabber.org/protocol/bytestreams", "streamhost");
+
+        for (var i = 0; i < sh.length; i++)
+            if (sh[i].getAttribute("port")) {
+                socks5Service.proxies[sh[i].getAttribute("jid")] = {
+                    host: sh[i].getAttribute("host"),
+                    port: +sh[i].getAttribute("port")
+                };
+            };
     },
 
     onDisconnect: function()
@@ -488,7 +512,12 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             item = this.getOrCreateContact(sender.getShortJID());
 
         item.onMessage(packet);
-    }
+    },
+
+    onError: function(error)
+    {
+        alert(error);
+    },
 }
 
 account = new Account();
