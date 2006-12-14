@@ -235,7 +235,7 @@ function JSJaCParseStreamFeatures(doc) {
       this.has_sasl=true;
       var lMec2 = lMec1.item(i).getElementsByTagName("mechanism");
       for (var j=0; j<lMec2.length; j++)
-        this.mechs[lMec2.item(j).firstChild.nodeValue] = true;
+        this.mechs[lMec2.item(j).textContent] = true;
       break;
     }
   if (this.has_sasl)
@@ -262,9 +262,10 @@ function JSJaCInBandReg() {
   var iq = new JSJaCIQ();
   iq.setType('set');
   iq.setID('reg1');
-  var query = iq.setQuery('jabber:iq:register');
-  query.appendChild(iq.getDoc().createElement('username')).appendChild(iq.getDoc().createTextNode(this.username));
-  query.appendChild(iq.getDoc().createElement('password')).appendChild(iq.getDoc().createTextNode(this.pass));
+  const ns = "jabber:iq:register";
+  var query = iq.setQuery(ns);
+  query.appendChild(iq.getDoc().createElementNS(ns, 'username')).appendChild(iq.getDoc().createTextNode(this.username));
+  query.appendChild(iq.getDoc().createElementNS(ns, 'password')).appendChild(iq.getDoc().createTextNode(this.pass));
 
   this.send(iq,this._doInBandRegDone);
 }
@@ -306,7 +307,7 @@ function JSJaCLegacyAuth() {
   var iq = new JSJaCIQ();
   iq.setIQ(oCon.server,null,'get','auth1');
   var query = iq.setQuery('jabber:iq:auth');
-  query.appendChild(iq.getDoc().createElement('username')).appendChild(iq.getDoc().createTextNode(oCon.username));
+  query.appendChild(iq.getDoc().createElementNS('jabber:iq:auth', 'username')).appendChild(iq.getDoc().createTextNode(oCon.username));
 
   this.send(iq,this._doLegacyAuth2);
   return true;
@@ -334,14 +335,15 @@ function JSJaCLegacyAuth2(iq) {
    */
   iq = new JSJaCIQ();
   iq.setIQ(oCon.server,null,'set','auth2');
-  query = iq.setQuery('jabber:iq:auth');
-  query.appendChild(iq.getDoc().createElement('username')).appendChild(iq.getDoc().createTextNode(oCon.username));
-  query.appendChild(iq.getDoc().createElement('resource')).appendChild(iq.getDoc().createTextNode(oCon.resource));
+  const ns = 'jabber:iq:auth';
+  query = iq.setQuery(ns);
+  query.appendChild(iq.getDoc().createElementNS(ns, 'username')).appendChild(iq.getDoc().createTextNode(oCon.username));
+  query.appendChild(iq.getDoc().createElementNS(ns, 'resource')).appendChild(iq.getDoc().createTextNode(oCon.resource));
 
   if (use_digest) { // digest login
-    query.appendChild(iq.getDoc().createElement('digest')).appendChild(iq.getDoc().createTextNode(hex_sha1(oCon.streamid + oCon.pass)));
+    query.appendChild(iq.getDoc().createElementNS(ns, 'digest')).appendChild(iq.getDoc().createTextNode(hex_sha1(oCon.streamid + oCon.pass)));
   } else if (oCon.allow_plain) { // use plaintext auth
-    query.appendChild(iq.getDoc().createElement('password')).appendChild(iq.getDoc().createTextNode(oCon.pass));
+    query.appendChild(iq.getDoc().createElementNS(ns, 'password')).appendChild(iq.getDoc().createTextNode(oCon.pass));
   } else {
     oCon.oDbg.log("no valid login mechanism found",1);
     oCon.disconnect();

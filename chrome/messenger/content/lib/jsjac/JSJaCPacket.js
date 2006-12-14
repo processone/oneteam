@@ -104,7 +104,7 @@ function JSJaCPacket(name) {
         aNode.replaceChild(tNode,aNode.firstChild);
       } catch (e) { }
     else {
-      aNode = this.getNode().appendChild(this.getDoc().createElement(nodeName));
+      aNode = this.getNode().appendChild(this.getDoc().createElementNS(this.getNode.namespaceURI, nodeName));
       aNode.appendChild(tNode);
     }
     return aNode;
