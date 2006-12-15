@@ -17,7 +17,6 @@
     <implementation implements="otISystrayListener">
       <constructor>
         <![CDATA[
-          try {
             this._systray = Components.classes["@process-one.net/systray;1"].
               createInstance(Components.interfaces.otISystray);
             this._systray.init(this);
@@ -27,7 +26,6 @@
             this.icon = this.getAttribute("icon");
             this._win = window.openDialog("chrome://messenger/content/bindings/systrayhelper.xul",
                                           "_blank", "chrome=yes,dialog=no,popup=yes");
-          } catch (ex) {alert(ex)}
         ]]>
       </constructor>
 
@@ -212,6 +210,9 @@
       <method name="_syncVisisibilty">
         <body>
           <![CDATA[
+            if (!this._systray)
+              return;
+
             if (this._icon) {
               var minimized = this._minimized && !this._minimizedOverride;
 
