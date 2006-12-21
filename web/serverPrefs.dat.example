@@ -1,4 +1,5 @@
-chat.connection.host = "process-one.net"
+chat.connection.domain = "jabber.server.address.tld"
+chat.connection.host = "www.server.address.tld"
 chat.connection.base = "http-poll"
 chat.connection.port = 80
 chat.connection.polling = false

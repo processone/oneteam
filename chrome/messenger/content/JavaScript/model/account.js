@@ -257,7 +257,8 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         var namePart;
         if ((namePart = name.replace(/^chat\.connection\./, "")) != name) {
             if (namePart != "host" && namePart != "base" && namePart != "user" &&
-                namePart != "pass" && namePart != "port" && namePart != "polling")
+                namePart != "pass" && namePart != "port" && namePart != "polling" &&
+                namePart != "domain")
                 return;
 
             if (namePart == "pass")
@@ -301,7 +302,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         con.registerHandler("onerror", function(p){account.onError(p)});
 
         args = {
-            domain: this.connectionInfo.host,
+            domain: this.connectionInfo.domain||this.connectionInfo.host,
             username: this.connectionInfo.user,
             pass: this.connectionInfo.pass,
             resource: prefManager.getPref("chat.connection.resource")};
