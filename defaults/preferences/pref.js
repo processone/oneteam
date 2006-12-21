@@ -1,13 +1,17 @@
 pref("toolkit.defaultChromeURI", "chrome://messenger/content/messenger.xul");
 pref("toolkit.defaultChromeURI", "chrome://messenger/content/main.xul");
+//pref("toolkit.defaultChromeURI", "chrome://messenger/content/subscribe.xul");
 //pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/chatpane.xul");
+//pref("toolkit.defaultChromeURI", "chrome://messenger/content/addContact.xul");
+//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/systray.xul");
 //pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/tabwithclose.xul");
-
+//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/notifications.xul");
+pref("toolkit.singletonWindowType", "ot:main");
 /* debugging prefs */
 
 pref("browser.dom.window.dump.enabled", true);
 pref("javascript.options.showInConsole", true);
-pref("javascript.options.strict", true);
+//pref("javascript.options.strict", true);
 pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);
 
@@ -43,9 +47,6 @@ pref("network.protocol-handler.warn-external.mailto", false);
 //pref("network.protocol-handler.external.mailto", true);
 
 pref ("general.skins.selectedSkin","");
-
-pref("chat.connection.username", "");
-pref("chat.connection.password", "");
 
 
 pref("chat.connection.priority", 5);

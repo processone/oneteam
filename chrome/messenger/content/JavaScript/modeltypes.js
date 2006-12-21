@@ -261,48 +261,6 @@ _DECL_(Model).prototype =
     }
 }
 
-function Callback(fun, obj) {
-    if (fun._isaCallback) {
-        fun._consArgs = arguments.callee.caller.arguments;
-        return fun;
-    }
-
-    var cb = new Function("", "return arguments.callee.apply(this, arguments)");
-    cb.apply = function(_this, _args) {
-        delete this._consArgs;
-        var args = this._args.slice();
-        if (this._callArgs && !this._callArgs.length)
-            this._callArgs = [[0,0,Infinity]];
-        for (var i = this._callArgs.length-1; i >= 0; i--) {
-            var a = Array.slice(_args, this._callArgs[i][1], this._callArgs[i][2]);
-            a.unshift(this._callArgs[i][0], 0);
-            args.splice.apply(args, a);
-        }
-        return this._fun.apply(this._obj, args);
-    }
-    cb._fun = fun;
-    cb._obj = obj;
-    cb._args = [];
-    cb._consArgs = arguments.callee.caller.arguments;
-    cb._callArgs = [];
-    cb._isaCallback = true;
-    cb.addArgs = function() { this._args.push.apply(this._args, arguments); return this; };
-    cb.fromCons = function(start, stop) {
-        this._args.push.apply(this._args, Array.slice(this._consArgs, start,
-                                                      stop == null ? Infinity : stop));
-        return this;
-    };
-    cb.fromCall = function(start, stop) {
-        if (!this._callArgs || start < 0) {
-            delete this._callArgs;
-            return this;
-        }
-        this._callArgs.push([this._args.length,  start || 0, stop == null ? Infinity : stop]);
-        return this;
-    };
-    return cb;
-}
-
 function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
     var fun = eval("(function "+CCname+"Accessor(){})");
     fun.prototype["get"+CCname] = eval("(function(forceUpdate, callback) {"+

@@ -312,8 +312,8 @@ _DECL_(Contact, null, Model,
 
     onRename: function(externalDialog)
     {
-        window.openDialog("chrome://messenger/content/rename.xul",
-                          "ot:renameContact", "resizable=no,chrome,dialog,modal", this);
+        openDialogUniq("ot:rename", "chrome://messenger/content/rename.xul",
+                       "resizable=no,chrome,dialog,modal", this);
     },
 
     rename: function(newName)
@@ -324,8 +324,8 @@ _DECL_(Contact, null, Model,
 
     onRemove: function()
     {
-        window.openDialog("chrome://messenger/content/removeContact.xul",
-                          "ot:removeContact", "resizable=no,chrome,dialog,modal", this);
+        openDialogUniq("ot:removeContact", "chrome://messenger/content/removeContact.xul",
+                       "resizable=no,chrome,dialog,modal", this);
     },
 
     remove: function()
@@ -336,8 +336,8 @@ _DECL_(Contact, null, Model,
 
     onEditContact: function()
     {
-        window.openDialog("chrome://messenger/content/editContact.xul",
-                          "ot:editContact", "resizable=no,chrome,dialog,modal", this);
+        openDialogUniq("ot:editContact", "chrome://messenger/content/editContact.xul",
+                       "resizable=no,chrome,dialog,modal", this);
     },
 
     editContact: function(newName, newGroups)
@@ -535,8 +535,8 @@ _DECL_(Resource, null, Model, DiscoItem,
                 // XXX: Disabled for now
                 var text = 0 && errorTag.getElementsByTagName('text');
                 if (text)
-                    window.openDialog("chrome://messenger/content/error.xul", "_blank",
-                                    "chrome,modal", text.textContent);
+                    openDialogUniq("ot:error", "chrome://messenger/content/error.xul",
+                                   "chrome,modal", text.textContent);
                 return;
             }
         }

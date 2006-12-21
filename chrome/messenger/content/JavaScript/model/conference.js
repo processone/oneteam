@@ -93,8 +93,8 @@ _DECL_(Conference, Contact).prototype =
 
     onInvite: function()
     {
-        window.openDialog("chrome://messenger/content/invite.xul",
-                          "ot:invite", "chrome,centerscreen", this);
+        openDialogUniq("ot:invite", "chrome://messenger/content/invite.xul",
+                       "chrome,centerscreen", this);
     },
 
     invite: function(jid, reason)
@@ -129,8 +129,8 @@ _DECL_(Conference, Contact).prototype =
 
     onChangeNick: function()
     {
-        window.openDialog("chrome://messenger/content/changeNick.xul",
-                          "ot:invite", "chrome,centerscreen", this);
+        openDialogUniq("ot:changeNick", "chrome://messenger/content/changeNick.xul",
+                       "chrome,centerscreen", this);
     },
 
     changeNick: function(newNick)

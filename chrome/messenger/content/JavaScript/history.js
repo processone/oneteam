@@ -1,3 +1,4 @@
+// #ifdef XULAPP
 function HistoryManager()
 {
     var file = Components.classes["@mozilla.org/file/directory_service;1"].
@@ -220,4 +221,40 @@ _DECL_(HistoryManager).prototype =
         return res;
     },
 }
+/* #else
+function HistoryManager()
+{
+}
 
+_DECL_(HistoryManager).prototype =
+{
+    getThreadJids: function(type)
+    {
+        return [];
+    },
+
+    addMessage: function(jid, type, flags, message, nick, time, thread, threadJid)
+    {
+        return null;
+    },
+
+    getThreadsForJidIds: function(jidId)
+    {
+        return [];
+    },
+
+    findMessages: function(word)
+    {
+        return [];
+    },
+
+    getThreadMessagesIterator: function(threadId)
+    {
+    },
+
+    getThreadMessages: function(threadId)
+    {
+        return [];
+    },
+}
+// #endif */

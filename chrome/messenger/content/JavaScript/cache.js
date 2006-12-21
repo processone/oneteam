@@ -1,3 +1,4 @@
+// #ifdeff XULAPP
 function PersistantCache(name)
 {
     var file = Components.classes["@mozilla.org/file/directory_service;1"].
@@ -155,7 +156,66 @@ _DECL_(StorageFunctionDelete).prototype =
         f.remove();
     }
 }
+/* #else
+function PersistantCache(name)
+{
+    if (prefManager.storage)
+        this._init();
+    else
+        prefManager.storageReadyCallbacks.push(new Callback(this._init, this));
+}
 
+_DECL_(PersistantCache).prototype =
+{
+    _init: function()
+    {
+        this.storage = prefManager.storage;
+        this.data = {};
+        for (var i = 0; i < this.storage.length; i++) {
+            var key = this.storage.key(i), keyName;
+            if ((keyName = key.replace(/^cache:/, "")) == key)
+                continue;
+            var expDate = this.storage["cacheExpiration:"+keyName];
+            if (expDate < Date.now()) {
+                delete this.storage["cacheExpiration:"+keyName];
+                delete this.storage[key];
+            } else
+                this.data[keyName] = this.storage[key];
+        }
+    },
+
+    setValue: function(key, value, expiryDate, storeAsFile)
+    {
+        this.storage["cache:"+key] = value;
+        if (expiryDate)
+            this.storage["cacheExpiration:"+expiryDate.getTime()];
+        this.data[key] = value;
+
+        return value;
+    },
+
+    getValue: function(key, asFile)
+    {
+        var data = this.data[key];
+        if (data != null && asFile)
+            return "data:image/png;base64,"+btoa(data);
+        return data;
+    },
+
+    removeValue: function(key)
+    {
+        delete this.storage["cache"+key];
+        delete this.storage["cacheExpiration:"+key];
+        delete this.data[key];
+    },
+
+    bumpExpiryDate: function(key, expiryDate)
+    {
+        if (this.data[key] != null)
+            this.storage["cacheExpiration:"+key] = expiryDate.getTime();
+    },
+}
+// #endif */
 function generateRandomName(length)
 {
     const charset = "0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
@@ -164,3 +224,5 @@ function generateRandomName(length)
         name += charset.charAt(Math.floor(Math.random() * charset.length));
     return name;
 }
+
+

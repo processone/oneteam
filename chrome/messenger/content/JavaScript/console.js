@@ -1,9 +1,6 @@
 var console;
 var inputEditor;
 
-const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
-                .getService(Components.interfaces.nsIPrefBranch);
-
 var handlers =
 {
     onPacketRecv: function(p)

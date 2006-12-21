@@ -10,7 +10,7 @@
     </resources>
 
     <content>
-      <xul:iframe id="output" flex="1"/>
+      <html:iframe id="output" flex="1"/>
     </content>
 
     <implementation>
@@ -23,7 +23,12 @@
 
           this._output.contentWindow.addEventListener("load", function(event) {
             var link = event.target.createElement("link");
+// #ifdef XULAPP
             link.setAttribute("href", "chrome://messenger/skin/chatpane-content.css");
+/* #else
+            link.setAttribute("href",
+              document.location.href.replace(/content\/.*?$/, "skin/chatpane-content.css"));
+// #endif */
             link.setAttribute("rel", "stylesheet");
             event.target.getElementsByTagName("HEAD")[0].appendChild(link);
             var msgs = me._msgs;
@@ -118,7 +123,11 @@
         </xul:hbox>
         <xul:chatpane-view id="output-pane" flex="1"/>
         <xul:hbox align="center">
+          <!-- #ifdef XULAPP -->
           <xul:iframe id="input" flex="1" style="height: 1.7em"/>
+          <!-- #else
+          <xul:textbox id="input" flex="1" style="height: 1.7em"/>
+          // #endif -->
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
         </xul:hbox>
       </xul:vbox>
@@ -126,8 +135,13 @@
 
     <implementation>
 
+      <!-- #ifdef XULAPP -->
       <property name="content" readonly="true"
         onget="return this._editor.outputToString('text/plain', 0)" />
+      <!-- #else
+      <property name="content" readonly="true"
+        onget="return this._input.value" />
+      // #endif -->
 
       <property name="hasSubject"
         onset="this._subject.parentNode.hidden = !val; return val"
@@ -149,16 +163,38 @@
           this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
 
           var me = this;
+          // #ifdef XULAPP
           this._input.contentWindow.addEventListener("load",
             function(event) { me._init() }, false);
+          /* #else
+          this._input.addEventListener("keypress",
+            function (event) {
+              if (event.keyCode == KeyEvent.DOM_VK_TAB)
+                event.preventDefault();
+              if (event.keyCode == KeyEvent.DOM_VK_RETURN &&
+                  !event.shiftKey && me.sendOnEnter)
+              {
+                me._send();
+
+                event.stopPropagation();
+                event.preventDefault();
+                return false;
+              }
+              return true;
+            }, true);
+          // #endif */
         ]]>
       </constructor>
 
       <method name="clear">
         <body>
           <![CDATA[
+          // #ifdef XULAPP
             this._editor.selectAll();
             this._editor.deleteSelection(0);
+          /* #else
+            this._input.value =""
+          // #endif */
           ]]>
         </body>
       </method>
@@ -256,8 +292,12 @@
       <method name="focus">
         <body>
           <![CDATA[
+          // #ifdef XULAPP
           window.setTimeout(function(a, b){b._firstFocus = false;a.focus()},
             this._firstFocus ? 500 : 0, this._input.contentWindow, this);
+          /* #else
+          this._input.focus();
+          // #endif */
           ]]>
         </body>
       </method>

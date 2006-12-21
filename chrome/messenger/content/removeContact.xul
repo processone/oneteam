@@ -3,7 +3,8 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/status.dtd">
 
 
-<dialog id="Remove" title="Contact removal" onload="onLoad()" ondialogaccept="onAccept()"
+<dialog windowtype="ot:removeContact" title="Contact removal"
+     onload="onLoad()" ondialogaccept="onAccept()"
     defaultButton="cancel" buttonlabelaccept="Remove"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 

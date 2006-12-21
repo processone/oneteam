@@ -10,7 +10,7 @@
         ondialogcancel="return doCancel();">
         
         <script type="application/x-javascript" src="JavaScript/gui.js"/>
-         <script type="application/x-javascript" src="JavaScript/renameGroup.js"/>
+        <script type="application/x-javascript" src="JavaScript/renameGroup.js"/>
 
 
 <hbox>

@@ -1,0 +1,4 @@
+chat.connection.host = "process-one.net"
+chat.connection.base = "http-poll"
+chat.connection.port = 80
+chat.connection.polling = false

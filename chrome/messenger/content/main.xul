@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/main.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 
@@ -14,8 +13,13 @@
 
 <window id="ot:main" title="OneTeam" onload="onLoad()" onclose="return onClose()"
     persist="width height" width="170" height="450"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  
+
+<!-- #ifndef XULAPP
+  <html:iframe id="bridge"/>
+// #endif -->
+
   <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
   <script type="text/javascript" src="lib/jsjac/crypt.js"/>
   <script type="text/javascript" src="lib/jsjac/json.js"/>
@@ -27,15 +31,21 @@
 
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
+  <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
+  <!-- #endif -->
   <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/prefs.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
+  <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
+  <!-- #endif -->
   <script type="text/javascript;version=1.7" src="JavaScript/model/presenceProfiles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
@@ -179,7 +189,10 @@
       onIconSetChange: function()
       {
         document.getElementById("setPresence-type-image").src =
-          this.systray.icon = presenceToIcon(account.currentPresence.show||"available");
+// #ifdef XULAPP
+          this.systray.icon =
+// #endif
+          presenceToIcon(account.currentPresence.show||"available");
       },
 
       init: function()
@@ -189,10 +202,12 @@
         account.registerView(this, "onIconSetChange", "iconSet");
 
         this.chooser = document.getElementById("setPresence-type-chooser");
-        this.systray = document.getElementById("systray");
         this.profileChooser = document.getElementById("setPresence-profile-chooser");
         this.profileEnable = document.getElementById("setPresence-profile-enable");
+// #ifdef XULAPP
+        this.systray = document.getElementById("systray");
         this.systray.icon = presenceToIcon(account.currentPresence.show||"available");
+// #endif
         this.presence = this.chooser.value;
       }
     };
@@ -205,16 +220,25 @@
     }
 
     function onClose() {
+    //#ifdef XULAPP
       setPresenceUpdater.systray.minimized = true;
       return false;
+    /*#else
+      return true;
+    //#endif */
     }
 
     function quit() {
       if (window.con)
         window.con.disconnect();
+
+    //#ifdef XULAPP
       Components.classes['@mozilla.org/toolkit/app-startup;1'].
         getService(Components.interfaces.nsIAppStartup).
           quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+    /*#else
+      window.close();
+    //#endif */
     }
 
     function connect() {
@@ -333,6 +357,7 @@
 
       _resizeWindow: function(paneAdded)
       {
+        // #ifdef XULAPP
         var splitter = document.getElementById("chats-splitter");
         var chats = document.getElementById("chats");
 
@@ -354,7 +379,8 @@
           splitter.setAttribute("rightWidth", self.outerWidth - width);
 
           self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
-        }
+          }
+        // #endif
       },
 
       onSend: function()
@@ -417,8 +443,10 @@
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
     <key id="key_help" modifiers="control" key="H" command="cmd_help"/>
     <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
+    <!-- #ifdef DEBUG -->
     <key id="key_jsConsole" modifiers="control" key="M" command="cmd_jsConsole"/>
     <key id="key_cmdConsole" modifiers="control" key="N" command="cmd_cmdConsole"/>
+    <!-- #endif -->
     <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
     <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
     <key id="key_transfers" modifiers="control" key="T" command="cmd_transfers"/>
@@ -474,9 +502,9 @@
                   accesskey="&shortcurt.service;"/>
           <!-- <menuitem label="&menulagger.adminTools;"/> -->
               <menuitem label="Histroy Manager" command="cmd_history"
-                  accesskey="H"/>
+                accesskey="H"/>
               <menuitem label="File Transfers" command="cmd_transfers"
-                  accesskey="T"/>
+                accesskey="T"/>
               <menuseparator/>
               <menuitem label="&menulagger.disconnect;" command="cmd_disconnect"/>
               <menuitem label="&menulagger.quitter;" command="cmd_quit"
@@ -581,9 +609,15 @@
             </tabpanels>
           </tabbox>
         </vbox>
+        <!-- #ifdef XULAPP -->
         <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
         <tabbox id="chats" collapsed="true" flex="1"
             onselect="this.selectedPanel.controler.focus()">
+        <!-- #else
+        <splitter id="chats-splitter"/>
+        <tabbox id="chats" flex="1"
+            onselect="this.selectedPanel.controler.focus()">
+        // #endif -->
           <tabs/>
           <tabpanels flex="1"/>
         </tabbox>
@@ -641,6 +675,7 @@
           oncommand="this.parentNode.view.activeItem.exitRoom()"/>
     </popup>
   </popupset>
-
+  <!-- #ifdef XULAPP -->
   <otsystray id="systray" type="minimizer"/>
+  <!-- #endif -->
 </window>

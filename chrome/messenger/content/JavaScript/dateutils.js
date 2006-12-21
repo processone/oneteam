@@ -1,3 +1,4 @@
+// #ifdef XULAPP
 function formatDate(date, locale, dateFormat, timeFormat)
 {
     var formater = Components.classes["@mozilla.org/intl/scriptabledateformat;1"].
@@ -36,6 +37,28 @@ function formatDate(date, locale, dateFormat, timeFormat)
         date.getFullYear(), date.getMonth()+1, date.getDate(),
         date.getHours(), date.getMinutes(), date.getSeconds());
 }
+/* #else
+function formatDate(date, locale, dateFormat, timeFormat)
+{
+    var res = "";
+
+    if (dateFormat != "none")
+        res += date.getFullYear() + "-" +
+            (date.getMonth()+101).toString().substr(1) + "-" +
+            (date.getDate()+100).toString().substr(1);
+
+    if (timeFormat == "none")
+        return res;
+
+    res += (res ? " " : "") +
+        (date.getHours()+100).toString().substr(1) + ":" +
+        (date.getMinutes()+100).toString().substr(1);
+    if (timeFormat == "short" || timeFormat == "short24")
+        res += ":" + (date.getSeconds()+100).toString().substr(1);
+
+    return res;
+}
+// #endif */
 
 function dateToUTCString(date)
 {

@@ -2,43 +2,40 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <!DOCTYPE dialog [
-        <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
-        %brandDTD;]>
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
+  %brandDTD;
+]>
 
 <!-- TODO: Translate About and Release -->
 <!-- TODO: Font-style should be defined in CSS -->
 <!-- TODO: Logo should be defined in CSS -->
 <!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
         
-<dialog id="about" windowtype="ot:about"
-        title="About &brandShortName;"
-        buttons="accept"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <stringbundle id="branding" src="chrome://branding/locale/brand.properties"/>
-    <script>
-        <![CDATA[
-        // Function to launch wizard window
-        function launchBrowser() {
-          var gStringBundle = document.getElementById("branding");
-          var URL = gStringBundle.getString("releaseURL");
+<dialog id="about" windowtype="ot:about" title="About &brandShortName;"
+  buttons="accept" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    	  var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
-                          .getService(Components.interfaces.nsIIOService);
-     	  var uriToOpen = ioservice.newURI(URL, null, null);
-          var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                          .getService(Components.interfaces.nsIExternalProtocolService);
-    	  extps.loadURI(uriToOpen, null);
-        } ]]>
-    </script>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  
+  <script><![CDATA[
+    function launchBrowser() {
+      openLink(_("branding:brand", "releaseURL"));
+    }
+  ]]></script>
 
-    <vbox style="background-color: white;" align="center" flex="1">
-        <spacer height="30"/>
-        <label value="&brandFullName;" style="font-size: 20pt"/>
-        <spacer height="20"/>
-        <label value="Release &softwareVersion;"/>
-        <spacer height="40"/>
-        <image src="chrome://branding/locale/logo.png" onclick="launchBrowser();"/>
-        <spacer height="30"/>
+  <vbox style="background-color: white;" align="center" flex="1">
+    <spacer height="30"/>
 
-    </vbox>
+    <label value="&brandFullName;" style="font-size: 20pt"/>
+
+    <spacer height="20"/>
+
+    <label value="Release &softwareVersion;"/>
+
+    <spacer height="40"/>
+
+    <image src="chrome://branding/locale/logo.png" onclick="launchBrowser();"/>
+
+    <spacer height="30"/>
+  </vbox>
 </dialog>

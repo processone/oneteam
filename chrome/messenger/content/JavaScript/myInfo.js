@@ -1,8 +1,5 @@
 var myFile = null;
 
-const gPrefService = Components.classes["@mozilla.org/preferences-service;1"]
-		.getService(Components.interfaces.nsIPrefBranch);
-
 var prefs = loadPrefs();
 
 // Function to init info with default photo

@@ -1,6 +1,3 @@
-var gPrefService = Components.classes["@mozilla.org/preferences;1"].
-    getService(Components.interfaces.nsIPrefBranch2);
-
 function presenceToIcon(show)
 {
     if (!show || show == "unavailable")
@@ -36,17 +33,10 @@ function Account()
     this.connectionInfo = {};
     this.notificationScheme = new NotificationScheme();
 
-    this.observe(null, null, "chat.connection.host");
-    this.observe(null, null, "chat.connection.port");
-    this.observe(null, null, "chat.connection.base");
-    this.observe(null, null, "chat.connection.port");
-    this.observe(null, null, "chat.connection.user");
-    this.observe(null, null, "chat.connection.pass");
-
-    this.observe(null, null, "chat.general.iconsetdir");
-
-    gPrefService.addObserver("chat.connection", this, false);
-    gPrefService.addObserver("chat.general", this, false);
+    prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
+                                       "chat.connection", true);
+    prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
+                                       "chat.general", true);
 }
 
 _DECL_(Account, null, Model, DiscoItem).prototype =
@@ -73,7 +63,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                            profile: profile};
 
         if (!newPresence.priority)
-            newPresence.priority = gPrefService.getIntPref("chat.connection.priority");
+            newPresence.priority = prefManager.getPref("chat.connection.priority");
 
         if (!newPresence.profile) {
             presence = new JSJaCPresence();
@@ -262,44 +252,33 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                        "chrome,centerscreen,modal");
     },
 
-    observe: function(subject, topic, value)
+    onPrefChange: function(name, value)
     {
-        var val;
-        try {
-            if ((val = value.replace(/^chat\.connection\./, "")) != value) {
-                switch (val) {
-                case "host":
-                case "base":
-                case "user":
-                    this.connectionInfo[val] = gPrefService.getCharPref(value);
-                    break;
-                case "pass":
-                    if (gPrefService.getCharPref(value))
-                        this.connectionInfo[val] = gPrefService.getCharPref(value);
-                    break;
-                case "port":
-                    this.connectionInfo[val] = gPrefService.getIntPref(value);
-                    break;
-                case "polling":
-                    this.connectionInfo[val] = gPrefService.getBoolPref(value);
-                    break;
-                }
-                this.modelUpdated("connectionInfo");
-            } else if (value == "chat.general.iconsetdir") {
-                this.iconSet = "chrome://messenger/content/img/" +
-                    gPrefService.getCharPref(value) + "/";
-                this.modelUpdated("iconSet");
-            }
-        } catch (ex) {}
+        var namePart;
+        if ((namePart = name.replace(/^chat\.connection\./, "")) != name) {
+            if (namePart != "host" && namePart != "base" && namePart != "user" &&
+                namePart != "pass" && namePart != "port" && namePart != "polling")
+                return;
+
+            if (namePart == "pass")
+                value = value || "";
+            this.connectionInfo[namePart] = value;
+            this.modelUpdated("connectionInfo");
+        } else if (name == "chat.general.iconsetdir") {
+            this.iconSet = "chrome://messenger/content/img/" + value + "/";
+            this.modelUpdated("iconSet");
+        }
     },
 
     setUserAndPass: function(user, pass, savePass)
     {
-        gPrefService.setCharPref("chat.connection.user", user);
+        prefManager.setPref("chat.connection.user", user);
+
         if (savePass)
-            gPrefService.setCharPref("chat.connection.pass", pass);
+            prefManager.setPref("chat.connection.pass", pass);
         else
-            gPrefService.clearUserPref("chat.connection.pass");
+            prefManager.deletePref("chat.connection.pass");
+
         this.connectionInfo.pass = pass;
     },
 
@@ -308,7 +287,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         var args = {
             httpbase: "http://"+this.connectionInfo.host+":"+this.connectionInfo.port+
                 "/"+this.connectionInfo.base+"/",
-//            oDbg: {log: function(a){dump(a+"\n")}},
+//            oDbg: {log: function(a){window.console ? console.info(a) : dump(a)}},
             timerval: 2000};
 
         var con = this.connectionInfo.polling ? new JSJaCHttpBindingConnection(args) :
@@ -325,7 +304,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             domain: this.connectionInfo.host,
             username: this.connectionInfo.user,
             pass: this.connectionInfo.pass,
-            resource: gPrefService.getCharPref("chat.connection.resource")};
+            resource: prefManager.getPref("chat.connection.resource")};
 
         self.con = con;
         this.modelUpdated("con");
@@ -419,8 +398,9 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                 var tag = packet.getNode().getElementsByTagName('priority');
 
                 if (+tag[0].textContent > this.currentPresence.priority)
-                    window.openDialog("chrome://messenger/content/changePriority.xul", "_blank",
-                                      "chrome,centerscreen", this);
+                    openDialogUniq("ot:changePriority",
+                                   "chrome://messenger/content/changePriority.xul",
+                                   "chrome,centerscreen", this);
             }
             return;
         }
@@ -428,9 +408,9 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         //Handle subscription requests
         switch (packet.getType()) {
         case "subscribe": 
-            window.openDialog("chrome://messenger/content/subscribe.xul", "_blank",
-                              "chrome,centerscreen,resizable", this.getOrCreateContact(sender),
-                              packet.getStatus());
+            openDialogUniq("ot:subscribe", "chrome://messenger/content/subscribe.xul",
+                           "chrome,centerscreen,resizable", this.getOrCreateContact(sender),
+                           packet.getStatus());
             return;
         case "subscribed":
         case "unsubscribe":
@@ -494,10 +474,10 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             if (conference.joined)
                 return;
 
-            window.openDialog("chrome://messenger/content/invitation.xul", "ot:invitation",
-                              "chrome,centerscreen", conference,
-                              new JID(invite.getAttribute("from")),
-                              reason && reason.textContent);
+            openDialogUniq("ot:invitation", "chrome://messenger/content/invitation.xul",
+                           "chrome,centerscreen", conference,
+                           new JID(invite.getAttribute("from")),
+                           reason && reason.textContent);
             return;
         }
 
