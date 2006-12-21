@@ -308,11 +308,16 @@ sub process {
     return $content unless $file =~ /\.(?:xul|xml|js|css)$/;
 
     my $depth = scalar(splitdir($file)) - 1;
-    $depth = 1 if $file =~ /\.js|\.xml$/;
+    $depth = 1 if $file =~ /\.js$/;
     $depth-- if $file =~ m!branding[\\\/]!;
 
     my $to_top_dir = join "/", (("..") x $depth);
     my $to_top_dir_one = join "/", (("..") x ($depth-1));
+
+    if ($file =~ /\.xml$/) {
+        $content =~ s{(?<!src=['"])chrome://messenger/(content|skin)/}{../$1/}g;
+        $content =~ s{(?<!src=['"])chrome://branding/locale/}{../branding/}g;
+    }
 
     $content =~ s!chrome://messenger/(content|skin)/!$to_top_dir/$1/!g;
     $content =~ s!chrome://branding/locale/!$to_top_dir_one/branding/!g;
