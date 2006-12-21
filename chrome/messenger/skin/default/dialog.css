@@ -1,14 +1,17 @@
 .field-desc {
   font-size: 80%;
 }
+
 spacer {
   height: 0.8em;
 }
+
 hbox.entry {
   -moz-box-align: center;
   -moz-box-flex: 1;
 }
-hbox.entry textbox {
+
+hbox.entry > *:last-child {
   -moz-box-flex: 1;
 }
  
