@@ -296,7 +296,8 @@
           window.setTimeout(function(a, b){b._firstFocus = false;a.focus()},
             this._firstFocus ? 500 : 0, this._input.contentWindow, this);
           /* #else
-          this._input.focus();
+          window.setTimeout(function(a, b){b._firstFocus = false;a.focus()},
+            this._firstFocus ? 500 : 0, this._input, this);
           // #endif */
           ]]>
         </body>
