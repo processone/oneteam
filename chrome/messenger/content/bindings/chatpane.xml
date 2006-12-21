@@ -126,7 +126,7 @@
           <!-- #ifdef XULAPP -->
           <xul:iframe id="input" flex="1" style="height: 1.7em"/>
           <!-- #else
-          <xul:textbox id="input" flex="1" style="height: 1.7em"/>
+          <xul:textbox id="input" flex="1"/>
           // #endif -->
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
         </xul:hbox>

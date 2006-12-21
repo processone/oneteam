@@ -4,6 +4,11 @@ vbox {
 
 #output, #input {
   margin: 3px;
+  -moz-border-top-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-appearance: none !important;
   border: 1px solid #7e9cb8 !important;
 }
 
