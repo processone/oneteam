@@ -6,6 +6,7 @@ use warnings;
 use File::Find;
 use File::Spec;
 use Data::Dumper;
+use Cwd;
 
 sub slurp {
     my $file = shift;
@@ -15,7 +16,8 @@ sub slurp {
 }
 
 my @files;
-my ($dir, %defs) = @ARGV;
+my $dir = File::Spec->catdir(getcwd, qw(chrome messenger));
+my %defs = @ARGV;
 my @locales;
 my @disabled_locales = qw(en-GB fr-FR);
 
@@ -31,7 +33,9 @@ my $disabled_locales_re = "[\\\/]locale[\\\/](?:".(join "|", @disabled_locales).
 my @filters = (
     new OneTeam::Preprocessor(%defs),
     exists $defs{XULAPP} ?
-        () :
+        (
+            new OneTeam::XulAppSaver(),
+        ) :
         (
             new OneTeam::WebLocaleProcessor(),
             new OneTeam::WebPathConverter(),
@@ -325,34 +329,22 @@ sub process {
     $content;
 }
 
-package OneTeam::WebJarSaver;
+package OneTeam::Saver;
 
 use base 'OneTeam::Filter';
 
-use File::Temp 'tempdir';
 use File::Path;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy;
 use Cwd;
 
-sub new {
-    my ($class, %defs) = @_;
-    my $self = {
-        tmpdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
-    };
-    bless $self, $class;
-}
-
 sub process {
     my ($self, $content, $file, $locale) = @_;
 
-    return $content if $file =~ /(?:\.bak|~|\.swp|\.dtd|\.properties)$/ or
-        $file =~ /skin[\/\\](?!default)/;
+    return $content if $file =~ /(?:\.bak|~|\.swp)$/;
 
-    $file =~ s!^skin[/\\]default!skin!;
-    $file =~ s!^locale[/\\]branding!branding!;
-
-    my $path = catfile($self->{tmpdir}, $locale, $file);
+    my $path = $self->path_convert($file, $locale);
+    return $content if not $path;
 
     my ($vol, $dir, undef) = splitpath($path);
 
@@ -363,10 +355,40 @@ sub process {
     return $content;
 }
 
+package OneTeam::WebJarSaver;
+
+use base 'OneTeam::Saver';
+
+use File::Temp 'tempdir';
+use File::Path;
+use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
+use File::Copy;
+use Cwd;
+
+sub new {
+    my ($class, %defs) = @_;
+    my $self = {
+        outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
+    };
+    bless $self, $class;
+}
+
+sub path_convert {
+    my ($self, $file, $locale) = @_;
+
+    return if $file =~ /(?:\.dtd|\.properties)$/ or
+        $file =~ /skin[\/\\](?!default)/;
+
+    $file =~ s!^skin[/\\]default!skin!;
+    $file =~ s!^locale[/\\]branding!branding!;
+
+    return catfile($self->{outputdir}, $locale, $file);
+}
+
 sub finalize {
     my $self = shift;
 
-    for my $localedir (glob catfile($self->{tmpdir}, "*")) {
+    for my $localedir (glob catfile($self->{outputdir}, "*")) {
         my $locale = (splitdir($localedir))[-1];
 
         system("cd '$localedir'; zip -q -9 -r '".catfile(getcwd, "oneteam-$locale.jar")."' .");
@@ -375,9 +397,8 @@ sub finalize {
 
 package OneTeam::WebDirSaver;
 
-use base 'OneTeam::WebJarSaver';
+use base 'OneTeam::Saver';
 
-use File::Temp 'tempdir';
 use File::Path;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy;
@@ -386,36 +407,94 @@ use Cwd;
 sub new {
     my ($class, %defs) = @_;
     my $self = {
-        tmpdir => catdir(getcwd, "web"),
+        outputdir => catdir(getcwd, "web"),
     };
-    rmtree([catdir($self->{tmpdir}, "branding"),
-        catdir($self->{tmpdir}, "content"),
-        catdir($self->{tmpdir}, "skin")], 0, 0);
+    rmtree([catdir($self->{outputdir}, "branding"),
+        catdir($self->{outputdir}, "content"),
+        catdir($self->{outputdir}, "skin")], 0, 0);
     bless $self, $class;
 }
 
-sub process {
-    my ($self, $content, $file, $locale) = @_;
+sub path_convert {
+    my ($self, $file, $locale) = @_;
 
-    return if $locale ne "en-US";
-
-    return $content if $file =~ /(?:\.bak|~|\.swp|\.dtd|\.properties)$/ or
+    return if $locale ne "en-US" or
+        $file =~ /(?:\.dtd|\.properties)$/ or
         $file =~ /skin[\/\\](?!default)/;
 
     $file =~ s!^skin[/\\]default!skin!;
     $file =~ s!^locale[/\\]branding!branding!;
 
-    my $path = catfile($self->{tmpdir}, $file);
+    return catfile($self->{outputdir}, $file);
+}
 
-    my ($vol, $dir, undef) = splitpath($path);
+package OneTeam::XulAppSaver;
 
-    mkpath(catpath($vol, $dir));
-    open my $fh, ">", $path or die "Unable to save temporary file $path: $!";
-    print $fh $content;
+use base 'OneTeam::Saver';
+
+use File::Temp 'tempdir';
+use File::Path;
+use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
+use File::Copy;
+use File::Copy::Recursive qw(rcopy);
+use Cwd;
+
+sub new {
+    my ($class, %defs) = @_;
+    my $self = {
+        outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
+    };
+    bless $self, $class;
+}
+
+sub analyze {
+    my ($self, $content, $file) = @_;
+
+    if ($file =~ /(?:^|[\\\/])locale[\\\/]([^\\\/]*)[\\\/]/ && $1 ne 'branding') {
+        $self->{locales}->{$1} = 1;
+    }
+
+    if ($file =~ /(?:^|[\\\/])skin[\\\/]([^\\\/]*)[\\\/]/) {
+        $self->{skins}->{$1} = 1;
+    }
+
+    @locales = ("en-US");
 
     return $content;
 }
 
+sub path_convert {
+    my ($self, $file, $locale) = @_;
+
+    return catfile($self->{outputdir}, $file);
+}
+
 sub finalize {
+    my $self = shift;
+
+    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
+    my $chromedir = catdir($tmpdir, "chrome");
+
+    mkpath([$chromedir], 0);
+
+    system("cd '$self->{outputdir}'; zip -q -0 -r '".catfile($chromedir, 'oneteam.jar')."' .");
+    copy('application.ini', $tmpdir);
+    rcopy('defaults', catdir($tmpdir, 'defaults'));
+    rcopy('components', catdir($tmpdir, 'components'));
+    rcopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
+
+    open(my $fh, ">", catfile($chromedir, 'chrome.manifest')) or
+        die "Uanble to create file: $!";
+    print $fh "content messenger jar:oneteam.jar!/content/\n";
+
+    print $fh "skin messenger ".($_ eq 'default' ? 'classic' : $_)."/1.0 ".
+        "jar:oneteam.jar!/skin/$_\n" for keys %{$self->{skins}};
+
+    print $fh "locale messenger $_ jar:oneteam.jar!/locale/$_\n"
+        for keys %{$self->{locales}};
+    print $fh "locale branding en-US jar:oneteam.jar!/locale/branding\n";
+    close($fh);
+
+    system("cd '$tmpdir'; zip -q -9 -r '".catfile(getcwd, "oneteam.xulapp")."' .");
 }
 
