@@ -313,10 +313,9 @@ sub process {
 
     my $depth = scalar(splitdir($file)) - 1;
     $depth = 1 if $file =~ /\.js$/;
-    $depth-- if $file =~ m!branding[\\\/]!;
+    $depth-- if $file =~ m!(branding|skin)[\\\/]!;
 
     my $to_top_dir = join "/", (("..") x $depth);
-    my $to_top_dir_one = join "/", (("..") x ($depth-1));
 
     if ($file =~ /\.xml$/) {
         $content =~ s{(?<!src=['"])chrome://messenger/(content|skin)/}{../$1/}g;
@@ -324,7 +323,7 @@ sub process {
     }
 
     $content =~ s!chrome://messenger/(content|skin)/!$to_top_dir/$1/!g;
-    $content =~ s!chrome://branding/locale/!$to_top_dir_one/branding/!g;
+    $content =~ s!chrome://branding/locale/!$to_top_dir/branding/!g;
 
     $content;
 }
