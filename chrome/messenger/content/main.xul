@@ -481,7 +481,11 @@
         <textbox id="login-pass" type="password"/>
       </vbox>
       <hbox pack="center">
+<!-- #ifdef XULAPP -->
         <checkbox id="login-savePass" checked="true" label="Remember password"/>
+<!-- #else
+        <checkbox id="login-savePass" checked="false" label="Remember password"/>
+// #endif -->
       </hbox>
       <hbox pack="center">
         <button id="login-signin" label="&Login.signin;" oncommand="connect()"/>
