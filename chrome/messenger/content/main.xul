@@ -17,10 +17,6 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-<!-- #ifndef XULAPP
-  <html:iframe id="bridge" style="display:none"/>
-// #endif -->
-
   <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
   <script type="text/javascript" src="lib/jsjac/crypt.js"/>
   <script type="text/javascript" src="lib/jsjac/json.js"/>
@@ -419,21 +415,30 @@
     <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
     <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
     <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
+<!-- #ifdef XULAPP -->
     <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
     <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
+<!-- #else
+    <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()" disabled="true"/>
+    <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()" disabled="true"/>
+// #endif -->
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
     <command id="cmd_disconnect" oncommand="con.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
 
     <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
+<!-- #ifdef XULAPP -->
     <command id="cmd_extensions" oncommand=""/>
     <command id="cmd_themes" key="key_themes" oncommand=""/>
+<!-- #endif -->
     <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
 
     <command id="cmd_help" key="key_help" oncommand=""/>
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
+<!-- #ifdef DEBUG -->
     <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
     <command id="cmd_cmdConsole" oncommand='window.openDialog("command.xul", "_blank","chrome,dialog=no,all", "")'/>
+<!-- #endif -->
     <command id="cmd_about" oncommand="account.showAbout()"/>
 
     <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
@@ -447,7 +452,9 @@
     <key id="key_disco" modifiers="control" key="S" command="cmd_disco"/>
     <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
     <key id="key_ourVCard" modifiers="control" key="E" command="cmd_ourVCard"/>
+<!-- #ifdef XULAPP -->
     <key id="key_themes" modifiers="control" key="T" command="cmd_themes"/>
+<!-- #endif -->
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
     <key id="key_help" modifiers="control" key="H" command="cmd_help"/>
     <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
@@ -524,10 +531,12 @@
               <menuitem label="&menuConfig.editinfo;" command="cmd_ourVCard()"
                   accesskey="&shortcurt.edit;"/>
               <menuseparator/>
+<!-- #ifdef XULAPP -->
               <menuitem label="&menuConfig.plugins;" command="cmd_extensions"/>
               <menuitem label="&menuConfig.themes;" command="cmd_themes()"
                   accesskey="&shortcurt.themes;"/>
               <menuseparator/>
+<!-- #endif -->
               <menuitem label="&menuConfig.preferences;" command="cmd_prefs"
                   accesskey="&shortcurt.pref;"/>
             </menupopup>
@@ -559,7 +568,11 @@
         </toolbar>
       </toolbox>
       <hbox flex="1">
+        <!-- #ifdef XULAPP -->
         <vbox flex="1">
+        <!-- #else
+        <vbox>
+        // #endif -->
           <hbox id="setPresence-box">
             <vbox pack="start">
               <image id="setPresence-type-image"/>
