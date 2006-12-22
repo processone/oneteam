@@ -23,7 +23,7 @@ my @disabled_locales = qw(en-GB fr-FR);
 
 find(sub {
         push @files, $File::Find::name
-            if -f and not $File::Find::dir =~ m![/\\].svn[/\\]!;
+            if -f and not $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
     }, $dir);
 
 my $disabled_locales_re = "[\\\/]locale[\\\/](?:".(join "|", @disabled_locales).")";
