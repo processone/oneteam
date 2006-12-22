@@ -17,7 +17,8 @@
         <xul:vbox style="background: white; padding: 1px; border: 1px solid #999"
             hidden="true">
           <html:div>
-            <html:img id="image" width="1" height="1" style="display: block"/>
+            <html:img id="image" width="1" height="1" style="display: block"
+              onload="this.parentNode.parentNode.parentNode.parentNode.onImageLoad()"/>
           </html:div>
         </xul:vbox>
       </xul:hbox>
@@ -66,49 +67,49 @@
 
       <method name="onAvatarChange">
         <body><![CDATA[
-          if (this.getAttribute("showBlankAvatar") != "true" && 
-                (!this._model || !this._model.avatar)) {
-              this._container.firstChild.hidden = true;
-              this._src = null;
-            } else {
-              this._container.firstChild.hidden = false;
-              if (this._model && this._model.avatar)
+        if (this._model && this._model.avatar) {
+          this._container.firstChild.hidden = false;
 // #ifdef XULAPP
-                this._src = "file://"+this._model.avatar;
+          this._src = "file://"+this._model.avatar;
 /* #else
-                this._src = this._model.avatar;
+          this._src = this._model.avatar;
 // #endif */
-              else
-                this._src = "chrome://messenger/skin/default-avatar.png";
-              this._image.setAttribute("src", this._src);
+          this._image.setAttribute("src", this._src);
+        } else if (this.getAttribute("showBlankAvatar") == "true") {
+          this._container.firstChild.hidden = false;
+            this._src = "chrome://messenger/skin/default-avatar.png";
+            this._image.setAttribute("src", this._src);
+        } else {
+          this._container.firstChild.hidden = true;
+          this._src = null;
+        }
+        ]]></body>
+      </method>
+
+      <method name="onImageLoad">
+        <body><![CDATA[
+          if (this._src != this._image.src) {
+            relD = this._src.split(/\.\.\//);
+            idx = relD.lastIndexOf("")+1;
+            var absSrc = document.location.href.split(/\//).slice(0, -idx-1).
+              concat(relD[idx]).join("/");
+            if (absSrc != this._image.src) {
+              this._image.src = this._src;
+              return;
             }
+          }
+
+          this._image.width = this._image.height = 1;
+          var height = this._container.boxObject.height - 4;
+
+          if (height > this._image.naturalHeight)
+            height = this._image.naturalHeight;
+
+          this._image.width = height*this._image.naturalWidth/this._image.naturalHeight;
+          this._image.height = height;
         ]]></body>
       </method>
     </implementation>
-
-    <handlers>
-      <handler event="load"><![CDATA[
-        if (this._src != this._image.src) {
-          relD = this._src.split(/\.\.\//);
-          idx = relD.lastIndexOf("")+1;
-          var absSrc = document.location.href.split(/\//).slice(0, -idx-1).
-            concat(relD[idx]).join("/");
-          if (absSrc != this._image.src) {
-            this._image.src = this._src;
-            return;
-          }
-        }
-
-        this._image.width = this._image.height = 1;
-        var height = this._container.boxObject.height - 4;
-
-        if (height > this._image.naturalHeight)
-          height = this._image.naturalHeight;
-
-        this._image.width = height*this._image.naturalWidth/this._image.naturalHeight;
-        this._image.height = height;
-      ]]></handler>
-    </handlers> 
 
   </binding>
 
