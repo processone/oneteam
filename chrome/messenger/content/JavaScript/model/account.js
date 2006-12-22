@@ -275,6 +275,21 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
     {
         prefManager.setPref("chat.connection.user", user);
 
+        if (~user.search(/@/)) {
+            var jid = new JID(user);
+// #ifdef XULAPP
+            this.connectionInfo.host = jid.domain;
+/* #else
+            this.connectionInfo.domain = jid.domain;
+// #endif */
+            this.connectionInfo.user = jid.node;
+        } else
+// #ifdef XULAPP
+            this.connectionInfo.host = prefManager.getPref("chat.connection.host");
+/* #else
+            this.connectionInfo.domain = prefManager.getPref("chat.connection.domain")
+// #endif */
+
         if (savePass)
             prefManager.setPref("chat.connection.pass", pass);
         else
@@ -288,11 +303,11 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         var args = {
             httpbase: "http://"+this.connectionInfo.host+":"+this.connectionInfo.port+
                 "/"+this.connectionInfo.base+"/",
-//            oDbg: {log: function(a){window.console ? console.info(a) : dump(a)}},
+            oDbg: {log: function(a){window.console ? console.info(a) : dump(a+"\n")}},
             timerval: 2000};
 
-        var con = this.connectionInfo.polling ? new JSJaCHttpBindingConnection(args) :
-            new JSJaCHttpPollingConnection(args);
+        var con = this.connectionInfo.polling ? new JSJaCHttpPollingConnection(args) :
+            new JSJaCHttpBindingConnection(args);
 
         con.registerHandler("message", function(p){account.onMessage(p)});
         con.registerHandler("presence", function(p){account.onPresence(p)});

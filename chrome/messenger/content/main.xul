@@ -18,7 +18,7 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
 <!-- #ifndef XULAPP
-  <html:iframe id="bridge"/>
+  <html:iframe id="bridge" style="display:none"/>
 // #endif -->
 
   <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
