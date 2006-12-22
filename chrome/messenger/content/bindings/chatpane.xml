@@ -21,8 +21,8 @@
           this._msgs = [];
           this._output = document.getAnonymousElementByAttribute(this, "id", "output");
 
-          this._output.contentWindow.addEventListener("load", function(event) {
-            var link = event.target.createElement("link");
+          this._output.addEventListener("load", function(event) {
+            var link = me._output.contentDocument.createElement("link");
 // #ifdef XULAPP
             link.setAttribute("href", "chrome://messenger/skin/chatpane-content.css");
 /* #else
@@ -30,7 +30,7 @@
               document.location.href.replace(/content\/.*?$/, "skin/chatpane-content.css"));
 // #endif */
             link.setAttribute("rel", "stylesheet");
-            event.target.getElementsByTagName("HEAD")[0].appendChild(link);
+            me._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
             var msgs = me._msgs;
             me._msgs = null;
             for (var i = 0; i < msgs.length; i++)
