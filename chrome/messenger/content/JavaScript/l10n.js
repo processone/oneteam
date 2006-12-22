@@ -141,7 +141,7 @@ _DECL_(L10NService, L10NServiceBase).prototype =
 {
     __proto__: L10NServiceBase.prototype,
 
-    _bundleCache = {
+    _bundleCache: {
         @BUNDLE_CACHE@
     },
 
