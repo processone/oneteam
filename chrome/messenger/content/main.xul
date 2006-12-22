@@ -571,7 +571,7 @@
         <!-- #ifdef XULAPP -->
         <vbox flex="1">
         <!-- #else
-        <vbox>
+        <vbox width="250">
         // #endif -->
           <hbox id="setPresence-box">
             <vbox pack="start">
