@@ -377,7 +377,8 @@ sub path_convert {
     my ($self, $file, $locale) = @_;
 
     return if $file =~ /(?:\.dtd|\.properties)$/ or
-        $file =~ /skin[\/\\](?!default)/;
+        $file =~ /skin[\/\\](?!default)/ or
+        $file =~ /(?:^|[\\\/])content[\\\/]sounds[\\\/]/;
 
     $file =~ s!^skin[/\\]default!skin!;
     $file =~ s!^locale[/\\]branding!branding!;
@@ -419,6 +420,7 @@ sub path_convert {
     my ($self, $file, $locale) = @_;
 
     return if $locale ne "en-US" or
+        $file =~ /(?:^|[\\\/])content[\\\/]sounds[\\\/]/ or
         $file =~ /(?:\.dtd|\.properties)$/ or
         $file =~ /skin[\/\\](?!default)/;
 
