@@ -79,16 +79,18 @@ function PrefManager()
         "chat.muc.nickname": "",
     };
 
-    var frame = document.getElementById("bridge");
-    frame.onload = new Callback(this._onBridgeLoad, this);
-    frame.src = document.location.href.
-// #ifndef NOJAR
-        replace(/^jar:/, "").replace(/\/[^\/]+!.*$/, "/bridge.html");
-// #else        
-        replace(/\/content\/.*$/, "/bridge.html");
-// #endif
+    this.storage = window.top.storage ||
+        globalStorage[document.location.host];
 
-    this.storageReadyCallbacks = [];
+    for (var i = 0; i < this.storage.length; i++) {
+        var key = this.storage.key(i), keyName;
+        if ((keyName = key.replace(/^pref-str:/, "")) != key)
+            this.prefs[keyName] = ""+this.storage[key];
+        else if ((keyName = key.replace(/^pref-bool:/, "")) != key)
+            this.prefs[keyName] = ""+this.storage[key] == "true";
+        else if ((keyName = key.replace(/^pref-num:/, "")) != key)
+            this.prefs[keyName] = +this.storage[key];
+    }
 
     var serverPrefsURL = document.location.href.
 // #ifndef NOJAR
@@ -114,23 +116,6 @@ function PrefManager()
 
 _DECL_(PrefManager).prototype =
 {
-    _onBridgeLoad: function()
-    {
-        this.storage = document.getElementById("bridge").contentWindow.storage;
-        for (var i = 0; i < this.storage.length; i++) {
-            var key = this.storage.key(i), keyName;
-            if ((keyName = key.replace(/^pref-str:/, "")) != key)
-                this.prefs[keyName] = ""+this.storage[key];
-            else if ((keyName = key.replace(/^pref-bool:/, "")) != key)
-                this.prefs[keyName] = ""+this.storage[key] == "true";
-            else if ((keyName = key.replace(/^pref-num:/, "")) != key)
-                this.prefs[keyName] = +this.storage[key];
-        }
-        for (i = 0; i < this.storageReadyCallbacks.length; i++)
-            this.storageReadyCallbacks[i].call();
-        delete this.storageReadyCallbacks;
-    },
-
     registerChangeCallback: function(callback, branch, notifyNow)
     {
         if (!this.callbacks[branch]) {

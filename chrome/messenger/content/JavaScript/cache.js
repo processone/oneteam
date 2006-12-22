@@ -159,31 +159,25 @@ _DECL_(StorageFunctionDelete).prototype =
 /* #else
 function PersistantCache(name)
 {
-    if (prefManager.storage)
-        this._init();
-    else
-        prefManager.storageReadyCallbacks.push(new Callback(this._init, this));
+    this.storage = window.top.storage ||
+        globalStorage[document.location.host];
+
+    this.data = {};
+    for (var i = 0; i < this.storage.length; i++) {
+        var key = this.storage.key(i), keyName;
+        if ((keyName = key.replace(/^cache:/, "")) == key)
+            continue;
+        var expDate = this.storage["cacheExpiration:"+keyName];
+        if (expDate < Date.now()) {
+            delete this.storage["cacheExpiration:"+keyName];
+            delete this.storage[key];
+        } else
+            this.data[keyName] = this.storage[key];
+    }
 }
 
 _DECL_(PersistantCache).prototype =
 {
-    _init: function()
-    {
-        this.storage = prefManager.storage;
-        this.data = {};
-        for (var i = 0; i < this.storage.length; i++) {
-            var key = this.storage.key(i), keyName;
-            if ((keyName = key.replace(/^cache:/, "")) == key)
-                continue;
-            var expDate = this.storage["cacheExpiration:"+keyName];
-            if (expDate < Date.now()) {
-                delete this.storage["cacheExpiration:"+keyName];
-                delete this.storage[key];
-            } else
-                this.data[keyName] = this.storage[key];
-        }
-    },
-
     setValue: function(key, value, expiryDate, storeAsFile)
     {
         this.storage["cache:"+key] = value;
