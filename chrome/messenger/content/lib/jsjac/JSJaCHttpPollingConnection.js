@@ -35,6 +35,7 @@ function JSJaCHPCSetupRequest(async) {
   var r = XmlHttp.create();
   try {
     r.open("POST",this._httpbase,async);
+    r.overrideMimeType('text/plain; charset=utf-8');
     r.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
   } catch(e) { this.oDbg.log(e,1); }
 
@@ -224,8 +225,7 @@ function JSJaCHPCConnect(oArg) {
 }
 
 function JSJaCHPCGetStream() {
-
-  if (!this._req[0].r.responseXML || this._req[0].r.responseText == '') {
+  if (this._req[0].r.responseText == '') {
     oCon = this;
     this._timeout = setTimeout("oCon._sendEmpty()",1000);
     return;
