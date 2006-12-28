@@ -1,3 +1,4 @@
+// #ifdef XULAPP
 function NotificationScheme()
 {
     this._top = Infinity;
@@ -31,7 +32,7 @@ _DECL_(NotificationScheme).prototype =
         if (this._top < 150 || this._wins.length > 8)
             return;
 
-        var args = ["chrome://messenger/content/notification.xul",
+        var args = ["../content/notification.xul",
                      "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                      ",screenX="+window.screen.availWidth+
                      ",screenY="+window.screen.availHeight];
@@ -62,4 +63,16 @@ _DECL_(NotificationScheme).prototype =
         }
     },
 }
+/* #else
+function NotificationScheme()
+{
+}
+
+_DECL_(NotificationScheme).prototype =
+{
+    show: function(kind, type, model, extra)
+    {
+    },
+}
+// #endif */
 
