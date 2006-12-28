@@ -592,22 +592,24 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     onMessage: function(packet)
     {
+        var chatPane;
+
         if (packet.getType() == "error" || !packet.getBody())
             return;
-        if (!this.chatPane || this.chatPane.closed)
-            if (this.contact.chatPane && !this.contact.chatPane.closed &&
-                this.contact.chatPane.contact == this.contact)
-            {
-                this.chatPane = this.contact.chatPane;
-                this.chatPane.updateContact(this);
-            } else
-                this.onOpenChat();
+        chatPane = this.chatPane && !this.chatPane.closed ? this.chatPane :
+            this.contact.chatPane && !this.contact.chatPane.closed ? this.contact.chatPane :
+            null;
+
+        if (!chatPane) {
+            this.onOpenChat();
+            chatPane = this.chatPane;
+        }
 
         var stamp = packet.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
         if (stamp)
             stamp = utcStringToDate(stamp.textContent);
 
-        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you",
+        chatPane.addMessage(this.visibleName, packet.getBody(), "you",
                                  packet.getFrom(), stamp);
     },
 

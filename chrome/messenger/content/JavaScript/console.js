@@ -50,7 +50,12 @@ function onLoad() {
     inputEditor = document.getElementById("texttemplates");
 
     var link = console.contentDocument.createElement("link");
+// #ifdef XULAPP
     link.setAttribute("href", "chrome://messenger/skin/xml-console-log.css");
+/* #else
+    link.setAttribute("href",                                                               
+              document.location.href.replace(/content\/.*?$/, "skin/xml-console-log.css"));
+// #endif */
     link.setAttribute("rel", "stylesheet");
     console.contentDocument.documentElement.getElementsByTagName("HEAD")[0].appendChild(link);
     

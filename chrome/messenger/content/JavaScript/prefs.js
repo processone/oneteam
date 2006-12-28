@@ -75,6 +75,7 @@ function PrefManager()
     this.prefs = {
         "chat.connection.user": "",
         "chat.connection.pass": "",
+        "chat.connection.resource": "OneTeam",
         "chat.general.iconsetdir": "crystal",
         "chat.muc.nickname": "",
     };

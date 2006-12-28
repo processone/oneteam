@@ -6,13 +6,14 @@
 
 <window id="Console" title="&Console.title;" width="640" height="550"
     onload="onLoad()" onclose="onClose();" windowtype="ot:console"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     
   <script type="application/x-javascript" src="JavaScript/console.js"/>
 
   <vbox align="center" flex="1">
     <label value="&Console.traffic;" style="font-weight: bold;" flex="1"/>
-    <iframe id="textconsole"  height="250" width="1024"/>
+    <html:iframe id="textconsole"  height="250" width="1024"/>
 
     <spacer flex="1"/>
 
