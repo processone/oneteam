@@ -436,7 +436,9 @@
     <command id="cmd_help" key="key_help" oncommand=""/>
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
 <!-- #ifdef DEBUG -->
+<!-- #ifdef XULAPP -->
     <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
+<!-- #endif -->
     <command id="cmd_cmdConsole" oncommand='window.openDialog("command.xul", "_blank","chrome,dialog=no,all", "")'/>
 <!-- #endif -->
     <command id="cmd_about" oncommand="account.showAbout()"/>
