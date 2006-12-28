@@ -1,4 +1,4 @@
-// #ifdeff XULAPP
+// #ifdef XULAPP
 function PersistantCache(name)
 {
     var file = Components.classes["@mozilla.org/file/directory_service;1"].
