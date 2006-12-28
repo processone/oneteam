@@ -76,8 +76,10 @@ function PrefManager()
         "chat.connection.user": "",
         "chat.connection.pass": "",
         "chat.connection.resource": "OneTeam",
+        "chat.connection.priority": 5,
         "chat.general.iconsetdir": "crystal",
         "chat.muc.nickname": "",
+        "chat.roster.showoffline": false,
     };
 
     this.storage = window.top.storage ||

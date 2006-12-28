@@ -116,3 +116,8 @@ function Callback(fun, obj) {
     return cb;
 }
 
+function ifnull(value, defaultValue)
+{
+    return value == null ? defaultValue : value
+}
+
