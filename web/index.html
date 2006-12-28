@@ -10,7 +10,7 @@
         width: 100%;
         height: 100%;
       }
-      iframe {
+      iframe, #selector {
         position: absolute;
         margin: 0;
         padding: 0;
@@ -18,17 +18,46 @@
         top: 0;
         bottom: 0;
         width: 100%;
+        display: none;
+      }
+      #selector {
+        text-align: center;
+      }
+      ul, li {
+        margin: 0;
+        padding: 0;
+        list-style: none;
       }
     </style>
     <script type="text/javascript">
       this.storage = globalStorage[document.location.host];
       function onLoad() {
-        document.getElementById("frame").src = "jar:"+
-          document.location.href.replace(/\/[^\/]*$/, "/oneteam.jar!/content/main.xul");
+        if (document.location.search == "?t=1")
+          thisWindow();
+        else
+          document.getElementById("selector").style.display = "block"
+      }
+      function thisWindow() {
+        var frame = document.getElementById("frame");
+
+        document.getElementById("selector").style.display = "none";
+        frame.style.display = "block";
+        frame.src = "jar:"+document.location.href.replace(/\/[^\/]*$/,
+            "/oneteam.jar!/content/main.xul");
+      }
+      function newWindow() {
+        window.open(document.location.href+"?t=1", "_blank",
+            "chrome,resizable=yes,dialog=no,all");
       }
     </script>
   </head>
   <body onload="onLoad()">
+    <div id="selector">
+      <ul>
+        <li><button onclick="newWindow()">Open OneTeam in new window</button></li>
+        <li><button onclick="thisWindow()">Show OneTeam in this window</button></li>
+      </ul>
+    </div>
     <iframe id="frame">
     </iframe>
   </body>
