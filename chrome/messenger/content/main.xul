@@ -439,7 +439,7 @@
 <!-- #ifdef XULAPP -->
     <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
 <!-- #endif -->
-    <command id="cmd_cmdConsole" oncommand='window.openDialog("command.xul", "_blank","chrome,dialog=no,all", "")'/>
+    <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "command.xul", "chrome,dialog=no,all", "")'/>
 <!-- #endif -->
     <command id="cmd_about" oncommand="account.showAbout()"/>
 
@@ -460,10 +460,12 @@
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
     <key id="key_help" modifiers="control" key="H" command="cmd_help"/>
     <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
-    <!-- #ifdef DEBUG -->
+<!-- #ifdef DEBUG -->
+<!-- #ifdef XULAPP -->
     <key id="key_jsConsole" modifiers="control" key="M" command="cmd_jsConsole"/>
+<!-- #endif -->
     <key id="key_cmdConsole" modifiers="control" key="N" command="cmd_cmdConsole"/>
-    <!-- #endif -->
+<!-- #endif -->
     <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
     <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
     <key id="key_transfers" modifiers="control" key="T" command="cmd_transfers"/>
@@ -553,7 +555,12 @@
                   accesskey="&shortcurt.help;"/>
               <menuitem label="&menuAide.console;" command="cmd_xmlConsole"
                   accesskey="&shortcurt.console;"/>
+<!-- #ifdef DEBUG -->
+<!-- #ifdef XULAPP -->
               <menuitem label="JavaScript Console" command="cmd_jsConsole"/>
+<!-- #endif -->
+              <menuitem label="Command Console" command="cmd_cmdConsole"/>
+<!-- #endif -->
               <menuseparator/>
               <menuitem label="&menuAide.apropos;" command="cmd_about"/>
             </menupopup>
