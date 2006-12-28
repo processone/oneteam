@@ -97,7 +97,7 @@ sub process {
     my ($comment_start, $comment_end) =
         $file =~ /\.js$/ ? ('(?://|/\*)', '\*/') :
         $file =~ /\.css$/ ? ('/\*', '\*/' ) :
-        $file =~ /\.(xul|xml)$/ ? ('(?://|/\*|\<!--)', '(?:\*/||--)' ) : do {return $content};
+        $file =~ /\.(xul|xml)$/ ? ('(?://|/\*|\<!--)', '(?:\*/|--)' ) : do {return $content};
 
     while ($content =~ m!^[^\n\S]*$comment_start[^\n\S]*\#(ifdef|ifndef|elifdef|elifndef|elif|if|else|endif)(.*)\n?!mg) {
         $res .= substr $content, $end, $-[0] - $end
