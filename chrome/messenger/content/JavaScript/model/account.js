@@ -54,6 +54,8 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
     setPresence: function(show, status, priority, profile, userSet)
     {
+        const defPrio = prefManager.getPref("chat.connection.priority");
+
         var presence, newPresence;
 
         if (show instanceof Object)
@@ -62,21 +64,18 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             newPresence = {show: show, status: status, priority: priority,
                            profile: profile};
 
-        if (!newPresence.priority)
-            newPresence.priority = prefManager.getPref("chat.connection.priority");
-
         if (!newPresence.profile) {
             presence = new JSJaCPresence();
             if (newPresence.show)
                 presence.setShow(newPresence.show);
             if (newPresence.status)
                 presence.setStatus(newPresence.status);
-            presence.setPriority(newPresence.priority);
+            presence.setPriority(ifnull(newPresence.priority, defPrio));
 
             for (var i = 0; i < this._presenceObservers.length; i++)
                 this._presenceObservers[i]._sendPresence(newPresence.show,
                                                          newPresence.status,
-                                                         newPresence.priority);
+                                                         ifnull(newPresence.priority, defPrio));
 
             con.send(presence);
             this.currentPresence = newPresence;
@@ -91,9 +90,11 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         for (var c in this.contactsIterator()) {
             if (presence = profile.getPresenceFor(c)) {
                 if (profile != this.currentPresence.profile)
-                    c._sendPresence(presence.show, presence.status, presence.priority);
+                    c._sendPresence(presence.show, presence.status,
+                                    ifnull(presence.priority, defPrio));
             } else
-                c._sendPresence(newPresence.show, newPresence.status, newPresence.priority);
+                c._sendPresence(newPresence.show, newPresence.status,
+                                ifnull(newPresence.priority, defPrio));
         }
 
         for (var i = 0; i < this._presenceObservers.length; i++)
@@ -101,11 +102,11 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                 if (profile != this.currentPresence.profile)
                     this._presenceObservers[i]._sendPresence(presence.show,
                                                              presence.status,
-                                                             presence.priority);
+                                                             ifnull(presence.priority, defPrio));
             } else
                 this._presenceObservers[i]._sendPresence(newPresence.show,
                                                          newPresence.status,
-                                                         newPresence.priority);
+                                                         ifnull(newPresence.priority, defPrio));
         this.currentPresence = newPresence;
         if (userSet)
             this.userPresence = newPresence;
