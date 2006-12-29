@@ -71,7 +71,8 @@ pref("chat.muc.nickname", "");
 pref("chat.general.showavatars", false);
 pref("chat.general.showseparatedwindows",false);
 pref("chat.general.keepproperties", false);
-pref("chat.general.iconsetdir", "crystal");
+pref("chat.general.iconset", "oneteam");
+pref("chat.general.smilesset", "oneteam");
 
 pref("chat.editor.incomingmessagecolor", "#000000");
 pref("chat.editor.outgoingmessagecolor", "#CC33CC");

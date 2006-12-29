@@ -69,11 +69,7 @@
         <body><![CDATA[
         if (this._model && this._model.avatar) {
           this._container.firstChild.hidden = false;
-// #ifdef XULAPP
-          this._src = "file://"+this._model.avatar;
-/* #else
           this._src = this._model.avatar;
-// #endif */
           this._image.setAttribute("src", this._src);
         } else if (this.getAttribute("showBlankAvatar") == "true") {
           this._container.firstChild.hidden = false;

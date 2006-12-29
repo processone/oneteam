@@ -151,7 +151,7 @@ function ContactView(model, parentView)
 
     this.model.registerView(this, "onNameChange", "name");
     this.model.registerView(this, "onActiveResourceChange", "activeResource");
-    account.registerView(this, null, "iconSet");
+    account.iconsRegistry.registerView(this, null, "defaultSet");
 }
 
 _DECL_(ContactView).prototype =
@@ -172,8 +172,8 @@ _DECL_(ContactView).prototype =
 
     onModelUpdated: function()
     {
-        this.statusIcon.setAttribute("src", presenceToIcon(this.model.activeResource &&
-                                                           this.model.activeResource.show));
+        this.statusIcon.setAttribute("src", account.iconsRegistry.getStatusIcon(
+            this.model.activeResource || "unavailable"));
         this.parentView.onItemUpdated(this);
     },
 
@@ -192,7 +192,7 @@ _DECL_(ContactView).prototype =
 
         this.model.unregisterView(this, "onNameChange", "name");
         this.model.unregisterView(this, "onActiveResourceChange", "activeResource");
-        account.unregisterView(this, null, "iconSet");
+        account.iconsRegistry.unregisterView(this, null, "defaultSet");
     },
 }
 

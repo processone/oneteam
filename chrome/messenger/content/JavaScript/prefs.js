@@ -77,7 +77,8 @@ function PrefManager()
         "chat.connection.pass": "",
         "chat.connection.resource": "OneTeam",
         "chat.connection.priority": 5,
-        "chat.general.iconsetdir": "crystal",
+        "chat.general.iconset": "oneteam",
+        "chat.general.smilesset": "oneteam",
         "chat.muc.nickname": "",
         "chat.roster.showoffline": false,
     };

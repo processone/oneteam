@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+	<meta>
+		<name>OneTeam</name>
+		<version>1.0</version>
+		<description>OneTeam iconset</description>
+		<creation>2006-12-20</creation>
+		<author>process-one.net</author>
+	</meta>
+
+	<!-- Normal status icons -->
+	<icon>
+		<x xmlns='name'>status/online</x>
+		<object mime='image/png'>online.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/offline</x>
+		<object mime='image/png'>offline.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/away</x>
+		<object mime='image/png'>away.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/xa</x>
+		<object mime='image/png'>xa.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/dnd</x>
+		<object mime='image/png'>xa.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/invisible</x>
+		<object mime='image/png'>offline.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/chat</x>
+		<object mime='image/png'>chat.png</object>
+	</icon>
+</icondef>

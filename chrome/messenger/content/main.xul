@@ -39,11 +39,13 @@
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/icons.js"/>
   <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
   <!-- #endif -->
   <script type="text/javascript;version=1.7" src="JavaScript/model/presenceProfiles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
@@ -189,21 +191,21 @@
 // #ifdef XULAPP
           this.systray.icon =
 // #endif
-          presenceToIcon(account.currentPresence.show||"available");
+          account.iconsRegistry.getStatusIcon(account.currentPresence.show);
       },
 
       init: function()
       {
         account.registerView(this, "onConnect", "connected");
         account.registerView(this, "onPresenceChange", "currentPresence");
-        account.registerView(this, "onIconSetChange", "iconSet");
+        account.iconsRegistry.registerView(this, "onIconSetChange", "defaultSet");
 
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.profileChooser = document.getElementById("setPresence-profile-chooser");
         this.profileEnable = document.getElementById("setPresence-profile-enable");
 // #ifdef XULAPP
         this.systray = document.getElementById("systray");
-        this.systray.icon = presenceToIcon(account.currentPresence.show||"available");
+        this.systray.icon = account.iconsRegistry.getStatusIcon(account.currentPresence.show);
 // #endif
         this.presence = this.chooser.value;
       }

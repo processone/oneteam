@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+	<meta>
+		<name>DCraven</name>
+		<version>0.1</version>
+		<description>DCraven iconset</description>
+		<creation>2006-01-01</creation>
+	</meta>
+
+	<!-- Normal status icons -->
+	<icon>
+		<x xmlns='name'>status/online</x>
+		<object mime='image/png'>online.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/offline</x>
+		<object mime='image/png'>offline.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/away</x>
+		<object mime='image/png'>away.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/xa</x>
+		<object mime='image/png'>xa.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/dnd</x>
+		<object mime='image/png'>dnd.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/invisible</x>
+		<object mime='image/png'>invisible.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/chat</x>
+		<object mime='image/png'>chat.png</object>
+	</icon>
+
+	<!-- Special statuses -->
+	<icon>
+		<x xmlns='name'>status/ask</x>
+		<object mime='image/png'>requested.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/noauth</x>
+		<object mime='image/png'>not_in_the_roster.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/error</x>
+		<object mime='image/png'>error.png</object>
+	</icon>
+
+	<!-- Special icons -->
+	<icon>
+		<x xmlns='name'>psi/message</x>
+		<object mime='image/png'>message.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>psi/connect</x>
+		<object mime='image/png'>connecting.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>psi/groupClosed</x>
+		<object mime='image/png'>closed.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>psi/groupOpen</x>
+		<object mime='image/png'>opened.png</object>
+	</icon>
+</icondef>

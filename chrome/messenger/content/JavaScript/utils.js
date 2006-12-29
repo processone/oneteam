@@ -69,7 +69,10 @@ function openDialogUniq(type, url, flags)
 
 function openLink(uri)
 {
-    window.open(uri, "_blank");
+    if (/^(?:http|https|ftp):/.exec(uri))
+        window.open(uri, "_blank");
+    else if (/^mailto:/.exec(uri))
+        document.location = uri;
 }
 //#endif */
 
@@ -119,5 +122,14 @@ function Callback(fun, obj) {
 function ifnull(value, defaultValue)
 {
     return value == null ? defaultValue : value
+}
+
+function xmlEscape(str)
+{
+    return str.replace(/&/g,"&amp;").
+        replace(/</g,"&lt;").
+        replace(/>/g,"&gt;").
+        replace(/\'/g,"&apos;").
+        replace(/\"/g,"&quot;");
 }
 

@@ -195,7 +195,7 @@ function ConferenceMemberView(model, parentView)
     this.label.setAttribute("flex", "1");
     this.label.setAttribute("crop", "end");
 
-    this.statusIcon.setAttribute("src", presenceToIcon(this.model.show));
+    this.statusIcon.setAttribute("src", account.iconsRegistry.getStatusIcon(this.model));
 
     this.node.model = this.model;
     this.node.view = this;
@@ -205,7 +205,7 @@ function ConferenceMemberView(model, parentView)
     this.node.appendChild(avatar);
 
     this.model.registerView(this, "onNameChange", "name");
-    account.registerView(this, null, "iconSet");
+    account.iconsRegistry.registerView(this, null, "defaultSet");
     this.model.registerView(this, null, "show");
     this.model.registerView(this, "onAffiliationChange", "affiliation");
 }
@@ -225,7 +225,7 @@ _DECL_(ConferenceMemberView).prototype =
 
     onModelUpdated: function()
     {
-        this.statusIcon.setAttribute("src", presenceToIcon(this.model.show));
+        this.statusIcon.setAttribute("src", account.iconsRegistry.getStatusIcon(this.model));
         this.parentView.onItemUpdated(this);
     },
 
@@ -241,6 +241,7 @@ _DECL_(ConferenceMemberView).prototype =
 
         this.model.unregisterViewFully(this);
         account.unregisterViewFully(this)
+        account.iconsRegistry.unregisterViewFully(this)
     },
 }
 

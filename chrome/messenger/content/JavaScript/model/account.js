@@ -1,10 +1,3 @@
-function presenceToIcon(show)
-{
-    if (!show || show == "unavailable")
-        return account.iconSet+"offline.png";
-    return account.iconSet + (show == "available" ? "online" : show) + ".png";
-}
-
 function Account()
 {
     this.groups = []
@@ -21,6 +14,7 @@ function Account()
     this.historyMgr = new HistoryManager();
     this.bookmarks = new ConferenceBookmarks();
     this.presenceProfiles = new PresenceProfiles();
+    this.iconsRegistry = new IconsRegistry(this.cache);
     this.connected = false;
 
     this.init();
@@ -266,9 +260,10 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                 value = value || "";
             this.connectionInfo[namePart] = value;
             this.modelUpdated("connectionInfo");
-        } else if (name == "chat.general.iconsetdir") {
-            this.iconSet = "chrome://messenger/content/img/" + value + "/";
-            this.modelUpdated("iconSet");
+        } else if (name == "chat.general.iconset") {
+            this.iconsRegistry.setDefaultIconSet(value);
+        } else if (name == "chat.general.smilesset") {
+            this.iconsRegistry.setDefaultSmilesSet(value);
         }
     },
 
@@ -304,7 +299,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         var args = {
             httpbase: "http://"+this.connectionInfo.host+":"+this.connectionInfo.port+
                 "/"+this.connectionInfo.base+"/",
-            oDbg: {log: function(a){window.console ? console.info(a) : dump(a+"\n")}},
+//            oDbg: {log: function(a){window.console ? console.info(a) : dump(a+"\n")}},
             timerval: 2000};
 
         var con = this.connectionInfo.polling ? new JSJaCHttpPollingConnection(args) :

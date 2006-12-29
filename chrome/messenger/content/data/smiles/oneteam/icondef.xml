@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<icondef>
+    <meta>
+        <name>OneTeam</name>
+	<author>Dominik Tomaszuk</author>
+        <version>0.9</version>
+	<description>Standard jabberZilla icon set.</description>
+    </meta>
+    <!-- standardowe -->
+    <icon>
+        <text>:-)</text>
+        <text>:)</text>
+        <object mime="image/gif">smile_n.gif</object>
+    </icon>
+    <icon>
+        <text>:-(</text>
+        <text>:(</text>
+        <object mime="image/gif">frown_n.gif</object>
+    </icon>
+    <icon>
+        <text>;-)</text>
+        <text>;)</text>
+        <object mime="image/gif">wink_n.gif</object>
+    </icon>
+    <icon>
+        <text>:-P</text>
+        <text>:P</text>
+        <object mime="image/gif">tongue_n.gif</object>
+    </icon>
+    <icon>
+        <text>:-D</text>
+        <text>:D</text>
+        <object mime="image/gif">laughing_n.gif</object>
+    </icon>
+    <icon>
+        <text>:-[</text>
+        <text>:[</text>
+        <object mime="image/gif">embarrassed_n.gif</object>
+    </icon>
+    <icon>
+        <text>:-\\</text>
+        <text>:\\</text>
+        <object mime="image/gif">undecided_n.gif</object>
+    </icon>
+    <icon>
+        <text>=-O</text>
+        <object mime="image/gif">surprised_n.gif</object>
+    </icon>
+    <icon>
+        <text>:-*</text>
+        <text>:*</text>
+        <text xml:lang="pl">:pocalunek:</text>
+        <text xml:lang="pl">:pocałunek:</text>
+        <text xml:lang="en">:kiss:</text>
+        <text>:ILY:</text>
+        <object mime="image/gif">kiss_n.gif</object>
+    </icon>
+    <icon>
+        <text>8-)</text>
+        <text>8)</text>
+        <object mime="image/gif">cool_n.gif</object>
+    </icon>
+    <icon>
+        <text>O:-)</text>
+        <text>O:)</text>
+        <object mime="image/gif">innocent_n.gif</object>
+    </icon>
+    <icon>
+        <text>:'(</text>
+        <object mime="image/gif">cry_n.gif</object>
+    </icon>
+</icondef>

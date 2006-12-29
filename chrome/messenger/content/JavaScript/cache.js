@@ -124,6 +124,7 @@ _DECL_(PersistantCache).prototype =
         if (type) {
             if (!asFile)
                 return slurpFile(value);
+            return "file://"+value;
         } else if (asFile)
             throw new GenericError("Unable to return data as file path");
 
@@ -210,6 +211,7 @@ _DECL_(PersistantCache).prototype =
     },
 }
 // #endif */
+
 function generateRandomName(length)
 {
     const charset = "0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";

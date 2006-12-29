@@ -9,8 +9,15 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/icons.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
+    account = window.opener.account;
+
     function TreeView(results) {
       this.wrappedJSObject = this;
       this._results = results;
@@ -24,16 +31,15 @@
         this._results = results;
         if (this._tree) {
           var len2 = results.length;
-          if (len1 > len2)
-            this._tree.rowCountChanged(len1, len1 - len2);
-          else
-            this._tree.rowCountChanged(len2, len2 - len1);
+          this._tree.rowCountChanged(len1 > len2 ? len1 : len2, len2 - len1);
           this._tree.invalidate()
         }
       },
       get rowCount() { return this._results ? this._results.length : 0 },
       getCellText : function(row, column)
       {
+        if (row > this._results.length)
+          return "ERROR";
         return column.id == "jid" ? this._results[row].jid :
           formatDate(this._results[row].time, null, "short", "long");
       },

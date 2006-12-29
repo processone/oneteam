@@ -20,9 +20,21 @@
 
           this._msgs = [];
           this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+// #ifdef XULAPP
+          this._output.contentWindow.addEventListener("load", function(){me._onLoad()}, false);
+/* #else
+          this._output.addEventListener("load", function(){me._onLoad()}, false);
+// #endif */
+        ]]>
+      </constructor>
 
-          this._output.addEventListener("load", function(event) {
-            var link = me._output.contentDocument.createElement("link");
+      <method name="_onLoad">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            if (!this._msgs)
+              return;
+            var link = this._output.contentDocument.createElement("link");
 // #ifdef XULAPP
             link.setAttribute("href", "chrome://messenger/skin/chatpane-content.css");
 /* #else
@@ -30,14 +42,30 @@
               document.location.href.replace(/content\/.*?$/, "skin/chatpane-content.css"));
 // #endif */
             link.setAttribute("rel", "stylesheet");
-            me._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
-            var msgs = me._msgs;
-            me._msgs = null;
+            this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
+            this._output.contentDocument.addEventListener("click", this._onClick, true)
+            var msgs = this._msgs;
+            this._msgs = null;
             for (var i = 0; i < msgs.length; i++)
-              me.addMessage.apply(me, msgs[i]);
-          }, false);
-        ]]>
-      </constructor>
+              this.addMessage.apply(this, msgs[i]);
+          ]]>
+        </body>
+      </method>
+
+      <method name="_onClick">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            if ((event.button == 0 || event.button == 1) &&
+                event.target.localName.toLowerCase() == "a")
+            {
+              event.preventDefault();
+              event.stopPropagation();
+              openLink(event.target.href);
+            }
+          ]]>
+        </body>
+      </method>
 
       <method name="addMessage">
         <parameter name="from"/>
@@ -84,7 +112,8 @@
 
             var e = doc.createElement("div");
             e.setAttribute("class", "body");
-            e.appendChild(doc.createTextNode(body));
+            var message = new Message(body);
+            e.innerHTML = message.asHtml;
             m.appendChild(e);
 
             m.scrollIntoView(true);
