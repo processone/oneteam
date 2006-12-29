@@ -45,7 +45,8 @@
           var count = this._listbox.getRowCount();
 
           for (var i = 0; i < val.length; i++)
-            valHash[val[i].name || val[i]] = true;
+            if (!val[i].builtinGroup)
+              valHash[val[i].name || val[i]] = true;
 
           for (i = 0; i < count; i++) {
             var item = this._listbox.getItemAtIndex(i);
