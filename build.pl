@@ -402,6 +402,7 @@ use base 'OneTeam::Saver';
 use File::Path;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy;
+use File::Compare;
 use Cwd;
 
 sub new {
@@ -427,6 +428,20 @@ sub path_convert {
     $file =~ s!^locale[/\\]branding!branding!;
 
     return catfile($self->{outputdir}, $file);
+}
+
+sub process {
+    my ($self, $content, $file, $locale) = @_;
+
+    return $content if $file =~ /(?:\.bak|~|\.swp)$/;
+
+    my $path = $self->path_convert($file, $locale);
+    if ($path and -f $path) {
+        open my $fh, "<", \$content;
+        return $content if compare($path, $fh) == 0;
+    }
+
+    OneTeam::Saver::process(@_);
 }
 
 package OneTeam::XulAppSaver;
