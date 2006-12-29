@@ -87,8 +87,7 @@
               return;
             }
 
-            var doc = this._output.contentDocument;
-            var mc;
+            var doc = this._output.contentDocument, mc;
 
             if (!this._content) {
               this._content = doc.createElement("div");
