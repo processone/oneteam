@@ -43,7 +43,14 @@
 // #endif */
             link.setAttribute("rel", "stylesheet");
             this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
+
+            this._output.contentDocument.body.className = "smiles-enabled";
+
+            for (var i = 0; i < account.iconsRegistry.smiles.length; i++)
+              account.iconsRegistry.smiles[i].attachStyles(this._output.contentDocument);
+
             this._output.contentDocument.addEventListener("click", this._onClick, true)
+
             var msgs = this._msgs;
             this._msgs = null;
             for (var i = 0; i < msgs.length; i++)
@@ -83,12 +90,17 @@
             var doc = this._output.contentDocument;
             var mc;
 
+            if (!this._content) {
+              this._content = doc.createElement("div");
+              doc.body.appendChild(this._content);
+            }
+
             if (!this._mc || this._authorId != authorId) {
               this._mc = mc = doc.createElement("div");
               this._authorId = authorId;
               mc.setAttribute("class", "messageChunk");
               mc.setAttribute("author-id", authorId);
-              doc.body.appendChild(mc)
+              this._content.appendChild(mc)
             } else
               mc = this._mc;
 
@@ -124,12 +136,10 @@
       <method name="clear">
         <body>
           <![CDATA[
-            var doc = this._output.contentDocument;
-            var body = doc.body;
-
-            body.parentNode.replaceChild(doc.createElement("body"), body);
-
+            if (this._content)
+              this._content.parentNode.removeChild(this._content);
             this._mc = this._authorId = null;
+            this._content = null;
           ]]>
         </body>
       </method>

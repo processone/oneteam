@@ -170,7 +170,7 @@ _DECL_(SmilesIconStyle, IconStyle).prototype =
 
     attachStyles: function(doc)
     {
-        var head = doc.getElementsByTagName("head")[0];
+        var head = doc.getElementsByTagName("HEAD")[0];
         var tag = doc.createElement("style");
 
         tag.setAttribute("type", "text/css");
@@ -188,7 +188,7 @@ _DECL_(SmilesIconStyle, IconStyle).prototype =
         while (match = this.regExp.exec(str)) {
             res += nextFilter(str.substring(last, match.index));
             res += "<span class='"+this.revMap[match[0]].cssStyle+"' "+
-                "title='"+xmlEscape(match[0])+"'></span>";
+                "title='"+xmlEscape(match[0])+"'>"+xmlEscape(match[0])+"</span>";
 
             last = this.regExp.lastIndex;
         }

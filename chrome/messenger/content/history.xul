@@ -12,7 +12,6 @@
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/icons.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
@@ -52,6 +51,7 @@
       getRowProperties: function(row,props) {},
       getCellProperties: function(row,col,props) {},
       getColumnProperties: function(colid,col,props) {},
+      cycleHeader: function(){},
     };
 
     var searchThreads, contactsList, contactsThreads,
