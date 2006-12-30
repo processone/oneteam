@@ -152,7 +152,7 @@ function SmilesIconStyle(url, iconDefData)
         });
 
         for each (var text in icon.text) {
-            regExp.push(text.toString().replace(/([$^[\]()*+.?\\|{}])/g, "\\$1"));
+            regExp.push(text.toString());
             this.revMap[text.toString()] = img;
         }
         this.cssRules += 
@@ -161,6 +161,9 @@ function SmilesIconStyle(url, iconDefData)
             ".smiles-enabled ."+img.cssStyle+
             "   {font-size:0} ";
     }
+    regExp = regExp.sort(function(a, b){return b.length-a.length}).
+        map(function(a){return a.replace(/([$^[\]()*+.?\\|{}])/g, "\\$1")});
+    
     this.regExp = new RegExp(regExp.join("|"), "g");
 }
 
@@ -186,6 +189,9 @@ _DECL_(SmilesIconStyle, IconStyle).prototype =
         var match, res = "", last = 0;
 
         while (match = this.regExp.exec(str)) {
+            if (match.index != last && !/\s/.test(str[match.index-1]))
+                continue;
+
             res += nextFilter(str.substring(last, match.index));
             res += "<span class='"+this.revMap[match[0]].cssStyle+"' "+
                 "title='"+xmlEscape(match[0])+"'>"+xmlEscape(match[0])+"</span>";
