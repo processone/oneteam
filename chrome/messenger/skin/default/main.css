@@ -115,7 +115,7 @@ richlistbox {
 /* Presence box */
 
 #setPresence-type-chooser, #setPresence-profile-chooser {
-  font-size: 80%;
+  font-size: 95%;
   margin: 0 !important;
   padding: 0 !important;
 /*  -moz-appearance: none;*/
