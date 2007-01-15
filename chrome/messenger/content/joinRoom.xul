@@ -4,12 +4,19 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/joinRoom.dtd">
+<!DOCTYPE dialog [
+  <!ENTITY % joinRoomDTD SYSTEM "chrome://messenger/locale/joinRoom.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %joinRoomDTD;
+  %dialogsDTD;
+]>
 
-<dialog id="joinRoom" windowtype="ot:joinRoom"
+<dialog id="joinRoom" windowtype="ot:joinRoom" title="Join Room"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Join"
-  ondialogaccept="return joinRoom()" title="Join Room" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="Join" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  ondialogaccept="return joinRoom()" onload="onLoad()">
         
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];

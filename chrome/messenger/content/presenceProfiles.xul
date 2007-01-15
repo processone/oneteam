@@ -7,14 +7,18 @@
 <!DOCTYPE dialog [
   <!ENTITY % guiDTD SYSTEM "chrome://messenger/locale/gui.dtd">
   <!ENTITY % statusDTD SYSTEM "chrome://messenger/locale/status.dtd">
-%guiDTD;
-%statusDTD;
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %guiDTD;
+  %statusDTD;
+  %dialogsDTD;
 ]>
 
-<dialog windowtype="ot:presenceProfiles"
+<dialog id="presenceProfiles" windowtype="ot:presenceProfiles" title="Presence Profiles"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
-  ondialogaccept="return saveProfiles()" title="Presence Profiles" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  ondialogaccept="return saveProfiles()" onload="onLoad()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var selectedItem;

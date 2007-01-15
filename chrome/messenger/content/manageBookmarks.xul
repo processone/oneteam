@@ -4,10 +4,17 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<dialog id="manageBookmarks" windowtype="ot:manageBookmarks"
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
+
+<dialog id="manageBookmarks" windowtype="ot:manageBookmarks" title="Bookmark manager"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
-  ondialogaccept="return saveBookmarks()" title="Bookmark manager" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  onload="onLoad()" ondialogaccept="return saveBookmarks()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var selectedItem;

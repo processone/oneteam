@@ -4,12 +4,19 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/editContact.dtd">
+<!DOCTYPE dialog [
+  <!ENTITY % editContactDTD SYSTEM "chrome://messenger/locale/editContact.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %editContactDTD;
+  %dialogsDTD;
+]>
 
-<dialog windowtype="ot:editContact"
+<dialog id="editContact" windowtype="ot:editContact" title="Edit Contact" 
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Change"
-  ondialogaccept="return editContact()" title="Edit Contact" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="Change" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  ondialogaccept="return editContact()" onload="onLoad()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var contact = window.arguments[0];

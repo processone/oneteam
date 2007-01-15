@@ -3,7 +3,9 @@
 
 <!DOCTYPE dialog [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
   %brandDTD;
+  %dialogsDTD;
 ]>
 
 <!-- TODO: Translate About and Release -->
@@ -12,8 +14,11 @@
 <!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
         
 <dialog id="about" windowtype="ot:about" title="About &brandShortName;"
-  buttons="accept" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="cancel">
+  
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   

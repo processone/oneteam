@@ -4,12 +4,19 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/addContact.dtd">
+<!DOCTYPE dialog [
+  <!ENTITY % addContactDTD SYSTEM "chrome://messenger/locale/addContact.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %addContactDTD;
+  %dialogsDTD;
+]>
 
-<dialog id="addContact" windowtype="ot:addContact"
+<dialog id="addContact" windowtype="ot:addContact" title="&Contact.titre;"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Add"
-  ondialogaccept="return addContact()" title="&Contact.titre;" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
+  buttonlabelaccept="Add" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  ondialogaccept="return addContact()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var contact = window.arguments[0];

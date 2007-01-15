@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/subscribe.dtd">
 
+<!DOCTYPE dialog [
+  <!ENTITY % subscribeDTD SYSTEM "chrome://messenger/locale/subscribe.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %subscribeDTD;
+  %dialogsDTD;
+]>
 
-<dialog windowtype="ot:subscribe" title="&Subscribe.title;" buttons="accept,cancel,extra1,extra2"
-  ondialogaccept="return subscribeContact()" ondialogextra2="return denySubscription()"
-  onload="onLoad()" xmlns:html="http://www.w3.org/1999/xhtml"
-  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+<dialog id="subscribe" windowtype="ot:subscribe" title="&Subscribe.title;"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel,extra1,extra2"
+  onload="onLoad()" ondialogaccept="return subscribeContact()"
+  ondialogextra2="return denySubscription()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var contact = window.arguments[0]

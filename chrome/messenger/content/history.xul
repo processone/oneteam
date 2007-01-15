@@ -12,7 +12,6 @@
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
     account = window.opener.account;
@@ -92,9 +91,8 @@
       view = document.getElementById(view);
       view.clear();
 
-      for (var msg in window.opener.account.historyMgr.getThreadMessagesIterator(threadId)) {
-        view.addMessage(msg.nick, msg.body, msg.flags ? "you" : "me", msg.jid, msg.time);
-      }
+      for (var msg in window.opener.account.historyMgr.getThreadMessagesIterator(threadId))
+        view.addMessage(msg);
     }
   ]]></script>
 

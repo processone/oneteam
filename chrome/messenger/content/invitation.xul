@@ -4,11 +4,18 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<dialog id="invitation" title="Invitation to a conference"
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
+
+<dialog id="invitation" windowtype="ot:invitation" title="Invitation to a conference"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Accept"
-  ondialogaccept="return acceptInvitation()" buttonlabelcancel="Decline"
-  ondialogcancel="return declineInvitation()" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="Accept" buttonlabelcancel="Decline"
+  buttons="accept,cancel"
+  ondialogaccept="return acceptInvitation()" ondialogcancel="return declineInvitation()"
+  onload="onLoad()">
         
   <script type="text/javascript;version=1.7"><![CDATA[
     var [conference, by, reason] = window.arguments;

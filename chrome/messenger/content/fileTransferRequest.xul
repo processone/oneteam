@@ -4,11 +4,18 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<dialog id="fileTransfer" title="File transfer request"
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
+
+<dialog id="fileTransferRequest" windowtype="ot:fileTransferRequest" title="File transfer request"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Accept"
-  ondialogaccept="return acceptFileTransfer()" buttonlabelcancel="Reject"
-  ondialogcancel="return rejectFileTransfer()" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml" 
+  buttonlabelaccept="Accept" buttonlabelcancel="Reject"
+  buttons="accept,cancel"
+  ondialogaccept="return acceptFileTransfer()" ondialogcancel="return rejectFileTransfer()"
+  onload="onLoad()">
         
   <script type="text/javascript;version=1.7"><![CDATA[
     var [fileTransfer, fileName] = window.arguments;

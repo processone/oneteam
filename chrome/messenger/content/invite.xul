@@ -4,12 +4,19 @@
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog SYSTEM "chrome://messenger/locale/invite.dtd">
+<!DOCTYPE dialog [
+  <!ENTITY % inviteDTD SYSTEM "chrome://messenger/locale/invite.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %inviteDTD;
+  %dialogsDTD;
+]>
 
-<dialog id="addContact"
+<dialog id="invite" windowtype="ot:invite" title="Invite users"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()" buttonlabelaccept="Invite"
-  ondialogaccept="return invite()" title="Invite users" buttons="accept,cancel">
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="Invite" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  ondialogaccept="return invite()" onload="onLoad()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];
