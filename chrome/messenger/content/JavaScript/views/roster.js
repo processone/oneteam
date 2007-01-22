@@ -5,7 +5,7 @@ function RosterView(node)
     this.model = account;
 
     this.onModelUpdated(null, "groups", {added: account.groups});
-    this.model.registerView(this, null, "groups");
+    this.model.registerView(this.onModelUpdated, this, "groups");
 }
 
 _DECL_(RosterView, null, ContainerView).prototype =
@@ -59,8 +59,9 @@ function GroupView(model, parentView)
 
     this.node.appendChild(this.label);
 
-    this.model.registerView(this, null, "contacts");
-    this.model.registerView(this, "onAvailUpdated", "availContacts");
+    this._bundle = new RegsBundle(this);
+    this._bundle.register(this.model, this.onModelUpdated, "contacts");
+    this._bundle.register(this.model, this.onAvailUpdated, "availContacts");
 }
 
 _DECL_(GroupView, null, ContainerView).prototype =
@@ -111,8 +112,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
 
     destroy: function()
     {
-        this.model.unregisterView(this, null, "contacts");
-        this.model.unregisterView(this, "onAvailUpdated", "availContacts");
+        this._bundle.unregister();
 
         if (!this.items)
             return;
@@ -149,9 +149,10 @@ function ContactView(model, parentView)
     this.node.appendChild(this.label);
     this.node.appendChild(avatar);
 
-    this.model.registerView(this, "onNameChange", "name");
-    this.model.registerView(this, "onActiveResourceChange", "activeResource");
-    account.iconsRegistry.registerView(this, null, "defaultSet");
+    this._bundle = new RegsBundle(this);
+    this._bundle.register(this.model, this.onNameChange, "name");
+    this._bundle.register(this.model, this.onActiveResourceChange, "activeResource");
+    this._bundle.register(account.iconsRegistry, this.onModelUpdated, "defaultSet");
 }
 
 _DECL_(ContactView).prototype =
@@ -164,9 +165,14 @@ _DECL_(ContactView).prototype =
 
     onActiveResourceChange: function()
     {
+        if (this._activeResource)
+            this._bundle.unregisterFromModel(this._activeResource);
+
         if (this.model.activeResource)
-            this.model.activeResource.registerView(this, null, "show");
+            this._bundle.register(this.model.activeResource, this.onModelUpdated, "show");
+
         this.node.setAttribute("offlineContact", this.model.activeResource == null);
+        this._activeResource + this.model.activeResource;
         this.onModelUpdated();
     },
 
@@ -187,12 +193,7 @@ _DECL_(ContactView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        if (this.model.activeResource)
-            this.model.activeResource.unregisterView(this, null, "show");
-
-        this.model.unregisterView(this, "onNameChange", "name");
-        this.model.unregisterView(this, "onActiveResourceChange", "activeResource");
-        account.iconsRegistry.unregisterView(this, null, "defaultSet");
+        this._bundle.unregister();
     },
 }
 
@@ -206,7 +207,7 @@ function PresenceProfilesView(node, checkbox)
     this.checkbox = checkbox;
 
     this.onModelUpdated(null, "profiles", {added: this.model.profiles});
-    this.model.registerView(this, null, "profiles");
+    this.model.registerView(this.onModelUpdated, this, "profiles");
 }
 
 _DECL_(PresenceProfilesView, null, ContainerView).prototype =
@@ -256,7 +257,7 @@ function PresenceProfileView(model, parentView)
     this.node.model = this.model;
     this.node.view = this;
 
-    this.model.registerView(this, "onNameChange", "name");
+    this._token = this.model.registerView(this.onNameChange, this, "name");
 }
 
 _DECL_(PresenceProfileView).prototype =
@@ -279,7 +280,7 @@ _DECL_(PresenceProfileView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        this.model.unregisterView(this, "onNameChange", "name");
+        this.model.unregisterView(this._token);
     },
 }
 

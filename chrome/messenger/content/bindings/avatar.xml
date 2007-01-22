@@ -35,12 +35,14 @@
           if (this._model == val)
             return val;
 
-          if (this._model)
-            this._model.unregisterView(this, "onAvatarChange", "avatar");
+          if (this._token) {
+            this._model.unregisterView(this._token);
+            this._token = null;
+          }
 
           if (val) {
             this._model = val;
-            this._model.registerView(this, "onAvatarChange", "avatar");
+            this._token = this._model.registerView(this.onAvatarChange, this, "avatar");
           }
           this.onAvatarChange();
 
@@ -53,7 +55,7 @@
           this._container = this._image.parentNode.parentNode.parentNode;
           if (this.model) {
             this._model = this.model;
-            this._model.registerView(this, "onAvatarChange", "avatar");
+            this._token = this._model.registerView(this.onAvatarChange, this, "avatar");
           }
           this.onAvatarChange();
         ]]>

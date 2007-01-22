@@ -6,7 +6,7 @@ function BookmarksMenuView(node)
     this.model = account.bookmarks;
 
     this.onModelUpdated(null, "bookmarks", {added: account.bookmarks.bookmarks});
-    this.model.registerView(this, null, "bookmarks");
+    this.model.registerView(this.onModelUpdated, this, "bookmarks");
 }
 
 _DECL_(BookmarksMenuView, null, ContainerView).prototype =
@@ -48,7 +48,7 @@ function BookmarkMenuItemView(model, parentView)
     this.node.model = this.model;
     this.node.view = this;
 
-    this.model.registerView(this, "onNameChange", "bookmarkName");
+    this._token = this.model.registerView(this.onNameChange, this, "bookmarkName");
 }
 
 _DECL_(BookmarkMenuItemView).prototype =
@@ -69,7 +69,7 @@ _DECL_(BookmarkMenuItemView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        this.model.unregisterView(this, "onNameChange", "bookmarkName");
+        this.model.unregisterView(this._token);
     },
 }
 
@@ -83,7 +83,7 @@ function ConferencesView(node)
     node.model = this.model;
 
     this.onModelUpdated(null, "conferences", {added: account.conferences});
-    this.model.registerView(this, null, "conferences");
+    this.model.registerView(this.onModelUpdated, this, "conferences");
 }
 
 _DECL_(ConferencesView, null, ContainerView).prototype =
@@ -125,7 +125,7 @@ function ConferenceView(model, parentView)
 
     this.node.appendChild(this.label);
 
-    this.model.registerView(this, null, "resources");
+    this._token = this.model.registerView(this.onModelUpdated, this, "resources");
 }
 
 _DECL_(ConferenceView, null, ContainerView).prototype =
@@ -167,7 +167,7 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
 
     destroy: function()
     {
-        this.model.unregisterViewFully(this);
+        this.model.unregisterView(this._token);
 
         if (!this.items)
             return;
@@ -204,10 +204,11 @@ function ConferenceMemberView(model, parentView)
     this.node.appendChild(this.label);
     this.node.appendChild(avatar);
 
-    this.model.registerView(this, "onNameChange", "name");
-    account.iconsRegistry.registerView(this, null, "defaultSet");
-    this.model.registerView(this, null, "show");
-    this.model.registerView(this, "onAffiliationChange", "affiliation");
+    this._bundle = new RegsBundle(this);
+    this._bundle.register(this.model, this.onNameChange, "name");
+    this._bundle.register(this.model, this.onModelUpdated, "show");
+    this._bundle.register(this.model, this.onAffiliationChange, "affiliation");
+    this._bundle.register(account.iconsRegistry, this.onModelUpdated, "defaultSet");
 }
 
 _DECL_(ConferenceMemberView).prototype =
@@ -239,9 +240,7 @@ _DECL_(ConferenceMemberView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        this.model.unregisterViewFully(this);
-        account.unregisterViewFully(this)
-        account.iconsRegistry.unregisterViewFully(this)
+        this._bundle.unregister();
     },
 }
 

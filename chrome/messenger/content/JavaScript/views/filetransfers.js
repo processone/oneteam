@@ -5,7 +5,7 @@ function FileTransfersView(node)
     this.model = window.opener.fileTransferService;
 
     this.onModelUpdated(null, "fileTransfers", {added: this.model.fileTransfers});
-    this.model.registerView(this, null, "fileTransfers");
+    this._token = this.model.registerView(this.onModelUpdated, this, "fileTransfers");
 }
 
 _DECL_(FileTransfersView, null, ContainerView).prototype =
@@ -32,7 +32,7 @@ _DECL_(FileTransfersView, null, ContainerView).prototype =
 
     destroy: function()
     {
-        this.model.unregisterView(this, null, "fileTransfers");
+        this.model.unregisterView(this._token);
         ContainerView.prototype.destroy.call(this);
     }
 }
@@ -85,8 +85,9 @@ function FileTransferView(model, parentView)
     this.node.model = this.model;
     this.node.view = this;
 
-    this.model.registerView(this, "onStateChange", "state");
-    this.model.registerView(this, "onTransferProgress", "sent");
+    this._bundle = new RegsBundle(this);
+    this._bundle.register(this.model, this.onStateChange, "state");
+    this._bundle.register(this.model, this.onTransferProgress, "sent");
 }
 
 _DECL_(FileTransferView).prototype =
@@ -131,7 +132,7 @@ _DECL_(FileTransferView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        this.model.unregisterViewFully(this)
+        this._bundle.unregister();
     },
 }
 

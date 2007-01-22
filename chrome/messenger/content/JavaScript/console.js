@@ -35,9 +35,15 @@ var handlers =
         }
     },
 
+    register: function()
+    {
+        this._token = window.opener.account.registerView(this._callback, this, "con");
+        this.onModelUpdated();
+    },
+
     unregister: function()
     {
-        window.opener.account.unregisterView(handlers, "onModelUpdated", "con");
+        window.opener.account.unregisterView(this._token);
         if (window.opener.con) {
             window.opener.con.unregisterHandler("onpacketsend", this.onPacketSend);
             window.opener.con.unregisterHandler("onpacketrecv", this.onPacketRecv);
@@ -58,10 +64,7 @@ function onLoad() {
 // #endif */
     link.setAttribute("rel", "stylesheet");
     console.contentDocument.documentElement.getElementsByTagName("HEAD")[0].appendChild(link);
-    
-    window.opener.account.registerView(handlers, "onModelUpdated", "con");
-    if (window.opener.con)
-        handlers.onModelUpdated();
+    handlers.register();
 }
 
 function onClose() {
