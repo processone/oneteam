@@ -37,7 +37,7 @@ var handlers =
 
     register: function()
     {
-        this._token = window.opener.account.registerView(this._callback, this, "con");
+        this._token = window.opener.account.registerView(this.onModelUpdated, this, "con");
         this.onModelUpdated();
     },
 
