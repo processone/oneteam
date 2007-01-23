@@ -294,6 +294,7 @@ _DECL_(ContactTooltip).prototype =
             firstResource = false;
 
             var box = document.createElement("hbox");
+            box.setAttribute("align", "center");
             this.resourcesContainer.appendChild(box);
             var icon = document.createElement("image");
             icon.setAttribute("src", account.iconsRegistry.getStatusIcon(resource));
