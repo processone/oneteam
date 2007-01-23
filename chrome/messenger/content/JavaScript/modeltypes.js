@@ -86,7 +86,7 @@ _DECL_(Model).prototype =
 
         for (var i = 0; i < flags.length; i++) {
             if (!this._views[flags[i]])
-                this._views[flags[i]] = callback;
+                this._views[flags[i]] = [callback];
             else
                 this._views[flags[i]].push(callback);
         }
@@ -112,7 +112,7 @@ _DECL_(Model).prototype =
                 if (1||~records.indexOf(views[j])) {
                     records.push(views[j]);
                     try {
-                        v[j](this, arguments[i], arguments[i+1]);
+                        views[j](this, arguments[i], arguments[i+1]);
                     } catch (ex) {alert(ex)}
                 }
         }
@@ -156,15 +156,15 @@ _DECL_(RegsBundle).prototype =
     register: function(model, method)
     {
         var args = Array.slice(arguments, 2);
-
         args.unshift(method, this._view);
-        this._tokens.push([view, model.registerView.apply(model, args)]);
+
+        this._tokens.push([model, model.registerView.apply(model, args)]);
     },
 
     unregister: function()
     {
         for (var i = 0; i < this._tokens.length; i++)
-            this._tokens[i][0].unregister(this._tokens[i][1]);
+            this._tokens[i][0].unregisterView(this._tokens[i][1]);
         this._tokens = [];
     },
 
@@ -172,7 +172,7 @@ _DECL_(RegsBundle).prototype =
     {
         for (var i = this._tokens.length-1; i >= 0; i--)
             if (this._tokens[i][0] == model) {
-                this._tokens[i][0].unregister(this._tokens[i][1]);
+                this._tokens[i][0].unregisterView(this._tokens[i][1]);
                 this._tokens.splice(i, 1);
             }
     },
