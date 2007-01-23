@@ -133,3 +133,17 @@ function xmlEscape(str)
         replace(/\"/g,"&quot;");
 }
 
+function generateRandomName(length)
+{
+    const charset = "0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
+    var name = "";
+    for (var i = 0; i < length; ++i)
+        name += charset.charAt(Math.floor(Math.random() * charset.length));
+    return name;
+}
+
+function generateUniqueId()
+{
+    return "uid"+(arguments.callee.value = arguments.callee.value+1 || 0);
+}
+

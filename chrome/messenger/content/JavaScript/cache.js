@@ -212,13 +212,3 @@ _DECL_(PersistantCache).prototype =
 }
 // #endif */
 
-function generateRandomName(length)
-{
-    const charset = "0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";
-    var name = "";
-    for (var i = 0; i < length; ++i)
-        name += charset.charAt(Math.floor(Math.random() * charset.length));
-    return name;
-}
-
-
