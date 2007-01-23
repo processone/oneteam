@@ -22,6 +22,14 @@
   color: #aaa;
 }
 
+.contact-tooltip-name, contact-tooltip-resource-name {
+    font-weight: bold;
+}
+
+.contact-tooltip-resources-grid {
+    margin-left: 1em;
+}
+
 tabpanels {
   -moz-appearance: none;
   background: white;

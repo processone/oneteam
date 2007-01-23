@@ -132,6 +132,9 @@ function ContactView(model, parentView)
     var avatar = document.createElement("avatar");
     avatar.model = this.model;
 
+    this.tooltip = new ContactTooltip(model, this.parentNode);
+    this.node.setAttribute("tooltip", this.tooltip.id);
+
     this.node.setAttribute("class", "contact-view");
     this.node.setAttribute("context", "contact-contextmenu");
     this.node.setAttribute("onmousedown", "self.activeItem = this.model");
@@ -186,14 +189,151 @@ _DECL_(ContactView).prototype =
     show: function(rootNode, insertBefore)
     {
         rootNode.insertBefore(this.node, insertBefore);
+        this.tooltip.show(this.node, this.node.firstChild);
+    },
+
+    destroy: function()
+    {
+        this.tooltip.destroy();
+        if (this.node.parentNode)
+            this.node.parentNode.removeChild(this.node);
+
+        this._bundle.unregister();
+    },
+}
+
+function ContactTooltip(model, parentView)
+{
+    this.model = model;
+    this.parentView = parentView;
+
+    this.node = document.createElement("tooltip");
+    this.avatar = document.createElement("image");
+    this.name = document.createElement("label");
+    this.subscription = document.createElement("label");
+
+    this.id = generateUniqueId();
+
+    this.node.setAttribute("onpopupshowing", "this.view.onTooltipShowing()");
+    this.node.setAttribute("id", this.id);
+    this.node.setAttribute("class", "contact-tooltip");
+    this.name.setAttribute("class", "contact-tooltip-name");
+
+    var box = document.createElement("hbox");
+    box.setAttribute("flex", "1");
+    box.setAttribute("align", "start");
+    this.node.appendChild(box);
+
+    var grid = document.createElement("grid");
+    box.appendChild(grid);
+    box.appendChild(this.avatar);
+
+    var cols = document.createElement("cols");
+    grid.appendChild(cols);
+    var col = document.createElement("col");
+    cols.appendChild(col);
+    col = document.createElement("col");
+    col.setAttribute("flex", "1");
+    cols.appendChild(col);
+
+    var rows = document.createElement("rows");
+    grid.appendChild(rows);
+    rows.appendChild(this.name);
+
+    var row = document.createElement("row");
+    rows.appendChild(row);
+    var label = document.createElement("label");
+    label.setAttribute("value", "Jabber ID:");
+    row.appendChild(label);
+    label = document.createElement("label");
+    label.setAttribute("value", this.model.jid);
+    row.appendChild(label);
+
+    row = document.createElement("row");
+    rows.appendChild(row);
+    label = document.createElement("label");
+    label.setAttribute("value", "Subscription:");
+    row.appendChild(label);
+    row.appendChild(this.subscription);
+
+    grid = document.createElement("grid");
+    grid.setAttribute("class", "contact-tooltip-resources-grid");
+    rows.appendChild(grid);
+
+    cols = document.createElement("cols");
+    grid.appendChild(cols);
+    col = document.createElement("col");
+    cols.appendChild(col);
+    col = document.createElement("col");
+    col.setAttribute("flex", "1");
+    cols.appendChild(col);
+
+    this.resourcesContainer = document.createElement("rows");
+    grid.appendChild(this.resourcesContainer);
+
+    this.node.model = this.model;
+    this.node.view = this;
+}
+
+_DECL_(ContactTooltip).prototype =
+{
+    onTooltipShowing: function()
+    {
+        this.avatar.setAttribute("src", this.model.avatar);
+        this.name.setAttribute("value", this.model.name || this.model.jid);
+        this.subscription.setAttribute("value", this.model.subscription);
+
+        while (this.resourcesContainer.firstChild)
+            this.resourcesContainer.removeChild(this.resourcesContainer.firstChild);
+
+        var firstResource = true;
+
+        for (var resource in this.model.resourcesIterator()) {
+            if (!firstResource)
+                this.resourcesContainer.appendChild(document.createElement("spacer"));
+            firstResource = false;
+
+            var box = document.createElement("hbox");
+            this.resourcesContainer.appendChild(box);
+            var icon = document.createElement("image");
+            icon.setAttribute("src", account.iconsRegistry.getStatusIcon(resource));
+            box.appendChild(icon);
+            var label = document.createElement("label");
+            label.setAttribute("class", "contact-tooltip-resource-name");
+            label.setAttribute("value", resource.jid.resource+" ("+resource.priority+")");
+            box.appendChild(label);
+
+            var row = document.createElement("row");
+            this.resourcesContainer.appendChild(row);
+            label = document.createElement("label");
+            label.setAttribute("value", "Status:");
+            row.appendChild(label);
+            label = document.createElement("label");
+            label.setAttribute("value", resource.show);
+            row.appendChild(label);
+
+            if (resource.status) {
+                var row = document.createElement("row");
+                this.resourcesContainer.appendChild(row);
+                label = document.createElement("label");
+                label.setAttribute("value", "Status text:");
+                row.appendChild(label);
+                label = document.createElement("label");
+                label.setAttribute("value", resource.status);
+                row.appendChild(label);
+            }
+        }
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        rootNode.insertBefore(this.node, insertBefore);
     },
 
     destroy: function()
     {
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
-
-        this._bundle.unregister();
     },
 }
 
