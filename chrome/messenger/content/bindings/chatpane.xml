@@ -25,6 +25,13 @@
 /* #else
           this._output.addEventListener("load", function(){me._onLoad()}, false);
 // #endif */
+          this.colorMap = {me: 0};
+          this.colorIndex = 1;
+          this.colorTable = [
+            "#ff0000", "#6978a3",
+            "#46a", "#c4d", "#3b3", "#fa4", "#79c", "#a7a",
+            "#4ca", "#c66", "#aaa", "#ca0", "#770", "#5cc",
+          ];
         ]]>
       </constructor>
 
@@ -43,6 +50,35 @@
 // #endif */
             link.setAttribute("rel", "stylesheet");
             this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
+
+            var colorScheme = "";
+            var white = new RGBColor(1, 1, 1);
+            for (var i = 0; i < this.colorTable.length; i++) {
+              var base = new RGBColor(this.colorTable[i]);
+              var bg = base.composite(white, 0.06);
+              var border = base.composite(white, 0.3);
+
+              colorScheme +=
+                <style>
+                  .messageChunk[color-id="{i}"] {"{"}
+                      background: {bg};
+                  }
+
+                  .messageChunk[color-id="{i}"], .messageChunk[color-id="{i}"] .message {"{"}
+                      border-color: {border};
+                  }
+
+                  .messageChunk[color-id="{i}"] .header {"{"}
+                      background-color: {base}
+                  }
+                </style>;
+            }
+
+            var colorSchemeTag = this._output.contentDocument.createElement("style");
+            colorSchemeTag.setAttribute("type", "text/css");
+            colorSchemeTag.appendChild(this._output.contentDocument.createTextNode(colorScheme));
+            this._output.contentDocument.getElementsByTagName("HEAD")[0].
+              appendChild(colorSchemeTag);
 
             this._output.contentDocument.body.className = "smiles-enabled";
 
@@ -97,8 +133,13 @@
             if (!this._mc || this._authorId != authorId) {
               this._mc = mc = doc.createElement("div");
               this._authorId = authorId;
+              if (!(authorId in this.colorMap)) {
+                this.colorMap[authorId] = this.colorIndex;
+                this.colorIndex = this.colorIndex%(this.colorTable.length-1) + 1;
+              }
               mc.setAttribute("class", "messageChunk");
               mc.setAttribute("author-id", authorId);
+              mc.setAttribute("color-id", this.colorMap[authorId]);
               this._content.appendChild(mc)
             } else
               mc = this._mc;

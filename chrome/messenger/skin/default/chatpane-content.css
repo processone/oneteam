@@ -49,31 +49,3 @@ body {
     content: " ";
     clear: both;
 }
-
-/* Default colors for normal chat */
-
-.messageChunk[author-id="me"] {
-    background: #fff0f0
-}
-
-.messageChunk[author-id="me"], .messageChunk[author-id="me"] .message {
-    border-color: #ffb3b3
-}
-
-.messageChunk[author-id="me"] .header {
-    background-color: #ff0000
-}
-
-.messageChunk[author-id="you"] {
-    background: #f6f7f9
-}
-
-.messageChunk[author-id="you"], .messageChunk[author-id="you"] .message {
-    border-color: #d2d7e3
-}
-
-.messageChunk[author-id="you"] .header {
-    background-color: #6978a3
-}
-
-
