@@ -408,6 +408,9 @@
           this.contact instanceof Conference ? 1 : 0, authorId == "me" ? 0 : 1,
           body, from, time, this.threadId, this.contact.jid.shortJID);
 
+        if (this.chats.selectedTab != this.tab)
+          this.tab.setAttribute("chatstate", "modified");
+
         if (this.closed)
           return;
         this.chatPane.addMessage(from, body, authorId, jid, time);
@@ -650,11 +653,11 @@
         <!-- #ifdef XULAPP -->
         <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
         <tabbox id="chats" collapsed="true" flex="1"
-            onselect="this.selectedPanel.controler.focus()">
+            onselect="this.selectedTab.removeAttribute('chatstate'); this.selectedPanel.controler.focus()">
         <!-- #else
         <splitter id="chats-splitter"/>
         <tabbox id="chats" flex="1"
-            onselect="this.selectedPanel.controler.focus()">
+            onselect="this.selectedTab.removeAttribute('chatstate'); this.selectedPanel.controler.focus()">
         // #endif -->
           <tabs/>
           <tabpanels flex="1"/>

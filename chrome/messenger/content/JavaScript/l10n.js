@@ -84,6 +84,21 @@ _DECL_(L10NServiceBase).prototype =
             return arguments[i-1];
         },
 
+        number: function(n, length, pad, precison)
+        {
+            n = precison != null ? (+n).toFixed(precison) : (+n).toString();
+            pad = pad || " ";
+            while (n.length < length)
+                n = pad+n;
+            return n;
+        },
+
+        format: function(str)
+        {
+            var args = [str, null].concat(Array.slice(arguments, 1));
+            return l10nService._formatString.apply(l10nService, args);
+        },
+
         plurals: function(n)
         {
             if (!this._pluralsExpr)
