@@ -290,6 +290,12 @@
         this.chats._tabpanels.appendChild(this.tabpanel);
         this.chats._tabs.appendChild(this.tab);
 
+        // XXX: TEAM-63 hack
+        if (!this.tab.previousSibling) {
+          this.tab.setAttribute("selected", "true");
+          this.tab.setAttribute("first-tab", "true");
+        }
+
         //this.chatPane.hasSubject = contact instanceof Conference;
 
         this.__proto__._allPanes.push(this);
