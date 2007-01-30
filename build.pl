@@ -247,13 +247,13 @@ sub process {
                 unless exists $self->{bundles}->{$loc}->{$bundle}->{$prefix};
 
             my $str = $self->{bundles}->{$loc}->{$bundle}->{$prefix};
-            $res .=  $type eq "_" ? "\"$str\"" : "l10Service._formatString(\"$str\", ";
+            $res .=  $type eq "_" ? "\"$str\"" : "l10nService._formatString(\"$str\", ";
             $last_end = $+[0];
         } else {
             die "Unable to resolve bundle string (id prefix: $prefix, $bundle: $bundle)"
                 unless grep {index($_, $prefix) >= 0} keys %{$self->{bundles}->{$loc}->{$bundle}};
 
-            $res .= $1 eq "_" ? "l10Service.getString" : "l10Service.formatString";
+            $res .= $1 eq "_" ? "l10nService.getString" : "l10nService.formatString";
             $last_end = $+[1];
         }
     }
