@@ -31,9 +31,8 @@
 
                 window.opener.__CONSOLE_ARGS__ = {
                     scope: {dump: dump}, expr: val };
-                val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
-                              "return eval(__CONSOLE_ARGS__.expr)}).call(window)}",
-                           window.opener);
+                val = window.opener.eval("with(__CONSOLE_ARGS__.scope){(function(){"+
+                  "return eval(__CONSOLE_ARGS__.expr)}).call(window)}");
 
                 dump("\n***RESULT***\n\n" + val);
             } catch (ex) {
