@@ -247,7 +247,7 @@ sub process {
                 unless exists $self->{bundles}->{$loc}->{$bundle}->{$prefix};
 
             my $str = $self->{bundles}->{$loc}->{$bundle}->{$prefix};
-            $res .=  $type eq "_" ? "\"$str\"" : "l10nService._formatString(\"$str\", ";
+            $res .=  $type eq "_" ? "\"$str\"" : "l10nService._formatString(\"$str\", null, ";
             $last_end = $+[0];
         } else {
             die "Unable to resolve bundle string (id prefix: $prefix, $bundle: $bundle)"
