@@ -15,6 +15,7 @@ function Account()
     this.bookmarks = new ConferenceBookmarks();
     this.presenceProfiles = new PresenceProfiles();
     this.iconsRegistry = new IconsRegistry(this.cache);
+    this.events = [];
     this.connected = false;
 
     this.init();
@@ -267,6 +268,22 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         }
     },
 
+    addEvent: function(title, callback)
+    {
+        var token = [title, callback];
+        this.events.push(token);
+        this.modelUpdated("events", {added: [token]});
+    },
+
+    removeEvent: function(token)
+    {
+        var idx = this.events.indexOf(token);
+        if (idx >= 0) {
+            this.events.splice(idx, 1);
+            this.modelUpdated("events", {removed: [token]});
+        }
+    },
+
     setUserAndPass: function(user, pass, savePass)
     {
         prefManager.setPref("chat.connection.user", user);
@@ -420,9 +437,11 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         //Handle subscription requests
         switch (packet.getType()) {
         case "subscribe": 
-            openDialogUniq("ot:subscribe", "chrome://messenger/content/subscribe.xul",
-                           "chrome,centerscreen,resizable", this.getOrCreateContact(sender),
-                           packet.getStatus());
+            this.addEvent(__("events", "subscriptionEvent", sender),
+                          new Callback(openDialogUniq, null).
+                          addArgs("ot:subscribe", "chrome://messenger/content/subscribe.xul",
+                                  "chrome,centerscreen,resizable",
+                                  this.getOrCreateContact(sender), packet.getStatus()));
             return;
         case "subscribed":
         case "unsubscribe":
@@ -486,10 +505,12 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             if (conference.joined)
                 return;
 
-            openDialogUniq("ot:invitation", "chrome://messenger/content/invitation.xul",
-                           "chrome,centerscreen", conference,
-                           new JID(invite.getAttribute("from")),
-                           reason && reason.textContent);
+            this.addEvent(__("events", "invitationEvent", sender, invite.getAttribute("from")),
+                          new Callback(openDialogUniq, null).
+                          addArgs("ot:invitation", "chrome://messenger/content/invitation.xul",
+                                  "chrome,centerscreen", conference,
+                                  new JID(invite.getAttribute("from")),
+                                  reason && reason.textContent));
             return;
         }
 

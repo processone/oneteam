@@ -215,6 +215,7 @@
 
     function onLoad() {
       setPresenceUpdater.init();
+      eventBoxHandler.init();
       document.getElementById("login-user").value = account.connectionInfo.user;
       document.getElementById("login-pass").value = account.connectionInfo.pass;
       document.getElementById("login-savePass").checked = account.connectionInfo.pass != null;
@@ -254,6 +255,36 @@
         document.getElementById("login-pass").value,
         document.getElementById("login-savePass").checked);
       account.connect();
+    }
+
+    eventBoxHandler = {
+      init: function()
+      {
+        this.eventBox = document.getElementById("eventBox");
+        this.title = this.eventBox.getElementsByTagName("div")[0];
+        this.tooltip = document.getElementById("eventBoxTooltip").
+          getElementsByTagName("div")[0];
+        account.registerView(this.onEventsChanged, this, "events");
+      },
+
+      onEventsChanged: function()
+      {
+        this.eventBox.collapsed = account.events.length == 0;
+
+        if (account.events.length) {
+          this.title.innerHTML = __("events", "eventsCounterFormat",
+            account.events.length);
+          this.tooltip.innerHTML = account.events[0][0];
+        }
+      },
+
+      onClick: function()
+      {
+        if (account.events.length) {
+          account.events[0][1]();
+          account.removeEvent(account.events[0]);
+        }
+      }
     }
 
     function ChatPane(contact) {
@@ -639,6 +670,10 @@
             </vbox>
             <avatar id="setPresence-avatar-image" showBlankAvatar="true"/>
           </hbox>
+          <description id="eventBox" collapsed="true" onclick="eventBoxHandler.onClick()"
+              tooltip="eventBoxTooltip">
+            <div xmlns="http://www.w3.org/1999/xhtml"/>
+          </description>
           <tabbox id="roster" flex="1">
             <tabs>
               <tab label="Contacts"/>
@@ -672,6 +707,12 @@
     </vbox>
   </deck>
   <popupset>
+    <tooltip id="eventBoxTooltip">
+      <description>
+        <div xmlns="http://www.w3.org/1999/xhtml">empty</div>
+      </description>
+    </tooltip>
+
     <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
       <menuitem id="contact-chat-single" label="&listitemcontext.Communiquer;"
           oncommand="activeItem.onOpenChat()"/>

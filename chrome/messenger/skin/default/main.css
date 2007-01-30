@@ -132,3 +132,15 @@ richlistbox {
 #setPresence-type-chooser:hover {
 /*  -moz-appearance: menulist*/
 }
+
+#eventBox {
+  color: #000;
+  background: #EEF;
+  border: 1px solid #79b;
+}
+
+#eventBox div {
+  padding: 3px;
+  text-align: center;
+}
+
