@@ -19,6 +19,9 @@ _DECL_(Conference, Contact).prototype =
 
     _sendPresence: function(show, status, priority, type)
     {
+        if (!con)
+            return;
+
         var presence = new JSJaCPresence();
         presence.setTo(this.jid + "/" + this._nick);
 
@@ -73,13 +76,13 @@ _DECL_(Conference, Contact).prototype =
         this._nick = nick;
         this._password = password;
 
-        var [type, status, priority] = account.getPresenceFor(this);
-
         if (!this.joined) {
             this._callback = new Callback(callback).fromCons(1);
             account._onConferenceAdded(this);
             account._presenceObservers.push(this);
         }
+
+        var [type, status, priority] = account.getPresenceFor(this);
         this._sendPresence(type, status, priority);
     },
 
@@ -87,8 +90,26 @@ _DECL_(Conference, Contact).prototype =
     {
         if (this.chatPane)
             this.chatPane.close();
+
         this._sendPresence(null, null, null, "unavailable");
-        this.joined = false;
+        this._exitRoomCleanup();
+    },
+
+    _exitRoomCleanup: function()
+    {
+        if (this.joined) {
+            this.joined = false;
+            account._onConferenceRemoved(this);
+            account._presenceObservers.splice(account._presenceObservers.indexOf(this), 1);
+        }
+
+        delete this._nick;
+        delete this._password;
+        delete this._callback;
+        delete this.myResource;
+
+        for (var resource in this.resourcesIterator())
+            resource._remove();
     },
 
     onInvite: function()
@@ -177,11 +198,9 @@ _DECL_(Conference, Contact).prototype =
         }
 
         if (!(303 in statusCodes) && pkt.getType() == "unavailable") {
-            this.joined = false;
-            account._onConferenceRemoved(this);
-            account._presenceObservers.splice(account._presenceObservers.indexOf(this), 1);
-
             // TODO: Notify about kick, ban, etc.
+
+            this._exitRoomCleanup();
 
             return false;
         }
@@ -209,6 +228,7 @@ _DECL_(Conference, Contact).prototype =
             this.subject = packet.getSubject();
             this.modelUpdated("subject");
         }
+
         if (packet.getBody()) {
             if (!this.chatPane || this.chatPane.closed)
                 this.onOpenChat();
@@ -314,6 +334,7 @@ _DECL_(ConferenceMember, Resource).prototype =
             this.contact.subject = packet.getSubject();
             this.contact.modelUpdated("subject");
         }
+
         if (packet.getType() == "groupchat") {
             if (!packet.getBody())
                 return;
@@ -322,11 +343,12 @@ _DECL_(ConferenceMember, Resource).prototype =
             if (stamp)
                 stamp = utcStringToDate(stamp.textContent);
 
-            if (!this.contact.chatPane || this.contact.chatPane.closed)
-                this.contact.onOpenChat();
             if (!this._authorId)
                 this._authorId = this.contact.myResource == this ? "me" :
                     "c-"+generateRandomName(10);
+
+            if (!this.contact.chatPane || this.contact.chatPane.closed)
+                this.contact.onOpenChat();
             this.contact.chatPane.addMessage(this.name, packet.getBody(),
                                              this._authorId, packet.getFrom(), stamp);
         } else

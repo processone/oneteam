@@ -38,11 +38,12 @@ _DECL_(ContainerView).prototype =
 
     onItemRemoved: function(model)
     {
-        for (var i = 0; i < this.items.length && this.items[i].model != model; i++)
-            ;
-
-        this.items[i].destroy();
-        this.items.splice(i, 1);
+        for (var i = 0; i < this.items.length; i++)
+            if (this.items[i].model == model) {
+                this.items[i].destroy();
+                this.items.splice(i, 1);
+                break;
+            }
     },
 
     onItemUpdated: function(item)
