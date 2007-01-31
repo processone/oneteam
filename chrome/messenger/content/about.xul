@@ -35,7 +35,7 @@
 
     <spacer height="20"/>
 
-    <label value="Release &softwareVersion;"/>
+    <label value="Release &softwareVersion; (r@REVISION@)"/>
 
     <spacer height="40"/>
 

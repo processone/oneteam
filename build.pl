@@ -20,6 +20,7 @@ my $dir = File::Spec->catdir(getcwd, qw(chrome messenger));
 my %defs = @ARGV;
 my @locales;
 my @disabled_locales = qw(en-GB fr-FR);
+my $revision;
 
 find(sub {
         push @files, $File::Find::name
@@ -75,6 +76,7 @@ sub finalize { }
 package OneTeam::Preprocessor;
 
 use base 'OneTeam::Filter';
+use File::Spec::Functions qw(catdir);
 
 sub new {
     my ($class, %defs) = @_;
@@ -93,6 +95,8 @@ sub process {
     my @stack;
     my $res = '';
     my ($start, $end, $token) = (0, 0, 'endif');
+
+    $content =~ s/\@REVISION\@/$self->get_revision()/ge;
 
     my ($comment_start, $comment_end) =
         $file =~ /\.js$/ ? ('(?://|/\*)', '\*/') :
@@ -153,6 +157,20 @@ sub process {
     $res .= substr $content, $end;
 
     return $res;
+}
+
+sub get_revision {
+    return $revision if defined $revision;
+
+    return $revision = `svnversion "$dir"`
+        if -d catdir($dir, '.svn');
+
+    my $info = `svk info "$dir"`;
+    my ($depot) = $info =~ /Depot Path: (\/.*?)\//;
+
+    while ($info =~ /Copied From: (\S+),/g) {
+        return $revision = $1 if `svk info "$depot$1"` =~ /Mirrored From:.*?, Rev. (\d+)/;
+    }
 }
 
 package OneTeam::WebLocaleProcessor;
