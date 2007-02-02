@@ -393,6 +393,12 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
     onDisconnect: function()
     {
+        // If "disconnect" event is received before "connect", it
+        // means that we attempted connection but did not manage
+        // to.
+        if(!this.connected) 
+            window.alert("Error during connection. (Wrong username or password?)");
+        
         this.connected = false;
         self.con = null;
 
