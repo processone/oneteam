@@ -266,6 +266,12 @@
     //#endif */
     }
 
+    function onBeforeUnload() {
+      if (account.connected)
+        return "Are you sure you want to leave OneTeam?";
+    }
+    window.onbeforeunload = onBeforeUnload;
+
     function quit() {
       if (window.con)
         window.con.disconnect();
