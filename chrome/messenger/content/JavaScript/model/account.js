@@ -24,6 +24,7 @@ function Account()
 
     // XXX use string bundle
     this.defaultGroup = new Group(null, "Contacts", true);
+    this.notInRosterGroup = new Group(null, "Not in roster", true);
 
     this.connectionInfo = {};
     this.notificationScheme = new NotificationScheme();
@@ -142,13 +143,18 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         return new Group(name);
     },
 
-    getOrCreateContact: function(jid, name, groups)
+    getOrCreateContact: function(jid, showInRoster, name, groups)
     {
         if (this.allContacts[jid])
             return this.allContacts[jid];
         if (this.allConferences[jid])
             return this.allConferences[jid];
-        return new Contact(jid, name, groups, null, null, true);
+        if (showInRoster) {
+            var contact = new Contact(jid, name, [this.notInRosterGroup], null, null);
+            contact.newItem = true;
+            return contact;
+        } else
+            return new Contact(jid, name, groups, null, null, true);
     },
 
     getOrCreateResource: function(jid)
@@ -525,11 +531,15 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         if (sender == this.myJID)
             return;
 
-        var item = sender.resource ? this.getOrCreateResource(sender) :
-            this.getOrCreateContact(sender);
+        var item;
 
-        if (!item)
-            item = this.getOrCreateContact(sender.getShortJID());
+        if (sender.resource) {
+            item = this.getOrCreateResource(sender);
+            if (!item)
+                item = this.getOrCreateContact(sender.getShortJID(), true).
+                    createResource(sender);
+        } else
+            this.getOrCreateContact(sender);
 
         item.onMessage(packet);
     },

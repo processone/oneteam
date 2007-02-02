@@ -95,7 +95,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.newItem = true;
         this.groups = [];
     } else {
-        this.name = name;
+        this.name = name || this.jid.shortJID;
         this.visibleName = name || this.jid.shortJID;
         this.subscription = subscription || "none";
         this.subscriptionAsk = !!subscriptionAsk;
@@ -492,7 +492,7 @@ _DECL_(Contact, null, Model,
 function Resource(jid)
 {
     this.jid = new JID(jid);
-    this.contact = account.contacts[jid.shortJID];
+    this.contact = account.allContacts[jid.shortJID];
 
     account.resources[jid] = this;
 

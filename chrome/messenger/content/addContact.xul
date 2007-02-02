@@ -45,7 +45,7 @@
           alert("Contact with this Jabber ID already exists");
           return false;
         }
-        contact = opener.account.getOrCreateContact(jid, nick, groups);
+        contact = opener.account.getOrCreateContact(jid, false, nick, groups);
       }
 
       contact.addToRoster();
