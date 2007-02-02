@@ -204,13 +204,25 @@
       {
       },
 
-      onIconSetChange: function()
+      updatePresenceIcon: function()
       {
         document.getElementById("setPresence-type-image").src =
 // #ifdef XULAPP
           this.systray.icon =
 // #endif
-          account.iconsRegistry.getStatusIcon(account.currentPresence.show);
+          account.iconsRegistry.getStatusIcon(account.currentPresence.show);        
+      },
+      
+      onIconSetChange: function()
+      {
+        for each(var presenceType in ["available", "chat", "dnd", "away", "xa", "invisible"]) {
+          var item = document.getElementById("setPresence-type-" + presenceType);
+          document
+            .getAnonymousElementByAttribute(item, "class", "menu-iconic-left")
+            .setAttribute("style", "display: block;");
+          item.setAttribute("image", account.iconsRegistry.getStatusIcon("available"));          
+        }
+        this.updatePresenceIcon();
       },
 
       init: function()
@@ -687,17 +699,17 @@
               <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
                 <menupopup>
                   <menuitem id="setPresence-type-available" label="&status.Available;"
-                      selected="true" value="available"/>
-                  <menuitem id="setPresence-type-availableChat" label="&status.AvailableChat;"
-                      value="chat"/>
+                      selected="true" value="available" class="menuitem-iconic"/>
+                  <menuitem id="setPresence-type-chat" label="&status.AvailableChat;"
+                      value="chat" class="menuitem-iconic"/>
                   <menuitem id="setPresence-type-dnd" label="&status.Dnd;"
-                      value="dnd"/>
+                      value="dnd" class="menuitem-iconic"/>
                   <menuitem id="setPresence-type-away" label="&status.Away;"
-                      value="away"/>
+                      value="away" class="menuitem-iconic"/>
                   <menuitem id="setPresence-type-xa" label="&status.Undisponible;"
-                      value="xa"/>
+                      value="xa" class="menuitem-iconic"/>
                   <menuitem id="setPresence-type-invisible" label="&status.Invisible;"
-                      value="invisible"/>
+                      value="invisible" class="menuitem-iconic"/>
                   <menuseparator/>
                   <menuitem id="setPresence-type-custom" label="&status.changeMessage;"/>
                 </menupopup>
