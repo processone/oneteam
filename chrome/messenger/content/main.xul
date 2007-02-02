@@ -217,10 +217,9 @@
       {
         for each(var presenceType in ["available", "chat", "dnd", "away", "xa", "invisible"]) {
           var item = document.getElementById("setPresence-type-" + presenceType);
-          document
-            .getAnonymousElementByAttribute(item, "class", "menu-iconic-left")
-            .setAttribute("style", "display: block;");
-          item.setAttribute("image", account.iconsRegistry.getStatusIcon("available"));          
+          document.getAnonymousElementByAttribute(item, "class", "menu-iconic-left").
+            setAttribute("style", "display: block;");
+          item.setAttribute("image", account.iconsRegistry.getStatusIcon(presenceType));
         }
         this.updatePresenceIcon();
       },
