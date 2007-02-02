@@ -296,6 +296,7 @@ _DECL_(Contact, null, Model,
 
     allowToSeeMe: function()
     {
+        this._subscribed = true;
         this._sendPresence(null, null, null, "subscribed");
     },
 

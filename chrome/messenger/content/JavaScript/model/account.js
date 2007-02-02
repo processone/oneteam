@@ -466,7 +466,14 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
         //Handle subscription requests
         switch (packet.getType()) {
-        case "subscribe": 
+        case "subscribe":
+            var contact = this.contacts[sender];
+            if (contact && contact._subscribed) {
+                delete contact._subscribed;
+                contact.allowToSeeMe();
+                return;
+            }
+
             this.addEvent(__("events", "subscriptionEvent", sender),
                           new Callback(openDialogUniq, null).
                           addArgs("ot:subscribe", "chrome://messenger/content/subscribe.xul",
