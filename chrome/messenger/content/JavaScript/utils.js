@@ -67,8 +67,9 @@ function openDialogUniq(type, url, flags)
 {
     if (_wins[type] && !_wins[type].closed)
         return;
-    if (_sizes[url]) {
-        var size = "width="+_sizes[url][0]+",height="+_sizes[url][1];
+    var size = _sizes[url.replace(/.*\//, "")];
+    if (size) {
+        var size = "width="+size[0]+",height="+size[1];
         flags = flags ? size : flags+", "+size
     }
     _wins[type] = window.open(url, type, flags);

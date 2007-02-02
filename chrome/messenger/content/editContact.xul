@@ -14,7 +14,7 @@
 <dialog id="editContact" windowtype="ot:editContact" title="Edit Contact" 
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  width="300" height="350"
+  width="350" height="400"
   buttonlabelaccept="Change" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
   ondialogaccept="return editContact()" onload="onLoad()">
@@ -37,7 +37,8 @@
   <dialogheader title="Edit Contact"/>
 
   <spacer/>
-  <hbox class="entry">
+
+  <hbox class="entry" flex="0">
     <label value="Nickname:" control="nick"/>
     <textbox id="nick"/>
   </hbox>
@@ -46,5 +47,7 @@
 
   <label value="Groups:" control="groups"/>
   <groupselector id="groups" rows="4"/>
+
+  <spacer flex="1"/>
 </dialog>
 
