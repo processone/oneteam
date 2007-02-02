@@ -136,6 +136,7 @@
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
         document.getElementById("setPresence-nick").value = account.connectionInfo.user;
         document.getElementById("login-progress").style.visibility = "hidden";
+        document.getElementById("login-signin").disabled = false;
         if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
@@ -286,10 +287,12 @@
     }
 
     function connect() {
+      document.getElementById("login-progress").style.visibility = "visible";
+      document.getElementById("login-signin").disabled = true;
+
       account.setUserAndPass(document.getElementById("login-user").value,
         document.getElementById("login-pass").value,
         document.getElementById("login-savePass").checked);
-      document.getElementById("login-progress").style.visibility = "visible";
       account.connect();
     }
 
