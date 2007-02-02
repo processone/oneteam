@@ -26,7 +26,7 @@
       contact.allowToSeeMe();
       if (contact.newItem) {
         window.opener.account.onAddContact(contact);
-      } else if (contact.canSeeHim) {
+      } else if (!contact.canSeeHim) {
         contact.askForSubscription();
       }
       return true;
