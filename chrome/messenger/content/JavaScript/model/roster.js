@@ -236,6 +236,7 @@ _DECL_(Contact, null, Model,
     {
         var presence = new JSJaCPresence();
         presence.setTo(this.jid);
+
         if (show)
             presence.setShow(show);
         if (status)

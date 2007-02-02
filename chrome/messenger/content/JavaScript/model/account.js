@@ -62,16 +62,23 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
 
         if (!newPresence.profile) {
             presence = new JSJaCPresence();
-            if (newPresence.show)
-                presence.setShow(newPresence.show);
-            if (newPresence.status)
-                presence.setStatus(newPresence.status);
-            presence.setPriority(ifnull(newPresence.priority, defPrio));
+            if (newPresence.show == "invisible")
+                presence.setType("invisible");
+            else {
+                if (newPresence.show)
+                    presence.setShow(newPresence.show);
+                if (newPresence.status)
+                    presence.setStatus(newPresence.status);
+                presence.setPriority(ifnull(newPresence.priority, defPrio));
+            }
 
             for (var i = 0; i < this._presenceObservers.length; i++)
-                this._presenceObservers[i]._sendPresence(newPresence.show,
-                                                         newPresence.status,
-                                                         ifnull(newPresence.priority, defPrio));
+                if (newPresence.show == "invisible")
+                    this._presenceObservers[i]._sendPresence(null, null, null, "invisible");
+                else
+                    this._presenceObservers[i]._sendPresence(newPresence.show,
+                                                             newPresence.status,
+                                                             ifnull(newPresence.priority, defPrio));
 
             con.send(presence);
             this.currentPresence = newPresence;
@@ -86,9 +93,14 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         for (var c in this.contactsIterator()) {
             if (presence = profile.getPresenceFor(c)) {
                 if (profile != this.currentPresence.profile)
-                    c._sendPresence(presence.show, presence.status,
-                                    ifnull(presence.priority, defPrio));
-            } else
+                    if (presence.show == "invisible")
+                        c._sendPresence(null, null, null, "invisible");
+                    else
+                        c._sendPresence(presence.show, presence.status,
+                                        ifnull(presence.priority, defPrio));
+            } else if (newPresence.show == "invisible")
+                c._sendPresence(null, null, null, "invisible");
+            else
                 c._sendPresence(newPresence.show, newPresence.status,
                                 ifnull(newPresence.priority, defPrio));
         }
@@ -96,10 +108,15 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         for (var i = 0; i < this._presenceObservers.length; i++)
             if (presence = profile.getPresenceFor(this._presenceObservers[i])) {
                 if (profile != this.currentPresence.profile)
-                    this._presenceObservers[i]._sendPresence(presence.show,
-                                                             presence.status,
-                                                             ifnull(presence.priority, defPrio));
-            } else
+                    if (presence.show == "invisible")
+                        this._presenceObservers[i]._sendPresence(null, null, null, "invisible");
+                    else
+                        this._presenceObservers[i].
+                            _sendPresence(presence.show, presence.status,
+                                          ifnull(presence.priority, defPrio));
+            } else if (newPresence.show == "invisible")
+                this._presenceObservers[i]._sendPresence(null, null, null, "invisible");
+            else
                 this._presenceObservers[i]._sendPresence(newPresence.show,
                                                          newPresence.status,
                                                          ifnull(newPresence.priority, defPrio));
