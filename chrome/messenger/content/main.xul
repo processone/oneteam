@@ -135,6 +135,7 @@
       {
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
         document.getElementById("setPresence-nick").value = account.connectionInfo.user;
+        document.getElementById("login-progress").style.visibility = "hidden";
         if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
@@ -288,6 +289,7 @@
       account.setUserAndPass(document.getElementById("login-user").value,
         document.getElementById("login-pass").value,
         document.getElementById("login-savePass").checked);
+      document.getElementById("login-progress").style.visibility = "visible";
       account.connect();
     }
 
@@ -600,6 +602,7 @@
         <checkbox id="login-savePass" checked="false" label="Remember password"/>
 // #endif -->
       </hbox>
+      <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
       <hbox pack="center">
         <button id="login-signin" label="&Login.signin;" oncommand="connect()"/>
       </hbox>
