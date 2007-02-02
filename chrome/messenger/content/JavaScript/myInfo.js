@@ -20,7 +20,10 @@ function loadMyInfo(){
 				image.setAttribute("width",50);
   	
 }*/
-
+if(window.arguments && window.arguments[0].select) {
+    document.getElementById("tablist").selectedTab =
+        document.getElementById(window.arguments[0].select)
+}
 }
 
 // Function to publish infos

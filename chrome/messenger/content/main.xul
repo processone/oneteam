@@ -628,12 +628,12 @@
           </menu>
           <menu id="configuration-menu" label="&menuConfig.configuration;">
             <menupopup id="config-popup">
-              <menuitem label="&menuConfig.editinfo;" command="cmd_ourVCard()"
+              <menuitem label="&menuConfig.editinfo;" command="cmd_ourVCard"
                   accesskey="&shortcurt.edit;"/>
               <menuseparator/>
 <!-- #ifdef XULAPP -->
               <menuitem label="&menuConfig.plugins;" command="cmd_extensions"/>
-              <menuitem label="&menuConfig.themes;" command="cmd_themes()"
+              <menuitem label="&menuConfig.themes;" command="cmd_themes"
                   accesskey="&shortcurt.themes;"/>
               <menuseparator/>
 <!-- #endif -->
