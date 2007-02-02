@@ -15,6 +15,7 @@
         
 <dialog id="about" windowtype="ot:about" title="About &brandShortName;"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  width="550" height="350"
   buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
   buttons="cancel">
   

@@ -59,10 +59,18 @@ function openLink(uri)
 
 /*#else
 var _wins = {};
+var _sizes = {
+    @SIZES@
+};
+
 function openDialogUniq(type, url, flags)
 {
     if (_wins[type] && !_wins[type].closed)
         return;
+    if (_sizes[url]) {
+        var size = "width="+_sizes[url][0]+",height="+_sizes[url][1];
+        flags = flags ? size : flags+", "+size
+    }
     _wins[type] = window.open(url, type, flags);
     _wins[type].arguments = Array.slice(arguments, 3);
 }

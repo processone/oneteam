@@ -14,6 +14,7 @@
 <dialog id="joinRoom" windowtype="ot:joinRoom" title="Join Room"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
+  width="300" height="400"
   buttonlabelaccept="Join" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
   ondialogaccept="return joinRoom()" onload="onLoad()">

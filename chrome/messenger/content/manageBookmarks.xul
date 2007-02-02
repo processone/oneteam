@@ -12,6 +12,7 @@
 <dialog id="manageBookmarks" windowtype="ot:manageBookmarks" title="Bookmark manager"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
+  width="550" height="400"
   buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return saveBookmarks()">
@@ -114,7 +115,7 @@
       </hbox>
     </vbox>
 
-    <grid>
+    <grid flex="1">
       <columns>
         <column/>
         <column flex="1"/>
