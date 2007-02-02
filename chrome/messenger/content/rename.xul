@@ -10,6 +10,7 @@
 
 <dialog id="rename" windowtype="ot:rename" title="Change Name"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  width="300" height="150"
   buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
   onload="onLoad()"  ondialogaccept="return onAccept();">
