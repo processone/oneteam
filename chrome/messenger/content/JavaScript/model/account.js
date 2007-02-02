@@ -328,6 +328,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
         con.registerHandler("onconnect", function(p){account.onConnect(p)});
         con.registerHandler("ondisconnect", function(p){account.onDisconnect(p)});
         con.registerHandler("onerror", function(p){account.onError(p)});
+        con.registerHandler("status_changed", function(p){account.onStatusChanged(p)});
 
         args = {
             domain: this.connectionInfo.domain||this.connectionInfo.host,
@@ -531,6 +532,14 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             item = this.getOrCreateContact(sender.getShortJID());
 
         item.onMessage(packet);
+    },
+
+    onStatusChanged: function(error) {
+        switch(error) {
+            case 'session-terminate-conflict':
+            alert('Conflict (same account/resource signed in from another client)')
+            break;
+        }
     },
 
     onError: function(error)
