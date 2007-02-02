@@ -27,6 +27,21 @@
         margin: 0;
         padding: 0;
         list-style: none;
+        height: 100%;
+        position: static;
+      }
+      #newWindow {
+        position: absolute;
+        width: 260px;
+        height: 100px;
+        left: 50%;
+        top: 50%;
+        margin-left: -120px;
+        margin-top: -50px;
+        color: transparent;
+        border: 0;
+        background: url(launch-button.png) transparent;
+        cursor: pointer;
       }
     </style>
     <script type="text/javascript">
@@ -54,8 +69,7 @@
   <body onload="onLoad()">
     <div id="selector">
       <ul>
-        <li><button onclick="newWindow()">Open OneTeam in new window</button></li>
-        <li><button onclick="thisWindow()">Show OneTeam in this window</button></li>
+        <li><button id="newWindow" onclick="newWindow()">Open OneTeam in new window</button></li>
       </ul>
     </div>
     <iframe id="frame">
