@@ -309,6 +309,7 @@
         vbox.setAttribute("flex", "1");
 
         var me = this;
+        this._msgs = [];
 
         this.chatPane = document.createElement("chatpane");
         this.chatPane.setAttribute("flex", "1");
@@ -450,7 +451,28 @@
 
         if (this.closed)
           return;
-        this.chatPane.addMessage(from, body, authorId, jid, time);
+
+        try {
+          if (this._timeout)
+            throw 1;
+          this.chatPane.addMessage(from, body, authorId, jid, time);
+        } catch (ex) {
+          this._msgs.push(Array.slice(arguments));
+          if (!this._timeout)
+            this._timeout = setTimeout(function(a){a._addMessagesTimeout()}, 0, this);
+        }
+      },
+
+      _addMessagesTimeout: function()
+      {
+        try {
+          for (var i = 0; this._msgs && i < this._msgs.length; i++)
+            this.chatPane.addMessage.apply(this.chatPane, this._msgs[i]);
+          this._msgs = null;
+          this._timeout = null;
+        } catch (ex) {
+          setTimeout(function(a){a._addMessagesTimeout()}, 0, this);
+        }
       }
     }
   ]]></script>
