@@ -630,9 +630,9 @@
                 </menupopup>
               </menu>
               <menuseparator/>
-              <menuitem label="&menulagger.servicesDiscovery;" command="cmd_disco"
+<!--          <menuitem label="&menulagger.servicesDiscovery;" command="cmd_disco"
                   accesskey="&shortcurt.service;"/>
-          <!-- <menuitem label="&menulagger.adminTools;"/> -->
+              <menuitem label="&menulagger.adminTools;"/> -->
               <menuitem label="Histroy Manager" command="cmd_history"
                 accesskey="H"/>
               <menuitem label="File Transfers" command="cmd_transfers"
