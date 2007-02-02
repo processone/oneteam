@@ -146,8 +146,6 @@ function ContactView(model, parentView)
     this.node.model = this.model;
     this.node.view = this;
 
-    this.onActiveResourceChange();
-
     this.node.appendChild(this.statusIcon);
     this.node.appendChild(this.label);
     this.node.appendChild(avatar);
@@ -156,6 +154,8 @@ function ContactView(model, parentView)
     this._bundle.register(this.model, this.onNameChange, "name");
     this._bundle.register(this.model, this.onActiveResourceChange, "activeResource");
     this._bundle.register(account.iconsRegistry, this.onModelUpdated, "defaultSet");
+
+    this.onActiveResourceChange();
 }
 
 _DECL_(ContactView).prototype =
@@ -175,7 +175,7 @@ _DECL_(ContactView).prototype =
             this._bundle.register(this.model.activeResource, this.onModelUpdated, "show");
 
         this.node.setAttribute("offlineContact", this.model.activeResource == null);
-        this._activeResource + this.model.activeResource;
+        this._activeResource = this.model.activeResource;
         this.onModelUpdated();
     },
 
