@@ -1,185 +1,308 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://global/skin/myInfo.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/myInfo.css" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/myInfo.dtd">
 
-<window id="myInfo" windowtype="ot:myInfo"
-		title="&myInfo.title;"
-        orient="horizontal"
-        onload="loadMyInfo();"
-        resizable="true" 
-        width="290"
-        onclose="self.close();"
-        height="280"
-        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-        
-        <script type="application/x-javascript" src="JavaScript/prefsFunctions.js"/>
-    	<script type="application/x-javascript" src="JavaScript/myInfo.js"/>
-        <script type="application/x-javascript" src="JavaScript/gui.js"/>
-        <script type="application/x-javascript" src="lib/jsjac/JSJaCConnection.js"/>
-    	<script type="application/x-javascript" src="lib/jsjac/JSJaCPacket.js"/>
- 	    <script type="application/x-javascript" src="lib/jsjac/xmlextras.js"/>
-        <script type="application/x-javascript" src="lib/jsjac/sha1.js"/>
-    	<script type="application/x-javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
-                        
-	<vbox flex="1" align="center">
-	
-	 <spacer height="15"/>
-        
-        <tabbox id="tablist" flex="1">
-          <tabs>
-                        <tab label="&myInfo.General;"/>
-                        <tab label="&myInfo.Location;"/>
-                        <tab label="&myInfo.Work;"/>
-                        <tab label="&myInfo.About;"/>
-                        <tab label="&myInfo.Avatar;" id="avatartab"/>
-                        
-          </tabs>
-          <tabpanels flex="1">
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
 
-                        <grid flex="1">
+<dialog id="myInfo" windowtype="ot:myInfo" title="My vCard"
+  width="800" height="600"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="Publish" buttonlabelcancel="&dialog.cancel.label;" buttonlabelextra1="Refresh"
+  buttons="extra1,accept,cancel"
+  onload="onLoad()" ondialogaccept="return saveVCard()" ondialogextra1="fetchVCard(true)">
 
-                                <columns>
-                                        <column flex="1"/>
-                                        <column flex="3"/>
-                                </columns>
-                                <rows>
-                                        <row>
-                                                <label value="&myInfo.Name;" control="fn"/>
-                                                <textbox persist="value" value="" id="name" flex="1"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.Family;" control="fn"/>
-                                                <textbox persist="value" value="" id="family"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.Nickname;" control="nickname"/>
-                                                <textbox persist="value" value="" id="nickname"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.E-mail;" control="url"/>
-                                                <textbox persist="value" value="" id="userid" />
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.Homepage;" control="url"/>
-                                                <textbox persist="value" value="" id="url" />
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.Birthday;" control="location"/>
-                                                <!--<datepicker id="location"/> -->
-                                                <textbox persist="value" value="" id="birthday"/>
-                                        </row>
-                                </rows>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    function onLoad() {
+//      if (window.arguments[0] == 1)
+//        document.getElementById("tabs").selectedIndex = 2;
+      fetchVCard();
+    }
 
-                        </grid>
-                        
-                        <grid flex="1">
+    const map = {
+      FN: "name",
+      N: {
+        FAMILY: "lastName",
+        GIVEN:  "firstName",
+        MIDDLE: "secondName",
+        PREFIX: "prefix",
+        SUFFIX: "suffix"
+      },
+      NICKNAME: "nickName",
+      BDAY: "birthday",
+      URL: "homepage",
+      EMAIL: [
+        { WORK: 1 },
+        {
+          USERID: "workEmail",
+        },
+        {},
+        {
+          USERID: "email",
+        },
+      ],
+      ADR: [
+        { WORK: 1 },
+        {
+          EXTADD: "workExtadd",
+          STREET: "workStreet",
+          CITY: "workCity",
+          PCODE: "workPostalCode",
+          CTRY: "workCountry",
+          REGION: "workRegion",
+        },
+        {},
+        {
+          EXTADD: "extadd",
+          STREET: "street",
+          CITY: "city",
+          PCODE: "postalCode",
+          CTRY: "country",
+          REGION: "region",
+        },
+      ],
+      ROLE: "role",
+      ORG: {
+        ORGNAME: "company",
+        ORGUNIT: "department",
+        TITLE: "position",
+      }
+    };
 
-                                <columns>
-                                        <column flex="1"/>
-                                        <column flex="3"/>
-                                </columns>
-                                <rows>
-                                        
-                                        <row>
-                                                <label value="&myInfo.Street;" control="nickname"/>
-                                                <textbox persist="value" value="" id="street"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.ExtraAddress;"/>
-                                                <textbox persist="value" value="" id="extra" />
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.CityState;"/>
-                                                <textbox persist="value" value="" id="location"/>
-                                        </row>
-                                         <row>
-                                                <label value="&myInfo.PostalCode;"/>
-                                                <textbox persist="value" value="" id="postal"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.Country;"/>
-                                                <textbox persist="value" value="" id="country"/>
-                                        </row>
-                                </rows>
+    function saveVCard() {
+      return true;
+    }
 
-                        </grid>
-                        
-                         <grid flex="1">
+    function fetchVCard(force) {
+      document.getElementById("updateProgress").style.visibility = "visible";
+      window.opener.account.getVCard(force, fetchDone);
+    }
 
-                                <columns>
-                                        <column flex="1"/>
-                                        <column flex="3"/>
-                                </columns>
-                                <rows>
-                                        
-                                        <row>
-                                                <label value="&myInfo.Company;"/>
-                                                <textbox persist="value" value="" id="company"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.Department;"/>
-                                                <textbox persist="value" value="" id="department" />
-                                        </row>
-                                        
-                                         <row>
-                                                <label value="&myInfo.Role;"/>
-                                                <textbox persist="value" value="" id="role"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.Phone;"/>
-                                                <textbox persist="value" value="" id="phone"/>
-                                        </row>
-                                        <row>
-                                                <label value="&myInfo.E-Mail;"/>
-                                                <textbox persist="value" value="" id="email"/>
-                                        </row>
-                                </rows>
+    function subst(tree, el, ns, map)
+    {
+      if (!tree || !tree.length() || !map)
+        return;
 
-                        </grid>
-                        
-                        <vbox>
-                                
-                                        <hbox flex="1">
-                                        <textbox persist="value" multiline="true" value="" width="240" height="130" id="about" flex="1" style="border: 1px solid #aaa"/>
-                                        </hbox>
-                                        <spacer height="20"/>
-                                        <hbox>
-                                        <button label="&myInfo.Clear;" width="60" height="30" onclick="clear()"/>
-                                        </hbox>
-                               
-                        </vbox>
-                        
-                        <vbox >
-                                <hbox>
-                                        <hbox>
-                                        <!-- maxwidth="100"  maxheight="100" persist="style"-->
-                                        <image id="myphoto" persist="src" style="border: 1px solid #aaa" height="70" width="70" /> 
-                                       
-                                        </hbox>
-                                        <hbox>
-                                        <label class="text-link" style="-moz-user-focus:ignore;" value="&myInfo.ChangePicture;" onclick="changePicture()" flex="0"/>
-                                        </hbox>
-                                </hbox>
-                        </vbox>
-                        
-                        
-                  </tabpanels>
+      if (map instanceof Array) {
+        var parts = [];
+        tree = tree.parent();
 
-                </tabbox>
-        
-        <spacer height="15"/>
-        
-        <hbox align="center">
-       		 <button label="Publish" onclick="publishInfo();"/>
-        		 <button label="Retrieve" onclick="retrieveInfos();"/>
-       		 <button label="Close" onclick="self.close();"/>
-        </hbox>
-       
-        </vbox>
-        
-        
-        
-        
-</window>        
+        for (var i = 0, handled = false; i < map.length; i+=2, handled = false) {
+          for (var j in map[i]) {
+            var treePart = tree.ns::[el].(function::elements(new QName(ns, j)).length())
+            alert(treePart);
+            handled = true;
+
+            if (treePart.length()) {
+              subst(treePart, el, ns, map[i+1]);
+              parts.push(treePart);
+            }
+          }
+          if (!handled) {
+            for each (i in tree.ns::[el])
+              if (parts.indexOf(i) != 0) {
+                subst(i, el, ns, map[i+i]);
+                return;
+              }
+            }
+        }
+      }
+
+      for (var i in map)
+        if (typeof(map[i]) == "string")
+          document.getElementById(map[i]).value = tree.ns::[i].text().toString();
+        else
+          subst(tree.ns::[i], i, ns, map[i]);
+    }
+
+    function fetchDone(pkt) {
+      document.getElementById("updateProgress").style.visibility = "hidden";
+      subst(window.opener.DOMtoE4X(pkt.getNode()).elements(), "vCard",
+            new Namespace("vcard-temp"), map);
+    }
+  ]]></script>
+
+  <dialogheader title="My vCard"/>
+  <spacer style="height: 0.6em"/>
+
+  <vbox flex="1">
+    <tabbox flex="1" id="tabs">
+      <tabs>
+        <tab label="Personal"/>
+        <tab label="Work"/>
+        <tab label="Appearance"/>
+      </tabs>
+      <tabpanels flex="1">
+        <tabpanel orient="vertical">
+          <hbox>
+            <label value="Name" control="name" style="width: 10em"/>
+            <textbox id="name" flex="1"/>
+          </hbox>
+          <groupbox>
+            <caption label="Name Details"/>
+            <grid>
+              <columns>
+                <column style="width: 10em"/>
+                <column flex="1"/>
+                <column style="width: 10em"/>
+                <column flex="1"/>
+              </columns>
+              <rows>
+                <row>
+                  <label value="First Name" control="firstName"/>
+                  <textbox id="firstName"/>
+                  <label value="Last Name" control="lastName"/>
+                  <textbox id="lastName"/>
+                </row>
+                <row>
+                  <label value="Second Name" control="secondName"/>
+                  <textbox id="secondName"/>
+                  <label value="Nick Name" control="nickName"/>
+                  <textbox id="nickName"/>
+                </row>
+                <row>
+                  <label value="Prefix" control="prefix"/>
+                  <textbox id="prefix"/>
+                  <label value="Suffix" control="suffix"/>
+                  <textbox id="suffix"/>
+                </row>
+              </rows>
+            </grid>
+          </groupbox>
+          <grid style="margin: 0.5em">
+            <columns>
+              <column style="width: 10em"/>
+              <column flex="1"/>
+              <column style="width: 10em"/>
+              <column flex="1"/>
+            </columns>
+            <rows>
+              <row>
+                <label value="Homepage" control="homepage"/>
+                <textbox id="homepage"/>
+                <label value="E-Mail" control="email"/>
+                <textbox id="email"/>
+              </row>
+              <row>
+                <label value="Birthday" control="birthday"/>
+                <textbox id="birthday"/>
+                <label value="Phone" control="phone"/>
+                <textbox id="phone"/>
+              </row>
+            </rows>
+          </grid>
+          <groupbox>
+            <caption label="Address"/>
+            <grid>
+              <columns>
+                <column style="width: 10em"/>
+                <column flex="1"/>
+                <column style="width: 10em"/>
+                <column flex="1"/>
+              </columns>
+              <rows>
+                <row>
+                  <label value="Street" control="street"/>
+                  <textbox id="street"/>
+                  <label value="ExtAdd" control="extadd"/>
+                  <textbox id="extadd"/>
+                </row>
+                <row>
+                  <label value="City" control="city"/>
+                  <textbox id="city"/>
+                  <label value="Postal code" control="postalCode"/>
+                  <textbox id="postalCode"/>
+                </row>
+                <row>
+                  <label value="Region" control="region"/>
+                  <textbox id="region"/>
+                  <label value="Country" control="country"/>
+                  <textbox id="country"/>
+                </row>
+              </rows>
+            </grid>
+          </groupbox>
+        </tabpanel>
+        <tabpanel orient="vertical">
+          <grid style="margin: 0.5em">
+            <columns>
+              <column style="width: 10em"/>
+              <column flex="1"/>
+              <column style="width: 10em"/>
+              <column flex="1"/>
+            </columns>
+            <rows>
+              <row>
+                <label value="Company" control="company"/>
+                <textbox id="company"/>
+                <label value="Department" control="department"/>
+                <textbox id="department"/>
+              </row>
+              <row>
+                <label value="Position" control="position"/>
+                <textbox id="position"/>
+                <label value="Role" control="role"/>
+                <textbox id="role"/>
+              </row>
+              <row>
+                <label value="E-Mail" control="workEmail"/>
+                <textbox id="workEmail"/>
+                <label value="Phone" control="workPhone"/>
+                <textbox id="workPhone"/>
+              </row>
+            </rows>
+          </grid>
+          <groupbox>
+            <caption label="Address"/>
+            <grid>
+              <columns>
+                <column style="width: 10em"/>
+                <column flex="1"/>
+                <column style="width: 10em"/>
+                <column flex="1"/>
+              </columns>
+              <rows>
+                <row>
+                  <label value="Street" control="street"/>
+                  <textbox id="workStreet"/>
+                  <label value="ExtAdd" control="extadd"/>
+                  <textbox id="workExtadd"/>
+                </row>
+                <row>
+                  <label value="City" control="city"/>
+                  <textbox id="workCity"/>
+                  <label value="Postal code" control="postalCode"/>
+                  <textbox id="workPostalCode"/>
+                </row>
+                <row>
+                  <label value="Region" control="region"/>
+                  <textbox id="workRegion"/>
+                  <label value="Country" control="country"/>
+                  <textbox id="workCountry"/>
+                </row>
+              </rows>
+            </grid>
+          </groupbox>
+        </tabpanel>
+        <tabpanel orient="vertical">
+          <groupbox flex="1">
+            <caption label="Avatar"/>
+          </groupbox>
+        </tabpanel>
+      </tabpanels>
+    </tabbox>
+    <hbox>
+      <progressmeter id="updateProgress" mode="undetermined" style="visibility: hidden" flex="1"/>
+    </hbox>
+    <spacer style="height: 1em;"/>
+    <hbox align="end" pack="end">
+      <button dlgtype="extra1" label="Refresh"/>
+      <spacer style="width: 4em"/>
+      <button dlgtype="cancel" label="Cancel"/>
+      <button dlgtype="accept" label="Publish"/>
+    </hbox>
+  </vbox>
+</dialog>
