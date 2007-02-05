@@ -137,6 +137,7 @@
         document.getElementById("setPresence-nick").value = account.connectionInfo.user;
         document.getElementById("login-progress").style.visibility = "hidden";
         document.getElementById("login-signin").disabled = false;
+        document.getElementById("roster").selectedIndex = 0;
         if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
