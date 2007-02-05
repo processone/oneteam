@@ -817,8 +817,13 @@
       <menuseparator/>
 
       <menuitem label="&listitemcontext.Infos;" oncommand="activeItem.showVCard()"/>
+      <!-- #ifdef XULAPP -->
       <menuitem id="contact-send-file" label="Send file..."
-          oncommand="activeItem.onSendFile()"/>
+        oncommand="activeItem.onSendFile()"/>
+      <!-- #else
+      <menuitem id="contact-send-file" label="Send file..."
+        oncommand="activeItem.onSendFile()" disabled="true"/>
+      // #endif -->
     </popup>
 
     <popup id="conference-contextmenu">
