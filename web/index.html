@@ -87,8 +87,6 @@
               "chrome,resizable=yes,dialog=no,all");
         } else {
           var frame = document.getElementById("frame");
-
-          document.getElementById("selector").style.display = "none";
           frame.style.display = "block";
           frame.src = "jar:"+document.location.href.replace(/\/[^\/]*$/,
               "/oneteam.jar!/content/main.xul");
