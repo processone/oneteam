@@ -160,7 +160,7 @@ _DECL_(Conference, Contact).prototype =
             return;
 
         this._nick = newNick;
-        this.joinRoom();
+        this.joinRoom(null, newNick);
     },
 
     sendMessage: function(body)
@@ -277,9 +277,10 @@ _DECL_(ConferenceMember, Resource).prototype =
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
 
-        var statusCodes = {};
+        var statusCodes = {}, item;
         if (x) {
             var statusCodesTags = x.getElementsByTagName("status");
+            item = x.getElementsByTagName("item")[0];
 
             for (i = 0; i < statusCodesTags.length; i++)
                 statusCodes[statusCodesTags[i].getAttribute("code")] = 1;
@@ -293,14 +294,12 @@ _DECL_(ConferenceMember, Resource).prototype =
             account.resources[this.jid] = this;
             this.modelUpdated("jid", null, "name", null, "visibleName");
             this.contact._nick = this.name;
-
             return;
         }
 
         Resource.prototype.onPresence.call(this, pkt);
 
         if (x) {
-            var item = x.getElementsByTagName("item")[0];
             if (item) {
                 var oldState = {affiliation: this.affiliation, role: this.role,
                                 realJID: this.realJID};
