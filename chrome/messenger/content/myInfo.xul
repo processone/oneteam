@@ -93,7 +93,6 @@
         for (var i = 0, handled = false; i < map.length; i+=2, handled = false) {
           for (var j in map[i]) {
             var treePart = tree.ns::[el].(function::elements(new QName(ns, j)).length())
-            alert(treePart);
             handled = true;
 
             if (treePart.length()) {
