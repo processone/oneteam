@@ -10,7 +10,7 @@
         width: 100%;
         height: 100%;
       }
-      iframe, #selector {
+      iframe, #launch, #useff {
         position: absolute;
         margin: 0;
         padding: 0;
@@ -20,10 +20,19 @@
         width: 100%;
         display: none;
       }
-      #selector {
+      #launch, #useff {
         text-align: center;
       }
-      #box {
+      #useffbox {
+        position: absolute;
+        width: 500px;
+        height: 150px;
+        left: 50%;
+        top: 50%;
+        margin-left: -250px;
+        margin-top: -75px;
+      }
+      #launchbox {
         position: absolute;
         width: 260px;
         height: 100px;
@@ -43,15 +52,33 @@
       }
     </style>
     <script type="text/javascript">
-      this.storage = globalStorage[document.location.host];
+      try {
+        window.storage = window.globalStorage[document.location.host];
+      } catch (ex) {}
+
+      function browserCheck()
+      {
+        if (!window.storage)
+          return false;
+        var el = document.
+          createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+                          "hbox");
+        el.setAttribute("flex", 1);
+
+        return !!el.flex;
+      }
+
       function onLoad() {
         if (document.location.search == "?t=1")
           launch(true);
-        else {
+        else if (browserCheck()) {
           document.getElementById("mode").checked = storage["openInNewWindow"] != "false";
-          document.getElementById("selector").style.display = "block"
+          document.getElementById("launch").style.display = "block"
+        } else {
+          document.getElementById("useff").style.display = "block"
         }
       }
+
       function launch(thisWindow) {
         var newWin = document.getElementById("mode").checked;
         storage["openInNewWindow"] = !! newWin;
@@ -70,8 +97,14 @@
     </script>
   </head>
   <body onload="onLoad()">
-    <div id="selector">
-      <div id="box">
+    <div id="useff">
+      <div id="useffbox">
+        OneTeam works only on Firefox 2 or newer browser.<br>
+        Please <a href="http://www.mozilla.com/firefox/">install Firefox</a> and try again.
+      </div>
+    </div>
+    <div id="launch">
+      <div id="launchbox">
         <button id="launchButton" onclick="launch()">Launch OneTeam</button>
         <input id="mode" type="checkbox" checked="checked">Open in new window</button>
       </div>
