@@ -447,8 +447,9 @@ _DECL_(Contact, null, Model,
         if (!photo) return;
 
         photo = atob(photo);
-        this.avatar = account.cache.setValue("avatar-"+this.avatarHash, photo,
-                                             new Date(Date.now()+30*24*60*60*1000), true);
+        account.cache.setValue("avatar-"+this.avatarHash, photo,
+                               new Date(Date.now()+30*24*60*60*1000), true);
+        this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
         this.modelUpdated("avatar");
     },
 

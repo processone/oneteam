@@ -250,6 +250,7 @@
       document.getElementById("login-user").value = account.connectionInfo.user;
       document.getElementById("login-pass").value = account.connectionInfo.pass;
       document.getElementById("login-savePass").checked = account.connectionInfo.pass != null;
+      document.getElementById("setPresence-avatar-image").model = account;
     }
 
     function onClose() {

@@ -35,7 +35,13 @@ function Account()
                                        "chat.general", true);
 }
 
-_DECL_(Account, null, Model, DiscoItem).prototype =
+_DECL_(Account, null, Model, DiscoItem,
+       XMPPDataAccesor("vcard", "VCard", function(){
+            var iq = new JSJaCIQ();
+            iq.setIQ(null, null, 'get');
+            iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
+            return iq;
+       })).prototype =
 {
     bumpPriority: true,
 
@@ -184,6 +190,23 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
             return this.allContacts[jid.shortJID].createResource(jid);
         else if (this.allConferences[jid.shortJID])
             return this.allConferences[jid.shortJID].createResource(jid);
+    },
+
+    _handleVCard: META.after=function(packet)
+    {
+        var photo = packet.getNode().getElementsByTagName("PHOTO")[0];
+        if (!photo) return;
+        photo = photo.getElementsByTagName("BINVAL")[0];
+        if (!photo) return;
+        photo = photo.textContent.replace(/\s/g,"");
+        if (!photo) return;
+
+        photo = atob(photo);
+        var hash = hex_sha1(photo);
+        account.cache.setValue("avatar-"+hash, photo,
+                               new Date(Date.now()+30*24*60*60*1000), true);
+        this.avatar = account.cache.getValue("avatar-"+hash, true);
+        this.modelUpdated("avatar");
     },
 
     _onConferenceAdded: function(conference)
@@ -399,6 +422,7 @@ _DECL_(Account, null, Model, DiscoItem).prototype =
                                         }
                                      });
         this.presenceProfiles.loadFromServer();
+        this.getVCard(true, function(){});
     },
 
     _proxyAddress: function(pkt)
