@@ -81,29 +81,31 @@
       window.opener.account.getVCard(force, fetchDone);
     }
 
-    function subst(tree, el, ns, map)
+    function parse(tree, map)
     {
       if (!tree || !tree.length() || !map)
         return;
 
+      var ns = tree.namespace();
+
       if (map instanceof Array) {
         var parts = [];
-        tree = tree.parent();
+        tree = tree.parent().ns::[tree.name()];
 
         for (var i = 0, handled = false; i < map.length; i+=2, handled = false) {
           for (var j in map[i]) {
-            var treePart = tree.ns::[el].(function::elements(new QName(ns, j)).length())
+            var treePart = tree.(function::elements(new QName(ns, j)).length())
             handled = true;
 
             if (treePart.length()) {
-              subst(treePart, el, ns, map[i+1]);
+              parse(treePart, map[i+1]);
               parts.push(treePart);
             }
           }
           if (!handled) {
-            for each (i in tree.ns::[el])
+            for each (i in tree)
               if (parts.indexOf(i) != 0) {
-                subst(i, el, ns, map[i+i]);
+                parse(i, map[i+i]);
                 return;
               }
             }
@@ -114,13 +116,12 @@
         if (typeof(map[i]) == "string")
           document.getElementById(map[i]).value = tree.ns::[i].text().toString();
         else
-          subst(tree.ns::[i], i, ns, map[i]);
+          parse(tree.ns::[i], map[i]);
     }
 
     function fetchDone(pkt) {
       document.getElementById("updateProgress").style.visibility = "hidden";
-      subst(window.opener.DOMtoE4X(pkt.getNode()).elements(), "vCard",
-            new Namespace("vcard-temp"), map);
+      parse(window.opener.DOMtoE4X(pkt.getNode()).elements(), map);
     }
   ]]></script>
 
