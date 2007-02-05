@@ -122,6 +122,7 @@ function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
                 "h.args.unshift(packet);"+
                 "h.callback.apply(null, h.args);"+
             "} catch (ex) {};"+
+        "delete this._"+name+"Callbacks;"+
         "this."+name+"Value = packet})");
     fun.prototype["_handle"+CCname].parse = packetParser;
 
