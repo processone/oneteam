@@ -19,7 +19,7 @@
     var conference = window.arguments[0];
 
     function onLoad() {
-      document.getElementById("nick").value = conference.fullJID.resource;
+      document.getElementById("nick").value = conference._nick;
     }
 
     function onAccept() {
