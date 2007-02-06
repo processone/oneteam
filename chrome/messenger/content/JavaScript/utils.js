@@ -3,7 +3,11 @@ function E4XtoDOM(xml, targetDoc)
     var dp = new DOMParser();
     var el = dp.parseFromString(xml.toXMLString(), "text/xml").documentElement;
 
-    return targetDoc ? targetDoc.adoptNode(el) : el;
+    try {
+        return targetDoc ? targetDoc.adoptNode(el) : el;
+    } catch (ex) {
+        return el;
+    }
 }
 
 function DOMtoE4X(dom)
