@@ -139,7 +139,8 @@ function prettyPrintDOM(dom)
 
         var i = dom.prefix ? "xmlns:"+dom.prefix : "xmlns";
         if (!dom.hasAttribute(i) && (!dom.parentNode || dom.prefix != dom.parentNode.prefix ||
-                                     dom.namespaceURI != dom.parentNode.namespaceURI))
+                                     dom.namespaceURI != dom.parentNode.namespaceURI) &&
+             dom.namespaceURI)
             ret += " <span class='attrib-name'>"+ i +
                 "</span>=<span class='attrib-value'>'" +
                 encodeEntity(dom.namespaceURI) +
