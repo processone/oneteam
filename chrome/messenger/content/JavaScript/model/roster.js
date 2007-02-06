@@ -302,7 +302,7 @@ _DECL_(Contact, null, Model,
 
     disallowToSeeMe: function()
     {
-        this._sendPresence(null, null, null, "unsubscribe");
+        this._sendPresence(null, null, null, "unsubscribed");
     },
 
     askForSubscription: function(reason)
