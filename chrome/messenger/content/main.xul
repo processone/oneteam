@@ -549,7 +549,8 @@
 <!-- #endif -->
     <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
 
-    <command id="cmd_help" key="key_help" oncommand=""/>
+    <command id="cmd_help" key="key_help" oncommand="openLink('http://www.process-one.net/en/oneteam/')"/>
+    <command id="cmd_bug" oncommand="openLink('https://support.process-one.net/browse/TEAM')"/>
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
 <!-- #ifdef DEBUG -->
 <!-- #ifdef XULAPP -->
@@ -670,6 +671,8 @@
             <menupopup id="help-popup">
               <menuitem label="&menuAide.aide_rapide;" command="cmd_help"
                   accesskey="&shortcurt.help;"/>
+              <menuitem label="Report Bug" command="cmd_bug"
+                  accesskey="R"/>
               <menuitem label="&menuAide.console;" command="cmd_xmlConsole"
                   accesskey="&shortcurt.console;"/>
 <!-- #ifdef DEBUG -->
