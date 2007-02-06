@@ -116,7 +116,7 @@ function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
 
     fun.prototype["_handle"+CCname] = eval("(function(packet) {"+
         (packetParser ? "packet = arguments.callee.parse.call(this,packet);" : "")+
-        "for (var i = 0; i < this._"+name+"Callbacks.length; i++)"+
+        "for (var i = 0; this._"+name+"Callbacks && i < this._"+name+"Callbacks.length; i++)"+
             "try {"+
                 "var h = this._"+name+"Callbacks[i];"+
                 "h.args.unshift(packet);"+
@@ -273,7 +273,7 @@ _DECL_(DiscoItem).prototype =
             this.getDiscoItems(forceUpdate,
                 new Callback(this._gotDiscoItems, this).fromCons(0,3).
                     addArgs(new Callback(callback).fromCons(4)));
-        
+
         return this._getDiscoItemsByCategory(category);
     },
 
@@ -307,4 +307,3 @@ _DECL_(DiscoItem).prototype =
         return ret;
     }
 }
-

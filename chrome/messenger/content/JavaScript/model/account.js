@@ -209,6 +209,16 @@ _DECL_(Account, null, Model, DiscoItem,
         this.modelUpdated("avatar");
     },
 
+    setVCard: function(vcardE4X)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(null, null, 'set');
+        iq.getNode().appendChild(E4XtoDOM(vcardE4X, iq.getDoc()));
+
+        this._handleVCard(iq);
+        con.send(iq);
+    },
+
     _onConferenceAdded: function(conference)
     {
         this.conferences.push(conference);
@@ -444,9 +454,9 @@ _DECL_(Account, null, Model, DiscoItem,
         // If "disconnect" event is received before "connect", it
         // means that we attempted connection but did not manage
         // to.
-        if(!this.connected) 
+        if(!this.connected)
             window.alert("Error during connection. (Wrong username or password?)");
-        
+
         this.connected = false;
         self.con = null;
 
@@ -608,4 +618,3 @@ _DECL_(Account, null, Model, DiscoItem,
 
 account = new Account();
 //account.showConsole();
-

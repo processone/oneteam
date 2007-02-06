@@ -22,6 +22,16 @@
       fetchVCard();
     }
 
+    var photo;
+
+    function handlePhoto(action, tree)
+    {
+      if (action) {
+        return photo;
+      } else
+        photo = tree.elements();
+    }
+
     const map = {
       FN: "name",
       N: {
@@ -39,7 +49,7 @@
         {
           USERID: "workEmail",
         },
-        {},
+        { HOME: 1 },
         {
           USERID: "email",
         },
@@ -54,7 +64,7 @@
           CTRY: "workCountry",
           REGION: "workRegion",
         },
-        {},
+        { HOME: 1 },
         {
           EXTADD: "extadd",
           STREET: "street",
@@ -69,17 +79,9 @@
         ORGNAME: "company",
         ORGUNIT: "department",
         TITLE: "position",
-      }
+      },
+      PHOTO: handlePhoto
     };
-
-    function saveVCard() {
-      return true;
-    }
-
-    function fetchVCard(force) {
-      document.getElementById("updateProgress").style.visibility = "visible";
-      window.opener.account.getVCard(force, fetchDone);
-    }
 
     function parse(tree, map)
     {
@@ -92,17 +94,18 @@
         var parts = [];
         tree = tree.parent().ns::[tree.name()];
 
-        for (var i = 0, handled = false; i < map.length; i+=2, handled = false) {
+        for (var i = 0, handled = 0; i < map.length; i+=2, handled = 0) {
           for (var j in map[i]) {
             var treePart = tree.(function::elements(new QName(ns, j)).length())
-            handled = true;
+            handled = 1;
 
             if (treePart.length()) {
+              handled = 2;
               parse(treePart, map[i+1]);
               parts.push(treePart);
             }
           }
-          if (!handled) {
+          if (handled == 0 || (handled == 1 && i == map.length-2)) {
             for each (i in tree)
               if (parts.indexOf(i) != 0) {
                 parse(i, map[i+i]);
@@ -115,8 +118,59 @@
       for (var i in map)
         if (typeof(map[i]) == "string")
           document.getElementById(map[i]).value = tree.ns::[i].text().toString();
+        else if (typeof(map[i]) == "function")
+          map[i](0, tree.ns::[i]);
         else
           parse(tree.ns::[i], map[i]);
+    }
+
+    function generate(map, ns) {
+      default xml namespace = ns;
+      var result = new XMLList(), val;
+
+      for (var i in map) {
+        if (typeof(map[i]) == "string") {
+          if (val = document.getElementById(map[i]).value)
+            result += <{i}>{val}</{i}>;
+        } else if (typeof(map[i]) == "function") {
+          var subresult = map[i](1);
+
+          if (subresult.length())
+            result += <{i}/>.appendChild(subresult);
+        } else if (map[i] instanceof Array) {
+          for (var j = 0; j < map[i].length; j += 2) {
+            var subresult = generate(map[i][j+1], ns);
+            if (subresult.length()) {
+              for (var k in map[i][j])
+                subresult += <{k}/>;
+              result += <{i}/>.appendChild(subresult);
+            }
+          }
+        } else {
+          var subresult = generate(map[i], ns);
+
+          if (subresult.length())
+            result += <{i}/>.appendChild(subresult);
+        }
+      }
+      return result;
+    }
+
+    function saveVCard() {
+      var ns = new Namespace("vcard-temp")
+      default xml namespace = ns;
+
+      var vcard = <vCard/>
+      vcard.appendChild(generate(map, ns));
+
+      window.opener.account.setVCard(vcard);
+
+      return true;
+    }
+
+    function fetchVCard(force) {
+      document.getElementById("updateProgress").style.visibility = "visible";
+      window.opener.account.getVCard(force, fetchDone);
     }
 
     function fetchDone(pkt) {
