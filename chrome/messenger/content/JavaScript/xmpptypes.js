@@ -18,6 +18,7 @@ function JID(node, domain, resource)
     if (arguments.length == 1) {
         if (node instanceof JID)
             return node;
+        node = node.toLowerCase();
         if (this._cache[node])
             return this._cache[node];
 
@@ -27,6 +28,10 @@ function JID(node, domain, resource)
         [node, domain, resource] = [node.substring(0, atIdx),
             node.substring(atIdx+1, slashIdx), node.substring(slashIdx+1)];
     }
+    node = node.toLowerCase();
+    domain = domain.toLowerCase();
+    resource = resource.toLowerCase();
+
     this.shortJID = (node ? node+"@" : "") + domain;
     this.longJID = this.shortJID + (resource ? "/"+resource : "");
 
