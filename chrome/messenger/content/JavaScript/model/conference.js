@@ -100,7 +100,9 @@ _DECL_(Conference, Contact).prototype =
         if (this.joined) {
             this.joined = false;
             account._onConferenceRemoved(this);
-            account._presenceObservers.splice(account._presenceObservers.indexOf(this), 1);
+            var idx = account._presenceObservers.indexOf(this);
+            if (idx >= 0)
+                account._presenceObservers.splice(idx, 1);
         }
 
         delete this._nick;

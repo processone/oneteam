@@ -472,6 +472,7 @@ _DECL_(Account, null, Model, DiscoItem,
         this.resources = {};
         this.conferences = [];
         this.allConferences = {};
+        this._presenceObservers = [];
 
         this.modelUpdated("groups", {removed: groups});
         this.modelUpdated("conferences", {removed: conferences});
