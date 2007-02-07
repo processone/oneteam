@@ -135,7 +135,7 @@ _DECL_(Contact, null, Model,
         return account.myJID.node;
     },
 
-    _updateRoster: function()
+    _updateRoster: function(callback)
     {
         var iq = new JSJaCIQ();
         iq.setType('set');
@@ -162,7 +162,7 @@ _DECL_(Contact, null, Model,
         delete this._subscriptionAsk;
         delete this._groups;
 
-        con.send(iq);
+        con.send(iq, callback);
     },
 
     _updateFromServer: function(node)
@@ -286,6 +286,20 @@ _DECL_(Contact, null, Model,
 
         this.chatPane.addMessage(this.visibleName, packet.getBody(), "you",
                                  packet.getFrom(), stamp);
+    },
+
+    subscribe: function(reason)
+    {
+        if (this.newItem)
+            this._updateRoster(new Callback(this._subscribeStep, this).addArgs(reason));
+        else
+            this.askForSubscription(reason);
+
+    },
+
+    _subscribeStep: function(pkt, reason)
+    {
+        this.askForSubscription(reason);
     },
 
     addToRoster: function()

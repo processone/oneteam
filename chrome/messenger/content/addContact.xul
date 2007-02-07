@@ -49,9 +49,7 @@
         contact = opener.account.getOrCreateContact(jid, false, nick, groups);
       }
 
-      contact.addToRoster();
-      contact.askForSubscription(reason);
-      contact.allowToSeeMe();
+      contact.subscribe(reason);
       return true;
     }
   ]]></script>
