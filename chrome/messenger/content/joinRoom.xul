@@ -17,7 +17,7 @@
   width="300" height="400"
   buttonlabelaccept="Join" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
-  ondialogaccept="return joinRoom()" onload="onLoad()">
+  onunload="cleanup()" ondialogaccept="return joinRoom()" onload="onLoad()">
         
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];
@@ -79,8 +79,10 @@
         conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value);
       }
 
+      try {
       if (bookmark.checked)
         conf.bookmark(bookmarkName.value, false, nick.value, password.value);
+        }catch(ex){alert(ex)}
 
       progressmeter.style.visibility = "visible";
       conf.joinRoom(joinRoomResponse, nick.value, password.value);
@@ -88,8 +90,13 @@
       return false;
     }
 
+    function cleanup()
+    {
+      if (conf)
+        conf.exitRoom();
+    }
+
     function joinRoomResponse(pkt, errorTag) {
-    try{
       progressmeter.style.visibility = "hidden";
 
       if (pkt.getType() == "error") {
@@ -108,8 +115,8 @@
         return;
       }
       conf.onOpenChat();
+      conf = null;
       window.close();
-      }catch(ex){alert(ex)}
     }
   ]]></script>
 

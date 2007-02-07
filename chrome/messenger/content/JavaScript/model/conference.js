@@ -88,10 +88,11 @@ _DECL_(Conference, Contact).prototype =
 
     exitRoom: function()
     {
+        this._sendPresence(null, null, null, "unavailable");
+
         if (this.chatPane)
             this.chatPane.close();
 
-        this._sendPresence(null, null, null, "unavailable");
         this._exitRoomCleanup();
     },
 
