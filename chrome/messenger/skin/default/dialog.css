@@ -11,6 +11,10 @@ hbox.entry {
   -moz-box-flex: 1;
 }
 
+row {
+  -moz-box-align: center;
+}
+
 hbox.entry > *:last-child {
   -moz-box-flex: 1;
 }
