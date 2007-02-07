@@ -82,14 +82,16 @@
       if (bookmark.checked)
         conf.bookmark(bookmarkName.value, false, nick.value, password.value);
 
-      progressmeter.mode = "undetermined";
+      progressmeter.style.visibility = "visible";
       conf.joinRoom(joinRoomResponse, nick.value, password.value);
 
       return false;
     }
 
     function joinRoomResponse(pkt, errorTag) {
-      progressmeter.mode = "determined";
+    try{
+      progressmeter.style.visibility = "hidden";
+
       if (pkt.getType() == "error") {
         const errorCodesMap = {
           401: "This room requires password",
@@ -107,6 +109,7 @@
       }
       conf.onOpenChat();
       window.close();
+      }catch(ex){alert(ex)}
     }
   ]]></script>
 
@@ -151,7 +154,7 @@
 
   <spacer/>
 
-  <progressmeter id="progressmeter"/>
+  <progressmeter id="progressmeter" style="visibility: hidden" mode="undetermined"/>
 
   <spacer/>
 </dialog>
