@@ -228,11 +228,11 @@ function ContactTooltip(model, parentView)
     box.appendChild(grid);
     box.appendChild(this.avatar);
 
-    var cols = document.createElement("cols");
+    var cols = document.createElement("columns");
     grid.appendChild(cols);
-    var col = document.createElement("col");
+    var col = document.createElement("column");
     cols.appendChild(col);
-    col = document.createElement("col");
+    col = document.createElement("column");
     col.setAttribute("flex", "1");
     cols.appendChild(col);
 
@@ -260,11 +260,11 @@ function ContactTooltip(model, parentView)
     grid.setAttribute("class", "contact-tooltip-resources-grid");
     rows.appendChild(grid);
 
-    cols = document.createElement("cols");
+    cols = document.createElement("columns");
     grid.appendChild(cols);
-    col = document.createElement("col");
+    col = document.createElement("column");
     cols.appendChild(col);
-    col = document.createElement("col");
+    col = document.createElement("column");
     col.setAttribute("flex", "1");
     cols.appendChild(col);
 
