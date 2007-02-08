@@ -73,7 +73,8 @@ _DECL_(Conference, Contact).prototype =
 
     joinRoom: function(callback, nick, password)
     {
-        this._nick = nick;
+        var jid = this.jid.createFullJID(nick);
+        this._nick = jid.resource;
         this._password = password;
 
         if (!this.joined) {
@@ -159,6 +160,9 @@ _DECL_(Conference, Contact).prototype =
 
     changeNick: function(newNick)
     {
+        var jid = this.jid.createFullJID(newNick);
+        newNick = jid.resource;
+
         if (this._nick == newNick)
             return;
 
