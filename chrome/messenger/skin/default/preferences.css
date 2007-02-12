@@ -1,32 +1,110 @@
-.paneSelector {
-    display: -moz-box
+#statusIconSet, #smileSet {
+    height: 8em;
+    background: white;
+    border: 2px solid;
+    -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
+    -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
+    -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
+    -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
 }
 
-#myExtensionOptions radio[pane] {
+.iconSetItem {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    -moz-padding-start: 13px;
+    -moz-padding-end: 10px;
+    min-height: 18px;
+    border-bottom: 1px dotted #C0C0C0;
+    overflow: hidden;
+}
+
+.iconSetItem image {
+    padding: 1px;
+}
+
+dialog {
+    padding: 0;
+}
+
+dialog > tabbox > tabs {
+    -moz-appearance: none;
+    color: -moz-FieldText;
+    background-color: -moz-Field;
+    margin: 0px;
+    -moz-padding-start: 10px;
+    border-bottom: 2px groove ThreeDFace;
+}
+
+dialog > tabbox > tabpanels {
+    -moz-appearance: none;
+    background: -moz-dialog;
+    border: none;
+}
+
+dialog > tabbox > tabpanels > tabpanel {
+    -moz-appearance: none;
+    border: none;
+    background: -moz-dialog;
+    padding-top: 8px;
+    padding-bottom: 10px;
+    -moz-padding-start: 8px;
+    -moz-padding-end: 10px;
+}
+
+dialog > tabbox > tabs > tab {
+    -moz-appearance: none;
+    -moz-box-orient: vertical;
+    -moz-box-align: center;
+    margin: 0px 1px 0px 1px;
+    padding: 1px 3px 1px 3px;
+    min-width: 4.5em;
+    border: none;
+    background: white;
     list-style-image: url( "chrome://messenger/skin/Options.png" );
 }
 
-radio[pane=general] {
+dialog > tabbox > tabs > tab:hover {
+    background-color: #E0E8F6;
+    color: black;
+}
+
+dialog > tabbox > tabs > tab[selected="true"] {
+    background-color: #C1D2EE;
+    color: black;
+}
+
+.tab-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.dialog-button-box {
+    padding-bottom: 10px;
+    -moz-padding-start: 8px;
+    -moz-padding-end: 10px;
+}
+
+#general {
     -moz-image-region: rect( 0px, 96px, 32px, 64px )
 }
 
-radio[pane=general]:hover, radio[pane=general][selected="true"] {
+#general:hover, #general[selected="true"] {
     -moz-image-region: rect( 32px, 96px, 64px, 64px )
 }
 
-radio[pane=connection] {
+#connection {
     -moz-image-region: rect( 0px, 64px, 32px, 32px )
 }
 
-radio[pane=connection]:hover, radio[pane=advanced][selected="true"] {
+#connection:hover, #connection[selected="true"] {
     -moz-image-region: rect( 32px, 64px, 64px, 32px )
 }
 
-radio[pane=advanced] {
+#appearance {
     -moz-image-region: rect( 0px, 128px, 32px, 96px )
 }
 
-radio[pane=advanced]:hover, radio[pane=advanced][selected="true"] {
+#appearance:hover, #appearance[selected="true"] {
     -moz-image-region: rect( 32px, 128px, 64px, 96px )
 }
 
@@ -38,10 +116,10 @@ radio[pane=editor]:hover, radio[pane=editor][selected="true"] {
     -moz-image-region: rect( 32px, 160px, 64px, 128px )
 }
 
-radio[pane=statuspane] {
+#status {
     -moz-image-region: rect( 0px, 192px, 32px, 160px )
 }
 
-radio[pane=statuspane]:hover, radio[pane=status][selected="true"] {
+#status:hover, #status[selected="true"] {
     -moz-image-region: rect( 32px, 192px, 64px, 160px )
 }

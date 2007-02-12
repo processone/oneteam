@@ -8,7 +8,7 @@ spacer {
 
 hbox.entry {
   -moz-box-align: center;
-  -moz-box-flex: 1;
+  -smoz-box-flex: 1;
 }
 
 row {
