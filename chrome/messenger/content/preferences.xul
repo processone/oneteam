@@ -1,430 +1,237 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/preferences.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
 
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
 
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/preferences.dtd">
+<dialog id="preferences" windowtype="ot:preferences" title="Preferences"
+  width="800" height="600"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel" onload="onLoad()" ondialogaccept="return savePrefs()">
 
-<prefwindow id="myExtensionOptions"
-            type="prefwindow"
-            xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-            buttons="accept, cancel"
-            height="350"
-            width="350"
-            onload="loadFonts();initialize()"
-            title="&Preferences.title;">
-            
-   
-       
-     
-            
-<script type="application/x-javascript" src="JavaScript/preferences.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    function enableDisableAutoAway(event)
+    {
+      var el = event.target;
 
+      el.nextSibling.disabled =
+        el.parentNode.nextSibling.childNodes[1].disabled = !el.checked;
+    }
 
+    function onLoad() {
+      var iconReg = window.opener.account.iconsRegistry;
 
-    <prefpane id="general" label="&Preferences.general;">
+      var iconContainer = document.getElementById("statusIconSet");
+      for (var i = 0; i < iconReg.statusIcons.length; i++)
+        iconContainer.appendChild(generateIconSetElement(iconReg.statusIcons[i]));
 
-        <preferences>
+      iconContainer = document.getElementById("smileSet");
+      for (i = 0; i < iconReg.smiles.length; i++)
+        iconContainer.appendChild(generateIconSetElement(iconReg.smiles[i]));
 
-        
-            <preference id="chat.roster.showoffline"
-                        name="chat.roster.showoffline" type="bool"/>
-            <preference id="chat.general.keepproperties"
-                        name="chat.general.keepproperties" type="bool"/>
-            
-            <preference id="chat.roster.sortbystatus"
-                        name="chat.roster.sortbystatus" type="bool"/>
-            <preference id="chat.general.showavatars"
-                        name="chat.general.showavatars" type="bool"/>          
-            <preference id="chat.sounds"
-                        name="chat.sounds" type="bool"/>            
-          
-        </preferences>
+      document.getElementById("autoAwayCheckbox").
+        addEventListener("CheckboxStateChange", enableDisableAutoAway, false);
 
-		<groupbox>
-      	<caption label="&Preferences.options;" style="font-weight : bold"/>
-        <grid flex="1" id="grid-general">
-            <columns>
-                <column flex="1" minwidth="30"/>
-                <column flex="1"/>
-            </columns>
-            <rows id="rows-general">
-            <spacer height="10"/>
-            
-                 <row>
-                    <spacer/>
-                    <checkbox id="sort status" label="&Preferences.sort;"
-                              preference="chat.roster.sortbystatus"/>
-                </row>
-               
-               <row>
-                    <spacer/>
-                    <checkbox id="showoffline" label="&Preferences.mask;"
-                              preference="chat.roster.showoffline" onclick="if(this.checked) { if (!window.opener.hideDecoUser) window.opener.hideDecoUser = true; window.opener.hideDecoUsers();} else {if (window.opener.hideDecoUser) window.opener.hideDecoUser = false; window.opener.hideDecoUsers();}"/>
-                </row>
-                
-	
-                <row>
-                    <spacer/>
-                    <checkbox id="saveguiproperties" label="&Preferences.interface;"
-                              preference="chat.general.keepproperties" onclick='if(this.checked) window.opener.document.getElementById("Messenger").removeAttribute("persist"); else window.opener.document.getElementById("Messenger").setAttribute("persist","width height");'/>
-                </row>
-                
-                 
-                
-                <row>
-                	<spacer/>
-					<checkbox checked="true" preference="chat.sounds" label="&Preferences.sounds;"/>
-					
-                </row>	
-                
-                <spacer height="20"/>
-                
-                
-            </rows>
+      document.getElementById("autoXACheckbox").
+        addEventListener("CheckboxStateChange", enableDisableAutoAway, false);
 
+      var prefElems = document.getElementsByAttribute("pref", "*");
+      for (i = 0; i < prefElems.length; i++) {
+        var pref = prefElems[i].getAttribute("pref").split(/[=:]/);
+        var val = window.opener.prefManager.getPref(pref[0]);
+        prefElems[i][pref[1]] = val == null ? "" : val;
+        if (window.opener.prefManager.builtinPref(pref[0]))
+          prefElems[i].disabled = true;
+      }
+
+      prefElems = document.getElementsByAttribute("prefSet", "*");
+      for (i = 0; i < prefElems.length; i++) {
+        var prefSetter = prefElems[i].getAttribute("prefSet");
+        var prefName = prefElems[i].getAttribute("prefName")
+        var val = window.opener.prefManager.getPref(prefName);
+        eval("(function(){"+prefSetter+"}).call(__element__)",
+             {__element__: prefElems[i], __value__: val == null ? "" : val});
+        if (window.opener.prefManager.builtinPref(pref[0]))
+          prefElems[i].disabled = true;
+      }
+    }
+
+    function savePrefs()
+    {
+      var valsToSet = [];
+      var prefElems = document.getElementsByAttribute("pref", "*");
+      for (i = 0; i < prefElems.length; i++) {
+        if (prefElems[i].disabled)
+          continue;
+        var pref = prefElems[i].getAttribute("pref").split(/[=:]/);
+        var val = prefElems[i][pref[1]];
+
+        if (pref[2] == "int" && typeof(val) == "string")
+          if (!/^\d+$/.exec(val)) {
+
+            var p = prefElems[i].parentNode;
+            while (p && p.localName != "tabpanel")
+              p = p.parentNode;
+            if (p)
+              p.parentNode.selectedPanel = p;
+
+            prefElems[i].focus();
+            alert("Please enter number");
+
+            return false;
+          } else
+            val = parseInt(val);
+
+        valsToSet.push([pref[0], val]);
+      }
+
+      prefElems = document.getElementsByAttribute("prefGet", "*");
+      for (i = 0; i < prefElems.length; i++) {
+        if (prefElems[i].disabled)
+          continue;
+
+        var val = eval("(function(){return "+
+                       prefElems[i].getAttribute("prefGet")+
+                       "}).call(prefElems[i])");
+
+        valsToSet.push([prefElems[i].getAttribute("prefName"), val]);
+      }
+
+      for (i = 0; i < valsToSet.length; i++)
+        window.opener.prefManager.setPref(valsToSet[i][0], valsToSet[i][1])
+
+      return true;
+    }
+
+    function generateIconSetElement(iconSet)
+    {
+      var rli = document.createElement("richlistitem");
+      rli.setAttribute("orient", "vertical");
+      rli.setAttribute("class", "iconSetItem");
+      rli.model = iconSet;
+
+      var ic = document.createElement("hbox");
+      ic.setAttribute("flex", "1");
+      for (var i = 0; i < iconSet.icons.length; i++) {
+        var icon = document.createElement("image");
+        icon.setAttribute("src", iconSet.icons[i].img);
+        ic.appendChild(icon);
+      }
+      rli.appendChild(ic);
+
+      var label = document.createElement("label");
+      label.setAttribute("value", iconSet.name+" - "+iconSet.desc);
+      rli.appendChild(label);
+      return rli;
+    }
+  ]]></script>
+
+  <tabbox flex="1">
+    <tabs>
+      <tab label="General"/>
+      <tab label="Connection"/>
+      <tab label="Status"/>
+      <tab label="Appearance"/>
+    </tabs>
+    <tabpanels flex="1">
+      <tabpanel orient="vertical">
+        <checkbox label="Display avatars in roster" pref="chat.general.showavatars=checked"/>
+        <checkbox label="Sort contacts by status" pref="chat.roster.sortbystatus=checked"/>
+        <checkbox label="Play sounds" pref="chat.sounds=checked"/>
+      </tabpanel>
+
+      <tabpanel>
+        <grid flex="1">
+          <columns>
+            <column/>
+            <column flex="1"/>
+          </columns>
+          <rows>
+            <row>
+              <label value="Host:"/>
+              <textbox pref="chat.connection.host=value"/>
+            </row>
+            <row>
+              <label value="Port:"/>
+              <textbox pref="chat.connection.port=value:int"/>
+            </row>
+            <row>
+              <label value="Resource:"/>
+              <textbox pref="chat.connection.resource=value"/>
+            </row>
+            <row>
+              <label value="Priority:"/>
+              <textbox pref="chat.connection.priority=value:int"/>
+            </row>
+            <row>
+              <label value="HTTP Base:"/>
+              <textbox pref="chat.connection.base=value"/>
+            </row>
+            <checkbox label="Use HTTP-Polling"
+                      pref="chat.connection.base=checked"/>
+          </rows>
         </grid>
-	</groupbox>
-	
+      </tabpanel>
 
-    </prefpane>
-
-    <prefpane id="editor" label="&Preferences.editor;">
-        <preferences>
-            <preference id="chat.editor.incomingmessagecolor"
-                        name="chat.editor.incomingmessagecolor" type="string"/>
-            <preference id="chat.editor.outgoingmessagecolor"
-                        name="chat.editor.outgoingmessagecolor" type="string"/>
-            <!--  <preference id="chat.editor.statusmessagecolor"
-                        name="chat.editor.statusmessagecolor" type="string"/>
-            <preference id="chat.editor.urlmessagecolor"
-                        name="chat.editor.urlmessagecolor" type="string"/>-->
-            <preference id="chat.editor.consoleinmessagecolor"
-                        name="chat.editor.consoleinmessagecolor" type="string"/>
-            <preference id="chat.editor.consoleoutmessagecolor"
-                        name="chat.editor.consoleoutmessagecolor" type="string"/>
-            <preference id="chat.editor.font"
-                        name="chat.editor.font" type="string"/>
-            <preference id="chat.editor.size"
-                        name="chat.editor.size" type="string"/>           
-        </preferences>
-
-
-		<groupbox>
-      	<caption label="&Preferences.cf;" style="font-weight : bold"/>
-        <grid flex="1" id="grid-editor">
-            <columns>
-                <column flex="1" minwidth="60"/>
-                <column flex="1"/>
-            </columns>
-            <rows id="rows-editor">
-					<spacer height="10"/>
-                <row>
-                    <label  value="&Preferences.incoming;" control="nickname"/>
-                    <colorpicker id="test" type="button" color="#996633" height="25" maxwidth="50" preference="chat.editor.incomingmessagecolor" onchange="test();"/>
-                </row>
-                
-                <spacer height="10"/>
-                
-                 <row>
-                    <label value="&Preferences.outgoing;" control="nickname"/>
-                    <colorpicker type="button" color="#330000" height="25" maxwidth="50" preference="chat.editor.outgoingmessagecolor"/>
-                </row>
-                
-                <spacer height="10"/>
-                
-                <!--   <row>
-                    <label value="&Preferences.status;" control="nickname"/>
-                    <colorpicker type="button" color="#66FF99" height="25" maxwidth="50" preference="chat.editor.statusmessagecolor"/>
-                </row>
-                
-                <spacer height="10"/>
-                
-                 <row>
-                    <label value="&Preferences.url;" control="nickname"/>
-                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.urlmessagecolor"/>
-                </row>
-				
-				<spacer height="10"/> -->
-				
-				<row>
-                    <label value="&Preferences.inconsole;" control="nickname"/>
-                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleinmessagecolor"/>
-                </row>
-                
-                <spacer height="10"/>
-                
-                <row>
-                    <label value="&Preferences.outconsole;" control="nickname"/>
-                    <colorpicker type="button" color="#9999FF" height="25" maxwidth="50" preference="chat.editor.consoleoutmessagecolor"/>
-                </row>
-               
-               </rows>
-                 
-                 </grid>
-               
-
-				<spacer height="20"/>
-				
-				 <grid flex="1">
-            <columns>
-                <column flex="1"/>
-                <column flex="8"/>
-                <column flex="1"/>
-                <column flex="0,5"/>
-            </columns>
-            <rows>
-				<row>
-                    <label value="&Preferences.font;" control="nickname"/>
-                    
-                	<menulist id="fontchooser"  height="25" maxwidth="150" flex="1" 
-                         preference="chat.editor.font">
-                			<menupopup flex="1" id="popfont">
-                 
-                 
-               		    </menupopup>
-            			</menulist>
-            			
-            			<label value="&Preferences.size;" control="nickname"/>
-            			
-            			<menulist id="sizefont" height="30" width="60" flex="1" maxheight="30" minheight="30"
-                       minwidth="60" maxwidth="60" preference="chat.editor.size">
-                <menupopup flex="1">
-                    
-                    <menuitem id="size1" label="1" value="1"/>
-                    <menuitem id="size2" label="2" value="2"/>
-                    <menuitem id="size3" label="3" value="3"/>
-                    <menuitem id="size4" label="4" value="4"/>
-                    <menuitem id="size5" label="5" value="5"/>
-                    <menuitem id="size6" label="6" value="6"/>
-                    <menuitem id="size7" label="7" value="7"/>
-                    <menuitem id="size8" label="8" value="8"/>
-                    <menuitem id="size9" label="9" value="9"/>
-                  
-                </menupopup>
-            </menulist>
-                </row>
-                
-                 <spacer height="10"/>
-                </rows>
-                
-                 
-                 </grid>
-                </groupbox>
-           
-
-        
-    </prefpane>
-
-    <prefpane id="statuspane" label="&Preferences.statuspane;">
-		 
-		 <preferences>
-            <preference id="chat.general.iconsetdir"
-                        name="chat.general.iconsetdir" type="string"/>
-            <preference id="chat.status.autoaway"
-                        name="chat.status.autoaway" type="int"/>
-            <preference id="chat.status.autoxa"
-                        name="chat.status.autoxa" type="int"/>            
-        </preferences>
-        
-        
-            
-           		 	<groupbox>
-      				<caption label="&Preferences.auto;" style="font-weight : bold" />
-            		
-            	 
-            <grid flex="1">
-            <columns>
-                <column flex="1" minwidth="60"/>
-                <column flex="2"/>
-            </columns>
-            
-            
-            
-            <rows>
-            <spacer height="20"/>
-				<row>
-					<checkbox checked="true"/>
-					<label value="&Preferences.away;"/>
-                	<textbox  color="#9999FF" height="22" width="50" preference="chat.status.autoaway"/>
-                	<label value="minutes"/> 
-                </row>
-                <row>
-					<checkbox checked="true"/>
-					<label value="&Preferences.unav;"/>
-                	<textbox  color="#9999FF" height="22" width="50" preference="chat.status.autoxa"/>
-                	<label value="minutes"/>
-                </row>
-                <spacer height="10"/>
-              
-               </rows>
-               </grid> 
-                </groupbox> 
-                
-                <spacer height="10"/>
-               
-               
-               <groupbox>
-      				<caption label="&Preferences.iconset;" style="font-weight : bold" />
-               
-              
-            
-               		
-               
-                
-               <spacer height="20"/> 
-                <row>
-					<spacer/>
-                    
-                    <menulist label="Available" id="status"  height="25" maxwidth="120" flex="1" 
-                        preference="chat.general.iconsetdir" oncommand="window.opener.refreshList();">
-                			<menupopup flex="1">
-                   			<menuitem class="menuitem-iconic" label="gajim" value="dcraven/"
-                              oncommand=""/>
-                    			<menuitem class="menuitem-iconic" label="ampoule" selected="true" value="crystal/"
-                              oncommand=""/>
-                 
-               		    </menupopup>
-            			</menulist>
-                </row>
-                
-                <spacer height="20"/> 
-                
-            
-        </groupbox>
-    </prefpane>
-    
-     <prefpane id="connection" label="&Preferences.connection;">
-
-        <preferences>
-
-            <preference id="chat.connection.host"
-                        name="chat.connection.host" type="string"/>
-            <preference id="chat.connection.port"
-                        name="chat.connection.port" type="int"/>
-            <preference id="chat.connection.ssl"
-                        name="chat.connection.ssl" type="bool"/>
-            <preference id="chat.connection.resource"
-                        name="chat.connection.resource" type="string"/>
-            <preference id="chat.connection.base"
-                        name="chat.connection.base" type="string"/>
-            <preference id="chat.connection.priority"
-                        name="chat.connection.priority" type="int"/>
-            <preference id="chat.connection.polling"
-                        name="chat.connection.polling" type="bool"/>           
-        </preferences>
-
-
-		<groupbox>
-      				<caption label="&Preferences.connection;"  style="font-weight : bold"/>
-        <grid flex="1" id="grid-connection">
-            <columns>
-                <column flex="1" minwidth="60"/>
-                <column flex="2"/>
-            </columns>
-            <rows id="rows-connection">
-                <row>
-                    <spacer/>
-                    <checkbox id="ssl" label="&Settings.ssl;" preference="chat.connection.ssl"
-                              onclick="if(this.checked) { port.value = 5280;} else {port.value = 5223; }"/>
-                </row>
-                <row>
-                    <label value="&Settings.port;" control="port"/>
-                    <textbox id="port" preference="chat.connection.port"/>
-                </row>
-
-
-                <spacer height="20"/>
-
-                <row>
-                    <label value="&Settings.host;" control="host"/>
-                    <textbox id="host" preference="chat.connection.host"/>
-                </row>
-
-                <spacer height="20"/>
-
-                <row>
-                    <label value="&Settings.base;" control="base"/>
-                    <textbox id="base" preference="chat.connection.base"/>
-                </row>
-				
-				<spacer height="20"/>
-				
-				<row>
-                    <spacer/>
-                    <checkbox id="advance" label="Advanced"  onclick='if(this.checked) {  document.getElementById("row-advance").style.visibility = "hidden";} else { document.getElementById("row-advance").style.visibility = "visible"; }'/>
-                </row>
-                
-                <spacer height="20"/>
-                
-                   <row style="visibility: hidden;" id="row-advance">
-              
-					<label value="Connection : " control="connection"/>
-                    <checkbox id="polling" checked="false" label="Use HttpPolling" preference="chat.connection.polling" onclick='if(this.checked){ document.getElementById("base").value = "http-bind";base.value="http-bind";} else {document.getElementById("base").value = "http-poll"; base.value="http-poll";}'/>
-				</row> 
-
-            </rows>
-
+      <tabpanel>
+        <grid flex="1">
+          <columns>
+            <column/>
+            <column/>
+            <column flex="1"/>
+          </columns>
+          <rows>
+            <row>
+              <checkbox label="Automaticaly set status to 'away' after"
+                        id="autoAwayCheckbox" checked="true"
+                        pref="chat.status.autoaway=checked:bool"/>
+              <textbox pref="chat.status.autoaway.time=value:int" size="3"/>
+              <label value="minutes"/>
+            </row>
+            <hbox class="entry">
+              <label value="And set status to:"/>
+              <textbox pref="chat.status.autoaway.status=value" flex="1"/>
+            </hbox>
+            <row>
+              <checkbox label="Automaticaly set status to 'not available' after"
+                        id="autoXACheckbox" checked="true"
+                        pref="chat.status.autoxa=checked:bool"/>
+              <textbox pref="chat.status.autoxa.time=value:int" size="3"/>
+              <label value="minutes"/>
+            </row>
+            <hbox class="entry">
+              <label value="And set status to:"/>
+              <textbox pref="chat.status.autoxa.status=value" flex="1"/>
+            </hbox>
+          </rows>
         </grid>
-	</groupbox>
+      </tabpanel>
 
-
-    </prefpane>
-   
-
-    <prefpane id="advanced" label="&Preferences.advanced;">
-    
-    <preferences>
-			<preference id="chat.advanced.browser"
-                        name="chat.advanced.browser" type="string"/>
-            <preference id="chat.advanced.mail"
-                        name="chat.advanced.mail" type="string"/>
-            <preference id="chat.advanced.fs"
-                        name="chat.advanced.fs" type="string"/>
-   </preferences>
-	
-	<groupbox>
-      				<caption label="&Preferences.applications;"  style="font-weight : bold"/>
-        <grid flex="1" id="grid-adv">
-            <columns>
-                <column flex="1" minwidth="60"/>
-                <column flex="2"/>
-            </columns>
-            <rows id="rows-advanced">
-            
-             <spacer height="10"/>
-            
-            
-            
-           
-            
-             <spacer height="20"/>
-            
-            	<row>
-					
-					<label value="&Preferences.browser;"/>
-                	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.browser"/>
-                	
-                </row>
-                <row>
-					
-					<label value="&Preferences.mail;"/>
-                	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.mail"/>
-                	
-                </row>
-                <row>
-					
-					<label value="&Preferences.file;"/>
-                	<textbox color="#9999FF" height="25" width="30" preference="chat.advanced.fs"/>
-                	
-                </row>
-                
-                <spacer height="20"/>
-            </rows>
-
-        </grid>
-        </groupbox>
-        
-    </prefpane>
-</prefwindow>
-
+      <tabpanel orient="vertical">
+        <label value="Default icon set:"/>
+        <richlistbox id="statusIconSet"
+                     prefName="chat.general.iconset"
+                     prefSet="var c=this.childNodes;
+                              for (var i = 0; i &lt; c.length; i++)
+                                if(__value__.toLowerCase() == c[i].model.name.toLowerCase())
+                                  return this.selectedIndex = i"
+                     prefGet="this.selectedItem.model.name"/>
+        <spacer/>
+        <label value="Default smiles set:"/>
+        <richlistbox id="smileSet"
+                     prefName="chat.general.smilesset"
+                     prefSet="var c=this.childNodes;
+                              for (var i = 0; i &lt; c.length; i++)
+                                if(__value__.toLowerCase() == c[i].model.name.toLowerCase())
+                                  return this.selectedIndex = i"
+                     prefGet="this.selectedItem.model.name"/>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+</dialog>

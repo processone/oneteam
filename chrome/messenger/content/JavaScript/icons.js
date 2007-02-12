@@ -155,7 +155,7 @@ function SmilesIconStyle(url, iconDefData)
             regExp.push(text.toString());
             this.revMap[text.toString()] = img;
         }
-        this.cssRules += 
+        this.cssRules +=
             ".smiles-enabled ."+img.cssStyle+"::before"+
             "   {content: url("+img.img+")}\n"+
             ".smiles-enabled ."+img.cssStyle+
@@ -163,7 +163,7 @@ function SmilesIconStyle(url, iconDefData)
     }
     regExp = regExp.sort(function(a, b){return b.length-a.length}).
         map(function(a){return a.replace(/([$^[\]()*+.?\\|{}])/g, "\\$1")});
-    
+
     this.regExp = new RegExp(regExp.join("|"), "g");
 }
 
@@ -214,7 +214,8 @@ function StatusIconStyle(url, iconDefData)
     };
     var tmp, filters = [];
 
-    this.icons = {};
+    this.icons = [];
+    this.iconsMap = {};
 
     for each (data in iconDefData.*::x.(function::namespace()=="client:name"))
         filters.push("client.clientName == "+uneval(data.text().toString()));
@@ -237,7 +238,11 @@ function StatusIconStyle(url, iconDefData)
         if (!type || !img)
             continue;
 
-        this.icons[type.text()] = url+"/"+img.text();
+        this.icons.push({
+            img: url+"/"+img.text(),
+            type: type.text()
+        });
+        this.iconsMap[type.text()] = url+"/"+img.text();
     }
 }
 
@@ -260,16 +265,15 @@ _DECL_(StatusIconStyle, IconStyle).prototype =
         } else if (!force)
             return null;
 
-        if (specialIcon && this.icons[specialIcon])
-            return this.icons[specialIcon];
+        if (specialIcon && this.iconsMap[specialIcon])
+            return this.iconsMap[specialIcon];
 
         if (!show || show == "available")
-            return this.icons["status/online"];
+            return this.iconsMap["status/online"];
 
         if (show == "unavailable")
-            return this.icons["status/offline"];
+            return this.iconsMap["status/offline"];
 
-        return this.icons["status/"+show];
+        return this.iconsMap["status/"+show];
     },
 }
-

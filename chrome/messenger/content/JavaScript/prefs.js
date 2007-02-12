@@ -48,6 +48,11 @@ _DECL_(PrefManager).prototype =
         this.srv[ map[typeof(value)] || "setCharPref" ](name, value);
     },
 
+    builtinPref: function(name)
+    {
+        return false;
+    },
+
     deletePref: function(name)
     {
         this.srv.clearUserPref(name);
@@ -83,6 +88,8 @@ function PrefManager()
         "chat.roster.showoffline": false,
     };
 
+    this.builtinPrefs = {}
+
     this.storage = window.top.storage ||
         globalStorage[document.location.host];
 
@@ -99,7 +106,7 @@ function PrefManager()
     var serverPrefsURL = document.location.href.
 // #ifndef NOJAR
         replace(/jar:/, "").replace(/\/[^\/]*!.*$/, "/serverPrefs.dat");
-// #else        
+// #else
         replace(/\/content\/.*$/, "/serverPrefs.dat");
 // #endif
 
@@ -109,6 +116,7 @@ function PrefManager()
 
     var lineMatch, valueMatch;
     while (lineMatch = /(\S+)[^\S\n]*=[^\S\n]*([^\n]+?)[^\S\n]*(?:\n|$)/g.exec(xhr.responseText)) {
+        this.builtinPrefs[lineMatch[1]] = 1;
         if (valueMatch = lineMatch[2].match(/'((?:[^\\']|\\.)*)'|"((?:[^\\"]|\\.)*)"/))
             this.prefs[lineMatch[1]] = valueMatch[1]||valueMatch[2];
         else if (valueMatch = lineMatch[2].match(/^true|(false)$/))
@@ -156,6 +164,11 @@ _DECL_(PrefManager).prototype =
                     this.callbacks[i][j].call(null, name, value);
     },
 
+    builtinPref: function(name)
+    {
+        return name in this.builtinPrefs;
+    },
+
     deletePref: function(name)
     {
         delete this.prefs[name];
@@ -164,4 +177,3 @@ _DECL_(PrefManager).prototype =
 //#endif */
 
 var prefManager = new PrefManager();
-
