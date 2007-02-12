@@ -9,7 +9,7 @@
 ]>
 
 <dialog id="preferences" windowtype="ot:preferences" title="Preferences"
-  width="800" height="600"
+  width="600" height="500"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
