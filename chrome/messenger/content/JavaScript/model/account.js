@@ -274,7 +274,7 @@ _DECL_(Account, null, Model, DiscoItem,
 
     showPrefs: function()
     {
-        openDialogUniq("ot:settings", "preferences.xul", "chrome,centerscreen");
+        openDialogUniq("ot:preferences", "preferences.xul", "chrome,centerscreen");
     },
 
     showVCard: function()

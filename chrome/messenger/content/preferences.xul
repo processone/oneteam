@@ -55,8 +55,10 @@
         var prefSetter = prefElems[i].getAttribute("prefSet");
         var prefName = prefElems[i].getAttribute("prefName")
         var val = window.opener.prefManager.getPref(prefName);
+        try {
         eval("(function(){"+prefSetter+"}).call(__element__)",
              {__element__: prefElems[i], __value__: val == null ? "" : val});
+        } catch(ex){}
         if (window.opener.prefManager.builtinPref(pref[0]))
           prefElems[i].disabled = true;
       }
@@ -134,10 +136,10 @@
 
   <tabbox flex="1">
     <tabs>
-      <tab label="General"/>
-      <tab label="Connection"/>
-      <tab label="Status"/>
-      <tab label="Appearance"/>
+      <tab id="general" label="General"/>
+      <tab id="connection" label="Connection"/>
+      <tab id="status" label="Status"/>
+      <tab id="appearance" label="Appearance"/>
     </tabs>
     <tabpanels flex="1">
       <tabpanel orient="vertical">
@@ -221,7 +223,7 @@
                               for (var i = 0; i &lt; c.length; i++)
                                 if(__value__.toLowerCase() == c[i].model.name.toLowerCase())
                                   return this.selectedIndex = i"
-                     prefGet="this.selectedItem.model.name"/>
+                     prefGet="this.selectedItem &amp;&amp; this.selectedItem.model.name"/>
         <spacer/>
         <label value="Default smiles set:"/>
         <richlistbox id="smileSet"
@@ -230,7 +232,7 @@
                               for (var i = 0; i &lt; c.length; i++)
                                 if(__value__.toLowerCase() == c[i].model.name.toLowerCase())
                                   return this.selectedIndex = i"
-                     prefGet="this.selectedItem.model.name"/>
+                     prefGet="this.selectedItem &amp;&amp; this.selectedItem.model.name"/>
       </tabpanel>
     </tabpanels>
   </tabbox>
