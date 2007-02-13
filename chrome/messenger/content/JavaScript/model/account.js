@@ -68,10 +68,8 @@ _DECL_(Account, null, Model, DiscoItem,
 
         if (!newPresence.profile) {
             presence = new JSJaCPresence();
-            if (newPresence.show == "invisible")
-                presence.setType("invisible");
-            else {
-                if (newPresence.show)
+            if (newPresence.show != "invisible") {
+                if (newPresence.show && newPresence.show != "available")
                     presence.setShow(newPresence.show);
                 if (newPresence.status)
                     presence.setStatus(newPresence.status);
@@ -85,8 +83,24 @@ _DECL_(Account, null, Model, DiscoItem,
                     this._presenceObservers[i]._sendPresence(newPresence.show,
                                                              newPresence.status,
                                                              ifnull(newPresence.priority, defPrio));
+            var privacyIq = new JSJaCIQ();
+            privacyIq.setIQ(null, null, "set");
+            var privacyQuery = privacyIq.setQuery("jabber:iq:privacy");
+            var privacyActive = privacyQuery.appendChild(
+                privacyIq.getDoc().createElement("active"));
 
-            con.send(presence);
+            if (newPresence.show == "invisible") {
+                privacyActive.setAttribute("name", "oneteam-invisible");
+
+                con.send((new JSJaCPresence()).setType("unavailable"));
+                con.send(privacyIq);
+                con.send(new JSJaCPresence());
+            } else {
+                con.send(privacyIq);
+                con.send(presence);
+            }
+
+                
             this.currentPresence = newPresence;
             if (userSet)
                 this.userPresence = newPresence;
