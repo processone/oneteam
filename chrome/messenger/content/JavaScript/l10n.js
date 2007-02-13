@@ -8,17 +8,17 @@ _DECL_(L10NServiceBase).prototype =
 
     formatString: function(bundle, id)
     {
-        bundle = this.getString(bundle, id)
+        id = this.getString(bundle, id)
         return this._formatString.apply(this, arguments);
     },
 
-    _formatString: function(str)
+    _formatString: function(bundle, str)
     {
         if (this._formatStringCache[str])
             return this._formatStringCache[str].apply(this, arguments);
 
         var fun = this._formatStringCache[str] =
-            new Function("", "return "+this._formatStringRec(str));
+            new Function("", "return "+this._formatStringRec(bundle, str));
 
         return fun.apply(this, arguments);
     },
@@ -37,17 +37,19 @@ _DECL_(L10NServiceBase).prototype =
             });
     },
 
-    _formatStringRec: function(str)
+    _formatStringRec: function(bundle, str, argsMap)
     {
-        var templRE = /((?:[^\\{]|\\.)*?)\{\s*(\d+)((?:\s*,\s*(?:[^}{"',]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'))*)\s*\}/g;
+        var templRE = /((?:[^\\{]|\\.)*?)\{\s*(call2|call|\d+)((?:\s*,\s*(?:[^}{"',]*|"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'))*)\s*\}/g;
         var argsRE = /\s*,\s*(?:"((?:[^\\"]|\\.)*)"|'((?:[^\\']|\\.)*)'|([^'",\s]*))/g;
 
         var endPos = 0, args, res = "";
         var strParts, argsParts;
+
         while (strParts = templRE.exec(str))
         {
             endPos = templRE.lastIndex;
             templRE.lastIndex = 0;
+
             if (strParts[1])
                 res += (res ? "+" : "")+uneval(this._unescapeJS(strParts[1]));
 
@@ -57,13 +59,23 @@ _DECL_(L10NServiceBase).prototype =
                         this._unescapeJS(argsParts[1]||argsParts[2]));
 
             if (args.length) {
-                res += (res ? "+" : "")+"this._formatMethods."+
-                    args[0]+"(arguments["+(+strParts[2]+2)+"]";
-                for (var i = 1; i < args.length; i++)
-                    res += ","+this._formatStringRec(args[i]);
-                res += ")";
-            } else
-                res += (res ? "+" : "")+"arguments["+(+strParts[2]+2)+"]";
+                if (strParts[2] == "call") {
+                    res += (res ? "+" : "")+this._formatStringRec(bundle,
+                        this.getString(args[0] == "null" ? bundle : args[0], args[1]),
+                        args);
+                } else if (strParts[2] == "call2") {
+                    res += (res ? "+" : "")+this._formatStringRec(bundle, args[1], args);
+                } else {
+                    res += (res ? "+" : "")+"this._formatMethods."+
+                        args[0]+"(arguments["+(argsMap ? +argsMap[+strParts[2]+2]+2 :
+                                                         +strParts[2]+2)+"]";
+                    for (var i = 1; i < args.length; i++)
+                        res += ","+this._formatStringRec(bundle, args[i]);
+                    res += ")";
+                }
+            } else if (strParts[2] != "call")
+                res += (res ? "+" : "")+"arguments["+(argsMap ? +argsMap[+strParts[2]+2]+2 :
+                                                                +strParts[2]+2)+"]";
             templRE.lastIndex = endPos;
         }
 

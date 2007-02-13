@@ -30,7 +30,7 @@
       if (action) {
         return photo;
       } else
-        photo = tree.elements();
+        return photo = tree.elements();
     }
 
     const map = {
@@ -136,7 +136,7 @@
         } else if (typeof(map[i]) == "function") {
           var subresult = map[i](1);
 
-          if (subresult.length())
+          if (subresult != null && subresult.length())
             result += <{i}/>.appendChild(subresult);
         } else if (map[i] instanceof Array) {
           for (var j = 0; j < map[i].length; j += 2) {

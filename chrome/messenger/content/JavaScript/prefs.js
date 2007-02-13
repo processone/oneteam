@@ -29,7 +29,6 @@ _DECL_(PrefManager).prototype =
     {
         try {
             var type = this.srv.getPrefType(name);
-            dump(name+", "+type+"\n");
             return type == this.srv.PREF_BOOL ? this.srv.getBoolPref(name) :
                 type == this.srv.PREF_INT ? this.srv.getIntPref(name) :
                 type == this.srv.PREF_STRING ? this.srv.getCharPref(name) :
