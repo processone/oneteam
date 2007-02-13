@@ -447,6 +447,20 @@ _DECL_(Account, null, Model, DiscoItem,
                                      });
         this.presenceProfiles.loadFromServer();
         this.getVCard(true, function(){});
+        this.setPrivacyList();
+    },
+
+    setPrivacyList: function() {
+        var iq = new JSJaCIQ();
+        iq.setIQ(null, null, "set");
+        var query = iq.setQuery("jabber:iq:privacy");
+        var list = query.appendChild(iq.getDoc().createElement("list"));
+        list.setAttribute("name", "oneteam-invisible");
+        var item = list.appendChild(iq.getDoc().createElement("item"));
+        item.setAttribute("action", "deny");
+        item.setAttribute("order", "1");
+        item.appendChild(iq.getDoc().createElement("presence-out"));
+        con.send(iq);
     },
 
     _proxyAddress: function(pkt)
