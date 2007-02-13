@@ -38,8 +38,10 @@ function sendVcardRequest (){
 try {
 
 	var iq = new JSJaCIQ();
-	var elem = iq.getDoc().createElementNS('vcard-temp', 'vCard');
+	var elem = iq.getDoc().createElement('vCard');
 	iq.setIQ(window.opener.infojid,null,'get','vcard');
+	
+	iq.getNode().appendChild(elem).setAttribute('xmlns','vcard-temp');
 	
 	window.opener.con.send(iq, retrieveVcard);
 	
