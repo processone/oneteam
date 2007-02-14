@@ -25,12 +25,12 @@
 
     var photo;
 
-    function handlePhoto(action, tree)
+    function handlePhoto(generateResult, tree)
     {
-      if (action) {
+      if (generateResult) {
         return photo;
       } else
-        return photo = tree.elements();
+        photo = tree.elements();
     }
 
     const map = {
