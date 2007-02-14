@@ -13,7 +13,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="550" height="400"
-  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="Save" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return saveBookmarks()">
 
