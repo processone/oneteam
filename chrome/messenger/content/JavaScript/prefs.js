@@ -99,7 +99,7 @@ function PrefManager()
         else if ((keyName = key.replace(/^pref-bool:/, "")) != key)
             this.prefs[keyName] = ""+this.storage[key] == "true";
         else if ((keyName = key.replace(/^pref-num:/, "")) != key)
-            this.prefs[keyName] = +this.storage[key];
+            this.prefs[keyName] = +this.storage[key].toString();
     }
 
     var serverPrefsURL = document.location.href.
@@ -150,6 +150,8 @@ _DECL_(PrefManager).prototype =
 
     setPref: function(name, value)
     {
+        if (this.prefs[name] === value)
+            return;
         const map = {
             "number": "pref-num:",
             "boolean": "pref-bool:"

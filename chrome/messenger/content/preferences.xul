@@ -64,6 +64,17 @@
       }
     }
 
+    function focusElement(el)
+    {
+        var p = el.parentNode;
+        while (p && p.localName != "tabpanel")
+          p = p.parentNode;
+        if (p)
+          p.parentNode.selectedPanel = p;
+
+        el.focus();
+    }
+
     function savePrefs()
     {
       var valsToSet = [];
@@ -76,19 +87,12 @@
 
         if (pref[2] == "int" && typeof(val) == "string")
           if (!/^\d+$/.exec(val)) {
-
-            var p = prefElems[i].parentNode;
-            while (p && p.localName != "tabpanel")
-              p = p.parentNode;
-            if (p)
-              p.parentNode.selectedPanel = p;
-
-            prefElems[i].focus();
+            focusElement(prefElems[i]);
             alert("Please enter number");
 
             return false;
           } else
-            val = parseInt(val);
+            val = +val;
 
         valsToSet.push([pref[0], val]);
       }
@@ -98,9 +102,16 @@
         if (prefElems[i].disabled)
           continue;
 
-        var val = eval("(function(){return "+
-                       prefElems[i].getAttribute("prefGet")+
-                       "}).call(prefElems[i])");
+        try {
+          val = eval("(function(){return "+
+                     prefElems[i].getAttribute("prefGet")+
+                     "}).call(prefElems[i])");
+        } catch (error) {
+          focusElement(prefElems[i]);
+          alert(error);
+
+          return false;
+        }
 
         valsToSet.push([prefElems[i].getAttribute("prefName"), val]);
       }
