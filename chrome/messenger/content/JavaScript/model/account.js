@@ -483,7 +483,7 @@ _DECL_(Account, null, Model, DiscoItem,
         // means that we attempted connection but did not manage
         // to.
         if(!this.connected)
-            window.alert("Error during connection. (Wrong username or password?)");
+            report("user", "error", "Error during connection. (Wrong username or password?)");
 
         this.connected = false;
         self.con = null;
@@ -634,14 +634,14 @@ _DECL_(Account, null, Model, DiscoItem,
     onStatusChanged: function(error) {
         switch(error) {
             case 'session-terminate-conflict':
-            alert('Conflict (same account/resource signed in from another client)')
+            report('user', 'error', 'Conflict (same account/resource signed in from another client)');
             break;
         }
     },
 
     onError: function(error)
     {
-        alert(error);
+        report('error', error, this);
     },
 }
 

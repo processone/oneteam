@@ -69,7 +69,7 @@ var oArg = new Object();
     }
 
     else {
-        alert("connexion failed");
+        report("user", "error", "connection failed");
     }
     
     con.send (iq);

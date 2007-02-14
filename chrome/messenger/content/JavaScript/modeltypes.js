@@ -114,7 +114,9 @@ _DECL_(Model).prototype =
                     records.push(views[j]);
                     try {
                         views[j](this, arguments[i], arguments[i+1]);
-                    } catch (ex) {alert(ex)}
+                    } catch (ex) {
+                        report('developer', 'error', ex, window);
+                    }
                 }
         }
     },

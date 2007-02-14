@@ -111,7 +111,7 @@ var roomPanelObserver = {
                 invite(startElement, room);
 
         } catch(e) {
-            alert("on drop" + e);
+            report("developer", "error", e, window);
         }
 
     }
@@ -305,7 +305,7 @@ function openConversation(event) {
 
         }
         catch(e) {
-            alert("OPen conv" + e);
+            report("developer", "error", e, window);
         }
     }
 
@@ -350,7 +350,7 @@ try {
     
      
         catch(e) {
-            alert("initTabNAme" + e);
+            report("developer", "error", e, window);
         }
 }
 
@@ -466,7 +466,7 @@ function initGUI() {
 
     }
     catch(e) {
-        alert("caught exception:" + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -829,7 +829,7 @@ function removeFromRoster() {
         }
     }
     catch (e) {
-        alert("removeFromRoster" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -862,7 +862,7 @@ function getRoomItems(iq) {
         showRooms();
     }
     catch (e) {
-        alert("get Room items" + e);
+        report("developer", "error", e, context);
     }
 }
 
@@ -909,7 +909,7 @@ function getRoomNames(iq) {
 
     }
     catch (e) {
-        alert("getRoomNames " + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -982,7 +982,7 @@ function getRoster(iq) {
 
     }
     catch(e) {
-        alert("getROster" + e);
+        report("developer", "error", e, window);
     }
     //if (!gPrefService.getCharPref("chat.roster.showOffline"))
     //hideDecoUsers();
@@ -1043,7 +1043,7 @@ function setTimeouts() {
 
     }
     catch (e) {
-        alert("timout" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -1066,7 +1066,7 @@ function makeAway() {
 
     }
     catch (e) {
-        alert("makeaway" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -1146,7 +1146,7 @@ function loadServers() {
     }
 
     catch(e) {
-        alert("dans load servers" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -1171,7 +1171,7 @@ function requestRetrieveBookmarks() {
     }
 
     catch(e) {
-        alert("request book" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -1257,7 +1257,7 @@ function retrieveBookmarks(iq) {
     }
 
     catch(e) {
-        alert("retrieve book" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -1326,7 +1326,9 @@ function selectTab(jid) {
     }
     
     }
- catch(e) {alert("selectTab" + e);}
+ catch(e) {
+     report("developer", "error", e, window);
+ }
 
 }
 
@@ -1764,7 +1766,7 @@ function showHide() {
 
 
     } catch (e) {
-        alert(e);
+        report("developer", "error", e, window);
     }
 
 
@@ -1812,7 +1814,7 @@ function showUsers(users) {
         //end forGroup
 
     } catch (e) {
-        alert("showUsers" + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -1862,7 +1864,7 @@ function showGroup(group) {
         return item;
 
     } catch (e) {
-        alert("showGroup" + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -1886,7 +1888,7 @@ function showRoom(room) {
 
 
     } catch (e) {
-        alert(e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -1947,7 +1949,7 @@ function showRoomUser(roomUser) {
             listconf.appendChild(item);
 
     } catch (e) {
-        alert("show Room User" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -1964,7 +1966,7 @@ function maskRoomUser(roomUserJid) {
     listconf.removeChild(item);
     
     } catch (e) {
-        alert("mask room user" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -2063,8 +2065,8 @@ function tooltiped(item, event)
             desStatus.setAttribute("value",user [9]);
         }
 
-    } catch(E) {
-        alert("tooltiped " + E);
+    } catch(e) {
+        report("developer", "error", e, window);
     }
 
 }
@@ -2124,14 +2126,14 @@ function showUser(user) {
     try {
         netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
     } catch (e) {
-        alert("Permission to save file was denied.");
+        report("user", "info", "Permission to save file was denied.");
     }
     // get the path to the user's home (profile) directory
     const DIR_SERVICE = new Components.Constructor("@mozilla.org/file/directory_service;1", "nsIProperties");
     try {
         path = (new DIR_SERVICE()).get("ProfD", Components.interfaces.nsIFile).path;
     } catch (e) {
-        alert("error");
+        report("user", "error", "Error while getting profile directory.");
     }
     // determine the file-separator
     if (path.search(/\\/) != -1) {
@@ -2203,7 +2205,7 @@ function sendDiscoRoomRequest(conferenceServer) {
 
     }
     catch (e) {
-        alert(e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -2223,7 +2225,7 @@ function sendServerRequest() {
         //alert("je sors de serverRequest");
     }
     catch (e) {
-        alert("send server request" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -2261,7 +2263,7 @@ function getServerItems(iq) {
         //alert("je sors de serverItem");
     }
     catch (e) {
-        alert("getServerItems" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -2308,7 +2310,7 @@ function getServerInfo(iq) {
         //alert("je sors de serverInfo");
     }
     catch (e) {
-        alert("Get server info" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -2380,7 +2382,7 @@ function sendFile() {
 
     }
     catch (e) {
-        alert("sendFile" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -2486,7 +2488,7 @@ function sendMsg(event) {
         writing = false;
         document.getElementById("text" + receiver).webNavigation.stop(1);
     } catch (e) {
-        alert(e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -2529,7 +2531,7 @@ function performJoinRoom(wholeRoom, jid, pass, nick) {
 
     }
     catch (e) {
-        alert("performJoinRoom" + e);
+        report("developer", "error", e, window);
     }
 
 
@@ -2553,7 +2555,7 @@ function exitRoom(room) {
         }
 
     } catch (e) {
-        alert("exit room" + e)
+        report("developer", "error", e, window);
     }
 }
 
@@ -2626,7 +2628,7 @@ function changeName(name) {
 
     }
     catch (e) {
-        alert("change name : " + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -2814,7 +2816,7 @@ function getRoomRoster(aPresence) {
 
     }
     catch (e) {
-        alert("getRoom roster" + e);
+        report("developer", "error", e, window);
     }
 
 
@@ -2888,7 +2890,7 @@ function createInstantRoom(wholeRoom, nick, name) {
 
     }
     catch (e) {
-        alert("create instant room GUI " + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -3252,7 +3254,7 @@ function launchInfoWindow() {
         window.open("chrome://messenger/content/info.xul", infojid, "chrome,titlebar,toolbar,centerscreen,modal");
 
     } catch (e) {
-        alert("dans launchInfo" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -3271,8 +3273,7 @@ function launchInviteWindow() {
         window.open("chrome://messenger/content/invite.xul", "", "chrome,centerscreen");
 
     else
-
-        alert("please open a room before trying to invite contacts");
+        report("user", "info", "please open a room before trying to invite contacts");
 
 }
 
@@ -3360,15 +3361,15 @@ function handleError(e) {
 
     switch (e.getAttribute('code')) {
         case '401':
-            alert("Authorization failed");
+            report("user", "info", "Authorization failed");
             if (!con.connected())
                 window.close();
             break;
         case '409':
-            alert("Registration failed!\n\nPlease choose a different username!");
+            report("user", "info", "Registration failed!\n\nPlease choose a different username!");
             break;
         case '503':
-            alert("Service unavailable");
+            report("user", "info", "Service unavailable");
             break;
         case '500':
             if (!con.connected() && !logoutCalled && onlstat != 'offline')
@@ -3376,7 +3377,10 @@ function handleError(e) {
                     changeStatus(onlstat, onlmsg);
             break;
         default:
-            alert("An Error Occured:\nCode: " + e.getAttribute('code') + "\nType: " + e.getAttribute('type') + "\nCondition: " + e.firstChild.nodeName); // this shouldn't happen :)
+            report("developer", "error",
+                   "An Error Occured:\nCode: " + e.getAttribute('code') + "\n" +
+                   "Type: " + e.getAttribute('type') + "\n" +
+                   "Condition: " + e.firstChild.nodeName); // this shouldn't happen :)
             break;
     }
 }
@@ -3650,7 +3654,7 @@ if (aJSJaCPacket.getBody()) {
       	}
 
     } catch(e) {
-        alert("Dans handle messsage" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -3715,7 +3719,7 @@ try {
 }	
     }
     catch(e) {
-        alert("Dans showstate" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -3803,7 +3807,7 @@ function customGroups() {
 
     }
     catch(e) {
-        alert("customGroups" + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -3864,7 +3868,7 @@ function applyFilterOnGroups() {
         
     }
     catch(e) {
-        alert("applyFilterOnGroups" + e);
+        report("developer", "error", e, window);
     }
 }
 
@@ -3931,7 +3935,7 @@ function calculateOnline(user) {
         }
 
     } catch (e) {
-        alert("calculateOnline" + e);
+        report("developer", "error", e, window);
     }
 
 }
@@ -4561,7 +4565,7 @@ function handlePresence(aJSJaCPacket) {
 				}
 
     } catch (e) {
-        alert("handle presence" + e);
+        report("developer", "error", e, window);
     }
     //alert (presence);
 }

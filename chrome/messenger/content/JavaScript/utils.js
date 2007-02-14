@@ -160,3 +160,84 @@ function generateUniqueId()
     return "uid"+(arguments.callee.value = arguments.callee.value+1 || 0);
 }
 
+function report(to, level, info, context) {
+    
+    // Alternative way to get the stack.
+    // #ifdef XULAPP
+    function getStackTrace() {
+        var frame = Components.stack.caller;
+        var str = "<top>";
+
+        while (frame) {
+            str += "\n" + frame;
+            frame = frame.caller;
+        }
+
+        return str;
+    }
+    // #endif
+
+    function inspect(object) {
+        var s = "";
+        for(var propertyName in object) {
+            var propertyValue = object[propertyName];
+            if(typeof(propertyValue) != "function")
+                s += "E    " + propertyName + ": " + propertyValue + "\n";
+        }
+        return s;
+    }
+
+    function formatException(ex, context) {
+        var s = "";
+        s += "E " + ex.name + ": " + ex.message + "\n";
+        s += "E    (" + ex.fileName + ":" + ex.lineNumber + ")\n";
+        s += "E STACK:\n";
+        if(ex.stack)
+            s += ex.stack.replace(/^/mg, "E    ") + "\n";
+
+        return s;
+    }
+
+    switch(to) {
+    case "user":
+        switch(level) {
+        case "info":
+            window.alert(info);
+            break;
+        case "error":
+            window.alert(info);
+            break;
+        }
+        break;
+    case "developer":
+        switch(level) {
+        case "debug":
+
+            break;
+        case "error":
+            // #ifdef XULAPP
+
+            // XXX bard: not using instanceof as it would fail on
+            // exceptions thrown in other toplevels
+            
+            if('name' in info && 'message' in info)  
+                dump(exceptionToString(info, "E ") + '\n');
+            else
+                dump(info + '\n');
+
+            if(context) {
+                dump("E CONTEXT:\n");
+                dump(inspect(context));
+            }
+
+            // #endif
+            break;
+        default:
+            throw new Error("Unexpected. (" + level + ")");
+        }
+   
+        break;
+    default:
+        throw new Error("Unexpected. (" + to + ")");
+    }
+}

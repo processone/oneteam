@@ -22,7 +22,7 @@ function read(path) {
 	try {
 		netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 	} catch (e) {
-		alert("Permission to read file was denied.");
+		report("user", "error", "Permission to read file was denied.");
 	}
 	var file = Components.classes["@mozilla.org/file/local;1"]
 		.createInstance(Components.interfaces.nsILocalFile);
@@ -188,7 +188,7 @@ function isValidJID(jid) {
 
     for (var i in prohibited) {
         if (nodeprep.indexOf(prohibited[i]) != -1) {
-            alert("JID invalide\n'" + prohibited[i] + "' interdit dans JID.\nChoisis-en un autre!");
+            report("user", "error", "JID invalide\n'" + prohibited[i] + "' interdit dans JID.\nChoisis-en un autre!");
             return false;
         }
     }
