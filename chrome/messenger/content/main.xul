@@ -56,7 +56,7 @@
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
 	<script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
-   
+
   <script type="text/javascript;version=1.7"><![CDATA[
     function updateContactContextMenu(menu, event)
     {
@@ -213,9 +213,9 @@
 // #ifdef XULAPP
           this.systray.icon =
 // #endif
-          account.iconsRegistry.getStatusIcon(account.currentPresence.show);        
+          account.iconsRegistry.getStatusIcon(account.currentPresence.show);
       },
-      
+
       onIconSetChange: function()
       {
         for each(var presenceType in ["available", "chat", "dnd", "away", "xa", "invisible"]) {
@@ -576,8 +576,8 @@
 <!-- #endif -->
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
     <key id="key_help" modifiers="control" key="H" command="cmd_help"/>
-    <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
 <!-- #ifdef DEBUG -->
+    <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
 <!-- #ifdef XULAPP -->
     <key id="key_jsConsole" modifiers="control" key="M" command="cmd_jsConsole"/>
 <!-- #endif -->
