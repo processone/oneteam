@@ -641,7 +641,7 @@ _DECL_(Account, null, Model, DiscoItem,
 
     onError: function(error)
     {
-        report('error', error, this);
+        report("developer", "error", error, this);
     },
 }
 
