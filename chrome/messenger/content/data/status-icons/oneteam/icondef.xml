@@ -31,7 +31,7 @@
 
 	<icon>
 		<x xmlns='name'>status/dnd</x>
-		<object mime='image/png'>xa.png</object>
+		<object mime='image/png'>dnd.png</object>
 	</icon>
 
 	<icon>
