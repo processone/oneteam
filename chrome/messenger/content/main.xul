@@ -837,6 +837,8 @@
           oncommand="this.parentNode.view.activeItem.onChangeNick()"/>
       <menuitem id="conference-changeSubject" label="Change subject..."
           oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
+      <menuitem id="conference-bookmark" label="Bookmark..."
+          oncommand="this.parentNode.view.activeItem.onBookmark()"/>
 
       <menuseparator/>
 

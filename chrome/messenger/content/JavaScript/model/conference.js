@@ -152,6 +152,12 @@ _DECL_(Conference, Contact).prototype =
         con.send(pkt);
     },
 
+    onBookmark: function()
+    {
+        openDialogUniq("ot:bookmarkRoom", "chrome://messenger/content/bookmarkRoom.xul",
+                       "chrome,centerscreen", this);        
+    },
+    
     onChangeNick: function()
     {
         openDialogUniq("ot:changeNick", "chrome://messenger/content/changeNick.xul",

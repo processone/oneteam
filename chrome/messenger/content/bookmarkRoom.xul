@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % bookmarkRoomDTD SYSTEM "chrome://messenger/locale/bookmarkRoom.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %bookmarkRoomDTD;
+  %dialogsDTD;
+]>
+
+<dialog id="bookmarkRoom" windowtype="ot:bookmarkRoom" title="Bookmark Room"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  width="300" height="400"
+  buttonlabelaccept="Bookmark" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  onunload="cleanup()" ondialogaccept="return bookmarkRoom()" onload="onLoad()">
+        
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/prefs.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conference = window.arguments[0];
+    var conf;
+
+    var room, server, nick, password, bookmarkName;
+
+    function onLoad() {
+      for each (i in "room server nick password bookmarkName".split(" "))
+        eval(i+" = document.getElementById("+uneval(i)+")");
+
+      if (conference) {
+        room.value = conference.jid.node;
+        server.value = conference.jid.domain;
+        nick.value = conference.bookmarkNick || "";
+        password.value = conference.bookmarkPassword || "";
+
+        bookmarkName.value = conference.bookmarkName || "";
+
+        room.disabled = room.previousSibling.disabled =
+        server.disabled = server.previousSibling.disabled = true;
+      } else {
+        server.value = window.opener.account.defaultConferenceServer || "";
+      }
+
+      document.getElementById('nick').value =
+        prefManager.getPref('chat.muc.nickname');
+    }
+
+    function bookmarkRoom() {
+      conf = conference;
+
+      if (!conference) {
+        if (!room.value) {
+          alert("Please give room name");
+          return false;
+        }
+
+        if (!~server.value.search(/(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
+          alert("Please give correct server address");
+          return false;
+        }
+
+        if (!nick.value) {
+          alert("Please give nick name");
+          return false;
+        }
+
+        if (!bookmarkName.value) {
+          alert("Please give bookmark name");
+          return false;
+        }
+
+        if (!conference && 
+            window.opener.account.bookmarks.getBookmarkByName(bookmarkName.value))
+        {
+          alert("Bookmark with that name already exists");
+          return false;
+        } 
+
+        conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value);
+      }
+
+      conf.bookmark(bookmarkName.value || conf.jid.node, false, nick.value, password.value);
+
+      return true;
+    }
+
+    function cleanup()
+    {
+    }
+  ]]></script>
+
+  <dialogheader title="Bookmark Room"/>
+
+  <grid>
+    <columns>
+      <column/>
+      <column flex="1"/>
+    </columns>
+    <rows>
+      <row align="center">
+        <label value="Room:" control="room"/>
+        <textbox id="room"/>
+      </row>
+
+      <row align="center">
+        <label value="Server:" control="server"/>
+        <textbox id="server"/>
+      </row>
+
+      <row align="center">
+        <label value="Nickname:" control="nick"/>
+        <textbox id="nick"/>
+      </row>
+
+      <row align="center">
+        <label value="Password:" control="password"/>
+        <textbox id="password" type="password"/>
+      </row>
+
+      <spacer/>
+
+      <row align="center">
+        <label value="Name:" control="bookmarkName"/>
+        <textbox id="bookmarkName"/>
+      </row>
+    </rows>
+  </grid>
+
+  <spacer/>
+</dialog>
+
+
