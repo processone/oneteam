@@ -202,11 +202,13 @@
         </xul:hbox>
         <xul:chatpane-view id="output-pane" flex="1"/>
         <xul:hbox align="center">
-          <!-- #ifdef XULAPP -->
-          <xul:iframe id="input" flex="1" style="height: 1.7em"/>
-          <!-- #else
-          <xul:textbox id="input" flex="1"/>
-          // #endif -->
+          <xul:deck flex="1">
+            <xul:textbox id="input" flex="1" multiline="true" style="height: 1.7em"
+                         oninput="this.parentNode.parentNode.parentNode.parentNode.maybeResize()"/>
+            <xul:vbox flex="1">
+              <xul:textbox id="inputClone" multiline="true" height="1"/>
+            </xul:vbox>
+          </xul:deck>
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
         </xul:hbox>
       </xul:vbox>
@@ -214,13 +216,8 @@
 
     <implementation>
 
-      <!-- #ifdef XULAPP -->
-      <property name="content" readonly="true"
-        onget="return this._editor.outputToString('text/plain', 0)" />
-      <!-- #else
       <property name="content" readonly="true"
         onget="return this._input.value" />
-      // #endif -->
 
       <property name="hasSubject"
         onset="this._subject.parentNode.hidden = !val; return val"
@@ -238,14 +235,11 @@
           this._firstFocus = true;
 
           this._input = document.getAnonymousElementByAttribute(this, "id", "input");
+          this._inputClone = document.getAnonymousElementByAttribute(this, "id", "inputClone");
           this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
           this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
 
           var me = this;
-          // #ifdef XULAPP
-          this._input.contentWindow.addEventListener("load",
-            function(event) { me._init() }, false);
-          /* #else
           this._input.addEventListener("keypress",
             function (event) {
               if (event.keyCode == KeyEvent.DOM_VK_TAB)
@@ -261,19 +255,15 @@
               }
               return true;
             }, true);
-          // #endif */
+          //this.maybeResize();
         ]]>
       </constructor>
 
       <method name="clear">
         <body>
           <![CDATA[
-          // #ifdef XULAPP
-            this._editor.selectAll();
-            this._editor.deleteSelection(0);
-          /* #else
-            this._input.value =""
-          // #endif */
+            this._input.value = ""
+            this.maybeResize();
           ]]>
         </body>
       </method>
@@ -294,67 +284,6 @@
         </body>
       </method>
 
-      <method name="_init">
-        <body>
-          <![CDATA[
-            var me = this;
-            var doc = this._input.contentDocument;
-            var win = this._input.contentWindow;
-
-            doc.body.style.margin = "0"
-            this._input.boxObject.
-              QueryInterface(Components.interfaces.nsIContainerBoxObject).docShell.
-              QueryInterface(Components.interfaces.nsIWebNavigation).
-              QueryInterface(Components.interfaces.nsIInterfaceRequestor).
-              getInterface(Components.interfaces.nsIEditingSession).
-              makeWindowEditable(win, "text", false);
-
-            this._editor = this._input.docShell.
-              QueryInterface(Components.interfaces.nsIEditorDocShell).editor;
-            this._editor instanceof Components.interfaces.nsIPlaintextEditor;
-            
-            doc.body.style.margin = "0";
-            doc.body.style.background = "white";
-            doc.body.style.fontFamily = "Arial, Verdana, sans-serif";
-
-            this.maybeResize();
-
-            var ev = ["DOMNodeInserted", "DOMNodeRemoved", "DOMAttrModified",
-                      "DOMCharacterDataModified"];
-
-            for (var i = 0; i < ev.length; i++)
-              doc.body.addEventListener(ev[i],
-                function (event) {
-                  if (!me.resizeTimeout)
-                    me.resizeTimeout = window.setTimeout(function(me){me.maybeResize()}, 0, me);
-                }, false);
-              win.addEventListener("resize",
-                function (event) {
-                  if (!me.resizeTimeout)
-                    me.resizeTimeout = window.setTimeout(function(me){me.maybeResize()}, 0, me);
-                }, false);
-
-            win.addEventListener("keypress",
-              function (event) {
-                if (event.keyCode == KeyEvent.DOM_VK_TAB)
-                  event.preventDefault();
-                if (event.keyCode == KeyEvent.DOM_VK_RETURN &&
-                    !event.shiftKey && me.sendOnEnter)
-                {
-                  me._send();
-
-                  event.stopPropagation();
-                  event.preventDefault();
-                  return false;
-                }
-                return true;
-              }, true);
-
-              doc = win = null;
-          ]]>
-        </body>
-      </method>
-
       <method name="_send">
         <body>
           <![CDATA[
@@ -371,13 +300,8 @@
       <method name="focus">
         <body>
           <![CDATA[
-          // #ifdef XULAPP
-          window.setTimeout(function(a, b){b._firstFocus = false;a.focus()},
-            this._firstFocus ? 500 : 0, this._input.contentWindow, this);
-          /* #else
           window.setTimeout(function(a, b){b._firstFocus = false;a.focus()},
             this._firstFocus ? 500 : 0, this._input, this);
-          // #endif */
           ]]>
         </body>
       </method>
@@ -385,27 +309,18 @@
       <method name="maybeResize">
         <body>
           <![CDATA[
-          var e = this._input.contentDocument.body.parentNode;
-          var w = this._input.contentWindow;
-          var h = e.offsetHeight;
+          this._inputClone.value = this._input.value;
 
-          this.resizeTimeout = null;
+          if (this._sizeOffset == null)
+            this._sizeOffset = this._input.boxObject.height -
+                this._input.inputField.offsetHeight;
 
-          if (this._scrollSize <= 0) {
-            if (w.scrollMaxX)
-              this._scrollSize = w.scrollMaxY - e.offsetHeight - this._scrollSize;
-            else
-              this._scrollSize = -e.offsetHeight;
-          }
+          var h = this._sizeOffset + this._inputClone.inputField.scrollHeight;
 
           if (h > 0.3*window.innerHeight)
             h = 0.3*window.innerHeight;
 
-          if (w.scrollMaxY ||
-              e.offsetHeight < w.innerHeight)
-            this._input.style.height =
-              (h + this._input.boxObject.height - w.innerHeight +
-              (w.scrollMaxX ? this._scrollSize : 0))+"px";
+          this._input.style.height = h + "px";
           ]]>
         </body>
       </method>

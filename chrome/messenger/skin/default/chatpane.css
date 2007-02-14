@@ -2,7 +2,7 @@ vbox {
   background: white;
 }
 
-#output, #input {
+#output, #input, #inputClone {
   margin: 3px;
   -moz-border-top-colors: none;
   -moz-border-right-colors: none;
