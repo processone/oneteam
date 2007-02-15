@@ -206,7 +206,7 @@
             <xul:textbox id="input" flex="1" multiline="true" style="height: 1.7em"
                          oninput="this.parentNode.parentNode.parentNode.parentNode.maybeResize()"/>
             <xul:vbox flex="1">
-              <xul:textbox id="inputClone" multiline="true" height="1"/>
+              <xul:textbox id="inputClone" multiline="true" style="height: 1.7em"/>
             </xul:vbox>
           </xul:deck>
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
