@@ -197,8 +197,19 @@ _DECL_(Conference, Contact).prototype =
 
     createCompletionEngine: function()
     {
-        var nickCompletion = new NickCompletionEngine(this);
-        return new CompletionEngine([nickCompletion]);
+        return new CompletionEngine([
+            new NickCompletionEngine(this),
+            new CommandCompletionEngine("/me", []),
+            new CommandCompletionEngine("/topic", []),
+            new CommandCompletionEngine("/leave", []),
+            new CommandCompletionEngine("/quit", []),
+            new CommandCompletionEngine("/nick", []),
+            new CommandCompletionEngine("/invite", [new ContactCompletionEngine()]),
+            new CommandCompletionEngine("/join", [new ConferenceCompletionEngine(false)]),
+            new CommandCompletionEngine("/msg", [new NickCompletionEngine(this)]),
+            new CommandCompletionEngine("/kick", [new NickCompletionEngine(this)]),
+            new CommandCompletionEngine("/ban", [new NickCompletionEngine(this)])
+        ]);
     },
 
     onPresence: function(pkt)
@@ -517,5 +528,5 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         else
             this._syncServerBookmarks();
         this.modelUpdated("bookmarks", {removed: [conference]})
-    },
+    }
 }

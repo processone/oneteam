@@ -492,6 +492,11 @@ _DECL_(Contact, null, Model,
 
     createCompletionEngine: function()
     {
+        return new CompletionEngine([
+            new CommandCompletionEngine("/me", []),
+            new CommandCompletionEngine("/join", [new ConferenceCompletionEngine(false)]),
+            new CommandCompletionEngine("/inviteto", [new ConferenceCompletionEngine(true)])
+        ]);
     },
 
     cmp: function(c)
@@ -636,6 +641,7 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     createCompletionEngine: function()
     {
+        return Contact.prototype.createCompletionEngine();
     },
 
     cmp: function(c)
