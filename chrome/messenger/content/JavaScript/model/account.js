@@ -100,7 +100,7 @@ _DECL_(Account, null, Model, DiscoItem,
                 con.send(presence);
             }
 
-                
+
             this.currentPresence = newPresence;
             if (userSet)
                 this.userPresence = newPresence;
@@ -111,7 +111,7 @@ _DECL_(Account, null, Model, DiscoItem,
         }
 
         for (var c in this.contactsIterator()) {
-            if (presence = profile.getPresenceFor(c)) {
+            if ((presence = profile.getPresenceFor(c))) {
                 if (profile != this.currentPresence.profile)
                     if (presence.show == "invisible")
                         c._sendPresence(null, null, null, "invisible");
@@ -126,7 +126,7 @@ _DECL_(Account, null, Model, DiscoItem,
         }
 
         for (var i = 0; i < this._presenceObservers.length; i++)
-            if (presence = profile.getPresenceFor(this._presenceObservers[i])) {
+            if ((presence = profile.getPresenceFor(this._presenceObservers[i]))) {
                 if (profile != this.currentPresence.profile)
                     if (presence.show == "invisible")
                         this._presenceObservers[i]._sendPresence(null, null, null, "invisible");
@@ -151,14 +151,14 @@ _DECL_(Account, null, Model, DiscoItem,
     {
         for (var i = 0; i < this.groups.length; i++)
             if (!predicate || predicate(this.groups[i], token))
-                yield this.groups[i];
+                yield (this.groups[i]);
     },
 
     contactsIterator: function(predicate, token)
     {
         for each (var contact in this.contacts)
             if (!predicate || predicate(contact, token))
-                yield contact;
+                yield (contact);
     },
 
     _onGroupAdded: function(group)
@@ -182,10 +182,13 @@ _DECL_(Account, null, Model, DiscoItem,
 
     getOrCreateContact: function(jid, showInRoster, name, groups)
     {
-        if (this.allContacts[jid])
-            return this.allContacts[jid];
-        if (this.allConferences[jid])
-            return this.allConferences[jid];
+        jid = new JID(jid);
+        var normalizedJID = jid.normalizedJID;
+
+        if (this.allContacts[normalizedJID])
+            return this.allContacts[normalizedJID];
+        if (this.allConferences[normalizedJID])
+            return this.allConferences[normalizedJID];
         if (showInRoster) {
             var contact = new Contact(jid, name, [this.notInRosterGroup], null, null);
             contact.newItem = true;
@@ -196,14 +199,18 @@ _DECL_(Account, null, Model, DiscoItem,
 
     getOrCreateResource: function(jid)
     {
-        if (this.resources[jid])
-            return this.resources[jid];
-
         jid = new JID(jid);
-        if (this.allContacts[jid.shortJID])
-            return this.allContacts[jid.shortJID].createResource(jid);
-        else if (this.allConferences[jid.shortJID])
-            return this.allConferences[jid.shortJID].createResource(jid);
+        var normalizedJID = jid.normalizedJID;
+
+        if (this.resources[normalizedJID])
+            return this.resources[normalizedJID];
+
+        if (this.allContacts[normalizedJID.shortJID])
+            return this.allContacts[normalizedJID.shortJID].createResource(jid);
+        else if (this.allConferences[normalizedJID.shortJID])
+            return this.allConferences[normalizedJID.shortJID].createResource(jid);
+
+        return null;
     },
 
     _handleVCard: META.after=function(packet)
@@ -223,14 +230,14 @@ _DECL_(Account, null, Model, DiscoItem,
         this.modelUpdated("avatar");
     },
 
-    setVCard: function(vcardE4X)
+    getOrCreateConference: function(jid)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(null, null, 'set');
-        iq.getNode().appendChild(E4XtoDOM(vcardE4X, iq.getDoc()));
+        jid = new JID(jid);
+        var normalizedJID = jid.normalizedJID;
 
-        this._handleVCard(iq);
-        con.send(iq);
+        if (this.allConferences[normalizedJID])
+            return this.allConferences[normalizedJID];
+        return new Conference(jid);
     },
 
     _onConferenceAdded: function(conference)
@@ -245,11 +252,14 @@ _DECL_(Account, null, Model, DiscoItem,
         this.modelUpdated("conferences", {removed: [conference]});
     },
 
-    getOrCreateConference: function(jid)
+    setVCard: function(vcardE4X)
     {
-        if (this.allConferences[jid])
-            return this.allConferences[jid];
-        return new Conference(jid);
+        var iq = new JSJaCIQ();
+        iq.setIQ(null, null, 'set');
+        iq.getNode().appendChild(E4XtoDOM(vcardE4X, iq.getDoc()));
+
+        this._handleVCard(iq);
+        con.send(iq);
     },
 
     onAddContact: function(contact)
@@ -515,7 +525,7 @@ _DECL_(Account, null, Model, DiscoItem,
     {
         var sender = new JID(packet.getFrom());
 
-        if (this.myJID.shortJID == sender.shortJID) {
+        if (this.myJID.normalizedJID.shortJID == sender.normalizedJID.shortJID) {
             if (this.bumpPriority) {
                 var tag = packet.getNode().getElementsByTagName('priority');
 
@@ -530,7 +540,7 @@ _DECL_(Account, null, Model, DiscoItem,
         //Handle subscription requests
         switch (packet.getType()) {
         case "subscribe":
-            var contact = this.contacts[sender];
+            var contact = this.contacts[sender.normalizedJID];
             if (contact && contact._subscribed) {
                 delete contact._subscribed;
                 contact.allowToSeeMe();
@@ -547,13 +557,13 @@ _DECL_(Account, null, Model, DiscoItem,
         case "unsubscribe":
         case "unsubscribed":
             this.notificationScheme.show("subscription", packet.getType(),
-                                         this.allContacts[sender.shortJID] || sender);
+                                         this.allContacts[sender.normalizedJID.shortJID] || sender);
             return;
         }
 
         // Delegate rest to respective handlers
         var item = sender.resource ? this.getOrCreateResource(sender) :
-            this.conferences[sender];
+            this.conferences[sender.normalizedJID];
 
         if (item)
             item.onPresence(packet);
@@ -576,9 +586,10 @@ _DECL_(Account, null, Model, DiscoItem,
             var items = query.getElementsByTagNameNS(ns, "item");
             for (i = 0; i < items.length; i++) {
                 var jid = items[i].getAttribute("jid");
+                var normalizedJID = new JID(jid).normalizedJID;
 
-                if (this.allContacts[jid])
-                    this.allContacts[jid]._updateFromServer(items[i]);
+                if (this.allContacts[normalizedJID])
+                    this.allContacts[normalizedJID]._updateFromServer(items[i]);
                 else
                     new Contact(items[i]);
             }
@@ -615,7 +626,7 @@ _DECL_(Account, null, Model, DiscoItem,
         }
 
         // Message come from me
-        if (sender == this.myJID)
+        if (sender.normalizedJID == this.myJID.normalizedJID)
             return;
 
         var item;
@@ -642,7 +653,7 @@ _DECL_(Account, null, Model, DiscoItem,
     onError: function(error)
     {
         report("developer", "error", error, this);
-    },
+    }
 }
 
 account = new Account();

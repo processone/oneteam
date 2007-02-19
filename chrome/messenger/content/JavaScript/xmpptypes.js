@@ -28,9 +28,6 @@ function JID(node, domain, resource)
         [node, domain, resource] = [node.substring(0, atIdx),
             node.substring(atIdx+1, slashIdx), node.substring(slashIdx+1)];
     }
-    node = node.toLowerCase();
-    domain = domain.toLowerCase();
-    resource = resource.toLowerCase();
 
     this.shortJID = (node ? node+"@" : "") + domain;
     this.longJID = this.shortJID + (resource ? "/"+resource : "");
@@ -100,6 +97,19 @@ JID.prototype =
     createFullJID: function(resource)
     {
         return new JID(this.node, this.domain, resource);
+    },
+
+    get normalizedJID()
+    {
+        var p = this.__proto__;
+        this.__proto__ = Object.prototype;
+
+        this.normalizedJID = new JID(this.node && this.node.toLowerCase(),
+                                     this.domain.toLowerCase(),
+                                     this.resource && this.resource.toLowerCase());
+        this.__proto__ = p;
+
+        return this.normalizedJID;
     }
 }
 

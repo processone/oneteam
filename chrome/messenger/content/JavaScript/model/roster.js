@@ -110,9 +110,9 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         }
 
         this.newItem = false;
-        account.contacts[jid] = this;
+        account.contacts[this.jid.normalizedJID] = this;
     }
-    account.allContacts[jid] = this;
+    account.allContacts[this.jid.normalizedJID] = this;
 }
 
 _DECL_(Contact, null, Model,
@@ -193,11 +193,11 @@ _DECL_(Contact, null, Model,
         this.groups = groups;
 
         if (this.subscription == "remove") {
-            delete account.allContacts[this.jid]
-            delete account.contacts[this.jid]
+            delete account.allContacts[this.jid.normalizedJID]
+            delete account.contacts[this.jid.normalizedJID]
         } else if (this.newItem) {
             this.newItem = false;
-            account.contacts[this.jid] = this;
+            account.contacts[this.jid.normalizedJID] = this;
         }
 
         if (this.subscription == "remove" || (canSeeHim && !this.canSeeHim)) {
@@ -518,9 +518,9 @@ _DECL_(Contact, null, Model,
 function Resource(jid)
 {
     this.jid = new JID(jid);
-    this.contact = account.allContacts[jid.shortJID];
+    this.contact = account.allContacts[this.jid.normalizedJID.shortJID];
 
-    account.resources[jid] = this;
+    account.resources[this.jid.normalizedJID] = this;
 
     this.init();
 }
@@ -603,7 +603,7 @@ _DECL_(Resource, null, Model, DiscoItem,
     {
         if (this._registered)
             this.contact._onResourceRemoved(this);
-        delete account.resources[this.jid];
+        delete account.resources[this.jid.normalizedJID];
     },
 
     sendMessage: function(body)
