@@ -490,6 +490,10 @@ _DECL_(Contact, null, Model,
         this.modelUpdated("avatar");
     },
 
+    createCompletionEngine: function()
+    {
+    },
+
     cmp: function(c)
     {
         const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
@@ -630,6 +634,10 @@ _DECL_(Resource, null, Model, DiscoItem,
                                  packet.getFrom(), stamp);
     },
 
+    createCompletionEngine: function()
+    {
+    },
+
     cmp: function(c)
     {
         const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
@@ -645,4 +653,3 @@ _DECL_(Resource, null, Model, DiscoItem,
         return kt == kc ? 0 : kt > kc ? 1 : -1;
     }
 }
-

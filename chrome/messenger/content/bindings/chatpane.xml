@@ -242,8 +242,12 @@
           var me = this;
           this._input.addEventListener("keypress",
             function (event) {
-              if (event.keyCode == KeyEvent.DOM_VK_TAB)
+              if (event.keyCode == KeyEvent.DOM_VK_TAB) {
                 event.preventDefault();
+                if (me.completionEngine)
+                  me.completionEngine.complete(me._input);
+              }
+              
               if (event.keyCode == KeyEvent.DOM_VK_RETURN &&
                   !event.shiftKey && me.sendOnEnter)
               {

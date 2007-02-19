@@ -61,7 +61,7 @@ _DECL_(Conference, Contact).prototype =
                 return;
             }
         }
-        
+
         if (this._modelUpdatedCheck(oldState).length && !internal)
             account.bookmarks._onBookmarkUpdated(this);
     },
@@ -133,7 +133,7 @@ _DECL_(Conference, Contact).prototype =
         node.setAttribute('to', jid);
         node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
             appendChild(pkt.getDoc().createTextNode(reason || "Please join that room"));
-        
+
         con.send(pkt);
     },
 
@@ -148,16 +148,16 @@ _DECL_(Conference, Contact).prototype =
         node.setAttribute('to', from);
         node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
             appendChild(pkt.getDoc().createTextNode(reason || "Sorry i can't join now"));
-        
+
         con.send(pkt);
     },
 
     onBookmark: function()
     {
         openDialogUniq("ot:bookmarkRoom", "chrome://messenger/content/bookmarkRoom.xul",
-                       "chrome,centerscreen", this);        
+                       "chrome,centerscreen", this);
     },
-    
+
     onChangeNick: function()
     {
         openDialogUniq("ot:changeNick", "chrome://messenger/content/changeNick.xul",
@@ -193,6 +193,12 @@ _DECL_(Conference, Contact).prototype =
             this.myResource = resource;
 
         return resource;
+    },
+
+    createCompletionEngine: function()
+    {
+        var nickCompletion = new NickCompletionEngine(this);
+        return new CompletionEngine([nickCompletion]);
     },
 
     onPresence: function(pkt)
@@ -388,7 +394,7 @@ function ConferenceBookmarks()
     this.init();
 }
 
-_DECL_(ConferenceBookmarks, null, Model).prototype = 
+_DECL_(ConferenceBookmarks, null, Model).prototype =
 {
     getBookmarkByName: function(name)
     {
@@ -513,4 +519,3 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         this.modelUpdated("bookmarks", {removed: [conference]})
     },
 }
-

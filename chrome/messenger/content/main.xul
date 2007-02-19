@@ -42,6 +42,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/xmpptypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/icons.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
   <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
@@ -355,6 +356,7 @@
       this.chatPane = document.createElement("chatpane");
       this.chatPane.setAttribute("flex", "1");
       this.chatPane.addEventListener("chat-send", function(){me.onSend()}, false);
+      this.chatPane.completionEngine = contact.createCompletionEngine();
 
       vbox.appendChild(this.chatPane);
       this.tabpanel.appendChild(vbox)
@@ -389,6 +391,7 @@
       {
         this.contact = contact;
         this.tab.setAttribute("label", contact.visibleName);
+        this.chatPane.completionEngine = contact.createCompletionEngine();
       },
 
       closeAllTabs: function()
