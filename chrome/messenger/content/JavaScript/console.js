@@ -1,5 +1,6 @@
 var console;
 var inputEditor;
+var intoInput
 
 var handlers =
 {
@@ -14,7 +15,7 @@ var handlers =
         console.contentDocument.body.appendChild(div);
         console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
     },
-    
+
     onPacketSend: function(p)
     {
         var msg = prettyPrintDOM(p.getNode());
@@ -54,12 +55,13 @@ var handlers =
 function onLoad() {
     console = document.getElementById("textconsole");
     inputEditor = document.getElementById("texttemplates");
+    intoInput = document.getElementById("intoinput");
 
     var link = console.contentDocument.createElement("link");
 // #ifdef XULAPP
     link.setAttribute("href", "chrome://messenger/skin/xml-console-log.css");
 /* #else
-    link.setAttribute("href",                                                               
+    link.setAttribute("href",
               document.location.href.replace(/content\/.*?$/, "skin/xml-console-log.css"));
 // #endif */
     link.setAttribute("rel", "stylesheet");
@@ -116,7 +118,11 @@ function sendToServer() {
     var dp = new DOMParser();
     var node = dp.parseFromString("<q xmlns='jabber:client'>"+str+"</q>", "text/xml").
         firstChild.firstChild;
-    window.opener.con.send(window.opener.JSJaCPWrapNode(node));
+
+    if (intoInput.checked)
+        window.opener.con._inQ.push(node);
+    else
+        window.opener.con.send(window.opener.JSJaCPWrapNode(node));
 
     inputEditor.value = "";
 }
@@ -144,7 +150,7 @@ function prettyPrintDOM(dom)
             ret += " <span class='attrib-name'>"+ i +
                 "</span>=<span class='attrib-value'>'" +
                 encodeEntity(dom.namespaceURI) +
-                "'</span>";            
+                "'</span>";
 
         for (i = 0; i < dom.attributes.length; i++) {
             ret += " <span class='attrib-name'>"+ dom.attributes[i].nodeName +
@@ -184,4 +190,3 @@ function encodeEntity(string)
                   replace(/\'/g,"&apos;").
                   replace(/\"/g,"&quot;");
 }
-

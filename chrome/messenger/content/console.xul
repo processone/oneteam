@@ -18,15 +18,19 @@
     <html:iframe id="textconsole" flex="1"/>
     <spacer height="10"/>
 
-    <button label="&Console.clear;" oncommand="clearConsole();"/>
+    <hbox pack="center">
+        <button label="&Console.clear;" oncommand="clearConsole();"/>
+    </hbox>
     <spacer height="10"/>
 
     <hbox pack="center">
         <label value="&Console.templates;" style="font-weight: bold;"/>
     </hbox>
-    
+
     <textbox id="texttemplates" multiline="true"
              style="color: #FF6600; padding: 0 10px;" flex="1"/>
+
+    <checkbox id="intoinput" label="Inject into input stram"/>
 
     <hbox pack="center">
       <menulist label="IQ  ">
