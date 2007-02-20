@@ -553,6 +553,7 @@
     <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
 
     <command id="cmd_help" key="key_help" oncommand="openLink('http://www.process-one.net/en/oneteam/')"/>
+    <command id="cmd_help_bot" oncommand="account.getOrCreateContact('bot.oneteam.im').onOpenChat()"/>
     <command id="cmd_bug" oncommand="openLink('https://support.process-one.net/browse/TEAM')"/>
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
 <!-- #ifdef DEBUG -->
@@ -672,8 +673,10 @@
           </menu>
           <menu id="help-menu" label="&menuAide.Aide;">
             <menupopup id="help-popup">
-              <menuitem label="&menuAide.aide_rapide;" command="cmd_help"
-                  accesskey="&shortcurt.help;"/>
+              <menuitem label="Help bot" command="cmd_help_bot"
+                  accesskey="b"/>
+              <menuitem label="Documentation" command="cmd_help"
+                  accesskey="D"/>
               <menuitem label="Report Bug" command="cmd_bug"
                   accesskey="R"/>
               <menuitem label="&menuAide.console;" command="cmd_xmlConsole"
