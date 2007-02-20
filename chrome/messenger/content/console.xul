@@ -30,7 +30,7 @@
     <textbox id="texttemplates" multiline="true"
              style="color: #FF6600; padding: 0 10px;" flex="1"/>
 
-    <checkbox id="intoinput" label="Inject into input stram"/>
+    <checkbox id="intoinput" label="Inject into input stream"/>
 
     <hbox pack="center">
       <menulist label="IQ  ">
