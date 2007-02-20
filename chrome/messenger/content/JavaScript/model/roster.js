@@ -18,7 +18,7 @@ _DECL_(Group, null, Model).prototype =
     {
         for (var i = 0; i < this.contacts.length; i++)
             if (!predicate || predicate(this.contacts[i]))
-                yield this.contacts[i];
+                yield (this.contacts[i]);
     },
 
     onRename: function(externalDialog)
@@ -94,6 +94,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this._groups = groups || [];
         this.newItem = true;
         this.groups = [];
+        this.visibleName = name || this.jid.shortJID;
     } else {
         this.name = name || this.jid.shortJID;
         this.visibleName = name || this.jid.shortJID;

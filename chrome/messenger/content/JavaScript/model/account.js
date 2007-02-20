@@ -637,7 +637,7 @@ _DECL_(Account, null, Model, DiscoItem,
                 item = this.getOrCreateContact(sender.getShortJID(), true).
                     createResource(sender);
         } else
-            this.getOrCreateContact(sender);
+            item = this.getOrCreateContact(sender);
 
         item.onMessage(packet);
     },
