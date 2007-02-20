@@ -18,7 +18,6 @@ function JID(node, domain, resource)
     if (arguments.length == 1) {
         if (node instanceof JID)
             return node;
-        node = node.toLowerCase();
         if (this._cache[node])
             return this._cache[node];
 

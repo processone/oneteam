@@ -8,13 +8,18 @@ function Conference(jid)
     this.resources = [];
     this.groups = [];
 
-    account.allConferences[this.jid] = this;
+    account.allConferences[this.jid.normalizedJID] = this;
 }
 
 _DECL_(Conference, Contact).prototype =
 {
     get interlocutorName() {
-        return this._nick;
+        return this.myResourceJID.resource;
+    },
+
+    get myResourceJID() {
+        return this.myResource ? this.myResource.jid :
+            this._myResourceJID;
     },
 
     _sendPresence: function(show, status, priority, type)
@@ -23,7 +28,7 @@ _DECL_(Conference, Contact).prototype =
             return;
 
         var presence = new JSJaCPresence();
-        presence.setTo(this.jid + "/" + this._nick);
+        presence.setTo(this.myResourceJID)
 
         if (show)
             presence.setShow(show);
@@ -73,8 +78,7 @@ _DECL_(Conference, Contact).prototype =
 
     joinRoom: function(callback, nick, password)
     {
-        var jid = this.jid.createFullJID(nick);
-        this._nick = jid.resource;
+        this._myResourceJID = this.jid.createFullJID(nick);
         this._password = password;
 
         if (!this.joined) {
@@ -107,7 +111,7 @@ _DECL_(Conference, Contact).prototype =
                 account._presenceObservers.splice(idx, 1);
         }
 
-        delete this._nick;
+        delete this._myResourceJID;
         delete this._password;
         delete this._callback;
         delete this.myResource;
@@ -166,13 +170,9 @@ _DECL_(Conference, Contact).prototype =
 
     changeNick: function(newNick)
     {
-        var jid = this.jid.createFullJID(newNick);
-        newNick = jid.resource;
-
-        if (this._nick == newNick)
+        if (this.myResourceJID.resource == newNick)
             return;
 
-        this._nick = newNick;
         this.joinRoom(null, newNick);
     },
 
@@ -188,8 +188,10 @@ _DECL_(Conference, Contact).prototype =
 
     createResource: function(jid)
     {
+        jid = new JID(jid);
+
         var resource = new ConferenceMember(jid);
-        if (!this.myResource && jid.resource == this._nick)
+        if (!this.myResource && jid.normalizedJID == this._myResourceJID.normalizedJID)
             this.myResource = resource;
 
         return resource;
@@ -283,7 +285,7 @@ _DECL_(Conference, Contact).prototype =
 function ConferenceMember(jid)
 {
     Resource.call(this, jid);
-    this.contact = account.allConferences[jid.shortJID];
+    this.contact = account.allConferences[this.jid.normalizedJID.shortJID];
     this.name = this.jid.resource;
     this.visibleName =  this.name + " from " + this.jid.node;
 }
@@ -291,7 +293,7 @@ function ConferenceMember(jid)
 _DECL_(ConferenceMember, Resource).prototype =
 {
     get interlocutorName() {
-        return this.contact._nick;
+        return this.contact.interlocutorName;
     },
 
     visibleName: null,
@@ -317,13 +319,12 @@ _DECL_(ConferenceMember, Resource).prototype =
         }
 
         if (303 in statusCodes) { // Nick change
-            delete account.resources[this.jid];
+            delete account.resources[this.jid.normalizedJID];
             this.name = item.getAttribute("nick")
             this.visibleName =  this.name + " from " + this.jid.node;
             this.jid = this.jid.createFullJID(this.name);
-            account.resources[this.jid] = this;
+            account.resources[this.jid.normalizedJID] = this;
             this.modelUpdated("jid", null, "name", null, "visibleName");
-            this.contact._nick = this.name;
             return;
         }
 
