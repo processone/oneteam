@@ -78,7 +78,7 @@ _DECL_(Group, null, Model).prototype =
             if (!this.builtinGroup)
                 delete account.allGroups[this.name];
         }
-    },
+    }
 }
 
 function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
@@ -254,14 +254,14 @@ _DECL_(Contact, null, Model,
     {
         for (var i = 0; i < this.groups.length; i++)
             if (!predicate || predicate(this.groups[i], token))
-                yield this.groups[i];
+                yield (this.groups[i]);
     },
 
     resourcesIterator: function(predicate, token)
     {
         for (var i = 0; i < this.resources.length; i++)
             if (!predicate || predicate(this.resources[i], token))
-                yield this.resources[i];
+                yield (this.resources[i]);
     },
 
     sendMessage: function(body)
@@ -564,7 +564,7 @@ _DECL_(Resource, null, Model, DiscoItem,
                 if (text)
                     openDialogUniq("ot:error", "chrome://messenger/content/error.xul",
                                    "chrome,modal", text.textContent);
-                return;
+                return 0;
             }
         }
 
