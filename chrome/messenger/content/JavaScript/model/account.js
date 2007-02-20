@@ -562,8 +562,10 @@ _DECL_(Account, null, Model, DiscoItem,
         }
 
         // Delegate rest to respective handlers
+
         var item = sender.resource ? this.getOrCreateResource(sender) :
-            this.conferences[sender.normalizedJID];
+            this.conferences[sender.normalizedJID] ||
+            this.getOrCreateResource(sender);
 
         if (item)
             item.onPresence(packet);

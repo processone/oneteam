@@ -542,7 +542,10 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     get visibleName()
     {
-        return this.contact.visibleName + "("+this.jid.resource+")";
+        if (this.jid.resource)
+            return this.contact.visibleName + "("+this.jid.resource+")";
+
+        return this.contact.visibleName;
     },
 
     onOpenChat: function()
