@@ -38,8 +38,8 @@
       var reason = document.getElementById("reason").value;
 
       if (!contact) {
-        if (!~jid.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-          alert("Please give correct Jabber ID");
+        if (!~jid.search(/^([^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
+          alert("Please enter correct Jabber ID");
           return false;
         }
         if (window.opener.account.contacts[jid]) {
@@ -84,10 +84,9 @@
 
   <label value="Groups:" control="groups"/>
   <groupselector id="groups" rows="4"/>
-		
+
   <spacer/>
 
   <label value="&Contact.reason;" />
   <textbox id="reason" multiline="true" rows="2"/>
 </dialog>
-
