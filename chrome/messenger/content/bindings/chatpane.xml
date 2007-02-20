@@ -260,6 +260,14 @@
               return true;
             }, true);
           //this.maybeResize();
+
+          this._output.addEventListener(
+            "mouseup", function(event) {
+              if(!me._output._output.contentWindow.getSelection().toString()) {
+                event.stopPropagation();
+                me.focus();
+              }
+            }, false);
         ]]>
       </constructor>
 
