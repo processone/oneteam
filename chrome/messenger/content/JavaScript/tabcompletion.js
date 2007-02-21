@@ -215,7 +215,7 @@ _DECL_(ConferenceCompletionEngine, null, DataCompletionEngine).prototype =
             var bm = account.bookmarks.bookmarks;
             for (i = 0; i < bm.length; i++)
                 if (!bm[i].joined)
-                    yield (bm[i].jid.createFullJID(bm.bookmarkNick).longJID);
+                    yield (bm[i].jid.createFullJID(bm[i].bookmarkNick).longJID);
         }
     },
 
