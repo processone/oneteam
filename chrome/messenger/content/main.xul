@@ -109,10 +109,6 @@
         setAttribute("disabled", !activeItem.canSeeMe);
     }
 
-    function updateTitle()
-    {
-    }
-
     var setPresenceUpdater = {
       onPresenceChange: function() {
         this.chooser.value = account.currentPresence.show || "available";
