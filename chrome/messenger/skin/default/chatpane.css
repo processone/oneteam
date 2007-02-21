@@ -12,6 +12,10 @@ vbox {
   border: 1px solid #7e9cb8 !important;
 }
 
+#output, #output-pane {
+  -moz-user-focus: ignore;
+}
+
 #send {
   list-style-image: url(chatpane/send.png);
   -moz-binding: url(chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image);
