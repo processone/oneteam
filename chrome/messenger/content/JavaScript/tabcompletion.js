@@ -173,7 +173,9 @@ _DECL_(CompletionEngine).prototype =
                 this.lastMatch + control.value.substr(control.selectionEnd);
             control.setSelectionRange(lineStartIdx + this.lastMatch.length,
                                       lineStartIdx + this.lastMatch.length);
+            return true;
         }
+        return false;
     }
 }
 
