@@ -41,6 +41,9 @@
           <![CDATA[
             if (!this._msgs)
               return;
+
+            this._output.contentDocument.body.style.MozUserFocus = "ignore";
+
             var link = this._output.contentDocument.createElement("link");
 // #ifdef XULAPP
             link.setAttribute("href", "chrome://messenger/skin/chatpane-content.css");
@@ -232,8 +235,6 @@
           this._scrollSize = 0;
           this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 
-          this._firstFocus = true;
-
           this._input = document.getAnonymousElementByAttribute(this, "id", "input");
           this._inputClone = document.getAnonymousElementByAttribute(this, "id", "inputClone");
           this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
@@ -360,8 +361,7 @@
       <method name="focus">
         <body>
           <![CDATA[
-          window.setTimeout(function(a, b){b._firstFocus = false;a.focus()},
-            this._firstFocus ? 500 : 0, this._input, this);
+            setTimeout(function(el){el.focus()}, 100, this._input);
           ]]>
         </body>
       </method>

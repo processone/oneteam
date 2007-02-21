@@ -111,19 +111,6 @@
 
     function updateTitle()
     {
-      var pendingMessages = false, doc;
-      var panes = ChatPane.prototype._allPanes;
-      for (var i = 0; i < panes.length; i++)
-        if (panes[i].modified) {
-          pendingMessages = true;
-          break;
-        }
-// #ifdef XULAPP
-      doc = document;
-/* #else
-      doc = window.top.document;
-// #endif */
-      doc.title = doc.title.replace(/^(\* )?/, pendingMessages ? "* " : "");
     }
 
     var setPresenceUpdater = {
@@ -351,7 +338,7 @@
       vbox.setAttribute("flex", "1");
 
       var me = this;
-      this._msgs = [];
+      this._tasks = [];
 
       this.chatPane = document.createElement("chatpane");
       this.chatPane.setAttribute("flex", "1");
@@ -361,21 +348,12 @@
       vbox.appendChild(this.chatPane);
       this.tabpanel.appendChild(vbox)
 
-      this.chats = document.getElementById("chats");
-      this.chats._tabpanels.appendChild(this.tabpanel);
-      this.chats._tabs.appendChild(this.tab);
-
-      // XXX: TEAM-63 hack
-      if (!this.tab.previousSibling) {
-        this.tab.setAttribute("selected", "true");
-        this.tab.setAttribute("first-tab", "true");
-      }
+      this._addToTabbox();
 
       //this.chatPane.hasSubject = contact instanceof Conference;
 
-      this.__proto__._allPanes.push(this);
       this._resizeWindow(true);
-      this.focus();
+      this._unseenCount = 0;
     }
 
     _DECL_(ChatPane).prototype =
@@ -385,7 +363,118 @@
       _allPanes: [],
 
       closed: false,
-      modified: false,
+      _unseenCount: 0,
+
+      _addToTabbox: function()
+      {
+        var chats = document.getElementById("chats");
+        chats._tabpanels.appendChild(this.tabpanel);
+        chats._tabs.appendChild(this.tab);
+
+        // XXX: TEAM-63 hack
+        this.tab.setAttribute("last-tab", "true");
+        if (!this.tab.previousSibling)
+          this.tab.setAttribute("first-tab", "true");
+        else
+          this.tab.previousSibling.removeAttribute("last-tab");
+
+        this.__proto__._allPanes.push(this);
+
+        this.focus();
+      },
+
+      _removeFromTabbox: function()
+      {
+        var nextTab = this.tab.selected ? this.tab.nextSibling || this.tab.previousSibling :
+          this.tab.parentNode.selectedItem;
+
+        if (nextTab)
+          nextTab.controler.focus();
+
+        // XXX: TEAM-63 hack
+        if (this.tab.nextSibling) {
+          if (!this.tab.previousSibling)
+            this.tab.nextSibling.setAttribute("first-tab", "true");
+        } else if (this.tab.previousSibling)
+          this.tab.previousSibling.setAttribute("last-tab", "true");
+
+        this.tabpanel.parentNode.removeChild(this.tabpanel);
+        this.tab.parentNode.removeChild(this.tab);
+
+        this.__proto__._allPanes.splice(this.__proto__._allPanes.indexOf(this),1);
+
+        if (nextTab)
+          nextTab.controler.focus();
+      },
+
+      focus: function()
+      {
+        if (this.closed || this._inFocus)
+          return;
+
+        this._inFocus = true;
+
+        this.unseenCount = 0;
+
+        // XXX Hack, hack, hack
+        for (var i = 0; i < this.tab.parentNode.childNodes.length; i++)
+          if (this.tab.parentNode.childNodes[i] == this.tab) {
+            this.tab.parentNode.selectedIndex = i;
+            this.tabpanel.parentNode.selectedIndex = i;
+            break;
+          }
+
+        if (this._selectedTab && this.tab != this._selectedTab) {
+          this._selectedTab.removeAttribute("selected");
+          if (this._selectedTab.previousSibling)
+            this._selectedTab.previousSibling.removeAttribute("beforeselected");
+          if (this._selectedTab.nextSibling)
+            this._selectedTab.nextSibling.removeAttribute("afterselected");
+        }
+
+        this.__proto__._selectedTab = this.tab;
+
+        this.tab.setAttribute("selected", "true");
+        if (this.tab.previousSibling)
+          this.tab.previousSibling.setAttribute("beforeselected", "true")
+        if (this.tab.nextSibling)
+          this.tab.nextSibling.setAttribute("afterselected", "true")
+
+        this._execWhenChatpaneInitialized("focus");
+
+        delete this._inFocus;
+      },
+
+      get unseenCount()
+      {
+        return this._unseenCount;
+      },
+
+      set unseenCount(val)
+      {
+        if (val == this._unseenCount)
+          return val;
+
+        if (val)
+          this.tab.setAttribute("chatstate", "modified");
+        else
+          this.tab.removeAttribute("chatstate");
+
+        ChatPane.prototype._unseenCount += val - this._unseenCount;
+        this._unseenCount = val;
+
+  // #ifdef XULAPP
+        var doc = document;
+  /* #else
+        var doc = window.top.document;
+  // #endif */
+        var count = ChatPane.prototype._unseenCount;
+
+        doc.title = doc.title.replace(/^(?:\* |\[\d+\] )?/, count ? "" :
+                                      count == 1 ? "* " : "["+count+"] ");
+
+        return val;
+      },
 
       updateContact: function(contact)
       {
@@ -405,49 +494,20 @@
           panes[i].close();
       },
 
-      focus: function()
-      {
-        if (this.closed)
-          return;
-        this.chats.selectedTab = this.tab;
-        this.chatPane.focus();
-        this.tab.removeAttribute("chatstate");
-        this.modified = false;
-        updateTitle();
-      },
-
       close: function()
       {
         if (this.closed)
           return;
 
-        var nextTab = this.tab.selected ? this.tab.nextSibling || this.tab.previousSibling :
-          this.chats.selectedTab;
-
-        if (nextTab) {
-          nextTab.selected = false;
-          nextTab.controler.focus();
-          nextTab.selected = true;
-        }
-
-        this.tabpanel.parentNode.removeChild(this.tabpanel);
-        this.tab.parentNode.removeChild(this.tab);
+        this._removeFromTabbox();
+        this.tab = this.tabpanel = null;
         this.closed = true;
 
-        if (nextTab) {
-          nextTab.selected = false;
-          nextTab.controler.focus();
-          nextTab.selected = true;
-        }
-
-        if (this.contact instanceof Conference) {
+        if (this.contact instanceof Conference)
           this.contact.exitRoom();
-        }
 
-        this.__proto__._allPanes.splice(this.__proto__._allPanes.indexOf(this),1);
-        this.tab = this.tabpanel = this.chats = null;
         this._resizeWindow(false);
-        updateTitle();
+        this.unseenCount = 0;
       },
 
       _resizeWindow: function(paneAdded)
@@ -495,37 +555,33 @@
           this.contact instanceof Conference ? 1 : 0, authorId == "me" ? 0 : 1,
           body, from, time, this.threadId, this.contact.jid.shortJID);
 
-        if (this.chats.selectedTab != this.tab) {
-          this.tab.setAttribute("chatstate", "modified");
-          this.modified = true;
-        }
+        if (!this.tab.selected)
+          this.unseenCount++;
 
-        updateTitle();
+        this._execWhenChatpaneInitialized("addMessage", from, body, authorId, jid, time);
+      },
 
-        if (this.closed)
-          return;
-
-        try {
-          if (this._timeout)
-            throw 1;
-          this.chatPane.addMessage(from, body, authorId, jid, time);
-        } catch (ex) {
-          this._msgs.push(Array.slice(arguments));
-          if (!this._timeout)
-            this._timeout = setTimeout(function(a){a._addMessagesTimeout()}, 0, this);
+      _execWhenChatpaneInitialized: function(fun)
+      {
+        if (this.chatPane.addMessage)
+          this.chatPane[fun].apply(this.chatPane, Array.slice(arguments, 1));
+        else {
+          this._tasks.push([fun, Array.slice(arguments, 1)]);
+          if (!this._tasksTimeout)
+            this._tasksTimeout = window.setTimeout(this._execWhenChatpaneInitializedTimeout, 0, this);
         }
       },
 
-      _addMessagesTimeout: function()
+      _execWhenChatpaneInitializedTimeout: function(_this)
       {
-        try {
-          for (var i = 0; this._msgs && i < this._msgs.length; i++)
-            this.chatPane.addMessage.apply(this.chatPane, this._msgs[i]);
-          this._msgs = null;
-          this._timeout = null;
-        } catch (ex) {
-          setTimeout(function(a){a._addMessagesTimeout()}, 0, this);
-        }
+        if (_this.chatPane.addMessage) {
+          for (var i = 0; i < _this._tasks.length; i++) {
+            var task = _this._tasks[i];
+            _this.chatPane[task[0]].apply(_this.chatPane, task[1]);
+          }
+          delete _this._tasks;
+        } else
+          window.setTimeout(_this._execWhenChatpaneInitializedTimeout, 0, _this);
       }
     }
   ]]></script>
