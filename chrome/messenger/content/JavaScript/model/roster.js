@@ -543,7 +543,7 @@ _DECL_(Resource, null, Model, DiscoItem,
     get visibleName()
     {
         if (this.jid.resource)
-            return this.contact.visibleName + "("+this.jid.resource+")";
+            return this.contact.visibleName + " ("+this.jid.resource+")";
 
         return this.contact.visibleName;
     },
