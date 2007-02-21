@@ -464,10 +464,14 @@
   /* #else
         var doc = window.top.document;
   // #endif */
-        var count = ChatPane.prototype._unseenCount;
 
-        doc.title = doc.title.replace(/^(?:\* |\[\d+\] )?/, count ? "" :
-                                      count == 1 ? "* " : "["+count+"] ");
+        var count = this._unseenCount;
+        count = count == 0 ? "" : count == 1 ? "* " : "["+count+"] ";
+        this.tab.setAttribute("label", count + this.contact.visibleName);
+
+        count = ChatPane.prototype._unseenCount;
+        count = count == 0 ? "" : count == 1 ? "* " : "["+count+"] ";
+        doc.title = doc.title.replace(/^(?:\* |\[\d+\] )?/, count);
 
         return val;
       },
