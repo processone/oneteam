@@ -70,16 +70,18 @@
 
     function saveBookmarks()
     {
+      roomChange(list);
+
       window.opener.account.bookmarks.startBatchUpdate();
 
       for (var i = 0; i < removedItems.length; i++)
         removedItems[i].bookmark();
       for (i = 0; i < list.childNodes.length; i++) {
         var item = list.childNodes[i];
-        var conference = window.opener.
-          getOrCreateConference(item["val-room"]+"@"+item[i]["val-server"]);
+        var conference = window.opener.account.
+          getOrCreateConference(item["val-room"]+"@"+item["val-server"]);
 
-        conference.bookmark(item["val-name"], item["val-autoJoin"],
+        conference.bookmark(item["label"], item["val-autoJoin"],
                             item["val-nick"] || null, item["val-pass"] || null);
       }
       window.opener.account.bookmarks.stopBatchUpdate();
@@ -161,4 +163,3 @@
     </grid>
   </hbox>
 </dialog>
-
