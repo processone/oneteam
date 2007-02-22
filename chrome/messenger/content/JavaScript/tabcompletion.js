@@ -6,50 +6,64 @@ _DECL_(DataCompletionEngine).prototype =
 {
     ROLE_REQUIRES: ["_getDataIterator", "_formatData"],
 
+    _normalizeForComparision: function(data)
+    {
+        return data;
+    },
+
     complete: function(str, maybeCommand, commandArgument)
     {
-        var parts, strSplit;
+        var strNorm = this._normalizeForComparision(str);
 
         if (commandArgument)
             for (var data in this._getDataIterator()) {
                 var dataTmp = this._formatData(data, true, false, true)+" ";
-                if (str.indexOf(dataTmp) == 0) {
+                if (strNorm.indexOf(this._normalizeForComparision(dataTmp)) == 0) {
                     this.matches = [dataTmp];
                     return dataTmp.length;
                 }
 
                 dataTmp = this._formatData(data, true, false, false)+" ";
-                if (str.indexOf(dataTmp) == 0) {
+                if (strNorm.indexOf(this._normalizeForComparision(dataTmp)) == 0) {
                     this.matches = [dataTmp];
                     return dataTmp.length;
                 }
             }
 
-        str = str.replace(/\s+$/, "");
+        var parts, partsNorm, strSplit;
 
-        if (commandArgument || (strSplit = str.split(/(\s+)/)).length == 1)
+        str = str.replace(/\s+$/, "");
+        strNorm = strNorm.replace(/\s+$/, "");
+
+        if (commandArgument || (strSplit = str.split(/(\s+)/)).length == 1) {
             parts = [str];
-        else {
+            partsNorm = [strNorm]
+        } else {
             var lastPart = ""
             parts = [];
+            partsNorm = [];
 
             for (var i = strSplit.length-1; i >= 0; i-=2) {
                 parts.push(lastPart = strSplit[i] + lastPart);
+                partsNorm.push(this._normalizeForComparision(lastPart));
                 if (i > 0)
                     for (var j = strSplit[i-1].length-1; j >= 0; j--) {
                         lastPart = strSplit[i-1][j] + lastPart;
-                        if (j > 0)
+                        if (j > 0) {
                             parts.push(lastPart);
+                            partsNorm.push(this._normalizeForComparision(lastPart));
+                        }
                     }
             }
         }
 
         this.matches = [];
         for (var data in this._getDataIterator()) {
+            var dataNorm = this._normalizeForComparision(data);
             for (var i = parts.length-1; i >= 0; i--)
-                if (data.indexOf(parts[i]) == 0) {
-                    var pfx = str.substr(0, str.lastIndexOf(parts[i]));
-                    this.matches.push(str.substr(0, str.lastIndexOf(parts[i]))+
+                if (dataNorm.indexOf(partsNorm[i]) == 0) {
+                    var pfx = str.substr(0, strNorm.lastIndexOf(partsNorm[i]));
+                    this.matches.push(str.substr(0, strNorm.lastIndexOf(partsNorm[i]))+
                         this._formatData(data, commandArgument,
                                          i == parts.length-1, false));
                 }
@@ -248,5 +262,10 @@ _DECL_(NickCompletionEngine, null, DataCompletionEngine).prototype =
         } else if (fromLineStart)
             return data+":";
         return data;
+    },
+
+    _normalizeForComparision: function(data)
+    {
+        return data.toLowerCase();
     }
 }
