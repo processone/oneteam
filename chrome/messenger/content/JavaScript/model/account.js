@@ -45,104 +45,27 @@ _DECL_(Account, null, Model, DiscoItem,
 {
     bumpPriority: true,
 
-    getPresenceFor: function(contact)
-    {
-        var presence = this.currentPresence.profile ?
-            this.currentPresence.profile.getPresenceFor(contact) :
-            this.currentPresence;
-
-        return [presence.show, presence.status, presence.priority];
-    },
-
     setPresence: function(show, status, priority, profile, userSet)
     {
-        const defPrio = prefManager.getPref("chat.connection.priority");
+        // XXXpfx: invisibility by using privacy lists removed, will be
+        //  added again during rewriting presenceProfiles to use privacy lists.
 
-        var presence, newPresence;
-
-        if (show instanceof Object)
-            newPresence = show;
-        else
-            newPresence = {show: show, status: status, priority: priority,
-                           profile: profile};
-
-        if (!newPresence.profile) {
-            presence = new JSJaCPresence();
-            if (newPresence.show != "invisible") {
-                if (newPresence.show && newPresence.show != "available")
-                    presence.setShow(newPresence.show);
-                if (newPresence.status)
-                    presence.setStatus(newPresence.status);
-                presence.setPriority(ifnull(newPresence.priority, defPrio));
-            }
-
-            for (var i = 0; i < this._presenceObservers.length; i++)
-                if (newPresence.show == "invisible")
-                    this._presenceObservers[i]._sendPresence(null, null, null, "invisible");
-                else
-                    this._presenceObservers[i]._sendPresence(newPresence.show,
-                                                             newPresence.status,
-                                                             ifnull(newPresence.priority, defPrio));
-            var privacyIq = new JSJaCIQ();
-            privacyIq.setIQ(null, null, "set");
-            var privacyQuery = privacyIq.setQuery("jabber:iq:privacy");
-            var privacyActive = privacyQuery.appendChild(
-                privacyIq.getDoc().createElement("active"));
-
-            if (newPresence.show == "invisible") {
-                privacyActive.setAttribute("name", "oneteam-invisible");
-
-                con.send((new JSJaCPresence()).setType("unavailable"));
-                con.send(privacyIq);
-                con.send(new JSJaCPresence());
-            } else {
-                con.send(privacyIq);
-                con.send(presence);
-            }
+        var presence = show instanceof Object ? show :
+            new Presence(show, status, priority, profile);
 
 
-            this.currentPresence = newPresence;
-            if (userSet)
-                this.userPresence = newPresence;
-
-            this.modelUpdated("currentPresence");
-
-            return;
-        }
-
-        for (var c in this.contactsIterator()) {
-            if ((presence = profile.getPresenceFor(c))) {
-                if (profile != this.currentPresence.profile)
-                    if (presence.show == "invisible")
-                        c._sendPresence(null, null, null, "invisible");
-                    else
-                        c._sendPresence(presence.show, presence.status,
-                                        ifnull(presence.priority, defPrio));
-            } else if (newPresence.show == "invisible")
-                c._sendPresence(null, null, null, "invisible");
-            else
-                c._sendPresence(newPresence.show, newPresence.status,
-                                ifnull(newPresence.priority, defPrio));
-        }
+        if (!presence.profile)
+            con.send(presence.generatePacket());
+        else if (presence.profile != this.currentPresence.profile)
+            for (var c in this.contactsIterator())
+                c._sendPresence(presence)
 
         for (var i = 0; i < this._presenceObservers.length; i++)
-            if ((presence = profile.getPresenceFor(this._presenceObservers[i]))) {
-                if (profile != this.currentPresence.profile)
-                    if (presence.show == "invisible")
-                        this._presenceObservers[i]._sendPresence(null, null, null, "invisible");
-                    else
-                        this._presenceObservers[i].
-                            _sendPresence(presence.show, presence.status,
-                                          ifnull(presence.priority, defPrio));
-            } else if (newPresence.show == "invisible")
-                this._presenceObservers[i]._sendPresence(null, null, null, "invisible");
-            else
-                this._presenceObservers[i]._sendPresence(newPresence.show,
-                                                         newPresence.status,
-                                                         ifnull(newPresence.priority, defPrio));
-        this.currentPresence = newPresence;
+            this._presenceObservers[i]._sendPresence(presence);
+
+        this.currentPresence = presence;
         if (userSet)
-            this.userPresence = newPresence;
+            this.userPresence = presence;
 
         this.modelUpdated("currentPresence");
     },

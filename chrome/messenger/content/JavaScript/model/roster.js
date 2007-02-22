@@ -233,21 +233,10 @@ _DECL_(Contact, null, Model,
         return [jid, name, subscription, subscriptionAsk, groups, groupsHash];
     },
 
-    _sendPresence: function(show, status, priority, type)
+    _sendPresence: function(presence)
     {
-        var presence = new JSJaCPresence();
-        presence.setTo(this.jid);
-
-        if (show)
-            presence.setShow(show);
-        if (status)
-            presence.setStatus(status);
-        if (priority != null)
-            presence.setPriority(priority);
-        if (type)
-            presence.setType(type);
-
-        con.send(presence);
+        if (con)
+            con.send(presence.generatePacket(this));
     },
 
     groupsIterator: function(predicate, token)
@@ -312,19 +301,19 @@ _DECL_(Contact, null, Model,
     allowToSeeMe: function()
     {
         this._subscribed = true;
-        this._sendPresence(null, null, null, "subscribed");
+        this._sendPresence(new Presence("subscribed"));
     },
 
     disallowToSeeMe: function()
     {
-        this._sendPresence(null, null, null, "unsubscribed");
+        this._sendPresence(new Presence("unsubscribed"));
     },
 
     askForSubscription: function(reason)
     {
         // TODO use string bundle.
-        this._sendPresence(null, reason || "I would like to add you in my contacts list",
-                           null, "subscribe");
+        this._sendPresence(new Presence("subscribe",
+            reason || "I would like to add you in my contacts list"));
     },
 
     onRename: function(externalDialog)
@@ -536,7 +525,13 @@ _DECL_(Resource, null, Model, DiscoItem,
     _registered: false,
     show: "unavailable",
 
-    get interlocutorName() {
+    get representsMe()
+    {
+        return account.myJID == this.jid;
+    },
+
+    get interlocutorName()
+    {
         return account.myJID.node;
     },
 
@@ -662,4 +657,22 @@ _DECL_(Resource, null, Model, DiscoItem,
 
         return kt == kc ? 0 : kt > kc ? 1 : -1;
     }
+}
+
+
+function MyResource()
+{
+}
+
+_DECL_(MyResource).prototype =
+{
+    get jid() {
+        return account.myJID;
+    },
+
+    get visibleName() {
+        return account.myJID.node;
+    },
+
+    representsMe: true,
 }

@@ -1,3 +1,48 @@
+function Presence(show, status, priority, profile)
+{
+    this.show = show;
+    this.status = status;
+    this.priority = priority;
+    this.profile = profile;
+}
+
+_DECL_(Presence).prototype =
+{
+    generatePacket: function(contact)
+    {
+        var pkt = new JSJaCPresence();
+        if (contact)
+            pkt.setTo(contact.jid || contact);
+
+        var presence = (this.profile && contact &&
+                        this.profile.getPresenceFor(contact)) || this;
+
+        if (presence.show in {invisible: 1,  unavailable: 1, subscribe: 1,
+                              subscribed: 1, unsubscribe: 1, unsubscribed: 1})
+            pkt.setType(presence.show);
+        else {
+            if (presence.show && presence.show != "available")
+                pkt.setShow(presence.show);
+
+            pkt.setPriority(presence.priority == null ?
+                            prefManager.getPref("chat.connection.priority") :
+                            presence.priority);
+        }
+
+        if (presence.status)
+            pkt.setStatus(presence.status);
+
+        return pkt;
+    },
+
+    cmp: function(p)
+    {
+        const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, unavailable: 5};
+
+        return show2num[this.show||"available"] - show2num[p.show||"available"];
+    }
+}
+
 function PresenceProfiles()
 {
     this.init();
@@ -104,7 +149,7 @@ _DECL_(PresenceProfiles, null, Model).prototype =
                     map(function(v){return presenceTags[j].getAttribute(v)});
 
                 if (show != null || priority != null || status != null)
-                    presence.presence = {show: show, priority: priority, status: status};
+                    presence.presence = new Presence(show, status, priority);
 
                 presence.groups = Array.map(presenceTags[j].getElementsByTagName("group"),
                                             function(g){return g.textContent});
@@ -117,7 +162,7 @@ _DECL_(PresenceProfiles, null, Model).prototype =
         }
         this.profiles = profiles;
         this.modelUpdated("profiles", {added: profiles});
-    },
+    }
 }
 
 function PresenceProfile(name, presences)
@@ -170,11 +215,24 @@ _DECL_(PresenceProfile, null, Model).prototype =
 
     getPresenceFor: function(contact)
     {
-        if (contact.jid in this._jidsHash)
-            return this._jidsHash[contact.jid];
-        for (var i = 0; i < contact.groups.length; i++)
-           if (contact.groups[i] in this._groupsHash)
-               return this._groupsHash[contact.groups[i]];
+        var jid, groups;
+
+        if (!contact)
+            return this._defaultPresence;
+
+        if (typeof(contact) == "string" || contact instanceof JID) {
+            jid = contact;
+            groups = [];
+        } else {
+            jid = contact.jid;
+            groups = contact.groups;
+        }
+
+        if (jid in this._jidsHash)
+            return this._jidsHash[jid];
+        for (var i = 0; i < groups.length; i++)
+           if (groups[i] in this._groupsHash)
+               return this._groupsHash[groups[i]];
 
         return this._defaultPresence;
     },
@@ -183,4 +241,3 @@ _DECL_(PresenceProfile, null, Model).prototype =
     {
     }
 }
-

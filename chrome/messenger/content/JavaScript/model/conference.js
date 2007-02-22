@@ -22,31 +22,21 @@ _DECL_(Conference, Contact).prototype =
             this._myResourceJID;
     },
 
-    _sendPresence: function(show, status, priority, type)
+    _sendPresence: function(presence)
     {
         if (!con)
             return;
 
-        var presence = new JSJaCPresence();
-        presence.setTo(this.myResourceJID)
+        var pkt = presence.generatePacket(this.myResourceJID);
 
-        if (show)
-            presence.setShow(show);
-        if (status)
-            presence.setStatus(status);
-        if (priority != null)
-            presence.setPriority(priority);
-        if (type != null)
-            presence.setType(type);
-
-        var x = presence.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
-        presence.getNode().appendChild(x);
+        var x = pkt.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
+        pkt.getNode().appendChild(x);
 
         if (this._password)
-            x.appendChild(presence.getDoc().createElement("password")).
-                appendChild(presence.getDoc().createTextNode(this._password));
+            x.appendChild(pkt.getDoc().createElement("password")).
+                appendChild(pkt.getDoc().createTextNode(this._password));
 
-        con.send(presence);
+        con.send(pkt);
     },
 
     bookmark: function(bookmarkName, autoJoin, nick, password, internal)
@@ -87,13 +77,12 @@ _DECL_(Conference, Contact).prototype =
             account._presenceObservers.push(this);
         }
 
-        var [type, status, priority] = account.getPresenceFor(this);
-        this._sendPresence(type, status, priority);
+        this._sendPresence(account.currentPresence);
     },
 
-    exitRoom: function()
+    exitRoom: function(reason)
     {
-        this._sendPresence(null, null, null, "unavailable");
+        this._sendPresence(new Presence("unavailable", reason));
 
         if (this.chatPane)
             this.chatPane.close();
