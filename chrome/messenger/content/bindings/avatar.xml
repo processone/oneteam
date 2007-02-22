@@ -18,7 +18,7 @@
             hidden="true">
           <html:div>
             <html:img id="image" width="1" height="1" style="display: block"
-              onload="this.parentNode.parentNode.parentNode.parentNode.onImageLoad()"/>
+              onload="try{this.parentNode.parentNode.parentNode.parentNode.onImageLoad()}catch(ex){}"/>
           </html:div>
         </xul:vbox>
       </xul:hbox>
