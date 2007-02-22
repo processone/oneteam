@@ -53,7 +53,6 @@ _DECL_(Account, null, Model, DiscoItem,
         var presence = show instanceof Object ? show :
             new Presence(show, status, priority, profile);
 
-
         if (!presence.profile)
             con.send(presence.generatePacket());
         else if (presence.profile != this.currentPresence.profile)

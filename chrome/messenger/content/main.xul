@@ -555,7 +555,7 @@
           this.contact instanceof Conference ? 1 : 0, authorId == "me" ? 0 : 1,
           body, from, time, this.threadId, this.contact.jid.shortJID);
 
-        if (!this.tab.selected)
+        if (this._selectedTab != this.tab)
           this.unseenCount++;
 
         this._execWhenChatpaneInitialized("addMessage", from, body, authorId, jid, time);
@@ -563,7 +563,7 @@
 
       _execWhenChatpaneInitialized: function(fun)
       {
-        if (this.chatPane.addMessage)
+        if (this.chatPane.addMessage && this.chatPane._output.addMessage)
           this.chatPane[fun].apply(this.chatPane, Array.slice(arguments, 1));
         else {
           this._tasks.push([fun, Array.slice(arguments, 1)]);
@@ -574,14 +574,14 @@
 
       _execWhenChatpaneInitializedTimeout: function(_this)
       {
-        if (_this.chatPane.addMessage) {
+        if (_this.chatPane.addMessage && _this.chatPane._output.addMessage) {
           for (var i = 0; i < _this._tasks.length; i++) {
             var task = _this._tasks[i];
             _this.chatPane[task[0]].apply(_this.chatPane, task[1]);
           }
           delete _this._tasks;
         } else
-          window.setTimeout(_this._execWhenChatpaneInitializedTimeout, 0, _this);
+          window.setTimeout(_this._execWhenChatpaneInitializedTimeout, 10, _this);
       }
     }
   ]]></script>
