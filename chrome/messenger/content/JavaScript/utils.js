@@ -39,9 +39,9 @@ function ppFileSize(size)
 function openDialogUniq(type, url, flags)
 {
     var wmediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].
-        getService(Components.interfaces.nsIWindowMediator);    
+        getService(Components.interfaces.nsIWindowMediator);
     var win = wmediator.getMostRecentWindow(type);
-    
+
     if (!win) {
         var args = [url, "_blank"].concat(Array.slice(arguments, 2));
         return window.openDialog.apply(window, args);
@@ -74,7 +74,8 @@ function openDialogUniq(type, url, flags)
     var size = _sizes[url.replace(/.*\//, "")];
     if (size) {
         var size = "width="+size[0]+",height="+size[1];
-        flags = flags ? size : flags+", "+size
+        flags = flags ? size : flags+", "+size;
+        flags += ", resizable";
     }
     _wins[type] = window.open(url, type, flags);
     _wins[type].arguments = Array.slice(arguments, 3);
@@ -161,7 +162,7 @@ function generateUniqueId()
 }
 
 function report(to, level, info, context) {
-    
+
     // Alternative way to get the stack.
     // #ifdef XULAPP
     function getStackTrace() {
@@ -206,8 +207,8 @@ function report(to, level, info, context) {
         case "error":
             // XXX bard: not using instanceof as it would fail on
             // exceptions thrown in other toplevels
-            
-            if('name' in info && 'message' in info)  
+
+            if('name' in info && 'message' in info)
                 dump(exceptionToString(info, "E ") + '\n');
             else {
                 if(typeof(info) == 'string')
@@ -236,7 +237,7 @@ function report(to, level, info, context) {
             // #endif
             throw new Error("Error while trying to report error, unrecognized level: " + level);
         }
-   
+
         break;
     default:
         // #ifdef XULAPP
