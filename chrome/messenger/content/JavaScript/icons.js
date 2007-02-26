@@ -104,7 +104,7 @@ _DECL_(IconsRegistry, null, Model).prototype =
                 this.modelUpdated("iconStyles", {added: [set]},
                                   "statusIcons", {added: [set]});
         }
-    },
+    }
 }
 
 function IconStyle(url, iconDefData)
@@ -120,7 +120,7 @@ function IconStyle(url, iconDefData)
             name: author.text(),
             jid: author.@jid.toString(),
             email: author.@email.toString(),
-            www: author.@www.toString(),
+            www: author.@www.toString()
         });
 }
 
@@ -132,7 +132,7 @@ function SmilesIconStyle(url, iconDefData)
         "image/gif": 1,
         "image/png": 1,
         "image/jpeg": 1,
-        "image/bmp": 1,
+        "image/bmp": 1
     }
     this.icons = [];
     this.revMap = {};
@@ -148,7 +148,7 @@ function SmilesIconStyle(url, iconDefData)
         this.icons.push(img = {
             img: url+"/"+img.text(),
             cssStyle: "-ot-smile-"+(++SmilesIconStyle.prototype._id),
-            texts: [i.text().toString() for each (i in icon.text)],
+            texts: [i.text().toString() for each (i in icon.text)]
         });
 
         for each (var text in icon.text) {
@@ -188,7 +188,7 @@ _DECL_(SmilesIconStyle, IconStyle).prototype =
 
         var match, res = "", last = 0;
 
-        while (match = this.regExp.exec(str)) {
+        while ((match = this.regExp.exec(str))) {
             if (match.index != last && !/\s/.test(str[match.index-1]))
                 continue;
 
@@ -199,7 +199,7 @@ _DECL_(SmilesIconStyle, IconStyle).prototype =
             last = this.regExp.lastIndex;
         }
         return res + nextFilter(str.substring(last));
-    },
+    }
 }
 
 function StatusIconStyle(url, iconDefData)
@@ -210,7 +210,7 @@ function StatusIconStyle(url, iconDefData)
         "image/gif": 1,
         "image/png": 1,
         "image/jpeg": 1,
-        "image/bmp": 1,
+        "image/bmp": 1
     };
     var tmp, filters = [];
 
@@ -256,7 +256,7 @@ _DECL_(StatusIconStyle, IconStyle).prototype =
             if (!force && !(this.filter && this.filter(resource.contact)))
                 return null;
 
-            show = resource.show;
+            show = resource.presence.show;
             if (!(resource instanceof ConferenceMember)) {
                 if (!resource.contact.canSeeHim)
                     specialIcon = resource.contact.subscriptionAsk ?
@@ -275,5 +275,5 @@ _DECL_(StatusIconStyle, IconStyle).prototype =
             return this.iconsMap["status/offline"];
 
         return this.iconsMap["status/"+show];
-    },
+    }
 }
