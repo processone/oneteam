@@ -206,7 +206,7 @@ function ConferenceMemberView(model, parentView)
 
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onNameChange, "name");
-    this._bundle.register(this.model, this.onModelUpdated, "show");
+    this._bundle.register(this.model, this.onModelUpdated, "presence");
     this._bundle.register(this.model, this.onAffiliationChange, "affiliation");
     this._bundle.register(account.iconsRegistry, this.onModelUpdated, "defaultSet");
 }

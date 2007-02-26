@@ -1,8 +1,19 @@
 function Presence(show, status, priority, profile)
 {
-    this.show = show;
-    this.status = status;
-    this.priority = priority;
+    if (show instanceof JSJaCPresence) {
+        var pkt = show, type = show.getType();
+        if (type == "invisible" || type == "unavailable")
+            this.show = type;
+        else
+            this.show = pkt.getShow() || "available";
+
+        this.status = pkt.getStatus()
+        this.priority = pkt.getPriority();
+    } else {
+        this.show = show;
+        this.status = status;
+        this.priority = priority;
+    }
     this.profile = profile;
 }
 
@@ -37,7 +48,7 @@ _DECL_(Presence).prototype =
 
     cmp: function(p)
     {
-        const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, unavailable: 5};
+        const show2num = {chat: 5, available: 4, dnd: 3, away:2, xa: 1, unavailable: 0};
 
         return show2num[this.show||"available"] - show2num[p.show||"available"];
     }

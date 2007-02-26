@@ -13,10 +13,6 @@ function Conference(jid)
 
 _DECL_(Conference, Contact).prototype =
 {
-    get interlocutorName() {
-        return this.myResourceJID.resource;
-    },
-
     get myResourceJID() {
         return this.myResource ? this.myResource.jid :
             this._myResourceJID;
@@ -281,8 +277,8 @@ function ConferenceMember(jid)
 
 _DECL_(ConferenceMember, Resource).prototype =
 {
-    get interlocutorName() {
-        return this.contact.interlocutorName;
+    get representsMe() {
+        return this.contact.myResource == this;
     },
 
     visibleName: null,
@@ -358,18 +354,10 @@ _DECL_(ConferenceMember, Resource).prototype =
             if (!packet.getBody())
                 return;
 
-            var stamp = packet.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
-            if (stamp)
-                stamp = utcStringToDate(stamp.textContent);
-
-            if (!this._authorId)
-                this._authorId = this.contact.myResource == this ? "me" :
-                    "c-"+generateRandomName(10);
-
             if (!this.contact.chatPane || this.contact.chatPane.closed)
                 this.contact.onOpenChat();
-            this.contact.chatPane.addMessage(this.name, packet.getBody(),
-                                             this._authorId, packet.getFrom(), stamp);
+
+            this.contact.chatPane.addMessage(new Message(packet, null, this));
         } else
             Resource.prototype.onMessage.call(this, packet);
     },

@@ -118,7 +118,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
             return;
         ContainerView.prototype.destroy.call(this);
         this.containerNode.removeChild(this.node);
-    },
+    }
 }
 
 function ContactView(model, parentView)
@@ -172,7 +172,7 @@ _DECL_(ContactView).prototype =
             this._bundle.unregisterFromModel(this._activeResource);
 
         if (this.model.activeResource)
-            this._bundle.register(this.model.activeResource, this.onModelUpdated, "show");
+            this._bundle.register(this.model.activeResource, this.onModelUpdated, "presence");
 
         this.node.setAttribute("offlineContact", this.model.activeResource == null);
         this._activeResource = this.model.activeResource;
@@ -199,7 +199,7 @@ _DECL_(ContactView).prototype =
             this.node.parentNode.removeChild(this.node);
 
         this._bundle.unregister();
-    },
+    }
 }
 
 function ContactTooltip(model, parentView)
@@ -301,7 +301,7 @@ _DECL_(ContactTooltip).prototype =
             box.appendChild(icon);
             var label = document.createElement("label");
             label.setAttribute("class", "contact-tooltip-resource-name");
-            label.setAttribute("value", resource.jid.resource+" ("+resource.priority+")");
+            label.setAttribute("value", resource.jid.resource+" ("+resource.presence.priority+")");
             box.appendChild(label);
 
             var row = document.createElement("row");
@@ -310,7 +310,7 @@ _DECL_(ContactTooltip).prototype =
             label.setAttribute("value", "Status:");
             row.appendChild(label);
             label = document.createElement("label");
-            label.setAttribute("value", resource.show);
+            label.setAttribute("value", resource.presence.show);
             row.appendChild(label);
 
             if (resource.status) {
@@ -320,7 +320,7 @@ _DECL_(ContactTooltip).prototype =
                 label.setAttribute("value", "Status text:");
                 row.appendChild(label);
                 label = document.createElement("label");
-                label.setAttribute("value", resource.status);
+                label.setAttribute("value", resource.presence.status);
                 row.appendChild(label);
             }
         }
@@ -335,7 +335,7 @@ _DECL_(ContactTooltip).prototype =
     {
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
-    },
+    }
 }
 
 function PresenceProfilesView(node, checkbox)
@@ -422,6 +422,5 @@ _DECL_(PresenceProfileView).prototype =
             this.node.parentNode.removeChild(this.node);
 
         this.model.unregisterView(this._token);
-    },
+    }
 }
-

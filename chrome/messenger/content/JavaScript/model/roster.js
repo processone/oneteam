@@ -132,10 +132,6 @@ _DECL_(Contact, null, Model,
       return this.subscription == "both" || this.subscription == "to";
     },
 
-    get interlocutorName() {
-        return account.myJID.node;
-    },
-
     _updateRoster: function(callback)
     {
         var iq = new JSJaCIQ();
@@ -270,12 +266,7 @@ _DECL_(Contact, null, Model,
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
 
-        var stamp = packet.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
-        if (stamp)
-            stamp = utcStringToDate(stamp.textContent);
-
-        this.chatPane.addMessage(this.visibleName, packet.getBody(), "you",
-                                 packet.getFrom(), stamp);
+        this.chatPane.addMessage(new Message(packet, null, this));
     },
 
     subscribe: function(reason)
@@ -359,6 +350,8 @@ _DECL_(Contact, null, Model,
             this.chatPane = new ChatPane(this);
         else
             this.chatPane.focus();
+
+        return this.chatPane;
     },
 
     createResource: function(jid)
@@ -491,17 +484,19 @@ _DECL_(Contact, null, Model,
 
     cmp: function(c)
     {
-        const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
+        var res;
 
-        var kt = show2num[this.activeResource ? this.activeResource.show : "offline"];
-        var kc = show2num[c.activeResource ? c.activeResource.show : "offline"];
+        if (this.activeResource)
+            if (c.activeResource) {
+                if ((res = this.activeResource.cmp(c.activeResource)))
+                    return res;
+            } else
+                return 1;
+        else if (c.activeResource)
+            return -1;
 
-        if (kt == kc) {
-            kt = this.visibleName;
-            kc = c.visibleName;
-        }
-
-        return kt == kc ? 0 : kt > kc ? 1 : -1;
+        return this.visibleName == c.visibleName ? 0 :
+            this.visibleName > c.visibleName ? 1 : -1;
     }
 }
 
@@ -523,17 +518,8 @@ _DECL_(Resource, null, Model, DiscoItem,
        })).prototype =
 {
     _registered: false,
-    show: "unavailable",
-
-    get representsMe()
-    {
-        return account.myJID == this.jid;
-    },
-
-    get interlocutorName()
-    {
-        return account.myJID.node;
-    },
+    presence: new Presence("unavailable"),
+    representsMe: false,
 
     get visibleName()
     {
@@ -549,6 +535,8 @@ _DECL_(Resource, null, Model, DiscoItem,
             this.chatPane = new ChatPane(this);
         else
             this.chatPane.focus();
+
+        return this.chatPane;
     },
 
     onPresence: function(packet, dontNotifyViews)
@@ -566,36 +554,31 @@ _DECL_(Resource, null, Model, DiscoItem,
             }
         }
 
-        var flags, oldState = { show: this.show, priority: this.priority,
-            status: this.status};
+        var oldPresence = this.presence;
+        this.presence = new Presence(packet);
+        var cmp = this.presence.cmp(oldPresence)
 
-        this.show = packet.getShow() || "available";
-        this.priority = packet.getPriority();
-        this.status = packet.getStatus();
-
-        if (packet.getType() == "unavailable") {
+        if (packet.getType() == "unavailable")
             this._remove();
-            this.show = "unavailable";
-        } else if (!this._registered)
+        else if (!this._registered)
             this.contact._onResourceAdded(this);
 
         this.contact._onResourceUpdated(this);
 
         var avatarHash = packet.getNode().
             getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
-        if (avatarHash)
+        if (this.presence.show != "unavailable" && avatarHash)
             this.contact.onAvatarChange(avatarHash.textContent);
 
-        if (this._registered)
-            flags = dontNotifyViews ? this._calcModificationFlags(oldState) :
-                this._modelUpdatedCheck(oldState);
+        if (this._registered && !dontNotifyViews && cmp)
+            this.modelUpdated("presence");
 
-        account.notificationScheme.show("resource", this.show,
-                                        this, oldState.show);
+        account.notificationScheme.show("resource", this.presence.show,
+                                        this, oldPresence.show);
 
         this._registered = true;
 
-        return flags;
+        return cmp ? [] : ["presence"];
     },
 
     _remove: function()
@@ -617,25 +600,16 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     onMessage: function(packet)
     {
-        var chatPane;
-
         if (packet.getType() == "error" || !packet.getBody())
             return;
-        chatPane = this.chatPane && !this.chatPane.closed ? this.chatPane :
-            this.contact.chatPane && !this.contact.chatPane.closed ? this.contact.chatPane :
-            null;
 
-        if (!chatPane) {
-            this.onOpenChat();
-            chatPane = this.chatPane;
-        }
+        var chatPane = this.chatPane && !this.chatPane.closed ?
+            this.chatPane :
+            this.contact.chatPane && !this.contact.chatPane.closed ?
+                this.contact.chatPane :
+                this.onOpenChat();
 
-        var stamp = packet.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
-        if (stamp)
-            stamp = utcStringToDate(stamp.textContent);
-
-        chatPane.addMessage(this.visibleName, packet.getBody(), "you",
-                                 packet.getFrom(), stamp);
+        chatPane.addMessage(new Message(packet, null, this));
     },
 
     createCompletionEngine: function()
@@ -645,17 +619,8 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     cmp: function(c)
     {
-        const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4, offline: 5};
-
-        var kt = this.priority;
-        var kc = c.priority;
-
-        if (kt == kc) {
-            kt = show2num[this.show];
-            kc = show2num[c.show];
-        }
-
-        return kt == kc ? 0 : kt > kc ? 1 : -1;
+        return this.priority == c.priority ? this.presence.cmp(c) :
+            this.priority - c.priority;
     }
 }
 
@@ -666,6 +631,10 @@ function MyResource()
 
 _DECL_(MyResource).prototype =
 {
+    get presence() {
+        return account.currentPresence;
+    },
+
     get jid() {
         return account.myJID;
     },

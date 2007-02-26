@@ -543,22 +543,21 @@
         var body = this.chatPane.content.replace(/\n$/, "");
 
         if (!(this.contact instanceof Conference))
-          this.addMessage(this.contact.interlocutorName, body,
-            "me", this.contact.jid);
+          this.addMessage(new Message(body, null, account.myResource, 0));
 
         this.contact.sendMessage(body);
       },
 
-      addMessage: function(from, body, authorId, jid, time)
+      addMessage: function(msg)
       {
-        this.threadId = account.historyMgr.addMessage(jid,
-          this.contact instanceof Conference ? 1 : 0, authorId == "me" ? 0 : 1,
-          body, from, time, this.threadId, this.contact.jid.shortJID);
+        if (!this._msgThread)
+          this._msgThread = new MessageThread();
+        msg.thread = this._msgThread;
 
         if (this._selectedTab != this.tab)
           this.unseenCount++;
 
-        this._execWhenChatpaneInitialized("addMessage", from, body, authorId, jid, time);
+        this._execWhenChatpaneInitialized("addMessage", msg);
       },
 
       _execWhenChatpaneInitialized: function(fun)

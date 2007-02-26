@@ -25,7 +25,7 @@
 /* #else
           this._output.addEventListener("load", function(){me._onLoad()}, false);
 // #endif */
-          this.colorMap = {me: 0};
+          this.colorMap = {0: 0};
           this.colorIndex = 1;
           this.colorTable = [
             "#ff0000", "#6978a3",
@@ -74,6 +74,9 @@
                   .messageChunk[color-id="{i}"] .header {"{"}
                       background-color: {base}
                   }
+                  .messageChunk[color-id="{i}"] .meMessage {"{"}
+                      color: {base}
+                  }
                 </style>;
             }
 
@@ -93,7 +96,7 @@
             var msgs = this._msgs;
             this._msgs = null;
             for (var i = 0; i < msgs.length; i++)
-              this.addMessage.apply(this, msgs[i]);
+              this.addMessage(msgs[i]);
           ]]>
         </body>
       </method>
@@ -114,15 +117,11 @@
       </method>
 
       <method name="addMessage">
-        <parameter name="from"/>
-        <parameter name="body"/>
-        <parameter name="authorId"/>
-        <parameter name="jid"/>
-        <parameter name="timeStamp"/>
+        <parameter name="message"/>
         <body>
           <![CDATA[
             if (this._msgs) {
-              this._msgs.push([from, body, authorId, jid, timeStamp]);
+              this._msgs.push(message);
               return;
             }
 
@@ -133,23 +132,23 @@
               doc.body.appendChild(this._content);
             }
 
-            if (!this._mc || this._authorId != authorId) {
-              this._mc = mc = doc.createElement("div");
-              this._authorId = authorId;
-              if (!(authorId in this.colorMap)) {
-                this.colorMap[authorId] = this.colorIndex;
+            if (!this._mc || this._lastContactId != message.contactId) {
+              this._mc = doc.createElement("div");
+              this._lastContactId = message.contactId;
+
+              if (!(message.contactId in this.colorMap)) {
+                this.colorMap[message.contactId] = this.colorIndex;
                 this.colorIndex = this.colorIndex%(this.colorTable.length-1) + 1;
               }
-              mc.setAttribute("class", "messageChunk");
-              mc.setAttribute("author-id", authorId);
-              mc.setAttribute("color-id", this.colorMap[authorId]);
-              this._content.appendChild(mc)
-            } else
-              mc = this._mc;
+              this._mc.setAttribute("class", "messageChunk");
+              this._mc.setAttribute("author-id", message.contactId);
+              this._mc.setAttribute("color-id", this.colorMap[message.contactId]);
+              this._content.appendChild(this._mc)
+            }
 
             var m = doc.createElement("div");
             m.setAttribute("class", "message");
-            mc.appendChild(m);
+            this._mc.appendChild(m);
 
             var h = doc.createElement("div");
             h.setAttribute("class", "header");
@@ -157,18 +156,17 @@
 
             var e = doc.createElement("div");
             e.setAttribute("class", "author");
-            e.appendChild(doc.createTextNode(from));
+            e.appendChild(doc.createTextNode(message.nick));
             h.appendChild(e);
 
             var e = doc.createElement("div");
             e.setAttribute("class", "date");
-            e.appendChild(doc.createTextNode(readableTimestamp(timeStamp||new Date())));
+            e.appendChild(doc.createTextNode(readableTimestamp(message.time)));
             h.appendChild(e);
 
             var e = doc.createElement("div");
-            e.setAttribute("class", "body");
-            var message = new Message(body);
-            e.innerHTML = message.asHtml;
+            e.setAttribute("class", "body "+message.classes);
+            e.innerHTML = message.formatedHtml;
             m.appendChild(e);
 
             m.scrollIntoView(true);
@@ -181,7 +179,7 @@
           <![CDATA[
             if (this._content)
               this._content.parentNode.removeChild(this._content);
-            this._mc = this._authorId = null;
+            this._mc = this._lastContactId = null;
             this._content = null;
           ]]>
         </body>

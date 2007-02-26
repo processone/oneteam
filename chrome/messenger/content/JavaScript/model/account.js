@@ -28,6 +28,7 @@ function Account()
 
     this.connectionInfo = {};
     this.notificationScheme = new NotificationScheme();
+    this.myResource = new MyResource();
 
     prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
                                        "chat.connection", true);
