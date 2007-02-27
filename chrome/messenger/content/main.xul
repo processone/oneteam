@@ -768,11 +768,11 @@
         <vbox width="250">
         // #endif -->
           <hbox id="setPresence-box">
-            <vbox pack="start">
-              <image id="setPresence-type-image"/>
-            </vbox>
             <vbox flex="1">
-              <label id="setPresence-nick"/>
+              <hbox align="center">
+                <image id="setPresence-type-image"/>
+                <label id="setPresence-nick"/>
+              </hbox>
               <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
                 <menupopup>
                   <menuitem id="setPresence-type-available" label="&status.Available;"

@@ -146,7 +146,11 @@ function ContactView(model, parentView)
     this.node.model = this.model;
     this.node.view = this;
 
-    this.node.appendChild(this.statusIcon);
+    var box = document.createElement("vbox");
+    box.setAttribute("pack", "center");
+    box.appendChild(this.statusIcon);
+
+    this.node.appendChild(box);
     this.node.appendChild(this.label);
     this.node.appendChild(avatar);
 
@@ -211,6 +215,7 @@ function ContactTooltip(model, parentView)
     this.avatar = document.createElement("image");
     this.name = document.createElement("label");
     this.subscription = document.createElement("label");
+    this.resourcesLabel = document.createElement("label");
 
     this.id = generateUniqueId();
 
@@ -218,6 +223,8 @@ function ContactTooltip(model, parentView)
     this.node.setAttribute("id", this.id);
     this.node.setAttribute("class", "contact-tooltip");
     this.name.setAttribute("class", "contact-tooltip-name");
+
+    this.resourcesLabel.setAttribute("value", "Resources:");
 
     var box = document.createElement("hbox");
     box.setAttribute("flex", "1");
@@ -255,6 +262,8 @@ function ContactTooltip(model, parentView)
     label.setAttribute("value", "Subscription:");
     row.appendChild(label);
     row.appendChild(this.subscription);
+
+    rows.appendChild(this.resourcesLabel);
 
     grid = document.createElement("grid");
     grid.setAttribute("class", "contact-tooltip-resources-grid");
@@ -313,7 +322,7 @@ _DECL_(ContactTooltip).prototype =
             label.setAttribute("value", resource.presence.show);
             row.appendChild(label);
 
-            if (resource.status) {
+            if (resource.presence.status) {
                 var row = document.createElement("row");
                 this.resourcesContainer.appendChild(row);
                 label = document.createElement("label");
