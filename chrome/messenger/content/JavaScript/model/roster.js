@@ -549,13 +549,13 @@ _DECL_(Resource, null, Model, DiscoItem,
                 if (text)
                     openDialogUniq("ot:error", "chrome://messenger/content/error.xul",
                                    "chrome,modal", text.textContent);
-                return 0;
+                return [];
             }
         }
 
         var oldPresence = this.presence;
         this.presence = new Presence(packet);
-        var cmp = this.presence.cmp(oldPresence)
+        var equal = this.presence.equal(oldPresence)
 
         if (packet.getType() == "unavailable")
             this._remove();
@@ -569,26 +569,16 @@ _DECL_(Resource, null, Model, DiscoItem,
         if (this.presence.show != "unavailable" && avatarHash)
             this.contact.onAvatarChange(avatarHash.textContent);
 
-        if (this._registered && !dontNotifyViews && cmp)
+        if (this._registered && !dontNotifyViews && !equal)
             this.modelUpdated("presence");
 
-        account.notificationScheme.show("resource", this.presence.show,
-                                        this, oldPresence.show);
+        if (!equal)
+            account.notificationScheme.show("resource", this.presence.show,
+                                            this, oldPresence.show);
 
         this._registered = true;
 
-        if (!cmp) {
-            var chatPane = this.chatPane && !this.chatPane.closed ?
-                this.chatPane :
-                    this.contact.chatPane && !this.contact.chatPane.closed ?
-                        this.contact.chatPane : null;
-            if (chatPane)
-                chatPane.addMessage(new Message(
-                    this.visibleName+" change status to "+this.presence.show+
-                        (this.presence.status ? "("+this.presence.status+")":"")));
-        }
-
-        return cmp ? [] : ["presence"];
+        return equal ? [] : ["presence"];
     },
 
     _remove: function()
@@ -640,6 +630,8 @@ function MyResource()
 
 _DECL_(MyResource).prototype =
 {
+    representsMe: true,
+
     get presence() {
         return account.currentPresence;
     },
@@ -650,7 +642,5 @@ _DECL_(MyResource).prototype =
 
     get visibleName() {
         return account.myJID.node;
-    },
-
-    representsMe: true,
+    }
 }

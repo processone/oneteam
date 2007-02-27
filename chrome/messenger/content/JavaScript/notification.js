@@ -1,4 +1,3 @@
-// #ifdef XULAPP
 function NotificationScheme()
 {
     this._top = Infinity;
@@ -9,16 +8,47 @@ _DECL_(NotificationScheme).prototype =
 {
     show: function(kind, type, model, extra)
     {
-        var msg;
+        var msg, chatMsg, mucMsg;
         if (kind == "resource") {
-            if (type != "unavailable" && extra == "unavailable")
+            if (type != "unavailable" && extra == "unavailable") {
                 msg = "<b>"+model.visibleName+"</b> signed in";
-            if (type == "unavailable" && extra != "unavailable")
+                chatMsg = model.visibleName+" is now "+model.presence.show+
+                    (model.presence.status ? " ("+model.presence.status+")":"");
+
+                if (model instanceof ConferenceMember)
+                    mucMsg = model.jid.resource + (model.realJID ? " ("+model.realJID+")" : "")+
+                        " has joined this room";
+            } if (type == "unavailable" && extra != "unavailable") {
                 msg = "<b>"+model.visibleName+"</b> signed out";
+                chatMsg = model.visibleName+" is now offline"+
+                    (model.presence.status ? " ("+model.presence.status+")":"");
+
+                if (model instanceof ConferenceMember)
+                    mucMsg = model.jid.resource + (model.realJID ? " ("+model.realJID+")" : "")+
+                        " has left this room";
+            }
+
+            if (mucMsg && model.contact.myResource != model &&
+                    model.contact.chatPane && !model.contact.chatPane.closed)
+                model.contact.chatPane.addMessage(new Message(mucMsg, null, model, 4));
+
+            var chatPanes = [model.chatPane, model instanceof ConferenceMember ?
+                             null : model.contact.chatPane], msgObj;
+
+            for each (var chatPane in chatPanes) {
+                if (!chatPane || chatPane.closed)
+                    continue;
+                if (!msgObj)
+                    msgObj = new Message(chatMsg || (model.visibleName+
+                                " changed status to "+model.presence.show+
+                                (model.presence.status ? " ("+model.presence.status+")":"")),
+                        null, this, 4);
+
+                chatPane.addMessage(msgObj);
+            }
 
             if (msg)
                 this._showAlert(this, msg, null, "contact", model.contact || model);
-            
         } else if (kind == "subscription") {
             msg = "<b>"+model.visibleName+"</b> ";
             msg += type == "subscribed" ? "authorised you to see his/her status" :
@@ -27,6 +57,7 @@ _DECL_(NotificationScheme).prototype =
         }
     },
 
+// #ifdef XULAPP
     _showAlert: function(msg, clickHandler, type, extra, extra2)
     {
         if (this._top < 150 || this._wins.length > 8)
@@ -61,18 +92,10 @@ _DECL_(NotificationScheme).prototype =
             this._top -= win.outerHeight + 1;
             win.moveTo(_left - win.outerWidth, this._top);
         }
-    },
-}
+    }
 /* #else
-function NotificationScheme()
-{
-}
-
-_DECL_(NotificationScheme).prototype =
-{
-    show: function(kind, type, model, extra)
+    _showAlert: function(msg, clickHandler, type, extra, extra2)
     {
-    },
-}
+    }
 // #endif */
-
+}

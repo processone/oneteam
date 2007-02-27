@@ -5,8 +5,9 @@ body {
 }
 
 .systemMessage {
-    margin: 9px;
+    margin: 2px 8px;
     color: #081;
+    font-style: italic;
 }
 
 .messageChunk {

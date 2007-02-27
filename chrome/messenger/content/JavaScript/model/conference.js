@@ -291,6 +291,10 @@ _DECL_(ConferenceMember, Resource).prototype =
         if (pkt.getType() == "error")
             return;
 
+        if ((!this.contact.chatPane || this.contact.chatPane.closed) &&
+                pkt.getType() != "unavailable")
+            this.contact.onOpenChat();
+
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
 
@@ -313,8 +317,6 @@ _DECL_(ConferenceMember, Resource).prototype =
             return;
         }
 
-        Resource.prototype.onPresence.call(this, pkt);
-
         if (x) {
             if (item) {
                 var oldState = {affiliation: this.affiliation, role: this.role,
@@ -327,6 +329,8 @@ _DECL_(ConferenceMember, Resource).prototype =
                 this._modelUpdatedCheck(oldState);
             }
         }
+
+        Resource.prototype.onPresence.call(this, pkt);
     },
 
     onMessage: function(packet)

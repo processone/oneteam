@@ -18,7 +18,7 @@
   buttonlabelaccept="Join" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
   onunload="cleanup()" ondialogaccept="return joinRoom()" onload="onLoad()">
-        
+
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];
     var autoJoin = window.arguments[1];
@@ -69,20 +69,18 @@
           return false;
         }
 
-        if (bookmark.checked && !conference && 
+        if (bookmark.checked && !conference &&
             window.opener.account.bookmarks.getBookmarkByName(bookmarkName.value))
         {
           alert("Bookmark with that name already exists");
           return false;
-        } 
+        }
 
         conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value);
       }
 
-      try {
       if (bookmark.checked)
         conf.bookmark(bookmarkName.value, false, nick.value, password.value);
-        }catch(ex){alert(ex)}
 
       progressmeter.style.visibility = "visible";
       conf.joinRoom(joinRoomResponse, nick.value, password.value);
@@ -114,7 +112,6 @@
         alert(msg || "Joining that room failed");
         return;
       }
-      conf.onOpenChat();
       conf = null;
       window.close();
     }
@@ -165,5 +162,3 @@
 
   <spacer/>
 </dialog>
-
-

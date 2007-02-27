@@ -554,7 +554,7 @@
           this._msgThread = new MessageThread();
         msg.thread = this._msgThread;
 
-        if (this._selectedTab != this.tab)
+        if (this._selectedTab != this.tab && !msg.isSystemMessage)
           this.unseenCount++;
 
         this._execWhenChatpaneInitialized("addMessage", msg);
