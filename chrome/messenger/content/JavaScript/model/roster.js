@@ -132,6 +132,11 @@ _DECL_(Contact, null, Model,
       return this.subscription == "both" || this.subscription == "to";
     },
 
+    get presence() {
+        return this.activeResource ? this.activeResource.presence :
+            new Presence("unavailable");
+    },
+
     _updateRoster: function(callback)
     {
         var iq = new JSJaCIQ();
@@ -484,16 +489,10 @@ _DECL_(Contact, null, Model,
 
     cmp: function(c)
     {
-        var res;
+        var res = this.presence.cmp(c.presence);
 
-        if (this.activeResource)
-            if (c.activeResource) {
-                if ((res = this.activeResource.cmp(c.activeResource)))
-                    return res;
-            } else
-                return 1;
-        else if (c.activeResource)
-            return -1;
+        if (res)
+            return res;
 
         return this.visibleName == c.visibleName ? 0 :
             this.visibleName > c.visibleName ? 1 : -1;
@@ -630,8 +629,7 @@ _DECL_(Resource, null, Model, DiscoItem,
 
     cmp: function(c)
     {
-        return this.priority == c.priority ? this.presence.cmp(c) :
-            this.priority - c.priority;
+        return this.presence.cmp(c.presence, true);
     }
 }
 

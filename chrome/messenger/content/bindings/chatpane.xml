@@ -88,8 +88,8 @@
 
             this._output.contentDocument.body.className = "smiles-enabled";
 
-            for (var i = 0; i < account.iconsRegistry.smiles.length; i++)
-              account.iconsRegistry.smiles[i].attachStyles(this._output.contentDocument);
+            for (var i = 0; i < account.style.smiles.length; i++)
+              account.style.smiles[i].attachStyles(this._output.contentDocument);
 
             this._output.contentDocument.addEventListener("click", this._onClick, true)
 
@@ -130,6 +130,20 @@
             if (!this._content) {
               this._content = doc.createElement("div");
               doc.body.appendChild(this._content);
+            }
+
+            if (message.isSystemMessage) {
+              var m = doc.createElement("div");
+
+              m.setAttribute("class", "systemMessage");
+              m.innerHTML = message.formatedHtml;
+              this._content.appendChild(m);
+
+              m.scrollIntoView(true);
+
+              this._mc = this._lastContactId = null;
+
+              return;
             }
 
             if (!this._mc || this._lastContactId != message.contactId) {

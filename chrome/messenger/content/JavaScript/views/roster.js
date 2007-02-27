@@ -185,8 +185,11 @@ _DECL_(ContactView).prototype =
 
     onModelUpdated: function()
     {
-        this.statusIcon.setAttribute("src", account.style.getStatusIcon(
-            this.model.activeResource || "unavailable"));
+        this.statusIcon.setAttribute("src", account.style.
+            getStatusIcon(this.model.activeResource || "unavailable"));
+        this.label.setAttribute("style", "color: "+account.style.
+            getStatusColor(this.model.activeResource || "unavailable"))
+
         this.parentView.onItemUpdated(this);
     },
 
@@ -265,20 +268,9 @@ function ContactTooltip(model, parentView)
 
     rows.appendChild(this.resourcesLabel);
 
-    grid = document.createElement("grid");
-    grid.setAttribute("class", "contact-tooltip-resources-grid");
+    grid = this.resourcesContainer = document.createElement("vbox");
+    grid.setAttribute("class", "contact-tooltip-resources");
     rows.appendChild(grid);
-
-    cols = document.createElement("columns");
-    grid.appendChild(cols);
-    col = document.createElement("column");
-    cols.appendChild(col);
-    col = document.createElement("column");
-    col.setAttribute("flex", "1");
-    cols.appendChild(col);
-
-    this.resourcesContainer = document.createElement("rows");
-    grid.appendChild(this.resourcesContainer);
 
     this.node.model = this.model;
     this.node.view = this;
@@ -305,34 +297,34 @@ _DECL_(ContactTooltip).prototype =
             var box = document.createElement("hbox");
             box.setAttribute("align", "center");
             this.resourcesContainer.appendChild(box);
+
             var icon = document.createElement("image");
             icon.setAttribute("src", account.style.getStatusIcon(resource));
             box.appendChild(icon);
+
             var label = document.createElement("label");
             label.setAttribute("class", "contact-tooltip-resource-name");
             label.setAttribute("value", resource.jid.resource+" ("+resource.presence.priority+")");
             box.appendChild(label);
 
-            var row = document.createElement("row");
-            this.resourcesContainer.appendChild(row);
             label = document.createElement("label");
-            label.setAttribute("value", "Status:");
-            row.appendChild(label);
+            label.setAttribute("value", "-");
+            box.appendChild(label);
+
             label = document.createElement("label");
             label.setAttribute("value", resource.presence.show);
-            row.appendChild(label);
+            label.setAttribute("class", "contact-tooltip-resource-show");
+            label.setAttribute("style", "color: "+account.style.getStatusColor(resource));
+            box.appendChild(label);
 
             if (resource.presence.status) {
-                var row = document.createElement("row");
-                this.resourcesContainer.appendChild(row);
-                label = document.createElement("label");
-                label.setAttribute("value", "Status text:");
-                row.appendChild(label);
-                label = document.createElement("label");
-                label.setAttribute("value", resource.presence.status);
-                row.appendChild(label);
+                label = document.createElement("description");
+                label.setAttribute("class", "contact-tooltip-resource-status");
+                this.resourcesContainer.appendChild(label);
+                label.appendChild(document.createTextNode(resource.presence.status));
             }
         }
+        this.resourcesLabel.setAttribute("hidden", firstResource);
     },
 
     show: function(rootNode, insertBefore)

@@ -56,6 +56,26 @@ _DECL_(StylesRegistry, null, Model).prototype =
         return this.defaultSet.getStatusIcon(contact, true);
     },
 
+    getStatusColor: function(presence)
+    {
+        const colorCodes = {
+            chat: "#E83",
+            available: "#0C4",
+            away: "#00C",
+            dnd: "#00C",
+            xa : "#00C",
+            unavailable: "#C00"
+        };
+
+        if (presence instanceof Resource)
+            presence = presence.presence;
+
+        if (typeof(presence) == "object")
+            presence = presence.show;
+
+        return colorCodes[presence] || colorCodes["available"];
+    },
+
     processSmiles: function(str, nextFilter)
     {
         return this.defaultSmilesSet.processSmiles(str, nextFilter);

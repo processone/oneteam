@@ -46,9 +46,20 @@ _DECL_(Presence).prototype =
         return pkt;
     },
 
-    cmp: function(p)
+    equal: function(p)
     {
-        const show2num = {chat: 5, available: 4, dnd: 3, away:2, xa: 1, unavailable: 0};
+        return this.show == p.show && this.status == p.status &&
+            this.priority == p.priority && this.profile == p.profile;
+    },
+
+    cmp: function(p, comparePriority)
+    {
+        const show2num = {chat: 0, available: 1, dnd: 2, away:3, xa: 4,
+                          unavailable: 5};
+
+        if (comparePriority)
+            if (this.priority != p.priority)
+                return this.priority - p.priority;
 
         return show2num[this.show||"available"] - show2num[p.show||"available"];
     }

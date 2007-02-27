@@ -22,11 +22,17 @@
   color: #aaa;
 }
 
-.contact-tooltip-name, contact-tooltip-resource-name {
+.contact-tooltip-name, .contact-tooltip-resource-name {
     font-weight: bold;
 }
 
-.contact-tooltip-resources-grid {
+.contact-tooltip-resource-status {
+  margin-left: 0;
+  padding-left: 0;
+  font-style: italic;
+}
+
+.contact-tooltip-resources {
     margin-left: 1em;
 }
 
@@ -143,4 +149,3 @@ richlistbox {
   padding: 3px;
   text-align: center;
 }
-

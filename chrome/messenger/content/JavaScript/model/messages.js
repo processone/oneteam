@@ -32,8 +32,8 @@ function Message(body, body_html, contact, type, time, thread)
         this.text = body.getBody();
         var stamp = body.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
         this.time = stamp ? utcStringToDate(stamp.textContent) : new Date();
-        if (body.getType() == "groupchat")
-            type = (type||0) | 1;
+        type = (type&~3) | ({normal: 0, groupchat: 1, headline: 2,
+                             chat: 3}[body.getType()] || 0);
     } else {
         this.text = body;
         this.html = body_html;
@@ -53,12 +53,24 @@ _DECL_(Message).prototype =
         return this._contactId;
     },
 
+    get isNormalMessage() {
+        return (this.type & 3) == 0;
+    },
+
     get isMucMessage() {
-        return (this.type & 1) == 1;
+        return (this.type & 3) == 1;
+    },
+
+    get isHeadlineMessage() {
+        return (this.type & 3) == 2;
+    },
+
+    get isChatMessage() {
+        return (this.type & 3) == 3;
     },
 
     get isSystemMessage() {
-        return (this.type & 2) == 2;
+        return (this.type & 4) == 4;
     },
 
     get nick() {
@@ -66,9 +78,12 @@ _DECL_(Message).prototype =
     },
 
     get classes() {
+        var res = this.isSystemMessage ? ["systemMessage"] : [];
+
         if (this.text.indexOf("/me ") == 0)
-            return "meMessage";
-        return "";
+            res.push("meMessage");
+
+        return res.join(" ");
     },
 
     get formatedHtml() {
@@ -118,7 +133,7 @@ _DECL_(Message).prototype =
 
     _processSmiles: function(str)
     {
-        return account.iconsRegistry.processSmiles(str, this._processFormatingChars);
+        return account.style.processSmiles(str, this._processFormatingChars);
     },
 
     _processFormatingChars: function(str)
