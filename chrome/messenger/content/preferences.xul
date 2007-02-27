@@ -25,15 +25,15 @@
     }
 
     function onLoad() {
-      var iconReg = window.opener.account.iconsRegistry;
+      var style = window.opener.account.style;
 
       var iconContainer = document.getElementById("statusIconSet");
-      for (var i = 0; i < iconReg.statusIcons.length; i++)
-        iconContainer.appendChild(generateIconSetElement(iconReg.statusIcons[i]));
+      for (var i = 0; i < style.statusIcons.length; i++)
+        iconContainer.appendChild(generateIconSetElement(style.statusIcons[i]));
 
       iconContainer = document.getElementById("smileSet");
-      for (i = 0; i < iconReg.smiles.length; i++)
-        iconContainer.appendChild(generateIconSetElement(iconReg.smiles[i]));
+      for (i = 0; i < style.smiles.length; i++)
+        iconContainer.appendChild(generateIconSetElement(style.smiles[i]));
 
       document.getElementById("autoAwayCheckbox").
         addEventListener("CheckboxStateChange", enableDisableAutoAway, false);

@@ -157,7 +157,7 @@ function ContactView(model, parentView)
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onNameChange, "name");
     this._bundle.register(this.model, this.onActiveResourceChange, "activeResource");
-    this._bundle.register(account.iconsRegistry, this.onModelUpdated, "defaultSet");
+    this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
 
     this.onActiveResourceChange();
 }
@@ -185,7 +185,7 @@ _DECL_(ContactView).prototype =
 
     onModelUpdated: function()
     {
-        this.statusIcon.setAttribute("src", account.iconsRegistry.getStatusIcon(
+        this.statusIcon.setAttribute("src", account.style.getStatusIcon(
             this.model.activeResource || "unavailable"));
         this.parentView.onItemUpdated(this);
     },
@@ -306,7 +306,7 @@ _DECL_(ContactTooltip).prototype =
             box.setAttribute("align", "center");
             this.resourcesContainer.appendChild(box);
             var icon = document.createElement("image");
-            icon.setAttribute("src", account.iconsRegistry.getStatusIcon(resource));
+            icon.setAttribute("src", account.style.getStatusIcon(resource));
             box.appendChild(icon);
             var label = document.createElement("label");
             label.setAttribute("class", "contact-tooltip-resource-name");

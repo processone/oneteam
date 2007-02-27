@@ -578,6 +578,17 @@ _DECL_(Resource, null, Model, DiscoItem,
 
         this._registered = true;
 
+        if (!cmp) {
+            var chatPane = this.chatPane && !this.chatPane.closed ?
+                this.chatPane :
+                    this.contact.chatPane && !this.contact.chatPane.closed ?
+                        this.contact.chatPane : null;
+            if (chatPane)
+                chatPane.addMessage(new Message(
+                    this.visibleName+" change status to "+this.presence.show+
+                        (this.presence.status ? "("+this.presence.status+")":"")));
+        }
+
         return cmp ? [] : ["presence"];
     },
 

@@ -14,7 +14,7 @@ function Account()
     this.historyMgr = new HistoryManager();
     this.bookmarks = new ConferenceBookmarks();
     this.presenceProfiles = new PresenceProfiles();
-    this.iconsRegistry = new IconsRegistry(this.cache);
+    this.style = new StylesRegistry(this.cache);
     this.events = [];
     this.connected = false;
 
@@ -265,9 +265,9 @@ _DECL_(Account, null, Model, DiscoItem,
             this.connectionInfo[namePart] = value;
             this.modelUpdated("connectionInfo");
         } else if (name == "chat.general.iconset") {
-            this.iconsRegistry.setDefaultIconSet(value);
+            this.style.setDefaultIconSet(value);
         } else if (name == "chat.general.smilesset") {
-            this.iconsRegistry.setDefaultSmilesSet(value);
+            this.style.setDefaultSmilesSet(value);
         }
     },
 

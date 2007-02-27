@@ -197,7 +197,7 @@
 // #ifdef XULAPP
           this.systray.icon =
 // #endif
-          account.iconsRegistry.getStatusIcon(account.currentPresence.show);
+          account.style.getStatusIcon(account.currentPresence.show);
       },
 
       onIconSetChange: function()
@@ -206,7 +206,7 @@
           var item = document.getElementById("setPresence-type-" + presenceType);
           document.getAnonymousElementByAttribute(item, "class", "menu-iconic-left").
             setAttribute("style", "display: block;");
-          item.setAttribute("image", account.iconsRegistry.getStatusIcon(presenceType));
+          item.setAttribute("image", account.style.getStatusIcon(presenceType));
         }
         this.updatePresenceIcon();
       },
@@ -215,14 +215,14 @@
       {
         account.registerView(this.onConnect, this, "connected");
         account.registerView(this.onPresenceChange, this, "currentPresence");
-        account.iconsRegistry.registerView(this.onIconSetChange, this, "defaultSet");
+        account.style.registerView(this.onIconSetChange, this, "defaultSet");
 
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.profileChooser = document.getElementById("setPresence-profile-chooser");
         this.profileEnable = document.getElementById("setPresence-profile-enable");
 // #ifdef XULAPP
         this.systray = document.getElementById("systray");
-        this.systray.icon = account.iconsRegistry.getStatusIcon(account.currentPresence.show);
+        this.systray.icon = account.style.getStatusIcon(account.currentPresence.show);
 // #endif
         this.presence = this.chooser.value;
       }

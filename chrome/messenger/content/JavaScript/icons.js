@@ -1,4 +1,4 @@
-function IconsRegistry(cache)
+function StylesRegistry(cache)
 {
     this.smiles = [];
     this.statusIcons = [];
@@ -17,10 +17,10 @@ function IconsRegistry(cache)
 
     styles = styles.split(/\n/);
     for (var i = 0; i < styles.length; i++)
-        this._registerFromUrl(styles[i]);
+        this._registerIconSetFromUrl(styles[i]);
 }
 
-_DECL_(IconsRegistry, null, Model).prototype =
+_DECL_(StylesRegistry, null, Model).prototype =
 {
     setDefaultIconSet: function(setName)
     {
@@ -61,7 +61,7 @@ _DECL_(IconsRegistry, null, Model).prototype =
         return this.defaultSmilesSet.processSmiles(str, nextFilter);
     },
 
-    _registerFromUrl: function(url, notify)
+    _registerIconSetFromUrl: function(url, notify)
     {
         var iconDefData = "";
 
