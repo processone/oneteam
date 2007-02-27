@@ -70,7 +70,7 @@ _DECL_(BookmarkMenuItemView).prototype =
             this.node.parentNode.removeChild(this.node);
 
         this.model.unregisterView(this._token);
-    },
+    }
 }
 
 function ConferencesView(node)
@@ -173,7 +173,7 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
             return;
         ContainerView.prototype.destroy.call(this);
         this.containerNode.removeChild(this.node);
-    },
+    }
 }
 
 function ConferenceMemberView(model, parentView)
@@ -206,6 +206,9 @@ function ConferenceMemberView(model, parentView)
     this.node.appendChild(this.label);
     this.node.appendChild(avatar);
 
+    this.tooltip = new ConferenceMemberTooltip(model, this.parentNode);
+    this.node.setAttribute("tooltip", this.tooltip.id);
+
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onNameChange, "name");
     this._bundle.register(this.model, this.onModelUpdated, "presence");
@@ -237,6 +240,123 @@ _DECL_(ConferenceMemberView).prototype =
     },
 
     show: function(rootNode, insertBefore)
+    {try{
+        rootNode.insertBefore(this.node, insertBefore);
+        this.tooltip.show(this.node, this.node.firstChild);
+    }catch(ex){alert(ex)}
+    },
+
+    destroy: function()
+    {
+        this.tooltip.destroy();
+        if (this.node.parentNode)
+            this.node.parentNode.removeChild(this.node);
+
+        this._bundle.unregister();
+    }
+}
+
+function ConferenceMemberTooltip(model, parentView)
+{
+    this.model = model;
+    this.parentView = parentView;
+
+    this.node = document.createElement("tooltip");
+    this.avatar = document.createElement("image");
+    this.statusIcon = document.createElement("image");
+    this.name = document.createElement("label");
+    this.presenceShow = document.createElement("label");
+    this.affiliation = document.createElement("label");
+    this.realJID = document.createElement("label");
+    this.status = document.createElement("description");
+
+    this.id = generateUniqueId();
+
+    this.node.setAttribute("onpopupshowing", "this.view.onTooltipShowing()");
+    this.node.setAttribute("id", this.id);
+    this.node.setAttribute("class", "conferencemember-tooltip");
+
+    this.name.setAttribute("class", "conferencemember-tooltip-name");
+    this.presenceShow.setAttribute("class", "conferencemember-tooltip-show");
+    this.status.setAttribute("class", "conferencemember-tooltip-status");
+
+    var box = document.createElement("hbox");
+    box.setAttribute("flex", "1");
+    box.setAttribute("align", "start");
+    this.node.appendChild(box);
+
+    var cbox = document.createElement("vbox");
+    cbox.setAttribute("flex", "1");
+    box.appendChild(cbox);
+    box.appendChild(this.avatar);
+
+    box = document.createElement("hbox");
+    box.setAttribute("align", "center");
+    cbox.appendChild(box);
+
+    box.appendChild(this.statusIcon);
+    box.appendChild(this.name);
+    var label = document.createElement("label");
+    label.setAttribute("value", "-");
+    box.appendChild(label);
+    box.appendChild(this.presenceShow);
+
+    var grid = document.createElement("grid");
+    grid.setAttribute("class", "conferencemember-tooltip-grid");
+    cbox.appendChild(grid);
+    var cols = document.createElement("columns");
+    grid.appendChild(cols);
+    var col = document.createElement("column");
+    cols.appendChild(col);
+    col = document.createElement("column");
+    col.setAttribute("flex", "1");
+    cols.appendChild(col);
+
+    var rows = document.createElement("rows");
+    grid.appendChild(rows);
+
+    var row = document.createElement("row");
+    rows.appendChild(row);
+    label = document.createElement("label");
+    label.setAttribute("value", "Jabber ID:");
+    row.appendChild(label);
+    row.appendChild(this.realJID);
+
+    row = document.createElement("row");
+    rows.appendChild(row);
+    label = document.createElement("label");
+    label.setAttribute("value", "Affiliation:");
+    row.appendChild(label);
+    row.appendChild(this.affiliation);
+
+    this.status.appendChild(document.createTextNode(""));
+    cbox.appendChild(this.status);
+
+    this.node.model = this.model;
+    this.node.view = this;
+}
+
+_DECL_(ConferenceMemberTooltip).prototype =
+{
+    onTooltipShowing: function()
+    {
+        this.avatar.setAttribute("src", this.model.avatar);
+        this.statusIcon.setAttribute("src", account.style.
+                                     getStatusIcon(this.model));
+        this.name.setAttribute("value", this.model.name || this.model.jid);
+        this.presenceShow.setAttribute("value", this.model.presence.show);
+        this.presenceShow.setAttribute("style", "color: "+account.style.
+                                       getStatusColor(this.model));
+        this.affiliation.setAttribute("value", this.model.affiliation);
+        if (this.model.realJID)
+            this.realJID.setAttribute("value", this.model.realJID);
+        this.realJID.parentNode.setAttribute("hidden", this.model.realJID == null);
+        if (this.model.presence.status)
+            this.status.firstChild.replaceData(0, 0xffff, this.model.presence.status);
+        this.status.setAttribute("hidden", !this.model.presence.status);
+    },
+
+    show: function(rootNode, insertBefore)
     {
         rootNode.insertBefore(this.node, insertBefore);
     },
@@ -245,7 +365,5 @@ _DECL_(ConferenceMemberView).prototype =
     {
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
-
-        this._bundle.unregister();
-    },
+    }
 }

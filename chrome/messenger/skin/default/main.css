@@ -22,17 +22,17 @@
   color: #aaa;
 }
 
-.contact-tooltip-name, .contact-tooltip-resource-name {
+.contact-tooltip-name, .contact-tooltip-resource-name, .conferencemember-tooltip-name {
     font-weight: bold;
 }
 
-.contact-tooltip-resource-status {
+.contact-tooltip-resource-status, .conferencemember-tooltip-status {
   margin-left: 0;
   padding-left: 0;
   font-style: italic;
 }
 
-.contact-tooltip-resources {
+.contact-tooltip-resources, .conferencemember-tooltip-grid {
     margin-left: 1em;
 }
 
