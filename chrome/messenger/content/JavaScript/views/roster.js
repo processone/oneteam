@@ -312,7 +312,7 @@ _DECL_(ContactTooltip).prototype =
             box.appendChild(label);
 
             label = document.createElement("label");
-            label.setAttribute("value", resource.presence.show);
+            label.setAttribute("value", resource.presence);
             label.setAttribute("class", "contact-tooltip-resource-show");
             label.setAttribute("style", "color: "+account.style.getStatusColor(resource));
             box.appendChild(label);

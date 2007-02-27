@@ -8,21 +8,15 @@ _DECL_(NotificationScheme).prototype =
 {
     show: function(kind, type, model, extra)
     {
-        var msg, chatMsg, mucMsg;
+        var msg, mucMsg;
         if (kind == "resource") {
-            if (type != "unavailable" && extra == "unavailable") {
+            if (type.show != "unavailable" && extra.show == "unavailable") {
                 msg = "<b>"+model.visibleName+"</b> signed in";
-                chatMsg = model.visibleName+" is now "+model.presence.show+
-                    (model.presence.status ? " ("+model.presence.status+")":"");
-
                 if (model instanceof ConferenceMember)
                     mucMsg = model.jid.resource + (model.realJID ? " ("+model.realJID+")" : "")+
                         " has joined this room";
-            } if (type == "unavailable" && extra != "unavailable") {
+            } if (type.show == "unavailable" && extra.show != "unavailable") {
                 msg = "<b>"+model.visibleName+"</b> signed out";
-                chatMsg = model.visibleName+" is now offline"+
-                    (model.presence.status ? " ("+model.presence.status+")":"");
-
                 if (model instanceof ConferenceMember)
                     mucMsg = model.jid.resource + (model.realJID ? " ("+model.realJID+")" : "")+
                         " has left this room";
@@ -39,10 +33,9 @@ _DECL_(NotificationScheme).prototype =
                 if (!chatPane || chatPane.closed)
                     continue;
                 if (!msgObj)
-                    msgObj = new Message(chatMsg || (model.visibleName+
-                                " changed status to "+model.presence.show+
-                                (model.presence.status ? " ("+model.presence.status+")":"")),
-                        null, this, 4);
+                    msgObj = new Message(model.visibleName+" is now "+
+                                            type.toString(true, true),
+                                         null, this, 4);
 
                 chatPane.addMessage(msgObj);
             }

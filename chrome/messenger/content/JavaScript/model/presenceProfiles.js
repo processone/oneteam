@@ -62,6 +62,24 @@ _DECL_(Presence).prototype =
                 return this.priority - p.priority;
 
         return show2num[this.show||"available"] - show2num[p.show||"available"];
+    },
+
+    toString: function(showStatus, lowerCase)
+    {
+        var showStrs = {
+            available: "Available",
+            chat: "Available for chat",
+            dnd: "Busy",
+            away: "Away",
+            xa: "Not available",
+            unavailable: "Offline"
+        };
+
+        var showStr = showStrs[this.show];
+        if (lowerCase)
+            showStr = showStr.toLowerCase();
+
+        return showStr+(showStatus && this.status ? " ("+this.status+")" : "");
     }
 }
 

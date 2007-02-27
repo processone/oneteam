@@ -343,7 +343,7 @@ _DECL_(ConferenceMemberTooltip).prototype =
         this.statusIcon.setAttribute("src", account.style.
                                      getStatusIcon(this.model));
         this.name.setAttribute("value", this.model.name || this.model.jid);
-        this.presenceShow.setAttribute("value", this.model.presence.show);
+        this.presenceShow.setAttribute("value", this.model.presence);
         this.presenceShow.setAttribute("style", "color: "+account.style.
                                        getStatusColor(this.model));
         this.affiliation.setAttribute("value", this.model.affiliation);

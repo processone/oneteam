@@ -573,8 +573,8 @@ _DECL_(Resource, null, Model, DiscoItem,
             this.modelUpdated("presence");
 
         if (!equal)
-            account.notificationScheme.show("resource", this.presence.show,
-                                            this, oldPresence.show);
+            account.notificationScheme.show("resource", this.presence,
+                                            this, oldPresence);
 
         this._registered = true;
 
