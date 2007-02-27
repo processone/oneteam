@@ -240,10 +240,9 @@ _DECL_(ConferenceMemberView).prototype =
     },
 
     show: function(rootNode, insertBefore)
-    {try{
+    {
         rootNode.insertBefore(this.node, insertBefore);
         this.tooltip.show(this.node, this.node.firstChild);
-    }catch(ex){alert(ex)}
     },
 
     destroy: function()
