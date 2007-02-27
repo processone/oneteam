@@ -195,12 +195,14 @@ function ConferenceMemberView(model, parentView)
     this.label.setAttribute("flex", "1");
     this.label.setAttribute("crop", "end");
 
-    this.statusIcon.setAttribute("src", account.style.getStatusIcon(this.model));
-
     this.node.model = this.model;
     this.node.view = this;
 
-    this.node.appendChild(this.statusIcon);
+    var box = document.createElement("vbox");
+    box.setAttribute("pack", "center");
+    box.appendChild(this.statusIcon);
+
+    this.node.appendChild(box);
     this.node.appendChild(this.label);
     this.node.appendChild(avatar);
 
@@ -209,6 +211,8 @@ function ConferenceMemberView(model, parentView)
     this._bundle.register(this.model, this.onModelUpdated, "presence");
     this._bundle.register(this.model, this.onAffiliationChange, "affiliation");
     this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
+
+    this.onModelUpdated();
 }
 
 _DECL_(ConferenceMemberView).prototype =
@@ -227,6 +231,8 @@ _DECL_(ConferenceMemberView).prototype =
     onModelUpdated: function()
     {
         this.statusIcon.setAttribute("src", account.style.getStatusIcon(this.model));
+        this.label.setAttribute("style", "color: "+account.style.
+                                getStatusColor(this.model));
         this.parentView.onItemUpdated(this);
     },
 

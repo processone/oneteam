@@ -1,20 +1,20 @@
 /* Roster */
 
-.group-view, .contact-view {
+.group-view, .contact-view, .conference-view, .conferencemember-view {
   color: #000;
   padding: 1px;
 }
 
-.group-view {
+.group-view, .conference-view {
   background: #DDD;
   font-weight : bold;
 }
 
-.group-view[selected=true] {
+.group-view[selected=true], .conference-view[selected=true] {
   background: #DDF;
 }
 
-.contact-view[selected=true] {
+.contact-view[selected=true], .conferencemember-view[selected=true] {
   background: #EEF;
 }
 
