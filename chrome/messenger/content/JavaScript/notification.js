@@ -8,45 +8,64 @@ _DECL_(NotificationScheme).prototype =
 {
     show: function(kind, type, model, extra)
     {
-        var msg, mucMsg;
         if (kind == "resource") {
-            if (type.show != "unavailable" && extra.show == "unavailable") {
-                msg = "<b>"+model.visibleName+"</b> signed in";
+            var signed;
+
+            this._showInChatPane(model.visibleName+" is now "+
+                                 type.toString(true, true), model, false, true);
+
+            if (type.show != "unavailable" && extra.show == "unavailable")
+                signed = true;
+            else if (type.show == "unavailable" && extra.show != "unavailable")
+                signed = false;
+
+            if (signed != null) {
                 if (model instanceof ConferenceMember)
-                    mucMsg = model.jid.resource + (model.realJID ? " ("+model.realJID+")" : "")+
-                        " has joined this room";
-            } if (type.show == "unavailable" && extra.show != "unavailable") {
-                msg = "<b>"+model.visibleName+"</b> signed out";
-                if (model instanceof ConferenceMember)
-                    mucMsg = model.jid.resource + (model.realJID ? " ("+model.realJID+")" : "")+
-                        " has left this room";
+                    this._showInChatPane(model+" has "+(signed ? "joined" : "left")+
+                                         " this room", model, true, false);
+                else
+                    this._showAlert(this, "<b>"+model.visibleName+"</b> signed "+
+                                    (signed ? "in" : "out"), null, "contact",
+                                    model.contact || model);
             }
-
-            if (mucMsg && model.contact.myResource != model &&
-                    model.contact.chatPane && !model.contact.chatPane.closed)
-                model.contact.chatPane.addMessage(new Message(mucMsg, null, model, 4));
-
-            var chatPanes = [model.chatPane, model instanceof ConferenceMember ?
-                             null : model.contact.chatPane], msgObj;
-
-            for each (var chatPane in chatPanes) {
-                if (!chatPane || chatPane.closed)
-                    continue;
-                if (!msgObj)
-                    msgObj = new Message(model.visibleName+" is now "+
-                                            type.toString(true, true),
-                                         null, this, 4);
-
-                chatPane.addMessage(msgObj);
-            }
-
-            if (msg)
-                this._showAlert(this, msg, null, "contact", model.contact || model);
         } else if (kind == "subscription") {
-            msg = "<b>"+model.visibleName+"</b> ";
+            var msg = "<b>"+model.visibleName+"</b> ";
             msg += type == "subscribed" ? "authorised you to see his/her status" :
                 type == "doesn't authorised you to see his/her status"
             this._showAlert(this, msg, null, "contact", model);
+        } else if (kind == "muc") {
+            if (type == "nickChange")
+                this._showInChatPane(extra.resource+" changed nick to "+
+                                     model.jid.resource, model, true, true);
+        }
+    },
+
+    _showInChatPane: function(msg, contact, showInMUC, showInPersonal)
+    {
+        var msgObj;
+        var chatPanes = [];
+
+        if (showInMUC)
+            if (contact instanceof Conference)
+                chatPanes.push(contact.chatPane);
+            else if (contact instanceof ConferenceMember &&
+                     contact.contact.myResource != contact)
+                chatPanes.push(contact.contact.chatPane);
+
+        if (showInPersonal)
+            if (!(contact instanceof Conference)) {
+                chatPanes.push(contact.chatPane);
+                if (!(contact instanceof ConferenceMember))
+                    chatPanes.push(contact.contact.chatPane);
+            }
+
+        for each (var chatPane in chatPanes) {
+            if (!chatPane || chatPane.closed)
+                continue;
+            if (!msgObj)
+                msgObj = new Message(msg, null, this, 4);
+
+            chatPane.addMessage(msgObj);
         }
     },
 

@@ -308,12 +308,16 @@ _DECL_(ConferenceMember, Resource).prototype =
         }
 
         if (303 in statusCodes) { // Nick change
+            var oldJID = this.jid;
+
             delete account.resources[this.jid.normalizedJID];
             this.name = item.getAttribute("nick")
             this.visibleName =  this.name + " from " + this.jid.node;
             this.jid = this.jid.createFullJID(this.name);
             account.resources[this.jid.normalizedJID] = this;
             this.modelUpdated("jid", null, "name", null, "visibleName");
+
+            account.notificationScheme.show("muc", "nickChange", this, oldJID);
             return;
         }
 
@@ -364,6 +368,11 @@ _DECL_(ConferenceMember, Resource).prototype =
             this.contact.chatPane.addMessage(new Message(packet, null, this));
         } else
             Resource.prototype.onMessage.call(this, packet);
+    },
+
+    toString: function()
+    {
+        return this.jid.resource + (this.realJID ? " ("+this.realJID+")" : "");
     },
 
     cmp: function(c)
