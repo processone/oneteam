@@ -52,12 +52,11 @@ _DECL_(NotificationScheme).prototype =
                      contact.contact.myResource != contact)
                 chatPanes.push(contact.contact.chatPane);
 
-        if (showInPersonal)
-            if (!(contact instanceof Conference)) {
-                chatPanes.push(contact.chatPane);
-                if (!(contact instanceof ConferenceMember))
-                    chatPanes.push(contact.contact.chatPane);
-            }
+        if (showInPersonal && !(contact instanceof Conference)) {
+            chatPanes.push(contact.chatPane);
+            if (!(contact instanceof ConferenceMember))
+                chatPanes.push(contact.contact.chatPane);
+        }
 
         for each (var chatPane in chatPanes) {
             if (!chatPane || chatPane.closed)
