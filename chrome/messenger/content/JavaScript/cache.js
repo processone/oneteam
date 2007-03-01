@@ -49,13 +49,13 @@ try{
 
     CREATE TRIGGER clean_update AFTER UPDATE ON cache WHEN old.is_file = 1
     BEGIN
-        SELECT deleteFile(old.value) WHERE NOT 
+        SELECT deleteFile(old.value) WHERE NOT
             EXISTS (SELECT 1 FROM cache WHERE value = old.value);
     END;
 
     CREATE TRIGGER clean_delete AFTER DELETE ON cache WHEN old.is_file = 1
     BEGIN
-        SELECT deleteFile(old.value) WHERE NOT 
+        SELECT deleteFile(old.value) WHERE NOT
             EXISTS (SELECT 1 FROM cache WHERE value = old.value);
     END;
 
@@ -181,9 +181,12 @@ _DECL_(PersistantCache).prototype =
 {
     setValue: function(key, value, expiryDate, storeAsFile)
     {
-        this.storage["cache:"+key] = value;
-        if (expiryDate)
-            this.storage["cacheExpiration:"+expiryDate.getTime()];
+        try{
+            this.storage["cache:"+key] = value;
+            if (expiryDate)
+                this.storage["cacheExpiration:"+expiryDate.getTime()];
+        } catch(ex) { report("developer", "error", ex) }
+
         this.data[key] = value;
 
         return value;
@@ -199,16 +202,19 @@ _DECL_(PersistantCache).prototype =
 
     removeValue: function(key)
     {
-        delete this.storage["cache"+key];
-        delete this.storage["cacheExpiration:"+key];
+        try {
+            delete this.storage["cache"+key];
+            delete this.storage["cacheExpiration:"+key];
+        } catch(ex) { report("developer", "error", ex) }
         delete this.data[key];
     },
 
     bumpExpiryDate: function(key, expiryDate)
     {
-        if (this.data[key] != null)
-            this.storage["cacheExpiration:"+key] = expiryDate.getTime();
+        try{
+            if (this.data[key] != null)
+                this.storage["cacheExpiration:"+key] = expiryDate.getTime();
+        } catch(ex) { report("developer", "error", ex) }
     },
 }
 // #endif */
-
