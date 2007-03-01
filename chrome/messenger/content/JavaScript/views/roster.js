@@ -320,8 +320,9 @@ _DECL_(ContactTooltip).prototype =
             if (resource.presence.status) {
                 label = document.createElement("description");
                 label.setAttribute("class", "contact-tooltip-resource-status");
+                label.setAttribute("value", resource.presence.status);
+                label.setAttribute("crop", "end");
                 this.resourcesContainer.appendChild(label);
-                label.appendChild(document.createTextNode(resource.presence.status));
             }
         }
         this.resourcesLabel.setAttribute("hidden", firstResource);

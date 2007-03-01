@@ -278,6 +278,7 @@ function ConferenceMemberTooltip(model, parentView)
     this.name.setAttribute("class", "conferencemember-tooltip-name");
     this.presenceShow.setAttribute("class", "conferencemember-tooltip-show");
     this.status.setAttribute("class", "conferencemember-tooltip-status");
+    this.status.setAttribute("crop", "end");
 
     var box = document.createElement("hbox");
     box.setAttribute("flex", "1");
@@ -328,7 +329,6 @@ function ConferenceMemberTooltip(model, parentView)
     row.appendChild(label);
     row.appendChild(this.affiliation);
 
-    this.status.appendChild(document.createTextNode(""));
     cbox.appendChild(this.status);
 
     this.node.model = this.model;
@@ -349,9 +349,9 @@ _DECL_(ConferenceMemberTooltip).prototype =
         this.affiliation.setAttribute("value", this.model.affiliation);
         if (this.model.realJID)
             this.realJID.setAttribute("value", this.model.realJID);
-        this.realJID.parentNode.setAttribute("hidden", this.model.realJID == null);
+        this.realJID.parentNode.setAttribute("hidden", this.model.realJID = null);
         if (this.model.presence.status)
-            this.status.firstChild.replaceData(0, 0xffff, this.model.presence.status);
+            this.status.setAttribute("value", this.model.presence.status);
         this.status.setAttribute("hidden", !this.model.presence.status);
     },
 
