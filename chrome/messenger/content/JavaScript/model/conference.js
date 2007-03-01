@@ -25,12 +25,14 @@ _DECL_(Conference, Contact).prototype =
 
         var pkt = presence.generatePacket(this._myResourceJID || this.myResource.jid);
 
-        var x = pkt.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
-        pkt.getNode().appendChild(x);
+        if (presence.show != "unavailable") {
+            var x = pkt.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
+            pkt.getNode().appendChild(x);
 
-        if (this._password)
-            x.appendChild(pkt.getDoc().createElement("password")).
-                appendChild(pkt.getDoc().createTextNode(this._password));
+            if (this._password)
+                x.appendChild(pkt.getDoc().createElement("password")).
+                    appendChild(pkt.getDoc().createTextNode(this._password));
+        }
 
         con.send(pkt);
     },
@@ -182,7 +184,8 @@ _DECL_(Conference, Contact).prototype =
         jid = new JID(jid);
 
         var resource = new ConferenceMember(jid);
-        if (!this.myResource && jid.normalizedJID == this._myResourceJID.normalizedJID)
+        if (!this.myResource && this._myResourceJID &&
+                jid.normalizedJID == this._myResourceJID.normalizedJID)
             this.myResource = resource;
 
         return resource;

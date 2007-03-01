@@ -38,17 +38,17 @@ _DECL_(Presence).prototype =
             pkt.setPriority(presence.priority == null ?
                             prefManager.getPref("chat.connection.priority") :
                             presence.priority);
+
+            if (account.avatarHash) {
+                pkt.getNode().
+                    appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "x")).
+                    appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "photo")).
+                    appendChild(pkt.getDoc().createTextNode(account.avatarHash));
+            }
         }
 
         if (presence.status)
             pkt.setStatus(presence.status);
-
-        if (account.avatarHash) {
-            pkt.getNode().
-                appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "x")).
-                appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "photo")).
-                appendChild(pkt.getDoc().createTextNode(account.avatarHash));
-        }
 
         return pkt;
     },
