@@ -361,9 +361,11 @@
         <body>
           <![CDATA[
             if (~this.content.search(/\S/)) {
-              var ev = document.createEvent("Events");
-              ev.initEvent("chat-send", true, false);
-              this.dispatchEvent(ev);
+              if (!this.completionEngine || !this.completionEngine.execCommand(this._input)) {
+                var ev = document.createEvent("Events");
+                ev.initEvent("chat-send", true, false);
+                this.dispatchEvent(ev);
+              }
             }
             this.clear();
           ]]>

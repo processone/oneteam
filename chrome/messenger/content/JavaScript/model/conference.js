@@ -23,7 +23,7 @@ _DECL_(Conference, Contact).prototype =
         if (!con)
             return;
 
-        var pkt = presence.generatePacket(this.myResourceJID);
+        var pkt = presence.generatePacket(this._myResourceJID || this.myResource.jid);
 
         var x = pkt.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
         pkt.getNode().appendChild(x);
@@ -64,6 +64,9 @@ _DECL_(Conference, Contact).prototype =
 
     joinRoom: function(callback, nick, password)
     {
+        if (!nick)
+            nick = prefManager.getPref('chat.muc.nickname') || account.myJID.node;
+
         this._myResourceJID = this.jid.createFullJID(nick);
         this._password = password;
 
@@ -78,6 +81,9 @@ _DECL_(Conference, Contact).prototype =
 
     exitRoom: function(reason)
     {
+        if (!this.joined)
+            return;
+
         this._sendPresence(new Presence("unavailable", reason));
 
         if (this.chatPane)
@@ -187,21 +193,22 @@ _DECL_(Conference, Contact).prototype =
         return new CompletionEngine([
             new NickCompletionEngine(this),
             new CommandCompletionEngine("/me", []),
-            new CommandCompletionEngine("/topic", []),
-            new CommandCompletionEngine("/leave", []),
-            new CommandCompletionEngine("/quit", []),
-            new CommandCompletionEngine("/nick", []),
-            new CommandCompletionEngine("/invite", [new ContactCompletionEngine()]),
-            new CommandCompletionEngine("/join", [new ConferenceCompletionEngine(false)]),
-            new CommandCompletionEngine("/msg", [new NickCompletionEngine(this)]),
-            new CommandCompletionEngine("/kick", [new NickCompletionEngine(this)]),
-            new CommandCompletionEngine("/ban", [new NickCompletionEngine(this)])
+            //new CommandCompletionEngine("/topic", []),
+            new LeaveCommand(this),
+            new NickCommand(this),
+            new InviteCommand(this),
+            new JoinCommand(),
+            //new CommandCompletionEngine("/msg", [new NickCompletionEngine(this)]),
+            //new CommandCompletionEngine("/kick", [new NickCompletionEngine(this)]),
+            //new CommandCompletionEngine("/ban", [new NickCompletionEngine(this)])
         ]);
     },
 
     onPresence: function(pkt)
     {
         var errorTag;
+
+        delete this._myResourceJID;
 
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];

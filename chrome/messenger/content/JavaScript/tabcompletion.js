@@ -4,7 +4,7 @@ function DataCompletionEngine()
 
 _DECL_(DataCompletionEngine).prototype =
 {
-    ROLE_REQUIRES: ["_getDataIterator", "_formatData"],
+    ROLE_REQUIRES: ["_getDataIterator", "_formatData", "extractData"],
 
     _normalizeForComparision: function(data)
     {
@@ -78,6 +78,11 @@ _DECL_(DataCompletionEngine).prototype =
 
         return [this.matches[this.matchesIndex],
                 this.matchesIndex == this.matches.length-1];
+    },
+
+    execCommand: function()
+    {
+        return false;
     }
 }
 
@@ -89,6 +94,13 @@ function CommandCompletionEngine(command, argsCompletionEngList)
 
 _DECL_(CommandCompletionEngine).prototype =
 {
+
+    /*
+      Magic return values:
+       0 - dont matches
+      -1 - matches
+      -2 - matches and thats is only engine which can match whole result
+    */
     complete: function(str, maybeCommand, commandArgument)
     {
         if (!maybeCommand)
@@ -135,6 +147,28 @@ _DECL_(CommandCompletionEngine).prototype =
 
         var res = this.lastEngine.completionResult();
         return [this.prefix + res[0], res[1]];
+    },
+
+    execCommand: function(str)
+    {
+        if (!this.doCommand)
+            return false;
+
+        if (str.indexOf(this.command+" ") != 0)
+            return false;
+
+        str = str.substr(this.command.length+1);
+        var args = [];
+
+        for (var i = 0; i < this.argsCompletionEngList.length; i++) {
+            var res = this.argsCompletionEngList[i].extractData(str);
+            args.push(res[0]);
+            str = str.substr(res[1]);
+        }
+        args.push(str);
+        this.doCommand.apply(this, args);
+
+        return true;
     }
 }
 
@@ -190,18 +224,28 @@ _DECL_(CompletionEngine).prototype =
             return true;
         }
         return false;
+    },
+
+    execCommand: function(control)
+    {
+        var str = control.value;
+        for (var i = 0; i < this.enginesList.length; i++)
+            if (this.enginesList[i].execCommand(str))
+                return true;
+        return false;
     }
 }
 
-function ContactCompletionEngine()
+function ContactCompletionEngine(filter)
 {
+    this.filter = filter;
 }
 
 _DECL_(ContactCompletionEngine, null, DataCompletionEngine).prototype =
 {
     _getDataIterator: function()
     {
-        for (var contact in account.contactsIterator())
+        for (var contact in account.contactsIterator(this.filter))
             yield (contact.jid.shortJID);
     },
 
@@ -210,27 +254,34 @@ _DECL_(ContactCompletionEngine, null, DataCompletionEngine).prototype =
         if (data.match(/\s/) || escapeForm)
             return "\""+data.replace(/\\/, "\\\\").replace(/"/, "\\\"")+"\"";
         return data;
+    },
+
+    extractData: function(str)
+    {
+        var res;
+        if ((res = str.match(/^"((?:[^"\\]|\.)*)"(?:\s|$)/)))
+            return [res[1].replace(/\\(.)/g, "$1"), res[0].length];
+
+        res = str.match(/^(\S+)(?:\s|$)/);
+        return [res[1], res[0].length];
     }
 }
 
-function ConferenceCompletionEngine(joined)
+function ConferenceCompletionEngine(filter, addNick)
 {
-    this.joined = joined
+    this.filter = filter;
+    this.addNick = addNick;
 }
 
 _DECL_(ConferenceCompletionEngine, null, DataCompletionEngine).prototype =
 {
     _getDataIterator: function()
     {
-        if (this.joined)
-            for (var i = 0; i < account.conferences.length; i++)
-                yield (account.conferences[i].jid.shortJID);
-        else {
-            var bm = account.bookmarks.bookmarks;
-            for (i = 0; i < bm.length; i++)
-                if (!bm[i].joined)
-                    yield (bm[i].jid.createFullJID(bm[i].bookmarkNick).longJID);
-        }
+        for each (var conf in account.allConferences)
+            if (!this.filter || this.filter(conf))
+                yield (this.addNick && conf.bookmarkNick ?
+                       conf.jid.createFullJID(conf.bookmarkNick).longJID :
+                       conf.jid.shortJID);
     },
 
     _formatData: function(data, commandArgument, fromLineStart, escapeForm)
@@ -238,19 +289,30 @@ _DECL_(ConferenceCompletionEngine, null, DataCompletionEngine).prototype =
         if (data.match(/\s/) || escapeForm)
             return "\""+data.replace(/\\/, "\\\\").replace(/"/, "\\\"")+"\"";
         return data;
+    },
+
+    extractData: function(str)
+    {
+        var res;
+        if ((res = str.match(/^"((?:[^"\\]|\.)*)"(?:\s|$)/)))
+            return [res[1].replace(/\\(.)/g, "$1"), res[0].length];
+
+        res = str.match(/^(\S+)(?:\s|$)/);
+        return [res[1], res[0].length];
     }
 }
 
-function NickCompletionEngine(model)
+function NickCompletionEngine(model, filter)
 {
     this.model = model;
+    this.filter = filter;
 }
 
 _DECL_(NickCompletionEngine, null, DataCompletionEngine).prototype =
 {
     _getDataIterator: function()
     {
-        for (var resource in this.model.resourcesIterator())
+        for (var resource in this.model.resourcesIterator(this.filter))
             yield (resource.jid.resource);
     },
 
@@ -264,8 +326,94 @@ _DECL_(NickCompletionEngine, null, DataCompletionEngine).prototype =
         return data;
     },
 
+    extractData: function(str)
+    {
+        var res;
+        if ((res = str.match(/^"((?:[^"\\]|\.)*)"(?:\s|$)/)))
+            return [res[1].replace(/\\(.)/g, "$1"), res[0].length];
+
+        res = str.match(/^(\S+)(?:\s|$)/);
+        return [res[1], res[0].length];
+    },
+
     _normalizeForComparision: function(data)
     {
         return data.toLowerCase();
+    }
+}
+
+function JoinCommand()
+{
+    CommandCompletionEngine.call(this, "/join",
+        [new ConferenceCompletionEngine(function(c){return !c.joined}, true)]);
+}
+
+_DECL_(JoinCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function(jid)
+    {
+        jid = new JID(jid);
+        var conf = account.getOrCreateConference(jid.shortJID);
+        conf.joinRoom(function(){}, jid.resource);
+    }
+}
+
+function InviteCommand(conference)
+{
+    this.conference = conference
+    CommandCompletionEngine.call(this, "/invite",
+        [new ContactCompletionEngine()]);
+}
+
+_DECL_(InviteCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function(jid, reason)
+    {
+        this.conference.invite(jid, reason || null);
+    }
+}
+
+function InviteToCommand(contact)
+{
+    this.contact = contact;
+    CommandCompletionEngine.call(this, "/inviteto",
+        [new ConferenceCompletionEngine(function(c){return !!c.joined}, false)]);
+}
+
+_DECL_(InviteToCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function(jid, reason)
+    {
+        jid = new JID(jid);
+        var conference = account.getOrCreateConference(jid.shortJID);
+        conference.invite(this.contact.jid, reason || null);
+    }
+}
+
+function NickCommand(conference)
+{
+    this.conference = conference
+    CommandCompletionEngine.call(this, "/nick", []);
+}
+
+_DECL_(NickCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function(nick)
+    {
+        this.conference.changeNick(nick);
+    }
+}
+
+function LeaveCommand(conference)
+{
+    this.conference = conference
+    CommandCompletionEngine.call(this, "/leave", []);
+}
+
+_DECL_(LeaveCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function(reason)
+    {
+        this.conference.exitRoom(reason || null);
     }
 }

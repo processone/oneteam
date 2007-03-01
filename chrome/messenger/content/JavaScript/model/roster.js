@@ -482,8 +482,8 @@ _DECL_(Contact, null, Model,
     {
         return new CompletionEngine([
             new CommandCompletionEngine("/me", []),
-            new CommandCompletionEngine("/join", [new ConferenceCompletionEngine(false)]),
-            new CommandCompletionEngine("/inviteto", [new ConferenceCompletionEngine(true)])
+            new JoinCommand(),
+            new InviteToCommand(this)
         ]);
     },
 
