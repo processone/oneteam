@@ -145,12 +145,17 @@ _DECL_(Account, null, Model, DiscoItem,
         photo = photo.textContent.replace(/\s/g,"");
         if (!photo) return;
 
+        var oldHash = this.avatarHash;
+
         photo = atob(photo);
-        var hash = hex_sha1(photo);
-        account.cache.setValue("avatar-"+hash, photo,
+        this.avatarHash = hex_sha1(photo);
+        account.cache.setValue("avatar-"+this.avatarHash, photo,
                                new Date(Date.now()+30*24*60*60*1000), true);
-        this.avatar = account.cache.getValue("avatar-"+hash, true);
+        this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
         this.modelUpdated("avatar");
+
+        if (this.avatarHash != oldHash)
+            this.setPresence(this.currentPresence);
     },
 
     getOrCreateConference: function(jid)

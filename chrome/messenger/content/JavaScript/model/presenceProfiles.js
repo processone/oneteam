@@ -43,6 +43,13 @@ _DECL_(Presence).prototype =
         if (presence.status)
             pkt.setStatus(presence.status);
 
+        if (account.avatarHash) {
+            pkt.getNode().
+                appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "x")).
+                appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "photo")).
+                appendChild(pkt.getDoc().createTextNode(account.avatarHash));
+        }
+
         return pkt;
     },
 
