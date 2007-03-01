@@ -19,7 +19,7 @@ _DECL_(SOCKS5Service).prototype =
 
         var token = {
             fileTransfer: fileTransfer,
-            accepted: false,
+            accepted: false
         };
 
         token.bytestream = new SOCKSBytestreamInitiator(SOCKSHostName, this, token);
@@ -107,7 +107,7 @@ _DECL_(SOCKS5Service).prototype =
     {
         return this.transfers[fileTransfer.streamID] = {
             bytestreams: [],
-            fileTransfer: fileTransfer,
+            fileTransfer: fileTransfer
         }
     },
 
@@ -208,7 +208,7 @@ _DECL_(SOCKS5Service).prototype =
     {
         if (!token.bytestreams || --token.pendingConnections <= 0)
             token.fileTransfer.onTransferFailure();
-    },
+    }
 }
 
 function SOCKSBytestreamTarget(addresses, socksAddr, callback, token)

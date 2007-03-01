@@ -374,6 +374,7 @@ _DECL_(Account, null, Model, DiscoItem,
                                         if (items.length)
                                            account.defaultConferenceServer = items[0].jid;
                                      });
+        if (typeof(socks5Service) == "object")
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
                                      function(items) {
                                         for (var i = 0; i < items.length; i++) {
