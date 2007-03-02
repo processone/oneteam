@@ -40,6 +40,10 @@
           event.stopPropagation();
         }
       ]]></handler>
+      <handler event="mouseup"><![CDATA[
+        if (event.button == 1 || event.button == 0 && event.ctrlKey)
+            this._closebutton.doCommand();
+      ]]></handler>
     </handlers>
   </binding>
 </bindings>
