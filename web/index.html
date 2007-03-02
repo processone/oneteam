@@ -44,7 +44,7 @@
       #launchButton {
         width: 260px;
         height: 100px;
-        color: transparent;
+        /*color: transparent;*/
         font-size: 0;
         border: 0;
         background: url(launch-button.png) transparent;
@@ -54,7 +54,33 @@
     <script type="text/javascript">
       try {
         window.storage = window.globalStorage[document.location.host];
-      } catch (ex) {}
+      } catch (ex) {};
+
+      var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*/, "$1");
+
+      if (window.storage) {
+        var keysToDel = [], cacheNewKey;
+
+        for (var i = 0; i < storage.length; i++) {
+          cacheNewKey = storage.key(i).replace(/^cache:/, ":cache:value:").
+            replace(/^cacheExpiration:/, ":cache:expiration:").
+            replace(/^pref-str:/, ":prefs:str:").
+            replace(/^pref-bool:/, ":prefs:bool:").
+            replace(/^pref-num:/, ":prefs:int:");
+          try {
+            if (cacheNewKey != storage.key(i)) {
+              storage[schema+cacheNewKey] = storage[storage.key(i)];
+              if (schema != "https")
+                keysToDel.push(storage.key(i));
+            }
+          } catch (ex) { }
+        }
+
+        for (i = 0; i < keysToDel.length; i++)
+          try {
+            delete storage[keysToDel[i]];
+          } catch (ex) { }
+      }
 
       function browserCheck()
       {
@@ -72,7 +98,7 @@
         if (document.location.search == "?t=1")
           launch(true);
         else if (browserCheck()) {
-          document.getElementById("mode").checked = storage["openInNewWindow"] != "false";
+          document.getElementById("mode").checked = storage[schema+":openInNewWindow"] != "false";
           document.getElementById("launch").style.display = "block"
         } else {
           document.getElementById("useff").style.display = "block"
@@ -81,7 +107,7 @@
 
       function launch(thisWindow) {
         var newWin = document.getElementById("mode").checked;
-        storage["openInNewWindow"] = !! newWin;
+        storage[schema+":openInNewWindow"] = !! newWin;
         if (!thisWindow && newWin) {
           window.open(document.location.href+"?t=1", "_blank",
               "chrome,resizable=yes,dialog=no,all");
@@ -90,6 +116,51 @@
           frame.style.display = "block";
           frame.src = "jar:"+document.location.href.replace(/\/[^\/]*$/,
               "/oneteam.jar!/content/main.xul");
+        }
+      }
+    </script>
+    <script type="text/javascript;version=1.7">
+      function StorageWrapper(prefix)
+      {
+        if (!window.storage)
+          throw "Can't access globalStorage";
+        this.prefix = schema+":"+prefix+":";
+        this.storage = window.storage;
+      }
+
+      StorageWrapper.prototype =
+      {
+        __iterator__: function(keysOnly) {
+          for (var i = 0; i < storage.length; i++)
+            if (storage.key(i).indexOf(this.prefix) == 0)
+              try {
+                var key = storage.key(i).substr(this.prefix.length);
+                yield (keysOnly ? key : [key, storage[storage.key(i)]]);
+              } catch (ex) { alert(ex)}
+          throw StopIteration;
+        },
+
+        "get": function(key)
+        {
+          try {
+            return ""+storage[this.prefix+key];
+          } catch(ex) { }
+          return null;
+        },
+
+        "set": function(key, value)
+        {
+          try {
+            return storage[this.prefix+key] = value;
+          } catch(ex) { }
+          return value;
+        },
+
+        "delete": function(key)
+        {
+          try {
+            delete storage[this.prefix+key];
+          } catch(ex) { }
         }
       }
     </script>

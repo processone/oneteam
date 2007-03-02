@@ -469,8 +469,8 @@ _DECL_(Contact, null, Model,
                 this.getVCard(true, function(){});
                 return;
             }
-            account.cache.bumpExpiryDate("avatar-"+avatarHash,
-                                         new Date(Date.now()+30*24*60*60*1000));
+            account.cache.bumpExpirationDate("avatar-"+avatarHash,
+                                             new Date(Date.now()+30*24*60*60*1000));
         }
 
         this.avatar = avatar;

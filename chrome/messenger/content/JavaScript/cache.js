@@ -137,12 +137,12 @@ _DECL_(PersistantCache).prototype =
         this.removeStmt.execute();
     },
 
-    bumpExpiryDate: function(key, expiryDate)
+    bumpExpirationDate: function(key, expiryDate)
     {
         this.bumpStmt.bindStringParameter(0, key);
         this.bumpStmt.bindInt64Parameter(1, expiryDate.getTime());
         this.bumpStmt.execute();
-    },
+    }
 }
 
 function StorageFunctionDelete()
@@ -160,41 +160,31 @@ _DECL_(StorageFunctionDelete).prototype =
 /* #else
 function PersistantCache(name)
 {
-    this.storage = window.top.storage ||
-        globalStorage[document.location.host];
+    this.storage = new StorageWrapper("cache");
 
-    this.data = {};
-    for (var i = 0; i < this.storage.length; i++) {
-        var key = this.storage.key(i), keyName;
-        if ((keyName = key.replace(/^cache:/, "")) == key)
-            continue;
-        var expDate = this.storage["cacheExpiration:"+keyName];
-        if (expDate < Date.now()) {
-            delete this.storage["cacheExpiration:"+keyName];
-            delete this.storage[key];
-        } else
-            this.data[keyName] = this.storage[key];
-    }
+    var keysToDel = [];
+    for (var key in this.storage)
+        if (key.indexOf("expiration:") == 0)
+            if (this.storage.get(key) < Date.now())
+                keysToDel.push(key.substr("expiration:".length));
+
+    for (var i = 0; i < keysToDel.length; i++)
+        this.removeValue(keysToDel[i]);
 }
 
 _DECL_(PersistantCache).prototype =
 {
-    setValue: function(key, value, expiryDate, storeAsFile)
+    setValue: function(key, value, expirationDate, storeAsFile)
     {
-        try{
-            this.storage["cache:"+key] = value;
-            if (expiryDate)
-                this.storage["cacheExpiration:"+expiryDate.getTime()];
-        } catch(ex) { report("developer", "error", ex) }
-
-        this.data[key] = value;
-
+        this.storage.set("value:"+key, value);
+        if (expirationDate)
+            this.storage.set("expiration:"+key, expirationDate.getTime());
         return value;
     },
 
     getValue: function(key, asFile)
     {
-        var data = this.data[key];
+        var data = this.storage.get("value:"+key);
         if (data != null && asFile)
             return "data:image/png;base64,"+btoa(data);
         return data;
@@ -202,19 +192,14 @@ _DECL_(PersistantCache).prototype =
 
     removeValue: function(key)
     {
-        try {
-            delete this.storage["cache"+key];
-            delete this.storage["cacheExpiration:"+key];
-        } catch(ex) { report("developer", "error", ex) }
-        delete this.data[key];
+        this.storage.delete("value:"+key);
+        this.storage.delete("expiration:"+key);
     },
 
-    bumpExpiryDate: function(key, expiryDate)
+    bumpExpirationDate: function(key, expirationDate)
     {
-        try{
-            if (this.data[key] != null)
-                this.storage["cacheExpiration:"+key] = expiryDate.getTime();
-        } catch(ex) { report("developer", "error", ex) }
-    },
+        if (this.getValue(key) != null)
+            this.storage.set("expiration:"+key, expirationDate.getTime());
+    }
 }
 // #endif */

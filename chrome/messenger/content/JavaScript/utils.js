@@ -88,8 +88,54 @@ function openLink(uri)
     else if (/^mailto:/.exec(uri))
         document.location = uri;
 }
-//#endif */
 
+function StorageWrapper(prefix)
+{
+    if (window.top != window)
+        return new window.top.StorageWrapper(prefix);
+
+    var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*$/, "$1");
+
+    this.storage = window.globalStorage[document.location.host];
+    this.prefix = schema+":"+prefix+":";
+}
+
+StorageWrapper.prototype =
+{
+    __iterator__: function(keysOnly) {
+        for (var i = 0; i < this.storage.length; i++)
+            if (this.storage.key(i).indexOf(this.prefix) == 0)
+                try {
+                    var key = this.storage.key(i).substr(this.prefix.length);
+                    yield (keysOnly ? key : [key, this.storage[this.storage.key(i)]]);
+                } catch(ex) { report("developer", "error", ex) }
+        throw StopIteration;
+    },
+
+    "get": function(key)
+    {
+        try {
+            return ""+this.storage[this.prefix+key];
+        } catch(ex) { report("developer", "error", ex) }
+        return null;
+    },
+
+    "set": function(key, value)
+    {
+        try {
+            return this.storage[this.prefix+key] = value;
+        } catch(ex) { report("developer", "error", ex) }
+        return value;
+    },
+
+    "delete": function(key)
+    {
+        try {
+            delete this.storage[this.prefix+key];
+        } catch(ex) { report("developer", "error", ex) }
+    }
+}
+//#endif */
 
 function Callback(fun, obj) {
     if (fun._isaCallback) {

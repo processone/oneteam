@@ -678,6 +678,10 @@
         <label value="|"/>
         <label crop="end" class="text-link" value="&Login.NewAccount;"
           onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
+<!-- #ifdef DEBUG -->
+        <label value="|"/>
+        <label crop="end" class="text-link" value="Command Console" command="cmd_cmdConsole"/>
+<!-- #endif -->
       </hbox>
     </vbox>
     <vbox id="main-box" flex="1">

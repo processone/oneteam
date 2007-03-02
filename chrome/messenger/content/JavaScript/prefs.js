@@ -89,17 +89,15 @@ function PrefManager()
 
     this.builtinPrefs = {}
 
-    this.storage = window.top.storage ||
-        globalStorage[document.location.host];
+    this.storage = new StorageWrapper("prefs");
 
-    for (var i = 0; i < this.storage.length; i++) {
-        var key = this.storage.key(i), keyName;
-        if ((keyName = key.replace(/^pref-str:/, "")) != key)
-            this.prefs[keyName] = ""+this.storage[key];
-        else if ((keyName = key.replace(/^pref-bool:/, "")) != key)
-            this.prefs[keyName] = ""+this.storage[key] == "true";
-        else if ((keyName = key.replace(/^pref-num:/, "")) != key)
-            this.prefs[keyName] = +this.storage[key].toString();
+    for ([key, value] in this.storage) {
+        if ((keyName = key.replace(/^str:/, "")) != key)
+            this.prefs[keyName] = this.storage.get(key);
+        else if ((keyName = key.replace(/^bool:/, "")) != key)
+            this.prefs[keyName] = this.storage.get(key) == "true";
+        else if ((keyName = key.replace(/^int:/, "")) != key)
+            this.prefs[keyName] = +this.storage.get(key);
     }
 
     var serverPrefsURL = document.location.href.
@@ -152,11 +150,13 @@ _DECL_(PrefManager).prototype =
     {
         if (this.prefs[name] === value)
             return;
+
         const map = {
-            "number": "pref-num:",
-            "boolean": "pref-bool:"
+            "number": "int:",
+            "boolean": "bool:"
         };
-        this.storage[ (map[typeof(value)] || "pref-str:") + name ] = value;
+
+        this.storage.set((map[typeof(value)] || "str:") + name, value);
         this.prefs[name] = value;
 
         for (var i in this.callbacks)
