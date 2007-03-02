@@ -60,11 +60,11 @@ _DECL_(StylesRegistry, null, Model).prototype =
     {
         const colorCodes = {
             chat: "#E83",
-            available: "#0C4",
+            available: "#082",
             away: "#00C",
             dnd: "#00C",
             xa : "#00C",
-            unavailable: "#C00"
+            unavailable: "#AAA"
         };
 
         if (presence instanceof Resource)
