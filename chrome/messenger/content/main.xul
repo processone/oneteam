@@ -758,7 +758,7 @@
           <toolbarbutton id="disco-button" tooltiptext="disco.tooltip"
               command="cmd_disco"/>
           <toolbarbutton id="editgroups-button" tooltiptext="teditgroups.tooltip"
-              oncommand="customGroups()"/>
+              command="cmd_prefs"/>
         </toolbar>
       </toolbox>
       <hbox flex="1">
