@@ -1,0 +1,19 @@
+#contact-info-box {
+	margin-left: 1em;
+}
+
+#name, #jid, #status, #statusText {
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
+#name {
+	font-weight: bold;
+	font-size: 150%;
+}
+
+#avatar, #statusIcon {
+	margin-right: 0.5em;
+}

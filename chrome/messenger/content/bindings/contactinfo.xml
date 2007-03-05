@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="info">
+
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/contactinfo.css"/>
+    </resources>
+
+    <content>
+      <xul:hbox id="contact-info-box">
+        <xul:avatar id="avatar" showBlankAvatar="true"/>
+        <xul:vbox flex="1">
+          <xul:hbox align="center">
+            <xul:label id="name"/>
+            <xul:label flex="1" crop="end" id="jid"/>
+          </xul:hbox>
+          <xul:hbox align="center">
+            <xul:image id="statusIcon"/>
+            <xul:label id="status"/>
+            <xul:label flex="1" crop="end" id="statusText"/>
+          </xul:hbox>
+        </xul:vbox>
+      </xul:hbox>
+    </content>
+
+    <implementation>
+
+      <property name="model">
+        <getter><![CDATA[
+          return this._model;
+        ]]></getter>
+
+        <setter><![CDATA[
+          if (this._model == val)
+            return val;
+
+          if (this._token)
+            this._token = this._model.unregisterView(this._token);
+          if (this._token2)
+            this._token2 = this._model.unregisterView(this._token2);
+
+          if (val) {
+            this._model = val;
+            this._token = this._model.registerView(this.onNameChange, this, "visibleName");
+            this._token2 = this._model.registerView(this.onPresenceChange, this, "presence");
+          }
+
+          this.onNameChange();
+          this.onPresenceChange();
+
+          this._avatar.model = val;
+
+          return val;
+        ]]></setter>
+      </property>
+
+      <constructor>
+        <![CDATA[
+          this._avatar = document.getAnonymousElementByAttribute(this, "id", "avatar");
+          this._name = document.getAnonymousElementByAttribute(this, "id", "name");
+          this._jid = document.getAnonymousElementByAttribute(this, "id", "jid");
+          this._status = document.getAnonymousElementByAttribute(this, "id", "status");
+          this._statusIcon = document.getAnonymousElementByAttribute(this, "id", "statusIcon");
+          this._statusText = document.getAnonymousElementByAttribute(this, "id", "statusText");
+
+          var root = window;
+
+          while (!root.account)
+            root = root.opener;
+
+          this._unavailablePresence = new root.Presence("unavailable");
+          if (this.model) {
+            var model = this.model;
+            this._model = null;
+            this.model = model;
+          }
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          this.model = null;
+        ]]>
+      </destructor>
+
+      <method name="onNameChange">
+        <body><![CDATA[
+          if (this.model) {
+            this._name.value = this.model.visibleName;
+            this._jid.value = " ("+this.model.jid+")";
+          } else {
+            this._name.value = this._jid.value = "";
+          }
+        ]]></body>
+      </method>
+
+      <method name="onPresenceChange">
+        <body><![CDATA[
+          if (this.model) {
+            this._statusIcon.src = this.model.getStatusIcon();
+            this._status.value = this.model.presence;
+            this._status.style.color = this.model.presence.getColor();
+            this._statusText.value = this.model.presence.status ?
+              " - "+this.model.presence.status : "";
+          } else {
+            this._statusIcon.src = this._unavailablePresence.getIcon();
+            this._status.value = this._unavailablePresence;
+            this._status.style.color = this._unavailablePresence.getColor();
+            this._statusText.value = "";
+          }
+        ]]></body>
+      </method>
+    </implementation>
+
+  </binding>
+
+</bindings>

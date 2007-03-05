@@ -19,11 +19,7 @@
 
   <script type="text/javascript;version=1.7"><![CDATA[
     function onLoad() {
-//      if (window.arguments[0] == 1)
-//        document.getElementById("tabs").selectedIndex = 2;
-      document.getElementById("contact-name").value = window.arguments[0].visibleName;
-      document.getElementById("contact-jid").value = window.arguments[0].jid;
-      document.getElementById("avatar").model = window.arguments[0];
+      document.getElementById("info-box").model = window.arguments[0];
 
       fetchVCard();
     }
@@ -144,14 +140,7 @@
   <dialogheader title="Contact vCard"/>
   <spacer style="height: 0.3em"/>
 
-  <hbox id="contact-info-box">
-    <avatar id="avatar" showBlankAvatar="true"/>
-    <vbox flex="1">
-      <label id="contact-name"/>
-      <label id="contact-jid"/>
-    </vbox>
-  </hbox>
-
+  <contactinfo id="info-box"/>
   <spacer style="height: 0.6em"/>
 
   <vbox flex="1">

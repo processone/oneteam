@@ -40,3 +40,7 @@ otsystray[type="minimizer"] {
   -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systray-minimizer");
 }
 
+
+contactinfo {
+  -moz-binding: url("chrome://messenger/content/bindings/contactinfo.xml#info");
+}
