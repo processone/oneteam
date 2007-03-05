@@ -67,7 +67,7 @@ _DECL_(StylesRegistry, null, Model).prototype =
             unavailable: "#AAA"
         };
 
-        if (presence instanceof Resource)
+        if (presence instanceof Resource || presence instanceof Contact)
             presence = presence.presence;
 
         if (typeof(presence) == "object")

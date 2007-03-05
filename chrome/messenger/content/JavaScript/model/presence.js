@@ -87,6 +87,16 @@ _DECL_(Presence).prototype =
             showStr = showStr.toLowerCase();
 
         return showStr+(showStatus && this.status ? " ("+this.status+")" : "");
+    },
+
+    getColor: function()
+    {
+        return account.style.getStatusColor(this);
+    },
+
+    getIcon: function()
+    {
+        return account.style.getStatusIcon(this.show);
     }
 }
 

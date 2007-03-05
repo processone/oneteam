@@ -233,9 +233,8 @@ _DECL_(ConferenceMemberView).prototype =
 
     onModelUpdated: function()
     {
-        this.statusIcon.setAttribute("src", account.style.getStatusIcon(this.model));
-        this.label.setAttribute("style", "color: "+account.style.
-                                getStatusColor(this.model));
+        this.statusIcon.setAttribute("src", this.model.getStatusIcon());
+        this.label.setAttribute("style", "color: "+this.model.presence.getColor());
         this.parentView.onItemUpdated(this);
     },
 
@@ -340,12 +339,10 @@ _DECL_(ConferenceMemberTooltip).prototype =
     onTooltipShowing: function()
     {
         this.avatar.setAttribute("src", this.model.avatar);
-        this.statusIcon.setAttribute("src", account.style.
-                                     getStatusIcon(this.model));
+        this.statusIcon.setAttribute("src", this.model.getStatusIcon());
         this.name.setAttribute("value", this.model.name || this.model.jid);
         this.presenceShow.setAttribute("value", this.model.presence);
-        this.presenceShow.setAttribute("style", "color: "+account.style.
-                                       getStatusColor(this.model));
+        this.presenceShow.setAttribute("style", "color: "+this.model.presence.getColor())
         this.affiliation.setAttribute("value", this.model.affiliation);
         if (this.model.realJID)
             this.realJID.setAttribute("value", this.model.realJID);

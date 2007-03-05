@@ -207,7 +207,11 @@ _DECL_(Contact, null, Model,
                 this.resources[i]._remove();
         }
 
-        this._modelUpdatedCheck(oldState);
+        // Notify our resources views about visibleName change here, because
+        //  resources don't track that.
+        if (this._modelUpdatedCheck(oldState).indexOf("visibleName") >= 0)
+            for (i = 0; i < this.resources.length; i++)
+                this.resources[i].modelUpdated("visibleName");
     },
 
     _parseNode: function(node, wantGroupsHash)
@@ -394,18 +398,24 @@ _DECL_(Contact, null, Model,
 
     _onResourceUpdated: function(resource, dontNotifyViews)
     {
-        var res = this.resources[0];
+        var res = this.activeResource;
 
-        for (var r in this.resourcesIterator())
-            if (res.cmp(r))
-                res = r;
+        if (resource == this.activeResource) {
+            res = this.resources[0];
+
+            for (var r in this.resourcesIterator())
+                if (res.cmp(r))
+                    res = r;
+        } else if (this.activeResource.cmp(resource))
+            res = resource;
 
         if (res != this.activeResource) {
             this.activeResource = res;
             if (!dontNotifyViews)
-                this.modelUpdated("activeResource");
-            return true;;
-        }
+                this.modelUpdated("activeResource", null, "presence");
+            return true;
+        } else if (!dontNotifyViews && resource == this.activeResource)
+            this.modelUpdated("presence");
 
         return false;
     },
@@ -417,7 +427,7 @@ _DECL_(Contact, null, Model,
         this.resources.push(resource);
         if (!this.activeResource || this.activeResource.cmp(resource)) {
             this.activeResource = resource;
-            this.modelUpdated("resources", {added: [resource]}, "activeResource");
+            this.modelUpdated("resources", {added: [resource]}, "activeResource", null, "presence");
         } else
             this.modelUpdated("resources", {added: [resource]});
         if (notifyGroups)
@@ -430,13 +440,13 @@ _DECL_(Contact, null, Model,
         this.resources.splice(this.resources.indexOf(resource), 1);
         if (!this.resources.length) {
             this.activeResource = null;
-            this.modelUpdated("resources", {removed: [resource]}, "activeResource");
+            this.modelUpdated("resources", {removed: [resource]}, "activeResource", null, "presence");
             for (var g in this.groupsIterator())
                 g._onContactUpdated(this);
             return;
         }
         if (this.activeResource == resource && this._onResourceUpdated(resource, true))
-            this.modelUpdated("resources", {removed: [resource]}, "activeResource");
+            this.modelUpdated("resources", {removed: [resource]}, "activeResource", null, "presence");
         else
             this.modelUpdated("resources", {removed: [resource]});
     },
@@ -498,6 +508,11 @@ _DECL_(Contact, null, Model,
 
         return this.visibleName == c.visibleName ? 0 :
             this.visibleName > c.visibleName ? 1 : -1;
+    },
+
+    getStatusIcon: function()
+    {
+        return account.style.getStatusIcon(this.activeResource || "unavailable");
     }
 }
 
@@ -622,6 +637,11 @@ _DECL_(Resource, null, Model, DiscoItem,
     cmp: function(c)
     {
         return this.presence.cmp(c.presence, true);
+    },
+
+    getStatusIcon: function()
+    {
+        return account.style.getStatusIcon(this);
     }
 }
 

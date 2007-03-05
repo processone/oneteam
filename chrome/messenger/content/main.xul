@@ -47,7 +47,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
   <!-- #endif -->
-  <script type="text/javascript;version=1.7" src="JavaScript/model/presenceProfiles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/presence.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>

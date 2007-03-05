@@ -185,10 +185,8 @@ _DECL_(ContactView).prototype =
 
     onModelUpdated: function()
     {
-        this.statusIcon.setAttribute("src", account.style.
-            getStatusIcon(this.model.activeResource || "unavailable"));
-        this.label.setAttribute("style", "color: "+account.style.
-            getStatusColor(this.model.activeResource || "unavailable"))
+        this.statusIcon.setAttribute("src", this.model.getStatusIcon());
+        this.label.setAttribute("style", "color: "+this.model.presence.getColor());
 
         this.parentView.onItemUpdated(this);
     },
@@ -299,7 +297,7 @@ _DECL_(ContactTooltip).prototype =
             this.resourcesContainer.appendChild(box);
 
             var icon = document.createElement("image");
-            icon.setAttribute("src", account.style.getStatusIcon(resource));
+            icon.setAttribute("src", resource.getStatusIcon());
             box.appendChild(icon);
 
             var label = document.createElement("label");
@@ -314,7 +312,7 @@ _DECL_(ContactTooltip).prototype =
             label = document.createElement("label");
             label.setAttribute("value", resource.presence);
             label.setAttribute("class", "contact-tooltip-resource-show");
-            label.setAttribute("style", "color: "+account.style.getStatusColor(resource));
+            label.setAttribute("style", "color: "+resource.presence.getColor());
             box.appendChild(label);
 
             if (resource.presence.status) {
