@@ -42,6 +42,8 @@
         server.disabled = server.previousSibling.disabled = true;
       } else {
         server.value = window.opener.account.defaultConferenceServer || "";
+        nick.value = window.opener.prefManager.getPref('chat.muc.nickname') ||
+            window.opener.account.myJID.node;
       }
     }
 
