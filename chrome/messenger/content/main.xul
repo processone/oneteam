@@ -473,6 +473,9 @@
         count = count == 0 ? "" : count == 1 ? "* " : "["+count+"] ";
         doc.title = doc.title.replace(/^(?:\* |\[\d+\] )?/, count);
 
+        if (window.top.changeFavIcon)
+          window.top.changeFavIcon(count ? account.style.defaultSet.iconsMap["psi/message"] : null);
+
         return val;
       },
 

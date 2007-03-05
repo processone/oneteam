@@ -164,6 +164,27 @@
           } catch(ex) { }
         }
       }
+
+      var defaultFavIcon;
+      function changeFavIcon(newFavIcon) {
+        var link = document.getElementsByTagName("link")[0];
+
+        if (!defaultFavIcon)
+          defaultFavIcon = link.href;
+
+        if (!newFavIcon)
+          newFavIcon = defaultFavIcon;
+
+        if (link.href == newFavIcon)
+          return;
+
+        var newLink = document.createElement("link");
+
+        newLink.setAttribute("rel", "icon");
+        newLink.setAttribute("href", newFavIcon);
+
+        link.parentNode.replaceChild(newLink, link);
+      }
     </script>
   </head>
   <body onload="onLoad()">
