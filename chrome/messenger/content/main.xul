@@ -540,7 +540,7 @@
 
       onSend: function()
       {
-        var body = this.chatPane.content.replace(/\n$/, "");
+        var body = this.chatPane.content;
 
         if (!(this.contact instanceof Conference))
           this.addMessage(new Message(body, null, account.myResource, 0));

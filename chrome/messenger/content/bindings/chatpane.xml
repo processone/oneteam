@@ -232,7 +232,7 @@
     <implementation>
 
       <property name="content" readonly="true"
-        onget="return this._input.value" />
+        onget="return this._input.value.replace(/\n$/, '')" />
 
       <property name="hasSubject"
         onset="this._subject.parentNode.hidden = !val; return val"
@@ -251,6 +251,8 @@
           this._inputClone = document.getAnonymousElementByAttribute(this, "id", "inputClone");
           this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
           this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
+          this._history = [];
+          this._historyPosition = 0;
 
           var me = this;
           this._input.addEventListener("keypress",
@@ -261,6 +263,13 @@
                   if (!me.completionEngine.complete(me._input))
                     me._blink();
               }
+
+              var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
+              if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
+                  !event.shiftKey && !event.altKey && !event.ctrlKey &&
+                  !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
+                if (me._handleHistoryKey(upKey))
+                  return false;
 
               if (event.keyCode == KeyEvent.DOM_VK_RETURN &&
                   !event.shiftKey && me.sendOnEnter)
@@ -306,6 +315,44 @@
         <body>
           <![CDATA[
             this._output.clear();
+          ]]>
+        </body>
+      </method>
+
+      <method name="_handleHistoryKey">
+        <parameter name="up"/>
+        <body>
+          <![CDATA[
+            var histPos = this._historyPosition + (up ? -1 : 1);
+
+            if (histPos < 0 || histPos >= this._history.length)
+              return false;
+
+            var height = this._inputClone.inputField.scrollHeight;
+            var cursPos = this._input.selectionStart;
+
+            if (up)
+              this._inputClone.value = this._inputClone.value.substr(cursPos);
+            else
+              this._inputClone.value = this._inputClone.value.substr(0, cursPos);
+
+            var newHeight = this._inputClone.inputField.scrollHeight;
+            if (newHeight < height-4 || newHeight > height+4) {
+              this._inputClone.value = this._input.value;
+              return false;
+            }
+
+            if (this._history[this._historyPosition] != this._input.value)
+              this._history[this._historyPosition] =
+                [this._input.value, this._input.selectionStart];
+
+            this._input.value = this._history[histPos][0];
+            window.setTimeout(function(i, p){i.selectionStart = i.selectionEnd = p},
+                              0, this._input, this._history[histPos][1]);
+            this._historyPosition = histPos;
+            this.maybeResize();
+
+            return true;
           ]]>
         </body>
       </method>
@@ -362,6 +409,9 @@
           <![CDATA[
             if (~this.content.search(/\S/)) {
               if (!this.completionEngine || !this.completionEngine.execCommand(this._input)) {
+                this._history.push([this.content, this._input.selectionEnd]);
+                this._historyPosition = this._history.length;
+
                 var ev = document.createEvent("Events");
                 ev.initEvent("chat-send", true, false);
                 this.dispatchEvent(ev);
