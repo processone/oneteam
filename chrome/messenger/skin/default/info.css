@@ -1,5 +1,12 @@
- 
-window {
-	background: #FFFFCC;
+#contact-info-box {
+	margin-left: 1em;
+}
 
- 	}
+#avatar {
+	margin-right: 0.5em;
+}
+
+#contact-name {
+	font-weight: bold;
+	font-size: 150%;
+}

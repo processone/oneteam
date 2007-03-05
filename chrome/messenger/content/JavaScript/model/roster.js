@@ -366,6 +366,8 @@ _DECL_(Contact, null, Model,
 
     showVCard: function()
     {
+        openDialogUniq("ot:info", "chrome://messenger/content/info.xul",
+                       "resizable=no,chrome,dialog", this);
     },
 
     onSendFile: function()
