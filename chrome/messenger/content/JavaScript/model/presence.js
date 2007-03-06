@@ -17,7 +17,7 @@ function Presence(show, status, priority, profile)
     this.profile = profile;
 }
 
-_DECL_(Presence).prototype =
+_DECL_(Presence, null, Comparator).prototype =
 {
     generatePacket: function(contact)
     {

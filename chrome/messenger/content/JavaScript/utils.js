@@ -183,6 +183,39 @@ function Callback(fun, obj) {
     return cb;
 }
 
+function Comparator()
+{
+}
+
+_DECL_(Comparator).prototype =
+{
+    ROLE_REQUIRES: [ ["cmp", "isGt", "isLt"] ],
+
+    isEq: function(obj)
+    {
+        return this.cmp(obj) == 0;
+    },
+
+    isGt: function(obj)
+    {
+        return this.cmp(obj) < 0;
+    },
+
+    isLt: function(obj)
+    {
+        return obj.isGt(this);
+    },
+
+    cmp: function(obj)
+    {
+        if (this.isLt(obj))
+            return 1;
+        if (obj.isLt(this))
+            return -1;
+        return 0;
+    },
+}
+
 function ifnull(value, defaultValue)
 {
     return value == null ? defaultValue : value

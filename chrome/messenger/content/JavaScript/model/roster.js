@@ -116,7 +116,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     account.allContacts[this.jid.normalizedJID] = this;
 }
 
-_DECL_(Contact, null, Model, vCardDataAccessor).prototype =
+_DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
 {
     get canSeeMe() {
         return this.subscription == "both" || this.subscription == "from";
@@ -398,9 +398,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor).prototype =
             res = this.resources[0];
 
             for (var r in this.resourcesIterator())
-                if (res.cmp(r) > 0)
+                if (res.isLt(r))
                     res = r;
-        } else if (this.activeResource.cmp(resource) > 0)
+        } else if (this.activeResource.isLt(resource))
             res = resource;
 
         if (res != this.activeResource) {
@@ -419,7 +419,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor).prototype =
         var notifyGroups = !this.activeResource;
 
         this.resources.push(resource);
-        if (!this.activeResource || this.activeResource.cmp(resource) > 0) {
+        if (!this.activeResource || this.activeResource.isLt(resource)) {
             this.activeResource = resource;
             this.modelUpdated("resources", {added: [resource]}, "activeResource", null, "presence");
         } else
@@ -504,7 +504,7 @@ function Resource(jid)
     this.init();
 }
 
-_DECL_(Resource, null, Model, DiscoItem,
+_DECL_(Resource, null, Model, DiscoItem, Comparator,
        XMPPDataAccesor("version", "Version", function() {
             var iq = new JSJaCIQ();
             iq.setQuery('jabber:iq:version');
