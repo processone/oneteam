@@ -398,9 +398,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor).prototype =
             res = this.resources[0];
 
             for (var r in this.resourcesIterator())
-                if (res.cmp(r))
+                if (res.cmp(r) > 0)
                     res = r;
-        } else if (this.activeResource.cmp(resource))
+        } else if (this.activeResource.cmp(resource) > 0)
             res = resource;
 
         if (res != this.activeResource) {
@@ -419,7 +419,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor).prototype =
         var notifyGroups = !this.activeResource;
 
         this.resources.push(resource);
-        if (!this.activeResource || this.activeResource.cmp(resource)) {
+        if (!this.activeResource || this.activeResource.cmp(resource) > 0) {
             this.activeResource = resource;
             this.modelUpdated("resources", {added: [resource]}, "activeResource", null, "presence");
         } else
@@ -485,7 +485,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor).prototype =
             return res;
 
         return this.visibleName == c.visibleName ? 0 :
-            this.visibleName > c.visibleName ? 1 : -1;
+            this.visibleName > c.visibleName ? -1 : 1;
     },
 
     getStatusIcon: function()

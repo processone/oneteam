@@ -273,7 +273,7 @@ _DECL_(Conference, Contact).prototype =
             kc = c.name;
         }
 
-        return kt == kc ? 0 : kt > kc ? 1 : -1;
+        return kt == kc ? 0 : kt > kc ? -1 : 1;
     }
 }
 
@@ -387,7 +387,7 @@ _DECL_(ConferenceMember, Resource).prototype =
 
     cmp: function(c)
     {
-        const affiliation2num = {owner: 1, admin: 2, member: 3, none: 4, outcast: 5};
+        const affiliation2num = {owner: 5, admin: 4, member: 3, none: 2, outcast: 1};
         var kt = affiliation2num[this.affiliation];
         var kc = affiliation2num[c.affiliation];
 
@@ -396,7 +396,7 @@ _DECL_(ConferenceMember, Resource).prototype =
             kc = this.name;
         }
 
-        return kt == kc ? 0 : kt > kc ? 1 : -1;
+        return kt == kc ? 0 : kt > kc ? -1 : 1;
     }
 }
 

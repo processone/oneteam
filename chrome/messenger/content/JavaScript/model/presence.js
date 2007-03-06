@@ -66,7 +66,7 @@ _DECL_(Presence).prototype =
 
         if (comparePriority)
             if (this.priority != p.priority)
-                return this.priority - p.priority;
+                return p.priority - this.priority;
 
         return show2num[this.show||"available"] - show2num[p.show||"available"];
     },
