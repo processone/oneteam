@@ -118,7 +118,8 @@ StorageWrapper.prototype =
     "get": function(key)
     {
         try {
-            return ""+this.storage[this.prefix+key];
+            var val = this.storage[this.prefix+key];
+            return val == null ? null : ""+val;
         } catch(ex) { report("developer", "error", ex) }
         return null;
     },

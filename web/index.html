@@ -144,7 +144,8 @@
         "get": function(key)
         {
           try {
-            return ""+storage[this.prefix+key];
+            var val = storage[this.prefix+key];
+            return val == null ? null : ""+val;
           } catch(ex) { this.report("developer", "error", ex) }
           return null;
         },
