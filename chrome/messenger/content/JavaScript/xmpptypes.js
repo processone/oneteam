@@ -143,6 +143,98 @@ function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
     return fun;
 }
 
+function XMPPDataAccessorBase()
+{
+}
+
+_DECL_(XMPPDataAccessorBase).prototype =
+{
+    _accessorState: [],
+
+    _fetchXMPPData: function(stateObj, pktGenerator, pktParser, accessorCallback,
+                             forceUpdate, callback)
+    {
+        if (!this[stateObj]) {
+            stateObj = this[stateObj] =
+                { callbacks: [], pktParser: pktParser, accessorCallback: accessorCallback };
+
+            stateObj.callback = new Callback(this._fetchXMPPDataDone, this).
+                addArgs(stateObj).fromCall();
+        } else
+            stateObj = this[stateObj];
+
+        if (!callback)
+            return stateObj.value;
+
+        if (stateObj.value == null || forceUpdate) {
+            stateObj.callbacks.push(callback);
+            if (stateObj.callbacks.length == 1)
+                con.send(pktGenerator.call(this), stateObj.callback);
+        } else
+            callback(stateObj.value);
+
+        return stateObj.value;
+    },
+
+    _fetchXMPPDataDone: function(stateObj, pkt)
+    {
+        stateObj.value = stateObj.pktParser ? stateObj.pktParser(pkt) : pkt;
+
+        for (var i = 0 ; i < stateObj.callbacks.length; i++)
+            try {
+                stateObj.callbacks[i](stateObj.value);
+            } catch (ex) { report("developer", "error", ex, stateObj.callbacks[i]) }
+
+        stateObj.callbacks = [];
+        if (stateObj.accessorCallback)
+            stateObj.accessorCallback.call(this, pkt, stateObj.value);
+    }
+}
+
+function vCardDataAccessor()
+{
+}
+
+_DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
+{
+    getVCard: function(forceUpdate, callback)
+    {
+        return this._fetchXMPPData("_vCardAccessorState", this._generateVCardPkt,
+                                   null, this._handleVCard, forceUpdate, callback);
+    },
+
+    _handleVCard: function(pkt, value)
+    {
+        var photo, photos = pkt.getNode().getElementsByTagName("PHOTO");
+
+        for (var i = 0; i < photos.length; i++) {
+            var binval = photos[i].getElementsByTagName("BINVAL")[0];
+            if (binval && binval.textContent) {
+                photo = binval.textContent.replace(/\s/g,"");
+                break;
+            }
+        }
+
+        if (!photo)
+            return;
+
+        photo = atob(photo);
+        this.avatarHash = hex_sha1(photo);
+        account.cache.setValue("avatar-"+this.avatarHash, photo,
+                               new Date(Date.now()+30*24*60*60*1000), true);
+        this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
+        this.modelUpdated("avatar");
+    },
+
+    _generateVCardPkt: function()
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, null, 'get');
+        iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
+        return iq;
+    }
+}
+
 function DiscoCacheEntry(jid, node)
 {
     if (DiscoCacheEntry.prototype.cache[jid])

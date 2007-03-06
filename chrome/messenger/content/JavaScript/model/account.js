@@ -36,13 +36,7 @@ function Account()
                                        "chat.general", true);
 }
 
-_DECL_(Account, null, Model, DiscoItem,
-       XMPPDataAccesor("vcard", "VCard", function(){
-            var iq = new JSJaCIQ();
-            iq.setIQ(null, null, 'get');
-            iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
-            return iq;
-       })).prototype =
+_DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 {
     bumpPriority: true,
 
@@ -136,23 +130,11 @@ _DECL_(Account, null, Model, DiscoItem,
         return null;
     },
 
-    _handleVCard: META.after=function(packet)
+    _handleVCard: function(pkt, value)
     {
-        var photo = packet.getNode().getElementsByTagName("PHOTO")[0];
-        if (!photo) return;
-        photo = photo.getElementsByTagName("BINVAL")[0];
-        if (!photo) return;
-        photo = photo.textContent.replace(/\s/g,"");
-        if (!photo) return;
-
         var oldHash = this.avatarHash;
 
-        photo = atob(photo);
-        this.avatarHash = hex_sha1(photo);
-        account.cache.setValue("avatar-"+this.avatarHash, photo,
-                               new Date(Date.now()+30*24*60*60*1000), true);
-        this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
-        this.modelUpdated("avatar");
+        vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
 
         if (this.avatarHash != oldHash)
             this.setPresence(this.currentPresence);

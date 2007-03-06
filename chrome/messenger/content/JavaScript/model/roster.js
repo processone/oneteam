@@ -116,13 +116,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     account.allContacts[this.jid.normalizedJID] = this;
 }
 
-_DECL_(Contact, null, Model,
-       XMPPDataAccesor("vcard", "VCard", function(){
-            var iq = new JSJaCIQ();
-            iq.setIQ(this.jid, null, 'get');
-            iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
-            return iq;
-       })).prototype =
+_DECL_(Contact, null, Model, vCardDataAccessor).prototype =
 {
     get canSeeMe() {
         return this.subscription == "both" || this.subscription == "from";
@@ -449,22 +443,6 @@ _DECL_(Contact, null, Model,
             this.modelUpdated("resources", {removed: [resource]}, "activeResource", null, "presence");
         else
             this.modelUpdated("resources", {removed: [resource]});
-    },
-
-    _handleVCard: META.after=function(packet)
-    {
-        var photo = packet.getNode().getElementsByTagName("PHOTO")[0];
-        if (!photo) return;
-        photo = photo.getElementsByTagName("BINVAL")[0];
-        if (!photo) return;
-        photo = photo.textContent.replace(/\s/g,"");
-        if (!photo) return;
-
-        photo = atob(photo);
-        account.cache.setValue("avatar-"+this.avatarHash, photo,
-                               new Date(Date.now()+30*24*60*60*1000), true);
-        this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
-        this.modelUpdated("avatar");
     },
 
     onAvatarChange: function(avatarHash)
