@@ -89,11 +89,11 @@
       if (!tree || !tree.length() || !map)
         return;
 
-      var ns = tree.namespace();
+      var ns = tree[0].namespace();
 
       if (map instanceof Array) {
         var parts = [];
-        tree = tree.parent().ns::[tree.name()];
+        tree = tree.parent().ns::[tree[0].name()];
 
         for (var i = 0, handled = 0; i < map.length; i+=2, handled = 0) {
           for (var j in map[i]) {
