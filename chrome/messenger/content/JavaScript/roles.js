@@ -3,7 +3,7 @@
  * @tparam    obj
  * @tparam    parent
  *
- * @treturn 
+ * @treturn
  */
 function _DECL_(obj, parent)
 {
@@ -48,7 +48,7 @@ function _DECL_NOW_(obj)
                      requires, 0);
     }
     for (i = 0; i < requires.length; i++)
-        checkReqs(obj, requires[i].name, requires[i].reqs, obj.prototype);
+        checkReqs(obj, requires[i].name, requires[i].reqs, obj.prototype, null, mixedProps);
 }
 
 /**
@@ -91,9 +91,9 @@ function setPrototype(obj, oldProto, newProto)
 
     for (i in newProto)
         if (newProto.hasOwnProperty(i)) {
-            if (g = newProto.__lookupGetter__(i))
+            if ((g = newProto.__lookupGetter__(i)))
                 oldProto.__defineGetter__(i, g);
-            if (s = newProto.__lookupSetter__(i))
+            if ((s = newProto.__lookupSetter__(i)))
                 oldProto.__defineSetter__(i, s);
             if (!g && !s)
                 oldProto[i] = newProto[i];
@@ -103,19 +103,23 @@ function setPrototype(obj, oldProto, newProto)
     return oldProto;
 }
 
-function checkReqs(obj, roleName, reqs, proto, result)
+function checkReqs(obj, roleName, reqs, proto, result, mixedProps)
 {
     var nmReqs = [];
     for (var i = 0; i < reqs.length; i++) {
         if (reqs[i] instanceof Array) {
-            if (!reqs[i].some(function(n){return n in proto}))
+            if (!reqs[i].some(function(n){return n in proto}) || mixedProps &&
+                reqs[i].every(function(n){return mixedProps[n].role.name == roleName}))
+            {
                 if (result)
                     nmReqs.push(reqs[i]);
                 else
                     throw new Error("Role "+roleName+" composed into "+obj.name+
-                                    " requires  any of ("+reqs[i].join(", ")+
-                                    " ) properties.");
-        } else if (!(reqs[i] in proto))
+                                    " requires at least one of ("+reqs[i].join(", ")+
+                                    ") properties.");
+            }
+        } else if (!(reqs[i] in proto) ||
+                   mixedProps && mixedProps[reqs[i]].role.name == roleName)
             if (result)
                 nmReqs.push(reqs[i]);
             else
@@ -161,9 +165,9 @@ function mixProto(cons, exclusions, aliases, objProto, mixedProps,
             checkReqs(null, name, proto.ROLE_REQUIRES, objProto, requires);
             continue;
         }
-        if (g = proto.__lookupGetter__(i))
+        if ((g = proto.__lookupGetter__(i)))
             objProto.__defineGetter__(j, g);
-        if (s = proto.__lookupSetter__(i))
+        if ((s = proto.__lookupSetter__(i)))
             objProto.__defineSetter__(j, s);
         if (!g && !s)
             objProto[j] = proto[i];
@@ -203,30 +207,6 @@ function getInheritanceChain(obj, name)
     return obj.__proto__.__META__.inheritanceChain[name] =
         obj.__proto__.__META__.inheritanceChain[''].filter(
           function(o){return name in o.__proto__});
-}
-
-function calculateWalkSequence(obj, name)
-{
-    var meta = obj.__proto__.__META__;
-    if (!meta.inheritanceChain)
-        meta.inheritanceChain = {};
-    if (meta.inheritanceChain[name])
-        return meta.inheritanceChain[name];
-
-    var c = [], p = obj.__proto__;
-    for (var i = 0; i <meta.roles.length; i++)
-    while (p && "__META__" in p) {
-        c.push(p.constructor);
-        for (var i = 0; i < p.__META__.roles.length; i++) {
-            var role = p.__META__.roles[i];
-            while (role && c.indexOf(role) >= 0) {
-                c.push(role);
-                role = role.prototype.__proto__.constructor;
-            }
-        }
-        p = p.__proto__;
-    }
-    obj.__proto__.__META__.inheritanceChain[''] = c;
 }
 
 function lookupForParentMethod(obj, fun)
@@ -309,4 +289,3 @@ WALK.desceding = {
             args[0][name].apply(args[0], realArgs);
     }
 }
-
