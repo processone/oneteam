@@ -91,8 +91,11 @@ function openLink(uri)
 
 function StorageWrapper(prefix)
 {
-    if (window.top != window)
-        return new window.top.StorageWrapper(prefix);
+    if (window.top != window) {
+        var storage = new window.top.StorageWrapper(prefix);
+        storage.report = report;
+        return storage;
+    }
 
     var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*$/, "$1");
 
@@ -207,23 +210,8 @@ function generateUniqueId()
     return "uid"+(arguments.callee.value = arguments.callee.value+1 || 0);
 }
 
-function report(to, level, info, context) {
-
-    // Alternative way to get the stack.
-    // #ifdef XULAPP
-    function getStackTrace() {
-        var frame = Components.stack.caller;
-        var str = "<top>";
-
-        while (frame) {
-            str += "\n" + frame;
-            frame = frame.caller;
-        }
-
-        return str + '\n'
-    }
-    // #endif
-
+function report(to, level, info, context)
+{
     function inspect(object) {
         var s = "";
         for(var propertyName in object) {
@@ -254,41 +242,50 @@ function report(to, level, info, context) {
             // XXX bard: not using instanceof as it would fail on
             // exceptions thrown in other toplevels
 
+            var msg = "";
+
             if('name' in info && 'message' in info)
-                dump(exceptionToString(info, "E ") + '\n');
+                msg += exceptionToString(info, "E ") + '\n';
             else {
                 if(typeof(info) == 'string')
-                    dump(info + '\n');
+                    msg += info + '\n';
                 else {
-                    dump("E INFO OBJECT: " + info + "\n");
-                    dump(inspect(info));
+                    msg += "E INFO OBJECT: " + info + "\n";
+                    msg += inspect(info);
                 }
 
                 // we still want the stack trace, but since it is not
                 // an object or string was thrown instead of an Error
                 // object, we have to get it by other means.
 
-                dump("E STACK TRACE:\n");
-                dump(getStackTrace().replace(/^/mg, "E    "));
+                msg += "E STACK TRACE:\n";
+                msg += dumpStack(null, "    ");
             }
 
-            if(context) {
-                dump("E CONTEXT:\n");
-                dump(inspect(context));
+            if (context) {
+                msg += "E CONTEXT:\n";
+                msg += inspect(context);
             }
+// #ifdef XULAPP
+            dump(msg);
+/* #else
+// #ifdef DEBUG
+            alert(msg);
+// #endif
+// #endif */
             break;
         default:
-            // #ifdef XULAPP
-            dump(getStackTrace());
-            // #endif
+// #ifdef XULAPP
+            dump(dumpStack());
+// #endif
             throw new Error("Error while trying to report error, unrecognized level: " + level);
         }
 
         break;
     default:
-        // #ifdef XULAPP
-        dump(getStackTrace());
-        // #endif
+// #ifdef XULAPP
+        dump(dumpStack());
+// #endif
         throw new Error("Error while trying to reporting error, unrecognized receiver type: " + to);
     }
 }

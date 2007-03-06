@@ -2,6 +2,7 @@ function dumpStack(stackFrame, indent)
 {
     var stacktrace = "";
 
+// #ifdef XULAPP
     stackFrame = stackFrame || Components.stack.caller;
     indent = indent || "";
 
@@ -11,6 +12,7 @@ function dumpStack(stackFrame, indent)
             (stackFrame.lineNumber||"<unknown>")+"\n";
         stackFrame = stackFrame.caller;
     }
+// #endif
     return stacktrace;
 }
 
@@ -46,7 +48,7 @@ function exceptionToString(exc, indent)
         } else if (exc instanceof Error || exc.stack) {
 /* #else
         if (exc instanceof Error || exc.stack) {
-// #endif */        
+// #endif */
             tmp = exc.stack.split("\n");
             frames = [];
 
