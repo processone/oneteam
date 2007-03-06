@@ -200,6 +200,13 @@ _DECL_(PersistantCache).prototype =
     {
         if (this.getValue(key) != null)
             this.storage.set("expiration:"+key, expirationDate.getTime());
+    },
+
+    clear: function()
+    {
+        var keys = [i for (i in this.storage)]
+        for (var i = 0; i < keys.length; i++)
+            this.storage.delete(keys[i]);
     }
 }
 // #endif */
