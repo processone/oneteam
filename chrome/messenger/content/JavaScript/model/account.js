@@ -168,8 +168,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         iq.setIQ(null, null, 'set');
         iq.getNode().appendChild(E4XtoDOM(vcardE4X, iq.getDoc()));
 
-        this._handleVCard(iq);
         con.send(iq);
+        this._handleVCard(iq);
     },
 
     onAddContact: function(contact)
