@@ -219,10 +219,17 @@
         data = tag.contentDocument.documentElement.textContent;
       } catch(ex) {window.opener.report("developer", "error", ex)}
 
+      try {
+        if (data)
+          data = atob(data.replace(/\s/g, ""));
+      } catch (ex) {
+        data = null;
+      }
+
       if (data)
-        avatarList.addAvatar(atob(data.replace(/\s/g, "")));
+        avatarList.addAvatar(data);
       else
-        alert("Unable to read your avatar image data");
+        alert("Can't read your avatar image data");
     }
   ]]></script>
 
