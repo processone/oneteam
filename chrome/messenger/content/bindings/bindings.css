@@ -24,6 +24,10 @@ avatar {
   -moz-binding: url("chrome://messenger/content/bindings/avatar.xml#avatar");
 }
 
+avatarlist {
+  -moz-binding: url("chrome://messenger/content/bindings/avatar.xml#avatarList");
+}
+
 groupselector {
   -moz-binding: url("chrome://messenger/content/bindings/groupselector.xml#groupselector");
 }

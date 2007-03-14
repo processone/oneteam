@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
 <bindings xmlns="http://www.mozilla.org/xbl"
-    xmlns:xbl="http://www.mozilla.org/xbl"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -14,8 +13,7 @@
 
     <content>
       <xul:hbox flex="1" align="center">
-        <xul:vbox style="background: white; padding: 1px; border: 1px solid #999"
-            hidden="true">
+        <xul:vbox class="avatarContainer" hidden="true">
           <html:div>
             <html:img id="image" width="1" height="1" style="display: block"
               onload="try{this.parentNode.parentNode.parentNode.parentNode.onImageLoad()}catch(ex){}"/>
@@ -111,4 +109,130 @@
 
   </binding>
 
+  <binding id="avatarList">
+
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/avatar.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <div flex="1" id="container" xmlns="http://www.w3.org/1999/xhtml" style="overflow: auto"/>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+
+      <property name="selectedAvatarHash">
+        <getter><![CDATA[
+          if (!this._selectedItem)
+            return null;
+          if (!this._selectedItem.firstChild.avatarHash) {
+            var data = atob(this._selectedItem.firstChild.src.
+                            slice("data:image/png;base64,".length));
+            var hash = this._rootWin.hex_sha1(data);
+            this._cache.setValue("avatar-"+hash, data,
+                                 new Date(Date.now()+30*24*60*60*1000), true);
+
+            this._selectedItem.firstChild.avatarHash = hash;
+          }
+          return this._selectedItem.firstChild.avatarHash;
+        ]]></getter>
+      </property>
+
+      <constructor>
+        <![CDATA[
+          this._container = document.getAnonymousElementByAttribute(this, "id", "container")
+
+          var root = window;
+          while (!root.account)
+            root = root.opener;
+          this._cache = root.account.cache;
+          this._rootWin = root;
+
+          for (var [key, val] in this._cache.iterator("avatar-", true))
+            this.addAvatar(val, key.slice(7));
+         ]]>
+      </constructor>
+
+      <method name="selectAvatar">
+        <parameter name="hash"/>
+        <parameter name="data"/>
+        <body><![CDATA[
+          if (this._selectedItem.firstChild.avatarHash == hash)
+            return;
+          this._selectedItem.removeAttribute("selected");
+
+          for (var i = 0; i < this._container.childNodes.length; i++)
+            if (this._container.childNodes[i].firstChild.avatarHash == hash) {
+              this._selectedItem = this._container.childNodes[i];
+              this._selectedItem.setAttribute("selected", "true");
+              return;
+            }
+          if (data)
+            this.addAvatar(data, hash);
+        ]]></body>
+      </method>
+
+      <method name="addAvatar">
+        <parameter name="data"/>
+        <parameter name="hash"/>
+        <body><![CDATA[
+          const xulNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          const htmlNS = "http://www.w3.org/1999/xhtml"
+
+          var el = document.createElementNS(htmlNS, "div");
+          var img = document.createElementNS(htmlNS, "img");
+          var size = document.createElementNS(htmlNS, "div");
+
+          el.setAttribute("class", "avatarIcon");
+          el.setAttribute("selected", "true");
+          el.appendChild(img);
+          el.appendChild(size);
+
+// TODOpfx implement size calculation for standalone version
+
+          var fileSize;
+          if (hash) {
+            img.setAttribute("src", data);
+            img.avatarHash = hash;
+
+            fileSize = data.length;
+            var pad = 0;
+            while (data[fileSize-pad-1] == "=")
+              pad++;
+            fileSize = (fileSize-22)/4*3-pad;
+          } else {
+            img.setAttribute("src", "data:image/png;base64,"+btoa(data));
+            fileSize = data.length;
+          }
+
+          size.setAttribute("class", "size");
+          size.appendChild(document.createTextNode(this._rootWin.ppFileSize(fileSize)));
+
+          if (this._selectedItem)
+            this._selectedItem.removeAttribute("selected", "true");
+          this._selectedItem = el;
+          this._container.appendChild(el);
+        ]]></body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="click" button="0"><![CDATA[
+        var target = event.originalTarget;
+
+        while (target && target.className != "avatarIcon")
+          target = target.parentNode;
+
+        if (target && target != this._selectedItem) {
+          this._selectedItem.removeAttribute("selected");
+          target.setAttribute("selected", "true");
+          this._selectedItem = target;
+        }
+      ]]></handler>
+    </handlers>
+
+  </binding>
 </bindings>

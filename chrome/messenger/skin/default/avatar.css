@@ -1,0 +1,32 @@
+.avatarContainer, .avatarIcon img {
+  background: white;
+  padding: 1px;
+  border: 1px solid #999;
+}
+
+.avatarIcon img {
+  display: block;
+  margin: auto;
+  max-width: 48px;
+  max-height: 48px;
+}
+
+.avatarIcon {
+  position: relative;
+  float: left;
+  padding: 2px;
+  margin: 4px;
+  width: 60px;
+  height: 76px;
+  border: 2px solid #ccc;
+}
+
+.avatarIcon[selected="true"] {
+  border-color: #79b;
+}
+
+.avatarIcon .size {
+  position: absolute;
+  bottom: 0px;
+  left: 4px;
+}
