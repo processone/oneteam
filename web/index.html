@@ -136,7 +136,12 @@
             if (storage.key(i).indexOf(this.prefix) == 0)
               try {
                 var key = storage.key(i).substr(this.prefix.length);
-                yield (keysOnly ? key : [key, storage[storage.key(i)]]);
+                if (keysOnly)
+                  yield (key);
+                else {
+                  var val = storage[storage.key(i)];
+                  yield ([key, val == null ? null : ""+val]);
+                }
               } catch (ex) { this.report("developer", "error", ex) }
           throw StopIteration;
         },
