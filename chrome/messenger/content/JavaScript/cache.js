@@ -72,6 +72,9 @@ try{
                                            "expiry_date) VALUES(?1, ?2, ?3, ?4)");
     this.removeStmt = this.db.createStatement("DELETE FROM cache WHERE key = ?1");
     this.bumpStmt = this.db.createStatement("UPDATE cache SET expiry_date = ?2 WHERE key = ?1");
+    this.clearStmt = this.db.createStatement("DELETE FROM cache");
+    this.iteratorStmt = this.db.createStatement("SELECT key, value, is_file FROM cache WHERE key LIKE ?1");
+    this.keyIteratorStmt = this.db.createStatement("SELECT key FROM cache WHERE key LIKE ?1");
 }
 
 _DECL_(PersistantCache).prototype =
@@ -142,6 +145,51 @@ _DECL_(PersistantCache).prototype =
         this.bumpStmt.bindStringParameter(0, key);
         this.bumpStmt.bindInt64Parameter(1, expiryDate.getTime());
         this.bumpStmt.execute();
+    },
+
+    clear: function()
+    {
+        this.clearStmt.execute();
+    },
+
+    iterator: function(prefix, asFile)
+    {
+        return {
+            prefix: prefix+"%",
+            asFile: asFile,
+            stmt: this.iteratorStmt,
+            keyStmt: this.keyIteratorStmt,
+
+            __iterator__: function(onlyKeys) {
+                if (onlyKeys) {
+                    try {
+                        this.keyStmt.bindStringParameter(this.prefix);
+                        while (this.keyStmt.executeStep())
+                            yield (this.keyStmt.getString(0));
+                    } finally {
+                        this.keyStmt.reset();
+                    }
+                } else
+                    try {
+                        this.stmt.bindStringParameter(this.prefix);
+                        while (this.stmt.executeStep()) {
+                            var value = this.getStmt.getString(1);
+
+                            if (this.getStmt.getInt32(2)) {
+                                if (!asFile)
+                                    value = slurpFile(value);
+                                else
+                                    value = "file://"+value;
+                            } else if (asFile)
+                                continue;
+
+                            yield ([this.stmt.getString(0), value]);
+                        }
+                    } finally {
+                        this.stmt.reset();
+                    }
+            }
+        };
     }
 }
 
@@ -207,6 +255,27 @@ _DECL_(PersistantCache).prototype =
         var keys = [i for (i in this.storage)]
         for (var i = 0; i < keys.length; i++)
             this.storage.delete(keys[i]);
+    },
+
+    iterator: function(prefix, asFile)
+    {
+        return {
+            prefix: "value:"+prefix,
+            storage: this.storage,
+            asFile: asFile,
+
+            __iterator__: function(onlyKeys) {
+                if (onlyKeys) {
+                    for (var key in this.storage)
+                        if (key.indexOf(this.prefix) == 0)
+                            yield (key.slice(6));
+                } else
+                    for (var [key, val] in this.storage)
+                        if (key.indexOf(this.prefix) == 0)
+                            yield ([key.slice(6), this.asFile ?
+                                "data:image/png;base64,"+btoa(val) : val]);
+            }
+        };
     }
 }
 // #endif */
