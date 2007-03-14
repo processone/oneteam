@@ -2,6 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/myInfo.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 
 <!DOCTYPE dialog [
   <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
@@ -17,20 +18,36 @@
   onload="onLoad()" ondialogaccept="return saveVCard()" ondialogextra1="fetchVCard(true)">
 
   <script type="text/javascript;version=1.7"><![CDATA[
+    var avatarList;
+
     function onLoad() {
 //      if (window.arguments[0] == 1)
 //        document.getElementById("tabs").selectedIndex = 2;
+      avatarList = document.getElementById("avatarList");
       fetchVCard();
+/* #ifndef XULAPP
+      document.getElementById("avatarUploadForm").action = document.location.href.
+// #ifdef NOJAR
+        replace(/\/content\/.*$/, "/service/b64encode");
+// #else
+        replace(/jar:/, "").replace(/\/[^\/]*!.*$/, "/service/b64encode");
+// #endif
+// #endif */
     }
-
-    var photo;
 
     function handlePhoto(generateResult, tree)
     {
       if (generateResult) {
-        return photo;
-      } else
-        photo = tree.elements();
+        var ns = new Namespace("vcard-temp");
+        var avatarData = window.opener.account.cache.
+          getValue("avatar-"+avatarList.selectedAvatarHash);
+
+        default xml namespace = ns;
+        return <><BINVAL>{btoa(avatarData)}</BINVAL></>;
+      } else {
+        avatarList.selectAvatar(window.opener.account.avatarHash,
+                                window.opener.account.avatar);
+      }
     }
 
     const map = {
@@ -177,6 +194,35 @@
     function fetchDone(pkt) {
       document.getElementById("updateProgress").style.visibility = "hidden";
       parse(window.opener.DOMtoE4X(pkt.getNode()).elements(), map);
+    }
+
+    var avatarFetchState = false;
+
+    function submitAvatar(tag) {
+      tag.parentNode.collapsed = true; // form box
+      tag.parentNode.nextSibling.hidden = false;
+      avatarFetchState = true;
+      return true;
+    }
+
+    function avatarSubmited(tag) {
+      tag.parentNode.collapsed = false; // form box
+      tag.parentNode.nextSibling.hidden = true;
+
+      if (!avatarFetchState)
+        return;
+
+      avatarFetchState = false;
+
+      var data;
+      try {
+        data = tag.contentDocument.documentElement.textContent;
+      } catch(ex) {window.opener.report("developer", "error", ex)}
+
+      if (data)
+        avatarList.addAvatar(atob(data.replace(/\s/g, "")));
+      else
+        alert("Unable to read your avatar image data");
     }
   ]]></script>
 
@@ -345,12 +391,25 @@
         <tabpanel orient="vertical">
           <groupbox flex="1">
             <caption label="Avatar"/>
+            <avatarlist id="avatarList" flex="1"/>
           </groupbox>
+          <hbox>
+            <spacer flex="1"/>
+            <html:form id="avatarUploadForm" method="post"
+                       enctype="multipart/form-data" onsubmit="submitAvatar(this)"
+                       target="avatarIframe">
+              <html:input type="file" name="avatar" flex="1"/>
+              <html:input type="submit" value="Add image..."/>
+            </html:form>
+            <html:iframe id="avatarIframe" style="visibility: collapse"
+                         onload="avatarSubmited(this)"/>
+          </hbox>
+          <progressmeter mode="undetermined" hidden="true"/>
         </tabpanel>
       </tabpanels>
     </tabbox>
     <hbox>
-      <progressmeter id="updateProgress" mode="undetermined" style="visibility: hidden" flex="1"/>
+      <progressmeter id="updateProgress" mode="undetermined" hidden="true" flex="1"/>
     </hbox>
     <spacer style="height: 1em;"/>
     <hbox align="end" pack="end">
