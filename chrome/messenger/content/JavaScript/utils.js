@@ -110,7 +110,12 @@ StorageWrapper.prototype =
             if (this.storage.key(i).indexOf(this.prefix) == 0)
                 try {
                     var key = this.storage.key(i).substr(this.prefix.length);
-                    yield (keysOnly ? key : [key, this.storage[this.storage.key(i)]]);
+                    if (keysOnly)
+                        yield (key);
+                    else {
+                        var val = this.storage[this.storage.key(i)];
+                        yield ([key, val == null ? null : ""+val]);
+                    }
                 } catch(ex) { report("developer", "error", ex) }
         throw StopIteration;
     },
