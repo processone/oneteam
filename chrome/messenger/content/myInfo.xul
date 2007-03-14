@@ -10,7 +10,7 @@
 ]>
 
 <dialog id="myInfo" windowtype="ot:myInfo" title="My vCard"
-  width="800" height="600"
+  width="800" height="640"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   buttonlabelaccept="Publish" buttonlabelcancel="&dialog.cancel.label;" buttonlabelextra1="Refresh"
