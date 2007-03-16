@@ -482,9 +482,21 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             item.onPresence(packet);
     },
 
+    iqServices: {
+        "jabber:iq:version": function (pkt, query) {
+            if (pkt.getType() != "get")
+                return null;
+            return <query xmlns="jabber:iq:version">
+                    <name>OneTeam</name>
+                    <version>{_("branding:brand", "softwareVersion")+" (r@REVISION@)"}</version>
+                    <os>{navigator.platform}</os>
+                   </query>;
+        }
+    },
+
     onIQ: function(packet)
     {
-        var ns, query = packet.getNode().childNodes;
+        var query = packet.getNode().childNodes;
 
         for (var i = 0; i < query.length; i++)
             if (query[i].nodeType == 1) {
@@ -494,7 +506,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (!query.nodeType)
             return;
 
-        switch (ns = query.namespaceURI) {
+        var ns = query.namespaceURI;
+
+        switch (ns) {
         case "jabber:iq:roster":
             var items = query.getElementsByTagNameNS(ns, "item");
             for (i = 0; i < items.length; i++) {
@@ -513,7 +527,75 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         case "http://jabber.org/protocol/bytestreams":
             socks5Service.onIQ(packet);
             break;
+        default:
+            var response, callback, service = this.iqServices[ns];
+
+            if (!service) {
+                if (packet.getType() != "get" && packet.getType() != "set" ||
+                    !packet.getID())
+                    return;
+
+                response = {
+                    type: "error",
+                    dom: query,
+                    e4x: <error xmlns="jabber:client" type="cancel" code="501">
+                            <service-unavailable xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>
+                         </error>
+                };
+            } else {
+                response = service(packet, DOMtoE4X(query));
+
+                if (response)
+                    break;
+
+                // crappy method for detecting Generator
+                if ("__iterator__" in response && !response.hasOwnProperty("__iterator__")) {
+                    callback = new Callback(this._iqServicesCallback, this);
+                    callback.addArgs(response, callback).fromCall();
+
+                    response = response.next();
+                }
+            }
+            this._iqServicesSendPacket(response, packet, callback)
+            break;
         }
+    },
+
+    _iqServicesSendPacket: function(response, packet, callback)
+    {
+        if (!response)
+            return;
+
+        if (typeof(response) == "xml")
+            response = {e4x: response};
+        if (response instanceof Node)
+            response = {dom: response};
+
+        var pkt = new JSJaCIQ();
+        pkt.setIQ(response.to || packet.getFrom(), null, response.type || "result", packet.getID());
+        if (response.dom)
+            pkt.getNode().appendChild(pkt.getDoc().adoptNode(response.dom));
+        if (response.e4x)
+            pkt.getNode().appendChild(E4XtoDOM(response.e4x, pkt.getDoc()));
+
+        con.send(pkt, callback);
+    },
+
+    _iqServicesCallback: function(service, callback, packet)
+    {
+        var query = packet.getNode().childNodes;
+
+        for (var i = 0; i < query.length; i++)
+            if (query[i].nodeType == 1) {
+                query = query[i];
+                break;
+            }
+
+        try {
+            if (query)
+                query = DOMtoE4X(query);
+            this._iqServicesSendPacket(service.send([packet, query]), packet, callback);
+        } catch (ex) {}
     },
 
     onMessage: function(packet)
