@@ -164,8 +164,8 @@ sub get_revision {
     return $revision if defined $revision;
 
     if (-d catdir($dir, '.svn')) {
-        $revision = `svnversion "$dir"`
-        chomp($revision)
+        $revision = `svnversion "$dir"`;
+        chomp $revision;
         return $revision;
     }
 
