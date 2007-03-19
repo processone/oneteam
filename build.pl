@@ -163,8 +163,11 @@ sub process {
 sub get_revision {
     return $revision if defined $revision;
 
-    return $revision = `svnversion "$dir"`
-        if -d catdir($dir, '.svn');
+    if (-d catdir($dir, '.svn')) {
+        $revision = `svnversion "$dir"`
+        chomp($revision)
+        return $revision;
+    }
 
     my $info = `svk info "$dir"`;
     my ($depot) = $info =~ /Depot Path: (\/.*?)\//;
@@ -262,7 +265,7 @@ sub process {
         my $loc = index($bundle, "branding:") == 0 ? "branding" : $locale;
 
         if ($prefix and ($6 eq ',' or $6 eq ')')) {
-            die "Unable to resolve bundle string (id: $prefix, $bundle: $bundle)"
+            die "Unable to resolve bundle string (id: $prefix, bundle: $bundle)"
                 unless exists $self->{bundles}->{$loc}->{$bundle}->{$prefix};
 
             my $str = $self->{bundles}->{$loc}->{$bundle}->{$prefix};
@@ -473,9 +476,9 @@ sub new {
     my $self = {
         outputdir => catdir(getcwd, "web"),
     };
-    rmtree([catdir($self->{outputdir}, "branding"),
-        catdir($self->{outputdir}, "content"),
-        catdir($self->{outputdir}, "skin")], 0, 0);
+#    rmtree([catdir($self->{outputdir}, "branding"),
+#        catdir($self->{outputdir}, "content"),
+#        catdir($self->{outputdir}, "skin")], 0, 0);
     bless $self, $class;
 }
 
@@ -576,4 +579,3 @@ sub finalize {
 
     system("cd '$tmpdir'; zip -q -9 -r '".catfile(getcwd, "oneteam.xulapp")."' .");
 }
-
