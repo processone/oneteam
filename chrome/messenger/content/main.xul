@@ -592,11 +592,10 @@
     <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
     <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
     <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
-<!-- #ifdef XULAPP -->
     <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
+<!-- #ifdef XULAPP -->
     <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
 <!-- #else
-    <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()" disabled="true"/>
     <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()" disabled="true"/>
 // #endif -->
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>

@@ -192,7 +192,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     showHistoryManager: function()
     {
+// #ifdef XULAPP
         openDialogUniq("ot:history", "history.xul", "chrome,centerscreen,dialog=no");
+/* #else
+        openDialogUniq("ot:history", "historyWeb.xul", "chrome,centerscreen,dialog=no");
+// #endif */
     },
 
     showTransfersManager: function()
@@ -341,7 +345,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.connected = true;
 
         this.myJID = new JID(con.fulljid);
-        this.discoJID = new JID(this.myJID.domain);
+        this.jid = new JID(this.myJID.domain);
 
         if (this.userPresence)
             this.setPresence(this.userPresence);
@@ -366,22 +370,22 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                             con.send(bsp, account._proxyAddress);
                                         }
                                      });
+        // Enable auto archiving
+        this.hasDiscoFeature("http://www.xmpp.org/extensions/xep-0136.html#ns", false,
+                             function (value) {
+                                if (!value)
+                                    return;
+                                var pkt = new JSJaCIQ();
+                                pkt.setIQ(account.jid, null, "set");
+                                var auto = pkt.getDoc().
+                                    createElementNS("http://www.xmpp.org/extensions/xep-0136.html#ns",
+                                                    "auto");
+                                auto.setAttribute("save", "true");
+                                pkt.getNode().appendChild(auto);
+                                con.send(pkt);
+                            });
         this.presenceProfiles.loadFromServer();
         this.getVCard(true, function(){});
-        this.setPrivacyList();
-    },
-
-    setPrivacyList: function() {
-        var iq = new JSJaCIQ();
-        iq.setIQ(null, null, "set");
-        var query = iq.setQuery("jabber:iq:privacy");
-        var list = query.appendChild(iq.getDoc().createElement("list"));
-        list.setAttribute("name", "oneteam-invisible");
-        var item = list.appendChild(iq.getDoc().createElement("item"));
-        item.setAttribute("action", "deny");
-        item.setAttribute("order", "1");
-        item.appendChild(iq.getDoc().createElement("presence-out"));
-        con.send(iq);
     },
 
     _proxyAddress: function(pkt)
