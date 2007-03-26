@@ -107,7 +107,7 @@ function dateToISO8601Timestamp(date, accuracy)
             if (accuracy > 4)
                 str+= "."+(1000+date.getMilliseconds()).toString().substr(1,2);
 
-            if (tz = date.getTimezoneOffset()) {
+            if ((tz = date.getTimezoneOffset())) {
                 if (tz > 0)
                     str += "-";
                 else if (tz < 0) {
@@ -130,12 +130,12 @@ function dateToISO8601Timestamp(date, accuracy)
 
 function iso8601TimestampToDate(string)
 {
-    var date = Date.UTC(string.substr(0,4), string.substr(5,2)-1 || 0,
-        string.substr(8,2) || 1, string.substr(11,2) || 0,
-        string.substr(14,2) || 0, string[16] == ":" ? string.substr(17,2) : 0,
-        string[19] == "." ? string.substr(20,2) : 0);
-    if (string.length > 10)
-        date-=(string.substr(-6,3)*60+string.substr(-2,2)*1)*60*1000;
+    var match = string.match(/(\d+)-(\d+)-(\d+)T(\d+):(\d+):(\d+)(?:\.(\d+))?(?:([+-])(\d+):(\d+))?/)
+    var date = Date.UTC(match[1], +match[2]-1 || 0, match[3] || 1,
+                        match[4] || 0, match[5] || 0, match[6] || 0, match[7] || 0);
+    if (match[8])
+        date += (match[8] == "+" ? -1 : 1) *
+            ((+match[9] || 0)*60 + (+match[10] || 0))*60*1000;
 
     return new Date(date);
 }
@@ -150,4 +150,3 @@ function readableTimestamp(date)
         return formatDate(date, null, "none", "short");
     return formatDate(date, null, "short", "short");
 }
-
