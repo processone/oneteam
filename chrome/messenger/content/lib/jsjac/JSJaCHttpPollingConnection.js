@@ -206,6 +206,17 @@ function JSJaCHPCConnect(oArg) {
   // extract session ID
   this.oDbg.log(this._req[0].r.getAllResponseHeaders(),4);
   var aPList = this._req[0].r.getResponseHeader('Set-Cookie');
+  if (aPList == null) {
+    this._setStatus("internal_server_error");
+    clearTimeout(this._timeout); // remove timer
+    clearInterval(this._interval);
+    clearInterval(this._inQto);
+    this._handleEvent('onerror',JSJaCError('503','cancel','session-terminate'));
+    this._connected = false;
+    this.oDbg.log("Disconnected.",1);
+    this._handleEvent('ondisconnect');
+    return;
+  }
   aPList = aPList.split(";");
   for (var i=0;i<aPList.length;i++) {
     aArg = aPList[i].split("=");
