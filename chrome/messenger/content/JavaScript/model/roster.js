@@ -252,12 +252,14 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
                 yield (this.resources[i]);
     },
 
-    sendMessage: function(body)
+    sendMessage: function(body, thread)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("chat");
         message.setBody(body)
+        if (thread)
+            message.setThread(thread);
 
         con.send(message);
     },
@@ -269,7 +271,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
 
-        this.chatPane.addMessage(new Message(packet, null, this));
+        this.chatPane.addMessage(new Message(packet, null, this), packet.getThread());
     },
 
     subscribe: function(reason)
@@ -583,12 +585,14 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         delete account.resources[this.jid.normalizedJID];
     },
 
-    sendMessage: function(body)
+    sendMessage: function(body, thread)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("chat");
         message.setBody(body)
+        if (thread)
+            message.setThread(thread);
 
         con.send(message);
     },
@@ -604,7 +608,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 this.contact.chatPane :
                 this.onOpenChat();
 
-        chatPane.addMessage(new Message(packet, null, this));
+        chatPane.addMessage(new Message(packet, null, this), packet.getThread());
     },
 
     createCompletionEngine: function()

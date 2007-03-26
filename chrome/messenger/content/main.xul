@@ -548,13 +548,18 @@
         if (!(this.contact instanceof Conference))
           this.addMessage(new Message(body, null, account.myResource, 0));
 
-        this.contact.sendMessage(body);
+        if (!this._thread)
+          this._thread = generateRandomName(12);
+
+        this.contact.sendMessage(body, this._thread);
       },
 
-      addMessage: function(msg)
+      addMessage: function(msg, thread)
       {
         if (!this._msgThread)
           this._msgThread = new MessageThread();
+        if (!this._thread)
+          this._thread = thread;
         msg.thread = this._msgThread;
 
         if (this._selectedTab != this.tab && !msg.isSystemMessage)
