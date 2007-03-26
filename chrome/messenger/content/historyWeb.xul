@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
+
+<window id="ot:histroy" title="History Manager" width="640" height="550"
+    onload="onLoad()" persist="width height" windowtype="ot:history"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/colorutils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    account = window.opener.account;
+
+    var contactsList, contactThreads, contactMsgs;
+    var conferencesList, conferenceThreads, conferenceMsgs;
+
+    var threads = {};
+
+    var pendingRequests = 0;
+    function updateProgressMeter(op)
+    {
+      pendingRequests += op;
+      if (op == 1 && pendingRequests == 1)
+        return;
+      else if (op == -1 && pendingRequests == 0)
+        return;
+    }
+
+    function ThreadsRetriever(jid, model)
+    {
+      this.jid = jid;
+      this.model = model;
+      this.cache = [];
+      this._contactIds = [];
+      this._contactNicks = {};
+    }
+
+    _DECL_(ThreadsRetriever).prototype =
+    {
+      getContactID: function(contact)
+      {
+        if (contact.representsMe)
+          return 0;
+
+        var idx = this._contactIds.indexOf(contact);
+        if (idx >= 0)
+          return idx+1;
+
+        this._contactIds.push(contact);
+        this._contactNicks[contact.visibleName] = contact;
+        return this._contactIds.length;
+      },
+
+      getContactForNick: function(nick, jid, representsMe)
+      {
+        if (this._contactNicks[nick] && this._contactNicks[nick].representsMe == representsMe)
+          return this._contactNicks[nick];
+
+        return new ContactInfo(jid, nick, representsMe);
+      },
+
+      fillTree: function(tree)
+      {
+        this.tree = tree;
+        tree.view.selection.selectAll();
+        tree.view.performAction("delete");
+        this.fillTreeFromCache(this.cache.length);
+
+        this.requestNextChunk();
+      },
+
+      requestNextChunk: function()
+      {
+        var pkt = new window.opener.JSJaCIQ();
+        pkt.setIQ(account.jid, null, "get");
+
+        var query = <list xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'>
+          <set xmlns='http://jabber.org/protocol/rsm'>
+            <max>30</max>
+            <before>{this.rsm || ""}</before>
+          </set>
+        </list>;
+
+        pkt.getNode().appendChild(window.opener.E4XtoDOM(query, pkt.getDoc()));
+        window.opener.con.send(pkt, new Callback(this.processChunk, this));
+        updateProgressMeter(1);
+      },
+
+      processChunk: function(pkt)
+      {
+        if (pkt.getType() != "result") {
+          updateProgressMeter(-1);
+          return;
+        }
+
+        for (var i = 0, query = pkt.getNode().childNodes; i < query.length && query[i].nodeType != 1; i++)
+          ;
+        if (i >= query.length)
+          return;
+        query = window.opener.DOMtoE4X(query[i]);
+
+        var archNS = new Namespace("http://www.xmpp.org/extensions/xep-0136.html#ns");
+        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
+        var idx = 0;
+        for each (thread in query.archNS::chat)
+          this.cache.splice(idx++, 0, new MessagesRetriever(thread.@with.toString(),
+                                                            thread.@start.toString(),
+                                                            this));
+
+        this.fillTreeFromCache(idx);
+
+        if (+query.rsmNS::first.@index > 0) {
+          this.rsm = query.rsmNS::first.text();
+          this.requestNextChunk();
+        }
+        updateProgressMeter(-1);
+      },
+
+      fillTreeFromCache: function(end)
+      {
+        for (var i = end-1; i >= 0; i--) {
+          var item = document.createElement("treeitem");
+          var row = document.createElement("treerow");
+
+          item.appendChild(row);
+          item.msgs = this.cache[i];
+
+          row.appendChild(document.createElement("treecell")).
+                      setAttribute("label", this.cache[i].jid).
+          row.appendChild(document.createElement("treecell")).
+                      setAttribute("label", readableTimestamp(iso8601TimestampToDate(this.cache[i].stamp)));
+
+          this.tree.body.insertBefore(item, tree.body.firstChild);
+        }
+      },
+    }
+
+    function MessagesRetriever(jid, stamp, thread)
+    {
+      this.jid = jid;
+      this.stamp = stamp;
+      this.thread = thread;
+      this.cache = [];
+    }
+
+    _DECL_(MessagesRetriever).prototype =
+    {
+      fillView: function(view)
+      {
+        this.view = view;
+        view.clear();
+
+        for (var i = 0; i < this.cache.length; i++)
+          this.view.addMessage(this.cache[i]);
+        this.requestNextChunk();
+      },
+
+      requestNextChunk: function()
+      {
+        var pkt = new window.opener.JSJaCIQ();
+        pkt.setIQ(account.jid, null, "get");
+
+        var query =
+          <retrieve xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
+              with={this.jid} start={this.stamp}>
+          <set xmlns='http://jabber.org/protocol/rsm'>
+            <max>100</max>
+            <after>{this.rsm || ""}</after>
+          </set>
+        </retrieve>;
+
+        pkt.getNode().appendChild(window.opener.E4XtoDOM(query, pkt.getDoc()));
+        window.opener.con.send(pkt, new Callback(this.processChunk, this));
+        updateProgressMeter(1);
+      },
+
+      processChunk: function(pkt)
+      {
+        if (pkt.getType() != "result") {
+          updateProgressMeter(-1);
+          return;
+        }
+
+        for (var i = 0, query = pkt.getNode().childNodes; i < query.length && query[i].nodeType != 1; i++)
+          ;
+        if (i >= query.length)
+          return;
+        query = window.opener.DOMtoE4X(query[i]);
+
+        var archNS = new Namespace("http://www.xmpp.org/extensions/xep-0136.html#ns");
+        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
+
+        var startTime = iso8601TimestampToDate(query.@start.toString()).getTime();
+        for each (msg in query.archNS::*) {
+          var contact;
+          if (msg.@name)
+            contact = this.thread.getContactForNick(msg.@name, msg.@jid, msg.name() == "to");
+          else
+            msg.name() == "from" ? this.thread.contact : window.opener.myResource;
+
+          msg = new Message(msg.archNS::body.text(), null, contact,
+                            this.thread.contact ? 3 : 1,
+                            new Date(startTime + 1000*msg.@secs), this.thread);
+
+          this.view.addMessage(mdg);
+          this.cache.push(msg);
+        }
+
+        if (this.cache.length < +query.rsmNS::count.text()) {
+          this.rsm = query.rsmNS::last.text();
+          this.requestNextChunk();
+        }
+        updateProgressMeter(-1);
+      }
+    }
+
+    function onLoad() {
+      contactsList = document.getElementById("contacts-list");
+      contactThreads = document.getElementById("contacts-threads");
+      contactMsgs = document.getElementById("contacts-view");
+      conferencesList = document.getElementById("conferences-list");
+      conferenceThreads = document.getElementById("conferences-threads");
+      conferenceMsgs = document.getElementById("conferences-view");
+
+      for (var contact in account.contactsIterator()) {
+        var item = document.createElement("treeitem");
+        item.model = contact;
+
+        contactsList.body.appendChild(item).
+          appendChild(document.createElement("treerow")).
+          appendChild(document.createElement("treecell")).
+                      setAttribute("label", contact.jid);
+      }
+
+      for (var i = 0; i < account.bookmarks.bookmarks.length; i++) {
+        conferencesList.body.
+          appendChild(document.createElement("treeitem")).
+          appendChild(document.createElement("treerow")).
+          appendChild(document.createElement("treecell")).
+                      setAttribute("label", account.bookmarks.bookmarks[i].jid);
+      }
+    }
+
+    function updateThreads(list, threads)
+    {
+      var tr, jid = list.view.getCellText(list.currentIndex, list.columns[0]);
+      if (!(tr = threads[jid]))
+        tr = threads[jid] = new ThreadsRetriever(jid, list.body.childNodes[list.currentIndex].model);
+
+      tr.fillTree(threads);
+    }
+
+    function updateMessages(threads, msgs)
+    {
+      threads.body.childNodes[threads.currentIndex].msgs.fillView(msgs)
+    }
+  ]]></script>
+
+  <tabbox flex="1">
+    <tabs>
+      <tab label="Chats"/>
+      <tab label="Conferences"/>
+    </tabs>
+    <tabpanels flex="1">
+      <tabpanel>
+        <hbox flex="1">
+          <tree id="contacts-list" width="150" persist="width" hidecolumnpicker="true"
+              seltype="single" onselect="updateThreads(this, contactThreads)">
+            <treecols>
+              <treecol primary="true" flex="1" id="jid" hideheader="true"/>
+            </treecols>
+            <treechildren/>
+          </tree>
+          <splitter/>
+          <vbox flex="1">
+            <tree id="contacts-threads" height="100" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, contactMsgs)">
+              <treecols>
+                <treecol primary="true" flex="5" label="JID" id="jid"/>
+                <splitter class="tree-splitter"/>
+                <treecol flex="1" label="Date" id="date"/>
+              </treecols>
+              <treechildren/>
+            </tree>
+            <splitter/>
+            <chatpane-view id="contacts-view" flex="1"/>
+          </vbox>
+        </hbox>
+      </tabpanel>
+      <tabpanel>
+        <hbox flex="1">
+          <tree id="conferences-list" width="150" persist="width" hidecolumnpicker="true"
+              seltype="single" onselect="updateThreads(this, conferenceThreads)">
+            <treecols>
+              <treecol primary="true" flex="1" id="jid" hideheader="true"/>
+            </treecols>
+            <treechildren/>
+          </tree>
+          <splitter/>
+          <vbox flex="1">
+            <tree id="conferences-threads" height="100" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, conferenceMsgs)">
+              <treecols>
+                <treecol primary="true" flex="5" label="JID" id="jid"/>
+                <splitter class="tree-splitter"/>
+                <treecol flex="1" label="Date" id="date"/>
+              </treecols>
+              <treechildren/>
+            </tree>
+            <splitter/>
+            <chatpane-view id="conferences-view" flex="1"/>
+          </vbox>
+        </hbox>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+
+</window>
