@@ -69,14 +69,14 @@
       fillTree: function(tree)
       {
         this.tree = tree;
-        tree.view.selection.selectAll();
-        tree.view.performAction("delete");
+        while (tree.body.firstChild)
+          tree.body.removeChild(tree.body.firstChild);
         this.fillTreeFromCache(this.cache.length);
 
         this.requestNextChunk();
       },
 
-      requestNextChunk: function()
+      requestNextChunk: function(rsm)
       {
         var pkt = new window.opener.JSJaCIQ();
         pkt.setIQ(account.jid, null, "get");
@@ -85,9 +85,12 @@
             with={this.jid}>
           <set xmlns='http://jabber.org/protocol/rsm'>
             <max>30</max>
-            <before>{this.rsm || ""}</before>
+            <before>{rsm || ""}</before>
           </set>
         </list>;
+
+        if (this.lastCheck)
+          query.@start = dateToISO8601Timestamp(this.lastCheck);
 
         pkt.getNode().appendChild(window.opener.E4XtoDOM(query, pkt.getDoc()));
         window.opener.con.send(pkt, new Callback(this.processChunk, this));
@@ -123,10 +126,11 @@
 
         this.fillTreeFromCache(idx);
 
-        if (+query.rsmNS::first.@index > 0) {
-          this.rsm = query.rsmNS::first.text();
-          this.requestNextChunk();
-        }
+        if (+query.rsmNS::first.@index > 0)
+          this.requestNextChunk(query.rsmNS::first.text());
+        else
+          this.lastCheck = new Date();
+
         updateProgressMeter(-1);
       },
 
@@ -166,7 +170,11 @@
 
         for (var i = 0; i < this.cache.length; i++)
           this.view.addMessage(this.cache[i]);
-        this.requestNextChunk();
+
+        // XXXpfx Need to find a method for adding cache with new records
+        //  from collection (or maybe just we should drop memory cache entirely?)
+        if (!this.cache.length)
+          this.requestNextChunk();
       },
 
       requestNextChunk: function()
@@ -225,10 +233,10 @@
           this.cache.push(msg);
         }
 
-        if (this.cache.length < +query.rsmNS::count.text()) {
-          this.rsm = query.rsmNS::last.text();
+        this.rsm = query.rsmNS::last.text();
+        if (this.cache.length < +query.rsmNS::count.text())
           this.requestNextChunk();
-        }
+
         updateProgressMeter(-1);
       }
     }
@@ -260,8 +268,10 @@
       }
     }
 
-    function updateThreads(list, threads)
+    function updateThreads(list, threads, msgs)
     {
+      msgs.clear();
+
       var tr, jid = list.view.getCellText(list.currentIndex, list.columns[0]);
       if (!(tr = threads[jid]))
         tr = threads[jid] = new ThreadsRetriever(jid, list.body.childNodes[list.currentIndex].model);
@@ -284,7 +294,7 @@
       <tabpanel>
         <hbox flex="1">
           <tree id="contacts-list" width="150" persist="width" hidecolumnpicker="true"
-              seltype="single" onselect="updateThreads(this, contactThreads)">
+              seltype="single" onselect="updateThreads(this, contactThreads, contactMsgs)">
             <treecols>
               <treecol primary="true" flex="1" id="jid" hideheader="true"/>
             </treecols>
@@ -309,7 +319,7 @@
       <tabpanel>
         <hbox flex="1">
           <tree id="conferences-list" width="150" persist="width" hidecolumnpicker="true"
-              seltype="single" onselect="updateThreads(this, conferenceThreads)">
+              seltype="single" onselect="updateThreads(this, conferenceThreads, conferenceMsgs)">
             <treecols>
               <treecol primary="true" flex="1" id="jid" hideheader="true"/>
             </treecols>
