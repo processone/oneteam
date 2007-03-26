@@ -5,7 +5,7 @@
 <!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
 
 <window id="Console" title="&Console.title;" width="640" height="550"
-    onload="onLoad()" onclose="onClose();" windowtype="ot:console"
+    onload="onLoad()" onunload="onClose()" windowtype="ot:console"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -19,7 +19,7 @@
     <spacer height="10"/>
 
     <hbox pack="center">
-        <button label="&Console.clear;" oncommand="clearConsole();"/>
+        <button label="&Console.clear;" accesskey="C" oncommand="clearConsole();"/>
     </hbox>
     <spacer height="10"/>
 

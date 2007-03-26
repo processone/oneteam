@@ -81,7 +81,8 @@
         var pkt = new window.opener.JSJaCIQ();
         pkt.setIQ(account.jid, null, "get");
 
-        var query = <list xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'>
+        var query = <list xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
+            with={this.jid}>
           <set xmlns='http://jabber.org/protocol/rsm'>
             <max>30</max>
             <before>{this.rsm || ""}</before>
@@ -139,11 +140,11 @@
           item.msgs = this.cache[i];
 
           row.appendChild(document.createElement("treecell")).
-                      setAttribute("label", this.cache[i].jid).
+                      setAttribute("label", this.cache[i].jid);
           row.appendChild(document.createElement("treecell")).
                       setAttribute("label", readableTimestamp(iso8601TimestampToDate(this.cache[i].stamp)));
 
-          this.tree.body.insertBefore(item, tree.body.firstChild);
+          this.tree.body.insertBefore(item, this.tree.body.firstChild);
         }
       },
     }
@@ -173,14 +174,17 @@
         var pkt = new window.opener.JSJaCIQ();
         pkt.setIQ(account.jid, null, "get");
 
+        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
         var query =
           <retrieve xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
               with={this.jid} start={this.stamp}>
           <set xmlns='http://jabber.org/protocol/rsm'>
             <max>100</max>
-            <after>{this.rsm || ""}</after>
           </set>
         </retrieve>;
+
+        if (this.rsm)
+          query.rsmNS::set.rsmNS::after = this.rsm;
 
         pkt.getNode().appendChild(window.opener.E4XtoDOM(query, pkt.getDoc()));
         window.opener.con.send(pkt, new Callback(this.processChunk, this));
@@ -206,16 +210,18 @@
         var startTime = iso8601TimestampToDate(query.@start.toString()).getTime();
         for each (msg in query.archNS::*) {
           var contact;
-          if (msg.@name)
-            contact = this.thread.getContactForNick(msg.@name, msg.@jid, msg.name() == "to");
+          if (msg.@name.length())
+            contact = this.thread.getContactForNick(msg.@name, msg.@jid,
+                                                    msg.localName() == "to");
           else
-            msg.name() == "from" ? this.thread.contact : window.opener.myResource;
+            contact = msg.localName() == "from" ? this.thread.model : account.myResource;
 
-          msg = new Message(msg.archNS::body.text(), null, contact,
-                            this.thread.contact ? 3 : 1,
-                            new Date(startTime + 1000*msg.@secs), this.thread);
+          msg = new window.opener.Message(msg.archNS::body.text(), null, contact,
+                                          this.thread.model ? 0 : 1,
+                                          new Date(startTime + 1000*msg.@secs),
+                                          this.thread);
 
-          this.view.addMessage(mdg);
+          this.view.addMessage(msg);
           this.cache.push(msg);
         }
 
