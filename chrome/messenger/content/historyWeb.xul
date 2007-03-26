@@ -114,6 +114,12 @@
                                                             thread.@start.toString(),
                                                             this));
 
+        // XXXpfx: also handle old syntax - remove when mod_oneteam switches to new one.
+        for each (thread in query.archNS::store)
+          this.cache.splice(idx++, 0, new MessagesRetriever(thread.@with.toString(),
+                                                            thread.@start.toString(),
+                                                            this));
+
         this.fillTreeFromCache(idx);
 
         if (+query.rsmNS::first.@index > 0) {
