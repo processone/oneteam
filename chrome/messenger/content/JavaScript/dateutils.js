@@ -142,11 +142,22 @@ function iso8601TimestampToDate(string)
 
 function readableTimestamp(date)
 {
-    var now = new Date();
-    var d1 = now.getFullYear()+"-"+now.getMonth()+"-"+now.getDate();
-    var d2 = date.getFullYear()+"-"+date.getMonth()+"-"+date.getDate();
+    const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday",
+                    "Thursday", "Friday", "Saturday"];
 
-    if (d1 == d2)
+    var now = new Date();
+    var d1 = new Date(now), d2 = new Date(date);
+
+    d1.setHours(0); d1.setMinutes(0); d1.setSeconds(0); d1.setMilliseconds(0);
+    d2.setHours(0); d2.setMinutes(0); d2.setSeconds(0); d2.setMilliseconds(0);
+
+    var days = (d1-d2)/24/60/60/1000;
+    if (days == 0)
         return formatDate(date, null, "none", "short");
+    if (days == 1)
+        return "Yesterday "+formatDate(date, null, "none", "short");
+    if (days > 1 && days < 6)
+        return dayMap[date.getDay()] + " "+formatDate(date, null, "none", "short");
+
     return formatDate(date, null, "short", "short");
 }
