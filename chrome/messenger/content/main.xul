@@ -37,7 +37,6 @@
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/prefs.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/xmpptypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
@@ -49,6 +48,7 @@
   <!-- #endif -->
   <script type="text/javascript;version=1.7" src="JavaScript/model/presence.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
@@ -313,8 +313,6 @@
     }
 
     function ChatPane(contact) {
-      this.contact = contact;
-
       var id = "panel"+(++this.__proto__.idx);
 
       const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
@@ -324,7 +322,6 @@
       this.tabpanel.controler = this;
 
       this.tab = document.createElementNS(ns, "tab");
-      this.tab.setAttribute("label", contact.visibleName);
       this.tab.setAttribute("hasclosebutton", "true");
       this.tab.setAttribute("oncommand", "this.controler.close()");
       this.tab.setAttribute("linkedpanel", id)
@@ -339,10 +336,11 @@
       this.chatPane = document.createElement("chatpane");
       this.chatPane.setAttribute("flex", "1");
       this.chatPane.addEventListener("chat-send", function(){me.onSend()}, false);
-      this.chatPane.completionEngine = contact.createCompletionEngine();
 
       vbox.appendChild(this.chatPane);
       this.tabpanel.appendChild(vbox)
+
+      this.updateContact(contact);
 
       this._addToTabbox();
 
@@ -483,7 +481,7 @@
       {
         this.contact = contact;
         this.tab.setAttribute("label", contact.visibleName);
-        this.chatPane.completionEngine = contact.createCompletionEngine();
+        this.chatPane.model = contact;
       },
 
       closeAllTabs: function()

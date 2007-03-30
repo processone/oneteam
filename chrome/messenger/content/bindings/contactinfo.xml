@@ -40,6 +40,11 @@
           if (this._model == val)
             return val;
 
+          if (!this._avatar) {
+            this._model = val;
+            return val;
+          }
+
           if (this._token)
             this._token = this._model.unregisterView(this._token);
           if (this._token2)
@@ -75,8 +80,10 @@
             root = root.opener;
 
           this._unavailablePresence = new root.Presence("unavailable");
+
           if (this.model) {
             var model = this.model;
+            delete this.model;
             this._model = null;
             this.model = model;
           }

@@ -211,6 +211,7 @@
 
     <content>
       <xul:vbox flex="1">
+        <xul:contactinfo id="contactInfo"/>
         <xul:hbox align="center" hidden="true">
           <xul:button label="Subject:"/>
           <xul:description id="subject" flex="1">TEST</xul:description>
@@ -242,6 +243,21 @@
         onset="return this._subject.value = val"
         onget="return this._subject.value" />
 
+      <property name="model" onget="return this._model">
+        <setter><![CDATA[
+          this._model = val;
+          if (val) {
+            this._contactInfo.model = val;
+            this.completionEngine = val.createCompletionEngine();
+          } else {
+            this._contactInfo.model = null;
+            this.completionEngine = null;
+          }
+
+          return val;
+        ]]></setter>
+      </property>
+
       <constructor>
         <![CDATA[
           this._scrollSize = 0;
@@ -251,8 +267,15 @@
           this._inputClone = document.getAnonymousElementByAttribute(this, "id", "inputClone");
           this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
           this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
+          this._contactInfo = document.getAnonymousElementByAttribute(this, "id", "contactInfo");
           this._history = [];
           this._historyPosition = 0;
+
+          if (this._model != this.model) {
+            var model = this.model;
+            delete this.model;
+            this.model = model;
+          }
 
           var me = this;
           this._input.addEventListener("keypress",
