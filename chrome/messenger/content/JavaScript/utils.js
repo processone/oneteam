@@ -188,6 +188,136 @@ function Callback(fun, obj) {
     return cb;
 }
 
+function CallbacksList(hasMultipleContexts)
+{
+    if (hasMultipleContexts)
+        this._callbacks = {}
+    else
+        this._callbacks = [];
+}
+
+_DECL_(CallbacksList).prototype =
+{
+    _iterateCallbacks: function(contexts)
+    {
+        var callbacks;
+
+        if (this._callbacks instanceof Array)
+            callbacks = this._callbacks;
+        else {
+            callbacks = this._callbacks[""] || [];
+            for (var i = 0; contexts && i < contexts.length; i++)
+                callbacks = callbacks.concat(this._callbacks[contexts[i]] || []);
+        }
+
+        for (i = 0; i < callbacks.length; i++)
+            yield (callbacks[i]);
+    },
+
+    _registerCallback: function(callback, token)
+    {
+        if (this._callbacks instanceof Array)
+            this._callbacks.push(callback);
+        else {
+            var contexts = arguments.length > 2 ? Array.slice(arguments, 2) : [""];
+            for (var i = 0; i < contexts.length; i++)
+                if (!this._callbacks[contexts[i]])
+                    this._callbacks[contexts[i]] = [callback];
+                else
+                    this._callbacks[contexts[i]].push(callback);
+        }
+
+        if (!token)
+            token = new RegistrationToken();
+        token._addRegistrationInfo(this, callback);
+
+        return token;
+    },
+
+    _unregisterCallback: function(callback)
+    {
+        var idx;
+
+        if (this._callbacks instanceof Array) {
+            if ((idx = this._callbacks.indexOf(callback)) >= 0)
+                this._callbacks.splice(idx, 1);
+        } else
+            for each (var context in this._callbacks)
+                if ((idx = context.indexOf(callback)) >= 0)
+                    context.splice(idx, 1);
+    },
+
+    _dumpStats: function()
+    {
+        if (this._callbacks instanceof Array) {
+            alert(this._callbacks.length);
+            return;
+        }
+        var res = "";
+        for (var context in this._callbacks)
+            res += context+": "+this._callbacks[context].length+"\n";
+        alert(res);
+    }
+}
+
+function RegistrationToken()
+{
+    this._regs = [];
+    this._tokens = [];
+}
+
+_DECL_(RegistrationToken).prototype =
+{
+    _addRegistrationInfo: function(listener, callback)
+    {
+        this._regs.push([listener, callback]);
+    },
+
+    merge: function(token)
+    {
+        this._tokens.push(token);
+    },
+
+    unmerge: function(token)
+    {
+        var idx = this._tokens.indexOf(token)
+        if (idx >= 0)
+            this._tokens.splice(1, 0);
+    },
+
+    unregisterFromAll: function()
+    {
+        for (var i = this._regs.length-1; i >= 0; i--)
+            this._regs[i][0]._unregisterCallback(this._regs[i][1]);
+        for (var i = this._tokens.length-1; i >= 0; i--)
+            this._tokens[i].unregisterFromAll();
+        this._regs = [];
+    },
+
+    unregister: function(listener)
+    {
+        for (var i = this._regs.length-1; i >= 0; i--)
+            if (this._regs[i][0] == listener) {
+                this._regs[i][0]._unregisterCallback(this._regs[i][1]);
+                this._regs.splice(i, 1);
+            }
+        for (var i = this._tokens.length-1; i >= 0; i--)
+            this._tokens[i].unregister(listener);
+    },
+
+    _dumpStats: function(indent)
+    {
+        var res = ""
+        indent = indent || "";
+        res += indent + this._regs.length+"\n";
+        for (var i = 0; i < this._tokens.length; i++)
+            res += this._tokens[i]._dumpStats(indent+"  ");
+        if (!indent)
+            alert(res);
+        return res;
+    }
+}
+
 function Comparator()
 {
 }
@@ -218,12 +348,7 @@ _DECL_(Comparator).prototype =
         if (obj.isLt(this))
             return -1;
         return 0;
-    },
-}
-
-function ifnull(value, defaultValue)
-{
-    return value == null ? defaultValue : value
+    }
 }
 
 function xmlEscape(str)
