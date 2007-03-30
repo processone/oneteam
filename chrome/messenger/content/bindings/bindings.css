@@ -44,7 +44,14 @@ otsystray[type="minimizer"] {
   -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systray-minimizer");
 }
 
-
 contactinfo {
   -moz-binding: url("chrome://messenger/content/bindings/contactinfo.xml#info");
+}
+
+menupopup[type="smiles-list"] {
+  -moz-binding: url("chrome://messenger/content/bindings/smileslist.xml#popup");
+}
+
+toolbarbutton[type="smiles-list"] {
+  -moz-binding: url("chrome://messenger/content/bindings/smileslist.xml#button");
 }

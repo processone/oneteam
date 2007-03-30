@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="popup" extends="chrome://global/content/bindings/popup.xml#popup">
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/smileslist.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <html:table id="table" style="overflow: auto" />
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          var me = this;
+          this._table = document.getAnonymousNodes(this)[0].firstChild;
+          this._token = account.style.registerView(this.smilesSetChanged, this, "defaultSmilesSet");
+
+          this.generateList();
+        ]]>
+      </constructor>
+
+      <destructor><![CDATA[
+        account.style.unregisterView(this._token);
+      ]]></destructor>
+
+      <method name="smilesSetChanged">
+        <body><![CDATA[
+          this._generated = false;
+        ]]></body>
+      </method>
+
+      <method name="generateList">
+        <body><![CDATA[
+          if (account.style.defaultSmilesSet && !this._generated) {
+            while (this._table.firstChild)
+              this._table.removeChild(this._table.firstChild);
+
+            const ns = "http://www.w3.org/1999/xhtml";
+            var icons = account.style.defaultSmilesSet.icons;
+
+            for (var row, i = 0; i < icons.length; i++) {
+              if (!row || row.childNodes.length > 16) {
+                row = document.createElementNS(ns, "tr");
+                this._table.appendChild(row);
+              }
+
+              var img = document.createElementNS(ns, "img");
+              img.setAttribute("src", icons[i].img);
+              img.setAttribute("title", icons[i].texts[0]);
+
+              var cell = document.createElementNS(ns, "td");
+              cell.appendChild(img);
+              cell.icon = icons[i];
+
+              row.appendChild(cell);
+            }
+            this._generated = true;
+          }
+        ]]></body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="popupshowing" phase="target">
+        <![CDATA[
+          this.generateList();
+        ]]>
+      </handler>
+
+      <handler event="click">
+        <![CDATA[
+          var el = event.originalTarget;
+
+          while (el && !el.icon)
+            el = el.parentNode;
+
+          if (!el)
+            return;
+
+          this.hidePopup();
+
+          this.selectedSmile = el.icon;
+          var event = document.createEvent("Events");
+          event.initEvent("selectedSmile", false, true);
+          this.dispatchEvent(event);
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+
+  <binding id="button">
+
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://messenger/skin/smileslist.css"/>
+    </resources>
+
+    <content>
+      <xul:toolbarbutton id="smiles-button" type="menu-button"
+                         oncommand="this.parentNode.smilesToggle()">
+        <xul:menupopup type="smiles-list"/>
+      </xul:toolbarbutton>
+    </content>
+
+    <implementation>
+      <property name="selectedSmile" readonly="true"
+                onget="return this._popup &amp;&amp; this._popup.selectedSmile"/>
+
+      <constructor>
+        <![CDATA[
+          this._popup = document.getAnonymousNodes(this)[0].firstChild;
+        ]]>
+      </constructor>
+
+      <method name="smilesToggle">
+        <body><![CDATA[
+          var event = document.createEvent("Events");
+          event.initEvent("smilesToggle", false, true);
+          this.dispatchEvent(event);
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+</bindings>
