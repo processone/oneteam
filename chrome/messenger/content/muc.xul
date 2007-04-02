@@ -183,7 +183,7 @@
 
       var el = document.getElementById("nick");
       el.value = args["nick"] || "";
-      if (el.value && 0)
+      if (el.value)
         connect();
     }
 
