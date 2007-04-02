@@ -122,6 +122,8 @@ function ConferenceView(model, parentView)
     this.node.view = this;
 
     this.label.setAttribute("value", this.model.name);
+    this.label.setAttribute("flex", "1");
+    this.label.setAttribute("crop", "end");
 
     this.node.appendChild(this.label);
 

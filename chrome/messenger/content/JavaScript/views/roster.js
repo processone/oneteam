@@ -49,11 +49,13 @@ function GroupView(model, parentView)
     this.contacts = [];
 
     this.node = document.createElement("richlistitem");
-    this.label = document.createElement("label");
-
     this.node.setAttribute("class", "group-view");
     this.node.model = this.model;
     this.node.view = this;
+
+    this.label = document.createElement("label");
+    this.label.setAttribute("flex", "1");
+    this.label.setAttribute("crop", "end");
 
     this.onAvailUpdated();
 
