@@ -641,6 +641,14 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         item.onMessage(packet);
     },
 
+    _generateVCardPkt: function()
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(null, null, 'get');
+        iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
+        return iq;
+    },
+
     onStatusChanged: function(error) {
         switch(error) {
             case 'session-terminate-conflict':
