@@ -402,7 +402,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
             for (var r in this.resourcesIterator())
                 if (res.isLt(r))
                     res = r;
-        } else if (this.activeResource.isLt(resource))
+        } else if (!this.activeResource || this.activeResource.isLt(resource))
             res = resource;
 
         if (res != this.activeResource) {
