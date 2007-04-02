@@ -94,7 +94,9 @@
 
             __noSuchMethod__: function(name, args)
             {
-              if (this._content._chatpane && this._content._chatpane.addMessage &&
+              if (this._content._chatpane &&
+                  this._content._chatpane.addMessage &&
+                  this._content._chatpane._output &&
                   this._content._chatpane._output.addMessage)
                 return this._content[name].apply(this._content, args);
 
@@ -102,8 +104,11 @@
 
               if (this._callbacks.length == 1)
                 window.setTimeout(function(me) {
-                  if (me._content._chatpane && me._content._chatpane.addMessage &&
-                      me._content._chatpane._output.addMessage) {
+                  if (me._content._chatpane &&
+                      me._content._chatpane.addMessage &&
+                      me._content._chatpane._output &&
+                      me._content._chatpane._output.addMessage)
+                  {
                     for (var i = 0; i < me._callbacks.length; i++)
                       me._content[me._callbacks[i][0]].apply(me._content,
                                                              me._callbacks[i][1]);
@@ -148,6 +153,9 @@
       <method name="_removeTab">
         <parameter name="content"/>
         <body><![CDATA[
+          if (!content._tab.parentNode)
+            return;
+
           if (this._inCloseTabs) {
             content._tabpanel.parentNode.removeChild(content._tabpanel);
             content._tab.parentNode.removeChild(content._tab);
@@ -275,10 +283,11 @@
           this.closed = true;
 
           if (this.contact instanceof Conference)
-            this.contact.exitRoom();
+            setTimeout(function(me){me.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
+          else
+            this._tabbox._removeTab(this);
 
           this.unseenCount = 0;
-          this._tabbox._removeTab(this);
         ]]></body>
       </method>
 

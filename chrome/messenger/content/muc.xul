@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/main.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % guiDTD SYSTEM "chrome://messenger/locale/gui.dtd">
+<!ENTITY % messengerDTD SYSTEM "chrome://messenger/locale/messenger.dtd">
+%guiDTD;
+%messengerDTD;
+]>
+
+<window id="ot:muc" title="OneTeam MUC"
+    onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
+    persist="width height" width="170" height="450"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
+  <script type="text/javascript" src="lib/jsjac/crypt.js"/>
+  <script type="text/javascript" src="lib/jsjac/json.js"/>
+  <script type="text/javascript" src="lib/jsjac/qm_cookie.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
+
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
+  <!-- #ifdef XULAPP -->
+  <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
+  <!-- #endif -->
+  <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/colorutils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/prefs.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/xmpptypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/styles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
+  <!-- #ifdef XULAPP -->
+  <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
+  <!-- #endif -->
+  <script type="text/javascript;version=1.7" src="JavaScript/model/presence.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/views/conference.js"/>
+
+  <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
+  <script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conf;
+
+    function roomConnected() {
+      document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
+      document.getElementById("login-signin").disabled = false;
+      document.getElementById("login-progress").style.visibility = "hidden";
+    }
+
+    function connectRoom() {
+      conf = account.getOrCreateConference(document.getElementById("room").value);
+      conf.joinRoom(roomConnected, document.getElementById("nick").value);
+    }
+
+    function connect() {
+      document.getElementById("login-progress").style.visibility = "visible";
+      document.getElementById("login-signin").disabled = true;
+
+      if (account.connected)
+        connectRoom();
+      else
+        account.connect();
+    }
+
+    var setPresenceUpdater = {
+      onPresenceChange: function() {
+        this.chooser.value = account.currentPresence.show || "available";
+        this.onIconSetChange();
+      },
+
+      onConnectionStateChange: function()
+      {
+        if(0)
+        document.getElementById("setPresence-nick").value = account.connectionInfo.user;
+
+        if (!this.conferencesView)
+          this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
+
+        if (!account.connected)
+          chatTabBox.closeTabs();
+        else
+          connectRoom();
+      },
+
+      onCommand: function()
+      {
+        if (this._skip)
+          return;
+
+        if (this.chooser.value) {
+          this.presence = this.chooser.value;
+          account.setPresence(this.presence, null, null, null, true);
+        } else {
+          this._skip = true;
+          this.chooser.value = this.presence;
+          this._skip = false;
+          account.onCustomPresence(this.presence, null);
+        }
+      },
+
+      updatePresenceIcon: function()
+      {
+        document.getElementById("setPresence-type-image").src =
+// #ifdef XULAPP
+          this.systray.icon =
+// #endif
+          account.style.getStatusIcon(account.currentPresence.show);
+      },
+
+      onIconSetChange: function()
+      {
+        return;
+        for each(var presenceType in ["available", "chat", "dnd", "away", "xa", "invisible"]) {
+          var item = document.getElementById("setPresence-type-" + presenceType);
+          document.getAnonymousElementByAttribute(item, "class", "menu-iconic-left").
+            setAttribute("style", "display: block;");
+          item.setAttribute("image", account.style.getStatusIcon(presenceType));
+        }
+        this.updatePresenceIcon();
+      },
+
+      init: function()
+      {
+        account.registerView(this.onConnectionStateChange, this, "connected");
+        account.registerView(this.onPresenceChange, this, "currentPresence");
+        account.style.registerView(this.onIconSetChange, this, "defaultSet");
+
+        this.chooser = document.getElementById("setPresence-type-chooser") || {};
+// #ifdef XULAPP
+        this.systray = document.getElementById("systray");
+        this.systray.icon = account.style.getStatusIcon(account.currentPresence.show);
+// #endif
+        this.presence = this.chooser.value;
+      }
+    };
+
+    var chatTabBox;
+    var args = {};
+    var search = window.top.location.search.substr(1);
+
+    for each (var i in search.split("&")) {
+      i = i.split("=", 2);
+      args[i[0]] = i[1];
+    }
+
+    function onLoad() {
+      account.mucMode = true;
+      setPresenceUpdater.init();
+      chatTabBox = document.getElementById("chats");
+
+      chatTabBox.addEventListener("tab-removed", function(event) {
+        if (!conf.joined) {
+          document.getElementById("main-deck").selectedIndex = 0;
+          con.disconnect();
+          //setTimeout(function(){con.disconnect()}, 0);
+        }
+      }, false)
+
+      var el = document.getElementById("room");
+      el.value = args["room"] || "";
+      if (el.value)
+        el.parentNode.hidden = true;
+
+      var el = document.getElementById("nick");
+      el.value = args["nick"] || "";
+      if (el.value && 0)
+        connect();
+    }
+
+    function onClose() {
+    //#ifdef XULAPP
+      setPresenceUpdater.systray.minimized = true;
+      return false;
+    /*#else
+      return true;
+    //#endif */
+    }
+
+    function onUnload() {
+    //#ifndef XULAPP
+      if (window.con)
+        window.con.disconnect();
+    //#endif */
+    }
+
+    function onBeforeUnload() {
+      if (account.connected)
+        return "Are you sure you want to leave OneTeam MUC?";
+    }
+    window.onbeforeunload = onBeforeUnload;
+
+    function quit() {
+      if (window.con)
+        window.con.disconnect();
+
+    //#ifdef XULAPP
+      Components.classes['@mozilla.org/toolkit/app-startup;1'].
+        getService(Components.interfaces.nsIAppStartup).
+          quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
+    /*#else
+      window.close();
+    //#endif */
+    }
+
+    function ChatPane(contact) {
+      return chatTabBox.openTab(contact);
+    }
+  ]]></script>
+
+  <keyset>
+<!-- #ifdef DEBUG -->
+    <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
+<!-- #ifdef XULAPP -->
+    <key id="key_jsConsole" modifiers="control" key="M" command="cmd_jsConsole"/>
+<!-- #endif -->
+    <key id="key_cmdConsole" modifiers="control" key="N" command="cmd_cmdConsole"/>
+<!-- #endif -->
+  </keyset>
+
+  <comandset>
+    <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
+    <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
+    <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
+    <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
+<!-- #ifdef XULAPP -->
+    <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
+<!-- #else
+    <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()" disabled="true"/>
+// #endif -->
+    <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
+    <command id="cmd_disconnect" oncommand="con.disconnect()"/>
+    <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
+
+    <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
+<!-- #ifdef XULAPP -->
+    <command id="cmd_extensions" oncommand=""/>
+    <command id="cmd_themes" key="key_themes" oncommand=""/>
+<!-- #endif -->
+    <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
+
+    <command id="cmd_help" key="key_help" oncommand="openLink('http://www.process-one.net/en/oneteam/')"/>
+    <command id="cmd_help_bot" oncommand="account.getOrCreateContact('bot.oneteam.im').onOpenChat()"/>
+    <command id="cmd_bug" oncommand="openLink('https://support.process-one.net/browse/TEAM')"/>
+    <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
+<!-- #ifdef DEBUG -->
+<!-- #ifdef XULAPP -->
+    <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
+<!-- #endif -->
+    <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "command.xul", "chrome,dialog=no,all", "")'/>
+<!-- #endif -->
+    <command id="cmd_about" oncommand="account.showAbout()"/>
+
+    <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
+      oncommand="this.setAttribute('checked', setPresenceUpdater.rosterView.hideOffline =
+        !setPresenceUpdater.rosterView.hideOffline)"/>
+  </comandset>
+
+  <deck id="main-deck" flex="1" selectedIndex="0">
+    <vbox id="login-box">
+      <hbox pack="center">
+        <image id="login-logo"/>
+      </hbox>
+      <vbox id="login-user-box">
+        <label control="room" value="Chat Room:"/>
+        <textbox id="room"/>
+      </vbox>
+      <vbox id="login-pass-box">
+        <label control="nick" value="Nick Name:"/>
+        <textbox id="nick" flex="1"/>
+      </vbox>
+      <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
+      <hbox pack="center">
+        <button id="login-signin" label="Enter Chat" oncommand="connect()"/>
+      </hbox>
+    </vbox>
+    <hbox id="main-box" flex="1">
+      <chattabbox id="chats" flex="1"/>
+      <splitter id="chats-splitter"/>
+      <richlistbox id="conferences-list" width="250"
+          onselect="this.view.activeItem = this.selectedItem.model"/>
+    </hbox>
+  </deck>
+  <popupset>
+    <popup id="conference-contextmenu">
+      <menuitem id="conference-invite" label="Invite contacts to this room..."
+          oncommand="this.parentNode.view.activeItem.onInvite()"/>
+      <menuitem id="conference-changeNick" label="Change nick..."
+          oncommand="this.parentNode.view.activeItem.onChangeNick()"/>
+      <menuitem id="conference-changeSubject" label="Change subject..."
+          oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
+      <menuitem id="conference-bookmark" label="Bookmark..."
+          oncommand="this.parentNode.view.activeItem.onBookmark()"/>
+
+      <menuseparator/>
+
+      <menuitem id="conference-leave" label="Leave conference"
+          oncommand="this.parentNode.view.activeItem.exitRoom()"/>
+    </popup>
+  </popupset>
+  <!-- #ifdef XULAPP -->
+  <otsystray id="systray" type="minimizer"/>
+  <!-- #endif -->
+</window>

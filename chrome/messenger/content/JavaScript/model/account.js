@@ -324,11 +324,19 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         con.registerHandler("onerror", function(p){account.onError(p)});
         con.registerHandler("status_changed", function(p){account.onStatusChanged(p)});
 
-        args = {
-            domain: this.connectionInfo.domain||this.connectionInfo.host,
-            username: this.connectionInfo.user,
-            pass: this.connectionInfo.pass,
-            resource: prefManager.getPref("chat.connection.resource")};
+        if (this.connectionInfo.user)
+            args = {
+                domain: this.connectionInfo.domain||this.connectionInfo.host,
+                username: this.connectionInfo.user,
+                pass: this.connectionInfo.pass,
+                resource: prefManager.getPref("chat.connection.resource") +
+                    this.mucMode ? "MUC":"" };
+        else
+            args = {
+                domain: this.connectionInfo.domain||this.connectionInfo.host,
+                authtype: "anonymous",
+                resource: prefManager.getPref("chat.connection.resource") +
+                    this.mucMode ? "MUC":"" };
 
         self.con = con;
         this.modelUpdated("con");
@@ -337,10 +345,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     onConnect: function()
     {
-        var pkt = new JSJaCIQ();
-        pkt.setIQ(null, null, 'get');
-        pkt.setQuery('jabber:iq:roster');
-        con.send(pkt);
+        if (!this.mucMode) {
+            var pkt = new JSJaCIQ();
+            pkt.setIQ(null, null, 'get');
+            pkt.setQuery('jabber:iq:roster');
+            con.send(pkt);
+        }
 
         this.connected = true;
 
@@ -354,6 +364,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.modelUpdated("connected");
 
+        if (this.mucMode)
+            return;
         this.bookmarks.retrieve();
         this.getDiscoItemsByCategory("conference", "text", false,
                                      function(items) {
@@ -474,6 +486,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.notificationScheme.show("subscription", packet.getType(),
                                          this.allContacts[sender.normalizedJID.shortJID] || sender);
             return;
+        case "unavailable":
+            if (!this.resources[sender.normalizedJID])
+                return;
         }
 
         // Delegate rest to respective handlers
