@@ -1,0 +1,349 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE bindings [
+  <!ENTITY % globalDTD SYSTEM "chrome://global/locale/global.dtd">
+  %globalDTD;
+]>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+    xmlns:xbl="http://www.mozilla.org/xbl"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="chattabbox">
+    <content>
+      <xul:tabbox flex="1" onselect="this.selectedPanel.controler.focus()">
+        <xul:tabs anonid="tabs"/>
+        <xul:tabpanels anonid="tabpanels" flex="1"/>
+      </xul:tabbox>
+    </content>
+    <implementation>
+      <property name="tabCount" onget="return this._tab.childNodes.length"
+                readonly="true"/>
+
+      <property name="unseenCount" onget="return this._unseenCount">
+        <setter><![CDATA[
+          if (val == this._unseenCount)
+            return val;
+
+          this._unseenCount = val;
+
+// #ifdef XULAPP
+          var doc = document;
+/* #else
+          var doc = window.top.document;
+// #endif */
+
+          doc.title = doc.title.replace(/^(?:\* |\[\d+\] )?/,
+            val == 0 ? "" : val == 1 ? "* " : "["+val+"] ");
+
+          if (window.top.changeFavIcon)
+            window.top.changeFavIcon(val ? account.style.defaultSet.iconsMap["psi/message"] : null);
+
+          return val;
+        ]]></setter>
+      </property>
+
+      <constructor><![CDATA[
+        this._tabs = document.getAnonymousElementByAttribute(this, "anonid", "tabs");
+        this._tabpanels = document.getAnonymousElementByAttribute(this, "anonid", "tabpanels");
+        this._unseenCount = 0;
+      ]]></constructor>
+
+      <method name="openTab">
+        <parameter name="contact"/>
+        <body><![CDATA[
+          const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+          var content = document.createElementNS(ns, "chattab-content");
+          var id = "panel"+this._tabs.childNodes.length;
+          var tab, tabpanel;
+
+          tabpanel = content._tabpanel = document.createElementNS(ns, "tabpanel");
+          tabpanel.setAttribute("id", id)
+          tabpanel.setAttribute("flex", "1");
+          this._tabpanels.appendChild(tabpanel);
+
+          tabpanel.appendChild(content);
+
+          tab = content._tab = document.createElementNS(ns, "tab");
+          tab.setAttribute("hasclosebutton", "true");
+          tab.setAttribute("oncommand", "this.controler.close()");
+          tab.setAttribute("linkedpanel", id)
+          this._tabs.appendChild(tab);
+
+          // XXX: TEAM-63 hack
+          tab.setAttribute("last-tab", "true");
+          if (!tab.previousSibling)
+            tab.setAttribute("first-tab", "true");
+          else
+            tab.previousSibling.removeAttribute("last-tab");
+
+          content.contact = contact;
+          content._tabbox = this;
+
+          // Magic - cache calls to _content until it is properly initialized
+          var wrappedContent = {
+            _content: content,
+            _callbacks: [],
+
+            get contact() { return this._content.contact },
+            set contact(val) { return this._content.contact = val },
+            get unseenCount() { return this._content.unseenCount || 0 },
+            get closed() { return this._content.closed || false },
+
+            __noSuchMethod__: function(name, args)
+            {
+              if (this._content._chatpane && this._content._chatpane.addMessage &&
+                  this._content._chatpane._output.addMessage)
+                return this._content[name].apply(this._content, args);
+
+              this._callbacks.push([name, args]);
+
+              if (this._callbacks.length == 1)
+                window.setTimeout(function(me) {
+                  if (me._content._chatpane && me._content._chatpane.addMessage &&
+                      me._content._chatpane._output.addMessage) {
+                    for (var i = 0; i < me._callbacks.length; i++)
+                      me._content[me._callbacks[i][0]].apply(me._content,
+                                                             me._callbacks[i][1]);
+
+                    me.__noSuchMethod__ = function(name, args) {
+                      this._content[name].apply(this._content, args);
+                    }
+                  }
+                  else
+                    window.setTimeout(arguments.callee, 10, me);
+                }, 0, this);
+              return null;
+            }
+          };
+
+          tabpanel.controler = wrappedContent;
+          tab.controler = wrappedContent;
+
+          this._selectTab(content);
+
+          var ev = document.createEvent("Events");
+          ev.initEvent("tab-added", true, false);
+          this.dispatchEvent(ev);
+
+          wrappedContent.focus();
+
+          return wrappedContent;
+        ]]></body>
+      </method>
+
+      <method name="closeTabs">
+        <body><![CDATA[
+          this._inCloseTabs = true;
+
+          for (var i = this._tabs.length-1; i >= 0; i--)
+            this._tabs[i].controler.close();
+
+          this._inCloseTabs = false;
+        ]]></body>
+      </method>
+
+      <method name="_removeTab">
+        <parameter name="content"/>
+        <body><![CDATA[
+          if (this._inCloseTabs) {
+            content._tabpanel.parentNode.removeChild(content._tabpanel);
+            content._tab.parentNode.removeChild(content._tab);
+
+            var ev = document.createEvent("Events");
+            ev.initEvent("tab-removed", true, false);
+            this.dispatchEvent(ev);
+
+            return;
+          }
+
+          var nextTab = content._tab.selected ?
+            content._tab.nextSibling || content._tab.previousSibling :
+            content._tab.parentNode.selectedItem;
+
+          if (nextTab)
+            nextTab.controler.focus();
+
+          // XXX: TEAM-63 hack
+          if (content._tab.nextSibling) {
+            if (!content._tab.previousSibling)
+              content._tab.nextSibling.setAttribute("first-tab", "true");
+          } else if (content._tab.previousSibling)
+            content._tab.previousSibling.setAttribute("last-tab", "true");
+
+          content._tabpanel.parentNode.removeChild(content._tabpanel);
+          content._tab.parentNode.removeChild(content._tab);
+
+          if (nextTab)
+            nextTab.controler.focus();
+
+          var ev = document.createEvent("Events");
+          ev.initEvent("tab-removed", true, false);
+          this.dispatchEvent(ev);
+        ]]></body>
+      </method>
+
+      <method name="_selectTab">
+        <parameter name="content"/>
+        <body><![CDATA[
+
+          // XXXpfx Tabbox doesn't fixup styles after focusing tab, we need
+          //   to do this ourself.
+
+          for (var i = 0; i < this._tabs.childNodes.length; i++)
+            if (this._tabs.childNodes[i] == content._tab) {
+              this._tabs.selectedIndex = i;
+              this._tabpanels.selectedIndex = i;
+              break;
+            }
+
+          if (this._selectedTab && content._tab != this._selectedTab) {
+            this._selectedTab.removeAttribute("selected");
+            if (this._selectedTab.previousSibling)
+              this._selectedTab.previousSibling.removeAttribute("beforeselected");
+            if (this._selectedTab.nextSibling)
+              this._selectedTab.nextSibling.removeAttribute("afterselected");
+          }
+
+          this._selectedTab = content._tab;
+
+          content._tab.setAttribute("selected", "true");
+          if (content._tab.previousSibling)
+            content._tab.previousSibling.setAttribute("beforeselected", "true")
+          if (content._tab.nextSibling)
+            content._tab.nextSibling.setAttribute("afterselected", "true")
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="chattab-content" display="xul:vbox">
+    <content flex="1">
+      <xul:chatpane anonid="chatpane" flex="1"/>
+    </content>
+
+    <implementation>
+      <property name="contact" onget="return this._contact">
+        <setter><![CDATA[
+          this._contact = val;
+          if (val)
+            this._tab.setAttribute("label", (this._unseenCount == 0 ? "" :
+                                             this._unseenCount == 1 ? "* " : "["+this._unseenCount+"] ") +
+                                   this._contact ? this._contact.visibleName : "");
+
+          this._chatpane.model = val;
+        ]]></setter>
+      </property>
+
+      <property name="unseenCount" onget="return this._unseenCount">
+        <setter><![CDATA[
+          if (val == this._unseenCount)
+            return val;
+
+          if (val)
+            this._tab.setAttribute("chatstate", "modified");
+          else
+            this._tab.removeAttribute("chatstate");
+
+          this._tabbox.unseenCount += val - this._unseenCount;
+          this._unseenCount = val;
+
+          this._tab.setAttribute("label", (val == 0 ? "" : val == 1 ? "* " : "["+val+"] ") +
+                                  this._contact ? this._contact.visibleName : "");
+
+          return val;
+        ]]></setter>
+      </property>
+
+      <constructor><![CDATA[
+        this._chatpane = document.getAnonymousElementByAttribute(this, "anonid", "chatpane");
+
+        this._unseenCount = 0;
+        this.closed = false;
+
+        if (this.contact) {
+          var contact = this.contact;
+          delete this.contact;
+          this.contact = contact;
+        }
+      ]]></constructor>
+
+      <method name="close">
+        <body><![CDATA[
+          this.closed = true;
+
+          if (this.contact instanceof Conference)
+            this.contact.exitRoom();
+
+          this.unseenCount = 0;
+          this._tabbox._removeTab(this);
+        ]]></body>
+      </method>
+
+      <method name="focus">
+        <body><![CDATA[
+          if (this.closed || this._inFocus)
+            return;
+
+          this._inFocus = true;
+          this._tabbox._selectTab(this);
+          delete this._inFocus;
+
+          this.unseenCount = 0;
+          this._chatpane.focus();
+        ]]></body>
+      </method>
+
+      <method name="addMessage">
+        <parameter name="msg"/>
+        <parameter name="threadID"/>
+        <body><![CDATA[
+          if (this._tabbox._selectedTab != this._tab && !msg.isSystemMessage)
+            this.unseenCount++;
+
+          this._chatpane.addMessage(msg, threadID);
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="tab-with-close-button" extends="chrome://global/content/bindings/tabbox.xml#tab"
+           display="xul:box">
+    <resources>
+      <stylesheet src="chrome://messenger/skin/tabwithclosebutton.css"/>
+    </resources>
+<!-- #ifdef XULAPP -->
+    <content chromedir="&locale.dir;" class="tab-content" flex="100">
+<!-- #else
+    <content class="tab-content" flex="100">
+//#endif -->
+      <xul:hbox class="tab-middle box-inherit" xbl:inherits="align,dir,pack,orient,selected"
+          flex="1">
+        <xul:image class="tab-icon" xbl:inherits="validate,src=image"/>
+        <xul:label class="tab-text" crop="end" xbl:inherits="value=label,accesskey,crop,disabled"
+          flex="1"/>
+      </xul:hbox>
+      <xul:toolbarbutton tabindex="-1" class="closebutton"/>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        this._closebutton = document.getAnonymousElementByAttribute(this, "class", "closebutton");
+      ]]></constructor>
+    </implementation>
+
+    <handlers>
+      <handler event="mousedown" button="0" phase="capturing"><![CDATA[
+        if (event.originalTarget == this._closebutton) {
+          event.stopPropagation();
+        }
+      ]]></handler>
+      <handler event="mouseup"><![CDATA[
+        if (event.button == 1 || event.button == 0 && event.ctrlKey)
+            this._closebutton.doCommand();
+      ]]></handler>
+    </handlers>
+  </binding>
+</bindings>

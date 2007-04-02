@@ -341,9 +341,17 @@
       </method>
 
       <method name="addMessage">
+        <parameter name="msg"/>
+        <parameter name="thread"/>
         <body>
           <![CDATA[
-            this._output.addMessage.apply(this._output, arguments);
+            if (!this._thread)
+              this._thread = new MessageThread(thread);
+            else if (thread)
+              this._thread._threadID = thread;
+
+            msg.thread = this._thread;
+            this._output.addMessage(msg);
           ]]>
         </body>
       </method>
@@ -452,6 +460,15 @@
                 var ev = document.createEvent("Events");
                 ev.initEvent("chat-send", true, false);
                 this.dispatchEvent(ev);
+
+                var body = this.content;
+                if (!(this._model instanceof Conference))
+                  this.addMessage(new Message(body, null, account.myResource, 0));
+
+                if (!this._thread)
+                  this._thread = new MessageThread();
+
+                this._model.sendMessage(body, this._thread.threadID);
               }
             }
             this.clear();

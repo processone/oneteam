@@ -16,10 +16,6 @@ chatpane-view {
   -moz-binding: url("chrome://messenger/content/bindings/chatpane.xml#chatpane-view");
 }
 
-tab[hasclosebutton="true"] {
-  -moz-binding: url("chrome://messenger/content/bindings/tabwithclosebutton.xml#tab");
-}
-
 avatar {
   -moz-binding: url("chrome://messenger/content/bindings/avatar.xml#avatar");
 }
@@ -54,4 +50,16 @@ menupopup[type="smiles-list"] {
 
 toolbarbutton[type="smiles-list"] {
   -moz-binding: url("chrome://messenger/content/bindings/smileslist.xml#button");
+}
+
+tab[hasclosebutton="true"] {
+  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#tab-with-close-button");
+}
+
+chattabbox {
+  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#chattabbox");
+}
+
+chattab-content {
+  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#chattab-content");
 }

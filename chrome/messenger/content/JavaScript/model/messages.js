@@ -5,13 +5,21 @@ function ContactInfo(jid, visibleName, representsMe)
     this.representsMe = representsMe;
 }
 
-function MessageThread()
+function MessageThread(threadID)
 {
+    this._threadID = threadID
     this._contactIds = [];
 }
 
 _DECL_(MessageThread).prototype =
 {
+    get threadID()
+    {
+        if (!this._threadID)
+            this._threadID = generateRandomName(12);
+        return this._threadID;
+    },
+
     getContactID: function(contact)
     {
         if (contact.representsMe)
