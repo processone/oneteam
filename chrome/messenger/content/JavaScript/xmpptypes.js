@@ -38,6 +38,7 @@ function JID(node, domain, resource)
     this.domain = domain;
     this.resource = resource || null;
     this._cache[this.longJID] = this;
+    return this;
 }
 
 JID.prototype =
@@ -112,66 +113,35 @@ JID.prototype =
     }
 }
 
-function XMPPDataAccesor(name, CCname, packetGenerator, packetParser) {
-    var fun = eval("(function "+CCname+"Accessor(){})");
-    fun.prototype["get"+CCname] = eval("(function(forceUpdate, callback) {"+
-                                       "if (!callback) return this."+name+"Value;"+
-                                       "if (!this."+name+"Value || forceUpdate) {"+
-                                       "if (!this._"+name+"Callbacks)this._"+name+"Callbacks=[];"+
-                                       "this._"+name+"Callbacks.push({callback: callback,"+
-                                       "args: Array.slice(arguments, 2)});"+
-                                       "if (this._"+name+"Callbacks.length > 1) return null;"+
-                                       "con.send(arguments.callee.generate.call(this), "+
-                                       "function(p,t){t._handle"+CCname+"(p)}, this)}else{"+
-                                       "var a=Array.slice(arguments, 2);"+
-                                       "a.unshift(this."+name+"Value);"+
-                                       "callback.apply(null, a)};return this."+name+"Value})");
-    fun.prototype["get"+CCname].generate = packetGenerator;
-
-    fun.prototype["_handle"+CCname] = eval("(function(packet) {"+
-        (packetParser ? "packet = arguments.callee.parse.call(this,packet);" : "")+
-        "for (var i = 0; this._"+name+"Callbacks && i < this._"+name+"Callbacks.length; i++)"+
-            "try {"+
-                "var h = this._"+name+"Callbacks[i];"+
-                "h.args.unshift(packet);"+
-                "h.callback.apply(null, h.args);"+
-            "} catch (ex) {};"+
-        "delete this._"+name+"Callbacks;"+
-        "this."+name+"Value = packet})");
-    fun.prototype["_handle"+CCname].parse = packetParser;
-
-    return fun;
-}
-
 function XMPPDataAccessorBase()
 {
 }
 
 _DECL_(XMPPDataAccessorBase).prototype =
 {
-    _accessorState: [],
-
-    _fetchXMPPData: function(stateObj, pktGenerator, pktParser, accessorCallback,
-                             forceUpdate, callback)
+    _fetchXMPPData: function(stateId, pktGeneratorFun, pktParserFun,
+                             onDataFetchedFun, forceUpdate, clientCallback)
     {
-        if (!this[stateObj]) {
-            stateObj = this[stateObj] =
-                { callbacks: [], pktParser: pktParser, accessorCallback: accessorCallback };
+        var stateObj;
+
+        if (!this[stateId]) {
+            stateObj = this[stateId] =
+                { callbacks: [], pktParser: pktParserFun, onDataFetchedFun: onFetchFun };
 
             stateObj.callback = new Callback(this._fetchXMPPDataDone, this).
                 addArgs(stateObj).fromCall();
         } else
-            stateObj = this[stateObj];
+            stateObj = this[stateId];
 
-        if (!callback)
+        if (!clientCallback)
             return stateObj.value;
 
         if (stateObj.value == null || forceUpdate) {
-            stateObj.callbacks.push(callback);
+            stateObj.callbacks.push(clientCallback);
             if (stateObj.callbacks.length == 1)
-                con.send(pktGenerator.call(this), stateObj.callback);
+                con.send(pktGeneratorFun.call(this), stateObj.callback);
         } else
-            callback(stateObj.value);
+            clientCallback(stateObj.value);
 
         return stateObj.value;
     },
@@ -186,9 +156,21 @@ _DECL_(XMPPDataAccessorBase).prototype =
             } catch (ex) { report("developer", "error", ex, stateObj.callbacks[i]) }
 
         stateObj.callbacks = [];
-        if (stateObj.accessorCallback)
-            stateObj.accessorCallback.call(this, pkt, stateObj.value);
+        if (stateObj.onDataFetchedFun)
+            stateObj.onDataFetchedFun.call(this, pkt, stateObj.value);
     }
+}
+
+function XMPPDataAccessor(prefix, pktGeneratorFun, pktParserFun)
+{
+    var fun = eval("(function "+prefix+"Accessor(){})");
+    _DECL_NOW_(fun, XMPPDataAccessorBase);
+
+    fun.prototype["get"+prefix] = function(forceUpdate, callbacks) {
+        return this._fetchXMPPData("_"+prefix+"State", pktGeneratorFun, pktParserFun,
+                                   null, null, forceUpdate, callbacks);
+    }
+    return fun;
 }
 
 function vCardDataAccessor()
@@ -242,6 +224,7 @@ function DiscoCacheEntry(jid, node)
     this.jid = jid;
     this.node = node;
     DiscoCacheEntry.prototype.cache[jid] = this;
+    return this;
 }
 
 _DECL_(DiscoCacheEntry).prototype =

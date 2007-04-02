@@ -507,7 +507,7 @@ function Resource(jid)
 }
 
 _DECL_(Resource, null, Model, DiscoItem, Comparator,
-       XMPPDataAccesor("version", "Version", function() {
+       XMPPDataAccessor("Version", function() {
             var iq = new JSJaCIQ();
             iq.setQuery('jabber:iq:version');
             return iq;
