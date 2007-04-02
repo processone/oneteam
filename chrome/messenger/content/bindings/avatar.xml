@@ -33,6 +33,11 @@
           if (this._model == val)
             return val;
 
+          if (!this._container) {
+            this._model = val;
+            return;
+          }
+
           if (this._token) {
             this._model.unregisterView(this._token);
             this._token = null;
