@@ -37,6 +37,9 @@ _DECL_(NotificationScheme).prototype =
             if (type == "nickChange")
                 this._showInChatPane(extra.resource+" changed nick to "+
                                      model.jid.resource, model, true, true);
+            else if (type == "subjectChange")
+                this._showInChatPane(extra.resource+" has set subject to '"+
+                                     model.subject+"'", model, true, false);
         }
     },
 

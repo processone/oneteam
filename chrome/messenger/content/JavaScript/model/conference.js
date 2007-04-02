@@ -179,6 +179,16 @@ _DECL_(Conference, Contact).prototype =
         con.send(message);
     },
 
+    setSubject: function(subject)
+    {
+        var message = new JSJaCMessage();
+        message.setTo(this.jid);
+        message.setType("groupchat");
+        message.setSubject(subject)
+
+        con.send(message);
+    },
+
     createResource: function(jid)
     {
         jid = new JID(jid);
@@ -197,6 +207,7 @@ _DECL_(Conference, Contact).prototype =
             new NickCompletionEngine(this),
             new CommandCompletionEngine("/me", []),
             //new CommandCompletionEngine("/topic", []),
+            new TopicCommand(this),
             new LeaveCommand(this),
             new NickCommand(this),
             new InviteCommand(this),
@@ -251,16 +262,24 @@ _DECL_(Conference, Contact).prototype =
         if (packet.getType() == "error")
             return;
 
-        if (packet.getSubject() != this.subject) {
-            this.subject = packet.getSubject();
-            this.modelUpdated("subject");
-        }
+        this._checkForSubject(packet, this.jid);
 
         if (packet.getBody()) {
             if (!this.chatPane || this.chatPane.closed)
                 this.onOpenChat();
             this.chatPane.addSpecialMessage(packet.getBody());
         }
+    },
+
+    _checkForSubject: function(pkt, jid)
+    {
+        subject = pkt._getChildNode("subject");
+        if (!subject || (subject = subject.textContent) == this.subject)
+            return;
+
+        this.subject = subject;
+        account.notificationScheme.show("muc", "subjectChange", this, jid);
+        this.modelUpdated("subject");
     },
 
     cmp: function(c)
@@ -363,10 +382,7 @@ _DECL_(ConferenceMember, Resource).prototype =
             }
         }
 
-        if (packet.getSubject() != this.subject) {
-            this.contact.subject = packet.getSubject();
-            this.contact.modelUpdated("subject");
-        }
+        this.contact._checkForSubject(packet, this.jid);
 
         if (packet.getType() == "groupchat") {
             if (!packet.getBody())

@@ -404,6 +404,20 @@ _DECL_(NickCommand, CommandCompletionEngine).prototype =
     }
 }
 
+function TopicCommand(conference)
+{
+    this.conference = conference;
+    CommandCompletionEngine.call(this, "/topic", []);
+}
+
+_DECL_(TopicCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function(topic)
+    {
+        this.conference.setSubject(topic);
+    }
+}
+
 function LeaveCommand(conference)
 {
     this.conference = conference
