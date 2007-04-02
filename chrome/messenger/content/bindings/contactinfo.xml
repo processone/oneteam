@@ -15,11 +15,15 @@
     <content>
       <xul:hbox id="contact-info-box">
         <xul:avatar id="avatar" showBlankAvatar="true"/>
+        <xul:vbox id="conferenceIcon" hidden="true">
+          <xul:image id="conferenceIconImage"/>
+        </xul:vbox>
         <xul:vbox flex="1">
           <xul:hbox align="center">
             <xul:label id="name"/>
             <xul:label flex="1" crop="end" id="jid"/>
           </xul:hbox>
+          <xul:description id="subject" hidden="true"/>
           <xul:hbox align="center">
             <xul:image id="statusIcon"/>
             <xul:label id="status"/>
@@ -45,21 +49,38 @@
             return val;
           }
 
+          // XXX: Should be val instanceof Conference but may not work in other
+          //  windows
+          var modelIsConference = !!(val && val.joinRoom);
+
+          this._subject.hidden = !modelIsConference;
+          this._status.parentNode.hidden = modelIsConference;
+          this._avatar.hidden = modelIsConference;
+          document.getAnonymousElementByAttribute(this, "id", "conferenceIcon").
+            hidden = !modelIsConference;
+
           if (this._token)
             this._token = this._model.unregisterView(this._token);
           if (this._token2)
             this._token2 = this._model.unregisterView(this._token2);
 
+          this._model = val;
+
+          this._token = this._token2 = null;
+
           if (val) {
-            this._model = val;
             this._token = this._model.registerView(this.onNameChange, this, "visibleName");
-            this._token2 = this._model.registerView(this.onPresenceChange, this, "presence");
+            if (modelIsConference)
+              this._token2 = this._model.registerView(this.onSubjectChanged, this, "subject");
+            else
+              this._token2 = this._model.registerView(this.onPresenceChange, this, "presence");
           }
 
+          this.onSubjectChanged();
           this.onNameChange();
           this.onPresenceChange();
 
-          this._avatar.model = val;
+          this._avatar.model = modelIsConference ? null : val;
 
           return val;
         ]]></setter>
@@ -70,6 +91,7 @@
           this._avatar = document.getAnonymousElementByAttribute(this, "id", "avatar");
           this._name = document.getAnonymousElementByAttribute(this, "id", "name");
           this._jid = document.getAnonymousElementByAttribute(this, "id", "jid");
+          this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
           this._status = document.getAnonymousElementByAttribute(this, "id", "status");
           this._statusIcon = document.getAnonymousElementByAttribute(this, "id", "statusIcon");
           this._statusText = document.getAnonymousElementByAttribute(this, "id", "statusText");
@@ -121,6 +143,17 @@
             this._status.style.color = this._unavailablePresence.getColor();
             this._statusText.value = "";
           }
+        ]]></body>
+      </method>
+
+      <method name="onSubjectChanged">
+        <body><![CDATA[
+          var subject = (this._model && this._model.subject) || "";
+
+          if (this._subject.firstChild)
+            this._subject.firstChild.replaceData(0, 0xffff, subject);
+          else
+            this._subject.appendChild(document.createTextNode(subject));
         ]]></body>
       </method>
     </implementation>
