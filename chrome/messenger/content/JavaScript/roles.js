@@ -149,7 +149,7 @@ function mixProto(cons, exclusions, aliases, objProto, mixedProps,
 
     for (i in proto) {
         j = aliases[i] == null ? i : aliases[i];
-        if (i in exclusions || !proto.hasOwnProperty(i))
+        if (i in exclusions || !proto.hasOwnProperty(i) || proto[i] === objProto[j])
             continue;
         if (i in mixedProps) {
             if (!(cons.prototype instanceof mixedProps[i].role))
