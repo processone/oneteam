@@ -96,9 +96,12 @@
         if (!this.conferencesView)
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
 
-        if (!account.connected)
+        if (!account.connected) {
           chatTabBox.closeTabs();
-        else
+          document.getElementById("login-signin").disabled = false;
+          document.getElementById("login-progress").style.visibility = "hidden";
+          document.getElementById("main-deck").selectedIndex = 0;
+        } else
           connectRoom();
       },
 
@@ -174,7 +177,10 @@
           con.disconnect();
           //setTimeout(function(){con.disconnect()}, 0);
         }
-      }, false)
+      }, false);
+
+      if (!("login" in args))
+        account.connectionInfo.user = null;
 
       var el = document.getElementById("room");
       el.value = args["room"] || "";
