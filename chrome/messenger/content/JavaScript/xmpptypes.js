@@ -146,6 +146,23 @@ _DECL_(XMPPDataAccessorBase).prototype =
         return stateObj.value;
     },
 
+    _storeXMPPData: function(stateId, pktParserFun, onDataFetchedFun, pkt)
+    {
+        var stateObj;
+
+        if ((stateObj = this[stateId]) == null) {
+            stateObj = this[stateId] =
+                { callbacks: [], pktParser: pktParserFun, onDataFetchedFun: onDataFetchedFun };
+
+            stateObj.callback = new Callback(this._fetchXMPPDataDone, this).
+                addArgs(stateObj).fromCall();
+        }
+
+        stateObj.value = stateObj.pktParser ? stateObj.pktParser(pkt) : pkt;
+        if (stateObj.onDataFetchedFun)
+            stateObj.onDataFetchedFun.call(this, pkt, stateObj.value);
+    },
+
     _fetchXMPPDataDone: function(stateObj, pkt)
     {
         stateObj.value = stateObj.pktParser ? stateObj.pktParser(pkt) : pkt;
