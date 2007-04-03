@@ -38,8 +38,9 @@ function Message(body, body_html, contact, type, time, thread)
 {
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
-        var stamp = body.getNode().getElementsByTagNameNS("jabber:x:delay", "stamp")[0];
-        this.time = stamp ? utcStringToDate(stamp.textContent) : new Date();
+        var stamp = body.getNode().getElementsByTagNameNS("jabber:x:delay", "x")[0];
+        stamp = stamp && stamp.getAttribute("stamp");
+        this.time = stamp ? utcStringToDate(stamp) : new Date();
         type = (type&~3) | ({normal: 0, groupchat: 1, headline: 2,
                              chat: 3}[body.getType()] || 0);
     } else {
