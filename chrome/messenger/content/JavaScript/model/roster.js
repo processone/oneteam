@@ -394,6 +394,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
 
     _onResourceUpdated: function(resource, dontNotifyViews)
     {
+        if (!this.resources.length)
+            return false;
+
         var res = this.activeResource;
 
         if (resource == this.activeResource) {
