@@ -114,7 +114,8 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         account.contacts[this.jid.normalizedJID] = this;
     }
     account.allContacts[this.jid.normalizedJID] = this;
-    this.chatPane = chatTabsControler.getType(this);
+    
+    this.chatPane = chatTabsControler.getTab(this);
 }
 
 _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
