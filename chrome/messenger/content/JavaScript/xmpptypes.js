@@ -126,7 +126,7 @@ _DECL_(XMPPDataAccessorBase).prototype =
 
         if (!this[stateId]) {
             stateObj = this[stateId] =
-                { callbacks: [], pktParser: pktParserFun, onDataFetchedFun: onDataFetchFun };
+                { callbacks: [], pktParser: pktParserFun, onDataFetchedFun: onDataFetchedFun };
 
             stateObj.callback = new Callback(this._fetchXMPPDataDone, this).
                 addArgs(stateObj).fromCall();
