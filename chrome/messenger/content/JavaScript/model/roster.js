@@ -558,8 +558,8 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
             this._remove();
         else if (!this._registered)
             this.contact._onResourceAdded(this);
-
-        this.contact._onResourceUpdated(this);
+        else
+            this.contact._onResourceUpdated(this);
 
         var avatarHash = packet.getNode().
             getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
