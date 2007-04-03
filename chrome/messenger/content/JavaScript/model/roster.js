@@ -352,7 +352,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
     onOpenChat: function()
     {
         if (!this.chatPane || this.chatPane.closed)
-            this.chatPane = new ChatPane(this);
+            this.chatPane = chatTabsControler.openTab(this);
         else
             this.chatPane.focus();
 
@@ -471,6 +471,10 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
         this.avatar = avatar;
         this.avatarHash = avatarHash;
         this.modelUpdated("avatar");
+        for (res in this.resourcesIterator()) {
+            res.avatar = avatar;
+            res.modelUpdated("avatar");
+        }
     },
 
     createCompletionEngine: function()
@@ -505,8 +509,9 @@ function Resource(jid)
     this.contact = account.allContacts[this.jid.normalizedJID.shortJID];
 
     account.resources[this.jid.normalizedJID] = this;
-
     this.init();
+
+    this.chatPane = chatTabsControler.getTab(this);
 }
 
 _DECL_(Resource, null, Model, DiscoItem, Comparator,
@@ -531,7 +536,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     onOpenChat: function()
     {
         if (!this.chatPane || this.chatPane.closed)
-            this.chatPane = new ChatPane(this);
+            this.chatPane = chatTabsControler.openTab(this);
         else
             this.chatPane.focus();
 
@@ -567,9 +572,9 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         var avatarHash = packet.getNode().
             getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
         if (this.presence.show != "unavailable" && avatarHash)
-            this.contact.onAvatarChange(avatarHash.textContent);
+            this.onAvatarChange(avatarHash.textContent);
 
-        if (this._registered && !dontNotifyViews && !equal)
+        if (!dontNotifyViews && !equal)
             this.modelUpdated("presence");
 
         if (!equal)
@@ -579,6 +584,11 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         this._registered = true;
 
         return equal ? [] : ["presence"];
+    },
+
+    onAvatarChange: function(avatarHash)
+    {
+        this.contact.onAvatarChange(avatarHash);
     },
 
     _remove: function()

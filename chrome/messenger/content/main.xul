@@ -135,7 +135,7 @@
           document.getElementById("conference-contextmenu").view = this.conferencesView;
         }
         if (!account.connected)
-          chatTabBox.closeTabs();
+          chatTabsControler.closeTabs();
       },
 
       onCommand: function()
@@ -228,7 +228,7 @@
       }
     };
 
-    var chatTabBox;
+    var chatTabsControler;
 
     function onLoad() {
       setPresenceUpdater.init();
@@ -238,10 +238,10 @@
       document.getElementById("login-savePass").checked = account.connectionInfo.pass != null;
       document.getElementById("setPresence-avatar-image").model = account;
 
-      chatTabBox = document.getElementById("chats");
+      chatTabsControler = document.getElementById("chats");
 
 // #ifdef XULAPP
-      chatTabBox.addEventListener("tab-added", function(event) {
+      chatTabsControler.addEventListener("tab-added", function(event) {
         if (event.target.tabCount != 1)
           return;
 
@@ -254,7 +254,7 @@
                       self.outerHeight);
       }, false);
 
-      chatTabBox.addEventListener("tab-removed", function(event) {
+      chatTabsControler.addEventListener("tab-removed", function(event) {
         if (event.target.tabCount != 0)
           return;
 
@@ -344,10 +344,6 @@
           account.removeEvent(account.events[0]);
         }
       }
-    }
-
-    function ChatPane(contact) {
-      return chatTabBox.openTab(contact);
     }
   ]]></script>
 

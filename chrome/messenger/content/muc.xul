@@ -97,7 +97,7 @@
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
 
         if (!account.connected) {
-          chatTabBox.closeTabs();
+          chatTabsControler.closeTabs();
           document.getElementById("login-signin").disabled = false;
           document.getElementById("login-progress").style.visibility = "hidden";
           document.getElementById("main-deck").selectedIndex = 0;
@@ -112,7 +112,7 @@
 
         if (this.chooser.value) {
           this.presence = this.chooser.value;
-          account.setPresence(this.presence, null, null, null, true);
+          account.setPresence(this.presence, null, 0, null, true);
         } else {
           this._skip = true;
           this.chooser.value = this.presence;
@@ -157,7 +157,7 @@
       }
     };
 
-    var chatTabBox;
+    var chatTabsControler;
     var args = {};
     var search = window.top.location.search.substr(1);
 
@@ -169,9 +169,9 @@
     function onLoad() {
       account.mucMode = true;
       setPresenceUpdater.init();
-      chatTabBox = document.getElementById("chats");
+      chatTabsControler = document.getElementById("chats");
 
-      chatTabBox.addEventListener("tab-removed", function(event) {
+      chatTabsControler.addEventListener("tab-removed", function(event) {
         if (!conf.joined) {
           document.getElementById("main-deck").selectedIndex = 0;
           con.disconnect();
@@ -226,10 +226,6 @@
     /*#else
       window.close();
     //#endif */
-    }
-
-    function ChatPane(contact) {
-      return chatTabBox.openTab(contact);
     }
   ]]></script>
 

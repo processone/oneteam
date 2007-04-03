@@ -35,11 +35,7 @@
 
     <implementation>
 
-      <property name="model">
-        <getter><![CDATA[
-          return this._model;
-        ]]></getter>
-
+      <property name="model" onget="return this._model">
         <setter><![CDATA[
           if (this._model == val)
             return val;
@@ -59,14 +55,12 @@
           document.getAnonymousElementByAttribute(this, "id", "conferenceIcon").
             hidden = !modelIsConference;
 
-          if (this._token)
+          if (this._token) {
             this._token = this._model.unregisterView(this._token);
-          if (this._token2)
             this._token2 = this._model.unregisterView(this._token2);
+          }
 
           this._model = val;
-
-          this._token = this._token2 = null;
 
           if (val) {
             this._token = this._model.registerView(this.onNameChange, this, "visibleName");
@@ -74,7 +68,8 @@
               this._token2 = this._model.registerView(this.onSubjectChanged, this, "subject");
             else
               this._token2 = this._model.registerView(this.onPresenceChange, this, "presence");
-          }
+          } else
+            this._token = this._token2 = null;
 
           this.onSubjectChanged();
           this.onNameChange();

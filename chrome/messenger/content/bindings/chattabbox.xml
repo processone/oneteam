@@ -50,14 +50,33 @@
         this._unseenCount = 0;
       ]]></constructor>
 
+      <method name="getTab">
+        <parameter name="contact"/>
+        <body><![CDATA[
+          var cn = this._tabs.childNodes;
+          for (var i = 0; i < cn.length; i++)
+            if (cn[i].controler.contact.jid.normalizedJID == contact.jid.normalizedJID) {
+              cn[i].controler.contact = contact;
+              return cn[i].controler;
+            }
+            return null;
+        ]]></body>
+      </method>
+
       <method name="openTab">
         <parameter name="contact"/>
         <body><![CDATA[
+          // Search for tab with this same jid (contact may lost track of chatpane
+          //  after resource disconnection/connection
+          var tab, tabpanel;
+
+          if ((tab = this.getTab(contact)))
+              return tab;
+
           const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
           var content = document.createElementNS(ns, "chattab-content");
           var id = "panel"+this._tabs.childNodes.length;
-          var tab, tabpanel;
 
           tabpanel = content._tabpanel = document.createElementNS(ns, "tabpanel");
           tabpanel.setAttribute("id", id)
@@ -197,6 +216,9 @@
         <parameter name="content"/>
         <body><![CDATA[
 
+          if (content._tab == this._selectedTab)
+            return;
+
           // XXXpfx Tabbox doesn't fixup styles after focusing tab, we need
           //   to do this ourself.
 
@@ -207,7 +229,7 @@
               break;
             }
 
-          if (this._selectedTab && content._tab != this._selectedTab) {
+          if (this._selectedTab) {
             this._selectedTab.removeAttribute("selected");
             if (this._selectedTab.previousSibling)
               this._selectedTab.previousSibling.removeAttribute("beforeselected");
@@ -240,6 +262,8 @@
             this._tab.setAttribute("label", (this._unseenCount == 0 ? "" :
                                              this._unseenCount == 1 ? "* " : "["+this._unseenCount+"] ") +
                                    this._contact ? this._contact.visibleName : "");
+          else
+            this._tab.setAttribute("label", "");
 
           this._chatpane.model = val;
         ]]></setter>

@@ -259,13 +259,8 @@
       <property name="model" onget="return this._model">
         <setter><![CDATA[
           this._model = val;
-          if (val) {
-            this._contactInfo.model = val;
-            this.completionEngine = val.createCompletionEngine();
-          } else {
-            this._contactInfo.model = null;
-            this.completionEngine = null;
-          }
+          this._contactInfo.model = val;
+          this.completionEngine = val ? val.createCompletionEngine() : null;
 
           return val;
         ]]></setter>

@@ -271,6 +271,10 @@ _DECL_(Conference, Contact).prototype =
         }
     },
 
+    onAvatarChange: function()
+    {
+    },
+
     _checkForSubject: function(pkt, jid)
     {
         subject = pkt._getChildNode("subject");
@@ -304,7 +308,7 @@ function ConferenceMember(jid)
     this.visibleName =  this.name + " from " + this.jid.node;
 }
 
-_DECL_(ConferenceMember, Resource).prototype =
+_DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 {
     get representsMe() {
         return this.contact.myResource == this;
@@ -394,6 +398,29 @@ _DECL_(ConferenceMember, Resource).prototype =
             this.contact.chatPane.addMessage(new Message(packet, null, this));
         } else
             Resource.prototype.onMessage.call(this, packet);
+    },
+
+    onAvatarChange: function(avatarHash)
+    {
+        var avatar;
+
+        if (avatarHash == this.avatarHash)
+            return;
+
+        if (avatarHash) {
+            avatar = account.cache.getValue("avatar-"+avatarHash, true);
+            if (!avatar) {
+                this.avatarHash = avatarHash;
+                this.getVCard(true, function(){});
+                return;
+            }
+            account.cache.bumpExpirationDate("avatar-"+avatarHash,
+                                             new Date(Date.now()+30*24*60*60*1000));
+        }
+
+        this.avatar = avatar;
+        this.avatarHash = avatarHash;
+        this.modelUpdated("avatar");
     },
 
     toString: function()
