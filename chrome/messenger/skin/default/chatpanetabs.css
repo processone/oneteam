@@ -23,7 +23,7 @@
 
 .tab-content {
   max-width: 250px;
-  min-width: 25px;
+  min-width: 120px;
 }
 
 tab[chatstate=modified] .tab-text {
@@ -34,3 +34,18 @@ tab[chatstate=editing] .tab-text {
   color: green;
 }
 
+#scroll-left-button {
+  list-style-image: url(images/scroll-left.png);
+}
+
+#scroll-left-button[disabled="true"] {
+  list-style-image: url(images/scroll-left-disabled.png);
+}
+
+#scroll-right-button {
+  list-style-image: url(images/scroll-right.png);
+}
+
+#scroll-right-button[disabled="true"] {
+  list-style-image: url(images/scroll-right-disabled.png);
+}

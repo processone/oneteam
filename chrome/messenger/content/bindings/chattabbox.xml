@@ -11,9 +11,13 @@
     xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <binding id="chattabbox">
+    <resources>
+      <stylesheet src="chrome://messenger/skin/chatpanetabs.css"/>
+    </resources>
+
     <content>
       <xul:tabbox flex="1" onselect="this.selectedPanel.controler.focus()">
-        <xul:tabs anonid="tabs"/>
+        <xul:tabs class="with-scroll" anonid="tabs"/>
         <xul:tabpanels anonid="tabpanels" flex="1"/>
       </xul:tabbox>
     </content>
@@ -206,6 +210,8 @@
           if (nextTab)
             nextTab.controler.focus();
 
+          this._tabs._fixupScrollPosition();
+
           var ev = document.createEvent("Events");
           ev.initEvent("tab-removed", true, false);
           this.dispatchEvent(ev);
@@ -216,9 +222,6 @@
         <parameter name="content"/>
         <body><![CDATA[
 
-          if (content._tab == this._selectedTab)
-            return;
-
           // XXXpfx Tabbox doesn't fixup styles after focusing tab, we need
           //   to do this ourself.
 
@@ -228,6 +231,11 @@
               this._tabpanels.selectedIndex = i;
               break;
             }
+
+          if (content._tab == this._selectedTab) {
+            this._tabs.scrollToTab(null, true);
+            return;
+          }
 
           if (this._selectedTab) {
             this._selectedTab.removeAttribute("selected");
@@ -241,9 +249,11 @@
 
           content._tab.setAttribute("selected", "true");
           if (content._tab.previousSibling)
-            content._tab.previousSibling.setAttribute("beforeselected", "true")
+            content._tab.previousSibling.setAttribute("beforeselected", "true");
           if (content._tab.nextSibling)
-            content._tab.nextSibling.setAttribute("afterselected", "true")
+            content._tab.nextSibling.setAttribute("afterselected", "true");
+
+          this._tabs.scrollToTab(null, true);
         ]]></body>
       </method>
     </implementation>
@@ -342,10 +352,251 @@
     </implementation>
   </binding>
 
+  <binding id="tabs-with-scroll"
+           extends="chrome://global/content/bindings/tabbox.xml#tabs">
+    <resources>
+      <stylesheet src="chrome://messenger/skin/chatpanetabs.css"/>
+    </resources>
+
+    <content>
+      <xul:toolbarbutton id="scroll-left-button" collapsed="true"
+                         onmousedown="this.parentNode._startScrolling(-1)"
+                         onmouseup="this.parentNode._stopScrolling()"
+                         onmouseout="this.parentNode._stopScrolling()"/>
+      <xul:scrollbox anonid="scrollbox" orient="horizontal" flex="1" style="min-width: 1px;">
+        <children includes="tab"/>
+      </xul:scrollbox>
+      <xul:toolbarbutton id="scroll-right-button" collapsed="true"
+                         onmousedown="this.parentNode._startScrolling(1)"
+                         onmouseup="this.parentNode._stopScrolling()"
+                         onmouseout="this.parentNode._stopScrolling()"/>
+    </content>
+
+    <implementation>
+      <property name="_scrollBoxObject" readonly="true"
+        onget="return this._scrollBox.boxObject.QueryInterface(Components.interfaces.nsIScrollBoxObject)"/>
+
+      <constructor><![CDATA[
+        this._scrollLeft = document.getAnonymousElementByAttribute(this, "id", "scroll-left-button");
+        this._scrollRight = document.getAnonymousElementByAttribute(this, "id", "scroll-right-button");
+        this._scrollBox = document.getAnonymousElementByAttribute(this, "anonid", "scrollbox");
+
+        var me = this;
+        window.addEventListener("resize", function(){me.scrollToTab(null, true)}, false);
+      ]]></constructor>
+
+      <destructor><![CDATA[
+      ]]></destructor>
+
+      <method name="scrollToTab">
+        <parameter name="tab"/>
+        <parameter name="instant"/>
+        <body><![CDATA[
+          var pos = {}, size = {};
+          this._scrollBoxObject.getPosition(pos, {});
+          this._scrollBoxObject.getScrolledSize(size, {});
+          pos = pos.value;
+          size = size.value;
+
+          var posw = pos + this._scrollBox.boxObject.width;
+
+          if (!tab && this.selectedIndex >= 0)
+            tab = this.childNodes[this.selectedIndex];
+
+          if (!tab) {
+            this._fixupScrollPosition();
+            return;
+          }
+
+          var x = tab.boxObject.x - this.childNodes[0].boxObject.x;
+          var xw = x + tab.boxObject.width;
+          var endPos;
+
+          if (xw > posw)
+            endPos = xw + pos - posw;
+          else if (x < pos)
+            endPos = x;
+
+          if (endPos == null) {
+            this._fixupScrollPosition();
+            return;
+          }
+
+          if (instant)
+            this._scrollTo(endPos);
+          else {
+            this._startScrollPos = pos;
+            this._endScrollPos = endPos;
+            if (!this._scrolling) {
+              this._scrollSpeed = pos < endPos ? 1 : -1;
+              this._scrollFun(this);
+            }
+          }
+        ]]></body>
+      </method>
+
+      <method name="_startScrolling">
+        <parameter name="direction"/>
+        <body><![CDATA[
+          var pos = {}, size = {};
+
+          this._scrollBoxObject.getPosition(pos, {});
+          this._scrollBoxObject.getScrolledSize(size, {});
+
+          if (direction > 0) {
+            if (size.value == pos.value)
+              return;
+          } else if (pos.value == 0)
+            return;
+
+          this._startScrollPos = pos.value;
+          this._endScrollPos = direction > 0 ?
+            size.value - this._scrollBox.boxObject.width : 0;
+          this._userScrolling = true;
+
+          if (!this._scrolling) {
+            this._scrollSpeed = direction > 0 ? 1 : -1;
+            this._scrollFun(this);
+          }
+        ]]></body>
+      </method>
+
+      <method name="_stopScrolling">
+        <body><![CDATA[
+          if (!this._userScrolling)
+            return;
+
+          var pos = {}, newPos, size = {};
+          this._scrollBoxObject.getPosition(pos, {});
+          pos = pos.value;
+
+          this._userScrolling = false;
+          var tabs = this.childNodes;
+          var leftMargin = tabs[0].boxObject.x + 2;
+
+          for (var i = 0; i < tabs.length; i++)
+            if (tabs[i].boxObject.x-leftMargin > pos) {
+              this._endScrollPos = this._scrollSpeed > 0 ?
+                tabs[i].boxObject.x-leftMargin : i > 0 ?
+                  tabs[i-1].boxObject.x-leftMargin : 0;
+              break;
+            }
+        ]]></body>
+      </method>
+
+      <method name="_scrollFun">
+        <parameter name="me"/>
+        <body><![CDATA[
+          var pos = {}, newPos, size = {};
+
+          me._scrollBoxObject.getPosition(pos, {});
+          pos = pos.value;
+
+          newPos = pos + Math.ceil(me._scrollSpeed);
+
+          if ((me._scrollSpeed > 0 && newPos >= me._endScrollPos) ||
+              (me._scrollSpeed < 0 && newPos <= me._endScrollPos))
+          {
+            me._scrolling = false;
+            me._scrollTo(me._endScrollPos);
+            return;
+          }
+
+          if (me._scrollTo(newPos, 0)) {
+            me._scrolling = false;
+            return;
+          }
+
+
+          var ds = newPos - me._startScrollPos, de = me._endScrollPos - newPos;
+          var accel = (ds*de/(ds+de)/(ds+de)*4*5)*(ds > 0 ? 1 : -1);
+          var newSpeed = me._scrollSpeed + accel;
+
+          if (newSpeed < 12 && newSpeed > -12 && newSpeed != 0)
+            me._scrollSpeed = newSpeed;
+
+          me._scrolling = true;
+
+          setTimeout(me._scrollFun, 10, me);
+        ]]></body>
+      </method>
+
+      <method name="_scrollTo">
+        <parameter name="position"/>
+        <body><![CDATA[
+          var pos = {}, size = {};
+          this._scrollBoxObject.scrollTo(position, 0);
+
+          this._scrollBoxObject.getPosition(pos, {});
+          this._scrollBoxObject.getScrolledSize(size, {});
+
+          this._scrollLeft.disabled = pos.value == 0;
+          this._scrollRight.disabled = pos.value + this._scrollBox.boxObject.width == size.value;
+
+          var onEdge = this._scrollLeft.disabled || this._scrollRight.disabled;
+
+          if (onEdge)
+            this._userScrolling = false;
+
+          return onEdge;
+        ]]></body>
+      </method>
+
+      <method name="_fixupScrollPosition">
+        <body><![CDATA[
+          try{
+            var pos = {}, size = {}, posw;
+
+            this._scrollBoxObject.getPosition(pos, {});
+            this._scrollBoxObject.getScrolledSize(size, {});
+
+            pos = pos.value;
+            posw = pos + this._scrollBox.boxObject.width;
+            size = size.value;
+
+            if (posw > size)
+              this._scrollTo(size);
+            else if (size < posw - pos)
+              this._scrollBoxObject.scrollTo(0, 0);
+          } catch (ex) {}
+        ]]></body>
+      </method>
+
+      <method name="handleEvent">
+        <parameter name="event"/>
+        <body><![CDATA[
+          this.fixupScrollPosition();
+        ]]></body>
+      </method>
+
+    </implementation>
+
+    <handlers>
+      <handler event="overflow"><![CDATA[
+        if (event.originalTarget != this._scrollBox || event.detail == 0)
+          return;
+        try{
+          this._scrollLeft.disabled = true;
+          this._scrollRight.disabled = false;
+          this._scrollLeft.collapsed = false;
+          this._scrollRight.collapsed = false;
+        }catch(ex){}
+      ]]></handler>
+      <handler event="underflow"><![CDATA[
+        if (event.originalTarget != this._scrollBox || event.detail == 0)
+          return;
+        try{
+          this._scrollLeft.collapsed = true;
+          this._scrollRight.collapsed = true;
+        }catch(ex){}
+      ]]></handler>
+    </handlers>
+  </binding>
+
   <binding id="tab-with-close-button" extends="chrome://global/content/bindings/tabbox.xml#tab"
            display="xul:box">
     <resources>
-      <stylesheet src="chrome://messenger/skin/tabwithclosebutton.css"/>
+      <stylesheet src="chrome://messenger/skin/chatpanetabs.css"/>
     </resources>
 <!-- #ifdef XULAPP -->
     <content chromedir="&locale.dir;" class="tab-content" flex="100">

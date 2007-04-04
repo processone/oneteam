@@ -60,6 +60,10 @@ chattabbox {
   -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#chattabbox");
 }
 
+tabs.with-scroll {
+  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#tabs-with-scroll");
+}
+
 chattab-content {
   -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#chattab-content");
 }
