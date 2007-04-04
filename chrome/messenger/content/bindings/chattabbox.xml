@@ -573,7 +573,7 @@
 
     <handlers>
       <handler event="overflow"><![CDATA[
-        if (event.originalTarget != this._scrollBox || event.detail == 0)
+        if (event.target != this || event.detail == 0)
           return;
         try{
           this._scrollLeft.disabled = true;
@@ -583,7 +583,7 @@
         }catch(ex){}
       ]]></handler>
       <handler event="underflow"><![CDATA[
-        if (event.originalTarget != this._scrollBox || event.detail == 0)
+        if (event.target != this || event.detail == 0)
           return;
         try{
           this._scrollLeft.collapsed = true;
