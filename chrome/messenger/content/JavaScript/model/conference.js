@@ -74,6 +74,7 @@ _DECL_(Conference, Contact).prototype =
 
         if (!this.joined) {
             this._callback = new Callback(callback).fromCons(1);
+            this._addedToRegistry = true;
             account._onConferenceAdded(this);
             account._presenceObservers.push(this);
         }
@@ -96,14 +97,14 @@ _DECL_(Conference, Contact).prototype =
 
     _exitRoomCleanup: function()
     {
-        if (this.joined) {
-            this.joined = false;
+        if (this._addedToRegistry) {
             account._onConferenceRemoved(this);
             var idx = account._presenceObservers.indexOf(this);
             if (idx >= 0)
                 account._presenceObservers.splice(idx, 1);
         }
 
+        this.joined = false;
         delete this._myResourceJID;
         delete this._password;
         delete this._callback;
@@ -253,6 +254,9 @@ _DECL_(Conference, Contact).prototype =
 
         this._callback.call(null, pkt, errorTag);
         this._callback = null;
+
+        if (errorTag)
+            this._exitRoomCleanup();
 
         return false;
     },
