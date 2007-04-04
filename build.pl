@@ -105,8 +105,11 @@ sub process {
         $file =~ /\.(xul|xml)$/ ? ('(?://|/\*|\<!--)', '(?:\*/|--)' ) : do {return $content};
 
     while ($content =~ m!^[^\n\S]*$comment_start[^\n\S]*\#(ifdef|ifndef|elifdef|elifndef|elif|if|else|endif)(.*)\n?!mg) {
-        $res .= substr $content, $end, $-[0] - $end
-            if !@stack || $stack[-1]->{generate};
+        if (@stack && !$stack[-1]->{generate}) {
+            $res .= "\n" x +(substr($content, $start, $+[0] - $start) =~ y/\n/\n/);
+        } else {
+            $res .= substr $content, $end, $-[0] - $end;
+        }
 
         ($start, $end, $token) = ($-[0], $+[0], $1);
 
