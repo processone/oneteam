@@ -21,11 +21,6 @@
   -moz-image-region: rect(0px, 48px, 16px, 32px);
 }
 
-.tab-content {
-  max-width: 250px;
-  min-width: 120px;
-}
-
 tab[chatstate=modified] .tab-text {
   color: red;
 }

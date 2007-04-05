@@ -93,6 +93,9 @@
           tab.setAttribute("hasclosebutton", "true");
           tab.setAttribute("oncommand", "this.controler.close()");
           tab.setAttribute("linkedpanel", id)
+          tab.maxWidth = 250;
+          tab.minWidth = 100;
+          tab.width = 0;
           this._tabs.appendChild(tab);
 
           // XXX: TEAM-63 hack
@@ -415,14 +418,14 @@
           if (xw > posw)
             endPos = xw + pos - posw;
           else if (x < pos)
-            endPos = x;
+            endPos = x - 3;
 
           if (endPos == null) {
             this._fixupScrollPosition();
             return;
           }
 
-          if (instant)
+          if (instant && Math.abs(pos-endPos) > 150)
             this._scrollTo(endPos);
           else {
             this._startScrollPos = pos;
@@ -472,7 +475,7 @@
 
           this._userScrolling = false;
           var tabs = this.childNodes;
-          var leftMargin = tabs[0].boxObject.x + 2;
+          var leftMargin = tabs[0].boxObject.x + 3;
 
           for (var i = 0; i < tabs.length; i++)
             if (tabs[i].boxObject.x-leftMargin > pos) {
@@ -573,17 +576,16 @@
 
     <handlers>
       <handler event="overflow"><![CDATA[
-        if (event.target != this || event.detail == 0)
+        if (event.originalTarget != this._scrollBox || event.detail == 0)
           return;
         try{
-          this._scrollLeft.disabled = true;
-          this._scrollRight.disabled = false;
           this._scrollLeft.collapsed = false;
           this._scrollRight.collapsed = false;
+          this.scrollToTab(null, true);
         }catch(ex){}
       ]]></handler>
       <handler event="underflow"><![CDATA[
-        if (event.target != this || event.detail == 0)
+        if (event.originalTarget != this._scrollBox || event.detail == 0)
           return;
         try{
           this._scrollLeft.collapsed = true;
@@ -607,7 +609,7 @@
           flex="1">
         <xul:image class="tab-icon" xbl:inherits="validate,src=image"/>
         <xul:label class="tab-text" crop="end" xbl:inherits="value=label,accesskey,crop,disabled"
-          flex="1"/>
+          flex="100"/>
       </xul:hbox>
       <xul:toolbarbutton tabindex="-1" class="closebutton"/>
     </content>
