@@ -236,7 +236,7 @@
             }
 
           if (content._tab == this._selectedTab) {
-            this._tabs.scrollToTab(null, true);
+            this._tabs.scrollToTab(null, 1);
             return;
           }
 
@@ -256,7 +256,7 @@
           if (content._tab.nextSibling)
             content._tab.nextSibling.setAttribute("afterselected", "true");
 
-          this._tabs.scrollToTab(null, true);
+          this._tabs.scrollToTab(null, 1);
         ]]></body>
       </method>
     </implementation>
@@ -385,7 +385,7 @@
         this._scrollBox = document.getAnonymousElementByAttribute(this, "anonid", "scrollbox");
 
         var me = this;
-        window.addEventListener("resize", function(){me.scrollToTab(null, true)}, false);
+        window.addEventListener("resize", function(){me.scrollToTab(null, 2)}, false);
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -393,7 +393,7 @@
 
       <method name="scrollToTab">
         <parameter name="tab"/>
-        <parameter name="instant"/>
+        <parameter name="scrollMode"/>
         <body><![CDATA[
           var pos = {}, size = {};
           this._scrollBoxObject.getPosition(pos, {});
@@ -425,7 +425,7 @@
             return;
           }
 
-          if (instant && Math.abs(pos-endPos) > 150)
+          if (scrollMode == 2 || scrollMode == 1 && Math.abs(pos-endPos) > 150)
             this._scrollTo(endPos);
           else {
             this._startScrollPos = pos;
@@ -560,7 +560,7 @@
             if (posw > size)
               this._scrollTo(size);
             else if (size < posw - pos)
-              this._scrollBoxObject.scrollTo(0, 0);
+              this._scrollTo(0, 0);
           } catch (ex) {}
         ]]></body>
       </method>
@@ -581,7 +581,7 @@
         try{
           this._scrollLeft.collapsed = false;
           this._scrollRight.collapsed = false;
-          this.scrollToTab(null, true);
+          this.scrollToTab(null, 2);
         }catch(ex){}
       ]]></handler>
       <handler event="underflow"><![CDATA[
