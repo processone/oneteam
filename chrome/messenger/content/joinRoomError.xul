@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
+
+<dialog id="joinRoomError" windowtype="ot:joinRoomError" title="Joining Room Error"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  width="600" height="250"
+  buttonlabelaccept="Join Room" buttonlabelcancel="&dialog.cancel.label;"
+  onload="onLoad()" ondialogaccept="return joinRoom()">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var [conference, errorCode, errorMsg] = window.arguments;
+    var nick, password;
+
+    function onLoad() {
+      if (!nick) {
+        nick = document.getElementById("nick");
+        nick.value = conference.bookmarkNick || "";
+      }
+      nick.parentNode.hidden = errorCode != 409;
+
+      if (!password) {
+        password = document.getElementById("password");
+        password.value = conference.bookmarkPassword || "";
+      }
+      password.parentNode.hidden = errorCode != 401;
+
+      var el = document.getElementById("jid");
+      if (el.firstChild)
+        el.removeNode(el.firstChild);
+      el.appendChild(document.createTextNode(conference.jid));
+
+      el = document.getElementById("errorMsg");
+      if (el.firstChild)
+        el.removeNode(el.firstChild);
+      el.appendChild(document.createTextNode(errorMsg));
+    }
+
+    function joinRoom() {
+      try{
+      document.getElementById("progressmeter").style.visibility = "visible";
+      conference.joinRoom(joinRoomResponse, nick.value, password.value || null);
+      }catch(ex){alert(ex)}
+      return false;
+    }
+
+    function joinRoomResponse(pkt, errorTag, errorMsgArg) {
+      if (!errorTag)
+        window.close();
+      document.getElementById("progressmeter").style.visibility = "hidden";
+      errorMsg = errorMsgArg;
+      errorCode = +errorTag.getAttribute("code");
+      onLoad();
+    }
+
+  ]]></script>
+
+  <dialogheader title="Joining Room Error"/>
+
+  <vbox flex="1">
+    <description id="errorInfo">Error ocured during joining room:
+      <html:span id="jid" style="font-weight: bold"/></description>
+    <description>Error message:
+      <html:span id="errorMsg" style="font-style: italic"/></description>
+
+    <hbox class="entry" style="margin-top: 1em">
+      <label value="New Nick:"/>
+      <textbox id="nick"/>
+    </hbox>
+
+    <hbox class="entry" style="margin-top: 1em">
+      <label value="Password:"/>
+      <textbox id="password" type="password"/>
+    </hbox>
+
+    <progressmeter id="progressmeter" style="visibility: hidden; margin: 1em; 0" mode="undetermined"/>
+    <spacer/>
+  </vbox>
+
+</dialog>
