@@ -110,6 +110,19 @@
         setAttribute("disabled", !activeItem.canSeeMe);
     }
 
+    function updateConferenceMemberContextMenu(menu, event)
+    {
+      if (event.target != menu)
+        return;
+
+      var kick = document.getElementById("conferencemember-kick");
+      var ban = document.getElementById("conferencemember-ban");
+
+      kick.previousSibling.hidden = kick.hidden = ban.hidden =
+        menu.view.activeItem.affiliation == "owner" ||
+        (menu.view.activeItem.contact.myResource.affiliation in {owner: 1, admin: 1});
+    }
+
     var setPresenceUpdater = {
       onPresenceChange: function() {
         this.chooser.value = account.currentPresence.show || "available";
@@ -134,6 +147,7 @@
           document.getElementById("cmd_toggleShowOffline").
             setAttribute("checked", this.rosterView.hideOffline);
           document.getElementById("conference-contextmenu").view = this.conferencesView;
+          document.getElementById("conferencemember-contextmenu").view = this.conferencesView;
         }
         if (!account.connected)
           chatTabsControler.closeTabs();
@@ -668,6 +682,27 @@
 
       <menuitem id="conference-leave" label="Leave conference"
           oncommand="this.parentNode.view.activeItem.exitRoom()"/>
+    </popup>
+    <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
+      <menuitem id="conferencemember-chat-single" label="&listitemcontext.Communiquer;"
+          oncommand="this.parentNode.view.activeItem.onOpenChat()"/>
+
+      <menuseparator/>
+      <menuitem id="conferencemember-kick" label="Kick..."
+          oncommand="this.parentNode.view.activeItem.onKick()"/>
+      <menuitem id="conferencemember-ban" label="Ban..."
+          oncommand="this.parentNode.view.activeItem.onBan()"/>
+
+      <menuseparator/>
+      <menuitem label="&listitemcontext.Infos;"
+        oncommand="this.parentNode.view.activeItem.showVCard()"/>
+      <!-- #ifdef XULAPP -->
+      <menuitem id="conferencemember-send-file" label="Send file..."
+        oncommand="this.parentNode.view.activeItem.onSendFile()"/>
+      <!-- #else
+      <menuitem id="conferencemember-send-file" label="Send file..."
+        oncommand="this.parentNode.view.activeItem.onSendFile()" disabled="true"/>
+      // #endif -->
     </popup>
   </popupset>
   <!-- #ifdef XULAPP -->

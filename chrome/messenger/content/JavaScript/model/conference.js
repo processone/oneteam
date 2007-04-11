@@ -341,6 +341,13 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     visibleName: null,
 
+    onBan: function()
+    {
+        var reason = prompt("Ban reason?");
+        if (reason != null)
+            this.ban(reason || null);
+    },
+
     ban: function(reason)
     {
         const ns = "http://jabber.org/protocol/muc#admin";
@@ -359,6 +366,13 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         con.send(iq);
     },
 
+    onBan: function()
+    {
+        var reason = prompt("Kick reason?");
+        if (reason != null)
+            this.kick(reason || null);
+    },
+
     kick: function(reason)
     {
         const ns = "http://jabber.org/protocol/muc#admin";
@@ -375,6 +389,12 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         iq.setQuery(ns).appendChild(item);
 
         con.send(iq);
+    },
+
+    showVCard: function()
+    {
+        openDialogUniq("ot:info", "chrome://messenger/content/info.xul",
+                       "resizable=no,chrome,dialog", this);
     },
 
     onPresence: function(pkt)
