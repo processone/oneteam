@@ -120,7 +120,20 @@
 
       kick.previousSibling.hidden = kick.hidden = ban.hidden =
         menu.view.activeItem.affiliation == "owner" ||
-        (menu.view.activeItem.contact.myResource.affiliation in {owner: 1, admin: 1});
+        !(menu.view.activeItem.myResource.affiliation in {owner: 1, admin: 1});
+    }
+
+    function updateConferenceContextMenu(menu, event)
+    {
+      if (event.target != menu)
+        return;
+
+      var configuration = document.getElementById("conference-configuration");
+      var permissions = document.getElementById("conference-edit-permissions");
+
+      configuration.hidden = !(menu.view.activeItem.myResource.affiliation in {owner: 1});
+      configuration.previousSibling.hidden = permissions.hidden =
+        !(menu.view.activeItem.myResource.affiliation in {owner: 1, admin: 1});
     }
 
     var setPresenceUpdater = {
@@ -666,7 +679,7 @@
       // #endif -->
     </popup>
 
-    <popup id="conference-contextmenu">
+    <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
       <menuitem id="conference-invite" label="Invite contacts to this room..."
           oncommand="this.parentNode.view.activeItem.onInvite()"/>
       <menuitem id="conference-changeNick" label="Change nick..."
@@ -675,14 +688,19 @@
           oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
       <menuitem id="conference-bookmark" label="Bookmark..."
           oncommand="this.parentNode.view.activeItem.onBookmark()"/>
+
+      <menuseparator/>
       <menuitem id="conference-configuration" label="Configure..."
           oncommand="this.parentNode.view.activeItem.onRoomConfiguration()"/>
+      <menuitem id="conference-edit-permissions" label="Edit Permissions..." disabled="true"
+          oncommand="this.parentNode.view.activeItem.onMemberPermissions()"/>
 
       <menuseparator/>
 
       <menuitem id="conference-leave" label="Leave conference"
           oncommand="this.parentNode.view.activeItem.exitRoom()"/>
     </popup>
+
     <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
       <menuitem id="conferencemember-chat-single" label="&listitemcontext.Communiquer;"
           oncommand="this.parentNode.view.activeItem.onOpenChat()"/>
