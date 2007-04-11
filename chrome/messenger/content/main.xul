@@ -115,12 +115,22 @@
       if (event.target != menu)
         return;
 
+      var confMemb = menu.view.activeItem;
+      var conf = confMemb.contact;
+
       var kick = document.getElementById("conferencemember-kick");
       var ban = document.getElementById("conferencemember-ban");
+      var affiliations = document.getElementById("conferencemember-affiliations");
 
-      kick.previousSibling.hidden = kick.hidden = ban.hidden =
-        menu.view.activeItem.affiliation == "owner" ||
-        !(menu.view.activeItem.myResource.affiliation in {owner: 1, admin: 1});
+      kick.previousSibling.hidden = kick.hidden = ban.hidden = !confMemb.canBeKicked;
+
+      affiliations.hidden = !(conf.isAdmin && conf.myResource.isGt(confMemb) || conf.isOwner);
+
+      for each (affiliation in "owner admin member none".split(" ")) {
+        var el = document.getElementById("conferencemember-affiliation-"+affiliation);
+        el.hidden = !conf.isOwner && conf.myResource.cmp(affiliation, true) >= 0;
+        el.setAttribute("checked", confMemb.affiliation == affiliation);
+      }
     }
 
     function updateConferenceContextMenu(menu, event)
@@ -131,9 +141,9 @@
       var configuration = document.getElementById("conference-configuration");
       var permissions = document.getElementById("conference-edit-permissions");
 
-      configuration.hidden = !(menu.view.activeItem.myResource.affiliation in {owner: 1});
+      configuration.hidden = !menu.view.activeItem.isOwner;
       configuration.previousSibling.hidden = permissions.hidden =
-        !(menu.view.activeItem.myResource.affiliation in {owner: 1, admin: 1});
+        !menu.view.activeItem.isAdmin;
     }
 
     var setPresenceUpdater = {
@@ -710,6 +720,26 @@
           oncommand="this.parentNode.view.activeItem.onKick()"/>
       <menuitem id="conferencemember-ban" label="Ban..."
           oncommand="this.parentNode.view.activeItem.onBan()"/>
+      <menu id="conferencemember-affiliations" label="Affiliation">
+        <menupopup>
+          <menuitem id="conferencemember-affiliation-owner" name="affiliations"
+            type="radio" label="Owners"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('owner')"/>
+          <menuitem id="conferencemember-affiliation-admin" name="affiliations"
+            type="radio" label="Administrators"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('admin')"/>
+          <menuitem id="conferencemember-affiliation-member" name="affiliations"
+            type="radio" label="Members"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('momber')"/>
+          <menuitem id="conferencemember-affiliation-none" name="affiliations"
+            type="radio" label="None"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('none')"/>
+        </menupopup>
+      </menu>
 
       <menuseparator/>
       <menuitem label="&listitemcontext.Infos;"

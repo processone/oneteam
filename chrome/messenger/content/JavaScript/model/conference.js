@@ -13,6 +13,10 @@ function Conference(jid)
 
 _DECL_(Conference, Contact).prototype =
 {
+    get isOwner() { return this.myResource.isOwner },
+    get isAdmin() { return this.myResource.isAdmin },
+    get isModerator() { return this.myResource.isModerator },
+
     get myResourceJID() {
         return this.myResource ? this.myResource.jid :
             this._myResourceJID;
@@ -341,6 +345,13 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     visibleName: null,
 
+    get isOwner() { return this.affiliation == "owner" },
+    get isAdmin() { return this.affiliation == "admin" || this.isOwner },
+    get isModerator() { return this.affiliation == "moderator" || this.isAdmin },
+
+    get canBeBanned() { return this.contact.isAdmin && !this.isAdmin },
+    get canBeKicked() { return this.canBeBanned },
+
     onBan: function()
     {
         var reason = prompt("Ban reason?");
@@ -350,23 +361,10 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     ban: function(reason)
     {
-        const ns = "http://jabber.org/protocol/muc#admin";
-
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.contact.jid, null, "set");
-
-        var item = iq.getDoc().createElementNS(ns, "item");
-        item.setAttribute("affiliation", "outcast");
-        item.setAttribute("jid", this.realJID);
-        if (reason)
-            item.appendChild(iq.getDoc().createElementNS(ns, "reason")).
-                appendChild(iq.getDoc().createTextNode(reason));
-        iq.setQuery(ns).appendChild(item);
-
-        con.send(iq);
+        this.setAffiliation("outcast", reason);
     },
 
-    onBan: function()
+    onKick: function()
     {
         var reason = prompt("Kick reason?");
         if (reason != null)
@@ -375,14 +373,47 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     kick: function(reason)
     {
+        this.setRole("none", reason);
+    },
+
+    setAffiliation: function(affiliation, reason)
+    {
         const ns = "http://jabber.org/protocol/muc#admin";
 
         var iq = new JSJaCIQ();
         iq.setIQ(this.contact.jid, null, "set");
 
         var item = iq.getDoc().createElementNS(ns, "item");
-        item.setAttribute("affiliation", "none");
-        item.setAttribute("nick", this.jid.resource);
+        item.setAttribute("affiliation", affiliation);
+
+        if (this.realJID)
+            item.setAttribute("jid", this.realJID);
+        else
+            item.setAttribute("nick", this.jid.resource);
+
+        if (reason)
+            item.appendChild(iq.getDoc().createElementNS(ns, "reason")).
+                appendChild(iq.getDoc().createTextNode(reason));
+        iq.setQuery(ns).appendChild(item);
+
+        con.send(iq);
+    },
+
+    setRole: function(role, reason)
+    {
+        const ns = "http://jabber.org/protocol/muc#admin";
+
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.contact.jid, null, "set");
+
+        var item = iq.getDoc().createElementNS(ns, "item");
+        item.setAttribute("role", role);
+
+        if (this.realJID)
+            item.setAttribute("jid", this.realJID);
+        else
+            item.setAttribute("nick", this.jid.resource);
+
         if (reason)
             item.appendChild(iq.getDoc().createElementNS(ns, "reason")).
                 appendChild(iq.getDoc().createTextNode(reason));
@@ -509,13 +540,13 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         return this.jid.resource + (this.realJID ? " ("+this.realJID+")" : "");
     },
 
-    cmp: function(c)
+    cmp: function(c, onlyAffiliations)
     {
         const affiliation2num = {owner: 5, admin: 4, member: 3, none: 2, outcast: 1};
         var kt = affiliation2num[this.affiliation];
-        var kc = affiliation2num[c.affiliation];
+        var kc = affiliation2num[typeof(c) == "string" ? c : c.affiliation];
 
-        if (kt == kc) {
+        if (kt == kc && typeof(c) != "string" && !onlyAffiliations) {
             kt = this.name;
             kc = this.name;
         }
