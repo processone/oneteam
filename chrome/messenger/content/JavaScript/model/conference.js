@@ -150,6 +150,29 @@ _DECL_(Conference, Contact).prototype =
         con.send(pkt);
     },
 
+    onRoomConfiguration: function()
+    {
+        openDialogUniq("ot:roomConfiguration", "chrome://messenger/content/roomConfiguration.xul",
+                       "chrome,centerscreen", this);
+    },
+
+    requestOwnerConfiguration: function(callback)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, null, "get");
+        iq.setQuery("http://jabber.org/protocol/muc#owner");
+        con.send(iq, callback);
+    },
+
+    sendOwnerConfiguration: function(payload)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, null, "set");
+        iq.setQuery("http://jabber.org/protocol/muc#owner").
+            appendChild(E4XtoDOM(payload, iq.getDoc()));
+        con.send(iq);
+    },
+
     onBookmark: function()
     {
         openDialogUniq("ot:bookmarkRoom", "chrome://messenger/content/bookmarkRoom.xul",
@@ -267,12 +290,6 @@ _DECL_(Conference, Contact).prototype =
             return;
 
         this._checkForSubject(packet, this.jid);
-
-        if (packet.getBody()) {
-            if (!this.chatPane || this.chatPane.closed)
-                this.onOpenChat();
-            this.chatPane.addSpecialMessage(packet.getBody());
-        }
     },
 
     onAvatarChange: function()
@@ -286,7 +303,12 @@ _DECL_(Conference, Contact).prototype =
             return;
 
         this.subject = subject;
-        account.notificationScheme.show("muc", "subjectChange", this, jid);
+
+        if (!pkt.getBody() || (new JID(pkt.getFrom())).resource)
+            account.notificationScheme.show("muc", "subjectChange", this, jid);
+        else if (this.chatPane && !this.chatPane.closed)
+            this.chatPane.addMessage(new Message(pkt.getBody(), null, null, 4));
+
         this.modelUpdated("subject");
     },
 

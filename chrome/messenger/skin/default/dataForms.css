@@ -1,0 +1,30 @@
+.data-form-container {
+    overflow: auto;
+}
+
+.data-form-title {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
+    text-align: center;
+}
+
+.data-form-description {
+    font-style: italic;
+    margin-bottom: 0.5em;
+}
+
+.data-form-field-description {
+    font-style: italic;
+    font-size: 0.9em;
+    margin-bottom: 0.5em;
+    margin-top: -0.5em;
+}
+
+row, .data-form-field-fixed {
+    margin-bottom: 0.5em;
+}
+
+.data-form-field-label {
+    font-weight: bold;
+}

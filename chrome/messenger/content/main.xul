@@ -42,6 +42,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/styles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/dataforms.js"/>
   <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
@@ -660,6 +661,8 @@
           oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
       <menuitem id="conference-bookmark" label="Bookmark..."
           oncommand="this.parentNode.view.activeItem.onBookmark()"/>
+      <menuitem id="conference-configuration" label="Configure..."
+          oncommand="this.parentNode.view.activeItem.onRoomConfiguration()"/>
 
       <menuseparator/>
 

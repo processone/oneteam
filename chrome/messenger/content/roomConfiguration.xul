@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dataForms.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
+
+<dialog id="roomConfiguration" windowtype="ot:roomConfiguration" title="Room Configuration"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  width="600" height="500"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  onload="onLoad()"  ondialogaccept="return onAccept();">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conference = window.arguments[0];
+
+    function onLoad() {
+      conference.requestOwnerConfiguration(onConfigurationRecv)
+    }
+
+    function onConfigurationRecv(pkt) {
+      var ns = new Namespace("jabber:x:data");
+      var data = window.opener.DOMtoE4X(pkt.getNode());
+      if (!data..ns::x[0])
+        return;
+      document.documentElement.appendChild(
+        window.opener.generateXULFromDataForm(data..ns::x[0], document));
+    }
+
+    function onAccept() {
+      conference.sendOwnerConfiguration(
+        window.opener.buildResponseDataFormFromXUL(document.documentElement.lastChild));
+      return true;
+    }
+  ]]></script>
+
+  <dialogheader title="Room Configuration"/>
+  <spacer/>
+
+</dialog>
