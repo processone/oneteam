@@ -230,15 +230,14 @@ _DECL_(Conference, Contact).prototype =
         return new CompletionEngine([
             new NickCompletionEngine(this),
             new CommandCompletionEngine("/me", []),
-            //new CommandCompletionEngine("/topic", []),
             new TopicCommand(this),
             new LeaveCommand(this),
             new NickCommand(this),
             new InviteCommand(this),
             new JoinCommand(),
+            new KickCommand(this),
+            new BanCommand(this),
             //new CommandCompletionEngine("/msg", [new NickCompletionEngine(this)]),
-            //new CommandCompletionEngine("/kick", [new NickCompletionEngine(this)]),
-            //new CommandCompletionEngine("/ban", [new NickCompletionEngine(this)])
         ]);
     },
 
@@ -341,6 +340,42 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
     },
 
     visibleName: null,
+
+    ban: function(reason)
+    {
+        const ns = "http://jabber.org/protocol/muc#admin";
+
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.contact.jid, null, "set");
+
+        var item = iq.getDoc().createElementNS(ns, "item");
+        item.setAttribute("affiliation", "outcast");
+        item.setAttribute("jid", this.realJID);
+        if (reason)
+            item.appendChild(iq.getDoc().createElementNS(ns, "reason")).
+                appendChild(iq.getDoc().createTextNode(reason));
+        iq.setQuery(ns).appendChild(item);
+
+        con.send(iq);
+    },
+
+    kick: function(reason)
+    {
+        const ns = "http://jabber.org/protocol/muc#admin";
+
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.contact.jid, null, "set");
+
+        var item = iq.getDoc().createElementNS(ns, "item");
+        item.setAttribute("affiliation", "none");
+        item.setAttribute("nick", this.jid.resource);
+        if (reason)
+            item.appendChild(iq.getDoc().createElementNS(ns, "reason")).
+                appendChild(iq.getDoc().createTextNode(reason));
+        iq.setQuery(ns).appendChild(item);
+
+        con.send(iq);
+    },
 
     onPresence: function(pkt)
     {

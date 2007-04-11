@@ -103,7 +103,7 @@ _DECL_(CommandCompletionEngine).prototype =
     */
     complete: function(str, maybeCommand, commandArgument)
     {
-        if (!maybeCommand)
+        if (!maybeCommand || this.disabled)
             return 0;
 
         this.argsMatched = false;
@@ -429,5 +429,51 @@ _DECL_(LeaveCommand, CommandCompletionEngine).prototype =
     doCommand: function(reason)
     {
         this.conference.exitRoom(reason || null);
+    }
+}
+
+function KickCommand(conference)
+{
+    this.conference = conference
+    CommandCompletionEngine.call(this, "/kick",
+                                 [new NickCompletionEngine(conference)]);
+}
+
+_DECL_(KickCommand, CommandCompletionEngine).prototype =
+{
+    get disabled()
+    {
+        return !(this.conference.myResource.affiliation in {owner: 1, admin: 1});
+    },
+
+    doCommand: function(nick, reason)
+    {
+        var contact = account.resources[this.conference.jid.
+                                        createFullJID(nick).normalizedJID];
+        if (contact)
+            contact.kick(reason || null);
+    }
+}
+
+function BanCommand(conference)
+{
+    this.conference = conference
+    CommandCompletionEngine.call(this, "/ban",
+                                 [new NickCompletionEngine(conference)]);
+}
+
+_DECL_(BanCommand, CommandCompletionEngine).prototype =
+{
+    get disabled()
+    {
+        return !(this.conference.myResource.affiliation in {owner: 1, admin: 1});
+    },
+
+    doCommand: function(nick, reason)
+    {
+        var contact = account.resources[this.conference.jid.
+                                        createFullJID(nick).normalizedJID];
+        if (contact)
+            contact.ban(reason || null);
     }
 }
