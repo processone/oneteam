@@ -116,6 +116,8 @@ function generateXULFromDataForm(data, doc)
                 el = doc.createElementNS(XULNS, "radiogroup");
                 el.setAttribute("class", "data-form-field-list-single");
                 el.setAttribute("seltype", "multiple");
+                if (field.ns::value[0])
+                    el.setAttribute("value", field.ns::value[0]);
                 for each (var option in field.ns::option) {
                     var li = doc.createElementNS(XULNS, "radio");
                     li.setAttribute("label", option.@label);
@@ -212,19 +214,21 @@ function buildResponseDataFormFromXUL(element)
             var field = idx != null ? res.ns::field[idx] :
                 <field var={els[i]._var} type={els[i]._type}/>;
 
+            var value = els[i][els[i]._value];
+
             if (els[i]._transform == "split")
-                for each (var value in els[i][els[i]._value].split("\n"))
-                    field.* += <value>{value}</value>;
+                for each (var line in value.split("\n"))
+                    field.* += <value>{line}</value>;
             else if (els[i]._transform == "toBool")
-                field.* += <value>{els[i][els[i]._value] ? 1 : 0}</value>;
+                field.* += <value>{value ? 1 : 0}</value>;
             else if (els[i]._transform == "flatten")
-                for each (var value in els[i][els[i]._value])
-                    field.* += <value>{value}</value>;
+                for each (var item in value)
+                    field.* += <value>{item}</value>;
             else if (els[i]._transform == "flattenValues")
-                for each (var value in els[i][els[i]._value])
-                    field.* += <value>{value.value}</value>;
+                for each (var item in value)
+                    field.* += <value>{item.value}</value>;
             else
-                field.* += <value>{els[i][els[i]._value]}</value>;
+                field.* += <value>{value}</value>;
 
             if (idx == null)
                 res.* += field;
