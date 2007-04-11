@@ -104,7 +104,7 @@ _DECL_(Conference, Contact).prototype =
         account.addEvent(__("events", "joinRoomErrorEvent", this.jid, errorMsg),
                          new Callback(openDialogUniq).
                             addArgs("ot:joinRoomError", "chrome://messenger/content/joinRoomError.xul",
-                                    "chrome,centerscreen", this, errorTag.getAttribute("code"),
+                                    "chrome,centerscreen", this, +errorTag.getAttribute("code"),
                                     errorMsg));
     },
 
@@ -128,16 +128,22 @@ _DECL_(Conference, Contact).prototype =
             var idx = account._presenceObservers.indexOf(this);
             if (idx >= 0)
                 account._presenceObservers.splice(idx, 1);
+            this._addedToRegistry = false;
         }
 
         this.joined = false;
         delete this._myResourceJID;
         delete this._password;
         delete this._callback;
-        delete this.myResource;
+
+        if (this.myResource)
+            this.myResource._remove();
 
         for (var resource in this.resourcesIterator())
-            resource._remove();
+            if (resource != this.myResource)
+                resource._remove();
+
+        delete this.myResource;
     },
 
     onInvite: function()
