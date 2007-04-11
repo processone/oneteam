@@ -158,7 +158,7 @@
 
         <spacer/>
 
-        <checkbox label="Auto join" id="autoJoin"/>
+        <checkbox label="Always join this room at startup" id="autoJoin"/>
       </rows>
     </grid>
   </hbox>
