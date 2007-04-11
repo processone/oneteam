@@ -44,10 +44,9 @@
     }
 
     function joinRoom() {
-      try{
       document.getElementById("progressmeter").style.visibility = "visible";
       conference.joinRoom(joinRoomResponse, nick.value, password.value || null);
-      }catch(ex){alert(ex)}
+
       return false;
     }
 
