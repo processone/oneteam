@@ -326,26 +326,26 @@ _DECL_(Comparator).prototype =
 {
     ROLE_REQUIRES: [ ["cmp", "isGt", "isLt"] ],
 
-    isEq: function(obj)
+    isEq: function(obj, arg)
     {
-        return this.cmp(obj) == 0;
+        return this.cmp(obj, arg) == 0;
     },
 
-    isGt: function(obj)
+    isGt: function(obj, arg)
     {
-        return this.cmp(obj) < 0;
+        return this.cmp(obj, arg) < 0;
     },
 
-    isLt: function(obj)
+    isLt: function(obj, arg)
     {
-        return obj.isGt(this);
+        return obj.isGt(this, arg);
     },
 
-    cmp: function(obj)
+    cmp: function(obj, arg)
     {
-        if (this.isLt(obj))
+        if (this.isLt(obj, arg))
             return 1;
-        if (obj.isLt(this))
+        if (obj.isLt(this, arg))
             return -1;
         return 0;
     }
