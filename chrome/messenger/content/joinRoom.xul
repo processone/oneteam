@@ -21,13 +21,12 @@
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];
-    var autoJoin = window.arguments[1];
     var conf;
 
-    var room, server, nick, password, bookmark, bookmarkName, progressmeter;
+    var room, server, nick, password, bookmark, bookmarkName, progressmeter, autoJoin;
 
     function onLoad() {
-      for each (i in "room server nick password bookmark bookmarkName progressmeter".split(" "))
+      for each (i in "room server nick password bookmark bookmarkName progressmeter autoJoin".split(" "))
         eval(i+" = document.getElementById("+uneval(i)+")");
 
       if (conference) {
@@ -37,9 +36,10 @@
         password.value = conference.bookmarkPassword || "";
 
         bookmarkName.value = conference.bookmarkName || "";
+        autoJoin.checked = !!conference.autoJoin;
 
         room.disabled = room.previousSibling.disabled =
-        server.disabled = server.previousSibling.disabled = true;
+            server.disabled = server.previousSibling.disabled = true;
       } else {
         server.value = window.opener.account.defaultConferenceServer || "";
         nick.value = window.opener.prefManager.getPref('chat.muc.nickname') ||
@@ -82,7 +82,7 @@
       }
 
       if (bookmark.checked)
-        conf.bookmark(bookmarkName.value, false, nick.value, password.value);
+        conf.bookmark(bookmarkName.value, autoJoin.checked, nick.value, password.value);
 
       progressmeter.style.visibility = "visible";
       conf.joinRoom(joinRoomResponse, nick.value, password.value);
@@ -96,22 +96,11 @@
         conf.exitRoom();
     }
 
-    function joinRoomResponse(pkt, errorTag) {
+    function joinRoomResponse(pkt, errorTag, errorMsg) {
       progressmeter.style.visibility = "hidden";
 
       if (pkt.getType() == "error") {
-        const errorCodesMap = {
-          401: "This room requires password",
-          403: "You are banned from this room",
-          404: "This room doesn't exist",
-          405: "This room doesn't exist, and can be created only by administrator",
-          406: "This room can be accessed only by registered persons",
-          407: "You are not member of this room",
-          409: "You nick name is already used, try another nick",
-          503: "This room reached maximum number of uses"
-        };
-        var msg = errorTag && errorCodesMap[+errorTag.getAttribute("code")];
-        alert(msg || "Joining that room failed");
+        alert("errorMsg");
         return;
       }
       conf = null;
@@ -150,11 +139,12 @@
       <spacer/>
 
       <checkbox label="Bookmark this room" id="bookmark"
-          oncommand="bookmarkName.disabled = bookmarkName.previousSibling.disabled = !this.checked"/>
+          oncommand="autoJoin.disabled = bookmarkName.disabled = bookmarkName.previousSibling.disabled = !this.checked"/>
       <row align="center">
-        <label value="Name:" control="bookmarkName" disabled="true"/>
+        <label style="margin-left: 2em" value="Name:" control="bookmarkName" disabled="true"/>
         <textbox id="bookmarkName" disabled="true"/>
       </row>
+      <checkbox style="margin-left: 2em" label="Always join this room at startup" id="autoJoin" disabled="true"/>
     </rows>
   </grid>
 

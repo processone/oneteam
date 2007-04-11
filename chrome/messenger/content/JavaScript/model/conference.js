@@ -86,6 +86,28 @@ _DECL_(Conference, Contact).prototype =
         this._sendPresence(account.currentPresence);
     },
 
+    backgroundJoinRoom: function(nick, password)
+    {
+        if (nick == null) {
+            nick = this.bookmarkNick;
+            password = this.bookmarkPassword;
+        }
+        this.joinRoom(new Callback(this._backgroundJoinCallback, this),
+                      nick, password);
+    },
+
+    _backgroundJoinCallback: function(pkt, errorTag, errorMsg)
+    {
+        if (!errorTag)
+            return;
+
+        account.addEvent(__("events", "joinRoomErrorEvent", this.jid, errorMsg),
+                         new Callback(openDialogUniq).
+                            addArgs("ot:joinRoomError", "chrome://messenger/content/joinRoomError.xul",
+                                    "chrome,centerscreen", this, errorTag.getAttribute("code"),
+                                    errorMsg));
+    },
+
     exitRoom: function(reason)
     {
         if (!this.joined)
@@ -247,7 +269,7 @@ _DECL_(Conference, Contact).prototype =
 
     onPresence: function(pkt)
     {
-        var errorTag;
+        var errorTag, errorMsg;
 
         delete this._myResourceJID;
 
@@ -278,7 +300,23 @@ _DECL_(Conference, Contact).prototype =
         else
             this.joined = true;
 
-        this._callback.call(null, pkt, errorTag);
+        if (errorTag) {
+            const errorCodesMap = {
+              401: "This room requires password",
+              403: "You are banned from this room",
+              404: "This room doesn't exist",
+              405: "This room doesn't exist, and can be created only by administrator",
+              406: "This room can be accessed only by registered persons",
+              407: "You are not member of this room",
+              409: "You nick name is already used, try another nick",
+              503: "This room reached maximum number of uses"
+            };
+            errorMsg = errorCodesMap[+errorTag.getAttribute("code")] ||
+                "Joining that room failed";
+        }
+        try {
+            this._callback.call(null, pkt, errorTag, errorMsg);
+        } catch(ex){}
         this._callback = null;
 
         if (errorTag)
@@ -632,6 +670,8 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
                                 true);
 
             this.bookmarks.push(conference);
+            if (conference.autoJoin)
+                conference.backgroundJoinRoom();
         }
         this.modelUpdated("bookmarks", {added: this.bookmarks});
     },
