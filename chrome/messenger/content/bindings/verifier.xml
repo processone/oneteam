@@ -1,0 +1,329 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+  xmlns:xbl="http://www.mozilla.org/xbl"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="textbox" extends="chrome://global/content/bindings/textbox.xml#textbox">
+    <resources>
+      <stylesheet src="chrome://global/skin/textbox.css"/>
+      <stylesheet src="chrome://messenger/skin/verifier.css"/>
+    </resources>
+
+    <content>
+      <xul:hbox class="textbox-input-box" flex="1" xbl:inherits="context" align="center">
+        <html:input class="textbox-input" flex="1" anonid="input"
+          xbl:inherits="type=internaltype,onfocus,onblur,value,maxlength,disabled,size,
+          readonly,tabindex,accesskey"/>
+        <xul:image class="verifier-state-image" valid="false" hidden="true"
+          xbl:inherits="tooltiptext=errortext"/>
+        <xul:verifier-controller anonid="verifier-controller"/>
+      </xul:hbox>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        this._controller = document.getAnonymousElementByAttribute(this, "anonid", "verifier-controller");
+        this._image = document.getAnonymousElementByAttribute(this, "class", "verifier-state-image");
+        this._timer = setTimeout(function(me){me._checkCondition()}, 50, this);
+        this._valid = false;
+        this._active = false;
+      ]]></constructor>
+
+      <destructor><![CDATA[
+        if (this._timer)
+          clearTimeout(this._timer);
+
+        if (this._conditionFun)
+          this._controller.unregisterVerifier(this);
+      ]]></destructor>
+
+      <property name="regex" onget="return this.getAttribute('regex')"
+                onset="this.setAttribute('regex', val); return val"/>
+      <property name="condition" onget="return this.getAttribute('condition')"
+                onset="this.setAttribute('condition', val); return val"/>
+      <property name="isValid" onget="return !this._active || !!this._valid"
+                readonly="true"/>
+
+      <method name="_checkCondition">
+        <body><![CDATA[
+          if (!this._controller)
+            return;
+
+          if (this._timer) {
+            clearTimeout(this._timer);
+            this._timer = null;
+          }
+          if (!this._conditionFun)
+            this._controller.registerVerifier(this);
+
+          if (this.condition) {
+            this._regex = null;
+            if (this._condition != this.condition) {
+              this._condition = this.condition;
+              try {
+                this._conditionFun = eval("var f; f=function(val){try{return !!"+
+                                          this._condition+"}catch(e){return false}}");
+              } catch(e) {
+                this._conditionFun = function(){return false};
+              }
+            }
+          } else if (this.regex) {
+            this._condition = null;
+            if (this._regex != this.regex) {
+              this._regex = this.regex;
+              try {
+                this._conditionFun = new RegExp(this._regex);
+              } catch(e) {
+                this._conditionFun = function(){return false};
+              }
+            }
+          } else
+            this._conditionFun = function(){return true};
+
+          var wasValid = this.isValid;
+          this._active = !!(this.boxObject.width > 0 && !this.inputField.disabled &&
+            (this._condition || this._regex));
+          this._valid = !!this._conditionFun(this.value);
+
+          if (this.isValid != wasValid)
+            if (wasValid)
+              this._controller.verificationFailed(this);
+            else
+              this._controller.verificationSucceeded(this);
+          this._image.hidden = !this._active;
+          this._image.setAttribute("valid", this.isValid ? "true" : "false");
+        ]]></body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="DOMAttrModified"><![CDATA[
+        if (event.target == event.currentTarget &&
+            (event.attrName == "hidden" || event.attrName == "collapsed" ||
+             event.attrName == "regex" || event.attrName == "condition" ||
+             event.attrName == "disabled"))
+          this._checkCondition();
+      ]]></handler>
+
+      <handler event="input"><![CDATA[
+        if (this._timer)
+          clearTimeout(this._timer);
+        this._timer = setTimeout(function(me){me._checkCondition()}, 50, this);
+        event.stopPropagation();
+      ]]></handler>
+
+      <handler event="keypress" keycode="VK_RETURN"><![CDATA[
+        this._checkCondition();
+        event.preventDefault();
+      ]]></handler>
+
+      <handler event="focus" phase="capturing"><![CDATA[
+        this._controller._updateErrorBox(this, true);
+      ]]></handler>
+
+      <handler event="blur" phase="capturing"><![CDATA[
+        this._controller._updateErrorBox(this, false);
+      ]]></handler>
+    </handlers>
+
+  </binding>
+
+  <binding id="controller">
+    <content>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        var p = this.parentNode;
+        while (p && p.localName != "wizardpage")
+          p = p.parentNode;
+
+        this._wizardPage = p;
+        p = p || document;
+
+        p._verifierController = this._pageController = p._verifierController || this;
+        document._verifierController = this._mainController = document._verifierController || this;
+
+        if (this._pageController != this)
+          return;
+
+        this._verifiers = [];
+        this._failedCount = 0;
+
+        if (this._wizardPage) {
+          var me = this;
+          this._wizardPage.addEventListener("pageshow", function(){
+            me._wizardPage.parentNode.canAdvance = me._failedCount == 0
+          }, false);
+        }
+
+        if (this._mainController == this) {
+          const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var doc = this.parentNode.ownerDocument;
+          var topEl = doc.documentElement;
+
+          var stack = doc.createElementNS(ns, "stack");
+          stack.setAttribute("flex", "1");
+
+          stack.appendChild(doc.createElementNS(ns, "vbox"));
+
+          this._errorBox = stack.appendChild(doc.createElementNS(ns, "vbox"));
+          this._errorBox.setAttribute("mousethrough", "always");
+          this._errorBox.setAttribute("class", "verifier-error-box");
+          this._errorBox.collapsed = true;
+
+          var hb = this._errorBox.appendChild(doc.createElementNS(ns, "hbox"));
+          hb.setAttribute("align", "center");
+
+          hb.appendChild(doc.createElementNS(ns, "image"));
+
+          this._errorText = hb.appendChild(doc.createElementNS(ns, "description"));
+          this._errorText.setAttribute("flex", "1");
+
+          while (topEl.firstChild)
+            stack.firstChild.appendChild(topEl.firstChild);
+
+          topEl.appendChild(stack);
+        }
+      ]]></constructor>
+
+      <method name="registerVerifier">
+        <parameter name="verifier"/>
+        <body><![CDATA[
+          if (this._pageController != this)
+            return this._pageController.registerVerifier(verifier);
+
+          this._verifiers.push(verifier);
+          if (!verifier.isValid)
+            this.verificationFailed(verifier);
+        ]]></body>
+      </method>
+
+      <method name="unregisterVerifier">
+        <parameter name="verifier"/>
+        <body><![CDATA[
+          if (this._pageController != this)
+            return this._pageController.unregisterVerifier(verifier);
+
+          var idx = this._verifiers.indexOf(verifier)
+          if (idx < 0)
+            return;
+
+          if (!verifier.isValid)
+            this.verificationSucceeded(verifier);
+
+          this._verifiers.splice(idx, 1);
+        ]]></body>
+      </method>
+
+      <method name="verificationSucceeded">
+        <parameter name="verifier"/>
+        <body><![CDATA[
+          if (this._pageController != this)
+            return this._pageController.verificationSucceeded(verifier);
+
+          this._failedCount--;
+          if (this._failedCount != 0)
+            return;
+
+          if (this._wizardPage && this._wizardPage.parentNode.currentPage == this._wizardPage)
+            this._wizardPage.parentNode.canAdvance = true;
+          if (this.parentNode.ownerDocument.documentElement.localName == "dialog")
+            this.parentNode.ownerDocument.documentElement.getButton("accept").disabled = false;
+        ]]></body>
+      </method>
+
+      <method name="verificationFailed">
+        <parameter name="verifier"/>
+        <body><![CDATA[
+          if (this._pageController != this)
+            return this._pageController.verificationFailed(verifier);
+
+          this._failedCount++;
+          if (this._failedCount != 1)
+            return;
+
+          if (this._wizardPage && this._wizardPage.parentNode.currentPage == this._wizardPage)
+            this._wizardPage.parentNode.canAdvance = false;
+          if (this.parentNode.ownerDocument.documentElement.localName == "dialog")
+            this.parentNode.ownerDocument.documentElement.getButton("accept").disabled = true;
+        ]]></body>
+      </method>
+
+      <method name="_updateErrorBox">
+        <parameter name="textbox"/>
+        <parameter name="focus"/>
+        <body><![CDATA[
+          if (this._mainController != this)
+            return this._mainController._updateErrorBox(textbox, focus);
+
+          if (!focus || !textbox.getAttribute("errortext"))
+            return this._errorBox.collapsed = true;
+
+          if (this._errorText.firstChild)
+            this._errorText.removeChild(this._errorText.firstChild);
+          this._errorText.appendChild(this._errorText.ownerDocument.
+                                        createTextNode(textbox.getAttribute("errortext")));
+
+          this._errorBox.collapsed = false;
+
+          var pos = textbox.boxObject.y -
+            this._errorBox.firstChild.boxObject.height -
+            this._errorBox.boxObject.y - 8;
+
+          if (pos < 0)
+            pos = textbox.boxObject.y + textbox.boxObject.height -
+              this._errorBox.boxObject.y - 4;
+
+          this._errorBox.left = textbox.boxObject.x;
+          this._errorBox.width = textbox.boxObject.width - 16;
+          this._errorBox.style.paddingTop = pos+"px";
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="isvalid">
+    <content>
+      <xul:vbox anonid="container" xbl:inherits="align,dir,pack,orient">
+        <children/>
+      </xul:vbox>
+    </content>
+    <implementation>
+
+      <method name="_update">
+        <parameter name="state"/>
+        <body>
+          <![CDATA[
+            document.getAnonymousElementByAttribute(this, "anonid",
+              "container").collapsed = !state;
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
+
+  <binding id="isinvalid">
+    <content>
+      <xul:vbox anonid="container" xbl:inherits="align,dir,pack,orient">
+        <children/>
+      </xul:vbox>
+    </content>
+    <implementation>
+
+      <method name="_update">
+        <parameter name="state"/>
+        <body>
+          <![CDATA[
+            document.getAnonymousElementByAttribute(this, "anonid",
+              "container").collapsed = state;
+          ]]>
+        </body>
+      </method>
+
+    </implementation>
+  </binding>
+</bindings>

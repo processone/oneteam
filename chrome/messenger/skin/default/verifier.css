@@ -1,0 +1,35 @@
+.verifier-error-box {
+    margin: 0;
+}
+
+.verifier-error-box > hbox {
+    color: InfoText;
+    background-color: InfoBackground;
+    padding: 3px;
+    margin: 4px 2px;
+    border: 1px solid ThreeDShadow;
+    opacity: 0.95;
+}
+
+.verifier-error-box image {
+    width: 32px;
+    height: 32px;
+    list-style-image: url(images/invalid-icon-big.png);
+}
+
+.verifier-error-box description {
+    text-align: center;
+}
+
+.verifier-state-image {
+    margin: 0;
+    margin-right: 1px;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    list-style-image: url(images/valid-icon.png);
+}
+
+.verifier-state-image[valid=false] {
+    list-style-image: url(images/invalid-icon.png);
+}
