@@ -224,6 +224,9 @@
           if (this._pageController != this)
             return this._pageController.verificationSucceeded(verifier);
 
+          if (this._mainController._focused == verifier)
+            this._mainController._updateErrorBox(verifier, true);
+
           this._failedCount--;
           if (this._failedCount != 0)
             return;
@@ -240,6 +243,9 @@
         <body><![CDATA[
           if (this._pageController != this)
             return this._pageController.verificationFailed(verifier);
+
+          if (this._mainController._focused == verifier)
+            this._mainController._updateErrorBox(verifier, true);
 
           this._failedCount++;
           if (this._failedCount != 1)
@@ -259,7 +265,9 @@
           if (this._mainController != this)
             return this._mainController._updateErrorBox(textbox, focus);
 
-          if (!focus || !textbox.getAttribute("errortext"))
+          this._focused = focus ? textbox : null;
+
+          if (!focus || !textbox.getAttribute("errortext") || textbox.isValid)
             return this._errorBox.collapsed = true;
 
           if (this._errorText.firstChild)
