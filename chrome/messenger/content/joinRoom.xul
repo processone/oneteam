@@ -3,6 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+<?xmls-stylesheet href="chrome://messenger/skin/verifier.css" type="text/css"?>
 
 <!DOCTYPE dialog [
   <!ENTITY % joinRoomDTD SYSTEM "chrome://messenger/locale/joinRoom.dtd" >
@@ -118,17 +119,20 @@
     <rows>
       <row align="center">
         <label value="Room:" control="room"/>
-        <textbox id="room"/>
+        <textbox type="verifiable" id="room" regex="^[^@]+$"
+                 errortext="Room name can't be empty and can't contain '@' character"/>
       </row>
 
       <row align="center">
         <label value="Server:" control="server"/>
-        <textbox id="server"/>
+        <textbox type="verifiable" id="server" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"
+                 errortext="This is not valid server adress"/>
       </row>
 
       <row align="center">
         <label value="Nickname:" control="nick"/>
-        <textbox id="nick"/>
+        <textbox type="verifiable" id="nick" regex="^[^/]+$"
+                 errortext="Nick name can't be empty and can't contain '/' character"/>
       </row>
 
       <row align="center">
@@ -142,7 +146,8 @@
           oncommand="autoJoin.disabled = bookmarkName.disabled = bookmarkName.previousSibling.disabled = !this.checked"/>
       <row align="center">
         <label style="margin-left: 2em" value="Name:" control="bookmarkName" disabled="true"/>
-        <textbox id="bookmarkName" disabled="true"/>
+        <textbox type="verifiable" regex="." id="bookmarkName" disabled="true"
+                 errortext="Bookmark name can't be empty"/>
       </row>
       <checkbox style="margin-left: 2em" label="Always join this room at startup" id="autoJoin" disabled="true"/>
     </rows>
