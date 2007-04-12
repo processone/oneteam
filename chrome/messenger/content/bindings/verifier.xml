@@ -159,34 +159,41 @@
           }, false);
         }
 
-        if (this._mainController == this) {
-          const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-          var doc = this.parentNode.ownerDocument;
-          var topEl = doc.documentElement;
+        if (this._mainController != this)
+          return;
 
-          var stack = doc.createElementNS(ns, "stack");
-          stack.setAttribute("flex", "1");
+        const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+        var doc = this.parentNode.ownerDocument;
+        var topEl = doc.documentElement;
 
-          stack.appendChild(doc.createElementNS(ns, "vbox"));
+        var stack = doc.createElementNS(ns, "stack");
+        stack.setAttribute("flex", "1");
 
-          this._errorBox = stack.appendChild(doc.createElementNS(ns, "vbox"));
-          this._errorBox.setAttribute("mousethrough", "always");
-          this._errorBox.setAttribute("class", "verifier-error-box");
-          this._errorBox.collapsed = true;
+        stack.appendChild(doc.createElementNS(ns, "vbox"));
 
-          var hb = this._errorBox.appendChild(doc.createElementNS(ns, "hbox"));
-          hb.setAttribute("align", "center");
+        this._errorBox = stack.appendChild(doc.createElementNS(ns, "vbox"));
+        this._errorBox.setAttribute("mousethrough", "always");
+        this._errorBox.setAttribute("class", "verifier-error-box");
+        this._errorBox.collapsed = true;
 
-          hb.appendChild(doc.createElementNS(ns, "image"));
+        var hb = this._errorBox.appendChild(doc.createElementNS(ns, "hbox"));
+        hb.setAttribute("align", "center");
 
-          this._errorText = hb.appendChild(doc.createElementNS(ns, "description"));
-          this._errorText.setAttribute("flex", "1");
+        hb.appendChild(doc.createElementNS(ns, "image"));
 
-          while (topEl.firstChild)
-            stack.firstChild.appendChild(topEl.firstChild);
+        this._errorText = hb.appendChild(doc.createElementNS(ns, "description"));
+        this._errorText.setAttribute("flex", "1");
 
-          topEl.appendChild(stack);
-        }
+        while (topEl.firstChild)
+          stack.firstChild.appendChild(topEl.firstChild);
+
+        topEl.appendChild(stack);
+
+        var me = this;
+        window.addEventListener("resize", function(){
+          if (me._focused)
+            me._updateErrorBox(me._focused, true)
+        }, false);
       ]]></constructor>
 
       <method name="registerVerifier">
@@ -275,6 +282,8 @@
           this._errorText.appendChild(this._errorText.ownerDocument.
                                         createTextNode(textbox.getAttribute("errortext")));
 
+          this._errorBox.collapsed = true;
+          this._errorBox.width = textbox.boxObject.width - 16;
           this._errorBox.collapsed = false;
 
           var pos = textbox.boxObject.y -
