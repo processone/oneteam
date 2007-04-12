@@ -552,8 +552,13 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
                 this.contact.onOpenChat();
 
             this.contact.chatPane.addMessage(new Message(packet, null, this));
-        } else
+        } else {
+            // Open tab because resource implementation will use our
+            // "contact" (conference) chatpane.
+            if (!this.chatPane || this.chatPane.closed)
+                this.onOpenChat();
             Resource.prototype.onMessage.call(this, packet);
+        }
     },
 
     onAvatarChange: function(avatarHash)
