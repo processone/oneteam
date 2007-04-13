@@ -3,7 +3,6 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
-<?xmls-stylesheet href="chrome://messenger/skin/verifier.css" type="text/css"?>
 
 <!DOCTYPE dialog [
   <!ENTITY % joinRoomDTD SYSTEM "chrome://messenger/locale/joinRoom.dtd" >
@@ -49,38 +48,7 @@
     }
 
     function joinRoom() {
-      conf = conference;
-
-      if (!conference) {
-        if (!room.value) {
-          alert("Please give room name");
-          return false;
-        }
-
-        if (!~server.value.search(/(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-          alert("Please give correct server address");
-          return false;
-        }
-
-        if (!nick.value) {
-          alert("Please give nick name");
-          return false;
-        }
-
-        if (bookmark.checked && !bookmarkName.value) {
-          alert("Please give bookmark name");
-          return false;
-        }
-
-        if (bookmark.checked && !conference &&
-            window.opener.account.bookmarks.getBookmarkByName(bookmarkName.value))
-        {
-          alert("Bookmark with that name already exists");
-          return false;
-        }
-
-        conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value);
-      }
+      conf = conference || window.opener.account.getOrCreateConference(room.value+"@"+server.value);
 
       if (bookmark.checked)
         conf.bookmark(bookmarkName.value, autoJoin.checked, nick.value, password.value);
