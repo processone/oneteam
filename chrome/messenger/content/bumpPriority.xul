@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://messenger/skin/dialog.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
+
+<dialog id="bumpPriority" windowtype="ot:bumpPriority" title="Another client active"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  width="300" height="200"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  onload="onLoad()"  ondialogaccept="return onAccept();">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    function onAccept() {
+      var account = window.opener.account;
+      var cp = account.currentPresence;
+      account.setPresence(cp.show, cp.status, window.arguments[0], cp.profile,
+                          cp == account.userPresence);
+      return true;
+    }
+  ]]></script>
+
+  <hbox class="entry">
+    <description>Another client active on your account. Because it has
+                 higher priority that this client, messages usualy will be routed to
+                 that client.</description>
+    <description>Do you want to bump this client priority to make it main client?</description>
+  </hbox>
+
+</dialog>

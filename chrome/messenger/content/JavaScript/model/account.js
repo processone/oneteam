@@ -45,6 +45,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         // XXXpfx: invisibility by using privacy lists removed, will be
         //  added again during rewriting presenceProfiles to use privacy lists.
 
+        if (priority == null && this.currentPresence)
+            priority = this.currentPresence.priority;
+
         var presence = show instanceof Object ? show :
             new Presence(show, status, priority, profile);
 
@@ -453,14 +456,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var sender = new JID(packet.getFrom());
 
         if (this.myJID.normalizedJID.shortJID == sender.normalizedJID.shortJID) {
-            if (this.bumpPriority) {
-                var tag = packet.getNode().getElementsByTagName('priority');
-
-                if (+tag[0].textContent > this.currentPresence.priority)
-                    openDialogUniq("ot:changePriority",
-                                   "chrome://messenger/content/changePriority.xul",
-                                   "chrome,centerscreen", this);
-            }
+            if (this.bumpPriority && +packet.getPriority() > this.currentPresence.priority)
+                openDialogUniq("ot:bumpPriority",
+                               "chrome://messenger/content/bumpPriority.xul",
+                               "chrome,centerscreen", +packet.getPriority()+1);
             return;
         }
 
