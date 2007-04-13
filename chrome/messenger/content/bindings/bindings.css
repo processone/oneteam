@@ -2,14 +2,6 @@
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-checkboxpopup {
-  -moz-binding: url("chrome://messenger/content/bindings/prompts.xml#checkboxpopup");
-}
-
-checkboxprompt {
-  -moz-binding: url("chrome://messenger/content/bindings/prompts.xml#checkboxprompt");
-}
-
 chatpane {
   -moz-binding: url("chrome://messenger/content/bindings/chatpane.xml#chatpane");
 }
