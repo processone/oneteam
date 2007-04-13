@@ -23,6 +23,8 @@ _DECL_(Group, null, Model).prototype =
 
     onRename: function(externalDialog)
     {
+        openDialogUniq("ot:renameGroup", "chrome://messenger/content/renameGroup.xul",
+                       "resizable=no,chrome,dialog,modal", this);
     },
 
     rename: function(newName)
@@ -30,6 +32,7 @@ _DECL_(Group, null, Model).prototype =
         this._name = name;
         for (var c in this.contactsIterator())
             c._updateRoster();
+        delete this._name;
     },
 
     _clean: function()
@@ -114,7 +117,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         account.contacts[this.jid.normalizedJID] = this;
     }
     account.allContacts[this.jid.normalizedJID] = this;
-    
+
     this.chatPane = chatTabsControler.getTab(this);
 }
 
@@ -146,7 +149,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
                 item.setAttribute('name', this._name || this.name);
             var groups = this._groups || this.groups;
             for (var i = 0; i < groups.length; i++) {
-                var groupName = typeof(groups[i]) == "string" ? groups[i] : groups[i].name;
+                var groupName = typeof(groups[i]) == "string" ? groups[i] : groups[i]._name || groups[i].name;
                 if (!groupName) continue;
                 var group = item.appendChild(iq.getDoc().createElement('group'));
                 group.appendChild(iq.getDoc().createTextNode(groupName));
