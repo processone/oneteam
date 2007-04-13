@@ -190,10 +190,6 @@
         topEl.appendChild(stack);
 
         var me = this;
-        window.addEventListener("resize", function(){
-          if (me._focused)
-            me._updateErrorBox(me._focused, true)
-        }, false);
       ]]></constructor>
 
       <method name="registerVerifier">
@@ -294,8 +290,9 @@
             pos = textbox.boxObject.y + textbox.boxObject.height -
               this._errorBox.boxObject.y - 4;
 
-          this._errorBox.left = textbox.boxObject.x;
-          this._errorBox.width = textbox.boxObject.width - 16;
+          this._errorBox.style.marginLeft = (textbox.boxObject.x+8)+"px";
+          this._errorBox.style.marginRight = (window.innerWidth-textbox.boxObject.x-
+                                              textbox.boxObject.width+12)+"px";
           this._errorBox.style.paddingTop = pos+"px";
         ]]></body>
       </method>
