@@ -8,7 +8,7 @@
   <binding id="textbox" extends="chrome://global/content/bindings/textbox.xml#textbox">
     <resources>
       <stylesheet src="chrome://global/skin/textbox.css"/>
-      <stylesheet src="chrome://oneteam/skin/verifier.css"/>
+      <stylesheet src="chrome://oneteam/skin/verifier/verifier.css"/>
     </resources>
 
     <content>

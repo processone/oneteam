@@ -9,7 +9,6 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://oneteam/skin/avatar.css"/>
     </resources>
 
     <content>

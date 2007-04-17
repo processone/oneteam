@@ -61,23 +61,23 @@ richlistbox {
 
 /* Toolbar icons */
 #adduser-button {
-  list-style-image: url(images/main/adduser.png);
+  list-style-image: url(imgs/main/adduser.png);
 }
 
 #joinroom-button {
-  list-style-image: url(images/main/joinroom.png);
+  list-style-image: url(imgs/main/joinroom.png);
 }
 
 #editgroups-button {
-  list-style-image: url(images/main/editgroups.png);
+  list-style-image: url(imgs/main/editgroups.png);
 }
 
 #disco-button {
-  list-style-image: url(images/main/disco.png);
+  list-style-image: url(imgs/main/disco.png);
 }
 
 #toggleshowoffline-button {
-  list-style-image: url(images/main/toggleoffline.png);
+  list-style-image: url(imgs/main/toggleoffline.png);
 }
 
 /* Login pane */
@@ -91,7 +91,7 @@ richlistbox {
 }
 
 #login-box {
-  background: url(images/login/background.png) 20% 100%;
+  background: url(imgs/background.png) 20% 100%;
   background-repeat: repeat-x;
 }
 

@@ -14,7 +14,7 @@
 .verifier-error-box image {
     width: 32px;
     height: 32px;
-    list-style-image: url(images/invalid-icon-big.png);
+    list-style-image: url(imgs/invalid-icon-big.png);
 }
 
 .verifier-error-box description {
@@ -27,9 +27,9 @@
     padding: 0;
     width: 16px;
     height: 16px;
-    list-style-image: url(images/valid-icon.png);
+    list-style-image: url(imgs/valid-icon.png);
 }
 
 .verifier-state-image[valid=false] {
-    list-style-image: url(images/invalid-icon.png);
+    list-style-image: url(imgs/invalid-icon.png);
 }

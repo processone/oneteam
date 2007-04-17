@@ -60,7 +60,7 @@ dialog > tabbox > tabs > tab {
     min-width: 4.5em;
     border: none;
     background: white;
-    list-style-image: url( "chrome://oneteam/skin/Options.png" );
+    list-style-image: url( "chrome://oneteam/skin/preferences/imgs/icons.png" );
 }
 
 dialog > tabbox > tabs > tab:hover {

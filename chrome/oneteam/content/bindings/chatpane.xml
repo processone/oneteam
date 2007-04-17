@@ -6,7 +6,7 @@
   <binding id="chatpane-view">
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://oneteam/skin/chatpane.css"/>
+      <stylesheet src="chrome://oneteam/skin/chatpane/chatpane.css"/>
     </resources>
 
     <content>
@@ -50,10 +50,10 @@
 
             var link = this._output.contentDocument.createElement("link");
 // #ifdef XULAPP
-            link.setAttribute("href", "chrome://oneteam/skin/chatpane-content.css");
+            link.setAttribute("href", "chrome://oneteam/skin/chatpane/content.css");
 /* #else
             link.setAttribute("href",
-              document.location.href.replace(/content\/.*?$/, "skin/chatpane-content.css"));
+              document.location.href.replace(/content\/.*?$/, "skin/chatpane/content.css"));
 // #endif */
             link.setAttribute("rel", "stylesheet");
             this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
@@ -210,11 +210,11 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://oneteam/skin/chatpane.css"/>
+      <stylesheet src="chrome://oneteam/skin/chatpane/chatpane.css"/>
     </resources>
 
     <content>
-      <xul:vbox flex="1" smilesEnabled="true">
+      <xul:vbox flex="1" smiles-enabled="true">
         <xul:contactinfo id="contactInfo"/>
 
         <xul:hbox align="center" hidden="true">
@@ -514,8 +514,8 @@
       </handler>
       <handler event="smilesToggle">
         <![CDATA[
-          var enabled = this._contactInfo.parentNode.getAttribute("smilesEnabled") != "true"
-          this._contactInfo.parentNode.setAttribute("smilesEnabled", enabled);
+          var enabled = this._contactInfo.parentNode.getAttribute("smiles-enabled") != "true"
+          this._contactInfo.parentNode.setAttribute("smiles-enabled", enabled);
           this._output.smilesEnabled = enabled;
         ]]>
       </handler>

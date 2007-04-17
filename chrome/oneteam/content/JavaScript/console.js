@@ -59,10 +59,10 @@ function onLoad() {
 
     var link = console.contentDocument.createElement("link");
 // #ifdef XULAPP
-    link.setAttribute("href", "chrome://oneteam/skin/xml-console-log.css");
+    link.setAttribute("href", "chrome://oneteam/skin/xmlconsole/content.css");
 /* #else
     link.setAttribute("href",
-              document.location.href.replace(/content\/.*?$/, "skin/xml-console-log.css"));
+              document.location.href.replace(/content\/.*?$/, "skin/xmlconsole/content.css"));
 // #endif */
     link.setAttribute("rel", "stylesheet");
     console.contentDocument.documentElement.getElementsByTagName("HEAD")[0].appendChild(link);

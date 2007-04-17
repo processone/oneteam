@@ -6,7 +6,7 @@
   <binding id="popup" extends="chrome://global/content/bindings/popup.xml#popup">
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://oneteam/skin/smileslist.css"/>
+      <stylesheet src="chrome://oneteam/skin/smileslist/smileslist.css"/>
     </resources>
 
     <content>
@@ -99,7 +99,7 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://oneteam/skin/smileslist.css"/>
+      <stylesheet src="chrome://oneteam/skin/smileslist/smileslist.css"/>
     </resources>
 
     <content>

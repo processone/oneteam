@@ -19,7 +19,7 @@ body {
 .header {
     margin: 1px;
     padding: 1px 6px;
-    background: url(chatpane/header-gradient.png);
+    background: url(imgs/header-gradient.png);
     color: white;
 }
 

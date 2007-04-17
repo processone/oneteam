@@ -30,17 +30,17 @@ tab[chatstate=editing] .tab-text {
 }
 
 #scroll-left-button {
-  list-style-image: url(images/scroll-left.png);
+  list-style-image: url(imgs/scroll-left.png);
 }
 
 #scroll-left-button[disabled="true"] {
-  list-style-image: url(images/scroll-left-disabled.png);
+  list-style-image: url(imgs/scroll-left-disabled.png);
 }
 
 #scroll-right-button {
-  list-style-image: url(images/scroll-right.png);
+  list-style-image: url(imgs/scroll-right.png);
 }
 
 #scroll-right-button[disabled="true"] {
-  list-style-image: url(images/scroll-right-disabled.png);
+  list-style-image: url(imgs/scroll-right-disabled.png);
 }

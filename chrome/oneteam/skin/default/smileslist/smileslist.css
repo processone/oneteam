@@ -1,0 +1,20 @@
+#table td {
+  margin: 0;
+  padding: 3px;
+  border: 1px solid #7e9cb8;
+}
+#table td:hover {
+  background-color: #7e9cb8;
+}
+
+img {
+  display: block;
+}
+
+#smiles-button {
+  list-style-image: url(imgs/smiles-disabled.png)
+}
+
+vbox[smiles-enabled="true"] #smiles-button {
+  list-style-image: url(imgs/smiles-enabled.png)
+}

@@ -9,7 +9,7 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://oneteam/skin/contactinfo.css"/>
+      <stylesheet src="chrome://oneteam/skin/contactinfo/contactinfo.css"/>
     </resources>
 
     <content>
