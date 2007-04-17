@@ -97,7 +97,7 @@ _DECL_(FileTransferService, null, Model).prototype =
                                             xml.siNS::si.@id.toString(), +file.@size);
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
-        window.openDialog("chrome://messenger/content/fileTransferRequest.xul", "_blank",
+        window.openDialog("chrome://oneteam/content/fileTransferRequest.xul", "_blank",
                           "chrome,modal", fileTransfer, file.@name, +file.@size);
    },
 }

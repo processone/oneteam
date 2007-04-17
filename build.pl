@@ -16,7 +16,7 @@ sub slurp {
 }
 
 my @files;
-my $dir = File::Spec->catdir(getcwd, qw(chrome messenger));
+my $dir = File::Spec->catdir(getcwd, qw(chrome oneteam));
 my %defs = @ARGV;
 my @locales;
 my @disabled_locales = qw(en-GB fr-FR);
@@ -343,11 +343,11 @@ sub process {
     my $to_top_dir = join "/", (("..") x $depth);
 
     if ($file =~ /\.xml$/) {
-        $content =~ s{(?<!src=['"])chrome://messenger/(content|skin)/}{../$1/}g;
+        $content =~ s{(?<!src=['"])chrome://oneteam/(content|skin)/}{../$1/}g;
         $content =~ s{(?<!src=['"])chrome://branding/locale/}{../branding/}g;
     }
 
-    $content =~ s!chrome://messenger/(content|skin)/!$to_top_dir/$1/!g;
+    $content =~ s!chrome://oneteam/(content|skin)/!$to_top_dir/$1/!g;
     $content =~ s!chrome://branding/locale/!$to_top_dir/branding/!g;
 
     $content;
@@ -570,12 +570,12 @@ sub finalize {
 
     open(my $fh, ">", catfile($chromedir, 'chrome.manifest')) or
         die "Uanble to create file: $!";
-    print $fh "content messenger jar:oneteam.jar!/content/\n";
+    print $fh "content oneteam jar:oneteam.jar!/content/\n";
 
-    print $fh "skin messenger ".($_ eq 'default' ? 'classic' : $_)."/1.0 ".
+    print $fh "skin oneteam ".($_ eq 'default' ? 'classic' : $_)."/1.0 ".
         "jar:oneteam.jar!/skin/$_\n" for keys %{$self->{skins}};
 
-    print $fh "locale messenger $_ jar:oneteam.jar!/locale/$_\n"
+    print $fh "locale oneteam $_ jar:oneteam.jar!/locale/$_\n"
         for keys %{$self->{locales}};
     print $fh "locale branding en-US jar:oneteam.jar!/locale/branding\n";
     close($fh);

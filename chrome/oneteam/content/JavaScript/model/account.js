@@ -458,7 +458,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (this.myJID.normalizedJID.shortJID == sender.normalizedJID.shortJID) {
             if (this.bumpPriority && +packet.getPriority() > this.currentPresence.priority)
                 openDialogUniq("ot:bumpPriority",
-                               "chrome://messenger/content/bumpPriority.xul",
+                               "chrome://oneteam/content/bumpPriority.xul",
                                "chrome,centerscreen", +packet.getPriority()+1);
             return;
         }
@@ -475,7 +475,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
             this.addEvent(__("events", "subscriptionEvent", sender),
                           new Callback(openDialogUniq, null).
-                          addArgs("ot:subscribe", "chrome://messenger/content/subscribe.xul",
+                          addArgs("ot:subscribe", "chrome://oneteam/content/subscribe.xul",
                                   "chrome,centerscreen,resizable",
                                   this.getOrCreateContact(sender), packet.getStatus()));
             return;
@@ -631,7 +631,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
             this.addEvent(__("events", "invitationEvent", sender, invite.getAttribute("from")),
                           new Callback(openDialogUniq, null).
-                          addArgs("ot:invitation", "chrome://messenger/content/invitation.xul",
+                          addArgs("ot:invitation", "chrome://oneteam/content/invitation.xul",
                                   "chrome,centerscreen", conference,
                                   new JID(invite.getAttribute("from")),
                                   reason && reason.textContent));

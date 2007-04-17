@@ -128,7 +128,7 @@ _DECL_(L10NService, L10NServiceBase).prototype =
         if (/^branding:/.exec(bundle))
             bundle = "chrome://branding/locale/" + bundle.substr(9) + ".properties";
         else
-            bundle = "chrome://messenger/locale/" + bundle + ".properties";
+            bundle = "chrome://oneteam/locale/" + bundle + ".properties";
 
         if (!this._bundleCache[bundle])
             this._bundleCache[bundle] = this._service.createBundle(bundle);

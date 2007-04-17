@@ -1,8 +1,0 @@
-- Skin selection:
-In the preference file, 
-  general.skins.selectedSkin
-the value should match the skin "name" in the manifest registration line
-
-- When adding:
-  hidechrome="true"
-  we can create a borderless window.

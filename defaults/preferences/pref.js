@@ -1,11 +1,4 @@
-pref("toolkit.defaultChromeURI", "chrome://messenger/content/messenger.xul");
-pref("toolkit.defaultChromeURI", "chrome://messenger/content/main.xul");
-//pref("toolkit.defaultChromeURI", "chrome://messenger/content/subscribe.xul");
-//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/chatpane.xul");
-//pref("toolkit.defaultChromeURI", "chrome://messenger/content/addContact.xul");
-//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/systray.xul");
-//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/tabwithclose.xul");
-//pref("toolkit.defaultChromeURI", "chrome://messenger/content/tests/notifications.xul");
+pref("toolkit.defaultChromeURI", "chrome://oneteam/content/main.xul");
 pref("toolkit.singletonWindowType", "ot:main");
 /* debugging prefs */
 

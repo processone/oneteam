@@ -10,10 +10,10 @@ function StylesRegistry(cache)
 
     var styles = cache.getValue["iconStyles"];
     if (!styles)
-        styles = "chrome://messenger/content/data/smiles/oneteam\n"+
-            "chrome://messenger/content/data/status-icons/oneteam\n"+
-            "chrome://messenger/content/data/status-icons/crystal\n"+
-            "chrome://messenger/content/data/status-icons/dcraven";
+        styles = "chrome://oneteam/content/data/smiles/oneteam\n"+
+            "chrome://oneteam/content/data/status-icons/oneteam\n"+
+            "chrome://oneteam/content/data/status-icons/crystal\n"+
+            "chrome://oneteam/content/data/status-icons/dcraven";
 
     styles = styles.split(/\n/);
     for (var i = 0; i < styles.length; i++)

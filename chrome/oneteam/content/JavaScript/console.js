@@ -59,7 +59,7 @@ function onLoad() {
 
     var link = console.contentDocument.createElement("link");
 // #ifdef XULAPP
-    link.setAttribute("href", "chrome://messenger/skin/xml-console-log.css");
+    link.setAttribute("href", "chrome://oneteam/skin/xml-console-log.css");
 /* #else
     link.setAttribute("href",
               document.location.href.replace(/content\/.*?$/, "skin/xml-console-log.css"));

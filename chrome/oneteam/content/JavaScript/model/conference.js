@@ -103,7 +103,7 @@ _DECL_(Conference, Contact).prototype =
 
         account.addEvent(__("events", "joinRoomErrorEvent", this.jid, errorMsg),
                          new Callback(openDialogUniq).
-                            addArgs("ot:joinRoomError", "chrome://messenger/content/joinRoomError.xul",
+                            addArgs("ot:joinRoomError", "chrome://oneteam/content/joinRoomError.xul",
                                     "chrome,centerscreen", this, +errorTag.getAttribute("code"),
                                     errorMsg));
     },
@@ -148,7 +148,7 @@ _DECL_(Conference, Contact).prototype =
 
     onInvite: function()
     {
-        openDialogUniq("ot:invite", "chrome://messenger/content/invite.xul",
+        openDialogUniq("ot:invite", "chrome://oneteam/content/invite.xul",
                        "chrome,centerscreen", this);
     },
 
@@ -184,7 +184,7 @@ _DECL_(Conference, Contact).prototype =
 
     onRoomConfiguration: function()
     {
-        openDialogUniq("ot:roomConfiguration", "chrome://messenger/content/roomConfiguration.xul",
+        openDialogUniq("ot:roomConfiguration", "chrome://oneteam/content/roomConfiguration.xul",
                        "chrome,centerscreen", this);
     },
 
@@ -207,13 +207,13 @@ _DECL_(Conference, Contact).prototype =
 
     onBookmark: function()
     {
-        openDialogUniq("ot:bookmarkRoom", "chrome://messenger/content/bookmarkRoom.xul",
+        openDialogUniq("ot:bookmarkRoom", "chrome://oneteam/content/bookmarkRoom.xul",
                        "chrome,centerscreen", this);
     },
 
     onChangeNick: function()
     {
-        openDialogUniq("ot:changeNick", "chrome://messenger/content/changeNick.xul",
+        openDialogUniq("ot:changeNick", "chrome://oneteam/content/changeNick.xul",
                        "chrome,centerscreen", this);
     },
 
@@ -468,7 +468,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     showVCard: function()
     {
-        openDialogUniq("ot:info", "chrome://messenger/content/info.xul",
+        openDialogUniq("ot:info", "chrome://oneteam/content/info.xul",
                        "resizable=no,chrome,dialog", this);
     },
 

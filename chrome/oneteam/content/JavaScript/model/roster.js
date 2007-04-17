@@ -23,7 +23,7 @@ _DECL_(Group, null, Model).prototype =
 
     onRename: function(externalDialog)
     {
-        openDialogUniq("ot:renameGroup", "chrome://messenger/content/renameGroup.xul",
+        openDialogUniq("ot:renameGroup", "chrome://oneteam/content/renameGroup.xul",
                        "resizable=no,chrome,dialog,modal", this);
     },
 
@@ -319,7 +319,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
 
     onRename: function(externalDialog)
     {
-        openDialogUniq("ot:rename", "chrome://messenger/content/rename.xul",
+        openDialogUniq("ot:rename", "chrome://oneteam/content/rename.xul",
                        "resizable=no,chrome,dialog,modal", this);
     },
 
@@ -331,7 +331,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
 
     onRemove: function()
     {
-        openDialogUniq("ot:removeContact", "chrome://messenger/content/removeContact.xul",
+        openDialogUniq("ot:removeContact", "chrome://oneteam/content/removeContact.xul",
                        "resizable=no,chrome,dialog,modal", this);
     },
 
@@ -343,7 +343,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
 
     onEditContact: function()
     {
-        openDialogUniq("ot:editContact", "chrome://messenger/content/editContact.xul",
+        openDialogUniq("ot:editContact", "chrome://oneteam/content/editContact.xul",
                        "resizable=no,chrome,dialog,modal", this);
     },
 
@@ -371,7 +371,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
 
     showVCard: function()
     {
-        openDialogUniq("ot:info", "chrome://messenger/content/info.xul",
+        openDialogUniq("ot:info", "chrome://oneteam/content/info.xul",
                        "resizable=no,chrome,dialog", this);
     },
 
@@ -557,7 +557,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 // XXX: Disabled for now
                 var text = 0 && errorTag.getElementsByTagName('text');
                 if (text)
-                    openDialogUniq("ot:error", "chrome://messenger/content/error.xul",
+                    openDialogUniq("ot:error", "chrome://oneteam/content/error.xul",
                                    "chrome,modal", text.textContent);
                 return [];
             }

@@ -194,7 +194,7 @@ function openConversation(event) {
         var imghead = document.createElement("image");
         imghead.setAttribute("id", "imghead" + id);
         var status = findStatusByJid(id);
-        imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref('chat.general.iconsetdir') + status);
+        imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref('chat.general.iconsetdir') + status);
 
         var namehead = document.createElement("label");
 
@@ -401,7 +401,7 @@ function initGUI() {
 
         var path = gPrefService.getCharPref('chat.general.iconsetdir') + "online.png";
 
-        var url = 'url("chrome://messenger/content/img/' + path + '")';
+        var url = 'url("chrome://oneteam/content/img/' + path + '")';
 
         document.getElementById("status").style.listStyleImage = url;
 
@@ -557,11 +557,11 @@ function extendGUI() {
 
     var toolbarseparator = document.createElement("toolbarseparator");
     /*var toolbarbutton1 =  document.createElement("toolbarbutton");
-     toolbarbutton1.setAttribute("image","chrome://messenger/content/img/mail.png");*/
+     toolbarbutton1.setAttribute("image","chrome://oneteam/content/img/mail.png");*/
 
 
     var toolbarbutton2 = document.createElement("toolbarbutton");
-    toolbarbutton2.setAttribute("image", "chrome://messenger/content/img/General/picture.gif");
+    toolbarbutton2.setAttribute("image", "chrome://oneteam/content/img/General/picture.gif");
     toolbarbutton2.setAttribute("oncommand", "sendFile();");
 
 
@@ -767,7 +767,7 @@ var list = document.getElementById("liste_conf");
         var tabitem = document.getElementById("tab" + iditem);
 
 
-		if (it.getAttribute("image")== "chrome://messenger/content/img/crystal/opened.png")
+		if (it.getAttribute("image")== "chrome://oneteam/content/img/crystal/opened.png")
 			exitRoom(iditem);
 
         list.removeChild(it);
@@ -1233,7 +1233,7 @@ function retrieveBookmarks(iq) {
             cell.setAttribute("flex", "1");
             cell.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textentry").focus();');
             cell.setAttribute("class", "listitem-iconic");
-            cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+            cell.setAttribute("image", "chrome://oneteam/content/img/crystal/closed.png");
 
             item.appendChild(cell);
 
@@ -1364,7 +1364,7 @@ function closeTab() {
 
 
             var cellConf = document.getElementById(jid + "cell");
-            cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+            cellConf.setAttribute("image", "chrome://oneteam/content/img/crystal/closed.png");
 
             // mask all users in room
             var el = element.nextSibling;
@@ -1407,7 +1407,7 @@ function closeTab() {
             var element = document.getElementById(jid);
 
             var cellConf = document.getElementById(jid + "cell");
-            cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+            cellConf.setAttribute("image", "chrome://oneteam/content/img/crystal/closed.png");
 
             // mask all users in room
 
@@ -1492,7 +1492,7 @@ var liste = document.getElementById("liste_contacts");
 
 
             var cellConf = document.getElementById(jid + "cell");
-            cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+            cellConf.setAttribute("image", "chrome://oneteam/content/img/crystal/closed.png");
 
             // mask all users in room
             var el = element.nextSibling;
@@ -1535,7 +1535,7 @@ var liste = document.getElementById("liste_contacts");
             var element = document.getElementById(jid);
 
             var cellConf = document.getElementById(jid + "cell");
-            cellConf.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+            cellConf.setAttribute("image", "chrome://oneteam/content/img/crystal/closed.png");
 
             // mask all users in room
 
@@ -1829,7 +1829,7 @@ function showGroup(group) {
         var item = document.createElement("listitem");
         item.setAttribute("context", "itemcontextgroup");
         item.setAttribute("class", "listitem-iconic");
-        item.setAttribute("image", "chrome://messenger/content/img/tes.png");
+        item.setAttribute("image", "chrome://oneteam/content/img/tes.png");
         item.setAttribute("onclick", "lastSelectedGroup = event.target.id;");
 
         for (var g = 0; g < groups.length; g++) {
@@ -1855,7 +1855,7 @@ function showGroup(group) {
         /*var item = document.createElement("treeitem");
         //item.setAttribute("context", "itemcontextgroup");
         //item.setAttribute("open", "true");
-        //item.setAttribute("image", "chrome://messenger/content/img/tes.png");
+        //item.setAttribute("image", "chrome://oneteam/content/img/tes.png");
         item.setAttribute("container","true");
         item.setAttribute("label", group);
         item.setAttribute("id", "group" + group);
@@ -1881,7 +1881,7 @@ function showRoom(room) {
         item.setAttribute("context", "itemcontextroom");
         item.setAttribute("class", "listitem-iconic");
         item.setAttribute("ondblclick", "openConversation(event)");
-        item.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
+        item.setAttribute("image", "chrome://oneteam/content/img/user-sibling.gif");
         item.setAttribute("label", room [3]);
         item.setAttribute("id", room [0]);
         liste.appendChild(item);
@@ -1919,14 +1919,14 @@ function showRoomUser(roomUser) {
 
         var image = document.createElement("image");
         // TO FIX : GIVE THE RIGHT SRC IF EXIST
-        //image.setAttribute("src", "chrome://messenger/content/img/Amedee.png");
+        //image.setAttribute("src", "chrome://oneteam/content/img/Amedee.png");
         image.setAttribute("width", "20");
         image.setAttribute("height", "20");
 
 
         var cell = document.createElement("richlistcell");
         cell.setAttribute("class", "listitem-iconic");
-        cell.setAttribute("image", "chrome://messenger/content/img/user-sibling.gif");
+        cell.setAttribute("image", "chrome://oneteam/content/img/user-sibling.gif");
         cell.setAttribute("label", roomUser[1]);
         cell.setAttribute("id", roomUser[0] + "cell");
         cell.setAttribute("flex", "1");
@@ -2039,7 +2039,7 @@ function tooltiped(item, event)
         var stringRes = "";
         
         if (user && user [4])
-        var image = "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user [4];
+        var image = "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user [4];
         
         var name;
         var ins;
@@ -2096,7 +2096,7 @@ function showUser(user) {
    item.setAttribute("context", "itemcontext");
    item.setAttribute("ondblclick", "openConversation(event)");
    item.setAttribute("class", "listitem-iconic");
-   item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+   item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
    item.setAttribute("label", user[3]);
    item.setAttribute("id", user[0]);
    item.setAttribute("flex", "1");*/
@@ -2108,7 +2108,7 @@ function showUser(user) {
 
     cell.setAttribute("ondblclick", 'openConversation(event);document.getElementById("textentry").focus();');
     cell.setAttribute("class", "listitem-iconic");
-    cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+    cell.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
     if (user [7] > 1)
         cell.setAttribute("label", user[3] + " " + "(" + (user [7]) + ")");
     else
@@ -2161,13 +2161,13 @@ function showUser(user) {
         item.setAttribute("context", "itemcontextsubboth");
     else if (user [1] == "from") {
         item.setAttribute("context", "itemcontextsubfrom");
-        cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "requested.png");
+        cell.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "requested.png");
     }
     else if (user [1] == "to")
         item.setAttribute("context", "itemcontextsubto");
     else if (user [1] == "none") {
         item.setAttribute("context", "itemcontextsubnone");
-        cell.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "requested.png");
+        cell.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "requested.png");
     }
     else
         item.setAttribute("context", "itemcontextsubboth");
@@ -2179,7 +2179,7 @@ function showUser(user) {
     item.setAttribute("context", "itemcontext");
     //item.setAttribute("ondblclick", "openConversation(event)");
     //item.setAttribute("class", "listitem-iconic");
-    cell1.setAttribute("src", "chrome://messenger/content/img/" + user[4]);
+    cell1.setAttribute("src", "chrome://oneteam/content/img/" + user[4]);
     cell2.setAttribute("label", user[3]);
     cell2.setAttribute("id", user[0]);
     //item.setAttribute("flex", "1");
@@ -2459,7 +2459,7 @@ function sendMsg(event) {
                     con.send(aMsg);
 
                     if (gPrefService.getBoolPref("chat.sounds"))
-                        playSound("chrome://messenger/content/sounds/sent.wav");
+                        playSound("chrome://oneteam/content/sounds/sent.wav");
                 }
 
 
@@ -2500,7 +2500,7 @@ function performJoinRoom(wholeRoom, jid, pass, nick) {
 
 
         var cell = document.getElementById(wholeRoom + "cell");
-        cell.setAttribute("image", "chrome://messenger/content/img/crystal/opened.png");
+        cell.setAttribute("image", "chrome://oneteam/content/img/crystal/opened.png");
 
         var aPresence = new JSJaCPresence();
         aPresence.setTo(wholeRoom + '/' + nick);
@@ -2873,7 +2873,7 @@ function createInstantRoom(wholeRoom, nick, name) {
         cell.setAttribute("id", wholeRoom + "cell");
         cell.setAttribute("flex", "1");
         cell.setAttribute("class", "listitem-iconic");
-        cell.setAttribute("image", "chrome://messenger/content/img/crystal/closed.png");
+        cell.setAttribute("image", "chrome://oneteam/content/img/crystal/closed.png");
 
         item.appendChild(cell);
 
@@ -3167,7 +3167,7 @@ function changeIcone(img) {
 
     var path = gPrefService.getCharPref('chat.general.iconsetdir') + img;
 
-    var url = 'url("chrome://messenger/content/img/' + path + '")';
+    var url = 'url("chrome://oneteam/content/img/' + path + '")';
 
     document.getElementById("status").style.listStyleImage = url;
 
@@ -3179,13 +3179,13 @@ function changeIcone(img) {
 
 // Function to launch preferences window
 function launchPreferences() {
-    window.open("chrome://messenger/content/preferences.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
+    window.open("chrome://oneteam/content/preferences.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
 }
 
 
 // Function to open Service Discovery
 function openDisco() {
-    window.open("chrome://messenger/content/disco.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
+    window.open("chrome://oneteam/content/disco.xul", "Lagger Preferences", "chrome,titlebar,toolbar,centerscreen,modal");
 }
 
 // Function to launch wizard window
@@ -3205,7 +3205,7 @@ function launchWizard() {
 function launchConsole() {
 
     if (!console) {
-        cons = window.open("chrome://messenger/content/console.xul", "Console", "chrome,centerscreen");
+        cons = window.open("chrome://oneteam/content/console.xul", "Console", "chrome,centerscreen");
         cons.opener = window;
         console = true;
     }
@@ -3213,7 +3213,7 @@ function launchConsole() {
 
 // Launch about window
 function launchAbout() {
-    window.open("chrome://messenger/content/about.xul", "About Lagger", "chrome,titlebar,toolbar,centerscreen,modal");
+    window.open("chrome://oneteam/content/about.xul", "About Lagger", "chrome,titlebar,toolbar,centerscreen,modal");
 }
 
 // Launch theme window
@@ -3226,7 +3226,7 @@ function launchThemeWindow() {
 
 
 function launchChangeNicknameWindow() {
-    window.openDialog("chrome://messenger/content/changeNickname.xul", "Change Nickname", "chrome,titlebar,toolbar,centerscreen,modal");
+    window.openDialog("chrome://oneteam/content/changeNickname.xul", "Change Nickname", "chrome,titlebar,toolbar,centerscreen,modal");
 }
 
 // Launch extension window
@@ -3251,7 +3251,7 @@ function launchInfoWindow() {
         // jid + resource
             infojid = infojid + "/" + resource [0];
 
-        window.open("chrome://messenger/content/info.xul", infojid, "chrome,titlebar,toolbar,centerscreen,modal");
+        window.open("chrome://oneteam/content/info.xul", infojid, "chrome,titlebar,toolbar,centerscreen,modal");
 
     } catch (e) {
         report("developer", "error", e, window);
@@ -3268,9 +3268,9 @@ function launchInviteWindow() {
 
     var cellRoom = document.getElementById(jidRoom + "cell");
 
-    if (cellRoom.getAttribute("image") != "chrome://messenger/content/img/crystal/closed.png")
+    if (cellRoom.getAttribute("image") != "chrome://oneteam/content/img/crystal/closed.png")
 
-        window.open("chrome://messenger/content/invite.xul", "", "chrome,centerscreen");
+        window.open("chrome://oneteam/content/invite.xul", "", "chrome,centerscreen");
 
     else
         report("user", "info", "please open a room before trying to invite contacts");
@@ -3279,13 +3279,13 @@ function launchInviteWindow() {
 
 // Function to launch the change nick window
 function launchNicknameWindow() {
-    window.open("chrome://messenger/content/changeNick.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");
+    window.open("chrome://oneteam/content/changeNick.xul", "Change your nickname", "chrome,titlebar,toolbar,centerscreen,modal");
 
 }
 
 // Function to launch transfert window
 function launchTransfertWindow() {
-    transfertWindow = window.open("chrome://messenger/content/fileTransfert.xul", "File transfert", "chrome,centerscreen");
+    transfertWindow = window.open("chrome://oneteam/content/fileTransfert.xul", "File transfert", "chrome,centerscreen");
     transfertWindow.opener = window;
 }
 
@@ -3293,7 +3293,7 @@ function launchTransfertWindow() {
 function launchPersoInfoWindow() {
 
 
-    window.open("chrome://messenger/content/myInfo.xul", "Edit your info", "chrome,titlebar,toolbar,centerscreen,modal");
+    window.open("chrome://oneteam/content/myInfo.xul", "Edit your info", "chrome,titlebar,toolbar,centerscreen,modal");
 
 }
 
@@ -3301,7 +3301,7 @@ function launchPersoInfoWindow() {
 // Function to add a contact
 function addContact()
 {
-    window.open("chrome://messenger/content/addContact.xul", "Add New Contact", "chrome,centerscreen");
+    window.open("chrome://oneteam/content/addContact.xul", "Add New Contact", "chrome,centerscreen");
 
 }
 
@@ -3309,8 +3309,8 @@ function addContact()
 // Function to join a room
 function joinRoom() {
 
-    //window.open("chrome://messenger/content/joinRoom.xul", "Room Manager", "chrome,centerscreen");
-    window.open("chrome://messenger/content/roomWizard.xul", "Room Manager", "chrome,centerscreen");
+    //window.open("chrome://oneteam/content/joinRoom.xul", "Room Manager", "chrome,centerscreen");
+    window.open("chrome://oneteam/content/roomWizard.xul", "Room Manager", "chrome,centerscreen");
 
 }
 
@@ -3325,7 +3325,7 @@ function closeWindows() {
 
     for (var i = 0; i < rooms.length; i++) {
     	var room = document.getElementById(rooms [i]);
-    	if (room.getAttribute("image", "chrome://messenger/content/img/crystal/opened.png"))
+    	if (room.getAttribute("image", "chrome://oneteam/content/img/crystal/opened.png"))
         	exitRoom(rooms [i]);
     }
 
@@ -3467,7 +3467,7 @@ function handleMessage(aJSJaCPacket) {
             var reason = aJSJaCPacket.getNode().getElementsByTagName('reason');
             if (reason && reason.item(0) && reason.item(0).firstChild)
                 invitingReason = reason.item(0).firstChild.nodeValue;
-            window.open("chrome://messenger/content/invitation.xul", "", "chrome,centerscreen");
+            window.open("chrome://oneteam/content/invitation.xul", "", "chrome,centerscreen");
             return;
         }
 
@@ -3495,7 +3495,7 @@ if (aJSJaCPacket.getBody()) {
         if (document.getElementById("tab" + jid) == null && aJSJaCPacket.getBody()) {
         
        /* var item = document.getElementById(jid);
-        	item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "message.png");
+        	item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "message.png");
         	user [14] += msgFormat(htmlEnc(aJSJaCPacket.getBody()) + "#";
         }
         
@@ -3517,7 +3517,7 @@ if (aJSJaCPacket.getBody()) {
             var imghead = document.createElement("image");
             imghead.setAttribute("id", "imghead" + jid);
             var status = findStatusByJid(jid);
-            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref('chat.general.iconsetdir') + status);
+            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref('chat.general.iconsetdir') + status);
             hboxhead.appendChild(imghead);
 
             //}
@@ -3593,7 +3593,7 @@ if (aJSJaCPacket.getBody()) {
 
             if (aJSJaCPacket.getBody()) {
                 if (gPrefService.getBoolPref("chat.sounds"))
-                    playSound("chrome://messenger/content/sounds/message1.wav");
+                    playSound("chrome://oneteam/content/sounds/message1.wav");
 
                 var tab = document.getElementById("tab" + jid);
                 var tabpanel = document.getElementById("tabpanel" + jid);
@@ -3976,7 +3976,7 @@ function handlePresence(aJSJaCPacket) {
                 		if (text)
                 			if (text && text.item(0) && text.item(0).firstChild){	
 			    				error = text.item(0).firstChild.nodeValue;
-			    				window.open("chrome://messenger/content/error.xul", "Error", "chrome,titlebar,toolbar,centerscreen,modal");
+			    				window.open("chrome://oneteam/content/error.xul", "Error", "chrome,titlebar,toolbar,centerscreen,modal");
 			    				}
 			    	}
 
@@ -3990,7 +3990,7 @@ function handlePresence(aJSJaCPacket) {
 
 
                 if (otherpriority > mypriority)
-                    window.open("chrome://messenger/content/changePriority.xul", "", "chrome,centerscreen");
+                    window.open("chrome://oneteam/content/changePriority.xul", "", "chrome,centerscreen");
 
                 askpriority = false;
             }
@@ -4242,24 +4242,24 @@ function handlePresence(aJSJaCPacket) {
 
                 presence = aJSJaCPacket.getFrom() + "has become available.";
                 if (item)
-                    item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "online.png");
+                    item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "online.png");
 
                 if (user [6] == "true") {
                     var alertsService = Components.classes["@mozilla.org/alerts-service;1"]
                             .getService(Components.interfaces.nsIAlertsService);
-                    alertsService.showAlertNotification("chrome://messenger/content/img/dcraven/online.png",
+                    alertsService.showAlertNotification("chrome://oneteam/content/img/dcraven/online.png",
                             user[3], "Is now available",
                             false, "", null);
                     user [6] = "false";
                     if (gPrefService.getBoolPref("chat.sounds"))
                     	if (!user[10])
-                        playSound("chrome://messenger/content/sounds/connected.wav");
+                        playSound("chrome://oneteam/content/sounds/connected.wav");
                 }
 
 
                 var imghead = document.getElementById("imghead" + user[0]);
                 if (imghead)
-                    imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                    imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
 
                 if (resources && (resources.length > 1)) {
@@ -4281,13 +4281,13 @@ function handlePresence(aJSJaCPacket) {
                     if (maxPrio > priority) {
 
                         if (item)
-                            item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + oldStatus);
+                            item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + oldStatus);
 
 
                         user [4] = oldStatus;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
                     }
                     else {
@@ -4328,7 +4328,7 @@ function handlePresence(aJSJaCPacket) {
                     if (type == 'subscribe') {
                         subscribeReason = aJSJaCPacket.getStatus();
                         subscribe = sender;
-                        window.open("chrome://messenger/content/subscribe.xul", "", "chrome,centerscreen,resizable");
+                        window.open("chrome://oneteam/content/subscribe.xul", "", "chrome,centerscreen,resizable");
                     }
 
 
@@ -4336,19 +4336,19 @@ function handlePresence(aJSJaCPacket) {
 
                         getContextBoth(sender);
                         subscribed = sender;
-                        window.open("chrome://messenger/content/subscribed.xul", "", "chrome,centerscreen,resizable");
+                        window.open("chrome://oneteam/content/subscribed.xul", "", "chrome,centerscreen,resizable");
                     }
 
                     else if (type == 'unsubscribe') {
                         unsubscribe = sender;
 
-                        window.open("chrome://messenger/content/unsubscribe.xul", "", "chrome,centerscreen,resizable");
+                        window.open("chrome://oneteam/content/unsubscribe.xul", "", "chrome,centerscreen,resizable");
                     }
 
                     else if (type == 'unsubscribed') {
                         getContextNone(sender);
                         unsubscribed = sender;
-                        window.open("chrome://messenger/content/unsubscribed.xul", "", "chrome,centerscreen,resizable");
+                        window.open("chrome://oneteam/content/unsubscribed.xul", "", "chrome,centerscreen,resizable");
                     }
 
                     presence += aJSJaCPacket.getType();
@@ -4374,12 +4374,12 @@ function handlePresence(aJSJaCPacket) {
                         }
 
                         if (item)
-                            item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "offline.png");
+                            item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "offline.png");
 
                         user [6] = "true";
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
                         var elementList = document.getElementById(sender + "cell");
 
@@ -4404,7 +4404,7 @@ function handlePresence(aJSJaCPacket) {
 
                             if (gPrefService.getBoolPref("chat.sounds"))
                            		 if (!user[10])
-                                playSound("chrome://messenger/content/sounds/disconnected.wav");
+                                playSound("chrome://oneteam/content/sounds/disconnected.wav");
                             calculateOnline(user);
                             user [10] = true;
                         }
@@ -4418,11 +4418,11 @@ function handlePresence(aJSJaCPacket) {
                         user [4] = "invisible.png";
                         user [12] = 1;
                         if (item)
-                            item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "invisible.png");
+                            item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "invisible.png");
 
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
 
 
@@ -4437,39 +4437,39 @@ function handlePresence(aJSJaCPacket) {
                     //alert (show.substring(0,2));
                     if (show.substring(0, 2) == "xa") {
                         if (item)
-                            item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "xa.png");
+                            item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "xa.png");
                         user [4] = "xa.png";
                         user [12] = 2;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
                     if (show.substring(0, 2) == "dn") {
                         if (item)
-                            item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "dnd.png");
+                            item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "dnd.png");
                         user [4] = "dnd.png";
                         user [12] = 4;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
                     if (show.substring(0, 2) == "ch") {
                         if (item)
-                            item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "chat.png");
+                            item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "chat.png");
                         user [4] = "chat.png";
                         user [12] = 5;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
                     if (show.substring(0, 2) == "aw") {
                         if (item)
-                            item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "away.png");
+                            item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + "away.png");
                         user [4] = "away.png";
                         user [12] = 3;
                         var imghead = document.getElementById("imghead" + user[0]);
                         if (imghead)
-                            imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                            imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
                     }
 
                     if (user [10]) {
@@ -4514,13 +4514,13 @@ function handlePresence(aJSJaCPacket) {
             if (maxPrio > priority) {
 
                 if (item)
-                    item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + oldStatus);
+                    item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + oldStatus);
 
 
                 user [4] = oldStatus;
                 var imghead = document.getElementById("imghead" + user[0]);
                 if (imghead)
-                    imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                    imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
             }
 
@@ -4537,12 +4537,12 @@ function handlePresence(aJSJaCPacket) {
                     }
 
                     if (item)
-                        item.setAttribute("image", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[8]);
+                        item.setAttribute("image", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[8]);
 
 
                     var imghead = document.getElementById("imghead" + user[0]);
                     if (imghead)
-                        imghead.setAttribute("src", "chrome://messenger/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
+                        imghead.setAttribute("src", "chrome://oneteam/content/img/" + gPrefService.getCharPref("chat.general.iconsetdir") + user[4]);
 
                 }
             }
