@@ -8,7 +8,7 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://messenger/skin/avatar.css"/>
+      <stylesheet src="chrome://oneteam/skin/avatar.css"/>
     </resources>
 
     <content>
@@ -78,7 +78,7 @@
           this._image.setAttribute("src", this._src);
         } else if (this.getAttribute("showBlankAvatar") == "true") {
           this._container.firstChild.hidden = false;
-            this._src = "chrome://messenger/skin/default-avatar.png";
+            this._src = "chrome://oneteam/skin/default-avatar.png";
             this._image.setAttribute("src", this._src);
         } else {
           this._container.firstChild.hidden = true;
@@ -118,7 +118,7 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://messenger/skin/avatar.css"/>
+      <stylesheet src="chrome://oneteam/skin/avatar.css"/>
     </resources>
 
     <content>

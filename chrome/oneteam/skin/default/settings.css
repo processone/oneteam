@@ -3,7 +3,7 @@
 }
 
 #settings radio[pane] {
-  list-style-image: url("chrome://messenger/skin/Options.png"); 
+  list-style-image: url("chrome://oneteam/skin/Options.png"); 
 }
 
 radio[pane=connection] {

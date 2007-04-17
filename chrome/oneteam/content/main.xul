@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/main.css" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/main.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
 <!DOCTYPE window [
-<!ENTITY % guiDTD SYSTEM "chrome://messenger/locale/gui.dtd">
-<!ENTITY % messengerDTD SYSTEM "chrome://messenger/locale/messenger.dtd">
+<!ENTITY % guiDTD SYSTEM "chrome://oneteam/locale/gui.dtd">
+<!ENTITY % oneteamDTD SYSTEM "chrome://oneteam/locale/oneteam.dtd">
 %guiDTD;
-%messengerDTD;
+%oneteamDTD;
 ]>
 
 <window id="ot:main" title="OneTeam"

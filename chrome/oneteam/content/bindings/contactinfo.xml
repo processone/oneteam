@@ -9,7 +9,7 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://messenger/skin/contactinfo.css"/>
+      <stylesheet src="chrome://oneteam/skin/contactinfo.css"/>
     </resources>
 
     <content>

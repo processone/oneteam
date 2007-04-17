@@ -24,7 +24,7 @@
             this._reallyHidden = true;
             this._hidden = this.getAttribute("hidden") == "true";
             this.icon = this.getAttribute("icon");
-            this._win = window.openDialog("chrome://messenger/content/bindings/systrayhelper.xul",
+            this._win = window.openDialog("chrome://oneteam/content/bindings/systrayhelper.xul",
                                           "_blank", "chrome=yes,dialog=no,popup=yes");
         ]]>
       </constructor>
@@ -123,7 +123,7 @@
   </binding>
 
   <binding id="systray-minimizer"
-    extends="chrome://messenger/content/bindings/systray.xml#systray">
+    extends="chrome://oneteam/content/bindings/systray.xml#systray">
 
     <implementation>
       <constructor>

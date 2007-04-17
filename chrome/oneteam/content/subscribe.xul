@@ -3,8 +3,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
 <!DOCTYPE dialog [
-  <!ENTITY % subscribeDTD SYSTEM "chrome://messenger/locale/subscribe.dtd" >
-  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  <!ENTITY % subscribeDTD SYSTEM "chrome://oneteam/locale/subscribe.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
   %subscribeDTD;
   %dialogsDTD;
 ]>

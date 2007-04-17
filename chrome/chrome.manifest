@@ -1,10 +1,10 @@
-content messenger           file:messenger/content/
+content oneteam           file:oneteam/content/
 
-#locale  messenger fr-FR     file:messenger/locale/fr-FR/
-#locale  messenger en-GB     file:messenger/locale/en-GB/
-locale  messenger en-US     file:messenger/locale/en-US/
-locale  branding  en-US     file:messenger/locale/branding/
+#locale  oneteam fr-FR     file:oneteam/locale/fr-FR/
+#locale  oneteam en-GB     file:oneteam/locale/en-GB/
+locale  oneteam en-US     file:oneteam/locale/en-US/
+locale  branding  en-US     file:oneteam/locale/branding/
 
-skin    messenger default   file:messenger/skin/default/
-skin    messenger classic   file:messenger/skin/default/
+skin    oneteam default   file:oneteam/skin/default/
+skin    oneteam classic   file:oneteam/skin/default/
 

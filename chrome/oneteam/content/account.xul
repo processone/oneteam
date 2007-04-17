@@ -30,7 +30,7 @@
 
 <hbox id="head">
 
-<image src="chrome://messenger/content/img/account.png"/>
+<image src="chrome://oneteam/content/img/account.png"/>
 
 <spacer width="30"/>
 

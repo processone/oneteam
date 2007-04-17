@@ -3,7 +3,7 @@
 
 <!DOCTYPE dialog [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
-  <!ENTITY % dialogsDTD SYSTEM "chrome://messenger/locale/dialogs.dtd" >
+  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
   %brandDTD;
   %dialogsDTD;
 ]>

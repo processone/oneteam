@@ -12,7 +12,7 @@
 
   <binding id="chattabbox">
     <resources>
-      <stylesheet src="chrome://messenger/skin/chatpanetabs.css"/>
+      <stylesheet src="chrome://oneteam/skin/chatpanetabs.css"/>
     </resources>
 
     <content>
@@ -358,7 +358,7 @@
   <binding id="tabs-with-scroll"
            extends="chrome://global/content/bindings/tabbox.xml#tabs">
     <resources>
-      <stylesheet src="chrome://messenger/skin/chatpanetabs.css"/>
+      <stylesheet src="chrome://oneteam/skin/chatpanetabs.css"/>
     </resources>
 
     <content>
@@ -598,7 +598,7 @@
   <binding id="tab-with-close-button" extends="chrome://global/content/bindings/tabbox.xml#tab"
            display="xul:box">
     <resources>
-      <stylesheet src="chrome://messenger/skin/chatpanetabs.css"/>
+      <stylesheet src="chrome://oneteam/skin/chatpanetabs.css"/>
     </resources>
 <!-- #ifdef XULAPP -->
     <content chromedir="&locale.dir;" class="tab-content" flex="100">

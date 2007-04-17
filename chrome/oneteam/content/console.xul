@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://messenger/skin/xml-console.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/xml-console.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://messenger/locale/console.dtd">
+<!DOCTYPE window SYSTEM "chrome://oneteam/locale/console.dtd">
 
 <window id="Console" title="&Console.title;" width="640" height="550"
     onload="onLoad()" onunload="onClose()" windowtype="ot:console"

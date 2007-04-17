@@ -1,71 +1,71 @@
-@import url("chrome://messenger/skin/verifier.css");
+@import url("chrome://oneteam/skin/verifier.css");
 
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 chatpane {
-  -moz-binding: url("chrome://messenger/content/bindings/chatpane.xml#chatpane");
+  -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#chatpane");
 }
 
 chatpane-view {
-  -moz-binding: url("chrome://messenger/content/bindings/chatpane.xml#chatpane-view");
+  -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#chatpane-view");
 }
 
 avatar {
-  -moz-binding: url("chrome://messenger/content/bindings/avatar.xml#avatar");
+  -moz-binding: url("chrome://oneteam/content/bindings/avatar.xml#avatar");
 }
 
 avatarlist {
-  -moz-binding: url("chrome://messenger/content/bindings/avatar.xml#avatarList");
+  -moz-binding: url("chrome://oneteam/content/bindings/avatar.xml#avatarList");
 }
 
 groupselector {
-  -moz-binding: url("chrome://messenger/content/bindings/groupselector.xml#groupselector");
+  -moz-binding: url("chrome://oneteam/content/bindings/groupselector.xml#groupselector");
 }
 
 contactselector {
-  -moz-binding: url("chrome://messenger/content/bindings/contactselector.xml#contactselector");
+  -moz-binding: url("chrome://oneteam/content/bindings/contactselector.xml#contactselector");
 }
 
 otsystray {
-  -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systray");
+  -moz-binding: url("chrome://oneteam/content/bindings/systray.xml#systray");
 }
 
 otsystray[type="minimizer"] {
-  -moz-binding: url("chrome://messenger/content/bindings/systray.xml#systray-minimizer");
+  -moz-binding: url("chrome://oneteam/content/bindings/systray.xml#systray-minimizer");
 }
 
 contactinfo {
-  -moz-binding: url("chrome://messenger/content/bindings/contactinfo.xml#info");
+  -moz-binding: url("chrome://oneteam/content/bindings/contactinfo.xml#info");
 }
 
 menupopup[type="smiles-list"] {
-  -moz-binding: url("chrome://messenger/content/bindings/smileslist.xml#popup");
+  -moz-binding: url("chrome://oneteam/content/bindings/smileslist.xml#popup");
 }
 
 toolbarbutton[type="smiles-list"] {
-  -moz-binding: url("chrome://messenger/content/bindings/smileslist.xml#button");
+  -moz-binding: url("chrome://oneteam/content/bindings/smileslist.xml#button");
 }
 
 tab[hasclosebutton="true"] {
-  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#tab-with-close-button");
+  -moz-binding: url("chrome://oneteam/content/bindings/chattabbox.xml#tab-with-close-button");
 }
 
 chattabbox {
-  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#chattabbox");
+  -moz-binding: url("chrome://oneteam/content/bindings/chattabbox.xml#chattabbox");
 }
 
 tabs.with-scroll {
-  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#tabs-with-scroll");
+  -moz-binding: url("chrome://oneteam/content/bindings/chattabbox.xml#tabs-with-scroll");
 }
 
 chattab-content {
-  -moz-binding: url("chrome://messenger/content/bindings/chattabbox.xml#chattab-content");
+  -moz-binding: url("chrome://oneteam/content/bindings/chattabbox.xml#chattab-content");
 }
 
 textbox[type="verifiable"] {
-  -moz-binding: url("chrome://messenger/content/bindings/verifier.xml#textbox");
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#textbox");
 }
 
 verifier-controller {
-  -moz-binding: url("chrome://messenger/content/bindings/verifier.xml#controller");
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#controller");
 }
