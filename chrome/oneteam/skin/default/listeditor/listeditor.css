@@ -1,0 +1,29 @@
+.add-button, .remove-button, .commit-button {
+    -moz-binding: url(chrome://global/content/bindings/button.xml#button-image);
+    min-width: 0;
+}
+
+.add-button {
+    list-style-image: url(imgs/add.png);
+}
+
+.add-button[disabled=true] {
+    list-style-image: url(imgs/add-dis.png);
+}
+
+.remove-button {
+    list-style-image: url(imgs/remove.png);
+}
+
+.remove-button[disabled=true] {
+    list-style-image: url(imgs/remove-dis.png);
+}
+
+.commit-button {
+    list-style-image: url(imgs/commit.png);
+}
+
+.commit-button[disabled=true] {
+    list-style-image: url(imgs/commit-dis.png);
+}
+

@@ -111,7 +111,6 @@
         if (this._timer)
           clearTimeout(this._timer);
         this._timer = setTimeout(function(me){me._checkCondition()}, 50, this);
-        event.stopPropagation();
       ]]></handler>
 
       <handler event="keypress" keycode="VK_RETURN"><![CDATA[
@@ -129,46 +128,12 @@
     </handlers>
   </binding>
 
-  <binding id="isvalid">
+  <binding id="ifvalid">
     <content>
-      <xul:vbox anonid="container" xbl:inherits="align,dir,pack,orient">
+      <xul:vbox class="box-inherit" xbl:inherits="align,dir,pack,orient">
         <children/>
       </xul:vbox>
     </content>
-    <implementation>
-
-      <method name="_update">
-        <parameter name="state"/>
-        <body>
-          <![CDATA[
-            document.getAnonymousElementByAttribute(this, "anonid",
-              "container").collapsed = !state;
-          ]]>
-        </body>
-      </method>
-
-    </implementation>
-  </binding>
-
-  <binding id="isinvalid">
-    <content>
-      <xul:vbox anonid="container" xbl:inherits="align,dir,pack,orient">
-        <children/>
-      </xul:vbox>
-    </content>
-    <implementation>
-
-      <method name="_update">
-        <parameter name="state"/>
-        <body>
-          <![CDATA[
-            document.getAnonymousElementByAttribute(this, "anonid",
-              "container").collapsed = state;
-          ]]>
-        </body>
-      </method>
-
-    </implementation>
   </binding>
 
   <binding id="error-box">
@@ -235,7 +200,7 @@
 
   <binding id="verifier">
     <content>
-      <xul:vbox flex="1">
+      <xul:vbox class="box-inherit" flex="1" xbl:inherits="orient,align,pack,dir">
         <children/>
       </xul:vbox>
     </content>
@@ -316,13 +281,13 @@
               invalidset = invalidset ? invalidset.split(/\s*,\s*/) : [];
 
               for (var i = 0; i < validset.length; i++) {
-                var ins = validset[i].match(/\s*(@)?(\S+?)\s*=\s*(\S+?)\s*(?:\$\s*(\S+))?\s*$/);
+                var ins = validset[i].match(/\s*(@)?(\S+?)\s*=\s*(\S+?)\s*(?::\s*(\S+))?\s*$/);
                 validFun += this._genStateFun(ins[1], ins[2], ins[3]);
                 invalidFun += this._genStateFun(ins[1], ins[2], ins[4]);
               }
 
               for (i = 0; i < invalidset.length; i++) {
-                ins = invalidset[i].match(/\s*(@)?(\S+?)\s*=\s*(\S+?)\s*(?:\$\s*(\S+))?\s*$/);
+                ins = invalidset[i].match(/\s*(@)?(\S+?)\s*=\s*(\S+?)\s*(?::\s*(\S+))?\s*$/);
                 invalidFun += this._genStateFun(ins[1], ins[2], ins[3]);
                 validFun += this._genStateFun(ins[1], ins[2], ins[4]);
               }
@@ -349,6 +314,14 @@
             try {
               (function(attr){eval(call)}).call(this, attr);
             } catch (ex){}
+
+          const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var els = (this._childContainer || this).getElementsByTagNameNS(ns, "ifvalid");
+          for (i = 0; i < els.length; i++)
+            els[i].collapsed = inInvalidState;
+          els = (this._childContainer || this).getElementsByTagNameNS(ns, "ifinvalid");
+          for (i = 0; i < els.length; i++)
+            els[i].collapsed = !inInvalidState;
         ]]></body>
       </method>
 

@@ -64,6 +64,14 @@ textbox[type="verifiable"] {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#textbox");
 }
 
+ifvalid {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#ifvalid");
+}
+
+ifinvalid {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#ifvalid");
+}
+
 verifier {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#verifier");
 }
@@ -76,3 +84,6 @@ dialog {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#dialog") !important; 
 }
 
+listeditor {
+  -moz-binding: url("chrome://oneteam/content/bindings/listeditor.xml#list-editor");
+}

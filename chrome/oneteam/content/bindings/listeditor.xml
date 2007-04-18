@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+  xmlns:xbl="http://www.mozilla.org/xbl"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="list-editor">
+    <resources>
+      <stylesheet src="chrome://oneteam/skin/listeditor/listeditor.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <xul:verifier orient="horizontal">
+          <xul:textbox type="verifiable" flex="1" xbl:inherits="regex,condition,errortext"
+            oninput="this.parentNode.parentNode.parentNode._sync()"/>
+          <xul:ifvalid>
+            <xul:button anonid="commit" class="commit-button"
+              oncommand="this.parentNode.parentNode.parentNode.parentNode._commit()"/>
+            <xul:button anonid="add" class="add-button"
+              oncommand="this.parentNode.parentNode.parentNode.parentNode._add()"/>
+            <xul:button anonid="remove" class="remove-button"
+              oncommand="this.parentNode.parentNode.parentNode.parentNode._remove()"/>
+          </xul:ifvalid>
+          <xul:ifinvalid>
+            <xul:button class="commit-button" disabled="true"/>
+            <xul:button class="add-button" disabled="true"/>
+            <xul:button class="remove-button" disabled="true"/>
+          </xul:ifinvalid>
+        </xul:verifier>
+        <xul:listbox class="list" flex="1" xbl:inherits="rows"
+          onselect="this.parentNode.parentNode._select()"/>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <property name="regex" onget="return this._textbox.regex"
+                onset="return this._textbox.regex = val"/>
+      <property name="condition" onget="return this._textbox.condition"
+                onset="return this._textbox.condition = val"/>
+      <property name="values" onget="return this._values">
+        <setter><![CDATA[
+          var i;
+
+          i = this._list.getRowCount();
+          while (i > 0)
+            this._list.removeItemAt(0);
+
+          this._hasValue = {};
+
+          for (i = 0; i < val.length; i++) {
+            this._hasValue[val[i]] = 1;
+            this._list.appendItem(val[i], val[i]);
+          }
+
+          this._sync()
+
+          return this._values = val;
+        ]]></setter>
+      </property>
+
+      <constructor>
+        <![CDATA[
+          this._values = [];
+          this._hasValue = {};
+
+          this._textbox = document.getAnonymousElementByAttribute(this, "type", "verifiable");
+          this._list = document.getAnonymousElementByAttribute(this, "class", "list");
+          this._commitButton = document.getAnonymousElementByAttribute(this, "anonid", "commit")
+          this._addButton = document.getAnonymousElementByAttribute(this, "anonid", "add")
+          this._removeButton = document.getAnonymousElementByAttribute(this, "anonid", "remove")
+
+          this._sync();
+        ]]>
+      </constructor>
+
+      <method name="_sync">
+        <body><![CDATA[
+          var selected = this._list.selectedItem &&
+            this._list.selectedItem.label == this._textbox.value;
+
+          this._commitButton.disabled = this._hasValue[this._textbox.value] || !this._list.selectedItem
+          this._removeButton.disabled = !selected;
+          this._addButton.disabled = this._hasValue[this._textbox.value];
+        ]]></body>
+      </method>
+
+      <method name="_select">
+        <body><![CDATA[
+          this._textbox.value = this._list.selectedItem ?
+            this._list.selectedItem.label  : "";
+          this._sync();
+        ]]></body>
+      </method>
+
+      <method name="_commit">
+        <body><![CDATA[
+          delete this._hasValue[this._list.selectedItem.label];
+          this._hasValue[this._textbox.value] = 1;
+          this._list.selectedItem.label = this._textbox.value;
+          this._values[this._list.selectedIndex] = this._textbox.value;
+          this._sync();
+        ]]></body>
+      </method>
+
+      <method name="_add">
+        <body><![CDATA[
+          var i = this._list.appendItem(this._textbox.value, this._textbox.value);
+          this._hasValue[this._textbox.value] = 1;
+          this._values.push(this._textbox.value);
+          this._list.ensureElementIsVisible(i);
+          this._list.selectItem(i);
+        ]]></body>
+      </method>
+
+      <method name="_remove">
+        <body><![CDATA[
+            var idx = this._list.selectedIndex;
+            delete this._hasValue[this._list.selectedItem.label];
+            this._values.slice(idx, 1);
+            this._list.removeItemAt(idx);
+
+            var rc = this._list.getRowCount();
+            if (rc != 0)
+              this._list.selectedIndex = idx == rc ? idx-1 : idx;
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+</bindings>
