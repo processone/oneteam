@@ -12,15 +12,16 @@ sub slurp {
     my $file = shift;
     local $/;
     open(my $fh, "<", $file) or die "Can't slurp file $file: $1";
-    <$fh>;
+    my $res = <$fh>;
+    return defined $res ? $res : "";
 }
 
 my @files;
-my $dir = File::Spec->catdir(getcwd, qw(chrome oneteam));
+my $topdir = getcwd;
+my $dir = File::Spec->catdir($topdir, qw(chrome oneteam));
 my %defs = @ARGV;
 my @locales;
 my @disabled_locales = qw(en-GB fr-FR);
-my $revision;
 
 find(sub {
         push @files, $File::Find::name
@@ -164,20 +165,27 @@ sub process {
 }
 
 sub get_revision {
-    return $revision if defined $revision;
+    my $self = shift;
+
+    return $self->{revision} if exists $self->{revision};
 
     if (-d catdir($dir, '.svn')) {
-        $revision = `svnversion "$dir"`;
+        my $revision = `svnversion "$dir"`;
         chomp $revision;
-        return $revision;
+        return $self->{revision} = $revision;
     }
 
-    my $info = `svk info "$dir"`;
+    my @mirrors = `svk mi -l`;
+    @mirrors = map { (split " ", $_, 2)[0] } @mirrors[2..$#mirrors];
+
+    my $info = `svk info "$topdir"`;
     my ($depot) = $info =~ /Depot Path: (\/.*?)\//;
 
     while ($info =~ /Copied From: (\S+),/g) {
-        return $revision = $1 if `svk info "$depot$1"` =~ /Mirrored From:.*?, Rev. (\d+)/;
+        my ($mirror) = grep { index("$depot$1", $_) == 0 } @mirrors;
+        return $self->{revision} = $1 if $mirror and `svk info "$mirror"` =~ /Mirrored From:.*? Rev\.\s+(\d+)/;
     }
+    return 0;
 }
 
 package OneTeam::WebLocaleProcessor;
