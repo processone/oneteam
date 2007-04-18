@@ -6,7 +6,7 @@
 
 <!DOCTYPE window [
 <!ENTITY % guiDTD SYSTEM "chrome://oneteam/locale/gui.dtd">
-<!ENTITY % oneteamDTD SYSTEM "chrome://oneteam/locale/oneteam.dtd">
+<!ENTITY % oneteamDTD SYSTEM "chrome://oneteam/locale/messenger.dtd">
 %guiDTD;
 %oneteamDTD;
 ]>
