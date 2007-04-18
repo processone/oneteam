@@ -64,6 +64,10 @@ textbox[type="verifiable"] {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#textbox");
 }
 
+verifier {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#verifier");
+}
+
 verifier-error-box {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#error-box");
 }
