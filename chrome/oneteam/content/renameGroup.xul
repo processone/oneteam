@@ -29,8 +29,8 @@
   ]]></script>
 
   <hbox class="entry">
-    <description value="New Name:"/>
-    <textbox id="name"/>
+    <description value="New Group Name:"/>
+    <textbox type="verifiable" id="name" regex="." errortext="Group name can't be empty"/>
   </hbox>
 
 </dialog>

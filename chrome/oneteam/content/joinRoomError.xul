@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
 <!DOCTYPE dialog [
@@ -19,18 +20,18 @@
     var [conference, errorCode, errorMsg] = window.arguments;
     var nick, password;
 
-    function onLoad() {
-      if (!nick) {
+    function onLoad()
+    {
         nick = document.getElementById("nick");
-        nick.value = conference.bookmarkNick || "";
-      }
-      nick.parentNode.hidden = errorCode != 409;
-
-      if (!password) {
         password = document.getElementById("password");
+        nick.value = conference.bookmarkNick || "";
         password.value = conference.bookmarkPassword || "";
-      }
-      password.parentNode.hidden = errorCode != 401;
+        updateState();
+    }
+
+    function updateState() {
+      nick.parentNode.collapsed = errorCode != 409;
+      password.parentNode.collapsed = errorCode != 401;
 
       var el = document.getElementById("jid");
       if (el.firstChild)
@@ -56,7 +57,7 @@
       document.getElementById("progressmeter").style.visibility = "hidden";
       errorMsg = errorMsgArg;
       errorCode = +errorTag.getAttribute("code");
-      onLoad();
+      updateState();
     }
 
   ]]></script>
@@ -71,7 +72,8 @@
 
     <hbox class="entry" style="margin-top: 1em">
       <label value="New Nick:"/>
-      <textbox id="nick"/>
+      <textbox type="verifiable" id="nick" regex="^[^/]+$"
+               errortext="Nick name can't be empty and can't contain '/' character"/>
     </hbox>
 
     <hbox class="entry" style="margin-top: 1em">
