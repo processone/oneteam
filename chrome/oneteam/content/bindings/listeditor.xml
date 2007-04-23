@@ -118,7 +118,7 @@
         <body><![CDATA[
             var idx = this._list.selectedIndex;
             delete this._hasValue[this._list.selectedItem.label];
-            this._values.slice(idx, 1);
+            this._values.splice(idx, 1);
             this._list.removeItemAt(idx);
 
             var rc = this._list.getRowCount();
