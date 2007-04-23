@@ -242,10 +242,11 @@ _DECL_(XEPArchiveThreadsRetriever).prototype =
 
     _deliverNewData: function(newThreadsCount, lastChunk, failed)
     {
+    alert(newThreadsCount);
         for (observer in account.historyMgr._iterateCallbacks("threads-"+this.jid)) {
             observer._startBatchUpdate();
-            for (var i = 0; i < newThreadsCount; i++)
-                observer._addRecord(this.cache[i]);
+            for (var i = newThreadsCount-1; i >= 0 ; i--)
+                observer._addRecord(this.cache[this.cache.length - i]);
             observer._endBatchUpdate(lastChunk);
         }
         if (lastChunk && !failed)
@@ -312,7 +313,7 @@ _DECL_(XEPArchiveThreadsRetriever).prototype =
             this._deliverNewData(newThreadsCount, false)
             this.requestNextChunk(query.rsmNS::first.text());
         } else
-            this._deliverNewData(idx, true)
+            this._deliverNewData(newThreadsCount, true)
     }
 }
 
@@ -472,10 +473,10 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
     deliverThreadsWithJid: function(observer, token, contact)
     {
-        if (!this._threadsRetrv[jid])
-            this._threadsRetrv[jid] = new XEPArchiveThreadsRetriever(contact.jid);
+        if (!this._threadsRetrv[contact.jid])
+            this._threadsRetrv[contact.jid] = new XEPArchiveThreadsRetriever(contact.jid);
 
-        this._threadsRetrv[jid].deliverData(observer);
+        this._threadsRetrv[contact.jid].deliverData(observer);
         return this._registerCallback(observer, token, "threads-"+contact.jid);
     },
 
