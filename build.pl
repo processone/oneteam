@@ -242,8 +242,8 @@ sub process {
 
     if ($file =~ /\.(?:xul|xml)$/) {
         my @entitiesFiles;
-        if ($content =~ s/<!DOCTYPE\s+\w+\s+\[([^\[]+)\]\s*>\n?//) {
-            my $decl = $1;
+        if ($content =~ s{(<!DOCTYPE\s+\w+\s+\[([^\[]+)\]\s*>\n?)}{"\n" x ($1 =~ y/\n/\n/)}e) {
+            my $decl = $2;
             while ($decl =~ /<!ENTITY\s+[^\>]+?(?:"([^"]*)"|'([^']*)')[^\>]*>/g) {
                 ($1||$2) =~ /([^\\\/]*)[\\\/]locale[\\\/](.*)$/;
                 push @entitiesFiles, $1 eq "branding" ? "branding:$2" : $2;
