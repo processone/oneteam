@@ -61,23 +61,23 @@ richlistbox {
 
 /* Toolbar icons */
 #adduser-button {
-  list-style-image: url(imgs/main/adduser.png);
+  list-style-image: url(imgs/adduser.png);
 }
 
 #joinroom-button {
-  list-style-image: url(imgs/main/joinroom.png);
+  list-style-image: url(imgs/joinroom.png);
 }
 
 #editgroups-button {
-  list-style-image: url(imgs/main/editgroups.png);
+  list-style-image: url(imgs/editgroups.png);
 }
 
 #disco-button {
-  list-style-image: url(imgs/main/disco.png);
+  list-style-image: url(imgs/disco.png);
 }
 
 #toggleshowoffline-button {
-  list-style-image: url(imgs/main/toggleoffline.png);
+  list-style-image: url(imgs/toggleoffline.png);
 }
 
 /* Login pane */
