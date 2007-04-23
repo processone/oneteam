@@ -18,10 +18,11 @@
   onload="onLoad()"  ondialogaccept="return onAccept();">
 
   <script type="text/javascript;version=1.7"><![CDATA[
-    var conference = window.opener.account.getOrCreateConference("test@muc.prefiks.ath.cx")//window.arguments[0];
+    var conference = window.arguments[0];
     var pendingRequests;
     var usersLists = {}, usersListsEl = {};
     var types;
+
     if (conference.isOwner)
       types = {owner: 1, admin: 1, member: 1, outcast: 1};
     else if (conference.isAdmin)
@@ -92,16 +93,20 @@
     </tabs>
     <tabpanels flex="1">
       <tabpanel>
-        <listeditor id="owner-list"/>
+        <listeditor id="owner-list" flex="1"
+                    regex="^(?:[^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?(?:\/[^?#]+)?$"/>
       </tabpanel>
       <tabpanel>
-        <listeditor id="admin-list"/>
+        <listeditor id="admin-list" flex="1"
+                    regex="^(?:[^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?(?:\/[^?#]+)?$"/>
       </tabpanel>
       <tabpanel>
-        <listeditor id="member-list"/>
+        <listeditor id="member-list" flex="1"
+                    regex="^(?:[^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?(?:\/[^?#]+)?$"/>
       </tabpanel>
       <tabpanel>
-        <listeditor id="outcast-list"/>
+        <listeditor id="outcast-list" flex="1"
+                    regex="^(?:[^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?(?:\/[^?#]+)?$"/>
       </tabpanel>
     </tabpanels>
   </tabbox>
