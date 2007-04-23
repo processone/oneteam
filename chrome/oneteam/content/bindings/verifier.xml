@@ -48,6 +48,8 @@
                 onset="this.setAttribute('condition', val); return val"/>
       <property name="isValid" onget="return !this._active || !!this._valid"
                 readonly="true"/>
+      <property name="value" onget="return this.inputField.value"
+                onset="this.inputField.value = val; this._checkCondition(); return val"/>
 
       <method name="_checkCondition">
         <body><![CDATA[
@@ -263,7 +265,8 @@
             createTreeWalker(this._childContainer || this, NodeFilter.SHOW_ELEMENT, function(el) {
                 if (el.localName == "verifier")
                   return NodeFilter.FILTER_REJECT;
-                if (el.hasAttribute("ifvalidset") || el.hasAttribute("ifinvalidset"))
+                if (el.hasAttribute("ifvalidset") || el.hasAttribute("ifinvalidset") ||
+                    el.localName == "ifvalid" || el.localName == "ifinvalid")
                   return NodeFilter.FILTER_ACCEPT;
                 return NodeFilter.FILTER_SKIP;
               }, true);
@@ -306,22 +309,19 @@
               el._verifier_invalid_fun();
             else
               el._verifier_valid_fun();
+
+            if (el.localName == "ifvalid")
+              el.collapsed = !!inInvalidState;
+            else if (el.localName == "ifinvalid")
+              el.collapsed = !inInvalidState;
           }
 
-          var attr = inInvalidState ? "oninvalid" : "onvalid";;
+          var attr = inInvalidState ? "oninvalid" : "onvalid";
           var call = this.getAttribute(attr);
           if (call)
             try {
               (function(attr){eval(call)}).call(this, attr);
             } catch (ex){}
-
-          const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-          var els = (this._childContainer || this).getElementsByTagNameNS(ns, "ifvalid");
-          for (i = 0; i < els.length; i++)
-            els[i].collapsed = inInvalidState;
-          els = (this._childContainer || this).getElementsByTagNameNS(ns, "ifinvalid");
-          for (i = 0; i < els.length; i++)
-            els[i].collapsed = !inInvalidState;
         ]]></body>
       </method>
 
