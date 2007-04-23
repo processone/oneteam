@@ -68,13 +68,13 @@
             toSend[jid] = "none";
       }
 
-      var ns = new Namespace("http://jabber.org/protocol/muc#admin");
+      default xml namespace = new Namespace("http://jabber.org/protocol/muc#admin");
       var e4x = <></>
 
       for (i in toSend)
-        res.* += <ns:item jid={i} affiliation={toSend[i]}/>
+        e4x += <item jid={i} affiliation={toSend[i]}/>
 
-      conference.changeUsersList(res);
+      conference.changeUsersList(e4x);
 
       return true;
     }
