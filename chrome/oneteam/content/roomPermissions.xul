@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dataforms/dataforms.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
+  %dialogsDTD;
+]>
+
+<dialog id="roomPermissions" windowtype="ot:roomPermissions" title="Edit Permissions"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  width="600" height="500"
+  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttons="accept,cancel"
+  onload="onLoad()"  ondialogaccept="return onAccept();">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conference = window.opener.account.getOrCreateConference("test@muc.prefiks.ath.cx")//window.arguments[0];
+    var pendingRequests;
+    var usersLists = {}, usersListsEl = {};
+    var types;
+    if (conference.isOwner)
+      types = {owner: 1, admin: 1, member: 1, outcast: 1};
+    else if (conference.isAdmin)
+      types = {member: 1, outcast: 1};
+
+
+    function onLoad() {
+      pendingRequests = types.__count__;
+      for (var type in types) {
+        usersListsEl[type] = document.getElementById(type+"-list");
+        document.getElementById(type+"-tab").collapsed = false;
+        conference.requestUsersList(type, usersListRecv);
+      }
+    }
+
+    function usersListRecv(list, pkt) {
+      if (--pendingRequests == 0) {
+      }
+
+      if (list.length) {
+        var type = list[0].affiliation;
+        usersListsEl[type].values = [i.jid for each (i in list)];
+        usersLists[type] = {};
+        for (var i = 0; i < list.length; i++)
+          usersLists[type][list[i].jid] = 1;
+      }
+    }
+
+    function onAccept() {
+      var toSend = {};
+
+      for (var type in types) {
+        newUsersList = usersListsEl[type].values;
+        newUsersHash = {};
+        for (var i = 0; i < newUsersList.length; i++) {
+          var jid = newUsersList[i];
+          newUsersHash[jid] = 1;
+          if (!(jid in usersLists[type]) && (!toSend[jid] || toSend[jid] == "none"))
+            toSend[jid] = type;
+        }
+        for (jid in usersLists[type])
+          if (!(jid in newUsersHash) && !toSend[jid])
+            toSend[jid] = "none";
+      }
+
+      var ns = new Namespace("http://jabber.org/protocol/muc#admin");
+      var e4x = <></>
+
+      for (i in toSend)
+        res.* += <ns:item jid={i} affiliation={toSend[i]}/>
+
+      conference.changeUsersList(res);
+
+      return true;
+    }
+  ]]></script>
+
+  <dialogheader title="Edit Permissions"/>
+
+  <spacer/>
+
+  <tabbox flex="1">
+    <tabs>
+      <tab label="Owners" id="owner-tab" collapsed="true"/>
+      <tab label="Admins" id="admin-tab" collapsed="true"/>
+      <tab label="Members" id="member-tab" collapsed="true"/>
+      <tab label="Banned" id="outcast-tab" collapsed="true"/>
+    </tabs>
+    <tabpanels flex="1">
+      <tabpanel>
+        <listeditor id="owner-list"/>
+      </tabpanel>
+      <tabpanel>
+        <listeditor id="admin-list"/>
+      </tabpanel>
+      <tabpanel>
+        <listeditor id="member-list"/>
+      </tabpanel>
+      <tabpanel>
+        <listeditor id="outcast-list"/>
+      </tabpanel>
+    </tabpanels>
+  </tabbox>
+</dialog>

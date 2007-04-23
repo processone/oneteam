@@ -188,7 +188,7 @@ _DECL_(Conference, Contact).prototype =
                        "chrome,centerscreen", this);
     },
 
-    requestOwnerConfiguration: function(callback)
+    requestRoomConfiguration: function(callback)
     {
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, null, "get");
@@ -196,11 +196,82 @@ _DECL_(Conference, Contact).prototype =
         con.send(iq, callback);
     },
 
-    sendOwnerConfiguration: function(payload)
+    changeRoomConfiguration: function(payload)
     {
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, null, "set");
         iq.setQuery("http://jabber.org/protocol/muc#owner").
+            appendChild(E4XtoDOM(payload, iq.getDoc()));
+        con.send(iq);
+    },
+
+    destroyRoom: function(alternateRoom, reason)
+    {
+        const ns = "http://jabber.org/protocol/muc#owner";
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, null, "get");
+        var query = iq.setQuery(ns);
+        var destroy = query.appendChild(iq.getDoc().createElementNS(ns, "destroy"));
+
+        if (alternateRoom)
+            destroy.setAttribute("jid", alternateRoom);
+        if (reason)
+            destroy.appendChild(iq.getDoc().createElementNS(ns, reason)).
+                appendChild(iq.getDoc().createTextNode(reason));
+        con.send(iq, callback);
+    },
+
+    onEditPermissions: function()
+    {
+        openDialogUniq("ot:roomPermissions", "chrome://oneteam/content/roomPermissions.xul",
+                       "chrome,centerscreen", this);
+    },
+
+    requestUsersList: function(affiliation, callback)
+    {
+        const ns = "http://jabber.org/protocol/muc#admin";
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, null, "get");
+
+        var query = iq.setQuery(ns);
+        query.appendChild(iq.getDoc().createElementNS(ns, "item")).
+            setAttribute("affiliation", affiliation);
+
+        con.send(iq, new Callback(this._requestUsersListCb, this).
+                        addArgs(callback).fromCall());
+    },
+
+    _requestUsersListCb: function(callback, pkt)
+    {
+        var ns = "http://jabber.org/protocol/muc#admin";
+        var list = [];
+        var items = pkt.getNode().getElementsByTagNameNS(ns, "item");
+
+        for (var i = 0; i < items.length; i++) {
+            var item = {
+                affiliation: items[i].getAttribute("affiliation"),
+                jid: items[i].getAttribute("jid"),
+                nick: items[i].getAttribute("nick"),
+                role: items[i].getAttribute("role")
+            };
+
+            var reason = items[i].getElementsByTagNameNS(ns, reason)[0];
+            var actor = items[i].getElementsByTagNameNS(ns, reason)[0];
+
+            if (reason)
+                item.reason = reason.textContent;
+            if (actor)
+                item.actor = actor.getAttribute("jid");
+            list.push(item);
+        }
+        callback(list, pkt);
+    },
+
+    changeUsersList: function(payload)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, null, "set");
+        iq.setQuery("http://jabber.org/protocol/muc#admin").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
         con.send(iq);
     },

@@ -702,8 +702,8 @@
       <menuseparator/>
       <menuitem id="conference-configuration" label="Configure..."
           oncommand="this.parentNode.view.activeItem.onRoomConfiguration()"/>
-      <menuitem id="conference-edit-permissions" label="Edit Permissions..." disabled="true"
-          oncommand="this.parentNode.view.activeItem.onMemberPermissions()"/>
+      <menuitem id="conference-edit-permissions" label="Edit Permissions..."
+          oncommand="this.parentNode.view.activeItem.onEditPermissions()"/>
 
       <menuseparator/>
 

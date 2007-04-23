@@ -21,7 +21,7 @@
     var conference = window.arguments[0];
 
     function onLoad() {
-      conference.requestOwnerConfiguration(onConfigurationRecv)
+      conference.requestRoomConfiguration(onConfigurationRecv)
     }
 
     function onConfigurationRecv(pkt) {
@@ -34,7 +34,7 @@
     }
 
     function onAccept() {
-      conference.sendOwnerConfiguration(
+      conference.changeRoomConfiguration(
         window.opener.buildResponseDataFormFromXUL(document.documentElement.lastChild));
       return true;
     }
