@@ -124,11 +124,11 @@
 
       kick.previousSibling.hidden = kick.hidden = ban.hidden = !confMemb.canBeKicked;
 
-      affiliations.hidden = !(conf.isAdmin && conf.myResource.isGt(confMemb) || conf.isOwner);
+      affiliations.hidden = !(conf.iAmAdmin && conf.myResource.isGt(confMemb) || conf.iAmOwner);
 
       for each (affiliation in "owner admin member none".split(" ")) {
         var el = document.getElementById("conferencemember-affiliation-"+affiliation);
-        el.hidden = !conf.isOwner && conf.myResource.cmp(affiliation, true) >= 0;
+        el.hidden = !conf.iAmOwner && conf.myResource.cmp(affiliation, true) >= 0;
         el.setAttribute("checked", confMemb.affiliation == affiliation);
       }
     }
@@ -141,9 +141,9 @@
       var configuration = document.getElementById("conference-configuration");
       var permissions = document.getElementById("conference-edit-permissions");
 
-      configuration.hidden = !menu.view.activeItem.isOwner;
+      configuration.hidden = !menu.view.activeItem.iAmOwner;
       configuration.previousSibling.hidden = permissions.hidden =
-        !menu.view.activeItem.isAdmin;
+        !menu.view.activeItem.iAmAdmin;
     }
 
     var setPresenceUpdater = {

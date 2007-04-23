@@ -23,9 +23,9 @@
     var usersLists = {}, usersListsEl = {};
     var types;
 
-    if (conference.isOwner)
+    if (conference.iAmOwner)
       types = {owner: 1, admin: 1, member: 1, outcast: 1};
-    else if (conference.isAdmin)
+    else if (conference.iAmAdmin)
       types = {member: 1, outcast: 1};
 
 

@@ -13,9 +13,9 @@ function Conference(jid)
 
 _DECL_(Conference, Contact).prototype =
 {
-    get isOwner() { return this.myResource.isOwner },
-    get isAdmin() { return this.myResource.isAdmin },
-    get isModerator() { return this.myResource.isModerator },
+    get iAmOwner() { return this.myResource.isOwner },
+    get iAmAdmin() { return this.myResource.isAdmin },
+    get iAmModerator() { return this.myResource.isModerator },
 
     get myResourceJID() {
         return this.myResource ? this.myResource.jid :
