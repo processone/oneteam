@@ -199,7 +199,7 @@
   </binding>
 
   <binding id="verifier">
-    <content>
+    <content class="box-inherit">
       <xul:vbox class="box-inherit" flex="1" xbl:inherits="orient,align,pack,dir">
         <children/>
       </xul:vbox>
