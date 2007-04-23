@@ -242,11 +242,10 @@ _DECL_(XEPArchiveThreadsRetriever).prototype =
 
     _deliverNewData: function(newThreadsCount, lastChunk, failed)
     {
-    alert(newThreadsCount);
         for (observer in account.historyMgr._iterateCallbacks("threads-"+this.jid)) {
             observer._startBatchUpdate();
             for (var i = newThreadsCount-1; i >= 0 ; i--)
-                observer._addRecord(this.cache[this.cache.length - i]);
+                observer._addRecord(this.cache[this.cache.length - i - 1]);
             observer._endBatchUpdate(lastChunk);
         }
         if (lastChunk && !failed)
@@ -342,8 +341,8 @@ _DECL_(XEPArchiveMessagesRetriever, null, MessageThread).prototype =
                     representsMe: representsMe};
         if (jid == account.myResource)
             return jid;
-        if (account.contact[jid])
-            return account.contact[jid];
+        if (account.contacts[jid])
+            return account.contacts[jid];
 
         return {visibleName: jid, jid: jid, representsMe: representsMe};
     },
@@ -367,8 +366,8 @@ _DECL_(XEPArchiveMessagesRetriever, null, MessageThread).prototype =
     {
         for (observer in account.historyMgr._iterateCallbacks("messages-"+this.jid+"-"+this.stamp)) {
             observer._startBatchUpdate();
-            for (var i = 0; i < newMessagesCount; i++)
-                observer._addRecord(this.cache[i]);
+            for (var i = newMessagesCount-1; i >= 0; i--)
+                observer._addRecord(this.cache[this.cache.length - i - 1]);
             observer._endBatchUpdate(lastChunk);
         }
         if (lastChunk && !failed)
@@ -423,12 +422,12 @@ _DECL_(XEPArchiveMessagesRetriever, null, MessageThread).prototype =
         for each (msg in query.archNS::*) {
             var representsMe = msg.localName() == "to";
             var contact = this.getContact(msg.@name.toString(),
-                                          msg.@jid.toString() || representsMe ?
-                                            account.myResource : this.jid,
+                                          msg.@jid.toString() || (representsMe ?
+                                            account.myResource : this.jid),
                                           representsMe);
 
             this.cache.push(new Message(msg.archNS::body.text(), null, contact,
-                                        msg.@name.length ? 1 : 0,
+                                        msg.@name.toString().length ? 1 : 0,
                                         new Date(startTime + 1000*msg.@secs),
                                         this));
             newMessagesCount++;
