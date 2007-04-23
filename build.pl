@@ -454,7 +454,7 @@ sub path_convert {
 
     return if $file =~ /(?:\.dtd|\.properties)$/ or
         $file =~ /skin[\/\\](?!default)/ or
-        $file =~ /(?:^|[\\\/])content[\\\/]sounds[\\\/]/;
+        $file =~ /(?:^|[\\\/])content[\\\/]data[\\\/]sounds[\\\/]/;
 
     $file =~ s!^skin[/\\]default!skin!;
     $file =~ s!^locale[/\\]branding!branding!;
