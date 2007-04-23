@@ -195,11 +195,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     showHistoryManager: function()
     {
-// #ifdef XULAPP
+// # ifdef XULAPP
         openDialogUniq("ot:history", "history.xul", "chrome,centerscreen,dialog=no");
-/* #else
+/* # else
         openDialogUniq("ot:history", "historyWeb.xul", "chrome,centerscreen,dialog=no");
-// #endif */
+// # endif */
     },
 
     showTransfersManager: function()

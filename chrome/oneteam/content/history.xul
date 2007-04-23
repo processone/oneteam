@@ -4,35 +4,32 @@
 
 <!DOCTYPE window SYSTEM "chrome://oneteam/locale/console.dtd">
 
-<window id="ot:histroy" title="History Manager" width="640" height="550"
-    onload="onLoad()" persist="width height" windowtype="ot:history"
+<window id="ot:history" title="History Manager" width="640" height="550"
+    onload="onLoad()" onunload="onUnload()" persist="width height" windowtype="ot:history"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/colorutils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
     account = window.opener.account;
 
-    function TreeView(results) {
+    function TreeView(tree) {
       this.wrappedJSObject = this;
-      this._results = results;
+      tree.myView = this;
+// #ifdef XULAPP
+      tree.view = this;
+/* #else
+      this._treeEl = tree;
+// #endif */
     }
 
     TreeView.prototype =
     {
-      _update: function(results)
-      {
-        var len1 = this._results ? this._results.length : 0;
-        this._results = results;
-        if (this._tree) {
-          var len2 = results.length;
-          this._tree.rowCountChanged(len1 > len2 ? len1 : len2, len2 - len1);
-          this._tree.invalidate()
-        }
-      },
       get rowCount() { return this._results ? this._results.length : 0 },
       getCellText : function(row, column)
       {
@@ -51,24 +48,112 @@
       getCellProperties: function(row,col,props) {},
       getColumnProperties: function(colid,col,props) {},
       cycleHeader: function(){},
+
+      get currentObject()
+      {
+        if (this._treeEl)
+          return this._treeEl.body.childNodes[this._treeEl.currentIndex].model;
+        return this._results[this._tree.currentIndex];
+      },
+
+      _updateTree: function(newValue)
+      {
+        var len1 = this._results ? this._results.length : 0;
+        this._results = newValue;
+        if (this._tree) {
+          var len2 = newValue ? this._results.length : 0;
+          this._tree.rowCountChanged(len1 > len2 ? len1 : len2, len2 - len1);
+          this._tree.invalidate()
+        }
+      },
+
+      _clear: function()
+      {
+        if (this._treeEl) {
+          while (this._treeEl.body.firstChild)
+            this._treeEl.body.removeChild(this._treeEl.body.firstChild);
+        } else
+          this._updateTree(null);
+      },
+
+      _startBatchUpdate: function() { },
+
+      _endBatchUpdate: function()
+      {
+        if (!this._treeEl)
+          this._updateTree([].concat(this._newResults || []));
+      },
+
+      _addRecord: function(value)
+      {
+        if (this._treeEl) {
+          var item = document.createElement("treeitem");
+          var row = document.createElement("treerow");
+
+          item.appendChild(row);
+          item.model = value;
+
+          row.appendChild(document.createElement("treecell")).
+                      setAttribute("label", value.jid);
+          if (value.date)
+            row.appendChild(document.createElement("treecell")).
+                        setAttribute("label", readableTimestamp(value.date));
+
+          this._treeEl.body.insertBefore(item, this._treeEl.body.firstChild);
+
+          return;
+        }
+        if (!this._newResults)
+          this._newResults = []
+        this._newResults.push(value);
+      }
     };
 
-    var searchThreads, contactsList, contactsThreads,
-      conferencesList, conferencesThreads;
+    function MessagesView(chatpaneView)
+    {
+      this.chatpaneView = chatpaneView
+    }
+
+    MessagesView.prototype =
+    {
+      _startBatchUpdate: function() { },
+      _endBatchUpdate: function() { },
+
+      _clear: function()
+      {
+        this.chatpaneView.clear();
+      },
+
+      _addRecord: function(value)
+      {
+        this.chatpaneView.addMessage(value);
+      }
+    };
+
+    var searchThreads;
+    var contactsList, contactsThreads, contactsMessages;
+    var conferencesList, conferencesThreads, conferencesMessages;
+    var regToken = new window.opener.RegistrationToken();
 
     function onLoad() {
-      searchThreads = document.getElementById("search-threads").view =
-        new TreeView();
+// #ifdef XULAPP
+      searchThreads = new TreeView(document.getElementById("search-threads"));
+// #endif
 
-      contactsList = document.getElementById("contacts-list").view =
-        new TreeView(window.opener.account.historyMgr.getThreadJids(0));
-      contactsThreads = document.getElementById("contacts-threads").view =
-        new TreeView();
+      contactsList = new TreeView(document.getElementById("contacts-list"));
+      contactsThreads = new TreeView(document.getElementById("contacts-threads"));
+      contactsMessages = new MessagesView(document.getElementById("contacts-view"));
 
-      conferencesList = document.getElementById("conferences-list").view =
-        new TreeView(window.opener.account.historyMgr.getThreadJids(1));
-      conferencesThreads = document.getElementById("conferences-threads").view =
-        new TreeView();
+      conferencesList = new TreeView(document.getElementById("conferences-list"));
+      conferencesThreads = new TreeView(document.getElementById("conferences-threads"));
+      conferencesMessages = new MessagesView(document.getElementById("conferences-view"));
+
+      account.historyMgr.deliverContactsList(contactsList, regToken);
+      account.historyMgr.deliverConferencesList(conferencesList, regToken);
+    }
+
+    function onUnload() {
+      regToken.unregisterFromAll();
     }
 
     function updateSearch(ev, val)
@@ -80,39 +165,45 @@
 
     function updateThreads(tree, view)
     {
-      view._update(window.opener.account.historyMgr.getThreadsForJidIds(
-        tree.view.wrappedJSObject._results[tree.currentIndex].id));
+      if (view.token) {
+        view.token.unregisterFromAll();
+        regToken.unmerge(view.token);
+      }
+      view.token = account.historyMgr.deliverThreadsWithJid(view, null, tree.myView.currentObject);
+      regToken.merge(view.token);
     }
 
     function updateMessages(tree, view)
     {
-      var threadId = tree.view.wrappedJSObject._results[tree.currentIndex].threadId;
-
-      view = document.getElementById(view);
-      view.clear();
-
-      for (var msg in window.opener.account.historyMgr.getThreadMessagesIterator(threadId))
-        view.addMessage(msg);
+      if (view.token) {
+        view.token.unregisterFromAll();
+        regToken.unmerge(view.token);
+      }
+      view.token = account.historyMgr.deliverMessagesFromThread(view, null, tree.myView.currentObject);
+      regToken.merge(view.token);
     }
   ]]></script>
 
   <tabbox flex="1">
     <tabs>
+<!-- #ifdef XULAPP -->
       <tab label="Search"/>
+<!-- #endif -->
       <tab label="Chats"/>
       <tab label="Conferences"/>
     </tabs>
     <tabpanels flex="1">
+<!-- #ifdef XULAPP -->
       <tabpanel>
         <vbox flex="1">
           <hbox align="center">
             <label value="Search:"/>
             <textbox id="search" flex="1" onkeypress="updateSearch(event, this.value)"/>
           </hbox>
-          <tree id="search-threads" height="100" persist="height" hidecolumnpicker="true"
-              seltype="single" onselect="updateMessages(this, 'search-view')">
+          <tree id="search-threads" height="150" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, searchMessages)">
             <treecols>
-              <treecol primary="true" flex="1" label="JID" id="jid"/>
+              <treecol primary="true" flex="5" label="JID" id="jid"/>
               <splitter class="tree-splitter"/>
               <treecol flex="1" label="Date" id="date"/>
             </treecols>
@@ -122,9 +213,10 @@
           <chatpane-view id="search-view" flex="1"/>
         </vbox>
       </tabpanel>
+<!-- #endif -->
       <tabpanel>
         <hbox flex="1">
-          <tree id="contacts-list" width="150" persist="width" hidecolumnpicker="true"
+          <tree id="contacts-list" width="250" persist="width" hidecolumnpicker="true"
               seltype="single" onselect="updateThreads(this, contactsThreads)">
             <treecols>
               <treecol primary="true" flex="1" id="jid" hideheader="true"/>
@@ -133,10 +225,10 @@
           </tree>
           <splitter/>
           <vbox flex="1">
-            <tree id="contacts-threads" height="100" persist="height" hidecolumnpicker="true"
-              seltype="single" onselect="updateMessages(this, 'contacts-view')">
+            <tree id="contacts-threads" height="150" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, contactsMessages)">
               <treecols>
-                <treecol primary="true" flex="1" label="JID" id="jid"/>
+                <treecol primary="true" flex="5" label="JID" id="jid"/>
                 <splitter class="tree-splitter"/>
                 <treecol flex="1" label="Date" id="date"/>
               </treecols>
@@ -149,7 +241,7 @@
       </tabpanel>
       <tabpanel>
         <hbox flex="1">
-          <tree id="conferences-list" width="150" persist="width" hidecolumnpicker="true"
+          <tree id="conferences-list" width="250" persist="width" hidecolumnpicker="true"
               seltype="single" onselect="updateThreads(this, conferencesThreads)">
             <treecols>
               <treecol primary="true" flex="1" id="jid" hideheader="true"/>
@@ -158,10 +250,10 @@
           </tree>
           <splitter/>
           <vbox flex="1">
-            <tree id="conferences-threads" height="100" persist="height" hidecolumnpicker="true"
-              seltype="single" onselect="updateMessages(this, 'conferences-view')">
+            <tree id="conferences-threads" height="150" persist="height" hidecolumnpicker="true"
+              seltype="single" onselect="updateMessages(this, conferencesMessages)">
               <treecols>
-                <treecol primary="true" flex="1" label="JID" id="jid"/>
+                <treecol primary="true" flex="5" label="JID" id="jid"/>
                 <splitter class="tree-splitter"/>
                 <treecol flex="1" label="Date" id="date"/>
               </treecols>

@@ -192,13 +192,13 @@ _DECL_(HistoryManager).prototype =
             this.getThreadMessagesStmt.bindInt32Parameter(0, threadId);
 
             while (this.getThreadMessagesStmt.executeStep()) {
-                yield {
+                yield ({
                     jid: this.getThreadMessagesStmt.getString(0),
                     flags: this.getThreadMessagesStmt.getInt32(1),
                     body: this.getThreadMessagesStmt.getString(2),
                     nick: this.getThreadMessagesStmt.getString(3),
                     time: new Date(this.getThreadMessagesStmt.getInt64(4))
-                };
+                });
             }
         } finally {
             this.getThreadMessagesStmt.reset();
@@ -219,42 +219,284 @@ _DECL_(HistoryManager).prototype =
         }
         this.getThreadMessagesStmt.reset();
         return res;
-    },
+    }
 }
 /* #else
-function HistoryManager()
+function XEPArchiveThreadsRetriever(jid)
 {
+    this.jid = jid;
+    this.cache = [];
 }
 
-_DECL_(HistoryManager).prototype =
+_DECL_(XEPArchiveThreadsRetriever).prototype =
 {
-    getThreadJids: function(type)
+    deliverData: function(observer)
     {
-        return [];
+        observer._clear();
+        observer._startBatchUpdate();
+        for (var i = 0; i < this.cache.length; i++)
+            observer._addRecord(this.cache[i]);
+        observer._endBatchUpdate(false);
+        this.requestNextChunk();
+    },
+
+    _deliverNewData: function(newThreadsCount, lastChunk, failed)
+    {
+        for (observer in account.historyMgr._iterateCallbacks("threads-"+this.jid)) {
+            observer._startBatchUpdate();
+            for (var i = 0; i < newThreadsCount; i++)
+                observer._addRecord(this.cache[i]);
+            observer._endBatchUpdate(lastChunk);
+        }
+        if (lastChunk && !failed)
+            this.lastCheck = new Date();
+    },
+
+    requestNextChunk: function(rsm)
+    {
+        var pkt = new JSJaCIQ();
+        pkt.setIQ(account.jid, null, "get");
+
+        var query =
+            <list xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
+                   with={this.jid}>
+                <set xmlns='http://jabber.org/protocol/rsm'>
+                    <max>30</max>
+                    <before>{rsm || ""}</before>
+                </set>
+            </list>;
+
+        if (this.lastCheck)
+            query.@start = dateToISO8601Timestamp(this.lastCheck);
+
+        pkt.getNode().appendChild(E4XtoDOM(query, pkt.getDoc()));
+        con.send(pkt, new Callback(this.processChunk, this));
+    },
+
+    processChunk: function(pkt)
+    {
+        if (pkt.getType() != "result") {
+            this._deliverNewData(0, true, true);
+            return;
+        }
+
+        for (var i = 0, query = pkt.getNode().childNodes;
+                i < query.length && query[i].nodeType != 1; i++)
+            ;
+
+        if (i >= query.length) {
+            this._deliverNewData(0, true, true);
+            return;
+        }
+
+        query = DOMtoE4X(query[i]);
+
+        var archNS = new Namespace("http://www.xmpp.org/extensions/xep-0136.html#ns");
+        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
+        var newThreadsCount = 0;
+
+        for each (thread in query.archNS::chat) {
+            this.cache.push(new XEPArchiveMessagesRetriever(thread.@with.toString(),
+                                                            thread.@start.toString()));
+            newThreadsCount++;
+        }
+
+        // XXXpfx: also handle old syntax - remove when mod_oneteam switches to new one.
+        for each (thread in query.archNS::store) {
+            this.cache.push(new XEPArchiveMessagesRetriever(thread.@with.toString(),
+                                                            thread.@start.toString()));
+            newThreadsCount++;
+        }
+
+        if (+query.rsmNS::first.@index > 0) {
+            this._deliverNewData(newThreadsCount, false)
+            this.requestNextChunk(query.rsmNS::first.text());
+        } else
+            this._deliverNewData(idx, true)
+    }
+}
+
+function XEPArchiveMessagesRetriever(jid, stamp)
+{
+    MessageThread.call(this);
+
+    this.jid = jid;
+    this.stamp = stamp;
+    this.date = iso8601TimestampToDate(stamp);
+    this.cache = [];
+    this._nicksHash = {}
+}
+
+_DECL_(XEPArchiveMessagesRetriever, null, MessageThread).prototype =
+{
+    getContact: function(nick, jid, representsMe)
+    {
+        if (nick)
+            if (this._nicksHash[nick])
+                return this._nicksHash[nick];
+            else
+                return this._nicksHash[nick] = {
+                    visibleName: nick,
+                    jid: jid || "dumy@jid/"+nick,
+                    representsMe: representsMe};
+        if (jid == account.myResource)
+            return jid;
+        if (account.contact[jid])
+            return account.contact[jid];
+
+        return {visibleName: jid, jid: jid, representsMe: representsMe};
+    },
+
+    deliverData: function(observer)
+    {
+        observer._clear();
+        observer._startBatchUpdate();
+        for (var i = 0; i < this.cache.length; i++)
+            observer._addRecord(this.cache[i]);
+
+        // XXXpfx Find a method for requesting only new messages in collection.
+        // For now request messages only when we don't have nothing in cache.
+        observer._endBatchUpdate(this.cache.length > 0);
+        if (!this.cache.length) {
+            this.requestNextChunk();
+        }
+    },
+
+    _deliverNewData: function(newMessagesCount, lastChunk, failed)
+    {
+        for (observer in account.historyMgr._iterateCallbacks("messages-"+this.jid+"-"+this.stamp)) {
+            observer._startBatchUpdate();
+            for (var i = 0; i < newMessagesCount; i++)
+                observer._addRecord(this.cache[i]);
+            observer._endBatchUpdate(lastChunk);
+        }
+        if (lastChunk && !failed)
+            this.lastCheck = new Date();
+    },
+
+    requestNextChunk: function(rsm)
+    {
+        var pkt = new JSJaCIQ();
+        pkt.setIQ(account.jid, null, "get");
+
+        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
+        var query =
+            <retrieve xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
+                    with={this.jid} start={this.stamp}>
+                <set xmlns='http://jabber.org/protocol/rsm'>
+                    <max>100</max>
+                </set>
+            </retrieve>;
+
+        if (rsm)
+            query.rsmNS::set.rsmNS::after = rsm;
+        if (this.lastCheck)
+            query.@start = dateToISO8601Timestamp(this.lastCheck);
+
+        pkt.getNode().appendChild(E4XtoDOM(query, pkt.getDoc()));
+        con.send(pkt, new Callback(this.processChunk, this));
+    },
+
+    processChunk: function(pkt)
+    {
+        if (pkt.getType() != "result") {
+            this._deliverNewData(0, true, true);
+            return;
+        }
+
+        for (var i = 0, query = pkt.getNode().childNodes;
+                i < query.length && query[i].nodeType != 1; i++)
+            ;
+        if (i >= query.length) {
+            this._deliverNewData(0, true, true);
+            return;
+        }
+        query = DOMtoE4X(query[i]);
+
+        var archNS = new Namespace("http://www.xmpp.org/extensions/xep-0136.html#ns");
+        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
+
+        var startTime = iso8601TimestampToDate(query.@start.toString()).getTime();
+        var newMessagesCount = 0;
+
+        for each (msg in query.archNS::*) {
+            var representsMe = msg.localName() == "to";
+            var contact = this.getContact(msg.@name.toString(),
+                                          msg.@jid.toString() || representsMe ?
+                                            account.myResource : this.jid,
+                                          representsMe);
+
+            this.cache.push(new Message(msg.archNS::body.text(), null, contact,
+                                        msg.@name.length ? 1 : 0,
+                                        new Date(startTime + 1000*msg.@secs),
+                                        this));
+            newMessagesCount++;
+        }
+
+        if (this.cache.length < +query.rsmNS::count.text()) {
+            this._deliverNewData(newMessagesCount, false)
+            this.requestNextChunk(query.rsmNS::last.text());
+        } else
+            this._deliverNewData(newMessagesCount, true)
+    }
+}
+
+function HistoryManager()
+{
+    CallbacksList.call(this, true);
+    this._threadsRetrv = {};
+    this._msgsRetrv = {}
+}
+
+_DECL_(HistoryManager, null, CallbacksList).prototype =
+{
+    canPerformSearches: false,
+
+    deliverContactsList: function(observer, token)
+    {
+        observer._startBatchUpdate();
+        for (var contact in account.contactsIterator())
+            observer._addRecord(contact);
+        observer._endBatchUpdate(true);
+        return this._registerCallback(observer, token, "contacts");
+    },
+
+    deliverConferencesList: function(observer, token)
+    {
+        observer._startBatchUpdate();
+        for (var i = 0; i < account.bookmarks.bookmarks.length; i++)
+            observer._addRecord(account.bookmarks.bookmarks[i]);
+        observer._endBatchUpdate(true);
+        return this._registerCallback(observer, token, "conferences");
+    },
+
+    deliverThreadsWithJid: function(observer, token, contact)
+    {
+        if (!this._threadsRetrv[jid])
+            this._threadsRetrv[jid] = new XEPArchiveThreadsRetriever(contact.jid);
+
+        this._threadsRetrv[jid].deliverData(observer);
+        return this._registerCallback(observer, token, "threads-"+contact.jid);
+    },
+
+    deliverMessagesFromThread: function(observer, token, thread)
+    {
+        var id = thread.jid+"-"+thread.stamp;
+        if (!this._msgsRetrv[id])
+            this._msgsRetrv[id] = new XEPArchiveMessagesRetriever(thread.jid, thread.stamp)
+
+        this._msgsRetrv[id].deliverData(observer);
+        return this._registerCallback(observer, token, "messages-"+id);
+    },
+
+    deliverSearchResult: function(observer, token, searchPhrase)
+    {
+        return null;
     },
 
     addMessage: function(jid, type, flags, message, nick, time, thread, threadJid)
     {
         return null;
-    },
-
-    getThreadsForJidIds: function(jidId)
-    {
-        return [];
-    },
-
-    findMessages: function(word)
-    {
-        return [];
-    },
-
-    getThreadMessagesIterator: function(threadId)
-    {
-    },
-
-    getThreadMessages: function(threadId)
-    {
-        return [];
-    },
+    }
 }
 // #endif */
