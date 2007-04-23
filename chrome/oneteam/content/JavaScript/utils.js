@@ -1,13 +1,19 @@
 function E4XtoDOM(xml, targetDoc)
 {
     var dp = new DOMParser();
-    var el = dp.parseFromString(xml.toXMLString(), "text/xml").documentElement;
+    var el = dp.parseFromString("<x>"+xml.toXMLString()+"</x>", "text/xml").documentElement;
+    var els = el.childNodes;
 
-    try {
-        return targetDoc ? targetDoc.adoptNode(el) : el;
-    } catch (ex) {
-        return el;
-    }
+    if (els.length == 1)
+        return targetDoc ? targetDoc.adoptNode(els[0]) : els[0];
+
+    var fragment = targetDoc ? targetDoc.createDocumentFragment() :
+        el.ownerDocument.createDocumentFragment();
+
+    for (var i = 0; i < els.length; i++)
+        fragment.appendChild(targetDoc ? targetDoc.adoptNode(els[i]) : els[i]);
+
+    return fragment;
 }
 
 function DOMtoE4X(dom)
@@ -69,8 +75,11 @@ var _sizes = {
 
 function openDialogUniq(type, url, flags)
 {
-    if (_wins[type] && !_wins[type].closed)
-        return;
+    try {
+        if (_wins[type] && !_wins[type].closed)
+            return;
+    } catch (ex) {}
+
     var size = _sizes[url.replace(/.*\//, "")];
     if (size) {
         var size = "width="+size[0]+",height="+size[1];
