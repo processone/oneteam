@@ -207,7 +207,7 @@ function CallbacksList(hasMultipleContexts)
 
 _DECL_(CallbacksList).prototype =
 {
-    _iterateCallbacks: function(contexts)
+    _iterateCallbacks: function()
     {
         var callbacks;
 
@@ -215,10 +215,9 @@ _DECL_(CallbacksList).prototype =
             callbacks = this._callbacks;
         else {
             callbacks = this._callbacks[""] || [];
-            for (var i = 0; contexts && i < contexts.length; i++)
-                callbacks = callbacks.concat(this._callbacks[contexts[i]] || []);
+            for (var i = 0; i < arguments.length; i++)
+                callbacks = callbacks.concat(this._callbacks[arguments[i]] || []);
         }
-
         for (i = 0; i < callbacks.length; i++)
             yield (callbacks[i]);
     },
