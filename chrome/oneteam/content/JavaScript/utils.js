@@ -4,14 +4,23 @@ function E4XtoDOM(xml, targetDoc)
     var el = dp.parseFromString("<x>"+xml.toXMLString()+"</x>", "text/xml").documentElement;
     var els = el.childNodes;
 
+    // adoptNode throws exception on gecko 1.8
     if (els.length == 1)
-        return targetDoc ? targetDoc.adoptNode(els[0]) : els[0];
+        try {
+            return targetDoc ? targetDoc.adoptNode(els[0]) : els[0];
+        } catch (ex) {
+            return els[0];
+        }
 
     var fragment = targetDoc ? targetDoc.createDocumentFragment() :
         el.ownerDocument.createDocumentFragment();
 
     for (var i = 0; i < els.length; i++)
-        fragment.appendChild(targetDoc ? targetDoc.adoptNode(els[i]) : els[i]);
+        try {
+            fragment.appendChild(targetDoc ? targetDoc.adoptNode(els[i]) : els[i]);
+        } catch (ex) {
+            fragment.appendChild(els[i]);
+        }
 
     return fragment;
 }
