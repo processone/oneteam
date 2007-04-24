@@ -33,6 +33,7 @@
       pendingRequests = types.__count__;
       for (var type in types) {
         usersListsEl[type] = document.getElementById(type+"-list");
+        usersLists[type] = {};
         document.getElementById(type+"-tab").collapsed = false;
         conference.requestUsersList(type, usersListRecv);
       }
@@ -45,7 +46,6 @@
       if (list.length) {
         var type = list[0].affiliation;
         usersListsEl[type].values = [i.jid for each (i in list)];
-        usersLists[type] = {};
         for (var i = 0; i < list.length; i++)
           usersLists[type][list[i].jid] = 1;
       }
