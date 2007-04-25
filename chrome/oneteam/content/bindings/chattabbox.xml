@@ -551,7 +551,7 @@
 
       <method name="_fixupScrollPosition">
         <body><![CDATA[
-          try{
+          try {
             var pos = {}, size = {}, posw;
 
             this._scrollBoxObject.getPosition(pos, {});
@@ -582,19 +582,19 @@
       <handler event="overflow"><![CDATA[
         if (event.originalTarget != this._scrollBox || event.detail == 0)
           return;
-        try{
+        try {
           this._scrollLeft.collapsed = false;
           this._scrollRight.collapsed = false;
           this.scrollToTab(null, 2);
-        }catch(ex){}
+        } catch (ex) {}
       ]]></handler>
       <handler event="underflow"><![CDATA[
         if (event.originalTarget != this._scrollBox || event.detail == 0)
           return;
-        try{
+        try {
           this._scrollLeft.collapsed = true;
           this._scrollRight.collapsed = true;
-        }catch(ex){}
+        } catch(ex) {}
       ]]></handler>
     </handlers>
   </binding>
