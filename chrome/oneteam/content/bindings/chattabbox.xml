@@ -16,9 +16,9 @@
     </resources>
 
     <content>
-      <xul:tabbox flex="1" onselect="this.selectedPanel.controler.focus()">
-        <xul:tabs class="with-scroll" anonid="tabs"/>
-        <xul:tabpanels anonid="tabpanels" flex="1"/>
+      <xul:tabbox flex="1">
+        <xul:tabs class="with-scroll" setfocus="false" anonid="tabs"/>
+        <xul:tabpanels anonid="tabpanels" flex="1" onselect="this.parentNode.parentNode._focusSelectedTab(event)"/>
       </xul:tabbox>
     </content>
     <implementation>
@@ -52,6 +52,7 @@
         this._tabs = document.getAnonymousElementByAttribute(this, "anonid", "tabs");
         this._tabpanels = document.getAnonymousElementByAttribute(this, "anonid", "tabpanels");
         this._unseenCount = 0;
+        this._inSelectTab = 0;
       ]]></constructor>
 
       <method name="getTab">
@@ -80,10 +81,8 @@
           const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
           var content = document.createElementNS(ns, "chattab-content");
-          var id = "panel"+this._tabs.childNodes.length;
 
           tabpanel = content._tabpanel = document.createElementNS(ns, "tabpanel");
-          tabpanel.setAttribute("id", id)
           tabpanel.setAttribute("flex", "1");
           this._tabpanels.appendChild(tabpanel);
 
@@ -92,7 +91,6 @@
           tab = content._tab = document.createElementNS(ns, "tab");
           tab.setAttribute("hasclosebutton", "true");
           tab.setAttribute("oncommand", "this.controler.close()");
-          tab.setAttribute("linkedpanel", id)
           tab.maxWidth = 250;
           tab.minWidth = 100;
           tab.width = 0;
@@ -176,6 +174,16 @@
         ]]></body>
       </method>
 
+      <method name="_focusSelectedTab">
+        <parameter name="event"/>
+        <body><![CDATA[
+          if (this._inSelectTab)
+            return;
+
+          this._tabpanels.selectedPanel.controler.focus();
+        ]]></body>
+      </method>
+
       <method name="_removeTab">
         <parameter name="content"/>
         <body><![CDATA[
@@ -224,6 +232,9 @@
       <method name="_selectTab">
         <parameter name="content"/>
         <body><![CDATA[
+          if (this._inSelectTab)
+            return;
+          this._inSelectTab++;
 
           // XXXpfx Tabbox doesn't fixup styles after focusing tab, we need
           //   to do this ourself.
@@ -237,6 +248,7 @@
 
           if (content._tab == this._selectedTab) {
             this._tabs.scrollToTab(null, 1);
+            this._inSelectTab--;
             return;
           }
 
@@ -256,6 +268,7 @@
           if (content._tab.nextSibling)
             content._tab.nextSibling.setAttribute("afterselected", "true");
 
+          this._inSelectTab--;
           this._tabs.scrollToTab(null, 1);
         ]]></body>
       </method>
