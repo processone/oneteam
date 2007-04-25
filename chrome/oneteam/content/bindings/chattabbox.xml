@@ -18,7 +18,8 @@
     <content>
       <xul:tabbox flex="1">
         <xul:tabs class="with-scroll" setfocus="false" anonid="tabs"/>
-        <xul:tabpanels anonid="tabpanels" flex="1" onselect="this.parentNode.parentNode._focusSelectedTab(event)"/>
+        <xul:tabpanels anonid="tabpanels" flex="1"
+                       onselect="this.selectedPanel.controler.focus()"/>
       </xul:tabbox>
     </content>
     <implementation>
@@ -171,16 +172,6 @@
             this._tabs[i].controler.close();
 
           this._inCloseTabs = false;
-        ]]></body>
-      </method>
-
-      <method name="_focusSelectedTab">
-        <parameter name="event"/>
-        <body><![CDATA[
-          if (this._inSelectTab)
-            return;
-
-          this._tabpanels.selectedPanel.controler.focus();
         ]]></body>
       </method>
 
