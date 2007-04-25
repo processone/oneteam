@@ -306,9 +306,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     connect: function()
     {
+        var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*$/, "$1");
+        if (schema == "chrome")
+            schema = "http";
+
         var args = {
-            httpbase: "http://"+this.connectionInfo.host+":"+this.connectionInfo.port+
-                "/"+this.connectionInfo.base+"/",
+            httpbase: schema+"://"+this.connectionInfo.host+":"+
+                this.connectionInfo.port+"/"+this.connectionInfo.base+"/",
 //            oDbg: {log: function(a){window.console ? console.info(a) : dump(a+"\n")}},
             timerval: 2000};
 
