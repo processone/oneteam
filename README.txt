@@ -15,3 +15,4 @@ xulrunner application.ini
 
 To launch the application with a different locale:
 xulrunner -UILocale fr-FR application.ini
+
