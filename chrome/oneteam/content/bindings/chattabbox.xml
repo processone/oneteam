@@ -22,7 +22,7 @@
       </xul:tabbox>
     </content>
     <implementation>
-      <property name="tabCount" onget="return this._tab.childNodes.length"
+      <property name="tabCount" onget="return this._tabs.childNodes.length"
                 readonly="true"/>
 
       <property name="unseenCount" onget="return this._unseenCount">
