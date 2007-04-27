@@ -69,7 +69,7 @@
       progressmeter.style.visibility = "hidden";
 
       if (pkt.getType() == "error") {
-        alert("errorMsg");
+        alert(errorMsg);
         return;
       }
       conf = null;
