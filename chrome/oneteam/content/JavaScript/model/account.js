@@ -88,7 +88,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     _onGatewayAdded: function(gateway)
     {
-        this.gateways[gateways.jid.normalizedJID.domain] = gateway;
+        this.gateways[gateway.jid.normalizedJID.domain] = gateway;
         this.modelUpdated("gateways", {added: [gateway]});
     },
 
