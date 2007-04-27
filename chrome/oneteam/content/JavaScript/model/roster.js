@@ -116,7 +116,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.newItem = false;
         account.contacts[this.jid.normalizedJID] = this;
     }
-    if (this.jid.node == "")
+    if (!this.jid.node)
         this.getDiscoIdentity(false, new Callback(this._checkIfGateway, this));
 
     account.allContacts[this.jid.normalizedJID] = this;
