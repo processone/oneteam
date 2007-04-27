@@ -14,7 +14,7 @@ function generateXULFromDataForm(data, doc)
         container.appendChild(el);
     }
 
-    for (var instruction in data.ns::instructions) {
+    for each (var instruction in data.ns::instructions) {
         el = doc.createElementNS(XULNS, "description");
         el.setAttribute("class", "data-form-description");
         el.appendChild(doc.createTextNode(instruction.text()));
@@ -54,7 +54,7 @@ function generateXULFromDataForm(data, doc)
                 rows.appendChild(row);
                 break;
             case "fixed":
-                for (var value in field.ns::value) {
+                for each (var value in field.ns::value) {
                     el = doc.createElementNS(XULNS, "label");
                     el.setAttribute("class", "data-form-field-fixed");
                     el.setAttribute("value", value.text().toString());
