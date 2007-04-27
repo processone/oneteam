@@ -148,7 +148,7 @@
             if (rows[i].hidden || rows[i].localName == "description")
               continue;
             var name = rows[i].getAttribute("anonid");
-            res.* += <{name}>{rows[i].getElementsByTagNameNS(xulNS, "textbox")[0].value}</{name}>;
+            res += <{name}>{rows[i].getElementsByTagNameNS(xulNS, "textbox")[0].value}</{name}>;
           }
           return res;
         ]]></getter>
