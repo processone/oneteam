@@ -165,6 +165,8 @@
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
           this.bookmarksMenuView =
             new BookmarksMenuView(document.getElementById("conference-menu-separator"));
+          this.gatewaysMenuView =
+            new GatewaysMenuView(document.getElementById("gateways-menu"));
           this.presenceProfilesView =
             new PresenceProfilesView(document.getElementById("setPresence-profile-dummy"),
                                      this.profileEnable);
@@ -500,6 +502,9 @@
                   <menuseparator id="conference-menu-separator" hidden="true"/>
                   <menuitem label="Manage Bookmarks" accesskey="M" command="cmd_manageBookmarks"/>
                 </menupopup>
+              </menu>
+              <menu label="Gateways" accesskey="G" id="gateways-menu">
+                <menupopup/>
               </menu>
               <menuseparator/>
 <!--          <menuitem label="&menulagger.servicesDiscovery;" command="cmd_disco"
