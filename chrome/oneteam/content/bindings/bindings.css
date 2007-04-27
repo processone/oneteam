@@ -81,9 +81,13 @@ verifier-error-box {
 }
 
 dialog {
-  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#dialog") !important; 
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#dialog") !important;
 }
 
 listeditor {
   -moz-binding: url("chrome://oneteam/content/bindings/listeditor.xml#list-editor");
+}
+
+registrationform {
+  -moz-binding: url("chrome://oneteam/content/bindings/forms.xml#registration-form");
 }
