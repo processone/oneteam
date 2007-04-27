@@ -2,19 +2,19 @@ function Gateway(contact)
 {
     if (contact instanceof Contact)
         contact.__proto__ = Gateway.prototype;
-    else if (contact instanceof JID) {
+    else {
         Contact.call(this, contact, null, null, null, null, true);
         contact = this;
     }
 
-    contact.getDiscoIdentity(false, new Callback(contact._onDiscoIdentity, contact));
+    contact.getDiscoIdentity(false, new Callback(contact._onGatewayInfo, contact));
 
     return contact;
 }
 
 _DECL_(Gateway, Contact).prototype =
 {
-    _onDiscoIdentity: function(info)
+    _onGatewayInfo: function(info)
     {
         this.gatewayType = info.type;
         this.gatewayName = info.name;
@@ -37,14 +37,15 @@ _DECL_(Gateway, Contact).prototype =
     requestRegistrationForm: function(callback)
     {
         var iq = new JSJaCIQ();
-        iq.setType('get');
+        iq.setIQ(this.jid, null, "get");
         iq.setQuery('jabber:iq:register');
         con.send(iq, callback);
     },
 
     register: function(payload, callback)
     {
-        var iq = new JSJaCIQ(); iq.setIQ(this.jid, null, "set");
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, null, "set");
         iq.setQuery("jabber:iq:register").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
         con.send(iq, callback);
@@ -59,7 +60,7 @@ _DECL_(Gateway, Contact).prototype =
     {
         if (force || !this._mapNameForm) {
             var iq = new JSJaCIQ();
-            iq.setType('get');
+            iq.setIQ(this.jid, null, "get");
             iq.setQuery('jabber:iq:gateway');
             con.send(iq, new Callback(this._mapNameFormRecv, this).
                      addArgs(callback).fromCall());
@@ -88,7 +89,7 @@ _DECL_(Gateway, Contact).prototype =
     mapName: function(payload, callback)
     {
         var iq = new JSJaCIQ();
-        iq.setType('set');
+        iq.setIQ(this.jid, null, "set");
         iq.setQuery('jabber:iq:gateway').
             appendChild(E4XtoDOM(payload, iq.getDoc()));
         con.send(iq, callback);
