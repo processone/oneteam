@@ -7,7 +7,7 @@
 
   <binding id="registration-form">
     <content>
-      <xul:grid anonid="form" hidden="true">
+      <xul:grid anonid="form" hidden="true" flex="1">
         <xul:columns>
           <xul:column/>
           <xul:column flex="1"/>
@@ -96,7 +96,8 @@
             this._xdata.parentNode.removeChild(this._xdata);
             this._xdata = null;
           }
-          var grid = document.document.getAnonymousElementByAttribute(this, "anonid", "form");
+
+          var grid = document.getAnonymousElementByAttribute(this, "anonid", "form");
           if (!val) {
             grid.hidden = true;
             return;
@@ -104,8 +105,10 @@
 
           var xdataNS = new Namespace("jabber:x:data");
           var registerNS = new Namespace("jabber:iq:register");
-          if (val.xdata::x) {
-            this._xdata = generateXULFromDataForm(val.xdata::x, document);
+          var xulNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+          if (val.xdataNS::x.length()) {
+            this._xdata = generateXULFromDataForm(val.xdataNS::x[0], document);
             grid.hidden = true;
             grid.parentNode.appendChild(this._xdata);
             return;
@@ -113,17 +116,19 @@
 
           var rows = grid.lastChild.childNodes;
           for (var i = 0; i < rows.length; i++) {
-            var el = val.(function::elements(new QName(registerNS, rows[i].getAttribute("anonid"))));
+            var el = val[new QName(registerNS, rows[i].getAttribute("anonid"))];
             if (el.length()) {
               if (rows[i].localName == "description") {
-                rows[i].removeChild(rows[i].firstChild);
-                rows[i].appendChild(document.createTextNode(el.text());
+                if (rows[i].firstChild)
+                  rows[i].removeChild(rows[i].firstChild);
+                rows[i].appendChild(document.createTextNode(el.text()));
               } else
-                rows[i].getElementsByTagName("textbox")[0].value = el.text();
+                rows[i].getElementsByTagNameNS(xulNS, "textbox")[0].value = el.text();
               rows[i].hidden = false;
             } else
               rows[i].hidden = true;
           }
+          grid.hidden = false;
         ]]></setter>
       </property>
 
@@ -132,18 +137,18 @@
           if (this._xdata)
             return buildResponseDataFormFromXUL(this._xdata);
 
-          var rows = document.document.
-            getAnonymousElementByAttribute(this, "anonid", "form").
+          var rows = document.getAnonymousElementByAttribute(this, "anonid", "form").
             lastChild.childNodes;
           var res = <></>;
 
           default xml namespace = new Namespace("jabber:x:data");
+          var xulNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
           for (var i = 0; i < rows.length; i++) {
             if (rows[i].hidden || rows[i].localName == "description")
               continue;
             var name = rows[i].getAttribute("anonid");
-            res.* += <{name}>{rows[i].getElementsByTagName("textbox")[0].value}</{name}>;
+            res.* += <{name}>{rows[i].getElementsByTagNameNS(xulNS, "textbox")[0].value}</{name}>;
           }
           return res;
         ]]></getter>
