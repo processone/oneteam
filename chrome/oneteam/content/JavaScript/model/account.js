@@ -1,13 +1,6 @@
 function Account()
 {
-    this.groups = []
-    this.allGroups = {}
-    this.contacts = {};
-    this.allContacts = {};
-    this.resources = {};
-    this.conferences = [];
-    this.allConferences = {};
-    this._presenceObservers = [];
+    this._initialize();
     this.currentPresence = {show: "unavailable"};
 
     this.cache = new PersistantCache("oneteamCache");
@@ -376,7 +369,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.getDiscoItemsByCategory("conference", "text", false,
                                      function(items) {
                                         if (items.length)
-                                           account.defaultConferenceServer = items[0].jid;
+                                            account.defaultConferenceServer = items[0].jid;
+                                     });
+        this.getDiscoItemsByCategory("gateway", null, false,
+                                     function(items) {
+                                        for (var i = 0; i < items.length; i++)
+                                            account.getOrCreateContact(items[i].jid);
                                      });
         if (typeof(socks5Service) == "object")
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
@@ -420,6 +418,20 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             };
     },
 
+    _initialize: function()
+    {
+        this.groups = []
+        this.allGroups = {}
+        this.contacts = {};
+        this.allContacts = {};
+        this.resources = {};
+        this.conferences = [];
+        this.allConferences = {};
+        this.gateways = {};
+        this._presenceObservers = [];
+
+    },
+
     onDisconnect: function()
     {
         // If "disconnect" event is received before "connect", it
@@ -436,14 +448,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var groups = this.groups;
         var conferences = this.conferences;
 
-        this.groups = []
-        this.allGroups = {}
-        this.contacts = {};
-        this.allContacts = {};
-        this.resources = {};
-        this.conferences = [];
-        this.allConferences = {};
-        this._presenceObservers = [];
+        this._initialize();
 
         this.modelUpdated("groups", {removed: groups});
         this.modelUpdated("conferences", {removed: conferences});

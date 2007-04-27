@@ -116,12 +116,16 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.newItem = false;
         account.contacts[this.jid.normalizedJID] = this;
     }
+    if (this.jid.node == "")
+        this.getDiscoIdentity(false, new Callback(this._checkIfGateway, this));
+
     account.allContacts[this.jid.normalizedJID] = this;
+    this.gateways = account.gateways[this.jid.normalizedJID.domain];
 
     this.chatPane = chatTabsControler.getTab(this);
 }
 
-_DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
+_DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype =
 {
     get canSeeMe() {
         return this.subscription == "both" || this.subscription == "from";
@@ -211,6 +215,18 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator).prototype =
         if (this._modelUpdatedCheck(oldState).indexOf("visibleName") >= 0)
             for (i = 0; i < this.resources.length; i++)
                 this.resources[i].modelUpdated("visibleName");
+    },
+
+    _checkIfGateway: function(info)
+    {
+        if (info.category == "gateway")
+            Gateway(this);
+    },
+
+    _setGateway: function(gateway)
+    {
+        this.gateway = gateway;
+        this.modelUpdated("gateway");
     },
 
     _parseNode: function(node, wantGroupsHash)
