@@ -66,7 +66,7 @@ _DECL_(Gateway, Contact).prototype =
                      addArgs(callback).fromCall());
             return;
         }
-        callback(this._mapNameForm);
+        callback(this, this._mapNameForm);
     },
 
     _mapNameFormRecv: function(callback, pkt)
@@ -75,15 +75,15 @@ _DECL_(Gateway, Contact).prototype =
             return callback(this._mapNameForm = null);
 
         var ns = "jabber:iq:gateway";
-        var desc = pkt.getNode().getElementsByTagName(ns, "desc")[0];
-        var prompt = pkt.getNode().getElementsByTagName(ns, "prompt")[0];
+        var desc = pkt.getNode().getElementsByTagNameNS(ns, "desc")[0];
+        var prompt = pkt.getNode().getElementsByTagNameNS(ns, "prompt")[0];
 
         this._mapNameForm = {
             desc: desc && desc.textContent,
             prompt : prompt && prompt.textContent
         };
 
-        return callback(this._mapNameForm);
+        return callback(this, this._mapNameForm);
     },
 
     mapName: function(payload, callback)
