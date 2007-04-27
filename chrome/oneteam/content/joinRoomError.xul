@@ -35,12 +35,12 @@
 
       var el = document.getElementById("jid");
       if (el.firstChild)
-        el.removeNode(el.firstChild);
+        el.removeChild(el.firstChild);
       el.appendChild(document.createTextNode(conference.jid));
 
       el = document.getElementById("errorMsg");
       if (el.firstChild)
-        el.removeNode(el.firstChild);
+        el.removeChild(el.firstChild);
       el.appendChild(document.createTextNode(errorMsg));
     }
 
