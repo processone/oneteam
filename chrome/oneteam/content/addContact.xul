@@ -20,9 +20,11 @@
   ondialogaccept="return addContact()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
-    var contact = window.arguments[0];
+    var contact = window.arguments && window.arguments[0];
+    var currentGateway, progressmeter;
 
     function onLoad() {
+      progressmeter = document.getElementById("progressmeter");
       if (contact) {
         var jid = document.getElementById("jid");
 
@@ -30,8 +32,63 @@
         jid.value = contact.jid;
         jid.disabled = true;
       }
+
+      var protoList = document.getElementById("protocol").firstChild;
+      for each (var gateway in window.opener.account.gateways) {
+        var el = document.createElement("menuitem");
+        el.setAttribute("label", gateway.gatewayName);
+        el.model = gateway;
+        protoList.appendChild(el);
+      }
+      if (protoList.childNodes.length > 1);
+        protoList.parentNode.parentNode.parentNode.hidden = false;
     }
+
+    function changeProto(gateway) {
+      currentGateway = gateway;
+
+      document.getElementById("mode").selectedIndex = gateway && gateway.newItem ? 1 : 0;
+      document.documentElement.getButton("accept").disabled = gateway && gateway.newItem;
+      if (gateway && gateway.newItem)
+        return;
+
+      var el = document.getElementById("jabber-entry");
+      el.hidden = el.nextSibling.hidden = !!gateway;
+      el = document.getElementById("gateway-entry")
+      el.hidden = el.nextSibling.hidden = !gateway;
+
+      if (gateway) {
+        _mapNameFormReady(gateway, gateway._mapNameForm || {});
+        if (!gateway._mapNameForm) {
+          gateway.requestMapNameForm(_mapNameFormReady);
+          progressmeter.style.visibility = "visible";
+        }
+      } else
+        progressmeter.style.visibility = "hidden";
+    }
+
+    function _mapNameFormReady(gateway, map) {
+      if (currentGateway != gateway)
+        return;
+
+      progressmeter.style.visibility = "hidden";
+
+      var el = document.getElementById("gateway-id");
+      el.previousSibling.value = map.prompt || "ID:";
+      el = el.parentNode.nextSibling;
+      if (el.firstChild)
+        el.removeChild(el.firstChild);
+      el.appendChild(document.createTextNode(map.desc || ""));
+    }
+
     function addContact() {
+      if (currentGateway) {
+        progressmeter.style.visibility = "visible";
+        document.documentElement.getButton("accept").disabled = true;
+        currentGateway.mapName(<prompt>{document.getElementById("gateway-id").value}</prompt>,
+                               _mapNameReady);
+        return false;
+      }
       var jid = document.getElementById("jid").value;
       var nick = document.getElementById("nick").value;
       var groups = document.getElementById("groups").choosenGroups;
@@ -52,41 +109,85 @@
       contact.subscribe(reason);
       return true;
     }
+
+    function _mapNameReady(pkt) {
+      document.getElementById("jid").value = pkt.getNode().
+        getElementsByTagNameNS("jabber:iq:gateway", "jid")[0].textContent;
+
+      addContact();
+      window.close();
+    }
   ]]></script>
 
   <dialogheader title="Add Contact"/>
 
-  <grid>
-    <columns>
-      <column/>
-      <column flex="1"/>
-    </columns>
-    <rows>
-      <row align="center">
-        <label value="Jabber ID:" control="jid"/>
-        <textbox id="jid"/>
-      </row>
-      <description class="field-desc">Enter Jabber ID of the contact you want to add.
-        (ex.: foo@jabber.org)</description>
+  <vbox hidden="true">
+    <hbox align="center">
+      <label value="Protocol:"/>
+      <menulist id="protocol" oncommand="changeProto(this.selectedItem.model)">
+        <menupopup>
+          <menuitem label="Jabber"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+    <spacer/>
+  </vbox>
+
+  <deck id="mode">
+    <vbox>
+      <grid>
+        <columns>
+          <column/>
+          <column flex="1"/>
+        </columns>
+        <rows>
+          <row id="gateway-entry" hidden="true">
+            <label control="gateway-id"/>
+            <textbox id="gateway-id"/>
+          </row>
+          <description class="field-desc" hidden="true"/>
+
+          <row id="jabber-entry">
+            <label value="Jabber ID:" control="jid"/>
+            <textbox id="jid"/>
+          </row>
+          <description class="field-desc">Enter Jabber ID of the contact you want to add.
+            (ex.: foo@jabber.org)</description>
+
+          <spacer/>
+
+          <row>
+            <label value="Nickname:" control="nick"/>
+            <textbox id="nick"/>
+          </row>
+          <description class="field-desc">Enter contact's nickname which will be displayed
+            in roster window.</description>
+        </rows>
+      </grid>
 
       <spacer/>
 
-      <row align="center">
-        <label value="Nickname:" control="nick"/>
-        <textbox id="nick"/>
-      </row>
-      <description class="field-desc">Enter contact's nickname which will be displayed
-        in roster window.</description>
-    </rows>
-  </grid>
+      <label value="Groups:" control="groups"/>
+      <groupselector id="groups" rows="4"/>
+
+      <spacer/>
+
+      <label value="&Contact.reason;" />
+      <textbox id="reason" multiline="true" rows="2"/>
+    </vbox>
+    <vbox>
+      <description>
+        Before adding contacts from this network you need to register to this network gateway.
+      </description>
+      <hbox align="center">
+        <label value="You can start gateway registration by clicking"/>
+        <button label="Gateway Registration" oncommand="currentGateway.onRegister()"/>
+        <label value="button"/>
+      </hbox>
+    </vbox>
+  </deck>
 
   <spacer/>
-
-  <label value="Groups:" control="groups"/>
-  <groupselector id="groups" rows="4"/>
-
+  <progressmeter id="progressmeter" style="visibility: hidden" mode="undetermined"/>
   <spacer/>
-
-  <label value="&Contact.reason;" />
-  <textbox id="reason" multiline="true" rows="2"/>
 </dialog>
