@@ -31,16 +31,27 @@ _DECL_(ContainerView).prototype =
                 a = mid+1;
         }
         this.items.splice(a, 0, item);
-        var insertBefore = this.items[a+1] ? this.items[a+1].node : this.afterlastItemNode;
-        if (!item.node.parentNode || item.node.nextSibling != insertBefore)
-            item.show(this.containerNode, insertBefore);
+
+        var node = item instanceof Node ? item : item.node;
+        var insertBefore = this.items[a+1] ? item instanceof Node ?
+            this.items[a+1] : this.items[a+1].node : this.afterlastItemNode;
+
+        if (!node.parentNode || node.nextSibling != insertBefore)
+            if (item instanceof Node)
+                this.containerNode.insertBefore(item, insertBefore);
+            else
+                item.show(this.containerNode, insertBefore);
     },
 
     onItemRemoved: function(model)
     {
         for (var i = 0; i < this.items.length; i++)
             if (this.items[i].model == model) {
-                this.items[i].destroy();
+                if (this.items[i] instanceof Node)
+                    this.containerNode.removeChild(this.items[i]);
+                else
+                    this.items[i].destroy();
+
                 this.items.splice(i, 1);
                 break;
             }
@@ -180,4 +191,3 @@ _DECL_(RegsBundle).prototype =
             }
     },
 }
-
