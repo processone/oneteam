@@ -18,7 +18,7 @@ _DECL_(Gateway, Contact).prototype =
     {
         this.gatewayType = info.type;
         this.gatewayName = info.name;
-        account.gateways[this.jid.normalizedJID.domain] = this;
+        account._onGatewayAdded(this);
 
         for (var i in account.allContacts) {
             if (account.allContacts[i].jid.normalizedJID.domain !=

@@ -86,6 +86,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("groups", {removed: [group]});
     },
 
+    _onGatewayAdded: function(gateway)
+    {
+        this.gateways[gateways.jid.normalizedJID.domain] = gateway;
+        this.modelUpdated("gateways", {added: [gateway]});
+    },
+
     getOrCreateGroup: function(name)
     {
         if (this.allGroups[name])
@@ -447,11 +453,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         var groups = this.groups;
         var conferences = this.conferences;
+        var gateways = [gateway for each (gateway in this.gateways)];
 
         this._initialize();
 
         this.modelUpdated("groups", {removed: groups});
         this.modelUpdated("conferences", {removed: conferences});
+        this.modelUpdated("gateways", {removed: gateways});
 
         this.bookmarks._clean();
         for (var i = 0; i < groups.length; i++)
