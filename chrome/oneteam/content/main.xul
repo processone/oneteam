@@ -51,6 +51,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/gateway.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
