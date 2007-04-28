@@ -92,6 +92,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("gateways", {added: [gateway]});
     },
 
+    _onGatewayRemoved: function(gateway)
+    {
+        var domain = gateway.jid.normalizedJID.domain;
+        if (!(domain in this.gateways))
+            return;
+        delete this.gateways[domain];
+        this.modelUpdated("gateways", {removed: [gateway]});
+    },
+
     getOrCreateGroup: function(name)
     {
         if (this.allGroups[name])

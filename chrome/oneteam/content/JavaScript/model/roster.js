@@ -198,11 +198,17 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         this.groups = groups;
 
         if (this.subscription == "remove") {
+            delete account.contacts[this.jid.normalizedJID];
             delete account.allContacts[this.jid.normalizedJID]
-            delete account.contacts[this.jid.normalizedJID]
+
+            if (this instanceof Gateway)
+                account._onGatewayRemoved(this);
+
+            this.newItem = true;
+            this.modelUpdated("newItem");
         } else if (this.newItem) {
-            this.newItem = false;
             account.contacts[this.jid.normalizedJID] = this;
+            this.newItem = false;
             this.modelUpdated("newItem");
         }
 
