@@ -203,6 +203,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         } else if (this.newItem) {
             this.newItem = false;
             account.contacts[this.jid.normalizedJID] = this;
+            this.modelUpdated("newItem");
         }
 
         if (this.subscription == "remove" || (canSeeHim && !this.canSeeHim)) {

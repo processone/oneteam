@@ -22,6 +22,7 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     var contact = window.arguments && window.arguments[0];
     var currentGateway, progressmeter;
+    var regToken;
 
     function onLoad() {
       progressmeter = document.getElementById("progressmeter");
@@ -45,12 +46,19 @@
     }
 
     function changeProto(gateway) {
+      if (currentGateway && regToken) {
+        currentGateway.unregisterView(regToken);
+        regToken = null;
+      }
       currentGateway = gateway;
 
       document.getElementById("mode").selectedIndex = gateway && gateway.newItem ? 1 : 0;
       document.documentElement.getButton("accept").disabled = gateway && gateway.newItem;
-      if (gateway && gateway.newItem)
+
+      if (gateway && gateway.newItem) {
+        regToken = gateway.registerView(changeProto, null, "newItem");
         return;
+      }
 
       var el = document.getElementById("jabber-entry");
       el.hidden = el.nextSibling.hidden = !!gateway;
