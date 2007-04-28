@@ -243,10 +243,10 @@ function StatusIconStyle(url, iconDefData)
         filters.push("/"+data.text()+"/.test(client.clientName)");
 
     for each (data in iconDefData.*::x.(function::namespace()=="transport:name"))
-        filters.push("(client.transport && client.transport.type == "+
+        filters.push("(client.gateway && client.gateway.gatewayType == "+
                     uneval(data.text().toString())+")");
-    for each (data in iconDefData.*::x.(function::namespace()=="client:regexp"))
-        filters.push("(client.transport && /"+data.text()+"/.test(client.transport.type))");
+    for each (data in iconDefData.*::x.(function::namespace()=="transport:regexp"))
+        filters.push("(client.gateway && /"+data.text()+"/.test(client.gateway.gatewayType))");
 
     if (filters.length)
         this.filter = new Function("client", "return "+filters.join("||"));
