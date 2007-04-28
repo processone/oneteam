@@ -13,7 +13,8 @@
 
 <dialog id="addContact" windowtype="ot:addContact" title="&Contact.titre;"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" onload="onLoad()"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  onload="onLoad()" onunload="onUnload()"
   width="470" height="570"
   buttonlabelaccept="Add" buttonlabelcancel="&dialog.cancel.label;"
   buttons="accept,cancel"
@@ -22,7 +23,8 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     var contact = window.arguments && window.arguments[0];
     var currentGateway, progressmeter;
-    var regToken;
+    var account = window.opener.account;
+    var gatewaysRegToken, regToken;
 
     function onLoad() {
       progressmeter = document.getElementById("progressmeter");
@@ -32,15 +34,32 @@
         document.getElementById("nick").value = contact.jid.node;
         jid.value = contact.jid;
         jid.disabled = true;
+      } else {
+        updateProtoList(account, "gateways",
+                        {added: [gateway for each (gateway in account.gateways)]});
+        gatewaysRegToken = account.registerView(updateProtoList, null, "gateways");
       }
+    }
 
+    function onUnload() {
+      if (currentGateway && regToken)
+        currentGateway.unregisterView(regToken);
+
+      if (gatewaysRegToken)
+        account.unregisterView(gatewaysRegToken);
+    }
+
+    function updateProtoList(model, type, data)
+    {
       var protoList = document.getElementById("protocol").firstChild;
-      for each (var gateway in window.opener.account.gateways) {
+
+      for (var i = 0; i < data.added.length; i++) {
         var el = document.createElement("menuitem");
-        el.setAttribute("label", gateway.gatewayName);
-        el.model = gateway;
+        el.setAttribute("label", data.added[i].gatewayName);
+        el.model = data.added[i];
         protoList.appendChild(el);
       }
+
       if (protoList.childNodes.length > 1);
         protoList.parentNode.parentNode.parentNode.hidden = false;
     }
@@ -55,9 +74,10 @@
       document.getElementById("mode").selectedIndex = gateway && gateway.newItem ? 1 : 0;
       document.documentElement.getButton("accept").disabled = gateway && gateway.newItem;
 
-      if (gateway && gateway.newItem) {
+      if (gateway) {
         regToken = gateway.registerView(changeProto, null, "newItem");
-        return;
+        if (gateway.newItem)
+          return;
       }
 
       var el = document.getElementById("jabber-entry");
@@ -107,11 +127,11 @@
           alert("Please enter correct Jabber ID");
           return false;
         }
-        if (window.opener.account.contacts[jid]) {
+        if (account.contacts[jid]) {
           alert("Contact with this Jabber ID already exists");
           return false;
         }
-        contact = opener.account.getOrCreateContact(jid, false, nick, groups);
+        contact = account.getOrCreateContact(jid, false, nick, groups);
       }
 
       contact.subscribe(reason);
