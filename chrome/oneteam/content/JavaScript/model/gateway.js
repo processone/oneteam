@@ -56,6 +56,12 @@ _DECL_(Gateway, Contact).prototype =
         this.register(<remove/>, callback);
     },
 
+    remove: function()
+    {
+        this.unregister();
+        Contact.prototype.remove.call(this);
+    },
+
     requestMapNameForm: function(callback, force)
     {
         if (force || !this._mapNameForm) {
