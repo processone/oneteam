@@ -195,7 +195,7 @@ _DECL_(ServicesManager).prototype =
             if (!service)
                 continue;
 
-            var res = service(pkt, from, nodes[i]);
+            var res = service(pkt, nodes[i], from);
             if (res == 1)
                 break;
             if (res == 2)
