@@ -540,7 +540,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return;
 
         if (query.namespaceURI != "jabber:iq:roster") {
-            iqServicesManager.dispatchIQ(pkt, query);
+            iqServicesManager.dispatchIQ(packet, query);
             return;
         }
 
