@@ -174,8 +174,10 @@ function Callback(fun, obj) {
     cb.apply = function(_this, _args) {
         delete this._consArgs;
         var args = this._args.slice();
-        if (this._callArgs && !this._callArgs.length)
-            this._callArgs = [[0,0,Infinity]];
+
+        this._callArgs = this._callArgs ? this._callArgs.length == 0 ?
+            [[0,0,Infinity]] : this._callArgs : [];
+
         for (var i = this._callArgs.length-1; i >= 0; i--) {
             var a = Array.slice(_args, this._callArgs[i][1], this._callArgs[i][2]);
             a.unshift(this._callArgs[i][0], 0);
