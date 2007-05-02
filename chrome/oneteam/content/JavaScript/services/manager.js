@@ -82,50 +82,57 @@ _DECL_(IQServicesManager).prototype =
         case "http://jabber.org/protocol/si":
             fileTransferService.onIQ(pkt);
             return;
+
         case "http://jabber.org/protocol/bytestreams":
             socks5Service.onIQ(pkt);
             return;
+
         case "http://jabber.org/protocol/disco#info":
-        {
-            if (pkt.getType() != "get")
+            if (pkt.getType() != "get" || query.localName != "query")
                 return;
 
-            default xml namespace = "http://jabber.org/protocol/disco#info";
-            var nodes = [], features = {};
-            var node = query.getAttribute("node");
-            response = <query/>;
+            {
+                default xml namespace = "http://jabber.org/protocol/disco#info";
+                var nodes = [], features = {};
+                var node = query.getAttribute("node");
 
-            if (node) {
-                response.@node = node;
+                response = <query/>;
 
-                if (!this._nodes[node] ||
-                    (node.indexOf(this._capsPrefix+"#") == 0 &&
-                     node.substr(this._capsPrefix.length+1) in this._disabledCapsExt))
-                    nodes = [];
-                else
-                    nodes = [node];
-            } else {
-                nodes = [this._capsPrefix+"#"+c for (c in this._capsExt)
-                         if (!(c in this._disabledCapsExt))].
-                            push(this._capsPrefix+"#"+this._capsVersion);
-                response.* += <identity category="client" type="pc" name="OneTeam"/>
+                if (node) {
+                    response.@node = node;
+
+                    if (!this._nodes[node] ||
+                        (node.indexOf(this._capsPrefix+"#") == 0 &&
+                         node.substr(this._capsPrefix.length+1) in this._disabledCapsExt))
+                        nodes = [];
+                    else
+                        nodes = [node];
+                } else {
+                    nodes = [this._capsPrefix+"#"+c for (c in this._capsExt)
+                             if (!(c in this._disabledCapsExt))];
+                    nodes.push(this._capsPrefix+"#"+this._capsVersion);
+
+                    response.* += <identity category="client" type="pc" name="OneTeam"/>
+                }
+
+                for (var i = 0; i < nodes.length; i++) {
+                    var ns = this._nodes[nodes[i]];
+                    for (var j = 0; j < ns.length; j++)
+                        if (!features[ns[j]]) {
+                            features[ns[j]] = 1;
+                            response.* += <feature var={ns[j]}/>
+                        }
+                }
             }
-
-            for (var i = 0; i < nodes.length; i++)
-                for (var j = 0; j < nodes[i].length; j++)
-                    if (!features[nodes[i][j]]) {
-                        features[nodes[i][j]] = 1;
-                        response.* += <feature var={nodes[i][j]}/>
-                    }
-
             break;
-        }
+
         case "http://jabber.org/protocol/disco#items":
-            if (pkt.getType() != "get")
+            if (pkt.getType() != "get" || query.localName != "query")
                 return;
 
             response = <query xmlns="http://jabber.org/protocol/disco#items"/>;
             break;
+
         default:
             var service = this._handlers[ns];
 
@@ -156,6 +163,7 @@ _DECL_(IQServicesManager).prototype =
             }
             break;
         }
+
         this._sendResponse(response, pkt, callback)
     },
 
