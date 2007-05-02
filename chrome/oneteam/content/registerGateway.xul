@@ -54,7 +54,7 @@
       progressmeter.style.visibility = "hidden";
       if (pkt.getType() != "error") {
         if (gateway.newItem)
-          gateway.subscribe();
+          gateway.subscribe("", true);
         window.close();
       }
       alert("Sending registration form failed.");

@@ -302,18 +302,20 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         this.chatPane.addMessage(new Message(packet, null, this), packet.getThread());
     },
 
-    subscribe: function(reason)
+    subscribe: function(reason, allowToSeeMe)
     {
         if (this.newItem)
-            this._updateRoster(new Callback(this._subscribeStep, this).addArgs(reason));
+            this._updateRoster(new Callback(this._subscribeStep, this).
+                               addArgs(reason, allowToSeeMe).fromCall(-1));
         else
-            this.askForSubscription(reason);
-
+            this._subscribeStep(null, reason, allowToSeeMe);
     },
 
-    _subscribeStep: function(pkt, reason)
+    _subscribeStep: function(reason, allowToSeeMe)
     {
         this.askForSubscription(reason);
+        if (allowToSeeMe)
+            this.allowToSeeMe();
     },
 
     addToRoster: function()

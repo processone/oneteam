@@ -492,6 +492,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         //Handle subscription requests
         switch (packet.getType()) {
         case "subscribe":
+            var gateway = this.gateways[sender.normalizedJID];
+            if (gateways)
+                return;
+
             var contact = this.contacts[sender.normalizedJID];
             if (contact && contact._subscribed) {
                 delete contact._subscribed;
@@ -548,9 +552,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             var jid = items[i].getAttribute("jid");
             var normalizedJID = new JID(jid).normalizedJID;
 
-            if (this.allContacts[normalizedJID])
-                this.allContacts[normalizedJID]._updateFromServer(items[i]);
-            else
+            if (this.allContacts[normalizedJID]) {
+                var contact = this.allContacts[normalizedJID];
+                contact._updateFromServer(items[i]);
+
+                if (contact._subscribed && contact.canSeeHim) {
+                    contact.allowToSeeMe();
+                    delete contact._subscribed;
+                }
+            } else
                 new Contact(items[i]);
         }
     },
