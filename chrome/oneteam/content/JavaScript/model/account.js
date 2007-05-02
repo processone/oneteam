@@ -383,24 +383,21 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return;
         this.bookmarks.retrieve();
         this.getDiscoItemsByCategory("conference", "text", false,
-                                     function(items) {
-                                        if (items.length)
-                                            account.defaultConferenceServer = items[0].jid;
+                                     function(identity) {
+                                        if (!account.defaultConferenceServer)
+                                            account.defaultConferenceServer = identity.jid;
                                      });
         this.getDiscoItemsByCategory("gateway", null, false,
-                                     function(items) {
-                                        for (var i = 0; i < items.length; i++)
-                                            account.getOrCreateContact(items[i].jid);
+                                     function(identity) {
+                                        account.getOrCreateContact(identity.jid);
                                      });
         if (typeof(socks5Service) == "object")
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
-                                     function(items) {
-                                        for (var i = 0; i < items.length; i++) {
-                                            var bsp = new JSJaCIQ();
-                                            bsp.setIQ(items[i].jid, null, "get");
-                                            bsp.setQuery("http://jabber.org/protocol/bytestreams");
-                                            con.send(bsp, account._proxyAddress);
-                                        }
+                                     function(identity) {
+                                        var bsp = new JSJaCIQ();
+                                        bsp.setIQ(identity.jid, null, "get");
+                                        bsp.setQuery("http://jabber.org/protocol/bytestreams");
+                                        con.send(bsp, account._proxyAddress);
                                      });
         // Enable auto archiving
         this.hasDiscoFeature("http://www.xmpp.org/extensions/xep-0136.html#ns", false,

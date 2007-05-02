@@ -393,17 +393,19 @@ _DECL_(DiscoItem).prototype =
 
     _gotDiscoItems: function(items, category, type, forceUpdate, callback)
     {
-        var count = {value: items.length};
         for (var i = 0; i < items.length; i++)
             items[i].getDiscoIdentity(forceUpdate,
                 new Callback(this._gotDiscoIdentity, this).
-                    addArgs(category, type, callback, count));
+                    addArgs(category, type, callback, items[i]));
     },
 
-    _gotDiscoIdentity: function(identity, category, type, callback, count)
+    _gotDiscoIdentity: function(identity, category, type, callback, item)
     {
-        if (--count.value == 0)
-            callback.call(null, this._getDiscoItemsByCategory(category, type));
+        if (!identity)
+            return;
+        if ((category == null || identity.category == category) &&
+            (type == null || identity.type == type))
+            callback.call(null, item);
     },
 
     _getDiscoItemsByCategory: function(category, type)
