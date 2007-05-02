@@ -89,7 +89,7 @@ _DECL_(IQServicesManager).prototype =
 
         case "http://jabber.org/protocol/disco#info":
             if (pkt.getType() != "get" || query.localName != "query")
-                return;
+                break;
 
             {
                 default xml namespace = "http://jabber.org/protocol/disco#info";
@@ -128,7 +128,7 @@ _DECL_(IQServicesManager).prototype =
 
         case "http://jabber.org/protocol/disco#items":
             if (pkt.getType() != "get" || query.localName != "query")
-                return;
+                break;
 
             response = <query xmlns="http://jabber.org/protocol/disco#items"/>;
             break;
@@ -163,6 +163,15 @@ _DECL_(IQServicesManager).prototype =
             }
             break;
         }
+
+        if (!response && (pkt.getType() == "get" || pkt.getType() == "set"))
+            response = {
+                type: "error",
+                dom: query,
+                e4x: <error xmlns="jabber:client" type="modify" code="400">
+                        <bad-request xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>
+                     </error>
+            };
 
         this._sendResponse(response, pkt, callback)
     },
