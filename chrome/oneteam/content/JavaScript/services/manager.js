@@ -1,4 +1,4 @@
-function IQServicesManager()
+function ServicesManager()
 {
     this._handlers = {};
     this._nodes = {};
@@ -8,12 +8,12 @@ function IQServicesManager()
     this._clean();
 }
 
-_DECL_(IQServicesManager).prototype =
+_DECL_(ServicesManager).prototype =
 {
     _capsPrefix: "http://oneteam.im/caps",
     _capsVersion: "1.0_1",
 
-    addService: function(ns, handler, capsExt, dontShowInDisco)
+    addIQService: function(ns, handler, capsExt, dontShowInDisco)
     {
         this._handlers[ns] = handler;
         if (!dontShowInDisco)
@@ -226,9 +226,9 @@ _DECL_(IQServicesManager).prototype =
     }
 }
 
-var iqServicesManager = new IQServicesManager();
+var servicesManager = new ServicesManager();
 
-iqServicesManager.addService("jabber:iq:version", function (pkt, query) {
+servicesManager.addIQService("jabber:iq:version", function (pkt, query) {
         if (pkt.getType() != "get")
             return null;
 
@@ -239,5 +239,5 @@ iqServicesManager.addService("jabber:iq:version", function (pkt, query) {
                     </query>;
     });
 
-iqServicesManager.publishDiscoInfo("http://jabber.org/protocol/disco#info");
-iqServicesManager.publishDiscoInfo("http://jabber.org/protocol/muc");
+servicesManager.publishDiscoInfo("http://jabber.org/protocol/disco#info");
+servicesManager.publishDiscoInfo("http://jabber.org/protocol/muc");

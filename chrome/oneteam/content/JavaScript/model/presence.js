@@ -47,7 +47,7 @@ _DECL_(Presence, null, Comparator).prototype =
                 if (account.avatarHash)
                     photo.appendChild(pkt.getDoc().createTextNode(account.avatarHash));
             }
-            iqServicesManager.appendCapsToPresence(pkt.getNode());
+            servicesManager.appendCapsToPresence(pkt.getNode());
         }
 
         if (presence.status)

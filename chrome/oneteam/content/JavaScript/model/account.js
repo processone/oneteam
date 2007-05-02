@@ -470,7 +470,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("gateways", {removed: gateways});
 
         this.bookmarks._clean();
-        iqServicesManager._clean();
+        servicesManager._clean();
 
         for (var i = 0; i < groups.length; i++)
             if (groups[i].builtinGroup)
@@ -543,7 +543,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return;
 
         if (query.namespaceURI != "jabber:iq:roster") {
-            iqServicesManager.dispatchIQ(packet, query);
+            servicesManager.dispatchIQ(packet, query);
             return;
         }
 
