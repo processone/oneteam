@@ -43,6 +43,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/styles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/dataforms.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/services/manager.js"/>
   <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>

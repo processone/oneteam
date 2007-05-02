@@ -45,6 +45,7 @@ _DECL_(Presence, null, Comparator).prototype =
                     appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "photo")).
                     appendChild(pkt.getDoc().createTextNode(account.avatarHash));
             }
+            iqServicesManager.appendCapsToPresence(pkt.getNode());
         }
 
         if (presence.status)
