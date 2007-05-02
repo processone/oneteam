@@ -407,7 +407,9 @@ _DECL_(Conference, Contact).prototype =
         if (packet.getType() == "error")
             return;
 
-        this._checkForSubject(packet, this.jid);
+        if (this._checkForSubject(packet, this.jid) && packet.getBody() &&
+            this.chatPane && !this.chatPane.closed)
+            this.chatPane.addMessage(new Message(packet.getBody(), null, null, 4));
     },
 
     onAvatarChange: function()
@@ -417,8 +419,10 @@ _DECL_(Conference, Contact).prototype =
     _checkForSubject: function(pkt, jid)
     {
         subject = pkt._getChildNode("subject");
-        if (!subject || (subject = subject.textContent) == this.subject)
-            return;
+        if (!subject)
+            return true;
+        if ((subject = subject.textContent) == this.subject)
+            return false;
 
         this.subject = subject;
 
@@ -428,6 +432,7 @@ _DECL_(Conference, Contact).prototype =
             this.chatPane.addMessage(new Message(pkt.getBody(), null, null, 4));
 
         this.modelUpdated("subject");
+        return false;
     },
 
     cmp: function(c)
