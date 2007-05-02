@@ -1,6 +1,7 @@
 function ServicesManager()
 {
-    this._handlers = {};
+    this._iqHandlers = {};
+    this._messageHandlers = {}
     this._nodes = {};
     this._capsExt = {};
     this._disabledCapsExt = {};
@@ -15,9 +16,14 @@ _DECL_(ServicesManager).prototype =
 
     addIQService: function(ns, handler, capsExt, dontShowInDisco)
     {
-        this._handlers[ns] = handler;
+        this._iqHandlers[ns] = handler;
         if (!dontShowInDisco)
             this.publishDiscoInfo(ns, capsExt || this._capsVersion);
+    },
+
+    addMessageService: function(ns, handler)
+    {
+        this._messageHandlers[ns] = handler;
     },
 
     publishDiscoInfo: function(ns, capsExt, nodes)
@@ -136,7 +142,7 @@ _DECL_(ServicesManager).prototype =
             break;
 
         default:
-            var service = this._handlers[ns];
+            var service = this._iqHandlers[ns];
 
             if (!service) {
                 if (pkt.getType() != "get" && pkt.getType() != "set")
@@ -175,6 +181,35 @@ _DECL_(ServicesManager).prototype =
             };
 
         this._sendResponse(response, pkt, callback)
+    },
+
+    dispatchMessage: function(pkt, from)
+    {
+        var nodes = pkt.getNode().childNodes;
+
+        for (var i = 0; i < nodes.length; i++) {
+            var service = this._messageHandlers[nodes[i].namespaceURI];
+
+            if (!service)
+                continue;
+
+            var res = service(pkt, from, nodes[i]);
+            if (res == 1)
+                break;
+            if (res == 2)
+                return;
+        }
+
+        var item;
+        if (from.resource) {
+            item = this.getOrCreateResource(from);
+            if (!item)
+                item = this.getOrCreateContact(from.getShortJID(), true).
+                    createResource(from);
+        } else
+            item = this.getOrCreateContact(from);
+
+        item.onMessage(packet);
     },
 
     _sendResponse: function(response, packet, callback)

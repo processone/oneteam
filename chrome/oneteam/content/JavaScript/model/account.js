@@ -591,17 +591,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (sender.normalizedJID == this.myJID.normalizedJID)
             return;
 
-        var item;
-
-        if (sender.resource) {
-            item = this.getOrCreateResource(sender);
-            if (!item)
-                item = this.getOrCreateContact(sender.getShortJID(), true).
-                    createResource(sender);
-        } else
-            item = this.getOrCreateContact(sender);
-
-        item.onMessage(packet);
+        servicesManager.dispatchMessage(packet, sender);
     },
 
     _generateVCardPkt: function()
