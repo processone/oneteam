@@ -53,7 +53,7 @@ _DECL_(Gateway, Contact).prototype =
 
     unregister: function(callback)
     {
-        this.register(<remove xmlns='jabber:iq:roster'/>, callback);
+        this.register(<remove xmlns='jabber:iq:register'/>, callback);
     },
 
     remove: function()
