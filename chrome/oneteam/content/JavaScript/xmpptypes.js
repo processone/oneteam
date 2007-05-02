@@ -196,6 +196,8 @@ function vCardDataAccessor()
 
 _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
 {
+    avatarRetrieved: false,
+
     getVCard: function(forceUpdate, callback)
     {
         return this._fetchXMPPData("_vCardAccessorState", this._generateVCardPkt,
@@ -214,8 +216,14 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
             }
         }
 
-        if (!photo)
+        this.avatarRetrieved = true;
+
+        if (!photo) {
+            this.avatarHash = null;
+            this.avatar = null;
+            this.modelUpdated("avatar");
             return;
+        }
 
         photo = atob(photo);
         this.avatarHash = hex_sha1(photo);

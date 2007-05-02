@@ -144,10 +144,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     _handleVCard: function(pkt, value)
     {
         var oldHash = this.avatarHash;
+        var oldAvatarRetrieved = this.avatarRetrieved;
 
         vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
 
-        if (this.avatarHash != oldHash)
+        if (!oldAvatarRetrieved || this.avatarHash != oldHash)
             this.setPresence(this.currentPresence);
     },
 
@@ -444,7 +445,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.allConferences = {};
         this.gateways = {};
         this._presenceObservers = [];
-
+        this.avatarHash = this.avatar = null;
+        this.avatarRetrieved = false;
     },
 
     onDisconnect: function()

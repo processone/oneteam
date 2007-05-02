@@ -39,11 +39,13 @@ _DECL_(Presence, null, Comparator).prototype =
                             prefManager.getPref("chat.connection.priority") :
                             presence.priority);
 
-            if (account.avatarHash) {
-                pkt.getNode().
+            if (account.avatarRetrieved) {
+                var photo = pkt.getNode().
                     appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "x")).
-                    appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "photo")).
-                    appendChild(pkt.getDoc().createTextNode(account.avatarHash));
+                    appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "photo"));
+
+                if (account.avatarHash)
+                    photo.appendChild(pkt.getDoc().createTextNode(account.avatarHash));
             }
             iqServicesManager.appendCapsToPresence(pkt.getNode());
         }
