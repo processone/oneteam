@@ -158,7 +158,10 @@ _DECL_(ServicesManager).prototype =
                          </error>
                 };
             } else {
-                if (!(response = service(pkt, DOMtoE4X(query))))
+                response = service(pkt, DOMtoE4X(query));
+                if (response === 0)
+                    break;
+                else if (!response)
                     return;
 
                 // We can't detect Generator reliable, so lets at least check
