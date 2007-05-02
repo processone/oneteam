@@ -11,7 +11,7 @@ function IQServicesManager()
 _DECL_(IQServicesManager).prototype =
 {
     _capsPrefix: "http://oneteam.im/caps",
-    _capsVersion: "1.0",
+    _capsVersion: "1.0_1",
 
     addService: function(ns, handler, capsExt, dontShowInDisco)
     {
@@ -236,3 +236,6 @@ iqServicesManager.addService("jabber:iq:version", function (pkt, query) {
                         <os>{navigator.platform}</os>
                     </query>;
     });
+
+iqServicesManager.publishDiscoInfo("http://jabber.org/protocol/disco#info");
+iqServicesManager.publishDiscoInfo("http://jabber.org/protocol/muc");
