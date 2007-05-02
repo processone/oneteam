@@ -42,6 +42,8 @@
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/styles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/dataforms.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/services/manager.js"/>
   <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
@@ -50,6 +52,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/model/gateway.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
@@ -60,6 +63,42 @@
 
   <script type="text/javascript;version=1.7"><![CDATA[
     var conf;
+
+    function updateConferenceMemberContextMenu(menu, event)
+    {
+      if (event.target != menu)
+        return;
+
+      var confMemb = menu.view.activeItem;
+      var conf = confMemb.contact;
+
+      var kick = document.getElementById("conferencemember-kick");
+      var ban = document.getElementById("conferencemember-ban");
+      var affiliations = document.getElementById("conferencemember-affiliations");
+
+      kick.previousSibling.hidden = kick.hidden = ban.hidden = !confMemb.canBeKicked;
+
+      affiliations.hidden = !(conf.iAmAdmin && conf.myResource.isGt(confMemb) || conf.iAmOwner);
+
+      for each (affiliation in "owner admin member none".split(" ")) {
+        var el = document.getElementById("conferencemember-affiliation-"+affiliation);
+        el.hidden = !conf.iAmOwner && conf.myResource.cmp(affiliation, true) >= 0;
+        el.setAttribute("checked", confMemb.affiliation == affiliation);
+      }
+    }
+
+    function updateConferenceContextMenu(menu, event)
+    {
+      if (event.target != menu)
+        return;
+
+      var configuration = document.getElementById("conference-configuration");
+      var permissions = document.getElementById("conference-edit-permissions");
+
+      configuration.hidden = !menu.view.activeItem.iAmOwner;
+      configuration.previousSibling.hidden = permissions.hidden =
+        !menu.view.activeItem.iAmAdmin;
+    }
 
     function roomConnected() {
       document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
@@ -95,6 +134,9 @@
 
         if (!this.conferencesView)
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
+
+        document.getElementById("conference-contextmenu").view = this.conferencesView;
+        document.getElementById("conferencemember-contextmenu").view = this.conferencesView;
 
         if (!account.connected) {
           chatTabsControler.closeTabs();
@@ -303,7 +345,7 @@
     </hbox>
   </deck>
   <popupset>
-    <popup id="conference-contextmenu">
+    <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
       <menuitem id="conference-invite" label="Invite contacts to this room..."
           oncommand="this.parentNode.view.activeItem.onInvite()"/>
       <menuitem id="conference-changeNick" label="Change nick..."
@@ -314,9 +356,57 @@
           oncommand="this.parentNode.view.activeItem.onBookmark()"/>
 
       <menuseparator/>
+      <menuitem id="conference-configuration" label="Configure..."
+          oncommand="this.parentNode.view.activeItem.onRoomConfiguration()"/>
+      <menuitem id="conference-edit-permissions" label="Edit Permissions..."
+          oncommand="this.parentNode.view.activeItem.onEditPermissions()"/>
+
+      <menuseparator/>
 
       <menuitem id="conference-leave" label="Leave conference"
           oncommand="this.parentNode.view.activeItem.exitRoom()"/>
+    </popup>
+
+    <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
+      <menuitem id="conferencemember-chat-single" label="&listitemcontext.Communiquer;"
+          oncommand="this.parentNode.view.activeItem.onOpenChat()"/>
+
+      <menuseparator/>
+      <menuitem id="conferencemember-kick" label="Kick..."
+          oncommand="this.parentNode.view.activeItem.onKick()"/>
+      <menuitem id="conferencemember-ban" label="Ban..."
+          oncommand="this.parentNode.view.activeItem.onBan()"/>
+      <menu id="conferencemember-affiliations" label="Affiliation">
+        <menupopup>
+          <menuitem id="conferencemember-affiliation-owner" name="affiliations"
+            type="radio" label="Owners"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('owner')"/>
+          <menuitem id="conferencemember-affiliation-admin" name="affiliations"
+            type="radio" label="Administrators"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('admin')"/>
+          <menuitem id="conferencemember-affiliation-member" name="affiliations"
+            type="radio" label="Members"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('momber')"/>
+          <menuitem id="conferencemember-affiliation-none" name="affiliations"
+            type="radio" label="None"
+            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
+                       setAffiliation('none')"/>
+        </menupopup>
+      </menu>
+
+      <menuseparator/>
+      <menuitem label="&listitemcontext.Infos;"
+        oncommand="this.parentNode.view.activeItem.showVCard()"/>
+      <!-- #ifdef XULAPP -->
+      <menuitem id="conferencemember-send-file" label="Send file..."
+        oncommand="this.parentNode.view.activeItem.onSendFile()"/>
+      <!-- #else
+      <menuitem id="conferencemember-send-file" label="Send file..."
+        oncommand="this.parentNode.view.activeItem.onSendFile()" disabled="true"/>
+      // #endif -->
     </popup>
   </popupset>
   <!-- #ifdef XULAPP -->
