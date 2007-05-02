@@ -158,7 +158,10 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
                 var group = item.appendChild(iq.getDoc().createElement('group'));
                 group.appendChild(iq.getDoc().createTextNode(groupName));
             }
-        }
+            this._inRoster = true;
+        } else
+            this._inRoster = false;
+
         if (this._subscription || this.subscription)
             item.setAttribute('subscription', this._subscription || this.subscription);
 
@@ -182,6 +185,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
             this._parseNode(node, true);
 
         this.visibleName = this.name || this.jid.shortJID;
+        delete this._inRoster;
 
         for (var i = 0; i < this.groups.length; i++) {
             if (!(this.groups[i].name in groupsHash)) {
