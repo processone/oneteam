@@ -148,13 +148,12 @@ _DECL_(IQServicesManager).prototype =
                          </error>
                 };
             } else {
-                response = service(pkt, DOMtoE4X(query));
-
-                if (response)
+                if (!(response = service(pkt, DOMtoE4X(query))))
                     return;
 
-                // crappy method for detecting Generator
-                if ("__iterator__" in response && !response.hasOwnProperty("__iterator__")) {
+                // We can't detect Generator reliable, so lets at least check
+                // that it looks like Generator.
+                if (typeof(response) == "object" && response.next && response.send) {
                     callback = new Callback(this._generatorTrackerCallback, this);
                     callback.addArgs(response, callback).fromCall();
 
