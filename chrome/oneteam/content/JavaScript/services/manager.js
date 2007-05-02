@@ -131,6 +131,8 @@ _DECL_(IQServicesManager).prototype =
                 break;
 
             response = <query xmlns="http://jabber.org/protocol/disco#items"/>;
+            if (query.getAttribute("node"))
+                response.@node = query.getAttribute("node");
             break;
 
         default:
