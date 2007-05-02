@@ -18,7 +18,7 @@ _DECL_(ServicesManager).prototype =
     {
         this._iqHandlers[ns] = handler;
         if (!dontShowInDisco)
-            this.publishDiscoInfo(ns, capsExt || this._capsVersion);
+            this.publishDiscoInfo(ns, capsExt);
     },
 
     addMessageService: function(ns, handler)
@@ -36,8 +36,10 @@ _DECL_(ServicesManager).prototype =
                 this._capsExt[capsExt[i]] = 1;
             nodes.push(this._capsPrefix+"#"+capsExt[i]);
         }
+        if (nodes.length == 0)
+            nodes.push(this._capsPrefix+"#"+this._capsVersion);
 
-        for (var i = 0; i < nodes.length; i++) {
+        for (i = 0; i < nodes.length; i++) {
             if (this._nodes[nodes[i]])
                 this._nodes[nodes[i]].push(ns);
             else
