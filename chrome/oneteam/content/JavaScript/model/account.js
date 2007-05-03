@@ -349,7 +349,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         else
             args = {
                 domain: this.connectionInfo.domain||this.connectionInfo.host,
-                authtype: "anonymous",
+                authtype: "saslanon",
                 resource: prefManager.getPref("chat.connection.resource") +
                     this.mucMode ? "MUC":"" };
 
