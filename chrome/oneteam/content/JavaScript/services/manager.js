@@ -207,14 +207,14 @@ _DECL_(ServicesManager).prototype =
 
         var item;
         if (from.resource) {
-            item = this.getOrCreateResource(from);
+            item = account.getOrCreateResource(from);
             if (!item)
-                item = this.getOrCreateContact(from.getShortJID(), true).
+                item = account.getOrCreateContact(from.getShortJID(), true).
                     createResource(from);
         } else
-            item = this.getOrCreateContact(from);
+            item = account.getOrCreateContact(from);
 
-        item.onMessage(packet);
+        item.onMessage(pkt);
     },
 
     _sendResponse: function(response, packet, callback)
