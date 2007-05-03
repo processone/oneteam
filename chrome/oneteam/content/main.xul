@@ -39,6 +39,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/xmpptypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/disco.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/styles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
