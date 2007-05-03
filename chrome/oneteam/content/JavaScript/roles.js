@@ -266,6 +266,16 @@ var META = {
             [,arguments.callee.caller.next] =
                 lookupForParentMethod(obj, arguments.callee.caller);
         return arguments.callee.caller.next(obj, Array.slice(arguments, 1));
+    },
+
+    ACCESSORS: {
+        replace: function(_this, name, newValue) {
+            delete _this[name];
+            var p = _this.__proto__;
+            _this[name] = newValue;
+            this.__proto__ = p;
+            return newValue;
+        }
     }
 }
 
