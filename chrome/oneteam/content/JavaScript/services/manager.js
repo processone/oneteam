@@ -108,13 +108,7 @@ _DECL_(ServicesManager).prototype =
 
                 if (node) {
                     response.@node = node;
-
-                    if (!this._nodes[node] ||
-                        (node.indexOf(this._capsPrefix+"#") == 0 &&
-                         node.substr(this._capsPrefix.length+1) in this._disabledCapsExt))
-                        nodes = [];
-                    else
-                        nodes = [node];
+                    nodes = this._nodes[node] ? [node] : [];
                 } else {
                     nodes = [this._capsPrefix+"#"+c for (c in this._capsExt)
                              if (!(c in this._disabledCapsExt))];
