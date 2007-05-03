@@ -108,7 +108,13 @@ _DECL_(ServicesManager).prototype =
 
                 if (node) {
                     response.@node = node;
-                    nodes = this._nodes[node] ? [node] : [];
+
+                    if (this._nodes[node]) {
+                        nodes = [node];
+                        if (node.indexOf(this._capsPrefix+"#") == 0)
+                            response.* += <identity category="client" type="pc" name="OneTeam"/>
+                    } else
+                        nodes = [];
                 } else {
                     nodes = [this._capsPrefix+"#"+c for (c in this._capsExt)
                              if (!(c in this._disabledCapsExt))];
