@@ -149,8 +149,19 @@ function mixProto(cons, exclusions, aliases, objProto, mixedProps,
 
     for (i in proto) {
         j = aliases[i] == null ? i : aliases[i];
-        if (i in exclusions || !proto.hasOwnProperty(i) || proto[i] === objProto[j])
+        if (i in exclusions || !proto.hasOwnProperty(i))
             continue;
+
+        g = proto.__lookupGetter__(i);
+        s = proto.__lookupSetter__(i);
+
+        if (g || s) {
+            if ((!g || g === objProto.__lookupGetter__(j)) &&
+                (!s || s === objProto.__lookupSetter__(j)))
+                continue;
+        } else if (proto[i] === objProto[j])
+            continue;
+
         if (i in mixedProps) {
             if (!(cons.prototype instanceof mixedProps[i].role))
                 throw new Error("Conflict for property ("+j+") during compositing "+
@@ -165,9 +176,9 @@ function mixProto(cons, exclusions, aliases, objProto, mixedProps,
             checkReqs(null, name, proto.ROLE_REQUIRES, objProto, requires);
             continue;
         }
-        if ((g = proto.__lookupGetter__(i)))
+        if (g)
             objProto.__defineGetter__(j, g);
-        if ((s = proto.__lookupSetter__(i)))
+        if (s)
             objProto.__defineSetter__(j, s);
         if (!g && !s)
             objProto[j] = proto[i];
