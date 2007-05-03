@@ -598,15 +598,22 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
         if (packet.getType() == "unavailable")
             this._remove();
-        else if (!this._registered)
-            this.contact._onResourceAdded(this);
-        else
-            this.contact._onResourceUpdated(this);
+        else {
+            if (!this._registered)
+                this.contact._onResourceAdded(this);
+            else
+                this.contact._onResourceUpdated(this);
 
-        var avatarHash = packet.getNode().
-            getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
-        if (this.presence.show != "unavailable" && avatarHash)
-            this.onAvatarChange(avatarHash.textContent);
+            var avatarHash = packet.getNode().
+                getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
+            if (avatarHash)
+                this.onAvatarChange(avatarHash.textContent);
+
+            var caps = packet.getNode().
+                getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
+            if (caps)
+                this.updateCapsInfo(caps);
+        }
 
         if (!dontNotifyViews && !equal)
             this.modelUpdated("presence");

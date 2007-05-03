@@ -1,16 +1,59 @@
-function DiscoCacheEntry(jid, node)
+function DiscoCacheEntry(jid, node, isCapsNode)
 {
-    if (DiscoCacheEntry.prototype.cache[jid])
-        return DiscoCacheEntry.prototype.cache[jid]
+    if (isCapsNode) {
+        if (this.capsCache[node])
+            return this.capsCache[node];
+        this.capsCache[node] = this;
+    } else {
+        var id = jid + (node ? "#"+node : "");
+        if (this.cache[id])
+            return this.cache[id];
+        this.cache[id] = this;
+    }
+
     this.jid = jid;
     this.node = node;
-    DiscoCacheEntry.prototype.cache[jid] = this;
+    this._isCapsNode = isCapsNode;
+
     return this;
 }
+
 
 _DECL_(DiscoCacheEntry).prototype =
 {
     cache: {},
+    capsCache: {},
+
+    requestDiscoInfo: function(featureName, forceUpdate, callback)
+    {
+        if (!this.discoInfo)
+            if (this.capsNode) {
+                this._populateDiscoInfoFromCaps(featureName, callback);
+                if (!this.discoInfo)
+                    return null;
+            } else if (this._isCapsNode)
+                this._populateDiscoInfoFromCapsCache();
+
+        if (!callback)
+            return this._feature(featureName);
+
+        if (!this.discoInfo || (!this.capsNode && !this._isCapsNode && forceUpdate)) {
+            if (!this.discoInfoCallbacks) {
+                var iq = new JSJaCIQ();
+                iq.setIQ(this.jid, null, "get");
+                iq.setQuery("http://jabber.org/protocol/disco#info");
+                if (this.node)
+                    iq.getQuery().setAttribute("node", this.node);
+                con.send(iq, function(pkt, _this) { _this._gotDiscoInfo(pkt) }, this);
+                this.discoInfoCallbacks = [[featureName, callback]];
+            } else
+                this.discoInfoCallbacks.push([featureName, callback]);
+            return null;
+        }
+        callback(this._feature(featureName), this);
+
+        return this._feature(featureName);
+    },
 
     requestDiscoItems: function(forceUpdate, callback)
     {
@@ -20,48 +63,139 @@ _DECL_(DiscoCacheEntry).prototype =
         if (!this.discoItems || forceUpdate) {
             if (!this.discoItemsCallbacks) {
                 var iq = new JSJaCIQ();
-                iq.setIQ(this.discoJID || this.jid, null, "get");
+                iq.setIQ(this.jid, null, "get");
                 iq.setQuery("http://jabber.org/protocol/disco#items");
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);
-                con.send(iq, function(pkt, _this) { _this.gotDiscoItems(pkt) }, this);
+                con.send(iq, function(pkt, _this) { _this._gotDiscoItems(pkt) }, this);
                 this.discoItemsCallbacks = [callback];
             } else
                 this.discoItemsCallbacks.push(callback);
             return null;
         }
-        callback(this.discoItems);
+        callback(this.discoItems, this);
 
         return this.discoItems;
     },
 
-    requestDiscoInfo: function(name, forceUpdate, callback)
+    updateCapsInfo: function(caps)
     {
-        if (!callback)
-            return name ? this.discoFeatures ? name in this.discoFeatures : null :
-                this.discoIdentity;
+        var [node, ver, ext] = [this.capsNode, this.capsVer, this.capsExt];
 
-        if (!this.discoFeatures || forceUpdate) {
-            if (!this.discoInfoCallbacks) {
-                var iq = new JSJaCIQ();
-                iq.setIQ(this.discoJID || this.jid, null, "get");
-                iq.setQuery("http://jabber.org/protocol/disco#info");
-                if (this.node)
-                    iq.getQuery().setAttribute("node", this.node);
-                con.send(iq, function(pkt, _this) { _this.gotDiscoInfo(pkt) }, this);
-                this.discoInfoCallbacks = [[name, callback]];
-            } else
-                this.discoInfoCallbacks.push([name, callback]);
-            return null;
-        }
-        var ret = name ? this.discoFeatures ? name in this.discoFeatures : null :
-            this.discoIdentity;
-        callback(ret);
+        this.capsNode = caps.getAttribute("node");
+        this.capsVer = caps.getAttribute("ver");
+        this.capsExt = (caps.getAttribute("ext") || "").split(/\s+/);
 
-        return ret;
+        if (node != this.capsNode || ver != this.capsVer ||
+            ext.sort().join(" ") != this.capsExt.sort().join(" "))
+            this.discoInfo = null;
     },
 
-    gotDiscoItems: function(pkt)
+    destroy: function()
+    {
+        if (!this._isCapsNode)
+            delete this.cache[this.jid + (this.node ? "" : "#"+this.node)];
+    },
+
+    _feature: function(featureName)
+    {
+        if (featureName == null)
+            return this.discoInfo;
+        if (featureName == "")
+            return this.discoInfo.identity;
+        return featureName in this.discoInfo.features;
+    },
+
+    _populateDiscoInfoFromCaps: function(featureName, callback)
+    {
+        var nodes = [this.capsVer].concat(this.capsExt);
+        var infos = [];
+        var capsCallback, capsCallbackData;
+
+        for (var i = 0; i < nodes.length; i++) {
+            var ce = new DiscoCacheEntry(this.jid, this.capsNode+"#"+nodes[i],
+                                         true);
+            var info = ce.requestDiscoInfo();
+            if (info) {
+                if (infos.length == i)
+                    infos.push(info);
+            } else if (callback) {
+                if (!capsCallback)
+                    capsCallback = new Callback(this._gotCapsInfo, this).
+                        addArgs(capsCallbackData = {}, featureName, callback);
+                capsCallbackData[this.capsNode+"#"+nodes[i]] = 1;
+                ce.requestDiscoInfo(null, false, capsCallback);
+            }
+        }
+
+        if (infos.length == nodes.length) {
+            this.discoInfo = {
+                identity: infos[0].identity,
+                features: {}
+            }
+            for (var i = 0; i < infos.length; i++)
+                for (var j in infos[i].features)
+                    this.discoInfo.features[j] = 1
+        }
+    },
+
+    _populateDiscoInfoFromCapsCache: function()
+    {
+        var s = account.cache.getValue("caps-"+this.node);
+
+        if (s == null)
+            return;
+
+        s = s.split("\n");
+        this.discoInfo = { features: {} };
+        account.cache.bumpExpirationDate("caps-"+this.node,
+                                         new Date(Date.now()+30*24*60*60*1000));
+
+        if (s[0] || s[1] || s[2])
+            this.discoInfo.identity = {
+                name: s[0],
+                type: s[1],
+                category: s[2]
+            }
+
+        for (var i = 3; i < s.length; i++)
+            this.discoInfo.features[s[i]] = 1;
+    },
+
+    _gotDiscoInfo: function(pkt)
+    {
+        var features = pkt.getQuery().getElementsByTagName("feature");
+        var identity = pkt.getQuery().getElementsByTagName("identity")[0];
+
+        this.discoInfo = { features: {} };
+
+        if (identity)
+            this.discoInfo.identity = {
+                name: identity.getAttribute("name"),
+                type: identity.getAttribute("type"),
+                category: identity.getAttribute("category")
+            };
+
+        var vals = []
+        for (var i = 0; i < features.length; i++)
+            this.discoInfo.features[vals[i] = features[i].getAttribute("var")] = 1;
+
+        for (i = 0; i < this.discoInfoCallbacks.length; i++) {
+            var [featureName, callback] = this.discoInfoCallbacks[i];
+            callback(this._feature(featureName), this);
+        }
+
+        if (this._isCapsNode) {
+            with (this.discoInfo.identity||{name:"", type:"", category:""})
+                vals.unshift(name||"", type||"", category||"");
+            account.cache.setValue("caps-"+this.node, vals.join("\n"),
+                                   new Date(Date.now()+30*24*60*60*1000));
+        }
+
+        delete this.discoInfoCallbacks;
+    },
+
+    _gotDiscoItems: function(pkt)
     {
         var items = pkt.getQuery().
             getElementsByTagNameNS("http://jabber.org/protocol/disco#items", "item");
@@ -73,109 +207,91 @@ _DECL_(DiscoCacheEntry).prototype =
                                                items[i].getAttribute("node")));
 
         for (var i = 0; i < this.discoItemsCallbacks.length; i++)
-            this.discoItemsCallbacks[i].call(null, this.discoItems);
+            this.discoItemsCallbacks[i].call(null, this.discoItems, this);
 
         delete this.discoItemsCallbacks;
     },
 
-    gotDiscoInfo: function(pkt)
+    _gotCapsInfo: function(info, item, nodes, featureName, callback)
     {
-        var features = pkt.getQuery().getElementsByTagName("feature");
-        var identity = pkt.getQuery().getElementsByTagName("identity")[0];
+        delete nodes[item.node];
+        if (nodes.__count__ != 0)
+            return;
 
-        if (identity)
-            this.discoIdentity = {
-                name: identity.getAttribute("name"),
-                type: identity.getAttribute("type"),
-                category: identity.getAttribute("category")
-            };
-
-        this.discoFeatures = {};
-        for (var i = 0; i < features.length; i++)
-            this.discoFeatures[features[i].getAttribute("var")] = 1;
-
-        for (i = 0; i < this.discoInfoCallbacks.length; i++) {
-            var [name, callback] = this.discoInfoCallbacks[i];
-
-            callback(name ? this.discoFeatures ? name in this.discoFeatures : null :
-                     this.discoIdentity);
-        }
-        delete this.discoInfoCallbacks;
+        this._populateDiscoInfoFromCaps();
+        callback(this._feature(featureName), this);
     }
 }
 
 function DiscoItem(jid, name, node)
 {
-    this.jid = jid;
-    this.name = name;
-    this.node = node;
+    this.discoJID = jid;
+    this.discoName = name;
+    this.discoNode = node;
 }
 
 _DECL_(DiscoItem).prototype =
 {
+    get _discoCacheEntry()
+    {
+        return META.ACCESSORS.replace(this, "_discoCacheEntry",
+            new DiscoCacheEntry(this.discoJID || this.jid, this.discoNode));
+    },
+
+    updateCapsInfo: function(node)
+    {
+        this._discoCacheEntry.updateCapsInfo(node);
+    },
+
     hasDiscoFeature: function(name, forceUpdate, callback)
     {
-        if (!this._discoCacheEntry)
-            this._discoCacheEntry = new DiscoCacheEntry(this.discoJID || this.jid);
-        return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate,
-            callback && new Callback(callback).fromCons(3));
+        return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate, callback);
     },
 
     getDiscoIdentity: function(forceUpdate, callback)
     {
-        if (!this._discoCacheEntry)
-            this._discoCacheEntry = new DiscoCacheEntry(this.discoJID || this.jid);
-        return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate,
-            callback && new Callback(callback).fromCons(2));
+        return this._discoCacheEntry.requestDiscoInfo("", forceUpdate, callback);
+    },
+
+    getDiscoInfo: function(forceUpdate, callback)
+    {
+        return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate, callback);
     },
 
     getDiscoItems: function(forceUpdate, callback)
     {
-        if (!this._discoCacheEntry)
-            this._discoCacheEntry = new DiscoCacheEntry(this.discoJID || this.jid);
-        return this._discoCacheEntry.requestDiscoItems(forceUpdate,
-            callback && new Callback(callback).fromCons(2));
+        return this._discoCacheEntry.requestDiscoItems(forceUpdate, callback);
     },
 
     getDiscoItemsByCategory: function(category, type, forceUpdate, callback)
     {
         if (callback)
-            this.getDiscoItems(forceUpdate,
-                new Callback(this._gotDiscoItems, this).fromCons(0,3).
-                    addArgs(new Callback(callback).fromCons(4)));
+            this.getDiscoItems(forceUpdate, new Callback(this._gotDiscoItems, this).
+                addArgs(category, type, forceUpdate, callback));
 
-        return this._getDiscoItemsByCategory(category);
-    },
-
-    _gotDiscoItems: function(items, category, type, forceUpdate, callback)
-    {
-        for (var i = 0; i < items.length; i++)
-            items[i].getDiscoIdentity(forceUpdate,
-                new Callback(this._gotDiscoIdentity, this).
-                    addArgs(category, type, callback, items[i]));
-    },
-
-    _gotDiscoIdentity: function(identity, category, type, callback, item)
-    {
-        if (!identity)
-            return;
-        if ((category == null || identity.category == category) &&
-            (type == null || identity.type == type))
-            callback.call(null, item);
-    },
-
-    _getDiscoItemsByCategory: function(category, type)
-    {
         if (!this.getDiscoItems())
             return [];
 
-        var i, ret = [], items = this.getDiscoItems();
-        for (i = 0; i < items.length; i++) {
+        var ret = [], items = this.getDiscoItems();
+        for (var i = 0; i < items.length; i++) {
             var id = items[i].getDiscoIdentity();
             if (id && (category == null || id.category == category) &&
                     (type == null || id.type == type))
                 ret.push(items[i]);
         }
         return ret;
+    },
+
+    _gotDiscoItems: function(items, category, type, forceUpdate, callback)
+    {
+        for (var i = 0; i < items.length; i++)
+            items[i].getDiscoIdentity(forceUpdate, new Callback(this._gotDiscoIdentity, this).
+                addArgs(category, type, callback, items[i]));
+    },
+
+    _gotDiscoIdentity: function(id, category, type, callback, item)
+    {
+        if (id && (category == null || id.category == category) && (type == null || id.type == type))
+            callback.call(null, this.getDiscoItemsByCategory(category, type), item);
     }
 }
