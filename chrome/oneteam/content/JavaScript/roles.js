@@ -271,9 +271,10 @@ var META = {
     ACCESSORS: {
         replace: function(_this, name, newValue) {
             delete _this[name];
-            var p = _this.__proto__;
+            var proto = _this.__proto__;
+            _this.__proto__ = {};
             _this[name] = newValue;
-            this.__proto__ = p;
+            _this.__proto__ = proto;
             return newValue;
         }
     }
