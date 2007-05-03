@@ -14,6 +14,33 @@ _DECL_(ServicesManager).prototype =
     _capsPrefix: "http://oneteam.im/caps",
     _capsVersion: "1.0_1",
 
+    /**
+     * Register new handler for iq stanzas from given namespace.
+     *
+     * Each handler will be called with two arguments, JSJaC request packet
+     * and IQ query node converted to E4X.
+     *
+     * Handler can return E4X or DOM value which will be inserted into
+     * generated reply IQ stanza (stanza with <code>type</code> <em>result</em>,
+     * <code>id</code> copied from request stanza) and sent back. Alternatively
+     * hander can return hash with fields to (jid of recipient), type
+     * (IQ stanza type), dom and e4x (which will be inserted into reply IQ
+     * stanza). Any field can be omitted. Handler can also return
+     * <em>null</em> which indicates that no stanza should be sent, or
+     * <em>0</em> for which bad-request error will be sent.
+     *
+     * @tparam String ns   Namespace of IQ stanzas which registered handled
+     *  should handle.
+     * @tparam Function handler   Function or Generator which should handle
+     *  requests.
+     * @tparam String capsExt   Name of entity caps extension in which should
+     *  be namespace <code>ns</code> registered. If <em>null</em> is passed
+     *  namespace will be visible in main entity caps block.
+     * @tparam bool dontShowInDisco   If <em>true</em> namespace
+     *  <code>ns</code> will not be visible in disco or entity caps responses.
+     *
+     *  @public
+     */
     addIQService: function(ns, handler, capsExt, dontShowInDisco)
     {
         this._iqHandlers[ns] = handler;
@@ -21,6 +48,24 @@ _DECL_(ServicesManager).prototype =
             this.publishDiscoInfo(ns, capsExt);
     },
 
+    /**
+     * Register new handler for extension in message stanzas.
+     *
+     * Each handler will be called with three arguments, JSJaC request packet,
+     * extension DOM node, and requestor jid.
+     *
+     * Handler should return <em>2</em> to indicate that this message shouldn't
+     * be further processed, <em>1</em> to stop other extensions processing,
+     * but showing this message in chat pane, or any other value to continuing
+     * processing with other extensions handlers.
+     *
+     * @tparam String ns   Namespace of message stanzas extension which should
+     *  be handled by <code>handler</code>.
+     * @tparam Function handler   Function or Generator which should handle
+     *  requests.
+     *
+     *  @public
+     */
     addMessageService: function(ns, handler)
     {
         this._messageHandlers[ns] = handler;
