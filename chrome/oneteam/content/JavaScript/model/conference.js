@@ -77,6 +77,7 @@ _DECL_(Conference, Contact).prototype =
         this._password = password;
 
         if (!this.joined) {
+            this._joinRequested = true;
             this._callback = new Callback(callback).fromCons(1);
             this._addedToRegistry = true;
             account._onConferenceAdded(this);
@@ -110,7 +111,7 @@ _DECL_(Conference, Contact).prototype =
 
     exitRoom: function(reason)
     {
-        if (!this.joined)
+        if (!this._joinRequested && !this.joined)
             return;
 
         this._sendPresence(new Presence("unavailable", reason));
@@ -132,6 +133,7 @@ _DECL_(Conference, Contact).prototype =
         }
 
         this.joined = false;
+        this._joinRequested = false;
         delete this._myResourceJID;
         delete this._password;
         delete this._callback;
@@ -349,6 +351,7 @@ _DECL_(Conference, Contact).prototype =
         var errorTag, errorMsg;
 
         delete this._myResourceJID;
+        this._joinRequested = false;
 
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
