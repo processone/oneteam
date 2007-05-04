@@ -61,7 +61,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/views/conference.js"/>
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
-	<script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
+  <script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
     function updateContactContextMenu(menu, event)

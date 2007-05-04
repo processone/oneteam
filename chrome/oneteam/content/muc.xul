@@ -39,11 +39,13 @@
   <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/xmpptypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/disco.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/styles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/dataforms.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/services/manager.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/services/rosterx.js"/>
   <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
