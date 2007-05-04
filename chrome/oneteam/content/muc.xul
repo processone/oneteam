@@ -102,10 +102,16 @@
         !menu.view.activeItem.iAmAdmin;
     }
 
-    function roomConnected() {
-      document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
-      document.getElementById("login-signin").disabled = false;
+    function roomConnected(pkt, errorTag, errorMsg) {
       document.getElementById("login-progress").style.visibility = "hidden";
+      document.getElementById("login-signin").disabled = false;
+
+      if (pkt.getType() == "error") {
+        alert(errorMsg);
+        return;
+      }
+
+      document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
     }
 
     function connectRoom() {
