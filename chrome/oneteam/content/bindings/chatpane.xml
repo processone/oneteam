@@ -442,8 +442,11 @@
                 this.dispatchEvent(ev);
 
                 var body = this.content;
-                if (!(this._model instanceof Conference))
-                  this.addMessage(new Message(body, null, account.myResource, 0));
+                if (!(this._model instanceof Conference)) {
+                  var myResource = this._model instanceof ConferenceMember ?
+                    this._model.contact.myResource : account.myResource;
+                  this.addMessage(new Message(body, null, myResource, 0));
+                }
 
                 if (!this._thread)
                   this._thread = new MessageThread();
