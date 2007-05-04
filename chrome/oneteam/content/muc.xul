@@ -207,7 +207,7 @@
 
     for each (var i in search.split("&")) {
       i = i.split("=", 2);
-      args[i[0]] = i[1];
+      args[decodeURIComponent(i[0])] = decodeURIComponent(i[1]);
     }
 
     function onLoad() {
