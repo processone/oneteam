@@ -401,6 +401,12 @@ _DECL_(Conference, Contact).prototype =
 
         if (errorTag)
             this._exitRoomCleanup();
+        else
+            this.getDiscoIdentity(false, new Callback(function(info) {
+                if (!info || !info.name) return;
+                this.visibleName = info.name;
+                this.modelUpdated("visibleName");
+            }, this));
 
         return false;
     },

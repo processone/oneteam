@@ -20,7 +20,7 @@
         </xul:vbox>
         <xul:vbox flex="1">
           <xul:hbox align="center">
-            <xul:label id="name"/>
+            <xul:label id="name" crop="end"/>
             <xul:label flex="1" crop="end" id="jid"/>
           </xul:hbox>
           <xul:description id="subject" hidden="true"/>
