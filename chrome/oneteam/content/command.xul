@@ -7,10 +7,10 @@
         xmlns:html="http://www.w3.org/1999/xhtml"
         width="640" height="480"
         screenX="10" screenY="10"
-        onload="onload()"
+        onload="onload()" onunload="onunload()"
         persist="screenX screenY width height sizemode">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>                            
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
 
     <script type="application/x-javascript;version=1.7"><![CDATA[
@@ -55,6 +55,13 @@
 
         function onload() {
             document.getElementById("inputexec").focus();
+            window.opener.console =  {
+                info: function(msg) { dump(msg) }
+            }
+        }
+
+        function onunload() {
+            delete window.opener.console;
         }
 
         var ev;
