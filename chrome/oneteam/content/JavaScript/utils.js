@@ -117,7 +117,7 @@ function StorageWrapper(prefix)
 
     var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*$/, "$1");
 
-    this.storage = window.globalStorage[document.location.host];
+    this.storage = window.globalStorage[document.location.host.replace(/:\d+$/, "")];
     this.prefix = schema+":"+prefix+":";
 }
 

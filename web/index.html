@@ -54,7 +54,7 @@
     </style>
     <script type="text/javascript">
       try {
-        window.storage = window.globalStorage[document.location.host];
+        window.storage = window.globalStorage[document.location.host.replace(/:\d+$/, "")];
       } catch (ex) {};
 
       var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*/, "$1");
