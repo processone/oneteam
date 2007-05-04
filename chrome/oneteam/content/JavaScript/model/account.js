@@ -316,9 +316,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     connect: function()
     {
 // #ifdef XULAPP
+        var domain = this.connectionInfo.domain || this.connectionInfo.host;
         var httpbase = "http://"+this.connectionInfo.host+":"+
             this.connectionInfo.port+"/"+this.connectionInfo.base+"/";
 /* #else
+        var domain = this.connectionInfo.domain || this.connectionInfo.host ||
+            document.location.toString().replace(/(?:jar:)?\w+:\/\/([^:\/]+).*$/, "$1");
         var httpbase = document.location.toString().
             replace(/(?:jar:)?(\w+:\/\/[^:\/]+(?::\d+)?\/).*$/, "$1")+
             this.connectionInfo.base+"/";
@@ -341,14 +344,14 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (this.connectionInfo.user)
             args = {
-                domain: this.connectionInfo.domain||this.connectionInfo.host,
+                domain: domain,
                 username: this.connectionInfo.user,
                 pass: this.connectionInfo.pass,
                 resource: prefManager.getPref("chat.connection.resource") +
                     (this.mucMode ? "MUC":"") };
         else
             args = {
-                domain: this.connectionInfo.domain||this.connectionInfo.host,
+                domain: domain,
                 authtype: "saslanon",
                 resource: prefManager.getPref("chat.connection.resource") +
                     this.mucMode ? "MUC":"" };

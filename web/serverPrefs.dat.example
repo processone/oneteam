@@ -1,5 +1,3 @@
 chat.connection.domain = "xmpp.server.address.tld"
-chat.connection.host = "www.server.address.tld"
 chat.connection.base = "http-poll"
-chat.connection.port = 80
 chat.connection.polling = true
