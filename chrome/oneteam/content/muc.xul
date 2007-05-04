@@ -354,14 +354,10 @@
   </deck>
   <popupset>
     <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
-      <menuitem id="conference-invite" label="Invite contacts to this room..."
-          oncommand="this.parentNode.view.activeItem.onInvite()"/>
       <menuitem id="conference-changeNick" label="Change nick..."
           oncommand="this.parentNode.view.activeItem.onChangeNick()"/>
       <menuitem id="conference-changeSubject" label="Change subject..."
           oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
-      <menuitem id="conference-bookmark" label="Bookmark..."
-          oncommand="this.parentNode.view.activeItem.onBookmark()"/>
 
       <menuseparator/>
       <menuitem id="conference-configuration" label="Configure..."
