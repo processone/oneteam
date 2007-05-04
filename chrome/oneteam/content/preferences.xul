@@ -187,7 +187,7 @@
               <textbox pref="chat.connection.base=value"/>
             </row>
             <checkbox label="Use HTTP-Polling"
-                      pref="chat.connection.base=checked"/>
+                      pref="chat.connection.polling=checked"/>
           </rows>
         </grid>
       </tabpanel>
