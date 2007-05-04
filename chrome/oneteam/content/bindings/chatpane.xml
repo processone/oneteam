@@ -95,27 +95,12 @@
             for (var i = 0; i < account.style.smiles.length; i++)
               account.style.smiles[i].attachStyles(this._output.contentDocument);
 
-            this._output.contentDocument.addEventListener("click", this._onClick, true)
+            this._output.contentDocument.addEventListener("click", linkEventsRedirector, true)
 
             var msgs = this._msgs;
             this._msgs = null;
             for (var i = 0; i < msgs.length; i++)
               this.addMessage(msgs[i]);
-          ]]>
-        </body>
-      </method>
-
-      <method name="_onClick">
-        <parameter name="event"/>
-        <body>
-          <![CDATA[
-            if ((event.button == 0 || event.button == 1) &&
-                event.target.localName.toLowerCase() == "a")
-            {
-              event.preventDefault();
-              event.stopPropagation();
-              openLink(event.target.href);
-            }
           ]]>
         </body>
       </method>

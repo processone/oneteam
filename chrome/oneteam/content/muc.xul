@@ -117,6 +117,9 @@
     function connectRoom() {
       conf = account.getOrCreateConference(document.getElementById("room").value);
       conf.joinRoom(roomConnected, document.getElementById("nick").value);
+      branding = prefManager.getPref("branding.muc."+conf.jid.normalizedJID+".html");
+      if (branding)
+        document.getElementById("brandingDiv").innerHTML = branding;
     }
 
     function connect() {
@@ -345,12 +348,18 @@
         <button id="login-signin" label="Enter Chat" oncommand="connect()"/>
       </hbox>
     </vbox>
-    <hbox id="main-box" flex="1">
-      <chattabbox id="chats" flex="1"/>
-      <splitter id="chats-splitter"/>
-      <richlistbox id="conferences-list" width="250"
-          onselect="this.view.activeItem = this.selectedItem.model"/>
-    </hbox>
+    <vbox flex="1">
+      <description pack="end" style="margin: 0; padding: 0">
+        <div id="brandingDiv" onclick="linkEventsRedirector(event)"
+             xmlns="http://www.w3.org/1999/xhtml"/>
+      </description>
+      <hbox id="main-box" flex="1">
+        <chattabbox id="chats" flex="1"/>
+        <splitter id="chats-splitter"/>
+        <richlistbox id="conferences-list" width="250"
+            onselect="this.view.activeItem = this.selectedItem.model"/>
+      </hbox>
+    </vbox>
   </deck>
   <popupset>
     <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">

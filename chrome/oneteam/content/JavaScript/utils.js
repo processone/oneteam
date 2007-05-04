@@ -50,6 +50,19 @@ function ppFileSize(size)
     return size+" B";
 }
 
+function linkEventsRedirector(event)
+{
+    if (event.target.localName.toLowerCase() != "a")
+        return;
+
+    if (event.name == "click" && event.button != 0 && event.button != 1)
+        return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    openLink(event.target.href);
+}
+
 //#ifdef XULAPP
 function openDialogUniq(type, url, flags)
 {
