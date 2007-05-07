@@ -343,16 +343,16 @@
         <image id="login-logo"/>
       </hbox>
       <vbox id="login-user-box">
-        <label control="room" value="Chat Room:"/>
+        <label control="room" value="&muc.roomname;"/>
         <textbox id="room"/>
       </vbox>
       <vbox id="login-pass-box">
-        <label control="nick" value="Nick Name:"/>
+        <label control="nick" value="&muc.nickname;"/>
         <textbox id="nick" flex="1"/>
       </vbox>
       <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
       <hbox pack="center">
-        <button id="login-signin" label="Enter Chat" oncommand="connect()"/>
+        <button id="login-signin" label="&muc.enterroom;" oncommand="connect()"/>
       </hbox>
     </vbox>
     <vbox flex="1">

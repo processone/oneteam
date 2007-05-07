@@ -388,7 +388,7 @@ _DECL_(Conference, Contact).prototype =
               405: "This room doesn't exist, and can be created only by administrator",
               406: "This room can be accessed only by registered persons",
               407: "You are not member of this room",
-              409: "You nick name is already used, try another nick",
+              409: _("gui", "joinRoomErrorNickAlreadyUsed"),
               503: "This room reached maximum number of uses"
             };
             errorMsg = errorCodesMap[+errorTag.getAttribute("code")] ||

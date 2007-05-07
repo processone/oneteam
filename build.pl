@@ -21,7 +21,7 @@ my $topdir = getcwd;
 my $dir = File::Spec->catdir($topdir, qw(chrome oneteam));
 my %defs = @ARGV;
 my @locales;
-my @disabled_locales = qw(en-GB fr-FR);
+my @disabled_locales = qw(en-GB);
 
 find(sub {
         push @files, $File::Find::name

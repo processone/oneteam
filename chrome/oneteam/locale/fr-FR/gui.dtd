@@ -6,6 +6,13 @@
 <!ENTITY menulagger.servicesDiscovery "Decouverte de service">
 <!ENTITY menulagger.adminTools "Outils d'administration">
 
+<!ENTITY menu.quitter "Quitter">
+<!ENTITY menu.disconnect "Deconnecter">
+<!ENTITY menu.addContact "Ajouter un contact">
+<!ENTITY menu.joinConference "Rejoindre un salon">
+<!ENTITY menu.servicesDiscovery "Decouverte de service">
+<!ENTITY menu.adminTools "Outils d'administration">
+
 <!ENTITY menuConfig.configuration "Config">
 <!ENTITY menuConfig.editinfo "Editer ses infos">
 <!ENTITY menuConfig.plugins "Plugins">
@@ -46,7 +53,7 @@
 <!ENTITY status.Away "Absent">
 <!ENTITY status.Available "Disponible">
 <!ENTITY status.AvailableChat "Disponible pour discuter">
-<!ENTITY status.Dnd "Occupe">
+<!ENTITY status.Dnd "Occupé">
 <!ENTITY status.Undisponible "Non disponible">
 <!ENTITY status.Invisible "Invisible">
 <!ENTITY status.changeMessage "Message d'état">
@@ -70,3 +77,7 @@
 <!ENTITY tooltip.mask "Cacher les contacts hors-ligne">
 
 <!ENTITY Nickname.Change "Changez votre pseudo">
+
+<!ENTITY muc.roomname "Salon :">
+<!ENTITY muc.nickname "Pseudonyme :">
+<!ENTITY muc.enterroom "Entrez dans le salon">
