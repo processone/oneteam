@@ -116,10 +116,15 @@
 
     function connectRoom() {
       conf = account.getOrCreateConference(document.getElementById("room").value);
-      conf.joinRoom(roomConnected, document.getElementById("nick").value);
-      branding = prefManager.getPref("branding.muc."+conf.jid.normalizedJID+".html");
+      var branding = prefManager.getPref("branding.muc."+conf.jid.normalizedJID+".html");
+
+      if (!branding)
+        branding = prefManager.getPref("branding.muc.html");
+
       if (branding)
         document.getElementById("brandingDiv").innerHTML = branding;
+
+      conf.joinRoom(roomConnected, document.getElementById("nick").value);
     }
 
     function connect() {
