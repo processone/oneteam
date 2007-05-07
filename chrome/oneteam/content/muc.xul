@@ -122,7 +122,9 @@
         branding = prefManager.getPref("branding.muc.html");
 
       if (branding)
-        document.getElementById("brandingDiv").innerHTML = branding;
+        try {
+          document.getElementById("brandingDiv").innerHTML = branding;
+        } catch (ex) {}
 
       conf.joinRoom(roomConnected, document.getElementById("nick").value);
     }
