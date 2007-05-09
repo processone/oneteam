@@ -1,6 +1,6 @@
 function checkIfGateway(contact)
 {
-    if ((!contact instanceof Contact))
+    if (!(contact instanceof Contact))
         contact = new Contact(contact, null, null, null, null, true);
 
     contact.getDiscoIdentity(false, new Callback(Gateway.prototype._onGatewayIdentity, contact));
