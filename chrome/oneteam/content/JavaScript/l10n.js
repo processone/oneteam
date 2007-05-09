@@ -84,6 +84,11 @@ _DECL_(L10NServiceBase).prototype =
             return arguments[i-1];
         },
 
+        bool: function(value, trueValue, falseValue)
+        {
+            return value ? trueValue : (falseValue || "");
+        },
+
         number: function(n, length, pad, precison)
         {
             n = precison != null ? (+n).toFixed(precison) : (+n).toString();
