@@ -174,9 +174,12 @@
               return;
             }
 
-            if (!this._mc || this._lastContactId != message.contactId) {
+            if (!this._mc || this._lastContactId != message.contactId ||
+                message.time - this._lastMessageTime > 5*60*1000)
+            {
               this._mc = doc.createElement("div");
               this._lastContactId = message.contactId;
+              this._lastMessageTime = message.time;
 
               if (!(message.contactId in this.colorMap)) {
                 this.colorMap[message.contactId] = this.colorIndex;
