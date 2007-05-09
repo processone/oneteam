@@ -274,15 +274,16 @@
     <implementation>
       <property name="contact" onget="return this._contact">
         <setter><![CDATA[
-          this._contact = val;
-          if (val)
-            this._tab.setAttribute("label", (this._unseenCount == 0 ? "" :
-                                             this._unseenCount == 1 ? "* " : "["+this._unseenCount+"] ") +
-                                   this._contact ? this._contact.visibleName : "");
-          else
-            this._tab.setAttribute("label", "");
+          if (this._contact && this._token)
+            this._contact.unregisterView(this._token)
 
+          this._contact = val;
           this._chatpane.model = val;
+
+          this._onNameChange();
+
+          if (val)
+            this._token = val.registerView(this._onNameChange, this, "visibleName");
         ]]></setter>
       </property>
 
@@ -299,8 +300,7 @@
           this._tabbox.unseenCount += val - this._unseenCount;
           this._unseenCount = val;
 
-          this._tab.setAttribute("label", (val == 0 ? "" : val == 1 ? "* " : "["+val+"] ") +
-                                  this._contact ? this._contact.visibleName : "");
+          this._onNameChange();
 
           return val;
         ]]></setter>
@@ -318,6 +318,11 @@
           this.contact = contact;
         }
       ]]></constructor>
+
+      <destructor><![CDATA[
+        if (this._contact && this._token)
+          this._contact.unregisterView(this._token);
+      ]]></destructor>
 
       <method name="close">
         <body><![CDATA[
@@ -354,6 +359,15 @@
             this.unseenCount++;
 
           this._chatpane.addMessage(msg, threadID);
+        ]]></body>
+      </method>
+
+      <method name="_onNameChange">
+        <body><![CDATA[
+          var countStr = this._unseenCount == 0 ? "" : this._unseenCount == 1 ?
+            "* " : "["+this._unseenCount+"] ";
+
+          this._tab.setAttribute("label", countStr + (this._contact ? this._contact.visibleName : ""));
         ]]></body>
       </method>
     </implementation>
