@@ -189,13 +189,16 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
         for (var i = 0; i < this.groups.length; i++) {
             if (!(this.groups[i].name in groupsHash)) {
-                this.groups[i]._onContactRemoved(this);
+                if (!this._notVisibleInRoster)
+                    this.groups[i]._onContactRemoved(this);
                 oldState.groups = 1;
             }
             delete groupsHash[this.groups[i].name];
         }
+
         for (i in groupsHash) {
-            groupsHash[i]._onContactAdded(this);
+            if (!this._notVisibleInRoster)
+                groupsHash[i]._onContactAdded(this);
             oldState.groups = 1;
         }
 
@@ -468,7 +471,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
             this.modelUpdated("resources", {added: [resource]}, "activeResource", null, "presence");
         } else
             this.modelUpdated("resources", {added: [resource]});
-        if (notifyGroups)
+        if (notifyGroups && !this._notVisibleInRoster)
             for (var g in this.groupsIterator())
                 g._onContactUpdated(this);
     },
@@ -479,8 +482,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         if (!this.resources.length) {
             this.activeResource = null;
             this.modelUpdated("resources", {removed: [resource]}, "activeResource", null, "presence");
-            for (var g in this.groupsIterator())
-                g._onContactUpdated(this);
+            if (!this._notVisibleInRoster)
+                for (var g in this.groupsIterator())
+                    g._onContactUpdated(this);
             return;
         }
         if (this.activeResource == resource && this._onResourceUpdated(resource, true))
