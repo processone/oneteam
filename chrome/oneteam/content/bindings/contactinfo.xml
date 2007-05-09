@@ -20,7 +20,7 @@
         </xul:vbox>
         <xul:vbox flex="1">
           <xul:description id="name" flex="1">
-            <xul:label id="jid"/>
+            <html:span id="jid"/>
           </xul:description>
           <xul:description id="subject" hidden="true"/>
           <xul:hbox align="center">
@@ -117,13 +117,14 @@
           while (this._name.firstChild != this._jid)
             this._name.removeChild(this._name.firstChild);
 
-          if (this.model) {
-            this._name.insertBefore(document.createTextNode(this.model.visibleName),
-                                    this._jid);
-            this._jid.value = " ("+this.model.jid+")";
-          } else {
-            this._jid.value = "";
-          }
+          while (this._jid.firstChild)
+            this._jid.removeChild(this._jid.firstChild);
+
+          if (!this.model)
+            return;
+
+          this._name.insertBefore(document.createTextNode(this.model.visibleName), this._jid);
+          this._jid.appendChild(document.createTextNode(" ("+this.model.jid+")"));
         ]]></body>
       </method>
 
