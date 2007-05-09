@@ -26,14 +26,14 @@ _DECL_(L10NServiceBase).prototype =
     _unescapeJS: function(str)
     {
         return str.replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
-            function(r, uni, hex, oct, nl, cr, tab, char)
+            function(r, uni, hex, oct, nl, cr, tab, chr)
             {
                 var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
                 if (charCode) return String.fromCharCode(charCode);
                 if (nl) return "\n";
                 if (cr) return "\r";
                 if (tab) return "\t";
-                return char;
+                return chr;
             });
     },
 
@@ -44,7 +44,7 @@ _DECL_(L10NServiceBase).prototype =
 
         var endPos = 0, args, res = "";
         var strParts, argsParts;
-        while (strParts = templRE.exec(str))
+        while ((strParts = templRE.exec(str)))
         {
             endPos = templRE.lastIndex;
             templRE.lastIndex = 0;
@@ -52,7 +52,7 @@ _DECL_(L10NServiceBase).prototype =
                 res += (res ? "+" : "")+uneval(this._unescapeJS(strParts[1]));
 
             args = [];
-            while (argsParts = argsRE.exec(strParts[3]))
+            while ((argsParts = argsRE.exec(strParts[3])))
                 args.push(argsParts[3] ? argsParts[3] :
                         this._unescapeJS(argsParts[1]||argsParts[2]));
 
@@ -106,7 +106,7 @@ _DECL_(L10NServiceBase).prototype =
                     "return arguments["+_("l10n", "plurals.expression")+"]");
             return this._pluralsExpr.apply(null, arguments);
         }
-    },
+    }
 }
 
 //#ifdef XULAPP
@@ -134,7 +134,7 @@ _DECL_(L10NService, L10NServiceBase).prototype =
             this._bundleCache[bundle] = this._service.createBundle(bundle);
 
         return this._bundleCache[bundle].GetStringFromName(id)
-    },
+    }
 }
 
 function _(bundle, id)
@@ -168,4 +168,3 @@ _DECL_(L10NService, L10NServiceBase).prototype =
 //#endif */
 
 var l10nService = new L10NService();
-
