@@ -121,6 +121,9 @@
               doc.body.appendChild(this._content);
             }
 
+            var atBottom = doc.body.scrollTop + doc.body.clientHeight >=
+              doc.body.scrollHeight - 8;
+
             if (message.isSystemMessage) {
               var m = doc.createElement("div");
 
@@ -128,7 +131,8 @@
               m.innerHTML = message.formatedHtml;
               this._content.appendChild(m);
 
-              m.scrollIntoView(true);
+              if (atBottom)
+                m.scrollIntoView(true);
 
               this._mc = this._lastContactId = null;
 
@@ -170,9 +174,11 @@
             var e = doc.createElement("div");
             e.setAttribute("class", "body "+message.classes);
             e.innerHTML = message.formatedHtml;
+
             m.appendChild(e);
 
-            m.scrollIntoView(true);
+            if (atBottom)
+              m.scrollIntoView(true);
           ]]>
         </body>
       </method>
@@ -187,7 +193,6 @@
           ]]>
         </body>
       </method>
-
     </implementation>
   </binding>
 
