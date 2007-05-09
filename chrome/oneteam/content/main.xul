@@ -59,6 +59,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/conference.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/views/gateway.js"/>
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
   <script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
@@ -173,6 +174,7 @@
           this.presenceProfilesView =
             new PresenceProfilesView(document.getElementById("setPresence-profile-dummy"),
                                      this.profileEnable);
+          this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
           document.getElementById("cmd_toggleShowOffline").
             setAttribute("checked", this.rosterView.hideOffline);
           document.getElementById("conference-contextmenu").view = this.conferencesView;
@@ -571,6 +573,7 @@
               command="cmd_disco"/> -->
           <toolbarbutton id="editgroups-button" tooltiptext="Preferences"
               command="cmd_prefs"/>
+          <toolbarseparator id="gateways-separator" hidden="true"/>
         </toolbar>
       </toolbox>
       <hbox flex="1">

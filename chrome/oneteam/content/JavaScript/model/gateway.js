@@ -14,11 +14,18 @@ _DECL_(Gateway, Contact).prototype =
 {
     _onGatewayIdentity: function(info)
     {
-        if (!info || info.category != "gateway")
+        if (this instanceof Gateway || !info || info.category != "gateway")
             return;
 
         // Wrap into Gateway object
         this.__proto__ = Gateway.prototype;
+
+        // Hide from roster
+        if (!this.newItem && !this._notVisibleInRoster) {
+            for (group in this.groupsIterator())
+                group._onContactRemoved(this)
+        }
+        this._notVisibleInRoster = true;
 
         this.gatewayType = info.type;
         this.gatewayName = info.name;
@@ -64,6 +71,16 @@ _DECL_(Gateway, Contact).prototype =
     {
         this.unregister();
         Contact.prototype.remove.call(this);
+    },
+
+    login: function()
+    {
+        this._sendPresence(account._currentPresence);
+    },
+
+    logout: function()
+    {
+        this._sendPresence(new Presence("unavailable"));
     },
 
     requestMapNameForm: function(callback, force)
