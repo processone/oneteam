@@ -116,8 +116,9 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.newItem = false;
         account.contacts[this.jid.normalizedJID] = this;
     }
+
     if (!this.jid.node)
-        this.getDiscoIdentity(false, new Callback(this._checkIfGateway, this));
+        checkIfGateway(this);
 
     account.allContacts[this.jid.normalizedJID] = this;
     this.gateways = account.gateways[this.jid.normalizedJID.domain];
@@ -229,12 +230,6 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         if (this._modelUpdatedCheck(oldState).indexOf("visibleName") >= 0)
             for (i = 0; i < this.resources.length; i++)
                 this.resources[i].modelUpdated("visibleName");
-    },
-
-    _checkIfGateway: function(info)
-    {
-        if (info.category == "gateway")
-            Gateway(this);
     },
 
     _setGateway: function(gateway)

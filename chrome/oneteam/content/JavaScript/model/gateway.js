@@ -1,21 +1,25 @@
+function checkIfGateway(contact)
+{
+    if ((!contact instanceof Contact))
+        contact = new Contact(contact, null, null, null, null, true);
+
+    contact.getDiscoIdentity(false, new Callback(Gateway.prototype._onGatewayIdentity, contact));
+}
+
 function Gateway(contact)
 {
-    if (contact instanceof Contact)
-        contact.__proto__ = Gateway.prototype;
-    else {
-        Contact.call(this, contact, null, null, null, null, true);
-        contact = this;
-    }
-
-    contact.getDiscoIdentity(false, new Callback(contact._onGatewayInfo, contact));
-
-    return contact;
 }
 
 _DECL_(Gateway, Contact).prototype =
 {
-    _onGatewayInfo: function(info)
+    _onGatewayIdentity: function(info)
     {
+        if (!info || info.category != "gateway")
+            return;
+
+        // Wrap into Gateway object
+        this.__proto__ = Gateway.prototype;
+
         this.gatewayType = info.type;
         this.gatewayName = info.name;
         account._onGatewayAdded(this);
