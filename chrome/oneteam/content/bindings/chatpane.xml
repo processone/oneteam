@@ -202,11 +202,6 @@
       <xul:vbox flex="1" smiles-enabled="true">
         <xul:contactinfo id="contactInfo"/>
 
-        <xul:hbox align="center" hidden="true">
-          <xul:button label="Subject:"/>
-          <xul:description id="subject" flex="1">TEST</xul:description>
-        </xul:hbox>
-
         <xul:chatpane-view id="output-pane" flex="1"/>
 
         <xul:toolbox class="toolbox-top">
