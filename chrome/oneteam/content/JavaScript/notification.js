@@ -21,10 +21,8 @@ _DECL_(NotificationScheme).prototype =
 
             if (signed != null) {
                 if (model instanceof ConferenceMember)
-		  this._showInChatPane(__("gui", "roomJoinLeft",
-					  model, (signed ? _("gui", "roomJoined") :
-						  _("gui", "roomLeft"))),
-				       model, true, false);
+					this._showInChatPane(__("gui", "roomJoinLeft", model, signed),
+										 model, true, false);
                 else
                     this._showAlert(this, "<b>"+model.visibleName+"</b> signed "+
                                     (signed ? "in" : "out"), null, "contact",
