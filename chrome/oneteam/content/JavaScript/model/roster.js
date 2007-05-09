@@ -383,6 +383,11 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         this._updateRoster();
     },
 
+    onShowHistory: function()
+    {
+        account.showHistoryManager(this);
+    },
+
     onOpenChat: function()
     {
         if (!this.chatPane || this.chatPane.closed)
@@ -663,6 +668,11 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 this.onOpenChat();
 
         chatPane.addMessage(new Message(packet, null, this), packet.getThread());
+    },
+
+    onShowHistory: function()
+    {
+        account.showHistoryManager(this.contact);
     },
 
     createCompletionEngine: function()

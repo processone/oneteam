@@ -689,6 +689,8 @@
       <menuseparator/>
 
       <menuitem label="&listitemcontext.Infos;" oncommand="activeItem.showVCard()"/>
+      <menuitem label="Show History..."
+        oncommand="activeItem.onShowHistory()"/>
       <!-- #ifdef XULAPP -->
       <menuitem id="contact-send-file" label="Send file..."
         oncommand="activeItem.onSendFile()"/>
@@ -709,10 +711,18 @@
           oncommand="this.parentNode.view.activeItem.onBookmark()"/>
 
       <menuseparator/>
+
       <menuitem id="conference-configuration" label="Configure..."
           oncommand="this.parentNode.view.activeItem.onRoomConfiguration()"/>
       <menuitem id="conference-edit-permissions" label="Edit Permissions..."
           oncommand="this.parentNode.view.activeItem.onEditPermissions()"/>
+
+      <menuseparator/>
+
+      <menuitem label="&listitemcontext.Infos;"
+        oncommand="this.parentNode.view.activeItem.showVCard()"/>
+      <menuitem label="Show History..."
+        oncommand="this.parentNode.view.activeItem.onShowHistory()"/>
 
       <menuseparator/>
 
@@ -753,6 +763,8 @@
       <menuseparator/>
       <menuitem label="&listitemcontext.Infos;"
         oncommand="this.parentNode.view.activeItem.showVCard()"/>
+      <menuitem label="Show History..."
+        oncommand="this.parentNode.view.activeItem.onShowHistory()"/>
       <!-- #ifdef XULAPP -->
       <menuitem id="conferencemember-send-file" label="Send file..."
         oncommand="this.parentNode.view.activeItem.onSendFile()"/>

@@ -202,9 +202,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                        "chrome,centerscreen,modal");
     },
 
-    showHistoryManager: function()
+    showHistoryManager: function(contact)
     {
-        openDialogUniq("ot:history", "history.xul", "chrome,centerscreen,dialog=no");
+        openDialogUniq("ot:history", "history.xul", "chrome,centerscreen,dialog=no",
+                       contact);
     },
 
     showTransfersManager: function()

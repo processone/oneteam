@@ -17,6 +17,7 @@
 
   <script type="text/javascript;version=1.7"><![CDATA[
     account = window.opener.account;
+    contact = window.arguments && window.arguments[0];
 
     function TreeView(tree) {
       this.wrappedJSObject = this;
@@ -144,6 +145,17 @@
       contactsThreads = new TreeView(document.getElementById("contacts-threads"));
       contactsMessages = new MessagesView(document.getElementById("contacts-view"));
 
+      if (contact) {
+        var list = document.getElementById("contacts-list");
+
+        document.getElementById("tabs").collapsed = list.collapsed =
+          list.nextSibling.collapsed = true;
+
+        regToken.merge(account.historyMgr.deliverThreadsWithJid(contactsThreads, null, contact));
+
+        return;
+      }
+
       conferencesList = new TreeView(document.getElementById("conferences-list"));
       conferencesThreads = new TreeView(document.getElementById("conferences-threads"));
       conferencesMessages = new MessagesView(document.getElementById("conferences-view"));
@@ -185,7 +197,7 @@
   ]]></script>
 
   <tabbox flex="1">
-    <tabs>
+    <tabs id="tabs">
 <!-- #ifdef XULAPP -->
       <tab label="Search"/>
 <!-- #endif -->

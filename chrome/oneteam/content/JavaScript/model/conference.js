@@ -669,6 +669,11 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         this.modelUpdated("avatar");
     },
 
+    onShowHistory: function()
+    {
+        account.showHistoryManager(this);
+    },
+
     toString: function()
     {
         return this.jid.resource + (this.realJID ? " ("+this.realJID+")" : "");
