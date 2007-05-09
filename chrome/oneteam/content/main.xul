@@ -560,16 +560,16 @@
           </menu>
         </menubar>
         <toolbar id="icones-toolbar">
-          <toolbarbutton id="adduser-button" tooltiptext="adduser.tooltip"
+          <toolbarbutton id="adduser-button" tooltiptext="Add user"
               command="cmd_addContact"/>
-          <toolbarbutton id="joinroom-button" tooltiptext="joinroom.tooltip"
+          <toolbarbutton id="joinroom-button" tooltiptext="Join room"
               command="cmd_joinRoom"/>
           <toolbarseparator/>
-          <toolbarbutton id="toggleshowoffline-button" tooltiptext="toggleshowoffline.tooltip"
+          <toolbarbutton id="toggleshowoffline-button" tooltiptext="Toggle offline contacts visibility"
               command="cmd_toggleShowOffline"/>
-          <toolbarbutton id="disco-button" tooltiptext="disco.tooltip"
-              command="cmd_disco"/>
-          <toolbarbutton id="editgroups-button" tooltiptext="teditgroups.tooltip"
+          <!-- <toolbarbutton id="disco-button" tooltiptext="disco.tooltip"
+              command="cmd_disco"/> -->
+          <toolbarbutton id="editgroups-button" tooltiptext="Preferences"
               command="cmd_prefs"/>
         </toolbar>
       </toolbox>
