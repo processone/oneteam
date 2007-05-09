@@ -13,16 +13,15 @@
     </resources>
 
     <content>
-      <xul:hbox id="contact-info-box">
+      <xul:hbox id="contact-info-box" flex="1">
         <xul:avatar id="avatar" showBlankAvatar="true"/>
         <xul:vbox id="conferenceIcon" hidden="true">
           <xul:image id="conferenceIconImage"/>
         </xul:vbox>
         <xul:vbox flex="1">
-          <xul:hbox align="center">
-            <xul:label id="name" crop="end"/>
-            <xul:label flex="1" crop="end" id="jid"/>
-          </xul:hbox>
+          <xul:description id="name" flex="1">
+            <xul:label id="jid"/>
+          </xul:description>
           <xul:description id="subject" hidden="true"/>
           <xul:hbox align="center">
             <xul:image id="statusIcon"/>
@@ -115,11 +114,15 @@
 
       <method name="onNameChange">
         <body><![CDATA[
+          while (this._name.firstChild != this._jid)
+            this._name.removeChild(this._name.firstChild);
+
           if (this.model) {
-            this._name.value = this.model.visibleName;
+            this._name.insertBefore(document.createTextNode(this.model.visibleName),
+                                    this._jid);
             this._jid.value = " ("+this.model.jid+")";
           } else {
-            this._name.value = this._jid.value = "";
+            this._jid.value = "";
           }
         ]]></body>
       </method>
