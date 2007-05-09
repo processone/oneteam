@@ -475,6 +475,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.bookmarks._clean();
         servicesManager._clean();
 
+        cleanDiscoCache();
+
         for (var i = 0; i < groups.length; i++)
             if (groups[i].builtinGroup)
                 groups[i]._clean();

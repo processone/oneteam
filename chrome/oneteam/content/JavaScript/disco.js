@@ -18,7 +18,6 @@ function DiscoCacheEntry(jid, node, isCapsNode)
     return this;
 }
 
-
 _DECL_(DiscoCacheEntry).prototype =
 {
     cache: {},
@@ -294,4 +293,9 @@ _DECL_(DiscoItem).prototype =
         if (id && (category == null || id.category == category) && (type == null || id.type == type))
             callback.call(null, this.getDiscoItemsByCategory(category, type), item);
     }
+}
+
+function cleanDiscoCache()
+{
+    DiscoCacheEntry.prototype.cache = {};
 }
