@@ -23,6 +23,8 @@
           var me = this;
 
           this._msgs = [];
+          this._parentEls = [];
+          this._childEls = [];
           this._output = document.getAnonymousElementByAttribute(this, "id", "output");
 // #ifdef XULAPP
           this._output.contentWindow.addEventListener("load", function(){me._onLoad()}, false);
@@ -105,6 +107,45 @@
         </body>
       </method>
 
+      <method name="_addMessage">
+        <parameter name="me"/>
+        <parameter name="parentEl"/>
+        <parameter name="childEl"/>
+        <body><![CDATA[
+          var doc = me._output.contentDocument;
+
+          if (parentEl) {
+            me._scrollToBottom = doc.body.scrollTop + doc.body.clientHeight >=
+              doc.body.scrollHeight - 8;
+
+            var idx = me._parentEls.indexOf(parentEl);
+            if (idx < 0){
+              idx = me._parentEls.length;
+              me._parentEls.push(parentEl);
+              me._childEls.push(doc.createDocumentFragment());
+            }
+            me._childEls[idx].appendChild(childEl);
+
+            if (me._addMessageTimeout)
+              clearTimeout(me._addMessageTimeout)
+            me._addMessageTimeout = setTimeout(me._addMessage, 50, me, null);
+
+            return;
+          }
+
+          for (var i = 0; i < me._parentEls.length; i++)
+            me._parentEls[i].appendChild(me._childEls[i]);
+          me._parentEls = [];
+          me._childEls = [];
+
+          if (me._scrollToBottom) {
+            doc.body.scrollTop = doc.body.scrollHeight;
+            setTimeout(function(body){body.scrollTop = body.scrollHeight},
+                       100, doc.body);
+          }
+        ]]></body>
+      </method>
+
       <method name="addMessage">
         <parameter name="message"/>
         <body>
@@ -121,18 +162,12 @@
               doc.body.appendChild(this._content);
             }
 
-            var atBottom = doc.body.scrollTop + doc.body.clientHeight >=
-              doc.body.scrollHeight - 8;
-
             if (message.isSystemMessage) {
               var m = doc.createElement("div");
 
               m.setAttribute("class", "systemMessage");
               m.innerHTML = message.formatedHtml;
-              this._content.appendChild(m);
-
-              if (atBottom)
-                m.scrollIntoView(true);
+              this._addMessage(this, this._content, m);
 
               this._mc = this._lastContactId = null;
 
@@ -150,12 +185,18 @@
               this._mc.setAttribute("class", "messageChunk");
               this._mc.setAttribute("author-id", message.contactId);
               this._mc.setAttribute("color-id", this.colorMap[message.contactId]);
-              this._content.appendChild(this._mc)
+              this._addMessage(this, this._content, this._mc);
             }
+
+            var freshMc = this._parentEls.indexOf(this._mc) >= 0;
 
             var m = doc.createElement("div");
             m.setAttribute("class", "message");
-            this._mc.appendChild(m);
+
+            if (freshMc)
+              this._mc.appendChild(m);
+            else
+              this._addMessage(this, this._mc, m);
 
             var h = doc.createElement("div");
             h.setAttribute("class", "header");
@@ -176,9 +217,6 @@
             e.innerHTML = message.formatedHtml;
 
             m.appendChild(e);
-
-            if (atBottom)
-              m.scrollIntoView(true);
           ]]>
         </body>
       </method>
