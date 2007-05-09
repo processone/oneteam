@@ -137,6 +137,7 @@ _DECL_(Conference, Contact).prototype =
         delete this._myResourceJID;
         delete this._password;
         delete this._callback;
+        delete this.joinedAt;
 
         if (this.myResource)
             this.myResource._remove();
@@ -374,6 +375,8 @@ _DECL_(Conference, Contact).prototype =
 
         if (this.joined || !this._callback)
             return false;
+
+        this.joinedAt = new Date();
 
         if (pkt.getType() == "error")
             errorTag = pkt.getNode().getElementsByTagName('error')[0];

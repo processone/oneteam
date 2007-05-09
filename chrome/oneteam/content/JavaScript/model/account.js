@@ -372,6 +372,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         }
 
         this.connected = true;
+        this.connectedAt = new Date();
 
         this.myJID = new JID(con.fulljid);
         this.jid = new JID(this.myJID.domain);

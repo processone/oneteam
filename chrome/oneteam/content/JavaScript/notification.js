@@ -19,6 +19,12 @@ _DECL_(NotificationScheme).prototype =
             else if (type.show == "unavailable" && extra.show != "unavailable")
                 signed = false;
 
+			var time = connectionTime = model instanceof ConferenceMember ?
+				model.contact.joinedAt : account.connectedAt;
+
+			if (!time || (Date.now()-time < 5*1024))
+				return;
+
             if (signed != null) {
                 if (model instanceof ConferenceMember)
 					this._showInChatPane(__("gui", "roomJoinLeft", model, signed),
