@@ -23,11 +23,11 @@ _DECL_(DiscoCacheEntry).prototype =
     cache: {},
     capsCache: {},
 
-    requestDiscoInfo: function(featureName, forceUpdate, callback)
+    requestDiscoInfo: function(featureName, forceUpdate, callback, discoItem)
     {
         if (!this.discoInfo)
             if (this.capsNode) {
-                this._populateDiscoInfoFromCaps(featureName, callback);
+                this._populateDiscoInfoFromCaps(featureName, callback, discoItem);
                 if (!this.discoInfo)
                     return null;
             } else if (this._isCapsNode)
@@ -44,17 +44,17 @@ _DECL_(DiscoCacheEntry).prototype =
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);
                 con.send(iq, function(pkt, _this) { _this._gotDiscoInfo(pkt) }, this);
-                this.discoInfoCallbacks = [[featureName, callback]];
+                this.discoInfoCallbacks = [[featureName, callback, discoItem]];
             } else
-                this.discoInfoCallbacks.push([featureName, callback]);
+                this.discoInfoCallbacks.push([featureName, callback, discoItem]);
             return null;
         }
-        callback(this._feature(featureName), this);
+        callback(discoItem, this._feature(featureName));
 
         return this._feature(featureName);
     },
 
-    requestDiscoItems: function(forceUpdate, callback)
+    requestDiscoItems: function(forceUpdate, callback, discoItem)
     {
         if (!callback)
             return this.discoItems;
@@ -67,12 +67,12 @@ _DECL_(DiscoCacheEntry).prototype =
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);
                 con.send(iq, function(pkt, _this) { _this._gotDiscoItems(pkt) }, this);
-                this.discoItemsCallbacks = [callback];
+                this.discoItemsCallbacks = [[callback, discoItem]];
             } else
-                this.discoItemsCallbacks.push(callback);
+                this.discoItemsCallbacks.push([callback, discoItem]);
             return null;
         }
-        callback(this.discoItems, this);
+        callback(discoItem, this.discoItems);
 
         return this.discoItems;
     },
@@ -98,6 +98,8 @@ _DECL_(DiscoCacheEntry).prototype =
 
     _feature: function(featureName)
     {
+        if (!this.discoInfo)
+            return null;
         if (featureName == null)
             return this.discoInfo;
         if (featureName == "")
@@ -105,7 +107,7 @@ _DECL_(DiscoCacheEntry).prototype =
         return featureName in this.discoInfo.features;
     },
 
-    _populateDiscoInfoFromCaps: function(featureName, callback)
+    _populateDiscoInfoFromCaps: function(featureName, callback, discoItem)
     {
         var nodes = [this.capsVer].concat(this.capsExt);
         var infos = [];
@@ -121,7 +123,7 @@ _DECL_(DiscoCacheEntry).prototype =
             } else if (callback) {
                 if (!capsCallback)
                     capsCallback = new Callback(this._gotCapsInfo, this).
-                        addArgs(capsCallbackData = {}, featureName, callback);
+                        addArgs(capsCallbackData = {}, featureName, callback, discoItem);
                 capsCallbackData[this.capsNode+"#"+nodes[i]] = 1;
                 ce.requestDiscoInfo(null, false, capsCallback);
             }
@@ -180,8 +182,8 @@ _DECL_(DiscoCacheEntry).prototype =
             this.discoInfo.features[vals[i] = features[i].getAttribute("var")] = 1;
 
         for (i = 0; i < this.discoInfoCallbacks.length; i++) {
-            var [featureName, callback] = this.discoInfoCallbacks[i];
-            callback(this._feature(featureName), this);
+            var [featureName, callback, discoItem] = this.discoInfoCallbacks[i];
+            callback(discoItem, this._feature(featureName));
         }
 
         if (this._isCapsNode) {
@@ -205,20 +207,22 @@ _DECL_(DiscoCacheEntry).prototype =
                                                items[i].getAttribute("name"),
                                                items[i].getAttribute("node")));
 
-        for (var i = 0; i < this.discoItemsCallbacks.length; i++)
-            this.discoItemsCallbacks[i].call(null, this.discoItems, this);
+        for (var i = 0; i < this.discoItemsCallbacks.length; i++) {
+            var [callback, discoInfo] = this.discoItemsCallbacks[i];
+            callback.call(null, discoInfo, this.discoItems);
+        }
 
         delete this.discoItemsCallbacks;
     },
 
-    _gotCapsInfo: function(info, item, nodes, featureName, callback)
+    _gotCapsInfo: function(capsItem, info, nodes, featureName, callback, discoItem)
     {
         delete nodes[item.node];
         if (nodes.__count__ != 0)
             return;
 
         this._populateDiscoInfoFromCaps();
-        callback(this._feature(featureName), this);
+        callback(discoItem, this._feature(featureName));
     }
 }
 
@@ -242,24 +246,40 @@ _DECL_(DiscoItem).prototype =
         this._discoCacheEntry.updateCapsInfo(node);
     },
 
+    /**
+     * Check if given disco item report feature <em>name</em> as implemented.
+     *
+     * @param name {String}  name of feature to check.
+     * @param forceUpdate {bool}  if <code>true</code> no cached result will be
+     *   reused.
+     * @param callback {Function}  callback which will be called when enough
+     *   informations will be available. Callback will be called with two
+     *   arguments, refence to object on which <code>hasDiscoFeature</code> has
+     *   been called and boolean value indicating that given feature is or
+     *   isn't implemented.
+     *
+     * @returns {bool} <code>true</code> if feature <em>name</em> is
+     *   implemented, <code>false</code> if not, and <code>null</code> if
+     *   this information is not yet available.
+     */
     hasDiscoFeature: function(name, forceUpdate, callback)
     {
-        return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate, callback);
+        return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate, callback, this);
     },
 
     getDiscoIdentity: function(forceUpdate, callback)
     {
-        return this._discoCacheEntry.requestDiscoInfo("", forceUpdate, callback);
+        return this._discoCacheEntry.requestDiscoInfo("", forceUpdate, callback, this);
     },
 
     getDiscoInfo: function(forceUpdate, callback)
     {
-        return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate, callback);
+        return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate, callback, this);
     },
 
     getDiscoItems: function(forceUpdate, callback)
     {
-        return this._discoCacheEntry.requestDiscoItems(forceUpdate, callback);
+        return this._discoCacheEntry.requestDiscoItems(forceUpdate, callback, this);
     },
 
     getDiscoItemsByCategory: function(category, type, forceUpdate, callback)
@@ -268,10 +288,10 @@ _DECL_(DiscoItem).prototype =
             this.getDiscoItems(forceUpdate, new Callback(this._gotDiscoItems, this).
                 addArgs(category, type, forceUpdate, callback));
 
-        if (!this.getDiscoItems())
-            return [];
+        var items = this.getDiscoItems(), ret = [];
+        if (!items)
+            return ret;
 
-        var ret = [], items = this.getDiscoItems();
         for (var i = 0; i < items.length; i++) {
             var id = items[i].getDiscoIdentity();
             if (id && (category == null || id.category == category) &&
@@ -281,17 +301,18 @@ _DECL_(DiscoItem).prototype =
         return ret;
     },
 
-    _gotDiscoItems: function(items, category, type, forceUpdate, callback)
+    _gotDiscoItems: function(discoItem, items, category, type, forceUpdate, callback)
     {
         for (var i = 0; i < items.length; i++)
-            items[i].getDiscoIdentity(forceUpdate, new Callback(this._gotDiscoIdentity, this).
-                addArgs(category, type, callback, items[i]));
+            if (!items[i].node)
+                items[i].getDiscoIdentity(forceUpdate, new Callback(this._gotDiscoIdentity, this).
+                    addArgs(category, type, callback));
     },
 
-    _gotDiscoIdentity: function(id, category, type, callback, item)
+    _gotDiscoIdentity: function(discoItem, id, category, type, callback)
     {
         if (id && (category == null || id.category == category) && (type == null || id.type == type))
-            callback.call(null, this.getDiscoItemsByCategory(category, type), item);
+            callback(this, this.getDiscoItemsByCategory(category, type), discoItem);
     }
 }
 

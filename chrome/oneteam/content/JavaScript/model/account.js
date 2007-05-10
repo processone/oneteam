@@ -388,25 +388,25 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return;
         this.bookmarks.retrieve();
         this.getDiscoItemsByCategory("conference", "text", false,
-                                     function(identity) {
+                                     function(account, items, item) {
                                         if (!account.defaultConferenceServer)
-                                            account.defaultConferenceServer = identity.jid;
+                                            account.defaultConferenceServer = item._discoCacheEntry.jid;
                                      });
         this.getDiscoItemsByCategory("gateway", null, false,
-                                     function(identity) {
-                                        account.getOrCreateContact(identity.jid);
+                                     function(account, items, item) {
+                                        account.getOrCreateContact(item._discoCacheEntry.jid);
                                      });
         if (typeof(socks5Service) == "object")
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
-                                     function(identity) {
+                                     function(account, items, item) {
                                         var bsp = new JSJaCIQ();
-                                        bsp.setIQ(identity.jid, null, "get");
+                                        bsp.setIQ(item._discoCacheEntry.jid, null, "get");
                                         bsp.setQuery("http://jabber.org/protocol/bytestreams");
                                         con.send(bsp, account._proxyAddress);
                                      });
         // Enable auto archiving
         this.hasDiscoFeature("http://www.xmpp.org/extensions/xep-0136.html#ns", false,
-                             function (value) {
+                             function (account, value) {
                                 if (!value)
                                     return;
                                 var pkt = new JSJaCIQ();

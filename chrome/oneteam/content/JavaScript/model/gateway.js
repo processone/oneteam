@@ -12,9 +12,9 @@ function Gateway(contact)
 
 _DECL_(Gateway, Contact).prototype =
 {
-    _onGatewayIdentity: function(info)
+    _onGatewayIdentity: function(contact, identity)
     {
-        if (this instanceof Gateway || !info || info.category != "gateway")
+        if (this instanceof Gateway || !identity || identity.category != "gateway")
             return;
 
         // Wrap into Gateway object
@@ -27,8 +27,8 @@ _DECL_(Gateway, Contact).prototype =
         }
         this._notVisibleInRoster = true;
 
-        this.gatewayType = info.type;
-        this.gatewayName = info.name;
+        this.gatewayType = identity.type;
+        this.gatewayName = identity.name;
         account._onGatewayAdded(this);
 
         for (var i in account.allContacts) {

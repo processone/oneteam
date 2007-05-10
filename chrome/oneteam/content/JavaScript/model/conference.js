@@ -405,11 +405,7 @@ _DECL_(Conference, Contact).prototype =
         if (errorTag)
             this._exitRoomCleanup();
         else
-            this.getDiscoIdentity(true, new Callback(function(info) {
-                if (!info || !info.name) return;
-                this.visibleName = info.name;
-                this.modelUpdated("visibleName");
-            }, this));
+            this._getRoomName();
 
         return false;
     },
@@ -426,6 +422,16 @@ _DECL_(Conference, Contact).prototype =
 
     onAvatarChange: function()
     {
+    },
+
+    _getRoomName: function()
+    {
+        this.getDiscoIdentity(true, function(conference, info) {
+            if (!info || !info.name)
+                return;
+            conference.visibleName = info.name;
+            conference.modelUpdated("visibleName")
+        });
     },
 
     _checkForSubject: function(pkt, jid)
