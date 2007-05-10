@@ -3,21 +3,26 @@ function StylesRegistry(cache)
     this.smiles = [];
     this.statusIcons = [];
     this.iconStyles = [];
+    this.cache = cache;
 
     this.init();
 
-    this.cache = cache;
+    var styles = (cache.getValue["iconStyles"] || "").split(/\n/);
+    var stylesUrls = {};
 
-    var styles = cache.getValue["iconStyles"];
-    if (!styles)
-        styles = "chrome://oneteam/content/data/smiles/oneteam\n"+
-            "chrome://oneteam/content/data/status-icons/oneteam\n"+
-            "chrome://oneteam/content/data/status-icons/crystal\n"+
-            "chrome://oneteam/content/data/status-icons/dcraven";
-
-    styles = styles.split(/\n/);
-    for (var i = 0; i < styles.length; i++)
+    for (var i = 0; i < styles.length; i++) {
+        stylesUrls[styles[i]] = 1;
         this._registerIconSetFromUrl(styles[i]);
+    }
+
+    styles = ["chrome://oneteam/content/data/smiles/oneteam",
+              "chrome://oneteam/content/data/status-icons/oneteam",
+              "chrome://oneteam/content/data/status-icons/crystal",
+              "chrome://oneteam/content/data/status-icons/dcraven"]
+
+    for (i = 0; i < styles.length; i++)
+        if (!stylesUrls[styles[i]])
+            this._registerIconSetFromUrl(styles[i]);
 }
 
 _DECL_(StylesRegistry, null, Model).prototype =
