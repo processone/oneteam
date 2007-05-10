@@ -537,7 +537,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
     getStatusIcon: function()
     {
-        return account.style.getStatusIcon(this.activeResource || "unavailable");
+        return account.style.getStatusIcon(this.activeResource || this);
     }
 }
 
