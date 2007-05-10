@@ -10,7 +10,7 @@ function Presence(show, status, priority, profile)
         this.status = pkt.getStatus()
         this.priority = pkt.getPriority();
     } else {
-        this.show = show;
+        this.show = show == null ? "available" : show;
         this.status = status;
         this.priority = priority;
     }

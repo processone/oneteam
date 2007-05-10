@@ -75,7 +75,7 @@ _DECL_(Gateway, Contact).prototype =
 
     login: function()
     {
-        this._sendPresence(account._currentPresence);
+        this._sendPresence(account.currentPresence);
     },
 
     logout: function()

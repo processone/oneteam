@@ -89,7 +89,7 @@ _DECL_(GatewaysToolbarButtons, null, ContainerView).prototype =
             this._visibleItems.splice(idx);
 
         this.gatewaysSeparator.hidden = this._visibleItems.length == 0;
-    },
+    }
 }
 
 function GatewayToolbarButton(model, parentView)
@@ -118,7 +118,8 @@ _DECL_(GatewayToolbarButton).prototype =
     onPresenceUpdated: function()
     {
         this.node.setAttribute("image", this.model.getStatusIcon());
-        this.node.setAttribute("checked", !!this.model.activeItem);
+        this.node.setAttribute("checked", !!this.model.activeResource);
+        this.node.checked = !!this.model.activeResource;
     },
 
     onNewItemChange: function()
