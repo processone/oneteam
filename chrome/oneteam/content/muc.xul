@@ -59,6 +59,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/conference.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/views/gateway.js"/>
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
   <script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
@@ -376,6 +377,7 @@
           oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
 
       <menuseparator/>
+
       <menuitem id="conference-configuration" label="Configure..."
           oncommand="this.parentNode.view.activeItem.onRoomConfiguration()"/>
       <menuitem id="conference-edit-permissions" label="Edit Permissions..."
@@ -418,6 +420,7 @@
       </menu>
 
       <menuseparator/>
+
       <menuitem label="&listitemcontext.Infos;"
         oncommand="this.parentNode.view.activeItem.showVCard()"/>
       <!-- #ifdef XULAPP -->
