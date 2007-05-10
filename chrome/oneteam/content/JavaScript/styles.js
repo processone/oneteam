@@ -279,15 +279,14 @@ _DECL_(StatusIconStyle, IconStyle).prototype =
 
         if (resource && (resource instanceof Resource || resource instanceof Contact)) {
             var contact = resource instanceof Resource ? resource.contact : resource;
+
             if (!force && !(this.filter && this.filter(contact)))
                 return null;
 
             show = resource.presence.show;
-            if (!(resource instanceof ConferenceMember)) {
-                if (!contact.canSeeHim)
-                    specialIcon = contact.subscriptionAsk ?
-                        "status/ask" : "status/noauth";
-            }
+            if (!(resource instanceof ConferenceMember || contact.canSeeHim))
+                specialIcon = contact.subscriptionAsk ?
+                    "status/ask" : "status/noauth";
         } else if (!force)
             return null;
 
