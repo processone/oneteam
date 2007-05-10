@@ -285,7 +285,7 @@ _DECL_(StatusIconStyle, IconStyle).prototype =
             show = resource.presence.show;
             if (!(resource instanceof ConferenceMember)) {
                 if (!contact.canSeeHim)
-                    specialIcon = resource.contact.subscriptionAsk ?
+                    specialIcon = contact.subscriptionAsk ?
                         "status/ask" : "status/noauth";
             }
         } else if (!force)
