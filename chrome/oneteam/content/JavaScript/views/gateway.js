@@ -102,7 +102,7 @@ function GatewayToolbarButton(model, parentView)
     this.node.setAttribute("tooltiptext", model.gatewayName + " ("+model.jid+")");
     this.node.setAttribute("oncommand", "this.checked ? this.model.logout() : this.model.login()")
     this.node.setAttribute("context", "gateway-contextmenu");
-    this.node.setAttribute("onmousedown", "this._contextMenu.activeItem = this.model");
+    this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
 
     this.node.model = this.model;
     this.node.view = this;

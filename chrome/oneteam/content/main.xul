@@ -65,8 +65,7 @@
   <script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
-    function updateContactContextMenu(menu, event)
-    {
+    function updateContactContextMenu(menu, event) {
       if (event.target != menu)
         return;
 
@@ -75,19 +74,22 @@
       var im = document.getElementById("contact-invite");
       var sf = document.getElementById("contact-send-file");
 
-      sf.hidden = !activeItem.activeResource;
+      sf.hidden = !menu.model.activeResource;
 
-      cm.hidden = !(cs.hidden = activeItem.resources.length > 1);
+      cm.hidden = !(cs.hidden = menu.model.resources.length > 1);
       if (cs.hidden) {
         var list = cm.firstChild;
         while (list && list.firstChild)
           list.removeChild(list.firstChild);
-        for (var i = 0; i < activeItem.resources.length; i++) {
+        for (var i = 0; i < menu.model.resources.length; i++) {
           var item = document.createElement("menuitem");
-          item.setAttribute("label", activeItem.resources[i].jid.resource+" ("+
-            activeItem.resources[i].priority+")");
+          item.model = menu.model.resources[i];
+
+          item.setAttribute("label", item.model.jid.resource+
+            (item.model.presence.priority == null ?
+             "" : " ("+item.model.presence.priority+")"));
           item.setAttribute("oncommand", "this.model.onOpenChat()");
-          item.model = activeItem.resources[i];
+
           list.appendChild(item);
         }
       }
@@ -102,25 +104,24 @@
           item.setAttribute("label", account.conferences[i].jid);
           item.setAttribute("oncommand", "this.model.invite(this.contact)");
           item.model = account.conferences[i];
-          item.contact = activeItem.jid;
+          item.contact = menu.model.jid;
           list.appendChild(item);
         }
       }
 
       document.getElementById("contact-authorisation-ask").
-        setAttribute("disabled", activeItem.canSeeHim);
+        setAttribute("disabled", menu.model.canSeeHim);
       document.getElementById("contact-authorisation-allow").
-        setAttribute("disabled", activeItem.canSeeMe);
+        setAttribute("disabled", menu.model.canSeeMe);
       document.getElementById("contact-authorisation-disallow").
-        setAttribute("disabled", !activeItem.canSeeMe);
+        setAttribute("disabled", !menu.model.canSeeMe);
     }
 
-    function updateConferenceMemberContextMenu(menu, event)
-    {
+    function updateConferenceMemberContextMenu(menu, event) {
       if (event.target != menu)
         return;
 
-      var confMemb = menu.view.activeItem;
+      var confMemb = menu.model;
       var conf = confMemb.contact;
 
       var kick = document.getElementById("conferencemember-kick");
@@ -145,17 +146,17 @@
       var configuration = document.getElementById("conference-configuration");
       var permissions = document.getElementById("conference-edit-permissions");
 
-      configuration.hidden = !menu.view.activeItem.iAmOwner;
+      configuration.hidden = !menu.model.iAmOwner;
       configuration.previousSibling.hidden = permissions.hidden =
-        !menu.view.activeItem.iAmAdmin;
+        !menu.model.iAmAdmin;
     }
 
     function updateGatewayMemberContextMenu(menu, event) {
       if (event.target != menu)
         return;
 
-      document.getElementById("gateway-login").disabled = !!menu.activeItem.activeResource;
-      document.getElementById("gateway-logout").disabled = !menu.activeItem.activeResource;
+      document.getElementById("gateway-login").disabled = !!menu.model.activeResource;
+      document.getElementById("gateway-logout").disabled = !menu.model.activeResource;
     }
 
     var setPresenceUpdater = {
@@ -640,12 +641,10 @@
             </tabs>
             <tabpanels flex="1">
               <tabpanel>
-                <richlistbox id="contacts-list" flex="1" persist="hideOffline"
-                    onselect="self.activeItem = this.selectedItem.model"/>
+                <richlistbox id="contacts-list" flex="1" persist="hideOffline"/>
               </tabpanel>
               <tabpanel>
-                <richlistbox id="conferences-list" flex="1"
-                    onselect="this.view.activeItem = this.selectedItem.model"/>
+                <richlistbox id="conferences-list" flex="1"/>
               </tabpanel>
             </tabpanels>
           </tabbox>
@@ -669,7 +668,7 @@
 
     <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
       <menuitem id="contact-chat-single" label="&listitemcontext.Communiquer;"
-          oncommand="activeItem.onOpenChat()"/>
+          oncommand="this.parentNode.model.onOpenChat()"/>
       <menu id="contact-chat-multi" label="&listitemcontext.Communiquer;" hidden="true">
         <menupopup/>
       </menu>
@@ -679,133 +678,131 @@
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.SupprimerContact;" oncommand="activeItem.onRemove()"/>
-      <menuitem label="&listitemcontext.Rename;" oncommand="activeItem.onRename()"/>
-      <menuitem label="Edit contact..." oncommand="activeItem.onEditContact()"/>
+      <menuitem label="&listitemcontext.SupprimerContact;" oncommand="this.parentNode.model.onRemove()"/>
+      <menuitem label="&listitemcontext.Rename;" oncommand="this.parentNode.model.onRename()"/>
+      <menuitem label="Edit contact..." oncommand="this.parentNode.model.onEditContact()"/>
 
       <menuseparator/>
 
       <menu label="&listitemcontext.Authorisation;">
         <menupopup>
           <menuitem id="contact-authorisation-ask" label="&listitemcontext.Ask;"
-              oncommand="activeItem.askForSubscription()"/>
+              oncommand="this.parentNode.parentNode.parentNode.model.askForSubscription()"/>
           <menuitem id="contact-authorisation-allow" label="&listitemcontext.Authorize;"
-              oncommand="activeItem.allowToSeeMe()"/>
+              oncommand="this.parentNode.parentNode.parentNode.model.allowToSeeMe()"/>
           <menuitem id="contact-authorisation-disallow" label="&listitemcontext.Forbid;"
-              oncommand="activeItem.disallowToSeeMe()"/>
+              oncommand="this.parentNode.parentNode.parentNode.model.disallowToSeeMe()"/>
         </menupopup>
       </menu>
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.Infos;" oncommand="activeItem.showVCard()"/>
+      <menuitem label="&listitemcontext.Infos;" oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
-        oncommand="activeItem.onShowHistory()"/>
+        oncommand="this.parentNode.model.onShowHistory()"/>
       <!-- #ifdef XULAPP -->
       <menuitem id="contact-send-file" label="Send file..."
-        oncommand="activeItem.onSendFile()"/>
+        oncommand="this.parentNode.model.onSendFile()"/>
       <!-- #else
       <menuitem id="contact-send-file" label="Send file..."
-        oncommand="activeItem.onSendFile()" disabled="true"/>
+        oncommand="this.parentNode.model.onSendFile()" disabled="true"/>
       // #endif -->
     </popup>
 
     <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
       <menuitem id="conference-invite" label="Invite contacts to this room..."
-          oncommand="this.parentNode.view.activeItem.onInvite()"/>
+          oncommand="this.parentNode.model.onInvite()"/>
       <menuitem id="conference-changeNick" label="Change nick..."
-          oncommand="this.parentNode.view.activeItem.onChangeNick()"/>
+          oncommand="this.parentNode.model.onChangeNick()"/>
       <menuitem id="conference-changeSubject" label="Change subject..."
-          oncommand="this.parentNode.view.activeItem.onChangeSubject()"/>
+          oncommand="this.parentNode.model.onChangeSubject()"/>
       <menuitem id="conference-bookmark" label="Bookmark..."
-          oncommand="this.parentNode.view.activeItem.onBookmark()"/>
+          oncommand="this.parentNode.model.onBookmark()"/>
 
       <menuseparator/>
 
       <menuitem id="conference-configuration" label="Configure..."
-          oncommand="this.parentNode.view.activeItem.onRoomConfiguration()"/>
+          oncommand="this.parentNode.model.onRoomConfiguration()"/>
       <menuitem id="conference-edit-permissions" label="Edit Permissions..."
-          oncommand="this.parentNode.view.activeItem.onEditPermissions()"/>
+          oncommand="this.parentNode.model.onEditPermissions()"/>
 
       <menuseparator/>
 
       <menuitem label="&listitemcontext.Infos;"
-        oncommand="this.parentNode.view.activeItem.showVCard()"/>
+        oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
-        oncommand="this.parentNode.view.activeItem.onShowHistory()"/>
+        oncommand="this.parentNode.model.onShowHistory()"/>
 
       <menuseparator/>
 
       <menuitem id="conference-leave" label="Leave conference"
-          oncommand="this.parentNode.view.activeItem.exitRoom()"/>
+          oncommand="this.parentNode.model.exitRoom()"/>
     </popup>
 
     <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
       <menuitem id="conferencemember-chat-single" label="&listitemcontext.Communiquer;"
-          oncommand="this.parentNode.view.activeItem.onOpenChat()"/>
+          oncommand="this.parentNode.model.onOpenChat()"/>
 
       <menuseparator/>
+
       <menuitem id="conferencemember-kick" label="Kick..."
-          oncommand="this.parentNode.view.activeItem.onKick()"/>
+          oncommand="this.parentNode.model.onKick()"/>
       <menuitem id="conferencemember-ban" label="Ban..."
-          oncommand="this.parentNode.view.activeItem.onBan()"/>
+          oncommand="this.parentNode.model.onBan()"/>
       <menu id="conferencemember-affiliations" label="Affiliation">
         <menupopup>
           <menuitem id="conferencemember-affiliation-owner" name="affiliations"
             type="radio" label="Owners"
-            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
-                       setAffiliation('owner')"/>
+            oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('owner')"/>
           <menuitem id="conferencemember-affiliation-admin" name="affiliations"
             type="radio" label="Administrators"
-            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
-                       setAffiliation('admin')"/>
+            oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('admin')"/>
           <menuitem id="conferencemember-affiliation-member" name="affiliations"
             type="radio" label="Members"
-            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
-                       setAffiliation('momber')"/>
+            oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('momber')"/>
           <menuitem id="conferencemember-affiliation-none" name="affiliations"
             type="radio" label="None"
-            oncommand="this.parentNode.parentNode.parentNode.view.activeItem.
-                       setAffiliation('none')"/>
+            oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('none')"/>
         </menupopup>
       </menu>
 
       <menuseparator/>
+
       <menuitem label="&listitemcontext.Infos;"
-        oncommand="this.parentNode.view.activeItem.showVCard()"/>
+        oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
-        oncommand="this.parentNode.view.activeItem.onShowHistory()"/>
+        oncommand="this.parentNode.model.onShowHistory()"/>
       <!-- #ifdef XULAPP -->
       <menuitem id="conferencemember-send-file" label="Send file..."
-        oncommand="this.parentNode.view.activeItem.onSendFile()"/>
+        oncommand="this.parentNode.model.onSendFile()"/>
       <!-- #else
       <menuitem id="conferencemember-send-file" label="Send file..."
-        oncommand="this.parentNode.view.activeItem.onSendFile()" disabled="true"/>
+        oncommand="this.parentNode.model.onSendFile()" disabled="true"/>
       // #endif -->
     </popup>
 
     <popup id="gateway-contextmenu" onpopupshowing="updateGatewayMemberContextMenu(this, event)">
       <menuitem id="gateway-chat-single" label="&listitemcontext.Communiquer;"
-          oncommand="this.parentNode.activeItem.onOpenChat()"/>
+          oncommand="this.parentNode.model.onOpenChat()"/>
 
       <menuseparator/>
 
       <menuitem id="gateway-login" label="Login"
-        oncommand="this.parentNode.activeItem.login()"/>
+        oncommand="this.parentNode.model.login()"/>
       <menuitem id="gateway-logout" label="Logout"
-        oncommand="this.parentNode.activeItem.logout()"/>
+        oncommand="this.parentNode.model.logout()"/>
 
       <menuseparator/>
 
       <menuitem label="&listitemcontext.Infos;"
-        oncommand="this.parentNode.activeItem.showVCard()"/>
+        oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
-        oncommand="this.parentNode.activeItem.onShowHistory()"/>
+        oncommand="this.parentNode.model.onShowHistory()"/>
 
       <menuseparator/>
 
       <menuitem label="Remove..."
-        oncommand="this.parentNode.activeItem.onRemove()"/>
+        oncommand="this.parentNode.model.onRemove()"/>
     </popup>
   </popupset>
   <!-- #ifdef XULAPP -->

@@ -117,9 +117,10 @@ function ConferenceView(model, parentView)
 
     this.node.setAttribute("class", "conference-view");
     this.node.setAttribute("context", "conference-contextmenu");
-    this.node.setAttribute("onmousedown", "this.view.parentView.activeItem = this.model");
+    this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
     this.node.model = this.model;
     this.node.view = this;
+    this.node._contextMenu = document.getElementById("conference-contextmenu");
 
     this.label.setAttribute("value", this.model.name);
     this.label.setAttribute("flex", "1");
@@ -191,7 +192,7 @@ function ConferenceMemberView(model, parentView)
 
     this.node.setAttribute("class", "conferencemember-view");
     this.node.setAttribute("context", "conferencemember-contextmenu");
-    this.node.setAttribute("onmousedown", "this.view.parentView.parentView.activeItem = this.model");
+    this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
     this.label.setAttribute("value", model.name);
     this.label.setAttribute("flex", "1");
@@ -199,6 +200,7 @@ function ConferenceMemberView(model, parentView)
 
     this.node.model = this.model;
     this.node.view = this;
+    this.node._contextMenu = document.getElementById("conferencemember-contextmenu");
 
     var box = document.createElement("vbox");
     box.setAttribute("pack", "center");
