@@ -522,6 +522,9 @@
       <method name="maybeResize">
         <body>
           <![CDATA[
+          var chatOutputEl = this._output._output.contentDocument.body;
+          var chatOutputScrollPos = chatOutputEl.scrollTop + chatOutputEl.clientHeight;
+
           this._inputClone.value = this._input.value;
 
           if (this._sizeOffset == null)
@@ -534,6 +537,8 @@
             h = 0.3*window.innerHeight;
 
           this._input.style.height = h + "px";
+
+          chatOutputEl.scrollTop = chatOutputScrollPos - chatOutputEl.clientHeight;
           ]]>
         </body>
       </method>
