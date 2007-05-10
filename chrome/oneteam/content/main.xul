@@ -138,8 +138,7 @@
       }
     }
 
-    function updateConferenceContextMenu(menu, event)
-    {
+    function updateConferenceContextMenu(menu, event) {
       if (event.target != menu)
         return;
 
@@ -149,6 +148,14 @@
       configuration.hidden = !menu.view.activeItem.iAmOwner;
       configuration.previousSibling.hidden = permissions.hidden =
         !menu.view.activeItem.iAmAdmin;
+    }
+
+    function updateGatewayMemberContextMenu(menu, event) {
+      if (event.target != menu)
+        return;
+
+      document.getElementById("gateway-login").disabled = !!menu.activeItem.activeResource;
+      document.getElementById("gateway-logout").disabled = !menu.activeItem.activeResource;
     }
 
     var setPresenceUpdater = {
@@ -775,6 +782,30 @@
       <menuitem id="conferencemember-send-file" label="Send file..."
         oncommand="this.parentNode.view.activeItem.onSendFile()" disabled="true"/>
       // #endif -->
+    </popup>
+
+    <popup id="gateway-contextmenu" onpopupshowing="updateGatewayMemberContextMenu(this, event)">
+      <menuitem id="gateway-chat-single" label="&listitemcontext.Communiquer;"
+          oncommand="this.parentNode.activeItem.onOpenChat()"/>
+
+      <menuseparator/>
+
+      <menuitem id="gateway-login" label="Login"
+        oncommand="this.parentNode.activeItem.login()"/>
+      <menuitem id="gateway-logout" label="Logout"
+        oncommand="this.parentNode.activeItem.logout()"/>
+
+      <menuseparator/>
+
+      <menuitem label="&listitemcontext.Infos;"
+        oncommand="this.parentNode.activeItem.showVCard()"/>
+      <menuitem label="Show History..."
+        oncommand="this.parentNode.activeItem.onShowHistory()"/>
+
+      <menuseparator/>
+
+      <menuitem label="Remove..."
+        oncommand="this.parentNode.activeItem.onRemove()"/>
     </popup>
   </popupset>
   <!-- #ifdef XULAPP -->
