@@ -98,11 +98,13 @@ function GatewayToolbarButton(model, parentView)
     this.parentView = parentView;
 
     this.node = document.createElement("toolbarbutton");
+    this.node.setAttribute("class", "gateway-toolbarbutton");
     this.node.setAttribute("autoCheck", "false");
     this.node.setAttribute("tooltiptext", model.gatewayName + " ("+model.jid+")");
     this.node.setAttribute("oncommand", "this.checked ? this.model.logout() : this.model.login()")
     this.node.setAttribute("context", "gateway-contextmenu");
     this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
+    this.node.setAttribute("gateway-type", model.gatewayType);
 
     this.node.model = this.model;
     this.node.view = this;
@@ -110,7 +112,6 @@ function GatewayToolbarButton(model, parentView)
 
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onPresenceUpdated, "presence");
-    this._bundle.register(account.style, this.onPresenceUpdated, "defaultSet");
     this._bundle.register(this.model, this.onNewItemChange, "newItem");
 
     this.onNewItemChange();
@@ -120,7 +121,6 @@ _DECL_(GatewayToolbarButton).prototype =
 {
     onPresenceUpdated: function()
     {
-        this.node.setAttribute("image", this.model.getStatusIcon());
         this.node.setAttribute("checked", !!this.model.activeResource);
         this.node.checked = !!this.model.activeResource;
     },
