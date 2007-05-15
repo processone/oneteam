@@ -46,8 +46,6 @@
             if (!this._msgs)
               return;
 
-            this._output.contentDocument.body.style.MozUserFocus = "ignore";
-
             var link = this._output.contentDocument.createElement("link");
 // #ifdef XULAPP
             link.setAttribute("href", "chrome://oneteam/skin/chatpane/content.css");
@@ -352,14 +350,6 @@
               return true;
             }, true);
           //this.maybeResize();
-
-          this._output.addEventListener(
-            "mouseup", function(event) {
-              if(!me._output._output.contentWindow.getSelection().toString()) {
-                event.stopPropagation();
-                me.focus();
-              }
-            }, false);
         ]]>
       </constructor>
 
