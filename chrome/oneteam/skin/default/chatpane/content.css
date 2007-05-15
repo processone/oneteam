@@ -17,6 +17,7 @@ body {
 }
 
 .header {
+    display: block;
     margin: 1px;
     padding: 1px 6px;
     background: url(imgs/header-gradient.png);
@@ -33,6 +34,10 @@ body {
     display: none;
 }
 
+.to-copy-paste {
+    display: none;
+}
+
 .author {
     font-weight: bold;
     float: left;
@@ -45,7 +50,7 @@ body {
 }
 
 .body {
-   padding: 3px 6px;
+    padding: 3px 6px;
 }
 
 .header::after {

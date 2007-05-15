@@ -207,21 +207,36 @@
 
             this._scheduleDomAppend(this._messagesCluster, messageEl);
 
-            var h = doc.createElement("div");
+            var h = doc.createElement("span");
             h.setAttribute("class", "header");
             messageEl.appendChild(h);
 
-            var e = doc.createElement("div");
-            e.setAttribute("class", "author");
-            e.appendChild(doc.createTextNode(message.nick));
+            var e = doc.createElement("span");
+            e.setAttribute("class", "to-copy-paste");
+            e.appendChild(doc.createTextNode("["));
             h.appendChild(e);
 
-            e = doc.createElement("div");
+            e = doc.createElement("span");
             e.setAttribute("class", "date");
             e.appendChild(doc.createTextNode(readableTimestamp(message.time)));
             h.appendChild(e);
 
-            e = doc.createElement("div");
+            var e = doc.createElement("span");
+            e.setAttribute("class", "to-copy-paste");
+            e.appendChild(doc.createTextNode("] "));
+            h.appendChild(e);
+
+            e = doc.createElement("span");
+            e.setAttribute("class", "author");
+            e.appendChild(doc.createTextNode(message.nick));
+            h.appendChild(e);
+
+            var e = doc.createElement("span");
+            e.setAttribute("class", "to-copy-paste");
+            e.appendChild(doc.createTextNode(": "));
+            h.appendChild(e);
+
+            e = doc.createElement("span");
             e.setAttribute("class", "body "+message.classes);
             e.innerHTML = message.formatedHtml;
 
