@@ -350,6 +350,19 @@
               return true;
             }, true);
           //this.maybeResize();
+
+          setTimeout(function(me) {
+            if (!me._output._output) {
+              setTimeout(arguments.callee, 10, me);
+              return;
+            }
+            me._output._output.contentWindow.addEventListener("keypress", function(event) {
+              if (event.charCode) {
+                me._input.value += String.fromCharCode(event.charCode);
+                me.focus();
+              }
+            }, false);
+          }, 0, this);
         ]]>
       </constructor>
 

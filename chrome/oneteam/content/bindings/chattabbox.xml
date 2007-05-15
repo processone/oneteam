@@ -54,6 +54,17 @@
         this._tabpanels = document.getAnonymousElementByAttribute(this, "anonid", "tabpanels");
         this._unseenCount = 0;
         this._inSelectTab = 0;
+
+        var _this = this;
+        window.addEventListener("keypress", function(event) {
+          if (event.charCode && _this._selectedTab &&
+              event.target.localName != "textbox" &&
+              event.target.localName != "chattabbox")
+          {
+            _this._selectedTab.controler._appendToInput(String.fromCharCode(event.charCode));
+            _this._selectedTab.controler.focus();
+          }
+        }, false);
       ]]></constructor>
 
       <method name="getTab">
@@ -359,6 +370,13 @@
             this.unseenCount++;
 
           this._chatpane.addMessage(msg, threadID);
+        ]]></body>
+      </method>
+
+      <method name="_appendToInput">
+        <parameter name="str"/>
+        <body><![CDATA[
+          this._chatpane._input.value += str;
         ]]></body>
       </method>
 
