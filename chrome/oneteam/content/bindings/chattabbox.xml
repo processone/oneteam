@@ -19,7 +19,7 @@
       <xul:tabbox flex="1">
         <xul:tabs class="with-scroll" setfocus="false" anonid="tabs"/>
         <xul:tabpanels anonid="tabpanels" flex="1"
-                       onselect="this.selectedPanel.controler.focus()"/>
+                       onselect="this.selectedPanel.controller.focus()"/>
       </xul:tabbox>
     </content>
     <implementation>
@@ -61,8 +61,8 @@
               event.target.localName != "textbox" &&
               event.target.localName != "chattabbox")
           {
-            _this._selectedTab.controler._appendToInput(String.fromCharCode(event.charCode));
-            _this._selectedTab.controler.focus();
+            _this._selectedTab.controller._appendToInput(String.fromCharCode(event.charCode));
+            _this._selectedTab.controller.focus();
           }
         }, false);
       ]]></constructor>
@@ -72,9 +72,9 @@
         <body><![CDATA[
           var cn = this._tabs.childNodes;
           for (var i = 0; i < cn.length; i++)
-            if (cn[i].controler.contact.jid.normalizedJID == contact.jid.normalizedJID) {
-              cn[i].controler.contact = contact;
-              return cn[i].controler;
+            if (cn[i].controller.contact.jid.normalizedJID == contact.jid.normalizedJID) {
+              cn[i].controller.contact = contact;
+              return cn[i].controller;
             }
             return null;
         ]]></body>
@@ -102,7 +102,7 @@
 
           tab = content._tab = document.createElementNS(ns, "tab");
           tab.setAttribute("hasclosebutton", "true");
-          tab.setAttribute("oncommand", "this.controler.close()");
+          tab.setAttribute("oncommand", "this.controller.close()");
           tab.maxWidth = 250;
           tab.minWidth = 100;
           tab.width = 0;
@@ -160,8 +160,8 @@
             }
           };
 
-          tabpanel.controler = wrappedContent;
-          tab.controler = wrappedContent;
+          tabpanel.controller = wrappedContent;
+          tab.controller = wrappedContent;
 
           this._selectTab(content);
 
@@ -180,7 +180,7 @@
           this._inCloseTabs = true;
 
           for (var i = this._tabs.length-1; i >= 0; i--)
-            this._tabs[i].controler.close();
+            this._tabs[i].controller.close();
 
           this._inCloseTabs = false;
         ]]></body>
@@ -208,7 +208,7 @@
             content._tab.parentNode.selectedItem;
 
           if (nextTab)
-            nextTab.controler.focus();
+            nextTab.controller.focus();
 
           // XXX: TEAM-63 hack
           if (content._tab.nextSibling) {
@@ -221,7 +221,7 @@
           content._tab.parentNode.removeChild(content._tab);
 
           if (nextTab)
-            nextTab.controler.focus();
+            nextTab.controller.focus();
 
           this._tabs._fixupScrollPosition();
 

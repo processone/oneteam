@@ -123,7 +123,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     account.allContacts[this.jid.normalizedJID] = this;
     this.gateways = account.gateways[this.jid.normalizedJID.domain];
 
-    this.chatPane = chatTabsControler.getTab(this);
+    this.chatPane = chatTabsController.getTab(this);
 }
 
 _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype =
@@ -389,7 +389,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
     onOpenChat: function()
     {
         if (!this.chatPane || this.chatPane.closed)
-            this.chatPane = chatTabsControler.openTab(this);
+            this.chatPane = chatTabsController.openTab(this);
         else
             this.chatPane.focus();
 
@@ -549,7 +549,7 @@ function Resource(jid)
     account.resources[this.jid.normalizedJID] = this;
     this.init();
 
-    this.chatPane = chatTabsControler.getTab(this);
+    this.chatPane = chatTabsController.getTab(this);
 }
 
 _DECL_(Resource, null, Model, DiscoItem, Comparator,
@@ -574,7 +574,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     onOpenChat: function()
     {
         if (!this.chatPane || this.chatPane.closed)
-            this.chatPane = chatTabsControler.openTab(this);
+            this.chatPane = chatTabsController.openTab(this);
         else
             this.chatPane.focus();
 

@@ -156,7 +156,7 @@
         document.getElementById("conferencemember-contextmenu").view = this.conferencesView;
 
         if (!account.connected) {
-          chatTabsControler.closeTabs();
+          chatTabsController.closeTabs();
           document.getElementById("login-signin").disabled = false;
           document.getElementById("login-progress").style.visibility = "hidden";
           document.getElementById("main-deck").selectedIndex = 0;
@@ -216,7 +216,7 @@
       }
     };
 
-    var chatTabsControler;
+    var chatTabsController;
     var args = {};
     var search = window.top.location.search.substr(1);
 
@@ -228,9 +228,9 @@
     function onLoad() {
       account.mucMode = true;
       setPresenceUpdater.init();
-      chatTabsControler = document.getElementById("chats");
+      chatTabsController = document.getElementById("chats");
 
-      chatTabsControler.addEventListener("tab-removed", function(event) {
+      chatTabsController.addEventListener("tab-removed", function(event) {
         if (!conf.joined) {
           document.getElementById("main-deck").selectedIndex = 0;
           con.disconnect();
