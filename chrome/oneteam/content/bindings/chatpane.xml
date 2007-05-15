@@ -357,7 +357,7 @@
               return;
             }
             me._output._output.contentWindow.addEventListener("keypress", function(event) {
-              if (event.charCode) {
+              if (event.charCode && !event.ctrlKey) {
                 me._input.value += String.fromCharCode(event.charCode);
                 me.focus();
               }
