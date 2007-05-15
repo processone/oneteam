@@ -57,7 +57,8 @@
 
         var _this = this;
         window.addEventListener("keypress", function(event) {
-          if (event.charCode && _this._selectedTab && !event.ctrlKey &&
+          if (event.charCode && _this._selectedTab &&
+              !event.ctrlKey && !event.altKey &&
               event.target.localName != "textbox" &&
               event.target.localName != "chattabbox")
           {
