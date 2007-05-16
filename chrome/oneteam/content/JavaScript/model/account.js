@@ -500,7 +500,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         switch (packet.getType()) {
         case "subscribe":
             var gateway = this.gateways[sender.normalizedJID];
-            if (gateways)
+            if (gateway)
                 return;
 
             var contact = this.contacts[sender.normalizedJID];
