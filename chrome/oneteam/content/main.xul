@@ -287,12 +287,20 @@
     function onLoad() {
       setPresenceUpdater.init();
       eventBoxHandler.init();
-      document.getElementById("login-user").value = account.connectionInfo.user;
-      document.getElementById("login-pass").value = account.connectionInfo.pass;
-      document.getElementById("login-savePass").checked = account.connectionInfo.pass != null;
       document.getElementById("setPresence-avatar-image").model = account;
-
       chatTabsController = document.getElementById("chats");
+
+      var login = parent.document.getElementById("login");
+      var pass = parent.document.getElementById("password");
+      if (login && pass) {
+        document.getElementById("login-user").value = login.value;
+      	document.getElementById("login-pass").value = pass.value;
+        connect();
+      } else {
+        document.getElementById("login-user").value = account.connectionInfo.user;
+      	document.getElementById("login-pass").value = account.connectionInfo.pass;
+      	document.getElementById("login-savePass").checked = account.connectionInfo.pass != null;
+      }
 
 // #ifdef XULAPP
       chatTabsController.addEventListener("tab-added", function(event) {
