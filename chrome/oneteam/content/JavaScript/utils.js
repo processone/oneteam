@@ -138,8 +138,8 @@ StorageWrapper.prototype =
 {
     __iterator__: function(keysOnly) {
         for (var i = 0; i < this.storage.length; i++)
-            if (this.storage.key(i).indexOf(this.prefix) == 0)
-                try {
+            try {
+                if (this.storage.key(i).indexOf(this.prefix) == 0) {
                     var key = this.storage.key(i).substr(this.prefix.length);
                     if (keysOnly)
                         yield (key);
@@ -147,7 +147,8 @@ StorageWrapper.prototype =
                         var val = this.storage[this.storage.key(i)];
                         yield ([key, val == null ? null : ""+val]);
                     }
-                } catch(ex) { report("developer", "error", ex) }
+                }
+            } catch(ex) { report("developer", "error", ex) }
         throw StopIteration;
     },
 

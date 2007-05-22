@@ -60,22 +60,27 @@
       var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*/, "$1");
 
       if (window.storage) {
-        var keysToDel = [], cacheNewKey;
+        var keysToDel = [], keysToSet = [], cacheNewKey;
 
         for (var i = 0; i < storage.length; i++) {
-          cacheNewKey = storage.key(i).replace(/^cache:/, ":cache:value:").
-            replace(/^cacheExpiration:/, ":cache:expiration:").
-            replace(/^pref-str:/, ":prefs:str:").
-            replace(/^pref-bool:/, ":prefs:bool:").
-            replace(/^pref-num:/, ":prefs:int:");
           try {
+            cacheNewKey = storage.key(i).replace(/^cache:/, ":cache:value:").
+              replace(/^cacheExpiration:/, ":cache:expiration:").
+              replace(/^pref-str:/, ":prefs:str:").
+              replace(/^pref-bool:/, ":prefs:bool:").
+              replace(/^pref-num:/, ":prefs:int:");
             if (cacheNewKey != storage.key(i)) {
-              storage[schema+cacheNewKey] = storage[storage.key(i)];
+              keysToSet.push([schema+cacheNewKey, storage[storage.key(i)]]);
               if (schema != "https")
                 keysToDel.push(storage.key(i));
             }
           } catch (ex) { }
         }
+
+        for (i = 0; i < keysToSet.length; i++)
+          try {
+            storage[keysToSet[i][0]] = keysToSet[i][1];
+          } catch (ex) { }
 
         for (i = 0; i < keysToDel.length; i++)
           try {
@@ -134,8 +139,8 @@
       {
         __iterator__: function(keysOnly) {
           for (var i = 0; i < storage.length; i++)
-            if (storage.key(i).indexOf(this.prefix) == 0)
-              try {
+            try {
+              if (storage.key(i).indexOf(this.prefix) == 0) {
                 var key = storage.key(i).substr(this.prefix.length);
                 if (keysOnly)
                   yield (key);
@@ -143,7 +148,8 @@
                   var val = storage[storage.key(i)];
                   yield ([key, val == null ? null : ""+val]);
                 }
-              } catch (ex) { this.report("developer", "error", ex) }
+              }
+            } catch (ex) { this.report("developer", "error", ex) }
           throw StopIteration;
         },
 
