@@ -96,6 +96,8 @@ has 'strings' => (
                     $self->headers([@headers]);
                     $self->comments([@comments]);
                 } else {
+                    push @{$self->{strings_order}}, $msgid;
+
                     $msgstr = length $msgstr ? OneTeam::L10N::FormattedString->
                         new(str => $msgstr, plural_forms => $self->plural_forms) : undef;
                     $strings{$msgid} = OneTeam::L10N::POFile::String->
@@ -159,6 +161,8 @@ sub sync_strings {
             next;
         }
 
+        push @{$self->{strings_order}}, $_->str;
+
         $self->{_in_sync}->{$_->str} = 1;
         $strings->{$_->str} = OneTeam::L10N::POFile::String->
             new(str => $_->str, locations => $_->locations);
@@ -195,7 +199,10 @@ sub write {
     }
     print $fh "\n";
 
-    for (values %$strings) {
+    for (@{$self->{strings_order}}) {
+        next if not exists $strings->{$_};
+        $_ = $strings->{$_};
+
         print $fh "# $_\n" for @{$_->comments};
         print $fh "#: $_\n" for @{$_->locations};
 
