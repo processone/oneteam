@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2007-05-23 13:32+CEST\n"
+"POT-Creation-Date: 2007-05-23 17:07+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10,19 +10,19 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Plural-Forms: nplurals=2; plural=n==1 ? 0 : 1;\n"
 
-#: ../chrome/oneteam/content/about.xul:28
-msgid "OneTeam Instant Messenger"
+#: ../chrome/oneteam/content/about.xul:9
+msgid "OneTeam"
 msgstr ""
 
 #: ../chrome/oneteam/content/about.xul:21
 msgid "http://process-one.net/"
 msgstr ""
 
-#: ../chrome/oneteam/content/about.xul:32
-msgid "1.0.0 beta 1"
+#: ../chrome/oneteam/content/about.xul:28
+msgid "OneTeam Instant Messenger"
 msgstr ""
 
-#: ../chrome/oneteam/content/about.xul:9
-msgid "OneTeam"
+#: ../chrome/oneteam/content/about.xul:32
+msgid "1.0.0 beta 1"
 msgstr ""
 

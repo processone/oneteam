@@ -503,7 +503,7 @@
     <vbox id="main-box" flex="1">
       <toolbox>
         <menubar>
-          <menu id="lagger-menu" label="OneTeam" accesskey="O">
+          <menu id="lagger-menu" label="_('_OneTeam')">
             <menupopup id="file-popup">
               <menuitem label="_('_Add Contact')" command="cmd_addContact"/>
 
@@ -512,19 +512,17 @@
                   <menuitem label="_('Join Chat Room')" command="cmd_joinRoom"/>
                   <menuseparator/>
                   <menuseparator id="conference-menu-separator" hidden="true"/>
-                  <menuitem label="Manage Bookmarks" accesskey="M" command="cmd_manageBookmarks"/>
+                  <menuitem label="_('_Manage Bookmarks')" command="cmd_manageBookmarks"/>
                 </menupopup>
               </menu>
-              <menu label="Gateways" accesskey="G" id="gateways-menu">
+              <menu label="_('_Gateways')" id="gateways-menu">
                 <menupopup/>
               </menu>
               <menuseparator/>
 <!--          <menuitem label="_('_Services Discovery')" command="cmd_disco"/>
               <menuitem label="_('Administration Tools')"/> -->
-              <menuitem label="History Manager" command="cmd_history"
-                accesskey="H"/>
-              <menuitem label="File Transfers" command="cmd_transfers"
-                accesskey="T"/>
+              <menuitem label="_('_History Manager')" command="cmd_history"/>
+              <menuitem label="_('File _Transfers')" command="cmd_transfers"/>
               <menuseparator/>
               <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
               <menuitem label="_('_Quit')" command="cmd_quit"/>
@@ -544,12 +542,9 @@
           </menu>
           <menu id="help-menu" label="_('Help')">
             <menupopup id="help-popup">
-              <menuitem label="Help bot" command="cmd_help_bot"
-                  accesskey="b"/>
-              <menuitem label="Documentation" command="cmd_help"
-                  accesskey="D"/>
-              <menuitem label="Report Bug" command="cmd_bug"
-                  accesskey="R"/>
+              <menuitem label="_('Help _Bot')" command="cmd_help_bot"/>
+              <menuitem label="_('_Documentation')" command="cmd_help"/>
+              <menuitem label="_('_Report Bug')" command="cmd_bug"/>
               <menuitem label="_('XML _Console')" command="cmd_xmlConsole"/>
 <!-- #ifdef DEBUG -->
 <!-- #ifdef XULAPP -->
