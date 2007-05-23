@@ -1,9 +1,7 @@
 content oneteam           file:oneteam/content/
 
-#locale  oneteam fr-FR     file:oneteam/locale/fr-FR/
-#locale  oneteam en-GB     file:oneteam/locale/en-GB/
-locale  oneteam en-US     file:oneteam/locale/en-US/
-locale  branding  en-US     file:oneteam/locale/branding/
+locale  oneteam  en-US    file:oneteam/locale/en-US/
+locale  branding en-US    file:oneteam/branding/
 
 skin    oneteam default   file:oneteam/skin/default/
 skin    oneteam classic   file:oneteam/skin/default/
