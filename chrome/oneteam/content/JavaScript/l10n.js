@@ -1,18 +1,7 @@
-function L10NServiceBase()
-{
-}
-
-_DECL_(L10NServiceBase).prototype =
-{
+var l10nFormatService = {
     _formatStringCache: { },
 
-    formatString: function(bundle, id)
-    {
-        bundle = this.getString(bundle, id)
-        return this._formatString.apply(this, arguments);
-    },
-
-    _formatString: function(str)
+    formatString: function(str)
     {
         if (this._formatStringCache[str])
             return this._formatStringCache[str].apply(this, arguments);
@@ -21,20 +10,6 @@ _DECL_(L10NServiceBase).prototype =
             new Function("", "return "+this._formatStringRec(str));
 
         return fun.apply(this, arguments);
-    },
-
-    _unescapeJS: function(str)
-    {
-        return str.replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
-            function(r, uni, hex, oct, nl, cr, tab, chr)
-            {
-                var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
-                if (charCode) return String.fromCharCode(charCode);
-                if (nl) return "\n";
-                if (cr) return "\r";
-                if (tab) return "\t";
-                return chr;
-            });
     },
 
     _formatStringRec: function(str)
@@ -74,6 +49,20 @@ _DECL_(L10NServiceBase).prototype =
 
     },
 
+    _unescapeJS: function(str)
+    {
+        return str.replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
+            function(r, uni, hex, oct, nl, cr, tab, chr)
+            {
+                var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
+                if (charCode) return String.fromCharCode(charCode);
+                if (nl) return "\n";
+                if (cr) return "\r";
+                if (tab) return "\t";
+                return chr;
+            });
+    },
+
     _formatMethods:
     {
         choice: function(value)
@@ -98,78 +87,31 @@ _DECL_(L10NServiceBase).prototype =
             return n;
         },
 
-        format: function(str)
-        {
-            var args = [str, null].concat(Array.slice(arguments, 1));
-            return l10nService._formatString.apply(l10nService, args);
-        },
-
         plurals: function(n)
         {
             if (!this._pluralsExpr)
                 this._pluralsExpr = new Function("n",
-                    "return arguments["+"n == 1 ? 0 : 1"+"]");
+                    "return arguments["+_("$$plural_forms$$: n==1 ? 0 : 1")+"]");
             return this._pluralsExpr.apply(null, arguments);
         }
-    }
+    },
 }
 
 //#ifdef XULAPP
-function L10NService()
-{
-    this._service = Components.classes["@mozilla.org/intl/stringbundle;1"].
-        getService(Components.interfaces.nsIStringBundleService);
-}
-
-_DECL_(L10NService, L10NServiceBase).prototype =
-{
-    __proto__: L10NServiceBase.prototype,
-
-    _bundleCache: { },
-
-    getString: function(bundle, id)
-    {
-        var tmp;
-        if (/^branding:/.exec(bundle))
-            bundle = "chrome://branding/locale/" + bundle.substr(9) + ".properties";
-        else
-            bundle = "chrome://oneteam/locale/" + bundle + ".properties";
-
-        if (!this._bundleCache[bundle])
-            this._bundleCache[bundle] = this._service.createBundle(bundle);
-
-        return this._bundleCache[bundle].GetStringFromName(id)
+function __ (id) {
+    if (!l10nFormatService._bundle) {
+        var svc = Components.classes["@mozilla.org/intl/stringbundle;1"].
+            getService(Components.interfaces.nsIStringBundleService);
+        l10nFormatService._bundle = svc.
+            createBundle("chrome://oneteam/locale/oneteam.properties");
     }
+    id = _ (l10nFormatService._bundle.GetStringFromName(id));
+
+    return l10nFormatService.formatString.apply(l10nFormatService, arguments);
 }
+// #endif
 
-function _(bundle, id)
-{
-    return l10nService.getString(bundle, id);
+function _ (id) {
+    id = id.replace(/^\$\$\w+\$\$:\s*/, "");
+    return l10nFormatService.formatString.apply(l10nFormatService, arguments);
 }
-
-function __(bundle, id)
-{
-    return l10nService.formatString.apply(l10nService, arguments);
-}
-
-/*#else
-function L10NService()
-{
-}
-
-_DECL_(L10NService, L10NServiceBase).prototype =
-{
-    __proto__: L10NServiceBase.prototype,
-
-    _bundleCache: {
-        @BUNDLE_CACHE@
-    },
-
-    getString: function(bundle, id)
-    {
-        return this._bundleCache[bundle][id];
-    },
-}
-//#endif */
-
-var l10nService = new L10NService();

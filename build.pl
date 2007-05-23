@@ -6,31 +6,20 @@ use warnings;
 use File::Find;
 use File::Spec;
 use Data::Dumper;
+use OneTeam::Utils;
 use Cwd;
-
-sub slurp {
-    my $file = shift;
-    local $/;
-    open(my $fh, "<", $file) or die "Can't slurp file $file: $1";
-    my $res = <$fh>;
-    return defined $res ? $res : "";
-}
 
 my @files;
 my $topdir = getcwd;
 my $dir = File::Spec->catdir($topdir, qw(chrome oneteam));
 my %defs = @ARGV;
 my @locales;
-my @disabled_locales = qw(en-GB);
+my @disabled_locales;
 
 find(sub {
         push @files, $File::Find::name
             if -f and not $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
     }, $dir);
-
-my $disabled_locales_re = "[\\\/]locale[\\\/](?:".(join "|", @disabled_locales).")";
-
-@files = grep { !/$disabled_locales_re/ } @files;
 
 my @filters = (
     new OneTeam::Preprocessor(%defs),
@@ -45,6 +34,16 @@ my @filters = (
             exists $defs{NOJAR} ? new OneTeam::WebDirSaver() :new OneTeam::WebJarSaver(),
         )
 );
+
+if (exists $defs{LANGS}) {
+    my %langs;
+    @langs{split /,/, $defs{LANGS}} = 1;
+
+    @locales = grep {exists $langs{$_}} @locales
+}
+
+@locales = ("en-US") if not @locales;
+@locales = ($locales[0]) if exists $defs{NOJAR};
 
 for my $file (@files) {
     my $content = slurp($file);
@@ -191,46 +190,43 @@ sub get_revision {
 package OneTeam::WebLocaleProcessor;
 
 use base 'OneTeam::Filter';
+use lib qw(tools/perl5lib tools/perl5lib/3rdparty);
 
-use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
-use Text::Balanced qw(extract_bracketed);
+use OneTeam::L10N::POFile;
+use OneTeam::L10N::InputFile;
+
+sub new {
+    my ($class) = @_;
+
+    my %po_files;
+
+    for (glob "po/*.po") {
+        my $locale = $_;
+        $locale =~ s/^po[\/\\](.*)\.po$/$1/;
+
+        my $branding_po = -f "po/branding/$locale.po" ? OneTeam::L10N::POFile->
+            new(path => "po/branding/$locale.po", is_branding_file => 1) : undef;
+        $po_files{$locale} = OneTeam::L10N::POFile->
+            new(path => $_, branding_po_file => $branding_po);
+    }
+
+    my $self = {
+        po_files => \%po_files
+    };
+
+    @locales = ("en-US", keys %{$self->{po_files}});
+
+    bless $self, $class;
+}
 
 sub analyze {
     my ($self, $content, $file) = @_;
-    if ($file =~ /\.properties$/) {
-        $file =~ /(?:^|[\\\/])locale[\\\/]([^\\\/]*)[\\\/](.*)\.properties$/;
-        my ($locale, $path) = ($1, $2);
 
-        $path = "branding:".$path if $locale eq "branding";
+    return $content unless $file =~ /\.(?:xul|xml|js)$/;
 
-        while ($content =~ /^\s*(\S+)\s*=\s*(.*?)\s*$/mg) {
-            $self->{bundles}->{$locale}->{$path}->{$1} = $2;
-        }
-    } elsif ($file =~ /\.(?:xul|xml|js)$/) {
-        while ($content =~ /
-            \b_{1,2}\s*\(\s*
-                (?:(?:"((?:[^\\"]|\\.)+)")|(?:'((?:[^\\']|\\.)+)'))
-                \s*,\s*
-                (?:(?:"((?:[^\\"]|\\.)+)")|(?:'((?:[^\\']|\\.)+)'))?
-                \s*(.)/xg)
-        {
-            $self->{prefixes}->{$1||$2}->{$3||$4||""} = 1
-                if $5 ne ',' and $5 ne ')';
-        }
-    } elsif ($file =~ /\.dtd$/) {
-        $file =~ /(?:^|[\\\/])locale[\\\/]([^\\\/]*)[\\\/](.*)$/;
-        my ($locale, $path) = ($1, $2);
-        if ($locale eq "branding") {
-            $path = "branding:$path";
-        } else {
-            push @locales, $locale
-                unless grep {$_ eq $locale} @locales;
-        }
+    my $if = OneTeam::L10N::InputFile->new(path => $file, content => $content);
 
-        while ($content =~ /<!ENTITY\s+(\S+)\s+(?:"([^"]*)"|'([^"]*)')>/mg) {
-            $self->{entities}->{$locale}->{$path}->{$1} = $2||$3||"";
-        }
-    }
+    $self->{files}->{$file} = $if if @{$if->translatable_strings};
 
     return $content;
 }
@@ -238,99 +234,10 @@ sub analyze {
 sub process {
     my ($self, $content, $file, $locale) = @_;
 
-    return $content unless $file =~ /\.(?:xul|xml|js)$/;
-
-    if ($file =~ /\.(?:xul|xml)$/) {
-        my @entitiesFiles;
-        if ($content =~ s{(<!DOCTYPE\s+\w+\s+\[([^\[]+)\]\s*>\n?)}{"\n" x ($1 =~ y/\n/\n/)}e) {
-            my $decl = $2;
-            while ($decl =~ /<!ENTITY\s+[^\>]+?(?:"([^"]*)"|'([^']*)')[^\>]*>/g) {
-                ($1||$2) =~ /([^\\\/]*)[\\\/]locale[\\\/](.*)$/;
-                push @entitiesFiles, $1 eq "branding" ? "branding:$2" : $2;
-            }
-        } elsif ($content =~ s/<!DOCTYPE\s+\w+\s+\w+\s+(?:"([^"]*)"|'([^']*)')[^>]*>\n?//) {
-            ($1||$2) =~ /([^\\\/]*)[\\\/]locale[\\\/](.*)$/;
-            push @entitiesFiles, $1 eq "branding" ? "branding:$2" : $2;
-        }
-
-        @entitiesFiles = map {
-            $self->{entities}->{$locale}->{$_} || $self->{entities}->{branding}->{$_}
-        } @entitiesFiles;
-
-        $content =~ s/&([^\s;]+);/$self->_replace_entity($1, $file, $locale, @entitiesFiles)/eg;
-    }
-
-    my ($res, $last_end) = ("", 0);
-    while ($content =~ /
-        \b(_{1,2})\s*\(\s*
-            (?:(?:"((?:[^\\"]|\\.)+)")|(?:'((?:[^\\']|\\.)+)'))
-            \s*,\s*
-            (?:(?:"((?:[^\\"]|\\.)+)")|(?:'((?:[^\\']|\\.)+)'))?
-            \s*(.)/xg)
-    {
-        $res .= substr $content, $last_end, $-[0] - $last_end;
-
-        my $type = $1;
-        my $bundle = $2||$3;
-        my $prefix = $4||$5||"";
-        my $loc = index($bundle, "branding:") == 0 ? "branding" : $locale;
-
-        if ($prefix and ($6 eq ',' or $6 eq ')')) {
-            die "Unable to resolve bundle string (id: $prefix, bundle: $bundle)"
-                unless exists $self->{bundles}->{$loc}->{$bundle}->{$prefix};
-
-            my $str = $self->{bundles}->{$loc}->{$bundle}->{$prefix};
-            $res .=  $type eq "_" ? "\"$str\"" : "l10nService._formatString(\"$str\", null, ";
-            $last_end = $+[0];
-        } else {
-            die "Unable to resolve bundle string (id prefix: $prefix, $bundle: $bundle)"
-                unless grep {index($_, $prefix) >= 0} keys %{$self->{bundles}->{$loc}->{$bundle}};
-
-            $res .= $1 eq "_" ? "l10nService.getString" : "l10nService.formatString";
-            $last_end = $+[1];
-        }
-    }
-
-    $content = $res . substr $content, $last_end if $res;
-
-    $content =~ s/([^\S\n]*)\@BUNDLE_CACHE\@/
-        $self->_serialize_bundle_cache($1, $locale) .
-        $self->_serialize_bundle_cache($1, "branding")/ge;
+    return $self->{files}->{$file}->translate($self->{po_files}->{$locale})
+        if exists $self->{files}->{$file};
 
     return $content;
-}
-
-sub _replace_entity {
-    my ($self, $entity, $file, $locale, @entitiesFiles) = @_;
-
-    return "&$entity;"
-        if $entity =~ /^(?:apos|quot|lt|gt|amp)$/;
-
-    for (@entitiesFiles) {
-        return $_->{$entity} if exists $_->{$entity};
-    }
-
-    die "Unknown entity $entity in file $file for locale $locale";
-}
-
-sub _serialize_bundle_cache {
-    my ($self, $indent, $bundle) = @_;
-
-    my $data = $self->{bundles}->{$bundle};
-    my $res = "";
-
-    for my $file (keys %$data) {
-        next unless exists $self->{prefixes}->{$file};
-        my $re = "^(?:".join( "|", map {"\Q$_\E"} keys %{$self->{prefixes}->{$file}}).")";
-
-        $res .= $indent . "\"$file\" : {\n";
-        for my $stringid (keys %{$data->{$file}}) {
-            next unless $stringid =~ /$re/;
-            $res .= $indent . "    \"$stringid\" : \"$data->{$file}->{$stringid}\",\n";
-        }
-        $res .= $indent . "},\n";
-    }
-    return $res;
 }
 
 package OneTeam::WebPathConverter;
@@ -452,12 +359,11 @@ sub new {
 sub path_convert {
     my ($self, $file, $locale) = @_;
 
-    return if $file =~ /(?:\.dtd|\.properties)$/ or
+    return if
         $file =~ /skin[\/\\](?!default)/ or
         $file =~ /(?:^|[\\\/])content[\\\/]data[\\\/]sounds[\\\/]/;
 
     $file =~ s!^skin[/\\]default!skin!;
-    $file =~ s!^locale[/\\]branding!branding!;
 
     return catfile($self->{outputdir}, $locale, $file);
 }
@@ -496,13 +402,11 @@ sub new {
 sub path_convert {
     my ($self, $file, $locale) = @_;
 
-    return if $locale ne "en-US" or
+    return if
         $file =~ /(?:^|[\\\/])content[\\\/]sounds[\\\/]/ or
-        $file =~ /(?:\.dtd|\.properties)$/ or
         $file =~ /skin[\/\\](?!default)/;
 
     $file =~ s!^skin[/\\]default!skin!;
-    $file =~ s!^locale[/\\]branding!branding!;
 
     return catfile($self->{outputdir}, $file);
 }
