@@ -386,7 +386,8 @@
         this.eventBox.collapsed = account.events.length == 0;
 
         if (account.events.length) {
-          this.title.innerHTML = "You have "+account.events.length+" new messages";
+          this.title.innerHTML = __("events", "eventsCounterFormat",
+            account.events.length);
           this.tooltip.innerHTML = account.events[0][0];
         }
       },
@@ -468,11 +469,11 @@
         <image id="login-logo"/>
       </hbox>
       <vbox id="login-user-box">
-        <label control="login-user" value="Username"/>
+        <label control="login-user" value="_('Username')"/>
         <textbox id="login-user" flex="1"/>
       </vbox>
       <vbox id="login-pass-box">
-        <label control="login-pass" value="Password"/>
+        <label control="login-pass" value="_('Password')"/>
         <textbox id="login-pass" type="password"/>
       </vbox>
       <hbox pack="center">
@@ -484,14 +485,14 @@
       </hbox>
       <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
       <hbox pack="center">
-        <button id="login-signin" label="Sign In" oncommand="connect()"/>
+        <button id="login-signin" label="_('Sign In')" oncommand="connect()"/>
       </hbox>
       <spacer/>
       <hbox id="login-settings-box">
-        <label crop="end" class="text-link" value="Startup Settings"
+        <label crop="end" class="text-link" value="_('Startup Settings')"
           onclick="account.showPrefs();"/>
         <label value="|"/>
-        <label crop="end" class="text-link" value="New Account"
+        <label crop="end" class="text-link" value="_('New Account')"
           onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
 <!-- #ifdef DEBUG -->
         <label value="|"/>
@@ -504,13 +505,11 @@
         <menubar>
           <menu id="lagger-menu" label="OneTeam" accesskey="O">
             <menupopup id="file-popup">
-              <menuitem label="Add Contact" command="cmd_addContact"
-                  accesskey="A"/>
+              <menuitem label="_('_Add Contact')" command="cmd_addContact"/>
 
-              <menu label="Join Chat Room"
-                  accesskey="J">
+              <menu label="_('_Join Chat Room')"/>
                 <menupopup>
-                  <menuitem label="Join Chat Room" command="cmd_joinRoom"/>
+                  <menuitem label="_('Join Chat Room')" command="cmd_joinRoom"/>
                   <menuseparator/>
                   <menuseparator id="conference-menu-separator" hidden="true"/>
                   <menuitem label="Manage Bookmarks" accesskey="M" command="cmd_manageBookmarks"/>
@@ -520,35 +519,30 @@
                 <menupopup/>
               </menu>
               <menuseparator/>
-<!--          <menuitem label="Services Discovery" command="cmd_disco"
-                  accesskey="S"/>
-              <menuitem label="Administration Tools"/> -->
+<!--          <menuitem label="_('_Services Discovery')" command="cmd_disco"/>
+              <menuitem label="_('Administration Tools')"/> -->
               <menuitem label="History Manager" command="cmd_history"
                 accesskey="H"/>
               <menuitem label="File Transfers" command="cmd_transfers"
                 accesskey="T"/>
               <menuseparator/>
-              <menuitem label="Disconnect" command="cmd_disconnect"/>
-              <menuitem label="Quit" command="cmd_quit"
-                  accesskey="Q"/>
+              <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
+              <menuitem label="_('_Quit')" command="cmd_quit"/>
             </menupopup>
           </menu>
-          <menu id="configuration-menu" label="Config">
+          <menu id="configuration-menu" label="_('Config')">
             <menupopup id="config-popup">
-              <menuitem label="Edit personal info" command="cmd_ourVCard"
-                  accesskey="E"/>
+              <menuitem label="_('_Edit personal info')" command="cmd_ourVCard"/>
               <menuseparator/>
 <!-- #ifdef XULAPP -->
-              <menuitem label="Plugins" command="cmd_extensions"/>
-              <menuitem label="Themes" command="cmd_themes"
-                  accesskey="T"/>
+              <menuitem label="_('Plugins')" command="cmd_extensions"/>
+              <menuitem label="_('_Themes')" command="cmd_themes"/>
               <menuseparator/>
 <!-- #endif -->
-              <menuitem label="Preferences" command="cmd_prefs"
-                  accesskey="P"/>
+              <menuitem label="_('_Preferences')" command="cmd_prefs"/>
             </menupopup>
           </menu>
-          <menu id="help-menu" label="Help">
+          <menu id="help-menu" label="_('Help')">
             <menupopup id="help-popup">
               <menuitem label="Help bot" command="cmd_help_bot"
                   accesskey="b"/>
@@ -556,8 +550,7 @@
                   accesskey="D"/>
               <menuitem label="Report Bug" command="cmd_bug"
                   accesskey="R"/>
-              <menuitem label="XML Console" command="cmd_xmlConsole"
-                  accesskey="C"/>
+              <menuitem label="_('XML _Console')" command="cmd_xmlConsole"/>
 <!-- #ifdef DEBUG -->
 <!-- #ifdef XULAPP -->
               <menuitem label="JavaScript Console" command="cmd_jsConsole"/>
@@ -565,7 +558,7 @@
               <menuitem label="Command Console" command="cmd_cmdConsole"/>
 <!-- #endif -->
               <menuseparator/>
-              <menuitem label="About" command="cmd_about"/>
+              <menuitem label="_('About')" command="cmd_about"/>
             </menupopup>
           </menu>
         </menubar>
@@ -598,20 +591,20 @@
               </hbox>
               <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
                 <menupopup>
-                  <menuitem id="setPresence-type-available" label="Available"
+                  <menuitem id="setPresence-type-available" label="_('Available')"
                       selected="true" value="available" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-chat" label="Available for chat"
+                  <menuitem id="setPresence-type-chat" label="_('Available for chat')"
                       value="chat" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-dnd" label="Busy"
+                  <menuitem id="setPresence-type-dnd" label="_('Busy')"
                       value="dnd" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-away" label="Away"
+                  <menuitem id="setPresence-type-away" label="_('Away')"
                       value="away" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-xa" label="Not available"
+                  <menuitem id="setPresence-type-xa" label="_('Not available')"
                       value="xa" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-invisible" label="Invisible"
+                  <menuitem id="setPresence-type-invisible" label="_('Invisible')"
                       value="invisible" class="menuitem-iconic"/>
                   <menuseparator/>
-                  <menuitem id="setPresence-type-custom" label="Status message"/>
+                  <menuitem id="setPresence-type-custom" label="_('Status message')"/>
                 </menupopup>
               </menulist>
               <hbox>
@@ -667,9 +660,9 @@
     </tooltip>
 
     <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
-      <menuitem id="contact-chat-single" label="Send Message..."
+      <menuitem id="contact-chat-single" label="_('Send Message...')"
           oncommand="this.parentNode.model.onOpenChat()"/>
-      <menu id="contact-chat-multi" label="Send Message..." hidden="true">
+      <menu id="contact-chat-multi" label="_('Send Message...')" hidden="true">
         <menupopup/>
       </menu>
       <menu id="contact-invite" label="Invite to" hidden="true">
@@ -678,26 +671,26 @@
 
       <menuseparator/>
 
-      <menuitem label="Remove Contact..." oncommand="this.parentNode.model.onRemove()"/>
-      <menuitem label="Rename..." oncommand="this.parentNode.model.onRename()"/>
+      <menuitem label="_('Remove Contact...')" oncommand="this.parentNode.model.onRemove()"/>
+      <menuitem label="_('Rename...')" oncommand="this.parentNode.model.onRename()"/>
       <menuitem label="Edit contact..." oncommand="this.parentNode.model.onEditContact()"/>
 
       <menuseparator/>
 
-      <menu label="Authorisation">
+      <menu label="_('Authorisation')">
         <menupopup>
-          <menuitem id="contact-authorisation-ask" label="Ask to see him"
+          <menuitem id="contact-authorisation-ask" label="_('Ask to see him')"
               oncommand="this.parentNode.parentNode.parentNode.model.askForSubscription()"/>
-          <menuitem id="contact-authorisation-allow" label="Authorize to see me"
+          <menuitem id="contact-authorisation-allow" label="_('Authorize to see me')"
               oncommand="this.parentNode.parentNode.parentNode.model.allowToSeeMe()"/>
-          <menuitem id="contact-authorisation-disallow" label="Cancel authorisation"
+          <menuitem id="contact-authorisation-disallow" label="_('Cancel authorisation')"
               oncommand="this.parentNode.parentNode.parentNode.model.disallowToSeeMe()"/>
         </menupopup>
       </menu>
 
       <menuseparator/>
 
-      <menuitem label="Information..." oncommand="this.parentNode.model.showVCard()"/>
+      <menuitem label="_('Information...')" oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
       <!-- #ifdef XULAPP -->
@@ -728,7 +721,7 @@
 
       <menuseparator/>
 
-      <menuitem label="Information..."
+      <menuitem label="_('Information...')"
         oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
@@ -740,7 +733,7 @@
     </popup>
 
     <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
-      <menuitem id="conferencemember-chat-single" label="Send Message..."
+      <menuitem id="conferencemember-chat-single" label="_('Send Message...')"
           oncommand="this.parentNode.model.onOpenChat()"/>
 
       <menuseparator/>
@@ -768,7 +761,7 @@
 
       <menuseparator/>
 
-      <menuitem label="Information..."
+      <menuitem label="_('Information...')"
         oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
@@ -782,7 +775,7 @@
     </popup>
 
     <popup id="gateway-contextmenu" onpopupshowing="updateGatewayMemberContextMenu(this, event)">
-      <menuitem id="gateway-chat-single" label="Send Message..."
+      <menuitem id="gateway-chat-single" label="_('Send Message...')"
           oncommand="this.parentNode.model.onOpenChat()"/>
 
       <menuseparator/>
@@ -794,7 +787,7 @@
 
       <menuseparator/>
 
-      <menuitem label="Information..."
+      <menuitem label="_('Information...')"
         oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>

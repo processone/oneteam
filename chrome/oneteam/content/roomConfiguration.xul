@@ -8,7 +8,7 @@
 <dialog id="roomConfiguration" windowtype="ot:roomConfiguration" title="Room Configuration"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
-  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onload="onLoad()"  ondialogaccept="return onAccept();">
 

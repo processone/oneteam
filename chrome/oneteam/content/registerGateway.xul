@@ -8,7 +8,7 @@
 <dialog id="registerGateway" windowtype="ot:registerGateway" title="Gateway Registration"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
-  buttonlabelaccept="Register" buttonlabelcancel="Cancel"
+  buttonlabelaccept="Register" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onload="onLoad()"  ondialogaccept="return onAccept();">
 

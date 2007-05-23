@@ -8,7 +8,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="400" height="450"
-  buttonlabelaccept="Invite" buttonlabelcancel="Cancel"
+  buttonlabelaccept="Invite" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   ondialogaccept="return invite()" onload="onLoad()">
 

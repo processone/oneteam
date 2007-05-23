@@ -8,7 +8,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="350" height="400"
-  buttonlabelaccept="Change" buttonlabelcancel="Cancel"
+  buttonlabelaccept="Change" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   ondialogaccept="return editContact()" onload="onLoad()">
 

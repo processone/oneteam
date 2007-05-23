@@ -1,0 +1,271 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OneTeam 1.0\n"
+"POT-Creation-Date: 2007-05-23 13:32+CEST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Plural-Forms: nplurals=2; plural=n==1 ? 0 : 1;\n"
+
+#: ../chrome/oneteam/content/about.xul:9
+msgid "About {0}"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:684
+msgid "Authorize to see me"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:542
+msgid "_Preferences"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:602
+#: ../chrome/oneteam/content/presenceProfiles.xul:168
+#: ../chrome/oneteam/content/status.xul:78
+msgid "Not available"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:529
+msgid "Disconnect"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:538
+msgid "Plugins"
+msgstr ""
+
+#: ../chrome/oneteam/content/about.xul:12
+#: ../chrome/oneteam/content/bumpPriority.xul:9
+#: ../chrome/oneteam/content/changeNick.xul:9
+#: ../chrome/oneteam/content/info.xul:10
+#: ../chrome/oneteam/content/preferences.xul:10
+#: ../chrome/oneteam/content/presenceProfiles.xul:10
+#: ../chrome/oneteam/content/rename.xul:9
+#: ../chrome/oneteam/content/renameGroup.xul:9
+#: ../chrome/oneteam/content/roomConfiguration.xul:11
+#: ../chrome/oneteam/content/roomPermissions.xul:11
+#: ../chrome/oneteam/content/status.xul:10
+#: ../chrome/oneteam/content/subscribe.xul:9
+msgid "OK"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:533
+msgid "Config"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:530
+msgid "_Quit"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:492
+msgid "Startup Settings"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:476
+msgid "Password"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:675
+msgid "Rename..."
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:472
+msgid "Username"
+msgstr ""
+
+#: ../chrome/oneteam/content/about.xul:12
+#: ../chrome/oneteam/content/addContact.xul:12
+#: ../chrome/oneteam/content/bookmarkRoom.xul:11
+#: ../chrome/oneteam/content/bumpPriority.xul:9
+#: ../chrome/oneteam/content/changeNick.xul:9
+#: ../chrome/oneteam/content/editContact.xul:11
+#: ../chrome/oneteam/content/invite.xul:11
+#: ../chrome/oneteam/content/joinRoom.xul:11
+#: ../chrome/oneteam/content/joinRoomError.xul:11
+#: ../chrome/oneteam/content/manageBookmarks.xul:11
+#: ../chrome/oneteam/content/myInfo.xul:10
+#: ../chrome/oneteam/content/preferences.xul:10
+#: ../chrome/oneteam/content/presenceProfiles.xul:10
+#: ../chrome/oneteam/content/registerGateway.xul:11
+#: ../chrome/oneteam/content/removeContact.xul:10
+#: ../chrome/oneteam/content/rename.xul:9
+#: ../chrome/oneteam/content/renameGroup.xul:9
+#: ../chrome/oneteam/content/roomConfiguration.xul:11
+#: ../chrome/oneteam/content/roomPermissions.xul:11
+#: ../chrome/oneteam/content/status.xul:10
+#: ../chrome/oneteam/content/subscribe.xul:9
+msgid "Cancel"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:594
+#: ../chrome/oneteam/content/presenceProfiles.xul:162
+#: ../chrome/oneteam/content/status.xul:72
+msgid "Available"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:539
+msgid "_Themes"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:512
+msgid "Join Chat Room"
+msgstr ""
+
+#: ../chrome/oneteam/content/console.xul:57
+msgid "Send"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:553
+msgid "XML _Console"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:535
+msgid "_Edit personal info"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:604
+#: ../chrome/oneteam/content/presenceProfiles.xul:169
+#: ../chrome/oneteam/content/status.xul:79
+msgid "Invisible"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:596
+#: ../chrome/oneteam/content/presenceProfiles.xul:164
+#: ../chrome/oneteam/content/status.xul:74
+msgid "Available for chat"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:7
+msgid "Add Contact"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:600
+#: ../chrome/oneteam/content/presenceProfiles.xul:167
+#: ../chrome/oneteam/content/status.xul:77
+msgid "Away"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:196
+msgid "Reason [Optional]"
+msgstr ""
+
+#: ../chrome/oneteam/content/about.xul:32
+msgid "Release {0} ({1})"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:598
+#: ../chrome/oneteam/content/presenceProfiles.xul:166
+#: ../chrome/oneteam/content/status.xul:76
+msgid "Busy"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:495
+msgid "New Account"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:674
+msgid "Remove Contact..."
+msgstr ""
+
+#: ../chrome/oneteam/content/console.xul:26
+msgid "XML Packet Templates"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:680
+msgid "Authorisation"
+msgstr ""
+
+#: ../chrome/oneteam/content/muc.xul:347
+msgid "Enter Chat"
+msgstr ""
+
+#: ../chrome/oneteam/content/muc.xul:342
+msgid "Nick Name:"
+msgstr ""
+
+#: ../chrome/oneteam/content/console.xul:21
+msgid "Clear"
+msgstr ""
+
+#: ../chrome/oneteam/content/status.xul:7
+msgid "Status Message"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:522
+msgid "_Services Discovery"
+msgstr ""
+
+#: ../chrome/oneteam/content/about.xul:32
+msgid "r@REVISION@"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:510
+msgid "_Join Chat Room"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:607
+msgid "Status message"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:488
+msgid "Sign In"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:523
+msgid "Administration Tools"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:693
+#: ../chrome/oneteam/content/main.xul:724
+#: ../chrome/oneteam/content/main.xul:764
+#: ../chrome/oneteam/content/main.xul:790
+#: ../chrome/oneteam/content/muc.xul:414
+msgid "Information..."
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:686
+msgid "Cancel authorisation"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:508
+msgid "_Add Contact"
+msgstr ""
+
+#: ../chrome/oneteam/content/console.xul:15
+msgid "Input - Output Jabber"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:663
+#: ../chrome/oneteam/content/main.xul:665
+#: ../chrome/oneteam/content/main.xul:736
+#: ../chrome/oneteam/content/main.xul:778
+#: ../chrome/oneteam/content/muc.xul:386
+msgid "Send Message..."
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:682
+msgid "Ask to see him"
+msgstr ""
+
+#: ../chrome/oneteam/content/muc.xul:338
+msgid "Chat Room:"
+msgstr ""
+
+#: ../chrome/oneteam/content/subscribe.xul:5
+msgid "Subscribtion request"
+msgstr ""
+
+#: ../chrome/oneteam/content/console.xul:6
+msgid "XML Console"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:545
+msgid "Help"
+msgstr ""
+
+#: ../chrome/oneteam/content/main.xul:561
+msgid "About"
+msgstr ""
+

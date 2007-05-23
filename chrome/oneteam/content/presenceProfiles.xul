@@ -7,7 +7,7 @@
 <dialog id="presenceProfiles" windowtype="ot:presenceProfiles" title="Presence Profiles"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   ondialogaccept="return saveProfiles()" onload="onLoad()">
 
@@ -159,14 +159,14 @@
         <caption label="Presence"/>
         <menulist id="presenceShow">
           <menupopup>
-            <menuitem id="type-available" label="Available"
+            <menuitem id="type-available" label="_('Available')"
               value="available"/>
-            <menuitem id="type-availableChat" label="Available for chat"
+            <menuitem id="type-availableChat" label="_('Available for chat')"
               value="chat"/>
-            <menuitem id="type-dnd" label="Busy" value="dnd"/>
-            <menuitem id="type-away" label="Away" value="away"/>
-            <menuitem id="type-xa" label="Not available" value="xa"/>
-            <menuitem id="type-invisible" label="Invisible" value="invisible"/>
+            <menuitem id="type-dnd" label="_('Busy')" value="dnd"/>
+            <menuitem id="type-away" label="_('Away')" value="away"/>
+            <menuitem id="type-xa" label="_('Not available')" value="xa"/>
+            <menuitem id="type-invisible" label="_('Invisible')" value="invisible"/>
           </menupopup>
         </menulist>
 

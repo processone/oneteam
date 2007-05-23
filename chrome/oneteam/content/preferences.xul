@@ -7,7 +7,7 @@
   width="600" height="500"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel" onload="onLoad()" ondialogaccept="return savePrefs()">
 
   <script type="text/javascript;version=1.7"><![CDATA[

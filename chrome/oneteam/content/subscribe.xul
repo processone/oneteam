@@ -2,11 +2,11 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<dialog id="subscribe" windowtype="ot:subscribe" title="Subscribtion request"
+<dialog id="subscribe" windowtype="ot:subscribe" title="_('Subscribtion request')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="600" height="250"
-  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel,extra1,extra2"
   onload="onLoad()" ondialogaccept="return subscribeContact()"
   ondialogextra2="return denySubscription()">

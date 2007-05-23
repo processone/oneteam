@@ -6,7 +6,7 @@
 <dialog id="bumpPriority" windowtype="ot:bumpPriority" title="Another client active"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="200"
-  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onload="onLoad()"  ondialogaccept="return onAccept();">
 

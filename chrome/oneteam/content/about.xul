@@ -6,10 +6,10 @@
 <!-- TODO: Logo should be defined in CSS -->
 <!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
         
-<dialog id="about" windowtype="ot:about" title="About OneTeam"
+<dialog id="about" windowtype="ot:about" title="_('About {0}', _('$$branding$$:OneTeam'))"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="550" height="350"
-  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="cancel">
   
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
@@ -18,18 +18,18 @@
   
   <script><![CDATA[
     function launchBrowser() {
-      openLink("http://www.process-one.net/");
+      openLink(_("$$branding$$: http://process-one.net/"));
     }
   ]]></script>
 
   <vbox style="background-color: white;" align="center" flex="1">
     <spacer height="30"/>
 
-    <label value="OneTeam Instant Messenger" style="font-size: 20pt"/>
+    <label value="_('$$branding$$:OneTeam Instant Messenger')" style="font-size: 20pt"/>
 
     <spacer height="20"/>
 
-    <label value="Release 1.0.0 beta 1 (r@REVISION@)"/>
+    <label value="_('Release {0} ({1})', _('$$branding$$:1.0.0 beta 1'), _('r@REVISION@'))"/>
 
     <spacer height="40"/>
 
