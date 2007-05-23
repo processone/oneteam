@@ -29,7 +29,7 @@
 
     <spacer height="20"/>
 
-    <label value="_('Release {0} ({1})', _('$$branding$$:1.0.0 beta 1'), _('r@REVISION@'))"/>
+    <label value="_('Release {0} ({1})', _('$$branding$$:1.0.0 beta 1'), 'r@REVISION@')"/>
 
     <spacer height="40"/>
 
