@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use lib qw(tools/perl5lib tools/perl5lib/3rdparty);
+
 use File::Find;
 use File::Spec;
 use Data::Dumper;
