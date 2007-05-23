@@ -4,11 +4,11 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<dialog id="bookmarkRoom" windowtype="ot:bookmarkRoom" title="Bookmark Room"
+<dialog id="bookmarkRoom" windowtype="ot:bookmarkRoom" title="_('Bookmark Room')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="300" height="400"
-  buttonlabelaccept="Bookmark" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('Bookmark')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onunload="cleanup()" ondialogaccept="return bookmarkRoom()" onload="onLoad()">
         
@@ -47,29 +47,29 @@
 
       if (!conference) {
         if (!room.value) {
-          alert("Please give room name");
+          alert(_("Please give room name");
           return false;
         }
 
         if (!~server.value.search(/(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-          alert("Please give correct server address");
+          alert(_("Please give correct server address"));
           return false;
         }
 
         if (!nick.value) {
-          alert("Please give nick name");
+          alert(_("Please give nick name"));
           return false;
         }
 
         if (!bookmarkName.value) {
-          alert("Please give bookmark name");
+          alert(_("Please give bookmark name"));
           return false;
         }
 
         if (!conference && 
             window.opener.account.bookmarks.getBookmarkByName(bookmarkName.value))
         {
-          alert("Bookmark with that name already exists");
+          alert(_("Bookmark with that name already exists"));
           return false;
         } 
 
@@ -86,7 +86,7 @@
     }
   ]]></script>
 
-  <dialogheader title="Bookmark Room"/>
+  <dialogheader title="_('Bookmark Room')"/>
 
   <grid>
     <columns>
@@ -95,29 +95,29 @@
     </columns>
     <rows>
       <row align="center">
-        <label value="Room:" control="room"/>
+        <label value="_('Room:')" control="room"/>
         <textbox id="room"/>
       </row>
 
       <row align="center">
-        <label value="Server:" control="server"/>
+        <label value="_('Server:')" control="server"/>
         <textbox id="server"/>
       </row>
 
       <row align="center">
-        <label value="Nickname:" control="nick"/>
+        <label value="_('Nickname:')" control="nick"/>
         <textbox id="nick"/>
       </row>
 
       <row align="center">
-        <label value="Password:" control="password"/>
+        <label value="_('Password:')" control="password"/>
         <textbox id="password" type="password"/>
       </row>
 
       <spacer/>
 
       <row align="center">
-        <label value="Name:" control="bookmarkName"/>
+        <label value="_('Name:')" control="bookmarkName"/>
         <textbox id="bookmarkName"/>
       </row>
     </rows>
@@ -125,5 +125,3 @@
 
   <spacer/>
 </dialog>
-
-

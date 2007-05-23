@@ -9,7 +9,7 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   onload="onLoad()" onunload="onUnload()"
   width="470" height="570"
-  buttonlabelaccept="Add" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('Add')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   ondialogaccept="return addContact()">
 
@@ -95,7 +95,7 @@
       progressmeter.style.visibility = "hidden";
 
       var el = document.getElementById("gateway-id");
-      el.previousSibling.value = map.prompt || "ID:";
+      el.previousSibling.value = map.prompt || _("ID:");
       el = el.parentNode.nextSibling;
       if (el.firstChild)
         el.removeChild(el.firstChild);
@@ -117,11 +117,11 @@
 
       if (!contact) {
         if (!~jid.search(/^([^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-          alert("Please enter correct Jabber ID");
+          alert(_("Please enter correct Jabber ID"));
           return false;
         }
         if (account.contacts[jid]) {
-          alert("Contact with this Jabber ID already exists");
+          alert(_("Contact with this Jabber ID already exists"));
           return false;
         }
         contact = account.getOrCreateContact(jid, false, nick, groups);
@@ -140,14 +140,14 @@
     }
   ]]></script>
 
-  <dialogheader title="Add Contact"/>
+  <dialogheader title="_('Add Contact')"/>
 
   <vbox hidden="true">
     <hbox align="center">
-      <label value="Protocol:"/>
+      <label value="_('Network:')"/>
       <menulist id="protocol" oncommand="changeProto(this.selectedItem.model)">
         <menupopup>
-          <menuitem label="Jabber"/>
+          <menuitem label="_('Jabber')"/>
         </menupopup>
       </menulist>
     </hbox>
@@ -169,41 +169,41 @@
           <description class="field-desc" hidden="true"/>
 
           <row id="jabber-entry">
-            <label value="Jabber ID:" control="jid"/>
+            <label value="_('Jabber ID:')" control="jid"/>
             <textbox id="jid"/>
           </row>
-          <description class="field-desc">Enter Jabber ID of the contact you want to add.
-            (ex.: foo@jabber.org)</description>
+          <description class="field-desc">_('Enter Jabber ID of the contact you want to add.
+            (ex.: foo@jabber.org)')</description>
 
           <spacer/>
 
           <row>
-            <label value="Nickname:" control="nick"/>
+            <label value="_('Nickname:')" control="nick"/>
             <textbox id="nick"/>
           </row>
-          <description class="field-desc">Enter contact's nickname which will be displayed
-            in roster window.</description>
+          <description class="field-desc">_("Enter contact's nickname which will be displayed
+            in roster window.")</description>
         </rows>
       </grid>
 
       <spacer/>
 
-      <label value="Groups:" control="groups"/>
+      <label value="_('Groups:')" control="groups"/>
       <groupselector id="groups" rows="4"/>
 
       <spacer/>
 
-      <label value="_('Reason [Optional]')" />
+      <label value="_('Reason (Optional)')" />
       <textbox id="reason" multiline="true" rows="2"/>
     </vbox>
     <vbox>
       <description>
-        Before adding contacts from this network you need to register to this network gateway.
+        _('Before adding contacts from this network you need to register to this network gateway.')
       </description>
       <hbox align="center">
-        <label value="You can start gateway registration by clicking"/>
-        <button label="Gateway Registration" oncommand="currentGateway.onRegister()"/>
-        <label value="button"/>
+        <label value="_('You can start gateway registration by clicking')"/>
+        <button label="_('Gateway Registration')" oncommand="currentGateway.onRegister()"/>
+        <label value="_('button')"/>
       </hbox>
     </vbox>
   </deck>

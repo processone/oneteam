@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<dialog id="bumpPriority" windowtype="ot:bumpPriority" title="Another client active"
+<dialog id="bumpPriority" windowtype="ot:bumpPriority" title="_('Another client active')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="200"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
@@ -21,10 +21,10 @@
   ]]></script>
 
   <hbox class="entry">
-    <description>Another client active on your account. Because it has
+    <description>_("Another client active on your account. Because it has
                  higher priority that this client, messages usualy will be routed to
-                 that client.</description>
-    <description>Do you want to bump this client priority to make it main client?</description>
+                 that client.")</description>
+    <description>_("Do you want to bump this client priority to make it main client?")</description>
   </hbox>
 
 </dialog>

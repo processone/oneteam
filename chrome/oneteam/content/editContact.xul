@@ -4,11 +4,11 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<dialog id="editContact" windowtype="ot:editContact" title="Edit Contact" 
+<dialog id="editContact" windowtype="ot:editContact" title="_('Edit Contact')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="350" height="400"
-  buttonlabelaccept="Change" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('Change')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   ondialogaccept="return editContact()" onload="onLoad()">
 
@@ -27,18 +27,18 @@
     }
   ]]></script>
 
-  <dialogheader title="Edit Contact"/>
+  <dialogheader title="_('Edit Contact')"/>
 
   <spacer/>
 
   <hbox class="entry" flex="0">
-    <label value="Nickname:" control="nick"/>
+    <label value="_('Nickname:')" control="nick"/>
     <textbox id="nick"/>
   </hbox>
 
   <spacer/>
 
-  <label value="Groups:" control="groups"/>
+  <label value="('Groups:')" control="groups"/>
   <groupselector id="groups" rows="4"/>
 
   <spacer flex="1"/>

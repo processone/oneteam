@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2007-05-23 16:23+CEST\n"
+"POT-Creation-Date: 2007-05-23 17:20+CEST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -47,6 +47,18 @@ msgstr ""
 #: ../chrome/oneteam/content/status.xul:10
 #: ../chrome/oneteam/content/subscribe.xul:9
 msgid "Cancel"
+msgstr ""
+
+#: ../chrome/oneteam/content/changeNick.xul:6
+msgid "Change Nick"
+msgstr ""
+
+#: ../chrome/oneteam/content/changeNick.xul:23
+msgid "Nick can't be empty!"
+msgstr ""
+
+#: ../chrome/oneteam/content/changeNick.xul:32
+msgid "New Nick:"
 msgstr ""
 
 #: ../chrome/oneteam/content/status.xul:7
@@ -265,12 +277,132 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
+#: ../chrome/oneteam/content/addContact.xul:143
 #: ../chrome/oneteam/content/addContact.xul:7
 msgid "Add Contact"
 msgstr ""
 
+#: ../chrome/oneteam/content/addContact.xul:12
+msgid "Add"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:98
+msgid "ID:"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:120
+msgid "Please enter correct Jabber ID"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:124
+msgid "Contact with this Jabber ID already exists"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:147
+msgid "Network:"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:150
+msgid "Jabber"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:172
+msgid "Jabber ID:"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:175
+msgid "Enter Jabber ID of the contact you want to add. (ex.: foo@jabber.org)"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:181
+#: ../chrome/oneteam/content/bookmarkRoom.xul:108
+#: ../chrome/oneteam/content/editContact.xul:35
+msgid "Nickname:"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:184
+msgid "Enter contact's nickname which will be displayed in roster window."
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:191
+msgid "Groups:"
+msgstr ""
+
 #: ../chrome/oneteam/content/addContact.xul:196
-msgid "Reason [Optional]"
+msgid "Reason (Optional)"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:201
+msgid "Before adding contacts from this network you need to register to this network gateway."
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:204
+msgid "You can start gateway registration by clicking"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:205
+msgid "Gateway Registration"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:206
+msgid "button"
+msgstr ""
+
+#: ../chrome/oneteam/content/bumpPriority.xul:6
+msgid "Another client active"
+msgstr ""
+
+#: ../chrome/oneteam/content/bumpPriority.xul:24
+msgid "Another client active on your account. Because it has higher priority that this client, messages usualy will be routed to that client."
+msgstr ""
+
+#: ../chrome/oneteam/content/bumpPriority.xul:27
+msgid "Do you want to bump this client priority to make it main client?"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:7
+#: ../chrome/oneteam/content/bookmarkRoom.xul:89
+msgid "Bookmark Room"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:11
+msgid "Bookmark"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:50
+msgid "Please give room name"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:55
+msgid "Please give correct server address"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:60
+msgid "Please give nick name"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:65
+msgid "Please give bookmark name"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:72
+msgid "Bookmark with that name already exists"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:98
+msgid "Room:"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:103
+msgid "Server:"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:113
+msgid "Password:"
+msgstr ""
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:120
+msgid "Name:"
 msgstr ""
 
 #: ../chrome/oneteam/content/muc.xul:338
@@ -287,6 +419,15 @@ msgstr ""
 
 #: ../chrome/oneteam/content/subscribe.xul:5
 msgid "Subscribtion request"
+msgstr ""
+
+#: ../chrome/oneteam/content/editContact.xul:30
+#: ../chrome/oneteam/content/editContact.xul:7
+msgid "Edit Contact"
+msgstr ""
+
+#: ../chrome/oneteam/content/editContact.xul:11
+msgid "Change"
 msgstr ""
 
 #: ../chrome/oneteam/content/about.xul:9

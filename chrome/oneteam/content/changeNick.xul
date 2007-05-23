@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<dialog id="changeNick" windowtype="ot:changeNick" title="Change Nick"
+<dialog id="changeNick" windowtype="ot:changeNick" title="_('Change Nick')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="200"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
@@ -20,7 +20,7 @@
     function onAccept() {
       var nick = document.getElementById("nick").value;
       if (!nick) {
-        alert("Nick cannot be empty!")
+        alert(_("Nick can't be empty!"))
         return false;
       }
       conference.changeNick(nick);
@@ -29,7 +29,7 @@
   ]]></script>
 
   <hbox class="entry">
-    <description value="New Nick:"/>
+    <description value="_('New Nick:')"/>
     <textbox id="nick"/>
   </hbox>
 
