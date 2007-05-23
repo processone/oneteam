@@ -3,16 +3,11 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %dialogsDTD;
-]>
-
 <dialog id="info" windowtype="ot:info" title="Contact vCard"
   width="800" height="600"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="Close" buttonlabelextra1="Refresh"
+  buttonlabelaccept="OK" buttonlabelcancel="Close" buttonlabelextra1="Refresh"
   buttons="extra1,cancel"
   onload="onLoad()" ondialogextra1="fetchVCard(true)">
 

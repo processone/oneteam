@@ -4,19 +4,12 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % addContactDTD SYSTEM "chrome://oneteam/locale/addContact.dtd" >
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %addContactDTD;
-  %dialogsDTD;
-]>
-
-<dialog id="addContact" windowtype="ot:addContact" title="&Contact.titre;"
+<dialog id="addContact" windowtype="ot:addContact" title="Add Contact"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   onload="onLoad()" onunload="onUnload()"
   width="470" height="570"
-  buttonlabelaccept="Add" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="Add" buttonlabelcancel="Cancel"
   buttons="accept,cancel"
   ondialogaccept="return addContact()">
 
@@ -200,7 +193,7 @@
 
       <spacer/>
 
-      <label value="&Contact.reason;" />
+      <label value="Reason [Optional]" />
       <textbox id="reason" multiline="true" rows="2"/>
     </vbox>
     <vbox>

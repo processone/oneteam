@@ -4,19 +4,10 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % guiDTD SYSTEM "chrome://oneteam/locale/gui.dtd">
-  <!ENTITY % statusDTD SYSTEM "chrome://oneteam/locale/status.dtd">
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %guiDTD;
-  %statusDTD;
-  %dialogsDTD;
-]>
-
 <dialog id="presenceProfiles" windowtype="ot:presenceProfiles" title="Presence Profiles"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
   buttons="accept,cancel"
   ondialogaccept="return saveProfiles()" onload="onLoad()">
 
@@ -168,14 +159,14 @@
         <caption label="Presence"/>
         <menulist id="presenceShow">
           <menupopup>
-            <menuitem id="type-available" label="&status.Available;"
+            <menuitem id="type-available" label="Available"
               value="available"/>
-            <menuitem id="type-availableChat" label="&status.AvailableChat;"
+            <menuitem id="type-availableChat" label="Available for chat"
               value="chat"/>
-            <menuitem id="type-dnd" label="&status.Dnd;" value="dnd"/>
-            <menuitem id="type-away" label="&status.Away;" value="away"/>
-            <menuitem id="type-xa" label="&status.Undisponible;" value="xa"/>
-            <menuitem id="type-invisible" label="&status.Invisible;" value="invisible"/>
+            <menuitem id="type-dnd" label="Busy" value="dnd"/>
+            <menuitem id="type-away" label="Away" value="away"/>
+            <menuitem id="type-xa" label="Not available" value="xa"/>
+            <menuitem id="type-invisible" label="Invisible" value="invisible"/>
           </menupopup>
         </menulist>
 

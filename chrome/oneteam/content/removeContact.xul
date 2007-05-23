@@ -4,17 +4,10 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % statusDTD SYSTEM "chrome://oneteam/locale/status.dtd" >
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %statusDTD;
-  %dialogsDTD;
-]>
-
 <dialog id="removeContact" windowtype="ot:removeContact" title="Contact removal"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="400" height="150"
-  buttonlabelaccept="Remove" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="Remove" buttonlabelcancel="Cancel"
   buttons="accept,cancel" defaultButton="cancel"
   onload="onLoad()" ondialogaccept="onAccept()">
 

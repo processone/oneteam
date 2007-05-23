@@ -4,18 +4,11 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % editContactDTD SYSTEM "chrome://oneteam/locale/editContact.dtd" >
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %editContactDTD;
-  %dialogsDTD;
-]>
-
 <dialog id="editContact" windowtype="ot:editContact" title="Edit Contact" 
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="350" height="400"
-  buttonlabelaccept="Change" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="Change" buttonlabelcancel="Cancel"
   buttons="accept,cancel"
   ondialogaccept="return editContact()" onload="onLoad()">
 

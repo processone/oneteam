@@ -3,16 +3,11 @@
 <?xml-stylesheet href="chrome://oneteam/skin/preferences/preferences.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %dialogsDTD;
-]>
-
 <dialog id="preferences" windowtype="ot:preferences" title="Preferences"
   width="600" height="500"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
   buttons="accept,cancel" onload="onLoad()" ondialogaccept="return savePrefs()">
 
   <script type="text/javascript;version=1.7"><![CDATA[

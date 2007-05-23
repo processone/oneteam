@@ -4,13 +4,6 @@
 <?xml-stylesheet href="chrome://oneteam/skin/main/main.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE window [
-<!ENTITY % guiDTD SYSTEM "chrome://oneteam/locale/gui.dtd">
-<!ENTITY % messengerDTD SYSTEM "chrome://oneteam/locale/messenger.dtd">
-%guiDTD;
-%messengerDTD;
-]>
-
 <window id="ot:main" title="OneTeam"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
     persist="width height" width="170" height="450"
@@ -476,11 +469,11 @@
         <image id="login-logo"/>
       </hbox>
       <vbox id="login-user-box">
-        <label control="login-user" value="&Login.login;"/>
+        <label control="login-user" value="Username"/>
         <textbox id="login-user" flex="1"/>
       </vbox>
       <vbox id="login-pass-box">
-        <label control="login-pass" value="&Login.password;"/>
+        <label control="login-pass" value="Password"/>
         <textbox id="login-pass" type="password"/>
       </vbox>
       <hbox pack="center">
@@ -492,14 +485,14 @@
       </hbox>
       <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
       <hbox pack="center">
-        <button id="login-signin" label="&Login.signin;" oncommand="connect()"/>
+        <button id="login-signin" label="Sign In" oncommand="connect()"/>
       </hbox>
       <spacer/>
       <hbox id="login-settings-box">
-        <label crop="end" class="text-link" value="&Login.settings;"
+        <label crop="end" class="text-link" value="Startup Settings"
           onclick="account.showPrefs();"/>
         <label value="|"/>
-        <label crop="end" class="text-link" value="&Login.NewAccount;"
+        <label crop="end" class="text-link" value="New Account"
           onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
 <!-- #ifdef DEBUG -->
         <label value="|"/>
@@ -512,13 +505,13 @@
         <menubar>
           <menu id="lagger-menu" label="OneTeam" accesskey="O">
             <menupopup id="file-popup">
-              <menuitem label="&menulagger.addContact;" command="cmd_addContact"
-                  accesskey="&shortcurt.add;"/>
+              <menuitem label="Add Contact" command="cmd_addContact"
+                  accesskey="A"/>
 
-              <menu label="&menulagger.joinConference;"
-                  accesskey="&shortcurt.join;">
+              <menu label="Join Chat Room"
+                  accesskey="J">
                 <menupopup>
-                  <menuitem label="&menulagger.joinConference;" command="cmd_joinRoom"/>
+                  <menuitem label="Join Chat Room" command="cmd_joinRoom"/>
                   <menuseparator/>
                   <menuseparator id="conference-menu-separator" hidden="true"/>
                   <menuitem label="Manage Bookmarks" accesskey="M" command="cmd_manageBookmarks"/>
@@ -528,35 +521,35 @@
                 <menupopup/>
               </menu>
               <menuseparator/>
-<!--          <menuitem label="&menulagger.servicesDiscovery;" command="cmd_disco"
-                  accesskey="&shortcurt.service;"/>
-              <menuitem label="&menulagger.adminTools;"/> -->
+<!--          <menuitem label="Services Discovery" command="cmd_disco"
+                  accesskey="S"/>
+              <menuitem label="Administration Tools"/> -->
               <menuitem label="History Manager" command="cmd_history"
                 accesskey="H"/>
               <menuitem label="File Transfers" command="cmd_transfers"
                 accesskey="T"/>
               <menuseparator/>
-              <menuitem label="&menulagger.disconnect;" command="cmd_disconnect"/>
-              <menuitem label="&menulagger.quitter;" command="cmd_quit"
-                  accesskey="&shortcurt.quit;"/>
+              <menuitem label="Disconnect" command="cmd_disconnect"/>
+              <menuitem label="Quit" command="cmd_quit"
+                  accesskey="Q"/>
             </menupopup>
           </menu>
-          <menu id="configuration-menu" label="&menuConfig.configuration;">
+          <menu id="configuration-menu" label="Config">
             <menupopup id="config-popup">
-              <menuitem label="&menuConfig.editinfo;" command="cmd_ourVCard"
-                  accesskey="&shortcurt.edit;"/>
+              <menuitem label="Edit personal info" command="cmd_ourVCard"
+                  accesskey="E"/>
               <menuseparator/>
 <!-- #ifdef XULAPP -->
-              <menuitem label="&menuConfig.plugins;" command="cmd_extensions"/>
-              <menuitem label="&menuConfig.themes;" command="cmd_themes"
-                  accesskey="&shortcurt.themes;"/>
+              <menuitem label="Plugins" command="cmd_extensions"/>
+              <menuitem label="Themes" command="cmd_themes"
+                  accesskey="T"/>
               <menuseparator/>
 <!-- #endif -->
-              <menuitem label="&menuConfig.preferences;" command="cmd_prefs"
-                  accesskey="&shortcurt.pref;"/>
+              <menuitem label="Preferences" command="cmd_prefs"
+                  accesskey="P"/>
             </menupopup>
           </menu>
-          <menu id="help-menu" label="&menuAide.Aide;">
+          <menu id="help-menu" label="Help">
             <menupopup id="help-popup">
               <menuitem label="Help bot" command="cmd_help_bot"
                   accesskey="b"/>
@@ -564,8 +557,8 @@
                   accesskey="D"/>
               <menuitem label="Report Bug" command="cmd_bug"
                   accesskey="R"/>
-              <menuitem label="&menuAide.console;" command="cmd_xmlConsole"
-                  accesskey="&shortcurt.console;"/>
+              <menuitem label="XML Console" command="cmd_xmlConsole"
+                  accesskey="C"/>
 <!-- #ifdef DEBUG -->
 <!-- #ifdef XULAPP -->
               <menuitem label="JavaScript Console" command="cmd_jsConsole"/>
@@ -573,7 +566,7 @@
               <menuitem label="Command Console" command="cmd_cmdConsole"/>
 <!-- #endif -->
               <menuseparator/>
-              <menuitem label="&menuAide.apropos;" command="cmd_about"/>
+              <menuitem label="About" command="cmd_about"/>
             </menupopup>
           </menu>
         </menubar>
@@ -606,20 +599,20 @@
               </hbox>
               <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
                 <menupopup>
-                  <menuitem id="setPresence-type-available" label="&status.Available;"
+                  <menuitem id="setPresence-type-available" label="Available"
                       selected="true" value="available" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-chat" label="&status.AvailableChat;"
+                  <menuitem id="setPresence-type-chat" label="Available for chat"
                       value="chat" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-dnd" label="&status.Dnd;"
+                  <menuitem id="setPresence-type-dnd" label="Busy"
                       value="dnd" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-away" label="&status.Away;"
+                  <menuitem id="setPresence-type-away" label="Away"
                       value="away" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-xa" label="&status.Undisponible;"
+                  <menuitem id="setPresence-type-xa" label="Not available"
                       value="xa" class="menuitem-iconic"/>
-                  <menuitem id="setPresence-type-invisible" label="&status.Invisible;"
+                  <menuitem id="setPresence-type-invisible" label="Invisible"
                       value="invisible" class="menuitem-iconic"/>
                   <menuseparator/>
-                  <menuitem id="setPresence-type-custom" label="&status.changeMessage;"/>
+                  <menuitem id="setPresence-type-custom" label="Status message"/>
                 </menupopup>
               </menulist>
               <hbox>
@@ -675,9 +668,9 @@
     </tooltip>
 
     <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
-      <menuitem id="contact-chat-single" label="&listitemcontext.Communiquer;"
+      <menuitem id="contact-chat-single" label="Send Message..."
           oncommand="this.parentNode.model.onOpenChat()"/>
-      <menu id="contact-chat-multi" label="&listitemcontext.Communiquer;" hidden="true">
+      <menu id="contact-chat-multi" label="Send Message..." hidden="true">
         <menupopup/>
       </menu>
       <menu id="contact-invite" label="Invite to" hidden="true">
@@ -686,26 +679,26 @@
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.SupprimerContact;" oncommand="this.parentNode.model.onRemove()"/>
-      <menuitem label="&listitemcontext.Rename;" oncommand="this.parentNode.model.onRename()"/>
+      <menuitem label="Remove Contact..." oncommand="this.parentNode.model.onRemove()"/>
+      <menuitem label="Rename..." oncommand="this.parentNode.model.onRename()"/>
       <menuitem label="Edit contact..." oncommand="this.parentNode.model.onEditContact()"/>
 
       <menuseparator/>
 
-      <menu label="&listitemcontext.Authorisation;">
+      <menu label="Authorisation">
         <menupopup>
-          <menuitem id="contact-authorisation-ask" label="&listitemcontext.Ask;"
+          <menuitem id="contact-authorisation-ask" label="Ask to see him"
               oncommand="this.parentNode.parentNode.parentNode.model.askForSubscription()"/>
-          <menuitem id="contact-authorisation-allow" label="&listitemcontext.Authorize;"
+          <menuitem id="contact-authorisation-allow" label="Authorize to see me"
               oncommand="this.parentNode.parentNode.parentNode.model.allowToSeeMe()"/>
-          <menuitem id="contact-authorisation-disallow" label="&listitemcontext.Forbid;"
+          <menuitem id="contact-authorisation-disallow" label="Cancel authorisation"
               oncommand="this.parentNode.parentNode.parentNode.model.disallowToSeeMe()"/>
         </menupopup>
       </menu>
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.Infos;" oncommand="this.parentNode.model.showVCard()"/>
+      <menuitem label="Information..." oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
       <!-- #ifdef XULAPP -->
@@ -736,7 +729,7 @@
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.Infos;"
+      <menuitem label="Information..."
         oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
@@ -748,7 +741,7 @@
     </popup>
 
     <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
-      <menuitem id="conferencemember-chat-single" label="&listitemcontext.Communiquer;"
+      <menuitem id="conferencemember-chat-single" label="Send Message..."
           oncommand="this.parentNode.model.onOpenChat()"/>
 
       <menuseparator/>
@@ -776,7 +769,7 @@
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.Infos;"
+      <menuitem label="Information..."
         oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
@@ -790,7 +783,7 @@
     </popup>
 
     <popup id="gateway-contextmenu" onpopupshowing="updateGatewayMemberContextMenu(this, event)">
-      <menuitem id="gateway-chat-single" label="&listitemcontext.Communiquer;"
+      <menuitem id="gateway-chat-single" label="Send Message..."
           oncommand="this.parentNode.model.onOpenChat()"/>
 
       <menuseparator/>
@@ -802,7 +795,7 @@
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.Infos;"
+      <menuitem label="Information..."
         oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>

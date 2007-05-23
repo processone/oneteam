@@ -2,9 +2,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/xmlconsole/xmlconsole.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://oneteam/locale/console.dtd">
 
-<window id="Console" title="&Console.title;" width="640" height="550"
+<window id="Console" title="XML Console" width="640" height="550"
     onload="onLoad()" onunload="onClose()" windowtype="ot:console"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -13,18 +12,18 @@
 
   <vbox flex="1">
     <hbox pack="center">
-        <label value="&Console.traffic;" style="font-weight: bold;"/>
+        <label value="Input - Output Jabber" style="font-weight: bold;"/>
     </hbox>
     <html:iframe id="textconsole" flex="1"/>
     <spacer height="10"/>
 
     <hbox pack="center">
-        <button label="&Console.clear;" accesskey="C" oncommand="clearConsole();"/>
+        <button label="Clear" accesskey="C" oncommand="clearConsole();"/>
     </hbox>
     <spacer height="10"/>
 
     <hbox pack="center">
-        <label value="&Console.templates;" style="font-weight: bold;"/>
+        <label value="XML Packet Templates" style="font-weight: bold;"/>
     </hbox>
 
     <textbox id="texttemplates" multiline="true"
@@ -55,7 +54,7 @@
           <menuitem label="Headline" oncommand="writeXMLMessageHeadline();"/>
         </menupopup>
       </menulist>
-      <button label="&Console.send;" oncommand="sendToServer();"/>
+      <button label="Send" oncommand="sendToServer();"/>
     </hbox>
   </vbox>
 </window>

@@ -2,7 +2,6 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://oneteam/locale/console.dtd">
 
 <window id="ot:history" title="History Manager" width="640" height="550"
     onload="onLoad()" onunload="onUnload()" persist="width height" windowtype="ot:history"

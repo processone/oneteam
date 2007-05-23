@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %brandDTD;
-  %dialogsDTD;
-]>
-
 <!-- TODO: Translate About and Release -->
 <!-- TODO: Font-style should be defined in CSS -->
 <!-- TODO: Logo should be defined in CSS -->
 <!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
         
-<dialog id="about" windowtype="ot:about" title="About &brandShortName;"
+<dialog id="about" windowtype="ot:about" title="About OneTeam"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="550" height="350"
-  buttonlabelaccept="&dialog.accept.label;" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="OK" buttonlabelcancel="Cancel"
   buttons="cancel">
   
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
@@ -32,11 +25,11 @@
   <vbox style="background-color: white;" align="center" flex="1">
     <spacer height="30"/>
 
-    <label value="&brandFullName;" style="font-size: 20pt"/>
+    <label value="OneTeam Instant Messenger" style="font-size: 20pt"/>
 
     <spacer height="20"/>
 
-    <label value="Release &softwareVersion; (r@REVISION@)"/>
+    <label value="Release 1.0.0 beta 1 (r@REVISION@)"/>
 
     <spacer height="40"/>
 

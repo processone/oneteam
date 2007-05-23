@@ -4,13 +4,6 @@
 <?xml-stylesheet href="chrome://oneteam/skin/main/main.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE window [
-<!ENTITY % guiDTD SYSTEM "chrome://oneteam/locale/gui.dtd">
-<!ENTITY % oneteamDTD SYSTEM "chrome://oneteam/locale/messenger.dtd">
-%guiDTD;
-%oneteamDTD;
-]>
-
 <window id="ot:muc" title="OneTeam MUC"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
     persist="width height" width="170" height="450"
@@ -342,16 +335,16 @@
         <image id="login-logo"/>
       </hbox>
       <vbox id="login-user-box">
-        <label control="room" value="&muc.roomname;"/>
+        <label control="room" value="Chat Room:"/>
         <textbox id="room"/>
       </vbox>
       <vbox id="login-pass-box">
-        <label control="nick" value="&muc.nickname;"/>
+        <label control="nick" value="Nick Name:"/>
         <textbox id="nick" flex="1"/>
       </vbox>
       <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
       <hbox pack="center">
-        <button id="login-signin" label="&muc.enterroom;" oncommand="connect()"/>
+        <button id="login-signin" label="Enter Chat" oncommand="connect()"/>
       </hbox>
     </vbox>
     <vbox flex="1">
@@ -390,7 +383,7 @@
     </popup>
 
     <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
-      <menuitem id="conferencemember-chat-single" label="&listitemcontext.Communiquer;"
+      <menuitem id="conferencemember-chat-single" label="Send Message..."
           oncommand="this.parentNode.model.onOpenChat()"/>
 
       <menuseparator/>
@@ -418,7 +411,7 @@
 
       <menuseparator/>
 
-      <menuitem label="&listitemcontext.Infos;"
+      <menuitem label="Information..."
         oncommand="this.parentNode.model.showVCard()"/>
       <!-- #ifdef XULAPP -->
       <menuitem id="conferencemember-send-file" label="Send file..."

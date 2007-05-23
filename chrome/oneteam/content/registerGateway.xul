@@ -5,15 +5,10 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dataforms/dataforms.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE dialog [
-  <!ENTITY % dialogsDTD SYSTEM "chrome://oneteam/locale/dialogs.dtd" >
-  %dialogsDTD;
-]>
-
 <dialog id="registerGateway" windowtype="ot:registerGateway" title="Gateway Registration"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
-  buttonlabelaccept="Register" buttonlabelcancel="&dialog.cancel.label;"
+  buttonlabelaccept="Register" buttonlabelcancel="Cancel"
   buttons="accept,cancel"
   onload="onLoad()"  ondialogaccept="return onAccept();">
 
