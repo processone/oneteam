@@ -510,7 +510,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 return;
             }
 
-            this.addEvent(__("events", "subscriptionEvent", sender),
+            this.addEvent("You have got subscription request from <b>"+sender+"{0}</b>",
                           new Callback(openDialogUniq, null).
                           addArgs("ot:subscribe", "chrome://oneteam/content/subscribe.xul",
                                   "chrome,centerscreen,resizable",
@@ -585,7 +585,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             if (conference.joined)
                 return;
 
-            this.addEvent(__("events", "invitationEvent", sender, invite.getAttribute("from")),
+            this.addEvent("You have been invited to room <b>"+sender+"</b> by <b>"+invite.getAttribute("from"))+"</b>",
                           new Callback(openDialogUniq, null).
                           addArgs("ot:invitation", "chrome://oneteam/content/invitation.xul",
                                   "chrome,centerscreen", conference,

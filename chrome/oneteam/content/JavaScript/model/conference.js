@@ -102,7 +102,7 @@ _DECL_(Conference, Contact).prototype =
         if (!errorTag)
             return;
 
-        account.addEvent(__("events", "joinRoomErrorEvent", this.jid, errorMsg),
+        account.addEvent("Joining to room <b>"++this.jid"</b> failed.<br/>Error message: <em>"+errorMsg+"</em>",
                          new Callback(openDialogUniq).
                             addArgs("ot:joinRoomError", "chrome://oneteam/content/joinRoomError.xul",
                                     "chrome,centerscreen", this, +errorTag.getAttribute("code"),
@@ -391,7 +391,7 @@ _DECL_(Conference, Contact).prototype =
               405: "This room doesn't exist, and can be created only by administrator",
               406: "This room can be accessed only by registered persons",
               407: "You are not member of this room",
-              409: _("gui", "joinRoomErrorNickAlreadyUsed"),
+              409: "You nick name is already used, try another nick",
               503: "This room reached maximum number of uses"
             };
             errorMsg = errorCodesMap[+errorTag.getAttribute("code")] ||

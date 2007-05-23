@@ -27,7 +27,7 @@ _DECL_(NotificationScheme).prototype =
 
             if (signed != null) {
                 if (model instanceof ConferenceMember)
-					this._showInChatPane(__("gui", "roomJoinLeft", model, signed),
+					this._showInChatPane(model+" has "+(signed ? "joined" : "left")+" this room",
 										 model, true, false);
                 else
                     this._showAlert(this, "<b>"+model.visibleName+"</b> signed "+
@@ -41,11 +41,11 @@ _DECL_(NotificationScheme).prototype =
             this._showAlert(this, msg, null, "contact", model);
         } else if (kind == "muc") {
             if (type == "nickChange")
-                this._showInChatPane(__("gui", "roomSetNick", extra.resource,
-				      model.jid.resource), model, true, true);
+                this._showInChatPane(extra.resource+" changed nick to "+model.jid.resource,
+                    model, true, true);
             else if (type == "subjectChange")
-	      this._showInChatPane(__("gui", "roomSetSubject", extra.resource,
-				      model.subject), model, true, false);
+	      this._showInChatPane(extra.resource+" changed subject to "+model.subject,
+                model, true, false);
         }
     },
 

@@ -328,7 +328,7 @@ function ConferenceMemberTooltip(model, parentView)
     row = document.createElement("row");
     rows.appendChild(row);
     label = document.createElement("label");
-    label.setAttribute("value", _("gui", "room.affiliation"));
+    label.setAttribute("value", "Affiliation:");
     row.appendChild(label);
     row.appendChild(this.affiliation);
 

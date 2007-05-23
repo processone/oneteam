@@ -319,7 +319,7 @@ servicesManager.addIQService("jabber:iq:version", function (pkt, query) {
 
         return <query xmlns="jabber:iq:version">
                     <name>OneTeam</name>
-                        <version>{_("branding:brand", "softwareVersion")+" (r@REVISION@)"}</version>
+                        <version>{"1.0"+" (r@REVISION@)"}</version>
                         <os>{navigator.platform}</os>
                     </query>;
     });

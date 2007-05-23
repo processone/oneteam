@@ -108,7 +108,7 @@ _DECL_(L10NServiceBase).prototype =
         {
             if (!this._pluralsExpr)
                 this._pluralsExpr = new Function("n",
-                    "return arguments["+_("l10n", "plurals.expression")+"]");
+                    "return arguments["+"n == 1 ? 0 : 1"+"]");
             return this._pluralsExpr.apply(null, arguments);
         }
     }

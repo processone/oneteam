@@ -18,7 +18,7 @@
   
   <script><![CDATA[
     function launchBrowser() {
-      openLink(_("branding:brand", "releaseURL"));
+      openLink("http://www.process-one.net/");
     }
   ]]></script>
 

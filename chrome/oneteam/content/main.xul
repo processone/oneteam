@@ -386,8 +386,7 @@
         this.eventBox.collapsed = account.events.length == 0;
 
         if (account.events.length) {
-          this.title.innerHTML = __("events", "eventsCounterFormat",
-            account.events.length);
+          this.title.innerHTML = "You have "+account.events.length+" new messages";
           this.tooltip.innerHTML = account.events[0][0];
         }
       },
