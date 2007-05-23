@@ -20,10 +20,8 @@ has '_str_parse_tree' => (
 sub resolve {
     my ($self, @args) = @_;
 
-     if ($self->str =~ /^\$\$plural_forms\$\$:/){
-        print $self->plural_forms, "\n";
-        return $self->plural_forms;
-    }
+    return $self->plural_forms
+        if $self->str =~ /^\$\$plural_forms\$\$:/;
 
     return $self->_resolve($self->_str_parse_tree, @args);
 }
