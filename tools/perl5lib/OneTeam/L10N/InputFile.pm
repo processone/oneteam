@@ -17,7 +17,7 @@ has 'strings' => (
     default => sub {
         my $self = shift;
         return [$self->_parse_xml] if $self->path =~ /\.(xul|xml)$/;
-        return [$self->_extract_strings($self->content, 0, 0,
+        return [$self->_extract_strings($self->content, 0, -1, 0,
                                         $self->path =~ /\.js$/)];
        return [];
     }
@@ -43,15 +43,19 @@ sub translate {
     # XXX: I don't know exactly why using aliases to strings elements
     #  ends with changing strings elements with undefs.
     for (@{[reverse @{$self->strings}]}) {
-        substr($content, $_->start_pos, $_->end_pos - $_->start_pos,
-               $_->resolve($locale_bundle));
+        my ($str, $accesskey, $accesskey_pos) = $_->resolve($locale_bundle);
+
+        substr($content, $accesskey_pos, 0, " accesskey=\"$accesskey\"")
+            if $accesskey_pos > 0;
+
+        substr($content, $_->start_pos, $_->end_pos - $_->start_pos, $str);
     }
 
     return $content;
 }
 
 sub _extract_strings {
-    my ($self, $str, $start, $xml_escaped, $in_js_code, $unescaped, @pos_map) = @_;
+    my ($self, $str, $start, $accesskey_pos, $xml_escaped, $in_js_code, $unescaped, @pos_map) = @_;
     my ($str_re, $brackets_re, $nextarg_re);
     my @strings;
     my %ent_map = ( apos => "'", quot => "\"", lt => "<", gt => ">", amp => "&");
@@ -151,7 +155,8 @@ sub _extract_strings {
                 my $last = $start+$-[2];
                 my $end = $start+$+[2];
                 my @strs = $self->_extract_strings($2, $self->_map_pos($last, 1, @pos_map),
-                                                   $xml_escaped, $in_js_code, 1, @pos_map);
+                                                   -1, $xml_escaped, $in_js_code, 1, @pos_map);
+
                 for (@strs) {
                     my $start = $self->_map_pos($_->start_pos, 0, @pos_map);
 
@@ -176,6 +181,7 @@ sub _extract_strings {
             end_pos => $self->_map_pos($start+pos($str), 1, @pos_map),
             str => $template,
             args => [@args],
+            accesskey_pos => $self->_map_pos($accesskey_pos, 1, @pos_map),
             js_code => $in_js_code,
             escape_xml => $xml_escaped);
     }
@@ -190,7 +196,7 @@ sub _parse_xml {
 
 MAIN_LOOP:
     while ($content =~ m/\G(.*?)<(?:([^\s\/>]+)|(\/[^\s>]+>))/gsc) {
-        push @strings, $self->_extract_strings($1, $-[1], 1, $in_js_code[0])
+        push @strings, $self->_extract_strings($1, $-[1], -1, 1, $in_js_code[0])
            if length $1;
 
         if ($3) {
@@ -202,33 +208,45 @@ MAIN_LOOP:
             my $cdata_start = $+[1];
             $self->_report_error("Unclosed CDATA declaration", $cdata_start)
                 unless $content =~ m/\G(.*?)]]>/gs;
-            push @strings, $self->_extract_strings($1, $-[1], 0, $in_js_code[0])
+            push @strings, $self->_extract_strings($1, $-[1], -1, 0, $in_js_code[0])
                 if length $1;
             next;
         }
 
-        unshift @in_js_code, $2 =~ /^(?:\S+:)?(?:script|setter|getter|constructor|
-                                               destructor|body|handler|field)$/x;
+        $2 =~ /^(?:\S+:)?(.*)$/x;
+        my $tag = $1;
+
+        unshift @in_js_code, $1 =~ /^(?:script|setter|getter|constructor|
+                                        destructor|body|handler|field)$/x;
         while ($content =~ m/\G\s*(?:
                 (?: (\w+) = (?: '([^']*)' | "([^"]*)" )) |
                 ( [\/?]> ) |
                 ( > ))/gcx) {
-            if ($1) {
-                if (defined $2 and length $2) {
-                    push @strings, $self->_extract_strings($2, $-[2], 1, index($1, "on") == 0);
-                } elsif (defined $3 and length $3) {
-                    push @strings, $self->_extract_strings($3, $-[3], 1, index($1, "on") == 0);
-                }
-                next;
+            if (not defined $1) {
+                shift @in_js_code if $4;
+                next MAIN_LOOP;
             }
-            shift @in_js_code if $4;
 
-            next MAIN_LOOP;
+            my $attr_name = $1;
+            my $attr_pos = $+[0];
+            my ($attr_val, $attr_start) = defined $2 ?
+                ($2, $-[2]) : ($3, $-[3]);
+
+            next unless length $attr_val;
+
+            my $accesskey =
+                $attr_name =~ /^(?:label|value)$/ &&
+                $tag =~ /^(?:button|checkbox|caption|label|listitem|menu|
+                             menuitem|menulist|radiotab|toolbarbutton)$/x ?
+                    $attr_pos : -1;
+
+            push @strings, $self->_extract_strings($attr_val, $attr_start,
+                $accesskey, 1, index($attr_name, "on") == 0)
         }
     }
     my $str = substr($content, pos($content));
 
-    push @strings, $self->_extract_strings($str, pos($content), 1, 0)
+    push @strings, $self->_extract_strings($str, pos($content), -1, 1, 0)
         if length $str;
 
     return @strings;
@@ -237,7 +255,7 @@ MAIN_LOOP:
 sub _map_pos {
     my ($self, $pos, $dir, @ranges) = @_;
 
-    return $pos if @ranges == 0;
+    return $pos if @ranges == 0 or $pos < 0;
 
     my $prev = [0, 0];
     for (@ranges) {
@@ -269,7 +287,7 @@ has 'start_pos' => (is => 'ro', isa => 'Int', required => 1);
 has 'end_pos' => (is => 'ro', isa => 'Int', required => 1);
 has 'str' => (is => 'ro', isa => 'OneTeam::L10N::FormattedString', required => 1, coerce => 1);
 has 'args' => (is => 'ro', default => sub { [] });
-
+has 'accesskey_pos' => (is => 'ro', isa => 'Int', default => sub { -1 });
 has 'js_code' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'escape_xml' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'line' => (
@@ -315,6 +333,16 @@ has 'translatable_strings' => (
         return \@strings;
     }
 );
+
+sub resolve {
+    my ($self, $locale_bundle) = @_;
+    my $str = $self->_resolve($locale_bundle);
+
+    return ($str, $1, $self->accesskey_pos)
+        if $self->accesskey_pos > 0 and $str =~ s/_(\w)/$1/;
+
+    return ($str, "", -1);
+}
 
 sub _resolve_array {
     my ($self, $array, $locale_bundle, $raw_value) = @_;
@@ -373,12 +401,6 @@ sub _resolve {
     }
 
     return $result;
-}
-
-sub resolve {
-    my ($self, $locale_bundle) = @_;
-
-    return $self->_resolve($locale_bundle);
 }
 
 1;
