@@ -590,7 +590,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                           addArgs("ot:invitation", "chrome://oneteam/content/invitation.xul",
                                   "chrome,centerscreen", conference,
                                   new JID(invite.getAttribute("from")),
-                                  reason && reason.textContent));
+                                  reason && reason.textContent);
             return;
         }
 

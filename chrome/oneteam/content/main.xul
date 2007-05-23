@@ -507,7 +507,7 @@
             <menupopup id="file-popup">
               <menuitem label="_('_Add Contact')" command="cmd_addContact"/>
 
-              <menu label="_('_Join Chat Room')"/>
+              <menu label="_('_Join Chat Room')">
                 <menupopup>
                   <menuitem label="_('Join Chat Room')" command="cmd_joinRoom"/>
                   <menuseparator/>
