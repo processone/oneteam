@@ -57,6 +57,8 @@ has 'strings' => (
 
         my (@comments, %flags, @locations, $msgid, $msgstr, $phase, $plural_forms);
 
+        local $_;
+
         while (<$fh>) {
             chomp;
             if (/#:\s+(.*)/) {

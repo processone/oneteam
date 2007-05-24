@@ -39,10 +39,9 @@ has 'translatable_strings' => (
 sub translate {
     my ($self, $locale_bundle) = @_;
     my $content = $self->content;
+    local $_;
 
-    # XXX: I don't know exactly why using aliases to strings elements
-    #  ends with changing strings elements with undefs.
-    for (@{[reverse @{$self->strings}]}) {
+    for (reverse @{$self->strings}) {
         my ($str, $accesskey, $accesskey_pos) = $_->resolve($locale_bundle);
 
         substr($content, $accesskey_pos, 0, " accesskey=\"$accesskey\"")
