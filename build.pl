@@ -376,10 +376,12 @@ sub finalize {
 
     for my $localedir (glob catfile($self->{outputdir}, "*")) {
         my $locale = (splitdir($localedir))[-1];
-        push @locales, "\"$locale\"";
+        push @locales, $locale;
 
         system("cd '$localedir'; zip -q -9 -r '".catfile($topdir, "web", "oneteam-$locale.jar")."' .");
     }
+    @locales = map { "\"$_\"" } "en-US", sort grep {$_ ne "en-US"} @locales;
+
     open(my $fh, ">", catfile($topdir, "web", "oneteam.js"));
 
     print $fh "var languages = [".join(", ", @locales)."];\n";
