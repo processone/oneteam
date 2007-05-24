@@ -52,151 +52,13 @@
         cursor: pointer;
       }
     </style>
-    <script type="text/javascript">
-      try {
-        window.storage = window.globalStorage[document.location.host.replace(/:\d+$/, "")];
-      } catch (ex) {};
-
-      var schema = document.location.toString().replace(/(?:jar:)?(.*?):.*/, "$1");
-
-      if (window.storage) {
-        var keysToDel = [], keysToSet = [], cacheNewKey;
-
-        for (var i = 0; i < storage.length; i++) {
-          try {
-            cacheNewKey = storage.key(i).replace(/^cache:/, ":cache:value:").
-              replace(/^cacheExpiration:/, ":cache:expiration:").
-              replace(/^pref-str:/, ":prefs:str:").
-              replace(/^pref-bool:/, ":prefs:bool:").
-              replace(/^pref-num:/, ":prefs:int:");
-            if (cacheNewKey != storage.key(i)) {
-              keysToSet.push([schema+cacheNewKey, storage[storage.key(i)]]);
-              if (schema != "https")
-                keysToDel.push(storage.key(i));
-            }
-          } catch (ex) { }
-        }
-
-        for (i = 0; i < keysToSet.length; i++)
-          try {
-            storage[keysToSet[i][0]] = keysToSet[i][1];
-          } catch (ex) { }
-
-        for (i = 0; i < keysToDel.length; i++)
-          try {
-            delete storage[keysToDel[i]];
-          } catch (ex) { }
-      }
-
-      function browserCheck()
-      {
-        if (!window.storage)
-          return false;
-        var el = document.
-          createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-                          "hbox");
-        el.setAttribute("flex", 1);
-
-        return !!el.flex;
-      }
-
-      function onLoad() {
-        if (document.location.search == "?t=1")
-          launch(true);
-        else if (browserCheck()) {
-          launch(true);
-          //document.getElementById("mode").checked = storage[schema+":openInNewWindow"] != "false";
-          //document.getElementById("launch").style.display = "block"
-        } else {
-          document.getElementById("useff").style.display = "block"
-        }
-      }
-
-      function launch(thisWindow) {
-        var newWin = document.getElementById("mode").checked;
-        storage[schema+":openInNewWindow"] = !! newWin;
-        if (!thisWindow && newWin) {
-          window.open(document.location.href+"?t=1", "_blank",
-              "chrome,resizable=yes,dialog=no,all");
-        } else {
-          var frame = document.getElementById("frame");
-          frame.style.display = "block";
-          frame.src = "jar:"+document.location.href.replace(/\/[^\/]*$/,
-              "/oneteam.jar!/content/muc.xul");
-        }
-      }
+    <script type="text/javascript;version=1.7" src="oneteam.js">
     </script>
-    <script type="text/javascript;version=1.7">
-      function StorageWrapper(prefix)
-      {
-        if (!window.storage)
-          throw "Can't access globalStorage";
-        this.prefix = schema+":"+prefix+":";
-        this.storage = window.storage;
-      }
-
-      StorageWrapper.prototype =
-      {
-        __iterator__: function(keysOnly) {
-          for (var i = 0; i < storage.length; i++)
-            try {
-              if (storage.key(i).indexOf(this.prefix) == 0) {
-                var key = storage.key(i).substr(this.prefix.length);
-                if (keysOnly)
-                  yield (key);
-                else {
-                  var val = storage[storage.key(i)];
-                  yield ([key, val == null ? null : ""+val]);
-                }
-              }
-            } catch (ex) { this.report("developer", "error", ex) }
-          throw StopIteration;
-        },
-
-        "get": function(key)
-        {
-          try {
-            var val = storage[this.prefix+key];
-            return val == null ? null : ""+val;
-          } catch(ex) { this.report("developer", "error", ex) }
-          return null;
-        },
-
-        "set": function(key, value)
-        {
-          try {
-            return storage[this.prefix+key] = value;
-          } catch(ex) { this.report("developer", "error", ex) }
-          return value;
-        },
-
-        "delete": function(key)
-        {
-          try {
-            delete storage[this.prefix+key];
-          } catch(ex) { this.report("developer", "error", ex) }
-        }
-      }
-
-      var defaultFavIcon;
-      function changeFavIcon(newFavIcon) {
-        var link = document.getElementsByTagName("link")[0];
-
-        if (!defaultFavIcon)
-          defaultFavIcon = link.href;
-
-        if (!newFavIcon)
-          newFavIcon = defaultFavIcon;
-
-        if (link.href == newFavIcon)
-          return;
-
-        var newLink = document.createElement("link");
-
-        newLink.setAttribute("rel", "icon");
-        newLink.setAttribute("href", newFavIcon);
-
-        link.parentNode.replaceChild(newLink, link);
+    <script type="text/javascript">
+      function onLoad() {
+        init(document.getElementById("launch"), document.getElementById("frame"),
+             document.getElementById("useff"),document.getElementById("mode"),
+             document.getElementById("langSelector"), "en-US", true);
       }
     </script>
   </head>
@@ -209,6 +71,7 @@
     </div>
     <div id="launch">
       <div id="launchbox">
+        <div>Language: <select id="langSelector"></select></div>
         <button id="launchButton" onclick="launch()">Launch OneTeam</button>
         <input id="mode" type="checkbox" checked="checked">Open in new window</button>
       </div>
