@@ -1,0 +1,440 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OneTeam 1.0\n"
+"POT-Creation-Date: 2007-05-23 17:20+CEST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Plural-Forms: nplurals=2; plural=n==1 ? 0 : 1;\n"
+
+#: ../chrome/oneteam/content/about.xul:12
+#: ../chrome/oneteam/content/bumpPriority.xul:9
+#: ../chrome/oneteam/content/changeNick.xul:9
+#: ../chrome/oneteam/content/info.xul:10
+#: ../chrome/oneteam/content/preferences.xul:10
+#: ../chrome/oneteam/content/presenceProfiles.xul:10
+#: ../chrome/oneteam/content/rename.xul:9
+#: ../chrome/oneteam/content/renameGroup.xul:9
+#: ../chrome/oneteam/content/roomConfiguration.xul:11
+#: ../chrome/oneteam/content/roomPermissions.xul:11
+#: ../chrome/oneteam/content/status.xul:10
+#: ../chrome/oneteam/content/subscribe.xul:9
+msgid "OK"
+msgstr "OK"
+
+#: ../chrome/oneteam/content/about.xul:12
+#: ../chrome/oneteam/content/addContact.xul:12
+#: ../chrome/oneteam/content/bookmarkRoom.xul:11
+#: ../chrome/oneteam/content/bumpPriority.xul:9
+#: ../chrome/oneteam/content/changeNick.xul:9
+#: ../chrome/oneteam/content/editContact.xul:11
+#: ../chrome/oneteam/content/invite.xul:11
+#: ../chrome/oneteam/content/joinRoom.xul:11
+#: ../chrome/oneteam/content/joinRoomError.xul:11
+#: ../chrome/oneteam/content/manageBookmarks.xul:11
+#: ../chrome/oneteam/content/myInfo.xul:10
+#: ../chrome/oneteam/content/preferences.xul:10
+#: ../chrome/oneteam/content/presenceProfiles.xul:10
+#: ../chrome/oneteam/content/registerGateway.xul:11
+#: ../chrome/oneteam/content/removeContact.xul:10
+#: ../chrome/oneteam/content/rename.xul:9
+#: ../chrome/oneteam/content/renameGroup.xul:9
+#: ../chrome/oneteam/content/roomConfiguration.xul:11
+#: ../chrome/oneteam/content/roomPermissions.xul:11
+#: ../chrome/oneteam/content/status.xul:10
+#: ../chrome/oneteam/content/subscribe.xul:9
+msgid "Cancel"
+msgstr "Cuncel"
+
+#: ../chrome/oneteam/content/changeNick.xul:6
+msgid "Change Nick"
+msgstr "Chungea Neeck"
+
+#: ../chrome/oneteam/content/changeNick.xul:23
+msgid "Nick can't be empty!"
+msgstr "Neeck cun't bea impty!  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/changeNick.xul:32
+msgid "New Nick:"
+msgstr "Nev Neeck:"
+
+#: ../chrome/oneteam/content/status.xul:7
+msgid "Status Message"
+msgstr "Statoos Messagea"
+
+#: ../chrome/oneteam/content/main.xul:589
+#: ../chrome/oneteam/content/presenceProfiles.xul:162
+#: ../chrome/oneteam/content/status.xul:72
+msgid "Available"
+msgstr "Afaeelablea"
+
+#: ../chrome/oneteam/content/main.xul:591
+#: ../chrome/oneteam/content/presenceProfiles.xul:164
+#: ../chrome/oneteam/content/status.xul:74
+msgid "Available for chat"
+msgstr "Afaeelablea ffur chat"
+
+#: ../chrome/oneteam/content/main.xul:593
+#: ../chrome/oneteam/content/presenceProfiles.xul:166
+#: ../chrome/oneteam/content/status.xul:76
+msgid "Busy"
+msgstr "Boosy"
+
+#: ../chrome/oneteam/content/main.xul:595
+#: ../chrome/oneteam/content/presenceProfiles.xul:167
+#: ../chrome/oneteam/content/status.xul:77
+msgid "Away"
+msgstr "Avay"
+
+#: ../chrome/oneteam/content/main.xul:597
+#: ../chrome/oneteam/content/presenceProfiles.xul:168
+#: ../chrome/oneteam/content/status.xul:78
+msgid "Not available"
+msgstr "Nut afaeelablea"
+
+#: ../chrome/oneteam/content/main.xul:599
+#: ../chrome/oneteam/content/presenceProfiles.xul:169
+#: ../chrome/oneteam/content/status.xul:79
+msgid "Invisible"
+msgstr "Eenfisiblea"
+
+#: ../chrome/oneteam/content/main.xul:472
+msgid "Username"
+msgstr "Oosernamea"
+
+#: ../chrome/oneteam/content/main.xul:476
+msgid "Password"
+msgstr "Passvurd"
+
+#: ../chrome/oneteam/content/main.xul:488
+msgid "Sign In"
+msgstr "Seegn Een"
+
+#: ../chrome/oneteam/content/main.xul:492
+msgid "Startup Settings"
+msgstr "Startoop Setteengs"
+
+#: ../chrome/oneteam/content/main.xul:495
+msgid "New Account"
+msgstr "Nev Accuoont"
+
+#: ../chrome/oneteam/content/main.xul:506
+msgid "_OneTeam"
+msgstr "_UneTeam"
+
+#: ../chrome/oneteam/content/main.xul:508
+msgid "_Add Contact"
+msgstr "_Add Cuntact"
+
+#: ../chrome/oneteam/content/main.xul:510
+msgid "_Join Chat Room"
+msgstr "_Jueen Chat Ruum"
+
+#: ../chrome/oneteam/content/main.xul:512
+msgid "Join Chat Room"
+msgstr "Jueen Chat Ruum"
+
+#: ../chrome/oneteam/content/main.xul:515
+msgid "_Manage Bookmarks"
+msgstr "_Munagea Buukmarks"
+
+#: ../chrome/oneteam/content/main.xul:518
+msgid "_Gateways"
+msgstr "_Gatevays"
+
+#: ../chrome/oneteam/content/main.xul:522
+msgid "_Services Discovery"
+msgstr "_Serfeeces Deescufery"
+
+#: ../chrome/oneteam/content/main.xul:523
+msgid "Administration Tools"
+msgstr "Admeenistrashun Tuuls"
+
+#: ../chrome/oneteam/content/main.xul:524
+msgid "_History Manager"
+msgstr "_Heestury Munager"
+
+#: ../chrome/oneteam/content/main.xul:525
+msgid "File _Transfers"
+msgstr "Ffeelea _Trunsffers"
+
+#: ../chrome/oneteam/content/main.xul:527
+msgid "Disconnect"
+msgstr "Deescunnect"
+
+#: ../chrome/oneteam/content/main.xul:528
+msgid "_Quit"
+msgstr "_Qooeet"
+
+#: ../chrome/oneteam/content/main.xul:531
+msgid "Config"
+msgstr "Cunffeeg"
+
+#: ../chrome/oneteam/content/main.xul:533
+msgid "_Edit personal info"
+msgstr "_Edeet persunal eenffo"
+
+#: ../chrome/oneteam/content/main.xul:536
+msgid "Plugins"
+msgstr "Ploogeens"
+
+#: ../chrome/oneteam/content/main.xul:537
+msgid "_Themes"
+msgstr "_Themes"
+
+#: ../chrome/oneteam/content/main.xul:540
+msgid "_Preferences"
+msgstr "_Prefferences"
+
+#: ../chrome/oneteam/content/main.xul:543
+msgid "Help"
+msgstr "Help"
+
+#: ../chrome/oneteam/content/main.xul:545
+msgid "Help _Bot"
+msgstr "Help _But"
+
+#: ../chrome/oneteam/content/main.xul:546
+msgid "_Documentation"
+msgstr "_Ducoomentashun"
+
+#: ../chrome/oneteam/content/main.xul:547
+msgid "_Report Bug"
+msgstr "_Repurt Boog"
+
+#: ../chrome/oneteam/content/main.xul:548
+msgid "XML _Console"
+msgstr "XML _Cunsulea"
+
+#: ../chrome/oneteam/content/main.xul:556
+msgid "About"
+msgstr "Abuoot"
+
+#: ../chrome/oneteam/content/main.xul:602
+msgid "Status message"
+msgstr "Statoos messagea"
+
+#: ../chrome/oneteam/content/main.xul:658
+#: ../chrome/oneteam/content/main.xul:660
+#: ../chrome/oneteam/content/main.xul:731
+#: ../chrome/oneteam/content/main.xul:773
+#: ../chrome/oneteam/content/muc.xul:386
+msgid "Send Message..."
+msgstr "Send Messagea.  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/main.xul:669
+msgid "Remove Contact..."
+msgstr "Remufea Cuntact.  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/main.xul:670
+msgid "Rename..."
+msgstr "Renamea.  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/main.xul:675
+msgid "Authorisation"
+msgstr "Oothureesashun"
+
+#: ../chrome/oneteam/content/main.xul:677
+msgid "Ask to see him"
+msgstr "Ask to seea heem"
+
+#: ../chrome/oneteam/content/main.xul:679
+msgid "Authorize to see me"
+msgstr "Oothureezea to seea mea"
+
+#: ../chrome/oneteam/content/main.xul:681
+msgid "Cancel authorisation"
+msgstr "Cuncel oothureesashun"
+
+#: ../chrome/oneteam/content/main.xul:688
+#: ../chrome/oneteam/content/main.xul:719
+#: ../chrome/oneteam/content/main.xul:759
+#: ../chrome/oneteam/content/main.xul:785
+#: ../chrome/oneteam/content/muc.xul:414
+msgid "Information..."
+msgstr "Eenffurmashun.  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/console.xul:6
+msgid "XML Console"
+msgstr "XML Cunsulea"
+
+#: ../chrome/oneteam/content/console.xul:15
+msgid "Input - Output Jabber"
+msgstr "Eenpoot - Oootpoot Jabber"
+
+#: ../chrome/oneteam/content/console.xul:21
+msgid "Clear"
+msgstr "Clear"
+
+#: ../chrome/oneteam/content/console.xul:26
+msgid "XML Packet Templates"
+msgstr "XML Packet Templates"
+
+#: ../chrome/oneteam/content/console.xul:57
+msgid "Send"
+msgstr "Send"
+
+#: ../chrome/oneteam/content/addContact.xul:143
+#: ../chrome/oneteam/content/addContact.xul:7
+msgid "Add Contact"
+msgstr "Add Cuntact"
+
+#: ../chrome/oneteam/content/addContact.xul:12
+msgid "Add"
+msgstr "Add"
+
+#: ../chrome/oneteam/content/addContact.xul:98
+msgid "ID:"
+msgstr "EeD:"
+
+#: ../chrome/oneteam/content/addContact.xul:120
+msgid "Please enter correct Jabber ID"
+msgstr "Pleasea inter currect Jabber EeD"
+
+#: ../chrome/oneteam/content/addContact.xul:124
+msgid "Contact with this Jabber ID already exists"
+msgstr "Cuntact veeth thees Jabber EeD already ixeests"
+
+#: ../chrome/oneteam/content/addContact.xul:147
+msgid "Network:"
+msgstr "Netvurk:"
+
+#: ../chrome/oneteam/content/addContact.xul:150
+msgid "Jabber"
+msgstr "Jabber"
+
+#: ../chrome/oneteam/content/addContact.xul:172
+msgid "Jabber ID:"
+msgstr "Jabber EeD:"
+
+#: ../chrome/oneteam/content/addContact.xul:175
+msgid "Enter Jabber ID of the contact you want to add. (ex.: foo@jabber.org)"
+msgstr "Inter Jabber EeD off zee cuntact yuoo vunt to add.  Bork Bork Bork! (ix.  Bork Bork Bork!: ffuo@jabber.  Bork Bork Bork!org)"
+
+#: ../chrome/oneteam/content/addContact.xul:181
+#: ../chrome/oneteam/content/bookmarkRoom.xul:108
+#: ../chrome/oneteam/content/editContact.xul:35
+msgid "Nickname:"
+msgstr "Neecknamea:"
+
+#: ../chrome/oneteam/content/addContact.xul:184
+msgid "Enter contact's nickname which will be displayed in roster window."
+msgstr "Inter cuntact's neecknamea vheech veell bea deesplayed een ruster veendoo.  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/addContact.xul:191
+msgid "Groups:"
+msgstr "Gruoops:"
+
+#: ../chrome/oneteam/content/addContact.xul:196
+msgid "Reason (Optional)"
+msgstr "Reasun (Opteeunal)"
+
+#: ../chrome/oneteam/content/addContact.xul:201
+msgid "Before adding contacts from this network you need to register to this network gateway."
+msgstr "Beffurea addeeng cuntacts ffrum thees netvurk yuoo need to regeester to thees netvurk gatevay.  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/addContact.xul:204
+msgid "You can start gateway registration by clicking"
+msgstr "Yuoo cun start gatevay regeestrashun by cleecking"
+
+#: ../chrome/oneteam/content/addContact.xul:205
+msgid "Gateway Registration"
+msgstr "Gatevay Regeestrashun"
+
+#: ../chrome/oneteam/content/addContact.xul:206
+msgid "button"
+msgstr "boottun"
+
+#: ../chrome/oneteam/content/bumpPriority.xul:6
+msgid "Another client active"
+msgstr "Unuther cleeent acteefea"
+
+#: ../chrome/oneteam/content/bumpPriority.xul:24
+msgid "Another client active on your account. Because it has higher priority that this client, messages usualy will be routed to that client."
+msgstr "Unuther cleeent acteefea on yuoor accuoont.  Bork Bork Bork! Becoosea eet has heegher preeurity that thees cleeent, messages oosooaly veell bea ruooted to that cleeent.  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/bumpPriority.xul:27
+msgid "Do you want to bump this client priority to make it main client?"
+msgstr "Do yuoo vunt to boomp thees cleeent preeurity to makea eet maeen cleeent?  Bork Bork Bork!"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:7
+#: ../chrome/oneteam/content/bookmarkRoom.xul:89
+msgid "Bookmark Room"
+msgstr "Buukmark Ruum"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:11
+msgid "Bookmark"
+msgstr "Buukmark"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:50
+msgid "Please give room name"
+msgstr "Pleasea geefea ruum namea"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:55
+msgid "Please give correct server address"
+msgstr "Pleasea geefea currect serfer address"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:60
+msgid "Please give nick name"
+msgstr "Pleasea geefea neeck namea"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:65
+msgid "Please give bookmark name"
+msgstr "Pleasea geefea buukmark namea"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:72
+msgid "Bookmark with that name already exists"
+msgstr "Buukmark veeth that namea already ixeests"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:98
+msgid "Room:"
+msgstr "Ruum:"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:103
+msgid "Server:"
+msgstr "Serfer:"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:113
+msgid "Password:"
+msgstr "Passvurd:"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:120
+msgid "Name:"
+msgstr "Namea:"
+
+#: ../chrome/oneteam/content/muc.xul:338
+msgid "Chat Room:"
+msgstr "Chat Ruum:"
+
+#: ../chrome/oneteam/content/muc.xul:342
+msgid "Nick Name:"
+msgstr "Neeck Namea:"
+
+#: ../chrome/oneteam/content/muc.xul:347
+msgid "Enter Chat"
+msgstr "Inter Chat"
+
+#: ../chrome/oneteam/content/subscribe.xul:5
+msgid "Subscribtion request"
+msgstr "Soobscreebshun reqooest"
+
+#: ../chrome/oneteam/content/editContact.xul:30
+#: ../chrome/oneteam/content/editContact.xul:7
+msgid "Edit Contact"
+msgstr "Ideet Cuntact"
+
+#: ../chrome/oneteam/content/editContact.xul:11
+msgid "Change"
+msgstr "Chungea"
+
+#: ../chrome/oneteam/content/about.xul:9
+msgid "About {0}"
+msgstr "Abuoot {0}"
+
+#: ../chrome/oneteam/content/about.xul:32
+msgid "Release {0} ({1})"
+msgstr "Releasea {0} ({1})"
+
