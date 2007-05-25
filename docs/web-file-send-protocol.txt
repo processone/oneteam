@@ -131,7 +131,7 @@ RECV <=
 which should be send each 5 second. You can get file size from
 {Content-Length} - {content length untill file start} - {boundary length + 2}
 
-TODO: XEP-95 requires that sender sends file size in proposing stanza.
+TODO: XEP-95 requires that sender sends file size in proposiyion stanza.
 For 1t <-> 1t connection we can skip this, but generally we will need to add
 method for that.
 
