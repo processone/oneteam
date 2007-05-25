@@ -1,0 +1,137 @@
+Let assume our proxy will be extension to xep-65 proxy.
+It must publish <feature var='http://oneteam.im/bs-proxy'/> in disco#info.
+
+All steps are written from client point of view (SEND means clients sends
+something).
+
+SIDHASH = SHA(SID + sender_jid + receiver_jid)
+
+I) Sender steps:
+
+1. Find proxy network address.
+
+SEND =>
+    <iq type='get' 
+        from='sender@host/resource' 
+        to='proxy.host' 
+        id='discover'>
+      <query xmlns='http://jabber.org/protocol/bytestreams'/>
+    </iq>
+
+RECV <=
+    <iq type='result' 
+        from='proxy.host' 
+        to='sender@host/resource' 
+        id='discover'>
+      <query xmlns='http://jabber.org/protocol/bytestreams'>
+        <streamhost 
+            jid='proxy.host' 
+            host='1.1.1.1' 
+            port='1111'/>
+      </query>
+    </iq>
+
+2. Activate stream (this take place after reciving side already estabilished connection).
+
+SENDS =>
+<iq type='set' 
+    from='sender@host/resource' 
+    to='proxy.host' 
+    id='activate'>
+  <query xmlns='http://jabber.org/protocol/bytestreams' sid='SID'>
+    <activate>receiver@host2/resource</activate>
+    <x xmlns='http://oneteam.im/bs-proxy'/>
+  </query>
+</iq>
+
+RECV <=
+<iq type='result' 
+    from='proxy.host' 
+    to='sender@host/resource' 
+    id='activate'>
+  <activated xmlns='http://oneteam.im/bs-proxy' url='http://proxy.host:port/upload'/>
+</iq>
+
+Now sender will send file using HTTP POST form with multipart/form-data with two
+fields, SIDHASH and FILE.
+Here how it may looks:
+
+POST /upload HTTP/1.1
+Host: prefiks.ath.cx
+User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9a5pre) Gecko/20070524 Firefox/3.0a5pre
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: pl,en-us;q=0.7,en;q=0.3
+Accept-Encoding: gzip,deflate
+Accept-Charset: ISO-8859-2,utf-8;q=0.7,*;q=0.7
+Keep-Alive: 300
+Connection: keep-alive
+Content-Type: multipart/form-data; boundary=---------------------------7148830871206398517200280906
+Content-Length: 394
+
+-----------------------------7148830871206398517200280906
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Disposition: form-data; name="SIDHASH"
+
+SIDHASH
+-----------------------------7148830871206398517200280906
+Content-Disposition: form-data; name="FILE"; filename="TEST"
+Content-Type: application/octet-stream
+
+TEST
+
+-----------------------------7148830871206398517200280906--
+
+II) Receiver steps:
+
+1. Request connection to sender supplied streamhosts.
+
+SENDS =>
+    <iq type='set' 
+        from='receiver@host2/resource' 
+        to='proxy.host' 
+        id='connect'>
+      <connect xmlns='http://oneteam.im/bs-proxy' sid='SID' jid='sender@host/resource'>
+        <streamhost 
+            jid='proxy.host' 
+            host='1.1.1.1' 
+            port='1111'/>
+        <streamhost 
+            jid='anotherproxy.host' 
+            host='2.2.2.2' 
+            port='2222'/>
+      </connect>
+    </iq>
+
+RECV <=
+    <iq type='result' 
+        from='proxy.host' 
+        to='receiver@host2/resource' 
+        id='connect'>
+      <connected xmlns='http://oneteam.im/bs-proxy' jid='proxy.host'/>
+    </iq>
+
+2. Proxy sends info when sender activate connection.
+
+RECV <=
+    <iq type='set' 
+        from='proxy.host' 
+        to='receiver@host2/resource'>
+      <activated xmlns='http://oneteam.im/bs-proxy' sidhash="SIDHASH" url='http://proxy.host:port/{UUID}'/>
+    </iq>
+
+III) You can add informing about progress for bonus points:
+
+RECV <=
+    <iq type='set' 
+        from='proxy.host' 
+        to='receiver@host2/resource'>
+      <progress xmlns='http://oneteam.im/bs-proxy' sidhash='SIDHASH' total='100' sent='30'/>
+    </iq>
+
+which should be send each 5 second. You can get file size from
+{Content-Length} - {content length untill file start} - {boundary length + 2}
+
+TODO: XEP-95 requires that sender sends file size in proposing stanza.
+For 1t <-> 1t connection we can skip this, but generally we will need to add
+method for that.
+
