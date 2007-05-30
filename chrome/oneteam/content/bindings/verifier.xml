@@ -368,6 +368,17 @@
 
     <implementation>
       <constructor><![CDATA[
+        if (/Mac|Linux/.test(window.navigator.platform)) {
+          var b = document.getAnonymousElementByAttribute(this, "anonid", "buttons");
+          b.removeAttribute("pack");
+          b.appendChild(b.childNodes[5]);
+          b.appendChild(b.childNodes[0]);
+          b.appendChild(b.childNodes[2]);
+          b.appendChild(b.childNodes[0]).removeAttribute("hidden");
+          b.appendChild(b.childNodes[1]);
+          b.appendChild(b.childNodes[0]);
+        }
+
         this._errorBox = document.getAnonymousNodes(this)[0];
         this._verifier = this._errorBox.firstChild;
         this._verifier._childContainer = this;
