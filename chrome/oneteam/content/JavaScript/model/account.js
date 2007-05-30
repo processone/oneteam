@@ -251,6 +251,38 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                        "chrome,centerscreen,modal");
     },
 
+    onChangePassword: function()
+    {
+        openDialogUniq("ot:changePassword", "changePassword.xul",
+                       "chrome,centerscreen,modal");
+    },
+
+    changePassword: function(password, callback)
+    {
+        const ns = "jabber:iq:register";
+        var iq = new JSJaCIQ();
+
+        iq.setIQ(null, null, 'set');
+        var query = iq.setQuery(ns);
+
+        query.appendChild(iq.getDoc().createElementNS(ns, "username")).
+            appendChild(iq.getDoc().createTextNode(this.myJID.node));
+        query.appendChild(iq.getDoc().createElementNS(ns, "password")).
+            appendChild(iq.getDoc().createTextNode(password));
+
+        if (prefManager.getPref("chat.connection.pass") != null)
+            callback = new Callback(this._changePasswordResult, this).
+                addArgs(callback, password);
+
+        con.send(iq, callback);
+    },
+
+    _changePasswordResult: function(pkt, callback, password) {
+        if (pkt.getType() == "result")
+            prefManager.setPref("chat.connection.pass", password);
+        callback(pkt);
+    },
+
     onPrefChange: function(name, value)
     {
         var namePart;
