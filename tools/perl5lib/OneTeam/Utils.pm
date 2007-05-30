@@ -10,6 +10,7 @@ sub slurp {
     local $/;
     open(my $fh, "<", $file) or die "Can't slurp file '$file' : $!";
     my $res = <$fh>;
+    close $fh;
     return defined $res ? $res : "";
 }
 

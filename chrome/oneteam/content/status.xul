@@ -2,8 +2,6 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-         
-
 <dialog id="status" windowtype="ot:status" title="_('Status Message')" orient="vertical"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="400" height="300"
