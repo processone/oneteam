@@ -336,7 +336,7 @@
       </hbox>
       <vbox id="login-user-box">
         <label control="room" value="_('Chat Room:')"/>
-        <textbox type="verifiable" id="room" regex="^[^&quot;&amp;&apos;/:&lt;&gt;@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
+        <textbox type="verifiable" id="room" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
       </vbox>
       <vbox id="login-pass-box">
         <label control="nick" value="_('Nick Name:')"/>

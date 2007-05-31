@@ -80,8 +80,8 @@
     <rows>
       <row align="center">
         <label value="Room:" control="room"/>
-        <textbox type="verifiable" id="room" regex="^[^&quot;&amp;&apos;/:&lt;&gt;@]+$"
-                 errortext="Room name can't be empty and can't contain any of [&quot;&amp;&apos;/:&lt;&gt;@] characters"/>
+        <textbox type="verifiable" id="room" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"
+                 errortext="Room name can't be empty and can't contain any of [&quot;&amp;&apos;/:&lt;&gt;@] or blank characters"/>
       </row>
 
       <row align="center">
