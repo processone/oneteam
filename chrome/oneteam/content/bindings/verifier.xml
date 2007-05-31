@@ -28,6 +28,8 @@
         this._valid = false;
         this._active = false;
 
+        this.inputField.value = value;
+
         var p = this.parentNode;
         while (p && !p.registerVerifiable)
           p = p.parentNode;
