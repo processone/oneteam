@@ -84,6 +84,10 @@ dialog {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#dialog") !important;
 }
 
+window {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#window") !important;
+}
+
 listeditor {
   -moz-binding: url("chrome://oneteam/content/bindings/listeditor.xml#list-editor");
 }

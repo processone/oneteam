@@ -31,7 +31,9 @@
         var p = this.parentNode;
         while (p && !p.registerVerifiable)
           p = p.parentNode;
-        this._verifier = p || window.document.documentElement;
+
+        if (!(this._verifier = p) && window.document.documentElement.registerVerifiable)
+          this._verifier = window.document.documentElement;
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -53,6 +55,8 @@
 
       <method name="_checkCondition">
         <body><![CDATA[
+          if (!this._verifier)
+            return
           if (this._timer != null) {
             clearTimeout(this._timer);
             this._timer = null;
@@ -110,21 +114,29 @@
       ]]></handler>
 
       <handler event="input"><![CDATA[
+        if (!this._verifier)
+          return;
         if (this._timer)
           clearTimeout(this._timer);
         this._timer = setTimeout(function(me){me._checkCondition()}, 50, this);
       ]]></handler>
 
       <handler event="keypress" keycode="VK_RETURN"><![CDATA[
+        if (!this._verifier)
+          return;
         this._checkCondition();
         event.preventDefault();
       ]]></handler>
 
       <handler event="focus" phase="capturing"><![CDATA[
+        if (!this._verifier)
+          return;
         window.document.documentElement._updateErrorBox(this, true);
       ]]></handler>
 
       <handler event="blur" phase="capturing"><![CDATA[
+        if (!this._verifier)
+          return;
         window.document.documentElement._updateErrorBox(this, false);
       ]]></handler>
     </handlers>
@@ -336,6 +348,30 @@
 
           return (value == null ? "delete this[" : "this[")+
             uneval(name) + (value == null ? "];" : "]="+value+";");
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="window">
+    <content>
+      <xul:verifier-error-box flex="1">
+        <xul:vbox class="box-inherit" flex="1">
+          <children/>
+        </xul:vbox>
+      </xul:verifier-error-box>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        this._errorBox = document.getAnonymousNodes(this)[0];
+      ]]></constructor>
+
+      <method name="_updateErrorBox">
+        <parameter name="textbox"/>
+        <parameter name="focus"/>
+        <body><![CDATA[
+          this._errorBox._updateErrorBox(textbox, focus);
         ]]></body>
       </method>
     </implementation>
