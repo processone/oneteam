@@ -3,11 +3,11 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<dialog id="myInfo" windowtype="ot:myInfo" title="My vCard"
+<dialog id="myInfo" windowtype="ot:myInfo" title="_('My vCard')"
   width="800" height="640"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="Publish" buttonlabelcancel="_('Cancel')" buttonlabelextra1="Refresh"
+  buttonlabelaccept="_('Ok')" buttonlabelcancel="_('Cancel')" buttonlabelextra1="_('Refresh')"
   buttons="extra1,accept,cancel"
   onload="onLoad()" ondialogaccept="return saveVCard()" ondialogextra1="fetchVCard(true)">
 
@@ -223,28 +223,28 @@
       if (data)
         avatarList.addAvatar(data);
       else
-        alert("Can't read your avatar image data");
+        alert(_("Can't read your avatar image data"));
     }
   ]]></script>
 
-  <dialogheader title="My vCard"/>
+  <dialogheader title="_('My vCard')"/>
   <spacer style="height: 0.6em"/>
 
   <vbox flex="1">
     <tabbox flex="1" id="tabs">
       <tabs>
-        <tab label="Personal"/>
-        <tab label="Work"/>
-        <tab label="Appearance"/>
+        <tab label="_('Personal')"/>
+        <tab label="_('Work')"/>
+        <tab label="_('Appearance')"/>
       </tabs>
       <tabpanels flex="1">
         <tabpanel orient="vertical">
           <hbox>
-            <label value="Name" control="name" style="width: 10em"/>
+            <label value="_('Name')" control="name" style="width: 10em"/>
             <textbox id="name" flex="1"/>
           </hbox>
           <groupbox>
-            <caption label="Name Details"/>
+            <caption label="_('Name Details')"/>
             <grid>
               <columns>
                 <column style="width: 10em"/>
@@ -254,21 +254,21 @@
               </columns>
               <rows>
                 <row>
-                  <label value="First Name" control="firstName"/>
+                  <label value="_('First Name')" control="firstName"/>
                   <textbox id="firstName"/>
-                  <label value="Last Name" control="lastName"/>
+                  <label value="_('Last Name')" control="lastName"/>
                   <textbox id="lastName"/>
                 </row>
                 <row>
-                  <label value="Second Name" control="secondName"/>
+                  <label value="_('Second Name')" control="secondName"/>
                   <textbox id="secondName"/>
-                  <label value="Nick Name" control="nickName"/>
+                  <label value="_('Nick Name')" control="nickName"/>
                   <textbox id="nickName"/>
                 </row>
                 <row>
-                  <label value="Prefix" control="prefix"/>
+                  <label value="_('Prefix')" control="prefix"/>
                   <textbox id="prefix"/>
-                  <label value="Suffix" control="suffix"/>
+                  <label value="_('Suffix')" control="suffix"/>
                   <textbox id="suffix"/>
                 </row>
               </rows>
@@ -283,21 +283,21 @@
             </columns>
             <rows>
               <row>
-                <label value="Homepage" control="homepage"/>
+                <label value="_('Homepage')" control="homepage"/>
                 <textbox id="homepage"/>
-                <label value="E-Mail" control="email"/>
+                <label value="_('E-Mail')" control="email"/>
                 <textbox id="email"/>
               </row>
               <row>
-                <label value="Birthday" control="birthday"/>
+                <label value="_('Birthday')" control="birthday"/>
                 <textbox id="birthday"/>
-                <label value="Phone" control="phone"/>
+                <label value="_('Phone')" control="phone"/>
                 <textbox id="phone"/>
               </row>
             </rows>
           </grid>
           <groupbox>
-            <caption label="Address"/>
+            <caption label="_('Address')"/>
             <grid>
               <columns>
                 <column style="width: 10em"/>
@@ -307,21 +307,21 @@
               </columns>
               <rows>
                 <row>
-                  <label value="Street" control="street"/>
+                  <label value="_('Street')" control="street"/>
                   <textbox id="street"/>
-                  <label value="ExtAdd" control="extadd"/>
+                  <label value="_('ExtAdd')" control="extadd"/>
                   <textbox id="extadd"/>
                 </row>
                 <row>
-                  <label value="City" control="city"/>
+                  <label value="_('City')" control="city"/>
                   <textbox id="city"/>
-                  <label value="Postal code" control="postalCode"/>
+                  <label value="_('Postal code')" control="postalCode"/>
                   <textbox id="postalCode"/>
                 </row>
                 <row>
-                  <label value="Region" control="region"/>
+                  <label value="_('Region')" control="region"/>
                   <textbox id="region"/>
-                  <label value="Country" control="country"/>
+                  <label value="_('Country')" control="country"/>
                   <textbox id="country"/>
                 </row>
               </rows>
@@ -338,27 +338,27 @@
             </columns>
             <rows>
               <row>
-                <label value="Company" control="company"/>
+                <label value="_('Company')" control="company"/>
                 <textbox id="company"/>
-                <label value="Department" control="department"/>
+                <label value="_('Department')" control="department"/>
                 <textbox id="department"/>
               </row>
               <row>
-                <label value="Position" control="position"/>
+                <label value="_('Position')" control="position"/>
                 <textbox id="position"/>
-                <label value="Role" control="role"/>
+                <label value="_('Role')" control="role"/>
                 <textbox id="role"/>
               </row>
               <row>
-                <label value="E-Mail" control="workEmail"/>
+                <label value="_('E-Mail')" control="workEmail"/>
                 <textbox id="workEmail"/>
-                <label value="Phone" control="workPhone"/>
+                <label value="_('Phone')" control="workPhone"/>
                 <textbox id="workPhone"/>
               </row>
             </rows>
           </grid>
           <groupbox>
-            <caption label="Address"/>
+            <caption label="_('Address')"/>
             <grid>
               <columns>
                 <column style="width: 10em"/>
@@ -368,21 +368,21 @@
               </columns>
               <rows>
                 <row>
-                  <label value="Street" control="street"/>
+                  <label value="_('Street')" control="street"/>
                   <textbox id="workStreet"/>
-                  <label value="ExtAdd" control="extadd"/>
+                  <label value="_('ExtAdd')" control="extadd"/>
                   <textbox id="workExtadd"/>
                 </row>
                 <row>
-                  <label value="City" control="city"/>
+                  <label value="_('City')" control="city"/>
                   <textbox id="workCity"/>
-                  <label value="Postal code" control="postalCode"/>
+                  <label value="_('Postal code')" control="postalCode"/>
                   <textbox id="workPostalCode"/>
                 </row>
                 <row>
-                  <label value="Region" control="region"/>
+                  <label value="_('Region')" control="region"/>
                   <textbox id="workRegion"/>
-                  <label value="Country" control="country"/>
+                  <label value="_('Country')" control="country"/>
                   <textbox id="workCountry"/>
                 </row>
               </rows>
@@ -391,7 +391,7 @@
         </tabpanel>
         <tabpanel orient="vertical">
           <groupbox flex="1">
-            <caption label="Avatar"/>
+            <caption label="_('Avatar')"/>
             <avatarlist id="avatarList" flex="1"/>
           </groupbox>
           <hbox>
@@ -414,10 +414,10 @@
     </hbox>
     <spacer style="height: 1em;"/>
     <hbox align="end" pack="end">
-      <button dlgtype="extra1" label="Refresh"/>
+      <button dlgtype="extra1" label="_('Refresh')"/>
       <spacer style="width: 4em"/>
-      <button dlgtype="cancel" label="Cancel"/>
-      <button dlgtype="accept" label="Publish"/>
+      <button dlgtype="cancel" label="_('Cancel')"/>
+      <button dlgtype="accept" label="_('Ok')"/>
     </hbox>
   </vbox>
 </dialog>
