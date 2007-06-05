@@ -458,9 +458,9 @@
     <key id="key_addContact" modifiers="control" key="A" command="cmd_addContact"/>
     <key id="key_joinRoom" modifiers="control" key="J" command="cmd_joinRoom"/>
     <key id="key_disco" modifiers="control" key="S" command="cmd_disco"/>
-    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
     <key id="key_ourVCard" modifiers="control" key="E" command="cmd_ourVCard"/>
 <!-- #ifdef XULAPP -->
+    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
     <key id="key_themes" modifiers="control" key="T" command="cmd_themes"/>
 <!-- #endif -->
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
@@ -539,7 +539,9 @@
               <menuitem label="_('File _Transfers')" command="cmd_transfers"/>
               <menuseparator/>
               <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
+<!-- #ifdef XULAPP -->
               <menuitem label="_('_Quit')" command="cmd_quit"/>
+<!-- #endif -->
             </menupopup>
           </menu>
           <menu id="configuration-menu" label="_('Config')">
