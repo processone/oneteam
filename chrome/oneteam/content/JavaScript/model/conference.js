@@ -417,7 +417,10 @@ _DECL_(Conference, Contact).prototype =
 
         if (this._checkForSubject(packet, this.jid) && packet.getBody() &&
             this.chatPane && !this.chatPane.closed)
+        {
+            soundsPlayer.playSound("message2");
             this.chatPane.addMessage(new Message(packet.getBody(), null, null, 4));
+        }
     },
 
     onAvatarChange: function()
@@ -645,6 +648,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             if (!this.contact.chatPane || this.contact.chatPane.closed)
                 this.contact.onOpenChat();
 
+            soundsPlayer.playSound("message2");
             this.contact.chatPane.addMessage(new Message(packet, null, this));
         } else {
             // Open tab because resource implementation will use our

@@ -24,7 +24,6 @@ sub path_convert {
     my ($self, $file, $locale) = @_;
 
     return if
-        $file =~ /(?:^|[\\\/])content[\\\/]sounds[\\\/]/ or
         $file =~ /skin[\/\\](?!default)/;
 
     $file =~ s!^skin[/\\]default!skin!;

@@ -301,6 +301,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
 
+        soundsPlayer.playSound("message1");
         this.chatPane.addMessage(new Message(packet, null, this), packet.getThread());
     },
 
@@ -666,6 +667,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 this.contact.chatPane :
                 this.onOpenChat();
 
+        soundsPlayer.playSound("message2");
         chatPane.addMessage(new Message(packet, null, this), packet.getThread());
     },
 

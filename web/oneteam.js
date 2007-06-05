@@ -35,7 +35,7 @@ if (window.storage) {
 }
 
 var otGuiFrame, otOnLaunch, otOpenInNewWindow, otUsername, otPassword
-var otLanguage, otMucModule, otArgs = {};
+var otLanguage, otMucModule, otFlash, otArgs = {};
 
 function init1t(guiFrame, onLaunch, onNotCompatible, openInNewWindow,
                 username, password, languageSelectorEl, defaultLanguage, mucModule)
@@ -54,6 +54,17 @@ function init1t(guiFrame, onLaunch, onNotCompatible, openInNewWindow,
     if (!compatibleBrowser) {
         onNotCompatible();
         return;
+    }
+
+    var plugin = window.navigator.mimeTypes.namedItem("application/x-shockwave-flash");
+    if (plugin && plugin.enabledPlugin) {
+        otFlash = document.createElementNS("http://www.w3.org/1999/xhtml", "embed");
+        otFlash.setAttribute("width", "1");
+        otFlash.setAttribute("height", "1");
+        otFlash.setAttribute("type", "application/x-shockwave-flash");
+        otFlash.setAttribute("bgcolor", "#FFFFFF");
+        otFlash.setAttribute("src", "sounds/player.swf");
+        document.body.appendChild(otFlash);
     }
 
     for each (var part in document.location.search.substr(1).split("&")) {
@@ -204,4 +215,9 @@ function changeFavIcon(newFavIcon) {
     newLink.setAttribute("href", newFavIcon);
 
     link.parentNode.replaceChild(newLink, link);
+}
+
+function playSound(url)
+{
+    otFlash.playSound(url);
 }

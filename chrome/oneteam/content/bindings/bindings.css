@@ -95,3 +95,7 @@ listeditor {
 registrationform {
   -moz-binding: url("chrome://oneteam/content/bindings/forms.xml#registration-form");
 }
+
+soundsplayer {
+  -moz-binding: url("chrome://oneteam/content/bindings/soundsplayer.xml#player");
+}

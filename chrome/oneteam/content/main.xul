@@ -276,12 +276,14 @@
     };
 
     var chatTabsController;
+    var soundsPlayer;
 
     function onLoad() {
       setPresenceUpdater.init();
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
       chatTabsController = document.getElementById("chats");
+      soundsPlayer = document.getElementById("soundsplayer");
 
       var args = {};
       for each (var part in document.location.search.substr(1).split("&")) {
@@ -809,4 +811,5 @@
   <!-- #ifdef XULAPP -->
   <otsystray id="systray" type="minimizer"/>
   <!-- #endif -->
+  <soundsplayer id="soundsplayer"/>
 </window>
