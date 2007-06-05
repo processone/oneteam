@@ -5,36 +5,45 @@
 <!-- TODO: Font-style should be defined in CSS -->
 <!-- TODO: Logo should be defined in CSS -->
 <!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
-        
+
 <dialog id="about" windowtype="ot:about" title="_('About {0}', _('$$branding$$:OneTeam'))"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="550" height="350"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="cancel">
-  
+
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
-  
+
   <script><![CDATA[
     function launchBrowser() {
-      openLink(_("$$branding$$: http://process-one.net/"));
+      openLink(_("$$branding$$: http://www.process-one.net/en/oneteam/"));
     }
   ]]></script>
+  <vbox style="background-color: white;" flex="1">
+    <hbox>
+      <spacer flex="1"/>
+      <image src="chrome://branding/locale/powered_by_process-one.png"
+             onclick="openLink('http://www.process-one.net/en/')"
+             style="cursor: pointer"/>
+      <spacer width="30"/>
+    </hbox>
+    <vbox align="center" flex="1">
 
-  <vbox style="background-color: white;" align="center" flex="1">
-    <spacer height="30"/>
+      <spacer height="30"/>
 
-    <label value="_('$$branding$$:OneTeam Instant Messenger')" style="font-size: 20pt"/>
+      <label value="_('$$branding$$:OneTeam Instant Messenger')" style="font-size: 20pt"/>
 
-    <spacer height="20"/>
+      <spacer height="20"/>
 
-    <label value="_('Release {0} ({1})', _('$$branding$$:1.0.0 beta 1'), 'r@@REVISION@@')"/>
+      <label value="_('Release {0} ({1})', _('$$branding$$:1.0.0 beta 1'), 'r@@REVISION@@')"/>
 
-    <spacer height="40"/>
+      <spacer height="40"/>
 
-    <image src="chrome://branding/locale/logo.png" onclick="launchBrowser();"/>
+      <image src="chrome://branding/locale/logo.png" style="cursor: pointer" onclick="launchBrowser();"/>
 
-    <spacer height="30"/>
+      <spacer height="30"/>
+    </vbox>
   </vbox>
 </dialog>
