@@ -33,12 +33,12 @@ var l10nFormatService = {
 
             if (args.length) {
                 res += (res ? "+" : "")+"this._formatMethods."+
-                    args[0]+"(arguments["+(+strParts[2]+2)+"]";
+                    args[0]+"(arguments["+(+strParts[2]+1)+"]";
                 for (var i = 1; i < args.length; i++)
                     res += ","+this._formatStringRec(args[i]);
                 res += ")";
             } else
-                res += (res ? "+" : "")+"arguments["+(+strParts[2]+2)+"]";
+                res += (res ? "+" : "")+"arguments["+(+strParts[2]+1)+"]";
             templRE.lastIndex = endPos;
         }
 
@@ -46,7 +46,6 @@ var l10nFormatService = {
             res += (res ? "+" : "")+uneval(this._unescapeJS(str.substr(endPos)));
 
         return res;
-
     },
 
     _unescapeJS: function(str)
