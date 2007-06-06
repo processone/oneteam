@@ -53,7 +53,6 @@
   <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/conference.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/gateway.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/plugin-hosting.js"/>
 
   <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
   <script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
@@ -277,24 +276,37 @@
     };
 
     var chatTabsController;
+    var soundsPlayer;
 
     function onLoad() {
       setPresenceUpdater.init();
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
       chatTabsController = document.getElementById("chats");
+      soundsPlayer = document.getElementById("soundsplayer");
 
-      var login = parent.document.getElementById("login");
-      var pass = parent.document.getElementById("password");
-      if (login && pass) {
-        document.getElementById("login-user").value = login.value;
-      	document.getElementById("login-pass").value = pass.value;
-        connect();
-      } else {
-        document.getElementById("login-user").value = account.connectionInfo.user;
-      	document.getElementById("login-pass").value = account.connectionInfo.pass;
-      	document.getElementById("login-savePass").checked = account.connectionInfo.pass != null;
+      var args = {};
+      for each (var part in document.location.search.substr(1).split("&")) {
+          part = part.split("=", 2);
+          args[decodeURIComponent(part[0])] = decodeURIComponent(part[1]);
       }
+
+      var username = account.connectionInfo.user;
+      var password = account.connectionInfo.pass;
+      var savePass = account.connectionInfo.pass != null;
+
+      if (args.username) {
+        username = args.username;
+        password = args.password || ""
+        savePass = false;
+      }
+
+      document.getElementById("login-user").value = username;
+      document.getElementById("login-pass").value = password;
+      document.getElementById("login-savePass").checked = savePass;
+
+      if (("login" in args) && username && password)
+        connect();
 
 // #ifdef XULAPP
       chatTabsController.addEventListener("tab-added", function(event) {
@@ -446,9 +458,9 @@
     <key id="key_addContact" modifiers="control" key="A" command="cmd_addContact"/>
     <key id="key_joinRoom" modifiers="control" key="J" command="cmd_joinRoom"/>
     <key id="key_disco" modifiers="control" key="S" command="cmd_disco"/>
-    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
     <key id="key_ourVCard" modifiers="control" key="E" command="cmd_ourVCard"/>
 <!-- #ifdef XULAPP -->
+    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
     <key id="key_themes" modifiers="control" key="T" command="cmd_themes"/>
 <!-- #endif -->
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
@@ -527,7 +539,9 @@
               <menuitem label="_('File _Transfers')" command="cmd_transfers"/>
               <menuseparator/>
               <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
+<!-- #ifdef XULAPP -->
               <menuitem label="_('_Quit')" command="cmd_quit"/>
+<!-- #endif -->
             </menupopup>
           </menu>
           <menu id="configuration-menu" label="_('Config')">
@@ -640,21 +654,6 @@
             </tabpanels>
           </tabbox>
         </vbox>
-        <vbox id="sidebar-box" flex="1" class="box-inset">
-          <groupbox>
-            <caption label="Plugin"/>
-            <label value="URL:"/>
-            <textbox value="/oneteam/plugins/muc_moderated/main.xul"/>
-            <label value="Address:"/>
-            <textbox value="test@conference.dev2.process-one.net"/>
-            <button label="Load"
-                    oncommand="initPlugin(
-                               this.previousSibling.value,
-                               this.previousSibling.previousSibling.previousSibling.value)"/>
-          </groupbox>
-          <browser id="sidebar" flex="1"/>
-        </vbox>
-
         <!-- #ifdef XULAPP -->
         <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
         <chattabbox id="chats" collapsed="true" flex="1"/>
@@ -814,4 +813,5 @@
   <!-- #ifdef XULAPP -->
   <otsystray id="systray" type="minimizer"/>
   <!-- #endif -->
+  <soundsplayer id="soundsplayer"/>
 </window>
