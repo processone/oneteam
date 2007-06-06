@@ -399,8 +399,8 @@
         this.eventBox.collapsed = account.events.length == 0;
 
         if (account.events.length) {
-          this.title.innerHTML = __("events", "eventsCounterFormat",
-            account.events.length);
+          this.title.innerHTML = _("You have {0} new {0, plurals, message, messages}",
+                                   account.events.length);
           this.tooltip.innerHTML = account.events[0][0];
         }
       },
