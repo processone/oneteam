@@ -28,7 +28,7 @@ my $dir = realpath(File::Spec->catdir($topdir, qw(chrome oneteam)));
 
 find(sub { watch_path($File::Find::name) },$dir);
 
-my %defs = ( REVISION => \&get_revision,
+my %defs = ( REVISION => sub { get_revision($topdir) },
              DEBUG => 1,
              NOJAR => 1);
 

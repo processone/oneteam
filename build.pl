@@ -22,7 +22,7 @@ find(sub {
             if -f and not $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
     }, $dir);
 
-$defs{REVISION} = \&get_revision;
+$defs{REVISION} = sub { get_revision($topdir) };
 
 my $locale_processor = exists $defs{XULAPP} ?
     new OneTeam::Builder::Filter::LocaleProcessor::XulApp(split /,/, ($defs{LANGS}||"")) :

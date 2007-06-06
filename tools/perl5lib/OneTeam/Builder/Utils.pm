@@ -1,10 +1,11 @@
 package OneTeam::Builder::Utils;
 
 use File::Spec::Functions qw(catdir);
+use strict;
 require Exporter;
 
-@ISA = qw(Exporter);
-@EXPORT = qw(get_revision);
+our @ISA = qw(Exporter);
+our @EXPORT = qw(get_revision);
 
 my $revision;
 
@@ -13,8 +14,8 @@ sub get_revision {
 
     return $revision if defined $revision;
 
-    if (-d catdir($dir, '.svn')) {
-        $revision = `svnversion "$dir"`;
+    if (-d catdir($topdir, '.svn')) {
+        $revision = `svnversion "$topdir"`;
         chomp $revision;
         return $revision;
     }
