@@ -78,16 +78,19 @@ while (1) {
 
     print "UPDATE: ",join(", ", keys %changed_files), "\n";
     for my $file (keys %changed_files) {
-        $file = File::Spec->rel2abs($file, $topdir);
+        eval {
+            $file = File::Spec->rel2abs($file, $topdir);
 
-        my $input = slurp($file);
-        my $input2 = $input;
+            my $input = slurp($file);
+            my $input2 = $input;
 
-        $input2 = $_->analyze($input2, File::Spec->abs2rel($file, $dir))
-            for @filters;
+            $input2 = $_->analyze($input2, File::Spec->abs2rel($file, $dir))
+                for @filters;
 
-        $input = $_->process($input, File::Spec->abs2rel($file, $dir), $locale)
-            for @filters;
+            $input = $_->process($input, File::Spec->abs2rel($file, $dir), $locale)
+                for @filters;
+        };
+        print "ERROR: $@" if $@;
     }
 
     %changed_files = ();
