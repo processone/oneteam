@@ -90,10 +90,10 @@ var l10nFormatService = {
         {
             if (!this._pluralsExpr)
                 this._pluralsExpr = new Function("n",
-                    "return arguments["+_("$$plural_forms$$: n==1 ? 0 : 1")+"]");
+                    "return arguments[1+("+_("$$plural_forms$$: n==1 ? 0 : 1")+")]");
             return this._pluralsExpr.apply(null, arguments);
         }
-    },
+    }
 }
 
 //#ifdef XULAPP
