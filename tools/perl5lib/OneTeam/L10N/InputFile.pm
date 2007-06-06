@@ -105,7 +105,7 @@ sub _extract_strings {
                 (?:
                     (?:
                         (?> [^,()"'\[\]{}]+ )
-                        $brackets_re
+                        $brackets_re ?
                     ) +
                 )
             ) \s*
