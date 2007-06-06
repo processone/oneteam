@@ -616,13 +616,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
             if (conference.joined)
                 return;
-
-            this.addEvent("You have been invited to room <b>"+sender+"</b> by <b>"+invite.getAttribute("from"))+"</b>",
+            this.addEvent("You have been invited to room <b>"+sender+"</b> by <b>"+invite.getAttribute("from")+"</b>",
                           new Callback(openDialogUniq, null).
                           addArgs("ot:invitation", "chrome://oneteam/content/invitation.xul",
                                   "chrome,centerscreen", conference,
                                   new JID(invite.getAttribute("from")),
-                                  reason && reason.textContent);
+                                  reason && reason.textContent));
             return;
         }
 
