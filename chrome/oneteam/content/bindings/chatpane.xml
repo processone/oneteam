@@ -261,6 +261,199 @@
     </implementation>
   </binding>
 
+  <binding id="resizable-textbox">
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://oneteam/skin/chatpane/chatpane.css"/>
+    </resources>
+
+    <content>
+      <xul:deck flex="1">
+        <xul:textbox id="_input" flex="1" multiline="true"
+          oninput="this.parentNode.parentNode._maybeResize()"/>
+        <xul:vbox flex="1">
+          <xul:textbox id="_inputClone" multiline="true"/>
+        </xul:vbox>
+      </xul:deck>
+    </content>
+
+    <implementation>
+      <property name="value" onget="return this._input.value"
+                onset="return this._input.value = val"/>
+
+      <constructor><![CDATA[
+        this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
+        this._inputClone = document.getAnonymousElementByAttribute(this, "id", "_inputClone");
+
+        this._history = [];
+        this._historyPosition = 0;
+
+        var me = this;
+        this._input.addEventListener("keypress",
+          function (event) {
+            if (event.keyCode == KeyEvent.DOM_VK_TAB) {
+              event.preventDefault();
+              me._tryCompletion()
+            }
+
+            var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
+            if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
+                !event.shiftKey && !event.altKey && !event.ctrlKey &&
+                !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
+              if (me._handleHistoryKey(upKey))
+                return false;
+
+            var inputValue;
+            if (event.keyCode == KeyEvent.DOM_VK_RETURN)
+              if ((inputValue = me._send(!event.shiftKey)) != null) {
+                if (inputValue) {
+                  me._history.push([inputValue, me._input.selectionEnd]);
+                  me._historyPosition = me._history.length;
+                }
+
+                event.stopPropagation();
+                event.preventDefault();
+
+                me.clear();
+              } else
+                return false;
+            return true;
+          }, true);
+      ]]></constructor>
+
+      <method name="focus">
+        <body><![CDATA[
+          setTimeout(function(el){el.focus()}, 100, this._input);
+        ]]></body>
+      </method>
+
+      <method name="clear">
+        <body><![CDATA[
+          this._input.value = "";
+          this._maybeResize();
+        ]]></body>
+      </method>
+
+      <method name="_tryCompletion">
+        <body><![CDATA[
+        ]]></body>
+      </method>
+
+      <method name="_send">
+        <parameter name="withEnter"/>
+        <body><![CDATA[
+          return withEnter ? null : this._input.value.replace(/\n$/, '');
+        ]]></body>
+      </method>
+
+      <method name="_blink">
+        <parameter name="me"/>
+        <body><![CDATA[
+          if (this == me || !me) {
+            me = this;
+            this._blinkSteps = 20;
+            this._blinkStep = 0;
+            this._blinkSrcColors = document.defaultView.
+              getComputedStyle(this._input, "").borderTopColor.
+                replace(/[^\d,\.]/g, "").split(/,/);
+
+            var n = this._input.parentNode, c;
+            while ((c = document.defaultView.getComputedStyle(n, "").
+                    backgroundColor) == "transparent")
+              n = n.parentNode;
+            this._blinkTargetColors = c.replace(/[^\d,\.]/g, "").split(/,/);
+
+            if (this._blinkSrcColors.length != this._blinkTargetColors.length)
+              if (this._blinkSrcColors.length == 4)
+                this._blinkTargetColors.push(1);
+              else
+                this._blinkSrcColors.push(1);
+
+            if (me._blinkTimeout)
+              return;
+          }
+
+          if (me._blinkStep == me._blinkSteps) {
+            me._input.style.outline = "";
+            delete me._blinkTimeout;
+            return;
+          }
+
+          var color = [];
+          for (var i = 0; i < me._blinkSrcColors.length; i++)
+            color[i] = Math.round((
+              me._blinkSrcColors[i]*(me._blinkSteps-me._blinkStep)+
+              me._blinkTargetColors[i]*me._blinkStep)/me._blinkSteps);
+          me._input.style.outline = "3px solid "+
+            (color.length == 3 ? "rgb(" : "rgba(") + color.join(",")+")";
+          me._blinkStep++;
+          me._blinkTimeout = window.setTimeout(me._blink, 20, me);
+        ]]></body>
+      </method>
+
+      <method name="_maybeResize">
+        <body><![CDATA[
+          this._preMaybeResize();
+
+          this._inputClone.value = this._input.value;
+
+          if (this._sizeOffset == null)
+            this._sizeOffset = this._input.boxObject.height -
+                this._input.inputField.offsetHeight;
+
+          var h = this._sizeOffset + this._inputClone.inputField.scrollHeight;
+
+
+          if (h > 0.3*window.innerHeight)
+            h = 0.3*window.innerHeight;
+
+          this._input.style.height = h + "px";
+
+          this._postMaybeResize();
+        ]]></body>
+      </method>
+
+      <method name="_preMaybeResize"/>
+      <method name="_postMaybeResize"/>
+
+      <method name="_handleHistoryKey">
+        <parameter name="up"/>
+        <body><![CDATA[
+          var histPos = this._historyPosition + (up ? -1 : 1);
+
+          if (histPos < 0 || histPos >= this._history.length)
+            return false;
+
+          var height = this._inputClone.inputField.scrollHeight;
+          var cursPos = this._input.selectionStart;
+
+          if (up)
+            this._inputClone.value = this._inputClone.value.substr(cursPos);
+          else
+            this._inputClone.value = this._inputClone.value.substr(0, cursPos);
+
+          var newHeight = this._inputClone.inputField.scrollHeight;
+          if (newHeight < height-4 || newHeight > height+4) {
+            this._inputClone.value = this._input.value;
+            return false;
+          }
+
+          if (this._history[this._historyPosition] != this._input.value)
+            this._history[this._historyPosition] =
+              [this._input.value, this._input.selectionStart];
+
+          this._input.value = this._history[histPos][0];
+          window.setTimeout(function(i, p){i.selectionStart = i.selectionEnd = p},
+                            0, this._input, this._history[histPos][1]);
+          this._historyPosition = histPos;
+          this._maybeResize();
+
+          return true;
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
   <binding id="chatpane">
 
     <resources>
@@ -281,13 +474,7 @@
         </xul:toolbox>
 
         <xul:hbox align="center">
-          <xul:deck flex="1">
-            <xul:textbox id="input" flex="1" multiline="true" style="height: 1.7em"
-                         oninput="this.parentNode.parentNode.parentNode.parentNode.maybeResize()"/>
-            <xul:vbox flex="1">
-              <xul:textbox id="inputClone" multiline="true" style="height: 1.7em"/>
-            </xul:vbox>
-          </xul:deck>
+          <xul:textbox type="resizable" id="input" flex="1" multiline="true"/>
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
         </xul:hbox>
       </xul:vbox>
@@ -316,249 +503,117 @@
         ]]></setter>
       </property>
 
-      <constructor>
-        <![CDATA[
-          this._scrollSize = 0;
-          this.sendOnEnter = this.getAttribute("sendonenter") != "false";
+      <constructor><![CDATA[
+        this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 
-          this._input = document.getAnonymousElementByAttribute(this, "id", "input");
-          this._inputClone = document.getAnonymousElementByAttribute(this, "id", "inputClone");
-          this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
-          this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
-          this._contactInfo = document.getAnonymousElementByAttribute(this, "id", "contactInfo");
-          this._smilesList = document.getAnonymousElementByAttribute(this, "id", "smilesList");
-          this._history = [];
-          this._historyPosition = 0;
+        this._input = document.getAnonymousElementByAttribute(this, "id", "input");
+        this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
+        this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
+        this._contactInfo = document.getAnonymousElementByAttribute(this, "id", "contactInfo");
+        this._smilesList = document.getAnonymousElementByAttribute(this, "id", "smilesList");
 
-          if (this._model != this.model) {
-            var model = this.model;
-            delete this.model;
-            this.model = model;
-          }
+        this._input._tryCompletion = new Callback(this._tryCompletion, this);
+        this._input._send = new Callback(this._send, this);
+        this._input._preMaybeResize = new Callback(this._preMaybeResize, this);
+        this._input._postMaybeResize = new Callback(this._postMaybeResize, this);
 
-          var me = this;
-          this._input.addEventListener("keypress",
-            function (event) {
-              if (event.keyCode == KeyEvent.DOM_VK_TAB) {
-                event.preventDefault();
-                if (me.completionEngine)
-                  if (!me.completionEngine.complete(me._input))
-                    me._blink();
-              }
+        if (this._model != this.model) {
+          var model = this.model;
+          delete this.model;
+          this.model = model;
+        }
 
-              var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
-              if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
-                  !event.shiftKey && !event.altKey && !event.ctrlKey &&
-                  !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
-                if (me._handleHistoryKey(upKey))
-                  return false;
-
-              if (event.keyCode == KeyEvent.DOM_VK_RETURN &&
-                  !event.shiftKey && me.sendOnEnter)
-              {
-                me._send();
-
-                event.stopPropagation();
-                event.preventDefault();
-                return false;
-              }
-              return true;
-            }, true);
-          //this.maybeResize();
-
-          setTimeout(function(me) {
-            if (!me._output._output) {
-              setTimeout(arguments.callee, 10, me);
-              return;
+        this._output.addEventListener(
+          "mouseup", function(event) {
+            if(!me._output._output.contentWindow.getSelection().toString()) {
+              event.stopPropagation();
+              me.focus();
             }
-            me._output._output.contentWindow.addEventListener("keypress", function(event) {
-              if (event.charCode && !event.ctrlKey && !event.altKey) {
-                me._input.value += String.fromCharCode(event.charCode);
-                me.focus();
-              }
-            }, false);
-          }, 0, this);
-        ]]>
-      </constructor>
+          }, false);
+      ]]></constructor>
 
-      <method name="clear">
-        <body>
-          <![CDATA[
-            this._input.value = ""
-            this.maybeResize();
-          ]]>
-        </body>
+      <method name="focus">
+        <body><![CDATA[
+          this._input.focus();
+        ]]></body>
       </method>
 
       <method name="addMessage">
         <parameter name="msg"/>
         <parameter name="thread"/>
-        <body>
-          <![CDATA[
-            if (!this._thread)
-              this._thread = new MessageThread(thread);
-            else if (thread)
-              this._thread._threadID = thread;
+        <body><![CDATA[
+          if (!this._thread)
+            this._thread = new MessageThread(thread);
+          else if (thread)
+            this._thread._threadID = thread;
 
-            msg.thread = this._thread;
-            this._output.addMessage(msg);
-          ]]>
-        </body>
+          msg.thread = this._thread;
+          this._output.addMessage(msg);
+        ]]></body>
       </method>
 
-      <method name="clearView">
-        <body>
-          <![CDATA[
-            this._output.clear();
-          ]]>
-        </body>
+      <method name="clear">
+        <body><![CDATA[
+          this._input.clear();
+        ]]></body>
       </method>
 
-      <method name="_handleHistoryKey">
-        <parameter name="up"/>
-        <body>
-          <![CDATA[
-            var histPos = this._historyPosition + (up ? -1 : 1);
-
-            if (histPos < 0 || histPos >= this._history.length)
-              return false;
-
-            var height = this._inputClone.inputField.scrollHeight;
-            var cursPos = this._input.selectionStart;
-
-            if (up)
-              this._inputClone.value = this._inputClone.value.substr(cursPos);
-            else
-              this._inputClone.value = this._inputClone.value.substr(0, cursPos);
-
-            var newHeight = this._inputClone.inputField.scrollHeight;
-            if (newHeight < height-4 || newHeight > height+4) {
-              this._inputClone.value = this._input.value;
-              return false;
-            }
-
-            if (this._history[this._historyPosition] != this._input.value)
-              this._history[this._historyPosition] =
-                [this._input.value, this._input.selectionStart];
-
-            this._input.value = this._history[histPos][0];
-            window.setTimeout(function(i, p){i.selectionStart = i.selectionEnd = p},
-                              0, this._input, this._history[histPos][1]);
-            this._historyPosition = histPos;
-            this.maybeResize();
-
-            return true;
-          ]]>
-        </body>
+      <method name="clearOutput">
+        <body><![CDATA[
+          this._output.clear();
+        ]]></body>
       </method>
 
-      <method name="_blink">
-        <parameter name="me"/>
-        <body>
-          <![CDATA[
-            if (this == me || !me) {
-              me = this;
-              this._blinkSteps = 20;
-              this._blinkStep = 0;
-              this._blinkSrcColors = document.defaultView.
-                getComputedStyle(this._input, "").borderTopColor.
-                  replace(/[^\d,\.]/g, "").split(/,/);
+      <method name="_tryCompletion">
+        <body><![CDATA[
+          if (this.completionEngine && !this.completionEngine.complete(this._input._input))
+            this._input._blink();
 
-              var n = this._input.parentNode, c;
-              while ((c = document.defaultView.getComputedStyle(n, "").
-                      backgroundColor) == "transparent")
-                n = n.parentNode;
-              this._blinkTargetColors = c.replace(/[^\d,\.]/g, "").split(/,/);
+        ]]></body>
+      </method>
 
-              if (this._blinkSrcColors.length != this._blinkTargetColors.length)
-                if (this._blinkSrcColors.length == 4)
-                  this._blinkTargetColors.push(1);
-                else
-                  this._blinkSrcColors.push(1);
+      <method name="_preMaybeResize">
+        <body><![CDATA[
+          var outputBody = this._output._output.contentDocument.body;
+          this._outputScrollPos = outputBody.scrollTop + outputBody.clientHeight;
+        ]]></body>
+      </method>
 
-              if (me._blinkTimeout)
-                return;
-            }
-
-            if (me._blinkStep == me._blinkSteps) {
-              me._input.style.outline = "";
-              delete me._blinkTimeout;
-              return;
-            }
-
-            var color = [];
-            for (var i = 0; i < me._blinkSrcColors.length; i++)
-              color[i] = Math.round((
-                me._blinkSrcColors[i]*(me._blinkSteps-me._blinkStep)+
-                me._blinkTargetColors[i]*me._blinkStep)/me._blinkSteps);
-            me._input.style.outline = "3px solid "+
-              (color.length == 3 ? "rgb(" : "rgba(") + color.join(",")+")";
-            me._blinkStep++;
-            me._blinkTimeout = window.setTimeout(me._blink, 20, me);
-          ]]>
-        </body>
+      <method name="_postMaybeResize">
+        <body><![CDATA[
+          var outputBody = this._output._output.contentDocument.body;
+          outputBody.scrollTop = this._outputScrollPos - outputBody.clientHeight;
+        ]]></body>
       </method>
 
       <method name="_send">
-        <body>
-          <![CDATA[
-            if (~this.content.search(/\S/)) {
-              if (!this.completionEngine || !this.completionEngine.execCommand(this._input)) {
-                this._history.push([this.content, this._input.selectionEnd]);
-                this._historyPosition = this._history.length;
+        <parameter name="withEnter"/>
+        <body><![CDATA[
+          if (!this.sendOnEnter || !withEnter)
+            return null;
 
-                var ev = document.createEvent("Events");
-                ev.initEvent("chat-send", true, false);
-                this.dispatchEvent(ev);
+          if (~this.content.search(/\S/)) {
+            if (!this.completionEngine || !this.completionEngine.execCommand(this._input)) {
+              var ev = document.createEvent("Events");
+              ev.initEvent("chat-send", true, false);
+              this.dispatchEvent(ev);
 
-                var body = this.content;
-                if (!(this._model instanceof Conference)) {
-                  var myResource = this._model instanceof ConferenceMember ?
-                    this._model.contact.myResource : account.myResource;
-                  this.addMessage(new Message(body, null, myResource, 0));
-                }
-
-                if (!this._thread)
-                  this._thread = new MessageThread();
-
-                this._model.sendMessage(body, this._thread.threadID);
+              var body = this.content;
+              if (!(this._model instanceof Conference)) {
+                var myResource = this._model instanceof ConferenceMember ?
+                  this._model.contact.myResource : account.myResource;
+                this.addMessage(new Message(body, null, myResource, 0));
               }
+
+              if (!this._thread)
+                this._thread = new MessageThread();
+
+              this._model.sendMessage(body, this._thread.threadID);
+              return this.content;
             }
-            this.clear();
-          ]]>
-        </body>
-      </method>
-
-      <method name="focus">
-        <body>
-          <![CDATA[
-            setTimeout(function(el){el.focus()}, 100, this._input);
-          ]]>
-        </body>
-      </method>
-
-      <method name="maybeResize">
-        <body>
-          <![CDATA[
-          var chatOutputEl = this._output._output.contentDocument.body;
-          var chatOutputScrollPos = chatOutputEl.scrollTop + chatOutputEl.clientHeight;
-
-          this._inputClone.value = this._input.value;
-
-          if (this._sizeOffset == null)
-            this._sizeOffset = this._input.boxObject.height -
-                this._input.inputField.offsetHeight;
-
-          var h = this._sizeOffset + this._inputClone.inputField.scrollHeight;
-
-          if (h > 0.3*window.innerHeight)
-            h = 0.3*window.innerHeight;
-
-          this._input.style.height = h + "px";
-
-          chatOutputEl.scrollTop = chatOutputScrollPos - chatOutputEl.clientHeight;
-          ]]>
-        </body>
+          }
+          return "";
+        ]]></body>
       </method>
     </implementation>
 

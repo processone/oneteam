@@ -2,7 +2,13 @@ vbox {
   background: white;
 }
 
-#output, #input, #inputClone {
+#input {
+  margin: 0;
+  -moz-appearance: none !important;
+  border: none !important;
+}
+
+#output, #input #_input, #input #_inputClone {
   margin: 3px;
   -moz-border-top-colors: none;
   -moz-border-right-colors: none;
@@ -10,6 +16,10 @@ vbox {
   -moz-border-left-colors: none;
   -moz-appearance: none !important;
   border: 1px solid #7e9cb8 !important;
+}
+
+#input #_input, #input #_inputClone {
+  height: 1.5em;
 }
 
 #send {
