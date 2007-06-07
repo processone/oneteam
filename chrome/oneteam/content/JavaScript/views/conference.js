@@ -415,6 +415,7 @@ _DECL_(ConferenceMemberTooltip).prototype =
         this.presenceShow.setAttribute("value", this.model.presence);
         this.presenceShow.setAttribute("style", "color: "+this.model.presence.getColor())
         this.affiliation.setAttribute("value", this.model.affiliation);
+        this.role.setAttribute("value", this.model.role);
         if (this.model.realJID)
             this.realJID.setAttribute("value", this.model.realJID);
         this.realJID.parentNode.setAttribute("hidden", this.model.realJID = null);
