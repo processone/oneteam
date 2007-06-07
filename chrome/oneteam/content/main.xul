@@ -120,15 +120,23 @@
       var kick = document.getElementById("conferencemember-kick");
       var ban = document.getElementById("conferencemember-ban");
       var affiliations = document.getElementById("conferencemember-affiliations");
+      var roles = document.getElementById("conferencemember-roles");
 
       kick.previousSibling.hidden = kick.hidden = ban.hidden = !confMemb.canBeKicked;
 
       affiliations.hidden = !(conf.iAmAdmin && conf.myResource.isGt(confMemb) || conf.iAmOwner);
+      roles.hidden = confMemb.isAdmin || !conf.iAmModerator;
 
-      for each (affiliation in "owner admin member none".split(" ")) {
+      for each (var affiliation in "owner admin member none".split(" ")) {
         var el = document.getElementById("conferencemember-affiliation-"+affiliation);
         el.hidden = !conf.iAmOwner && conf.myResource.cmp(affiliation, true) >= 0;
         el.setAttribute("checked", confMemb.affiliation == affiliation);
+      }
+
+      for each (var role in "moderator participant visitor none".split(" ")) {
+        var el = document.getElementById("conferencemember-role-"+role);
+        el.hidden = confMemb.isAdmin || (role == "moderator" && conf.iAmModerator && !conf.iAmAdmin);
+        el.setAttribute("checked", confMemb.role == role);
       }
     }
 
