@@ -272,12 +272,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (prefManager.getPref("chat.connection.pass") != null)
             callback = new Callback(this._changePasswordResult, this).
-                addArgs(callback, password);
+                addArgs(callback, password).fromCall();
 
         con.send(iq, callback);
     },
 
-    _changePasswordResult: function(pkt, callback, password) {
+    _changePasswordResult: function(callback, password, pkt)
+    {
         if (pkt.getType() == "result")
             prefManager.setPref("chat.connection.pass", password);
         callback(pkt);
