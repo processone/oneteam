@@ -13,7 +13,7 @@
   onunload="cleanup()" ondialogaccept="return joinRoom()" onload="onLoad()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
-    var conference = window.arguments[0];
+    var conference = window.arguments && window.arguments[0];
     var conf;
 
     var room, server, nick, password, bookmark, bookmarkName, progressmeter, autoJoin;
