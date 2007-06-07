@@ -771,6 +771,23 @@
         </menupopup>
       </menu>
 
+      <menu id="conferencemember-roles" label="Role">
+        <menupopup>
+          <menuitem id="conferencemember-role-moderator" name="roles"
+            type="radio" label="Moderator"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('moderator')"/>
+          <menuitem id="conferencemember-role-participant" name="roles"
+            type="radio" label="Participant"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('participant')"/>
+          <menuitem id="conferencemember-role-visitor" name="roles"
+            type="radio" label="Visitor"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('visitor')"/>
+          <menuitem id="conferencemember-role-none" name="roles"
+            type="radio" label="None"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('none')"/>
+        </menupopup>
+      </menu>
+
       <menuseparator/>
 
       <menuitem label="_('Information...')"
