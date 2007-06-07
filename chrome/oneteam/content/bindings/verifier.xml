@@ -415,6 +415,9 @@
           b.appendChild(b.childNodes[0]).removeAttribute("hidden");
           b.appendChild(b.childNodes[1]);
           b.appendChild(b.childNodes[0]);
+          try {
+            this.buttons = this.buttons;
+          } catch(ex){}
         }
 
         this._errorBox = document.getAnonymousNodes(this)[0];
