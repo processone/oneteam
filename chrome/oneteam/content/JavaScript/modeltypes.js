@@ -33,8 +33,9 @@ _DECL_(ContainerView).prototype =
         this.items.splice(a, 0, item);
 
         var node = item instanceof Node ? item : item.node;
-        var insertBefore = this.items[a+1] ? item instanceof Node ?
-            this.items[a+1] : this.items[a+1].node : this.afterlastItemNode;
+        var insertBefore = this.items[a+1];
+        insertBefore = insertBefore instanceof Node ? insertBefore :
+            insertBefore ? insertBefore.node : this.afterlastItemNode;
 
         if (!node.parentNode || node.nextSibling != insertBefore)
             if (item instanceof Node)
@@ -76,7 +77,10 @@ _DECL_(ContainerView).prototype =
     destroy: function()
     {
         for (var i = 0; i < this.items.length; i++)
-            this.items[i].destroy();
+            if (this.items[i] instanceof Node)
+                this.containerNode.removeChild(this.items[i]);
+            else
+                this.items[i].destroy();
     }
 }
 
