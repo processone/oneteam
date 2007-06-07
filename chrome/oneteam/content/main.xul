@@ -575,9 +575,9 @@
           </menu>
         </menubar>
         <toolbar id="icones-toolbar">
-          <toolbarbutton id="adduser-button" tooltiptext="Add user"
+          <toolbarbutton id="adduser-button" tooltiptext="Add new contact"
               command="cmd_addContact"/>
-          <toolbarbutton id="joinroom-button" tooltiptext="Join room"
+          <toolbarbutton id="joinroom-button" tooltiptext="Join group chat room"
               command="cmd_joinRoom"/>
           <toolbarseparator/>
           <toolbarbutton id="toggleshowoffline-button" tooltiptext="Toggle offline contacts visibility"
