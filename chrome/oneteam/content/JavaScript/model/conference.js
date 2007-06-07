@@ -488,7 +488,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     get isOwner() { return this.affiliation == "owner" },
     get isAdmin() { return this.affiliation == "admin" || this.isOwner },
-    get isModerator() { return this.affiliation == "moderator" || this.isAdmin },
+    get isModerator() { return this.role == "moderator" },
 
     get canBeBanned() { return this.contact.isAdmin && !this.isAdmin },
     get canBeKicked() { return this.canBeBanned },
