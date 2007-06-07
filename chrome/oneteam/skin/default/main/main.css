@@ -1,21 +1,33 @@
 /* Roster */
 
-.group-view, .contact-view, .conference-view, .conferencemember-view {
+.group-view, .contact-view, .conference-view, .conference-role-view, .conferencemember-view {
   color: #000;
   padding: 1px;
 }
 
 .group-view, .conference-view {
-  background: #DDD;
+  background: #CCC;
   font-weight : bold;
 }
 
-.group-view[selected=true], .conference-view[selected=true] {
-  background: #DDF;
+.group-view[selected=true], .conference-view[selected=true],
+.conference-role-view[selected=true], .contact-view[selected=true],
+.conferencemember-view[selected=true]{
+  background: #DDE;
 }
 
-.contact-view[selected=true], .conferencemember-view[selected=true] {
-  background: #EEF;
+.conference-role-view {
+  background: #EEE;
+  font-weight : bold;
+  padding-left: 4px;
+}
+
+.contact-view {
+  padding-left: 8px;
+}
+
+.conferencemember-view {
+  padding-left: 16px;
 }
 
 .contact-view[offlineContact=true] {
@@ -23,7 +35,7 @@
 }
 
 .contact-tooltip-name, .contact-tooltip-resource-name, .conferencemember-tooltip-name {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .contact-tooltip-resource-status, .conferencemember-tooltip-status {

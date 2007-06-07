@@ -96,6 +96,7 @@ _DECL_(ConferencesView, null, ContainerView).prototype =
         return a.model.cmp(b.model);
     },
 
+
     onModelUpdated: function(model, type, data)
     {
         for (var i = 0; data.added && i < data.added.length; i++)
@@ -128,6 +129,20 @@ function ConferenceView(model, parentView)
 
     this.node.appendChild(this.label);
 
+    this.roleNodes = {};
+    for each (role in ["moderator", "participant", "visitor", "none"]) {
+        var node = document.createElement("richlistitem");
+        node.appendChild(document.createElement("label"));
+        node.setAttribute("class", "conference-role-view");
+        node.setAttribute("hidden", "true");
+        node.role = role;
+
+        this.roleNodes[role] = {
+            count: 0,
+            node: node
+        };
+    }
+
     this._token = this.model.registerView(this.onModelUpdated, this, "resources");
 }
 
@@ -140,9 +155,18 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
         return this.parentView.getNextItemNode(this);
     },
 
-    itemComparator: function(a, b)
+    itemComparator: function(a, b, m, s, e)
     {
-        return a.model.cmp(b.model);
+        var role2num = {moderator: 4, participant: 3, visitor: 2, none: 1};
+        var aVal = role2num[a.role ? a.role : a.model.role];
+        var bVal = role2num[b.role ? b.role : b.model.role];
+
+        if (aVal == bVal) {
+            aVal = a.role ? "1" : "0"+a.model.name;
+            bVal = b.role ? "1" : "0"+b.model.name;
+        }
+
+        return aVal == bVal ? 0 : aVal > bVal ? -1 : 1;
     },
 
     onModelUpdated: function(model, type, data)
@@ -150,11 +174,40 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
         if (!this.items)
             return;
 
-        for (var i = 0; data.added && i < data.added.length; i++)
+        for (var i = 0; data.added && i < data.added.length; i++) {
+            this.updateRoleNode(data.added[i].role, 1)
             this.onItemAdded(new ConferenceMemberView(data.added[i], this));
+        }
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
+        for (i = 0; data.removed && i < data.removed.length; i++) {
+            this.updateRoleNode(data.added[i].role, -1)
             this.onItemRemoved(data.removed[i]);
+        }
+    },
+
+    updateRoleNode: function(role, count)
+    {
+        var item = this.roleNodes[role];
+        item.count += count;
+
+        item.node.hidden = item.count == 0;
+        if (item.count == 0)
+            return;
+
+        switch (role) {
+            case "moderator":
+                item.node.firstChild.setAttribute("value", _("Moderators ({0})", item.count));
+                break;
+            case "participant":
+                item.node.firstChild.setAttribute("value", _("Participants ({0})", item.count));
+                break;
+            case "visitor":
+                item.node.firstChild.setAttribute("value", _("Visitors ({0})", item.count));
+                break;
+            default:
+                item.node.firstChild.setAttribute("value", _("No Role Assigned ({0})", item.count));
+                break;
+        };
     },
 
     show: function(rootNode, insertBefore)
@@ -164,6 +217,8 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
 
         if (!this.items) {
             this.items = [];
+            for each (var item in this.roleNodes)
+                this.onItemAdded(item.node);
             this.onModelUpdated(this.model, "resources", {added: this.model.resources});
         }
     },
@@ -216,10 +271,11 @@ function ConferenceMemberView(model, parentView)
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onNameChange, "name");
     this._bundle.register(this.model, this.onModelUpdated, "presence");
-    this._bundle.register(this.model, this.onAffiliationChange, "affiliation");
+    this._bundle.register(this.model, this.onRoleChange, "role");
     this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
 
     this.onModelUpdated();
+    this._oldRole = this.model.role;
 }
 
 _DECL_(ConferenceMemberView).prototype =
@@ -230,8 +286,11 @@ _DECL_(ConferenceMemberView).prototype =
         this.parentView.onItemUpdated(this);
     },
 
-    onAffiliationChange: function()
+    onRoleChange: function()
     {
+        this.parentView.updateRoleNode(this._oldRole, -1);
+        this.parentView.updateRoleNode(this.model.role, 1);
+        this._oldRole = this.model.role;
         this.parentView.onItemUpdated(this);
     },
 
@@ -269,6 +328,7 @@ function ConferenceMemberTooltip(model, parentView)
     this.name = document.createElement("label");
     this.presenceShow = document.createElement("label");
     this.affiliation = document.createElement("label");
+    this.role = document.createElement("label");
     this.realJID = document.createElement("label");
     this.status = document.createElement("description");
 
@@ -331,6 +391,13 @@ function ConferenceMemberTooltip(model, parentView)
     label.setAttribute("value", "Affiliation:");
     row.appendChild(label);
     row.appendChild(this.affiliation);
+
+    row = document.createElement("row");
+    rows.appendChild(row);
+    label = document.createElement("label");
+    label.setAttribute("value", "Role:");
+    row.appendChild(label);
+    row.appendChild(this.role);
 
     cbox.appendChild(this.status);
 
