@@ -402,7 +402,7 @@
             oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('admin')"/>
           <menuitem id="conferencemember-affiliation-member" name="affiliations"
             type="radio" label="Members"
-            oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('momber')"/>
+            oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('member')"/>
           <menuitem id="conferencemember-affiliation-none" name="affiliations"
             type="radio" label="None"
             oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('none')"/>
