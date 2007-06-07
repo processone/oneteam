@@ -75,14 +75,24 @@ function exceptionToString(exc, indent)
                     arguments.callee(exc.reason, indent+"  ");
 
             return msg+indent+"Stacktrace:\n"+stacktrace;
-        } else if (exc.code)
-            return indent+"Exception code: "+exc.code+"\n"+
+        } else if (exc.code) {
+            var codeStr = "";
+            for (var i in exc)
+                if (exc[i] == exc.code && i != "code") {
+                    codeStr = " ("+i+")";
+                    break;
+                }
+
+            var location = exc.toString().replace(/.*"(\S+).*?:\s*(\d+)".*/, "$1:$2");
+            location = location == exc.toString() ? "" : " thrown at "+location;
+
+            return indent+"Exception: "+exc.code+codeStr+" - '"+exc.message+"'"+location+"\n"+
                 (exc.reason ? indent+"Caused by:\n" +
-                arguments.callee(exc.reason,indent+"  ")+"\n":"");
-        else
+                 arguments.callee(exc.reason,indent+"  ")+"\n":"");
+        } else
             return indent+uneval(exc);
     } else
-    	return indent+"Null exception\n";
+        return indent+"Null exception\n";
 }
 
 function logExceptionInConsole(exc)
@@ -149,15 +159,15 @@ function GenericError(message, reason) {
     } while (true);
 
     exc = new Error(message,
-		    stack.filename,
-		    stack.lineNumber);
+            stack.filename,
+            stack.lineNumber);
 /* #else
     exc = new Error(message);
 // #endif */
     exc.__proto__ = this.__proto__;
 
     if (reason)
-    	exc.reason = reason;
+        exc.reason = reason;
     return exc;
 }
 
