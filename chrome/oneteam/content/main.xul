@@ -294,7 +294,7 @@
       soundsPlayer = document.getElementById("soundsplayer");
 
       var args = {};
-      for each (var part in document.location.search.substr(1).split("&")) {
+      for each (var part in document.location.toString().replace(/.*?\?/, "").split("&")) {
         if (!part)
           continue;
         part = part.split("=", 2);
