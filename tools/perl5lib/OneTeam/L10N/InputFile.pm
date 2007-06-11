@@ -176,11 +176,11 @@ sub _extract_strings {
 
         push @strings, OneTeam::L10N::InputFile::String->new(
             file => $self,
-            start_pos => $self->_map_pos($start+$pos, 1, @pos_map),
-            end_pos => $self->_map_pos($start+pos($str), 1, @pos_map),
+            start_pos => $start+$self->_map_pos($pos, 1, @pos_map),
+            end_pos => $start+$self->_map_pos(pos($str), 1, @pos_map),
             str => $template,
             args => [@args],
-            accesskey_pos => $self->_map_pos($accesskey_pos, 1, @pos_map),
+            accesskey_pos => $accesskey_pos,
             js_code => $in_js_code,
             escape_xml => $xml_escaped);
     }
