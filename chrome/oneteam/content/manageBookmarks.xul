@@ -36,6 +36,9 @@
       }
       if (i)
         list.selectedIndex = 0;
+      else
+        for each (var textbox in textBoxes)
+          textbox.disabled = textbox.previousSibling.disabled = true;
     }
 
     function updateName(newName)
@@ -46,6 +49,9 @@
 
     function newRoom()
     {
+      for each (var textbox in textBoxes)
+        textbox.disabled = textbox.previousSibling.disabled = false;
+
       var item = list.appendItem("New Room");
       for each (var id in "room server nick pass autoJoin".split(/ /))
         item["val-"+id] = "";
@@ -61,6 +67,9 @@
       if (selectedItem.model)
         removedItems.push(selectedItem.model);
       list.removeChild(selectedItem);
+      if (!list.childNodes.length)
+        for each (var textbox in textBoxes)
+          textbox.disabled = textbox.previousSibling.disabled = true;
     }
 
     function saveBookmarks()
@@ -84,9 +93,38 @@
       return true;
     }
 
+    var mutex;
     function roomChange(list)
     {
+      if (mutex)
+        return;
+      mutex = 1;
+
+      var saveValues = true;
       if (selectedItem) {
+        var verifier = document.getElementById("verifier");
+        if (!verifier.isValid) {
+          var restore = confirm(selectedItem.model ?
+            _('Entered informations are invalid.\nDo you want to forget entered informations and restore previous values (click "Cancel" if you want to correct values)?'):
+            _('Entered informations are invalid.\nDo you want to forget this bookmark (click "Cancel" if you want to correct values)?'));
+
+          saveValues = false;
+
+          if (restore) {
+            if (selectedItem.model)
+              selectedItem.label = selectedItem.model.bookmarkName;
+            else
+              removeRoom();
+          } else {
+            list.selectedItem = selectedItem;
+            verifier.focusInvalidWidget();
+            mutex = 0;
+            return;
+          }
+        }
+      }
+
+      if (saveValues && selectedItem) {
         for each (var id in "name room server nick pass".split(/ /))
           selectedItem[id == "name" ? "label" : "val-"+id] = textBoxes[id].value;
         selectedItem["val-autoJoin"] = textBoxes["autoJoin"].checked;
@@ -99,6 +137,8 @@
         textBoxes["autoJoin"].checked = selectedItem["val-autoJoin"];
       } else
         setTimeout("list.selectedIndex = 0", 0);
+      setTimeout(function(a){a.focus()}, 0, textBoxes.name);
+      mutex = 0;
     }
   ]]></script>
 
@@ -112,49 +152,58 @@
       </hbox>
     </vbox>
 
-    <grid flex="1">
-      <columns>
-        <column/>
-        <column flex="1"/>
-      </columns>
-      <rows>
-        <row align="center">
-          <label value="Name:" control="name"/>
-          <textbox id="name" oninput="updateName(this.value)"/>
-        </row>
+    <verifier flex="1" id="verifier">
+      <grid flex="1">
+        <columns>
+          <column/>
+          <column flex="1"/>
+        </columns>
+        <rows>
+          <row>
+            <label value="Name:" control="name"/>
+            <textbox id="name" oninput="updateName(this.value)" type="verifiable" condition="
+              this.value == '' ?
+                (this.errortext=_('Bookmark name can\'t be empty'), false) :
+              (!selectedItem || !selectedItem.model || selectedItem.model.bookmarkName != this.value) &amp;&amp;
+                  window.opener.account.bookmarks.getBookmarkByName(this.value) ?
+                (this.errortext=_('Bookmark with that name already exists'), false) : true"/>
+          </row>
 
-        <spacer/>
+          <spacer/>
 
-        <row align="center">
-          <label value="Room:" control="room"/>
-          <textbox id="room"/>
-        </row>
+          <row>
+            <label value="Room:" control="room"/>
+            <textbox id="room" type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"
+                     errortext="_('Room name can\'t be empty and can\'t contain any of
+                                [&quot;&amp;\&apos;/:&lt;&gt;@] or blank characters')"/>
+          </row>
 
-        <spacer/>
+          <spacer/>
 
-        <row align="center">
-          <label value="Server:" control="server"/>
-          <textbox id="server"/>
-        </row>
+          <row>
+            <label value="Server:" control="server"/>
+            <textbox id="server" type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
+          </row>
 
-        <spacer/>
+          <spacer/>
 
-        <row align="center">
-          <label value="Nickname:" control="nick"/>
-          <textbox id="nick"/>
-        </row>
+          <row>
+            <label value="Nickname:" control="nick"/>
+            <textbox id="nick" type="verifiable" regex="." errortext="_('Nick name can\'t be empty')"/>
+          </row>
 
-        <spacer/>
+          <spacer/>
 
-        <row align="center">
-          <label value="Password:" control="pass"/>
-          <textbox id="pass" type="password"/>
-        </row>
+          <row>
+            <label value="Password:" control="pass"/>
+            <textbox id="pass" type="password"/>
+          </row>
 
-        <spacer/>
+          <spacer/>
 
-        <checkbox label="Always join this room at startup" id="autoJoin"/>
-      </rows>
-    </grid>
+          <checkbox label="Always join this room at startup" id="autoJoin"/>
+        </rows>
+      </grid>
+    </verifier>
   </hbox>
 </dialog>
