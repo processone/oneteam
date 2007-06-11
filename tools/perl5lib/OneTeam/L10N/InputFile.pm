@@ -238,9 +238,10 @@ MAIN_LOOP:
                 $tag =~ /^(?:button|checkbox|caption|label|listitem|menu|
                              menuitem|menulist|radiotab|toolbarbutton)$/x ?
                     $attr_pos : -1;
+            my $js_attr = index($attr_name, "on") == 0 || $attr_name eq 'condition';
 
             push @strings, $self->_extract_strings($attr_val, $attr_start,
-                $accesskey, 1, index($attr_name, "on") == 0)
+                $accesskey, 1, $js_attr)
         }
     }
     my $str = substr($content, pos($content));
