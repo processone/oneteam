@@ -295,8 +295,10 @@
 
       var args = {};
       for each (var part in document.location.search.substr(1).split("&")) {
-          part = part.split("=", 2);
-          args[decodeURIComponent(part[0])] = decodeURIComponent(part[1]);
+        if (!part)
+          continue;
+        part = part.split("=", 2);
+        args[decodeURIComponent(part[0])] = part.length == 1 ? null : decodeURIComponent(part[1]);
       }
 
       var username = account.connectionInfo.user;

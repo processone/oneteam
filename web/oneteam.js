@@ -68,8 +68,10 @@ function init1t(guiFrame, onLaunch, onNotCompatible, openInNewWindow,
     }
 
     for each (var part in document.location.search.substr(1).split("&")) {
+        if (!part)
+            continue;
         part = part.split("=", 2);
-        otArgs[decodeURIComponent(part[0])] = decodeURIComponent(part[1]);
+        otArgs[decodeURIComponent(part[0])] = part.length == 1 ? null : decodeURIComponent(part[1]);
     }
 
     if (otArgs.lang)
@@ -140,6 +142,7 @@ function launch(internal) {
 
     var searchStr = [[encodeURIComponent(i), encodeURIComponent(otArgs[i])] for (i in otArgs)].
         map(function(a){return a[1] ? a[0]+"="+a[1] : a[0]}).join("&")
+
     otGuiFrame.src = "jar:"+document.location.href.
         replace(/\/[^\/]*$/, "/oneteam-"+lang+".jar!/content/"+
             (otMucModule ? "muc.xul" : "main.xul")+"?"+searchStr);
