@@ -222,6 +222,8 @@
     </content>
 
     <implementation>
+      <property name="isValid" onget="return this._failedCount == 0" readonly="true"/>
+
       <constructor><![CDATA[
         this._verifiables = [];
         this._failedCount = 0;
@@ -405,6 +407,8 @@
     </content>
 
     <implementation>
+      <property name="isValid" onget="return this._verifier.isValid" readonly="true"/>
+
       <constructor><![CDATA[
         if (/Mac|Linux/.test(window.navigator.platform)) {
           var b = document.getAnonymousElementByAttribute(this, "anonid", "buttons");
