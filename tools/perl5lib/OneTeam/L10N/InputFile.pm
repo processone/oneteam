@@ -131,7 +131,7 @@ sub _extract_strings {
             if not $str =~ m/\G\s*($str_re)\s*/g;
 
         my $template = substr($1, 1, -1);
-        $template =~ s/\\(.)/$1/g;
+        $template =~ s/\\(['"\\])/$1/e;
         $template =~ s/\s+/ /g;
 
         my @args;
@@ -378,6 +378,9 @@ sub _resolve {
             sub {
                 my $str = cut_flags(shift);
                 $str =~ s/(["\\])/\\$1/g;
+                $str =~ s/\n/\\n/g;
+                $str =~ s/\r/\\r/g;
+                $str =~ s/\t/\\t/g;
                 return "\"$str\"";
             };
 
