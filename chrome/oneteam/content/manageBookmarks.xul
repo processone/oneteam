@@ -4,11 +4,11 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<dialog id="manageBookmarks" windowtype="ot:manageBookmarks" title="Bookmark manager"
+<dialog id="manageBookmarks" windowtype="ot:manageBookmarks" title="_('Bookmark Manager')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="550" height="400"
-  buttonlabelaccept="Save" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('Save')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return saveBookmarks()">
 
@@ -52,7 +52,7 @@
       for each (var textbox in textBoxes)
         textbox.disabled = textbox.previousSibling.disabled = false;
 
-      var item = list.appendItem("New Room");
+      var item = list.appendItem(_("New Room"));
       for each (var id in "room server nick pass autoJoin".split(/ /))
         item["val-"+id] = "";
       list.selectedItem = item;
@@ -142,13 +142,13 @@
     }
   ]]></script>
 
-  <dialogheader title="Bookmark Manager"/>
+  <dialogheader title="_('Bookmark Manager')"/>
   <hbox flex="1">
     <vbox>
       <listbox id="list" flex="1" onselect="roomChange(this)"/>
       <hbox>
-        <button label="New" oncommand="newRoom()"/>
-        <button label="Remove" oncommand="removeRoom()"/>
+        <button label="_('New')" oncommand="newRoom()"/>
+        <button label="_('Remove')" oncommand="removeRoom()"/>
       </hbox>
     </vbox>
 
@@ -160,7 +160,7 @@
         </columns>
         <rows>
           <row>
-            <label value="Name:" control="name"/>
+            <label value="_('Name:')" control="name"/>
             <textbox id="name" oninput="updateName(this.value)" type="verifiable" condition="
               this.value == '' ?
                 (this.errortext=_('Bookmark name can\'t be empty'), false) :
@@ -172,7 +172,7 @@
           <spacer/>
 
           <row>
-            <label value="Room:" control="room"/>
+            <label value="_('Room:')" control="room"/>
             <textbox id="room" type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"
                      errortext="_('Room name can\'t be empty and can\'t contain any of
                                 [&quot;&amp;\&apos;/:&lt;&gt;@] or blank characters')"/>
@@ -181,27 +181,27 @@
           <spacer/>
 
           <row>
-            <label value="Server:" control="server"/>
+            <label value="_('Server:')" control="server"/>
             <textbox id="server" type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
           </row>
 
           <spacer/>
 
           <row>
-            <label value="Nickname:" control="nick"/>
+            <label value="_('Nickname:')" control="nick"/>
             <textbox id="nick" type="verifiable" regex="." errortext="_('Nick name can\'t be empty')"/>
           </row>
 
           <spacer/>
 
           <row>
-            <label value="Password:" control="pass"/>
+            <label value="_('Password:')" control="pass"/>
             <textbox id="pass" type="password"/>
           </row>
 
           <spacer/>
 
-          <checkbox label="Always join this room at startup" id="autoJoin"/>
+          <checkbox label="_('Always join this room at startup')" id="autoJoin"/>
         </rows>
       </grid>
     </verifier>
