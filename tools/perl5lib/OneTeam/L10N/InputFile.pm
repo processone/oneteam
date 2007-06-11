@@ -58,7 +58,6 @@ sub _extract_strings {
     my ($str_re, $brackets_re, $nextarg_re);
     my @strings;
     my %ent_map = ( apos => "'", quot => "\"", lt => "<", gt => ">", amp => "&");
-    my $strc = $str;
 
     $str_re = qr/
         '
@@ -113,13 +112,14 @@ sub _extract_strings {
     /x;
 
     if ($xml_escaped and not $unescaped) {
-        my $pos_diff;
+        my $pos_diff = 0;
+        my $strc = $str;
         while ($strc =~ m/&(apos|quot|lt|gt|amp);/g) {
             my $len = length($1)+1;
             $pos_diff += $len;
+            substr($str, pos($strc)-1-$pos_diff, $len+1, $ent_map{$1});
             push @pos_map, [pos($strc)-$pos_diff,
                             pos($strc)];
-            substr($str, pos($strc)-$pos_diff, $len, $ent_map{$1});
         }
     }
 
