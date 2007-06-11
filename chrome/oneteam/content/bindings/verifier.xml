@@ -71,8 +71,8 @@
             if (this._condition != this.condition) {
               this._condition = this.condition;
               try {
-                this._conditionFun = eval("var f; f=function(val){try{return !!"+
-                                          this._condition+"}catch(e){return false}}");
+                this._conditionFun = eval("var f; f=function(val){try{return !!("+
+                                          this._condition+")}catch(e){return false}}");
               } catch(e) {
                 this._conditionFun = function(){return false};
               }
@@ -187,13 +187,13 @@
           } else
             this._focused = focus ? textbox : null;
 
-          if (!this._focused || !textbox.getAttribute("errortext") || textbox.isValid)
+          if (!this._focused || !(textbox.errortext || textbox.getAttribute("errortext")) || textbox.isValid)
             return this._errorBox.collapsed = true;
 
           if (this._errorText.firstChild)
             this._errorText.removeChild(this._errorText.firstChild);
           this._errorText.appendChild(this._errorText.ownerDocument.
-                                        createTextNode(textbox.getAttribute("errortext")));
+                                      createTextNode(textbox.errortext || textbox.getAttribute("errortext")));
 
           this._errorBox.collapsed = false;
 
