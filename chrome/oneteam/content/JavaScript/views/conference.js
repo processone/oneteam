@@ -180,7 +180,7 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
         }
 
         for (i = 0; data.removed && i < data.removed.length; i++) {
-            this.updateRoleNode(data.added[i].role, -1)
+            this.updateRoleNode(data.removed[i].role, -1)
             this.onItemRemoved(data.removed[i]);
         }
     },
