@@ -10,12 +10,10 @@
   width="300" height="400"
   buttonlabelaccept="_('Bookmark')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
-  onunload="cleanup()" ondialogaccept="return bookmarkRoom()" onload="onLoad()">
-        
-  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/prefs.js"/>
+  ondialogaccept="return bookmarkRoom()" onload="onLoad()">
+
   <script type="text/javascript;version=1.7"><![CDATA[
-    var conference = window.arguments[0];
+    var conference = window.arguments && window.arguments[0];
     var conf;
 
     var room, server, nick, password, bookmarkName;
@@ -31,7 +29,6 @@
         password.value = conference.bookmarkPassword || "";
 
         bookmarkName.value = conference.bookmarkName || "";
-
         room.disabled = room.previousSibling.disabled =
         server.disabled = server.previousSibling.disabled = true;
       } else {
@@ -39,50 +36,18 @@
       }
 
       document.getElementById('nick').value =
-        prefManager.getPref('chat.muc.nickname');
+        window.opener.prefManager.getPref('chat.muc.nickname');
     }
 
     function bookmarkRoom() {
       conf = conference;
 
-      if (!conference) {
-        if (!room.value) {
-          alert(_("Please give room name");
-          return false;
-        }
-
-        if (!~server.value.search(/(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-          alert(_("Please give correct server address"));
-          return false;
-        }
-
-        if (!nick.value) {
-          alert(_("Please give nick name"));
-          return false;
-        }
-
-        if (!bookmarkName.value) {
-          alert(_("Please give bookmark name"));
-          return false;
-        }
-
-        if (!conference && 
-            window.opener.account.bookmarks.getBookmarkByName(bookmarkName.value))
-        {
-          alert(_("Bookmark with that name already exists"));
-          return false;
-        } 
-
+      if (!conference)
         conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value);
-      }
 
       conf.bookmark(bookmarkName.value || conf.jid.node, false, nick.value, password.value);
 
       return true;
-    }
-
-    function cleanup()
-    {
     }
   ]]></script>
 
@@ -96,17 +61,20 @@
     <rows>
       <row align="center">
         <label value="_('Room:')" control="room"/>
-        <textbox id="room"/>
+        <textbox id="room" type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"
+                 errortext="_('Room name can\'t be empty and can\'t contain any of
+                            [&quot;&amp;\&apos;/:&lt;&gt;@] or blank characters')"/>
       </row>
 
       <row align="center">
         <label value="_('Server:')" control="server"/>
-        <textbox id="server"/>
+        <textbox id="server" type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
       </row>
 
       <row align="center">
         <label value="_('Nickname:')" control="nick"/>
-        <textbox id="nick"/>
+        <textbox id="nick" type="verifiable" regex="."
+                 errortext="_('Nick name can\'t be empty')"/>
       </row>
 
       <row align="center">
@@ -118,10 +86,13 @@
 
       <row align="center">
         <label value="_('Name:')" control="bookmarkName"/>
-        <textbox id="bookmarkName"/>
+        <textbox id="bookmarkName" type="verifiable" condition="
+          this.value == '' ?
+            (this.errortext=_('Bookmark name can\'t be empty'), false) :
+          !conference &amp;&amp; window.opener.account.bookmarks.getBookmarkByName(this.value) ?
+            (this.errortext=_('Bookmark with that name already exists'), false) : true"/>
       </row>
     </rows>
   </grid>
-
   <spacer/>
 </dialog>
