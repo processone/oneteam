@@ -131,7 +131,7 @@ sub _extract_strings {
             if not $str =~ m/\G\s*($str_re)\s*/g;
 
         my $template = substr($1, 1, -1);
-        $template =~ s/\\././g;
+        $template =~ s/\\(.)/$1/g;
         $template =~ s/\s+/ /g;
 
         my @args;
