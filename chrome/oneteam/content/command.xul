@@ -218,15 +218,21 @@
   }
 
   function dump(value) {
-    var ret = document.getElementById("output");
-    ret.value += value+"\n";
+    var output = document.getElementById("output").contentDocument;
+
+    var el = output.createElement("div");
+    el.setAttribute("class", "exec-unit");
+    el.innerHTML += "<div class='exec-expr'>Dump result:</div>";
+    el.innerHTML += "<div class='exec-result'>"+genOutput(value, true)+"</div>";
+
+    output.body.appendChild(el);
+    output.body.scrollTop = output.body.scrollHeight;
   }
 
   function dumps() {
-    var i;
-
-    for (i = 0; i < arguments.length; i++)
-    dump("arguments["+i+"] = "+uneval(arguments[i]));
+    var arr = [];
+    arr.push.apply(arr, arguments);
+    dump(arr);
   }
   ]]></script>
 
