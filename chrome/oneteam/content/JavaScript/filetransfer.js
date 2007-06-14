@@ -6,59 +6,21 @@ function FileTransferService()
 
 _DECL_(FileTransferService, null, Model).prototype =
 {
-    idPrefix: generateRandomName(8),
-    idCount: 0,
-
     sendFile: function(to, file)
     {
-        file = new File(file);
+        if (file) {
+            file = new File(file);
+            if (!file.exists)
+                return null;
+        }
 
-        if (!file.exists)
-            return false;
-
-        var streamID = this.idPrefix+(++FileTransferService.prototype.idCount);
-
-        var pkt = new JSJaCIQ();
-        pkt.setIQ(to, null, "set");
-        pkt.getNode().appendChild(E4XtoDOM(
-            <si xmlns='http://jabber.org/protocol/si' id={streamID}
-                    profile='http://jabber.org/protocol/si/profile/file-transfer'>
-                <file xmlns='http://jabber.org/protocol/si/profile/file-transfer'
-                        name={file.path.match(/[^/\\]+$/)[0]} size={file.size}/>
-                <feature xmlns='http://jabber.org/protocol/feature-neg'>
-                    <x xmlns='jabber:x:data' type='form'>
-                        <field var='stream-method' type='list-single'>
-                            <option><value>http://jabber.org/protocol/bytestreams</value></option>
-                        </field>
-                    </x>
-                </feature>
-            </si>, pkt.getDoc()));
-
-        var fileTransfer = new FileTransfer(pkt.getID(), to, streamID, file.size, file);
-
+        var fileTransfer = new FileTransfer(null, to, null, file && file.size, file);
         this.fileTransfers.push(fileTransfer);
         this.modelUpdated("fileTransfers", {added: [fileTransfer]});
 
-        con.send(pkt, new Callback(this._sendFileStep, this), fileTransfer);
-    },
-
-    _sendFileStep: function(pkt, fileTransfer)
-    {
-        if (pkt.getType() != "result") {
-            fileTransfer.onRejected();
-            return;
-        }
-
-        var xml = DOMtoE4X(pkt.getNode());
-        var xdataNS = new Namespace("jabber:x:data")
-        var ftNS = new Namespace("http://jabber.org/protocol/si/profile/file-transfer");
-
-        var method = xml..xdataNS::field.(@var == "stream-method")..xdataNS::value.toString();
-        var range = xml..ftNS::range;
-
-        fileTransfer.jid = pkt.getFrom();
-
-        fileTransfer._sendFile(method, range.@offset, range.@length);
+        if (!file)
+            account.showTransfersManager();
+        return fileTransfer;
     },
 
     onIQ: function(pkt)
@@ -97,27 +59,40 @@ _DECL_(FileTransferService, null, Model).prototype =
                                             xml.siNS::si.@id.toString(), +file.@size);
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
-        window.openDialog("chrome://oneteam/content/fileTransferRequest.xul", "_blank",
-                          "chrome,modal", fileTransfer, file.@name, +file.@size);
-   },
+        addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getID())),
+                 new Callback(openDialogUniq, null).
+                 addArgs("ot:fileTransferRequest", "chrome://oneteam/content/fileTransferRequest.xul",
+                          "chrome,modal", fileTransfer, file.@name, +file.@size));
+   }
 }
 
 function FileTransfer(offerID, jid, streamID, size, file)
 {
     this.jid = jid;
     this.offerID = offerID;
-    this.streamID = streamID;
-    this.file = file;
     this.state = "waiting";
-    this.type = file ? "send" : "recv";
     this.sent = 0;
     this.size = size;
     this.accepted = false;
     this.init();
+    this.streamID = streamID;
+    this.file = file;
+    this.type = streamID == null ? "send" : "recv";
+
+    if (streamID == null) {
+        this.streamID = this.idPrefix+(++FileTransfer.prototype.idCount);
+        this.state = "selecting";
+    }
+
+    if (this.file)
+        this._sendOffer();
 }
 
 _DECL_(FileTransfer, null, Model).prototype =
 {
+    idPrefix: generateRandomName(8),
+    idCount: 0,
+
     get ppSize()
     {
         return ppFileSize(this.size);
@@ -130,7 +105,62 @@ _DECL_(FileTransfer, null, Model).prototype =
 
     get finished()
     {
-        return this.state != "waiting" && this.state != "started";
+        return this.state != "selecting" && this.state != "waiting" && this.state != "started";
+    },
+
+    onFileChoosen: function(path, form)
+    {
+        this.file = {path: path};
+        this.form = form;
+        this.state = "waiting";
+        this.modelUpdated("state");
+        this._sendOffer();
+    },
+
+    _sendOffer: function()
+    {
+        var fileName = this.file.path.match(/[^\/\\]+$/)[0];
+
+        var node = <si xmlns='http://jabber.org/protocol/si' id={this.streamID}
+                        profile='http://jabber.org/protocol/si/profile/file-transfer'>
+                      <file xmlns='http://jabber.org/protocol/si/profile/file-transfer'
+                          name={fileName}/>
+                      <feature xmlns='http://jabber.org/protocol/feature-neg'>
+                        <x xmlns='jabber:x:data' type='form'>
+                          <field var='stream-method' type='list-single'>
+                            <option><value>http://jabber.org/protocol/bytestreams</value></option>
+                          </field>
+                        </x>
+                      </feature>
+                    </si>
+        if (this.size != null)
+            node.child(0).@size = this.size;
+
+        var pkt = new JSJaCIQ();
+        pkt.setIQ(this.jid, null, "set");
+        pkt.getNode().appendChild(E4XtoDOM(node, pkt.getDoc()));
+
+        con.send(pkt, new Callback(this._sendOfferStep, this));
+    },
+
+    _sendOfferStep: function(pkt)
+    {
+        if (pkt.getType() != "result") {
+            this.onRejected();
+            return;
+        }
+
+        var xml = DOMtoE4X(pkt.getNode());
+        var xdataNS = new Namespace("jabber:x:data")
+        var ftNS = new Namespace("http://jabber.org/protocol/si/profile/file-transfer");
+
+        var method = xml..xdataNS::field.(@var == "stream-method")..xdataNS::value.toString();
+        var range = xml..ftNS::range;
+
+        this.jid = pkt.getFrom();
+
+        if (method == "http://jabber.org/protocol/bytestreams")
+            this.socksToken = socks5Service.sendFile(this, range.@offset, range.@length);
     },
 
     accept: function(path)
@@ -185,12 +215,6 @@ _DECL_(FileTransfer, null, Model).prototype =
             fileTransferService.fileTransfers.splice(idx, 1);
             fileTransferService.modelUpdated("fileTransfers", {removed: [this]});
         }
-    },
-
-    _sendFile: function(method, rangeOffset, rangeLength)
-    {
-        if (method == "http://jabber.org/protocol/bytestreams")
-            this.socksToken = socks5Service.sendFile(this, rangeOffset, rangeLength);
     },
 
     onRejected: function()

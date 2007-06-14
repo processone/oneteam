@@ -4,33 +4,38 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<dialog id="fileTransferRequest" windowtype="ot:fileTransferRequest" title="File transfer request"
+<dialog id="fileTransferRequest" windowtype="ot:fileTransferRequest" title="_('File Transfer Request')"
+  width="600" height="300"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  xmlns:html="http://www.w3.org/1999/xhtml" 
-  buttonlabelaccept="Accept" buttonlabelcancel="Reject"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttonlabelaccept="_('Accept')" buttonlabelcancel="_('Reject')"
   buttons="accept,cancel"
   ondialogaccept="return acceptFileTransfer()" ondialogcancel="return rejectFileTransfer()"
   onload="onLoad()">
-        
+
   <script type="text/javascript;version=1.7"><![CDATA[
     var [fileTransfer, fileName] = window.arguments;
 
     function onLoad()
     {
       document.getElementById("msg").innerHTML =
-        "<b>"+fileTransfer.jid+"</b> wants to send you file";
+        _("<b>{0}</b> wants to send you file", window.opener.xmlEscape(fileTransfer.jid));
 
       document.getElementById("name").value = fileName;
-      document.getElementById("size").value = fileTransfer.ppSize;
+      if (fileTransfer.size == null)
+        document.getElementById("size").hidden = true;
+      else
+        document.getElementById("size").value = fileTransfer.ppSize;
     }
 
     function acceptFileTransfer()
     {
+//#ifdef XULAPP
       const nsIFilePicker = Components.interfaces.nsIFilePicker;
       var picker = Components.classes["@mozilla.org/filepicker;1"].
         createInstance(nsIFilePicker);
 
-      picker.init(window, "Select a File", nsIFilePicker.modeSave);
+      picker.init(window, _("Select a File"), nsIFilePicker.modeSave);
       picker.defaultString = fileName;
 
       if (picker.show() != nsIFilePicker.returnCancel) {
@@ -39,6 +44,10 @@
       }
 
       return false;
+/* #else
+      fileTransfer.accept();
+      return true;
+// #endif */
     }
 
     function rejectFileTransfer()
@@ -48,7 +57,7 @@
     }
   ]]></script>
 
-  <dialogheader title="File transfer request"/>
+  <dialogheader title="_('File Transfer Request')"/>
 
   <description><span id="msg" xmlns="http://www.w3.org/1999/xhtml"/></description>
   <spacer/>
@@ -59,11 +68,11 @@
     </cols>
     <rows>
       <row>
-        <label value="Name:"/>
+        <label value="_('Name:')"/>
         <label id="name"/>
       </row>
       <row>
-        <label value="Size:"/>
+        <label value="_('Size:')"/>
         <label id="size"/>
       </row>
     </rows>

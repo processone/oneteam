@@ -22,7 +22,7 @@ _DECL_(RosterExchangeService).prototype =
 
     _iqHandler: function(pkt, query)
     {
-        if (pkt.getType() != "set" || query.localName != "x")
+        if (pkt.getType() != "set" || query.localName() != "x")
             return 0;
 
         var jid = new JID(pkt.getFrom());

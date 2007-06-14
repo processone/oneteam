@@ -8,6 +8,11 @@ _DECL_(SOCKS5Service).prototype =
     transfers: {},
     proxies: {},
 
+    canSendTo: function(contact)
+    {
+        return true;
+    },
+
     sendFile: function(fileTransfer, rangeOffset, rangeLength)
     {
         var bsNS = new Namespace("http://jabber.org/protocol/bytestreams");

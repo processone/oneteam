@@ -39,10 +39,12 @@
   <script type="text/javascript;version=1.7" src="JavaScript/dataforms.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/services/manager.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/services/rosterx.js"/>
-  <!-- #ifdef XULAPP -->
+<!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
+<!-- #else
+  <script type="text/javascript;version=1.7" src="JavaScript/otbs.js"/>
+// #endif -->
   <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
-  <!-- #endif -->
   <script type="text/javascript;version=1.7" src="JavaScript/model/presence.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
@@ -67,7 +69,7 @@
       var im = document.getElementById("contact-invite");
       var sf = document.getElementById("contact-send-file");
 
-      sf.hidden = !menu.model.activeResource;
+      sf.hidden = !menu.model.activeResource || !socks5Service.canSendTo(menu.model.activeResource);
 
       cm.hidden = !(cs.hidden = menu.model.resources.length > 1);
       if (cs.hidden) {
@@ -430,11 +432,7 @@
     <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
     <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
     <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
-<!-- #ifdef XULAPP -->
     <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
-<!-- #else
-    <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()" disabled="true"/>
-// #endif -->
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
     <command id="cmd_disconnect" oncommand="con.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
@@ -715,13 +713,8 @@
       <menuitem label="_('Information...')" oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
-      <!-- #ifdef XULAPP -->
-      <menuitem id="contact-send-file" label="Send file..."
+      <menuitem id="contact-send-file" label="_('Send file...')"
         oncommand="this.parentNode.model.onSendFile()"/>
-      <!-- #else
-      <menuitem id="contact-send-file" label="Send file..."
-        oncommand="this.parentNode.model.onSendFile()" disabled="true"/>
-      // #endif -->
     </popup>
 
     <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
@@ -804,13 +797,8 @@
         oncommand="this.parentNode.model.showVCard()"/>
       <menuitem label="Show History..."
         oncommand="this.parentNode.model.onShowHistory()"/>
-      <!-- #ifdef XULAPP -->
-      <menuitem id="conferencemember-send-file" label="Send file..."
+      <menuitem id="conferencemember-send-file" label="_('Send file...')"
         oncommand="this.parentNode.model.onSendFile()"/>
-      <!-- #else
-      <menuitem id="conferencemember-send-file" label="Send file..."
-        oncommand="this.parentNode.model.onSendFile()" disabled="true"/>
-      // #endif -->
     </popup>
 
     <popup id="gateway-contextmenu" onpopupshowing="updateGatewayMemberContextMenu(this, event)">

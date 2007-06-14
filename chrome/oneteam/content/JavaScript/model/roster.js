@@ -410,6 +410,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
     onSendFile: function()
     {
+// #ifdef XULAPP
         if (!this.activeResource)
             return;
 
@@ -421,6 +422,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
         if (picker.show() != nsIFilePicker.returnCancel)
             this.sendFile(picker.file.path);
+/* #else
+        this.sendFile();
+// #endif */
     },
 
     sendFile: function(path)

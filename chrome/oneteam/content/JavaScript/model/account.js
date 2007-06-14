@@ -429,7 +429,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                      function(account, items, item) {
                                         account.getOrCreateContact(item._discoCacheEntry.jid);
                                      });
-        if (typeof(socks5Service) == "object")
+// #ifdef XULAPP
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
                                      function(account, items, item) {
                                         var bsp = new JSJaCIQ();
@@ -437,6 +437,16 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                         bsp.setQuery("http://jabber.org/protocol/bytestreams");
                                         con.send(bsp, account._proxyAddress);
                                      });
+/* #else
+        this.getDiscoItemsByFeature("http://oneteam.im/bs-proxy", false,
+                                     function(account, items, item) {
+                                        var bsp = new JSJaCIQ();
+                                        bsp.setIQ(item._discoCacheEntry.jid, null, "get");
+                                        bsp.setQuery("http://jabber.org/protocol/bytestreams");
+                                        con.send(bsp, account._proxyAddress);
+                                     });
+// #endif */
+        if (typeof(socks5Service) == "object")
         // Enable auto archiving
         this.hasDiscoFeature("http://www.xmpp.org/extensions/xep-0136.html#ns", false,
                              function (account, value) {
