@@ -17,6 +17,42 @@
 
   <script type="application/x-javascript;version=1.7"><![CDATA[
   xmlEscape = window.opener.xmlEscape;
+
+  var input;
+
+  function onload() {
+    var output = document.getElementById("output");
+
+    input = document.getElementById("input");
+
+    var link = output.contentDocument.createElement("link");
+    link.setAttribute("href", document.location.href.replace(/content\/.*?$/,
+      "skin/command/content.css"));
+    link.setAttribute("rel", "stylesheet");
+
+    output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
+
+    setTimeout(function(a){a.focus()}, 100, input);
+
+    input._send = function(withEnter) {
+      if (!withEnter)
+        return null;
+      var val = this._input.value.replace(/\n$/, '');
+      exec(val);
+      return val;
+    }
+
+    input._tryCompletion = complete;
+
+    window.opener.console =  {
+      info: function(msg) { dump(msg) }
+    }
+  }
+
+  function onunload() {
+    delete window.opener.console;
+  }
+
   function flushChrome() {
     var prefSvc = Components.classes["@mozilla.org/preferences-service;1"].
     getService(Components.interfaces.nsIPrefBranch);
@@ -91,6 +127,75 @@
     }
   }
 
+  var lastCompletionStr, lastCompletionResults, lastCompletionIdx;
+  function complete() {
+    var cursPos = input._input.selectionStart;
+    var str = input.value.substr(0, cursPos);
+    var rest = input.value.substr(cursPos);
+
+    if (lastCompletionStr == str) {
+      lastCompletionIdx = (lastCompletionIdx+1) % lastCompletionResults.length;
+      lastCompletionStr = lastCompletionResults[lastCompletionIdx];
+      input.value = lastCompletionStr + rest;
+      input.selectionStart = lastCompletionStr.length;
+      return;
+    }
+
+    var type, substr;
+    var strPart = str.replace(/(?:(?:(\.)(\w*))|(?:(\[)\s*(?:(?:"((?:[^\\"]|\\.)*))|(?:'((?:[^\\']|\\.)*)))))$/,
+                              function(all, dot, s1, arr, s2, s3) {
+                                substr = dot ? s1 : unescapeJS(s2 || s3);
+                                return "";
+                              });
+    if (strPart == str) {
+      substr = strPart;
+      strPart = "";
+    }
+
+    var val = evalInWindow(strPart || "this", window.opener);
+
+    if (val.exception || !val.result) {
+      input._blink();
+      return;
+    }
+
+    var res = [];
+
+    for (var i in val.result)
+      if (i.indexOf(substr) == 0) {
+        var word = i.search(/^[^\W\d]\w*$/) == 0;
+        if (strPart)
+          res.push(word ? strPart+"."+i : strPart+"["+uneval(i));
+        else
+          res.push(word ? i : "this["+uneval(i));
+      }
+
+    if (!res.length) {
+      input._blink();
+      return;
+    }
+
+    res = res.sort();
+
+    lastCompletionIdx = 0;
+    lastCompletionResults = res;
+    lastCompletionStr = res[0];
+    input.value = res[0] + rest;
+    input._input.selectionStart = res[0].length;
+  }
+
+  function evalInWindow(expr, win) {
+    try {
+      win.__CONSOLE_ARGS__ = { scope: {dump: dump, dumps: dumps}, expr: expr };
+
+      val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
+        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", win);
+      return {result: val};
+    } catch (ex) {
+      return {exception: val}
+    }
+  }
+
   function exec() {
     var output = document.getElementById("output").contentDocument;
     var expr = document.getElementById("input").value;
@@ -99,20 +204,15 @@
     el.setAttribute("class", "exec-unit");
     el.innerHTML += "<div class='exec-expr'>"+indent(expr)+"</div>";
 
-    try {
-      window.opener.__CONSOLE_ARGS__ = {
-        scope: {dump: dump, dumps: dumps}, expr: expr };
+    var val = evalInWindow(expr, window.opener);
 
-      val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
-        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", window.opener);
-
-      el.innerHTML += "<div class='exec-result'>"+genOutput(val, true)+"</div>";
-      output.body.appendChild(el);
-   } catch (ex) {
+    if ("result" in val)
+      el.innerHTML += "<div class='exec-result'>"+genOutput(val.result, true)+"</div>";
+    else
       el.innerHTML += "<div class='exec-exception'>Exception:"+
-        "<div>"+indent(exceptionToString(ex, ""))+"</div></div>";
-      output.body.appendChild(el);
-    }
+        "<div>"+indent(exceptionToString(val.exception, ""))+"</div></div>";
+
+    output.body.appendChild(el);
     output.body.scrollTop = output.body.scrollHeight;
   }
 
@@ -127,38 +227,8 @@
     for (i = 0; i < arguments.length; i++)
     dump("arguments["+i+"] = "+uneval(arguments[i]));
   }
-
-  function onload() {
-    var input = document.getElementById("input");
-    var output = document.getElementById("output");
-
-    var link = output.contentDocument.createElement("link");
-    link.setAttribute("href", document.location.href.replace(/content\/.*?$/,
-      "skin/command/content.css"));
-    link.setAttribute("rel", "stylesheet");
-
-    output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
-
-    setTimeout(function(a){a.focus()}, 100, input);
-
-    input._send = function(withEnter) {
-      if (!withEnter)
-        return null;
-      var val = this._input.value.replace(/\n$/, '');
-      exec(val);
-      return val;
-    }
-
-    window.opener.console =  {
-      info: function(msg) { dump(msg) }
-    }
-  }
-
-  function onunload() {
-    delete window.opener.console;
-  }
-
   ]]></script>
+
   <vbox flex="1">
     <html:iframe flex="1" id="output"/>
     <textbox type="resizable" id="input" multilinea="true"/>
