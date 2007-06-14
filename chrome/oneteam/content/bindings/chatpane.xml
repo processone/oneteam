@@ -414,11 +414,11 @@
       </method>
 
       <method name="_preMaybeResize">
-        <body/>
+        <body> </body>
       </method>
 
       <method name="_postMaybeResize">
-        <body/>
+        <body> </body>
       </method>
 
       <method name="_handleHistoryKey">
@@ -573,7 +573,6 @@
         <body><![CDATA[
           if (this.completionEngine && !this.completionEngine.complete(this._input._input))
             this._input._blink();
-
         ]]></body>
       </method>
 
