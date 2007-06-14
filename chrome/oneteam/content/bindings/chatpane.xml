@@ -294,6 +294,7 @@
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
               event.preventDefault();
               me._tryCompletion()
+              return;
             }
 
             var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
@@ -426,7 +427,7 @@
         <body><![CDATA[
           var histPos = this._historyPosition + (up ? -1 : 1);
 
-          if (histPos < 0 || histPos >= this._history.length)
+          if (histPos < 0 || histPos > this._history.length)
             return false;
 
           var height = this._inputClone.inputField.scrollHeight;
@@ -443,13 +444,19 @@
             return false;
           }
 
-          if (this._history[this._historyPosition] != this._input.value)
+          if (this._historyPosition < this._history.length &&
+              this._history[this._historyPosition][0] != this._input.value)
             this._history[this._historyPosition] =
               [this._input.value, this._input.selectionStart];
 
-          this._input.value = this._history[histPos][0];
-          window.setTimeout(function(i, p){i.selectionStart = i.selectionEnd = p},
-                            0, this._input, this._history[histPos][1]);
+          if (histPos >= this._history.length) {
+            this._input.value = "";
+          } else {
+            this._input.value = this._history[histPos][0];
+            window.setTimeout(function(i, p){i.selectionStart = i.selectionEnd = p},
+                              0, this._input, this._history[histPos][1]);
+          }
+
           this._historyPosition = histPos;
           this._maybeResize();
 
