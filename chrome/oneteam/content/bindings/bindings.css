@@ -4,6 +4,10 @@ chatpane {
   -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#chatpane");
 }
 
+textbox[type="resizable"] {
+  -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#resizable-textbox");
+}
+
 chatpane-view {
   -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#chatpane-view");
 }
