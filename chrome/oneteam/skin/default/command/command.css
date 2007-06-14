@@ -1,0 +1,9 @@
+#input, #output {
+  margin: 0;
+  -moz-appearance: none !important;
+  border: none !important;
+}
+
+#input {
+  border-top: 1px solid #7e9cb8 !important;
+}

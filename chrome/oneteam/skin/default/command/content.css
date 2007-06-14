@@ -1,0 +1,45 @@
+body {
+    background: white;
+    font-family: Arial, Verdana, sans-serif;
+    margin: 2px;
+    padding: 2px;
+}
+
+.exec-unit {
+    display: block;
+    border: 1px solid #ccc;
+    padding: 2px 4px;
+    margin: 2px 0;
+}
+
+.exec-expr {
+    border-bottom: 1px dotted #eee;
+}
+
+.exec-exception {
+    background: #ffe;
+}
+
+.value-object {
+    color: #116;
+}
+
+.value-array {
+    color: #229;
+}
+
+.value-string {
+    color: #e33;
+}
+
+.value-number {
+    color: #44f;
+}
+
+.value-boolean{
+    color: #e2e;
+}
+
+.value-xml {
+    color: #383;
+}

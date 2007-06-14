@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/command/command.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
 <window
@@ -15,6 +16,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
 
   <script type="application/x-javascript;version=1.7"><![CDATA[
+  xmlEscape = window.opener.xmlEscape;
   function flushChrome() {
     var prefSvc = Components.classes["@mozilla.org/preferences-service;1"].
     getService(Components.interfaces.nsIPrefBranch);
@@ -23,24 +25,95 @@
     prefSvc.setBoolPref("nglayout.debug.disable_xul_cache", false);
   }
 
+  function indent(value) {
+    value = xmlEscape(value);
+    value = value.replace(/\n(\s*)/g, function(t, a){
+      var val = "<br/>";
+      for (var i = 0; i < a.length; i++)
+        val+="&nbsp;";
+      return val;
+    });
+    return value;
+  }
+
+  function genOutput(value, topLevel) {
+    switch (typeof value) {
+      case "object":
+        if (value == null)
+          return "<span class='value-object'>"+uneval(value)+"</span>";
+
+        if ("length" in value && typeof(value.length) == "number") {
+          if (!topLevel)
+            return "<span class='value-array'>[<span class='value-continue'>...</span>]</span>";
+          var res = "<span class='value-array'>[";
+          for (var i = 0; i < value.length; i++)
+            if (i > 8) {
+              res += ", <span class='value-continue'>...</span>";
+              break;
+            } else
+              res += (i > 0 ? ", " : "") + genOutput(value[i], false);
+          return res + "]</span>";
+        }
+
+        if (!topLevel)
+          return "<span class='value-object'>{<span class='value-continue'>...</span>}</span>";
+
+        var res = "<span class='value-object'>{", idx = 0;
+        for (var i in value) {
+          if (idx++ > 8) {
+              res += ", <span class='value-continue'>...</span>";
+              break;
+          }
+          res += (idx > 1 ? ", " : "") + genOutput(i)+": "+genOutput(value[i]);
+        }
+        return res += "}</span>";
+
+        break;
+      case "string":
+        value = topLevel ? '"'+indent(value)+'"' : xmlEscape(uneval(value));
+        return "<span class='value-string'>"+value+"</span>";
+      case "number":
+        return "<span class='value-number'>"+xmlEscape(uneval(value))+"</span>";
+      case "boolean":
+        return "<span class='value-boolean'>"+xmlEscape(uneval(value))+"</span>";
+      case "xml":
+        var pp = XML.prettyPrinting;
+        XML.prettyPrinting = topLevel;
+        value = topLevel ? indent(value.toXMLString()) : xmlEscape(value.toXMLString());
+        var val = "<span class='value-xml'>"+value+"</span>";
+        XML.prettyPrinting = pp;
+        return val;
+      case "function":
+        if (!topLevel)
+          return "<span class='value-function'>function(){<span class='value-continue'>...</span>}</span>"
+        return "<span class='value-function'>"+indent(uneval(value))+"</span>";
+        break;
+    }
+  }
+
   function exec() {
-    var ret = document.getElementById("output");
-    ret.value = "";
+    var output = document.getElementById("output").contentDocument;
+    var expr = document.getElementById("input").value;
+
+    var el = output.createElement("div");
+    el.setAttribute("class", "exec-unit");
+    el.innerHTML += "<div class='exec-expr'>"+indent(expr)+"</div>";
 
     try {
-      var val = document.getElementById("inputexec").value;
-
       window.opener.__CONSOLE_ARGS__ = {
-        scope: {dump: dump, dumps: dumps}, expr: val };
+        scope: {dump: dump, dumps: dumps}, expr: expr };
 
       val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
         "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", window.opener);
 
-      dump("\n***RESULT***\n\n" + val);
-    } catch (ex) {
-      dump("\n***EXCEPTION***\n\n"+
-        exceptionToString(ex, ""));
+      el.innerHTML += "<div class='exec-result'>"+genOutput(val, true)+"</div>";
+      output.body.appendChild(el);
+   } catch (ex) {
+      el.innerHTML += "<div class='exec-exception'>Exception:"+
+        "<div>"+indent(exceptionToString(ex, ""))+"</div></div>";
+      output.body.appendChild(el);
     }
+    output.body.scrollTop = output.body.scrollHeight;
   }
 
   function dump(value) {
@@ -56,12 +129,20 @@
   }
 
   function onload() {
-    var input = document.getElementById("inputexec");
+    var input = document.getElementById("input");
+    var output = document.getElementById("output");
+
+    var link = output.contentDocument.createElement("link");
+    link.setAttribute("href", document.location.href.replace(/content\/.*?$/,
+      "skin/command/content.css"));
+    link.setAttribute("rel", "stylesheet");
+
+    output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
 
     setTimeout(function(a){a.focus()}, 100, input);
 
     input._send = function(withEnter) {
-      if (withEnter)
+      if (!withEnter)
         return null;
       var val = this._input.value.replace(/\n$/, '');
       exec(val);
@@ -79,7 +160,7 @@
 
   ]]></script>
   <vbox flex="1">
-    <textbox flex="1" id="output" readonly="true" multiline="true"/>
-    <textbox type="resizable" id="inputexec" multilinea="true"/>
+    <html:iframe flex="1" id="output"/>
+    <textbox type="resizable" id="input" multilinea="true"/>
   </vbox>
 </window>
