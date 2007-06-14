@@ -393,6 +393,20 @@ function xmlEscape(str)
         replace(/\"/g,"&quot;");
 }
 
+unescapeJS: function(str)
+{
+    return str.replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
+        function(r, uni, hex, oct, nl, cr, tab, chr)
+        {
+            var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
+            if (charCode) return String.fromCharCode(charCode);
+            if (nl) return "\n";
+            if (cr) return "\r";
+            if (tab) return "\t";
+            return chr;
+        });
+}
+
 function generateRandomName(length)
 {
     const charset = "0123456789abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz";

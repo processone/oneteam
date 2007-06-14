@@ -24,12 +24,12 @@ var l10nFormatService = {
             endPos = templRE.lastIndex;
             templRE.lastIndex = 0;
             if (strParts[1])
-                res += (res ? "+" : "")+uneval(this._unescapeJS(strParts[1]));
+                res += (res ? "+" : "")+uneval(unescapeJS(strParts[1]));
 
             args = [];
             while ((argsParts = argsRE.exec(strParts[3])))
                 args.push(argsParts[3] ? argsParts[3] :
-                        this._unescapeJS(argsParts[1]||argsParts[2]));
+                        unescapeJS(argsParts[1]||argsParts[2]));
 
             if (args.length) {
                 res += (res ? "+" : "")+"this._formatMethods."+
@@ -43,23 +43,9 @@ var l10nFormatService = {
         }
 
         if (endPos < str.length)
-            res += (res ? "+" : "")+uneval(this._unescapeJS(str.substr(endPos)));
+            res += (res ? "+" : "")+uneval(unescapeJS(str.substr(endPos)));
 
         return res;
-    },
-
-    _unescapeJS: function(str)
-    {
-        return str.replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
-            function(r, uni, hex, oct, nl, cr, tab, chr)
-            {
-                var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
-                if (charCode) return String.fromCharCode(charCode);
-                if (nl) return "\n";
-                if (cr) return "\r";
-                if (tab) return "\t";
-                return chr;
-            });
     },
 
     _formatMethods:
