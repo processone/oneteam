@@ -286,7 +286,7 @@ _DECL_(DiscoItem).prototype =
     {
         if (callback)
             this.getDiscoItems(forceUpdate, new Callback(this._gotDiscoItems, this).
-                addArgs(category, type, forceUpdate, callback));
+                addArgs(null, category, type, forceUpdate, callback));
 
         var items = this.getDiscoItems(), ret = [];
         if (!items)
@@ -301,17 +301,41 @@ _DECL_(DiscoItem).prototype =
         return ret;
     },
 
-    _gotDiscoItems: function(discoItem, items, category, type, forceUpdate, callback)
+    getDiscoItemsByFeature: function(feature, forceUpdate, callback)
+    {
+        if (callback)
+            this.getDiscoItems(forceUpdate, new Callback(this._gotDiscoItems, this).
+                addArgs(feature, null, null, forceUpdate, callback));
+
+        var items = this.getDiscoItems(), ret = [];
+        if (!items)
+            return ret;
+
+        for (var i = 0; i < items.length; i++) {
+            var id = items[i].getDiscoIdentity();
+            if (id && (feature in id.features))
+                ret.push(items[i]);
+        }
+        return ret;
+    },
+
+    _gotDiscoItems: function(discoItem, items, feature, category, type, forceUpdate, callback)
     {
         for (var i = 0; i < items.length; i++)
             if (!items[i].node)
                 items[i].getDiscoIdentity(forceUpdate, new Callback(this._gotDiscoIdentity, this).
-                    addArgs(category, type, callback));
+                    addArgs(feature, category, type, callback));
     },
 
-    _gotDiscoIdentity: function(discoItem, id, category, type, callback)
+    _gotDiscoIdentity: function(discoItem, id, feature, category, type, callback)
     {
-        if (id && (category == null || id.category == category) && (type == null || id.type == type))
+        if (!id)
+            return;
+
+        if (feature) {
+            if (feature in id.features)
+                callback(this, this.getDiscoItemsByFeature(feature), discoItem);
+        } else if ((category == null || id.category == category) && (type == null || id.type == type))
             callback(this, this.getDiscoItemsByCategory(category, type), discoItem);
     }
 }
