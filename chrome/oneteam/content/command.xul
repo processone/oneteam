@@ -129,13 +129,14 @@
   }
 
   var lastCompletionStr, lastCompletionResults, lastCompletionIdx;
-  function complete() {
+  function complete(prevEntry) {
     var cursPos = input._input.selectionStart;
     var str = input.value.substr(0, cursPos);
     var rest = input.value.substr(cursPos);
 
     if (lastCompletionStr == str) {
-      lastCompletionIdx = (lastCompletionIdx+1) % lastCompletionResults.length;
+      lastCompletionIdx = (lastCompletionResults.length + lastCompletionIdx +
+                           (prevEntry ? -1 : 1)) % lastCompletionResults.length;
       lastCompletionStr = lastCompletionResults[lastCompletionIdx];
       input.value = lastCompletionStr + rest;
       input.selectionStart = lastCompletionStr.length;
@@ -166,23 +167,24 @@
       if (i.indexOf(substr) == 0) {
         var word = i.search(/^[^\W\d]\w*$/) == 0;
         if (strPart)
-          res.push(word ? strPart+"."+i : strPart+"["+uneval(i));
+          res.push(word ? strPart+"."+i : strPart+"["+uneval(i)+"]");
         else
-          res.push(word ? i : "this["+uneval(i));
+          res.push(word ? i : "this["+uneval(i)+"]");
       }
 
     if (!res.length) {
       input._blink();
+      lastCompletionStr = null;
       return;
     }
 
     res = res.sort();
 
-    lastCompletionIdx = 0;
+    lastCompletionIdx = prevEntry ? res.length-1 : 0;
     lastCompletionResults = res;
-    lastCompletionStr = res[0];
-    input.value = res[0] + rest;
-    input._input.selectionStart = res[0].length;
+    lastCompletionStr = res[lastCompletionIdx];
+    input.value = lastCompletionStr + rest;
+    input._input.selectionStart = lastCompletionStr.length;
   }
 
   function evalInWindow(expr, win) {

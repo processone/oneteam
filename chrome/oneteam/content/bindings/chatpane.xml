@@ -293,7 +293,7 @@
           function (event) {
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
               event.preventDefault();
-              me._tryCompletion()
+              me._tryCompletion(event.shiftKey)
               return;
             }
 
