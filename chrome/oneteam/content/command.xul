@@ -14,6 +14,7 @@
 
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
 
   <script type="application/x-javascript;version=1.7"><![CDATA[
   xmlEscape = window.opener.xmlEscape;
@@ -142,9 +143,9 @@
     }
 
     var type, substr;
-    var strPart = str.replace(/(?:(?:(\.)(\w*))|(?:(\[)\s*(?:(?:"((?:[^\\"]|\\.)*))|(?:'((?:[^\\']|\\.)*)))))$/,
+    var strPart = str.replace(/(?:(?:(\.)(\w*))|(?:(\[)\s*(?:(?:"((?:[^\\"]|\\.)*))|(?:'((?:[^\\']|\\.)*)))?))$/,
                               function(all, dot, s1, arr, s2, s3) {
-                                substr = dot ? s1 : unescapeJS(s2 || s3);
+                                substr = dot ? s1 : unescapeJS(s2 || s3 || "");
                                 return "";
                               });
     if (strPart == str) {
