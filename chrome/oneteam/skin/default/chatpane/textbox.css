@@ -1,0 +1,8 @@
+#_input, #_inputClone {
+  margin: 0 !important;
+  padding: 2px 2px 2px 4px !important;
+  border: none !important;
+  -moz-appearance: none !important;
+  height: 1.5em;
+}
+

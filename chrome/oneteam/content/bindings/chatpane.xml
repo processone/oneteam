@@ -264,7 +264,7 @@
   <binding id="resizable-textbox">
     <resources>
       <stylesheet src="chrome://global/skin"/>
-      <stylesheet src="chrome://oneteam/skin/chatpane/chatpane.css"/>
+      <stylesheet src="chrome://oneteam/skin/chatpane/textbox.css"/>
     </resources>
 
     <content>
