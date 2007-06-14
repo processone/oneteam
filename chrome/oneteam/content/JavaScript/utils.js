@@ -393,7 +393,7 @@ function xmlEscape(str)
         replace(/\"/g,"&quot;");
 }
 
-unescapeJS: function(str)
+function unescapeJS(str)
 {
     return str.replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
         function(r, uni, hex, oct, nl, cr, tab, chr)
