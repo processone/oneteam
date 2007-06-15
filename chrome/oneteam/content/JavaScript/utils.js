@@ -386,7 +386,10 @@ _DECL_(Comparator).prototype =
 
 function xmlEscape(str)
 {
-    return str.replace(/&/g,"&amp;").
+    if (str == null)
+        return "";
+    return str.toString().
+        replace(/&/g,"&amp;").
         replace(/</g,"&lt;").
         replace(/>/g,"&gt;").
         replace(/\'/g,"&apos;").
@@ -395,7 +398,9 @@ function xmlEscape(str)
 
 function unescapeJS(str)
 {
-    return str.replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
+    if (str == null)
+        return "";
+    return str.toString().replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
         function(r, uni, hex, oct, nl, cr, tab, chr)
         {
             var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
