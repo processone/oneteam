@@ -85,6 +85,9 @@ function PrefManager()
         "chat.general.smilesset": "oneteam",
         "chat.muc.nickname": "",
         "chat.roster.showoffline": false,
+        "chat.sounds": true,
+        "chat.general.showavatars": true,
+        "chat.roster.sortbystatus": true,
     };
 
     this.builtinPrefs = {}
