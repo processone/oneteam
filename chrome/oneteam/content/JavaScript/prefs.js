@@ -166,7 +166,7 @@ _DECL_(PrefManager).prototype =
         this.prefs[name] = value;
 
         for (var i in this.callbacks)
-            if (name.indexOf(i+".") == 0)
+            if (name == i || name.indexOf(i+".") == 0)
                 for (var j = 0; j < this.callbacks[i].length; j++)
                     this.callbacks[i][j].call(null, name, value);
     },
