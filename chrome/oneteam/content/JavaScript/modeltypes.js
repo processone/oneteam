@@ -68,6 +68,14 @@ _DECL_(ContainerView).prototype =
         this.onItemAdded(item);
     },
 
+    onSortMethodChanged: function()
+    {
+        var items = this.items;
+        this.items = [];
+        for (var i = 0; i < items.length; i++)
+            this.onItemAdded(items[i]);
+    },
+
     getNextItemNode: function(item)
     {
         var idx = this.items.indexOf(item)+1;
