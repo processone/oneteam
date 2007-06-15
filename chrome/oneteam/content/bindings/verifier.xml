@@ -28,7 +28,20 @@
         this._valid = false;
         this._active = false;
 
-        this.inputField.value = value;
+        var p = this.__proto__;
+        this.__proto__ = {};
+
+        var state = {};
+        for each (var i in "value disabled regex condition".split(/ /))
+          if (this[i] != null) {
+            state[i] = this[i];
+            delete this[i];
+          }
+
+        this.__proto__ = p;
+
+        for (i in state)
+          this[i] = state[i];
 
         var p = this.parentNode;
         while (p && !p.registerVerifiable)
