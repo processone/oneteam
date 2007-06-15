@@ -13,7 +13,7 @@ _DECL_(PrefManager).prototype =
         if (!this.callbacks[branch]) {
             this.callbacks[branch] = [callback];
             this.srv.addObserver(branch, this, false);
-        } else
+        } else if (this.callbacks[branch].indexOf(callback) < 0)
             this.callbacks[branch].push(callback);
 
         if (!notifyNow)
@@ -153,7 +153,7 @@ _DECL_(PrefManager).prototype =
     {
         if (!this.callbacks[branch]) {
             this.callbacks[branch] = [callback];
-        } else
+        } else if (this.callbacks[branch].indexOf(callback) < 0)
             this.callbacks[branch].push(callback);
 
         if (!notifyNow)
