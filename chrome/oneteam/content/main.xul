@@ -482,7 +482,9 @@
 <!-- #endif -->
     <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
     <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
+<!-- #ifdef XULAPP -->
     <key id="key_transfers" modifiers="control" key="T" command="cmd_transfers"/>
+<!-- #endif -->
   </keyset>
 
   <deck id="main-deck" flex="1" selectedIndex="0">
