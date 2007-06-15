@@ -143,6 +143,9 @@ _DECL_(PrefManager).prototype =
 
     getPref: function(name)
     {
+        var res;
+        if (res = name.match(/chat.connection.(host|port|domain)$/))
+            return account.connectionInfo[res[1]];
         return this.prefs[name];
     },
 
@@ -167,6 +170,8 @@ _DECL_(PrefManager).prototype =
 
     builtinPref: function(name)
     {
+        if (name.search(/chat.connection.(host|port|domain)$/) == 0)
+            return true;
         return name in this.builtinPrefs;
     },
 
