@@ -61,6 +61,9 @@ function GroupView(model, parentView)
 
     this.node.appendChild(this.label);
 
+    this._prefToken = new Callback(this.onPrefChange, this);
+    prefManager.registerChangeCallback(this._prefToken, "chat.roster.sortbystatus");
+
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onModelUpdated, "contacts");
     this._bundle.register(this.model, this.onAvailUpdated, "availContacts");
@@ -75,9 +78,14 @@ _DECL_(GroupView, null, ContainerView).prototype =
         return this.parentView.getNextItemNode(this);
     },
 
+    onPrefChange: function(name, value)
+    {
+        this.onSortMethodChanged();
+    },
+
     itemComparator: function(a, b)
     {
-        return a.model.cmp(b.model);
+        return a.model.cmp(b.model, prefManager.getPref("chat.roster.sortbystatus"));
     },
 
     onAvailUpdated: function()
@@ -120,6 +128,8 @@ _DECL_(GroupView, null, ContainerView).prototype =
             return;
         ContainerView.prototype.destroy.call(this);
         this.containerNode.removeChild(this.node);
+
+        prefManager.unregisterChangeCallback(this._prefToken, "chat.roster.sortbystatus");
     }
 }
 
@@ -159,7 +169,6 @@ function ContactView(model, parentView)
     this.node.appendChild(this.avatar);
 
     this._prefToken = new Callback(this.onPrefChange, this);
-
     prefManager.registerChangeCallback(this._prefToken, "chat.general.showavatars");
 
     this._bundle = new RegsBundle(this);

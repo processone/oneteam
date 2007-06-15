@@ -529,15 +529,15 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         ]);
     },
 
-    cmp: function(c)
+    cmp: function(c, usePresence)
     {
-        var res = this.presence.cmp(c.presence);
+        var res = usePresence ? this.presence.cmp(c.presence) : 0;
 
         if (res)
             return res;
 
         return this.visibleName == c.visibleName ? 0 :
-            this.visibleName > c.visibleName ? -1 : 1;
+            this.visibleName > c.visibleName ? 1 : -1;
     },
 
     getStatusIcon: function()
