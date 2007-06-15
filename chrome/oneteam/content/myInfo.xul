@@ -7,8 +7,8 @@
   width="800" height="640"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="_('Ok')" buttonlabelcancel="_('Cancel')" buttonlabelextra1="_('Refresh')"
-  buttons="extra1,accept,cancel"
+  buttonlabelaccept="_('Ok')" buttonlabelcancel="_('Cancel')"
+  buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return saveVCard()" ondialogextra1="fetchVCard(true)">
 
   <script type="text/javascript;version=1.7"><![CDATA[
@@ -18,7 +18,7 @@
 //      if (window.arguments[0] == 1)
 //        document.getElementById("tabs").selectedIndex = 2;
       avatarList = document.getElementById("avatarList");
-      fetchVCard();
+      fetchVCard(true);
 /* #ifndef XULAPP
       document.getElementById("avatarUploadForm").action = document.location.href.
 // #ifdef NOJAR
@@ -411,13 +411,6 @@
     </tabbox>
     <hbox>
       <progressmeter id="updateProgress" mode="undetermined" hidden="true" flex="1"/>
-    </hbox>
-    <spacer style="height: 1em;"/>
-    <hbox align="end" pack="end">
-      <button dlgtype="extra1" label="_('Refresh')"/>
-      <spacer style="width: 4em"/>
-      <button dlgtype="cancel" label="_('Cancel')"/>
-      <button dlgtype="accept" label="_('Ok')"/>
     </hbox>
   </vbox>
 </dialog>

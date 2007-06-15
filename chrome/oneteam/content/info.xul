@@ -7,24 +7,27 @@
   width="800" height="600"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="_('OK')" buttonlabelcancel="Close" buttonlabelextra1="Refresh"
-  buttons="extra1,cancel"
-  onload="onLoad()" ondialogextra1="fetchVCard(true)">
+  buttonlabelaccept="_('OK')" buttonlabelcancel="Close"
+  buttons="cancel"
+  onload="onLoad()">
 
   <script type="text/javascript;version=1.7"><![CDATA[
     function onLoad() {
+      if (!window.arguments)
+        return;
+
       document.getElementById("info-box").model = window.arguments[0];
 
-      fetchVCard();
+      fetchVCard(true);
     }
 
     var photo;
 
     function handlePhoto(generateResult, tree)
     {
-      if (generateResult) {
+      if (generateResult)
         return photo;
-      } else
+      else
         photo = tree.elements();
     }
 
@@ -299,13 +302,6 @@
     </tabbox>
     <hbox>
       <progressmeter id="updateProgress" mode="undetermined" style="visibility: hidden" flex="1"/>
-    </hbox>
-    <spacer style="height: 1em;"/>
-    <hbox align="end" pack="end">
-      <button dlgtype="extra1" label="Refresh"/>
-      <spacer style="width: 4em"/>
-      <button dlgtype="cancel" label="Close"/>
-      <button dlgtype="accept" label="Publish" hidden="true"/>
     </hbox>
   </vbox>
 </dialog>
