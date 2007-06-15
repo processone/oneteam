@@ -131,8 +131,9 @@ function ContactView(model, parentView)
     this.node = document.createElement("richlistitem");
     this.statusIcon = document.createElement("image");
     this.label = document.createElement("label");
-    var avatar = document.createElement("avatar");
-    avatar.model = this.model;
+    this.avatar = document.createElement("avatar");
+    this.avatar.model = this.model;
+    this.avatar.hidden = !prefManager.getPref("chat.general.showavatars");
 
     this.tooltip = new ContactTooltip(model, this.parentNode);
     this.node.setAttribute("tooltip", this.tooltip.id);
@@ -155,7 +156,11 @@ function ContactView(model, parentView)
 
     this.node.appendChild(box);
     this.node.appendChild(this.label);
-    this.node.appendChild(avatar);
+    this.node.appendChild(this.avatar);
+
+    this._prefToken = new Callback(this.onPrefChange, this);
+
+    prefManager.registerChangeCallback(this._prefToken, "chat.general.showavatars");
 
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onNameChange, "name");
@@ -167,6 +172,14 @@ function ContactView(model, parentView)
 
 _DECL_(ContactView).prototype =
 {
+    onPrefChange: function(name, value) {
+        this.avatar.hidden = !value;
+
+        // Hack needed to update avatar scale factor after creating frame.
+        if (value)
+            this.avatar.onImageLoad();
+    },
+
     onNameChange: function()
     {
         this.label.value = this.model.name;
@@ -207,6 +220,8 @@ _DECL_(ContactView).prototype =
             this.node.parentNode.removeChild(this.node);
 
         this._bundle.unregister();
+
+        prefManager.unregisterChangeCallback(this._prefToken, "chat.general.showavatars");
     }
 }
 
