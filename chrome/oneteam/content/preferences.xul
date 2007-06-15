@@ -142,16 +142,16 @@
 
   <tabbox flex="1">
     <tabs>
-      <tab id="general" label="General"/>
-      <tab id="connection" label="Connection"/>
-      <tab id="status" label="Status"/>
-      <tab id="appearance" label="Appearance"/>
+      <tab id="general" label="_('General')"/>
+      <tab id="connection" label="_('Connection')"/>
+      <tab id="status" label="_('Status')"/>
+      <tab id="appearance" label="_('Appearance')"/>
     </tabs>
     <tabpanels flex="1">
       <tabpanel orient="vertical">
-        <checkbox label="Display avatars in roster" pref="chat.general.showavatars=checked"/>
-        <checkbox label="Sort contacts by status" pref="chat.roster.sortbystatus=checked"/>
-        <checkbox label="Play sounds" pref="chat.sounds=checked"/>
+        <checkbox label="_('Display avatars in roster')" pref="chat.general.showavatars=checked"/>
+        <checkbox label="_('Sort contacts by status')" pref="chat.roster.sortbystatus=checked"/>
+        <checkbox label="_('Play sounds')" pref="chat.sounds=checked"/>
       </tabpanel>
 
       <tabpanel>
@@ -162,26 +162,26 @@
           </columns>
           <rows>
             <row>
-              <label value="Host:"/>
+              <label value="_('Host:')"/>
               <textbox pref="chat.connection.host=value"/>
             </row>
             <row>
-              <label value="Port:"/>
+              <label value="_('Port:')"/>
               <textbox pref="chat.connection.port=value:int"/>
             </row>
             <row>
-              <label value="Resource:"/>
+              <label value="_('Resource:')"/>
               <textbox pref="chat.connection.resource=value"/>
             </row>
             <row>
-              <label value="Priority:"/>
+              <label value="_('Priority:')"/>
               <textbox pref="chat.connection.priority=value:int"/>
             </row>
             <row>
-              <label value="HTTP Base:"/>
+              <label value="_('HTTP Base:')"/>
               <textbox pref="chat.connection.base=value"/>
             </row>
-            <checkbox label="Use HTTP-Polling"
+            <checkbox label="_('Use HTTP-Polling')"
                       pref="chat.connection.polling=checked"/>
           </rows>
         </grid>
@@ -196,25 +196,25 @@
           </columns>
           <rows>
             <row>
-              <checkbox label="Automaticaly set status to 'away' after"
+              <checkbox label="_('Automaticaly set status to \'away\' after')"
                         id="autoAwayCheckbox" checked="true"
                         pref="chat.status.autoaway=checked:bool"/>
               <textbox pref="chat.status.autoaway.time=value:int" size="3"/>
-              <label value="minutes"/>
+              <label value="_('minutes')"/>
             </row>
             <hbox class="entry">
-              <label value="And set status to:"/>
+              <label value="_('And set status to:')"/>
               <textbox pref="chat.status.autoaway.status=value" flex="1"/>
             </hbox>
             <row>
-              <checkbox label="Automaticaly set status to 'not available' after"
+              <checkbox label="_('Automaticaly set status to \'not available\' after')"
                         id="autoXACheckbox" checked="true"
                         pref="chat.status.autoxa=checked:bool"/>
               <textbox pref="chat.status.autoxa.time=value:int" size="3"/>
-              <label value="minutes"/>
+              <label value="_('minutes')"/>
             </row>
             <hbox class="entry">
-              <label value="And set status to:"/>
+              <label value="_('And set status to:')"/>
               <textbox pref="chat.status.autoxa.status=value" flex="1"/>
             </hbox>
           </rows>
@@ -222,7 +222,7 @@
       </tabpanel>
 
       <tabpanel orient="vertical">
-        <label value="Default icon set:"/>
+        <label value="_('Default icon set:')"/>
         <richlistbox id="statusIconSet"
                      prefName="chat.general.iconset"
                      prefSet="var c=this.childNodes;
@@ -231,7 +231,7 @@
                                   return this.selectedIndex = i"
                      prefGet="this.selectedItem &amp;&amp; this.selectedItem.model.name"/>
         <spacer/>
-        <label value="Default smiles set:"/>
+        <label value="_('Default smiles set:')"/>
         <richlistbox id="smileSet"
                      prefName="chat.general.smilesset"
                      prefSet="var c=this.childNodes;
