@@ -25,6 +25,27 @@ _DECL_(PrefManager).prototype =
             callback(list[i], this.getPref(list[i]));
     },
 
+    unregisterChangeCallback: function(callback, branch)
+    {
+        if (branch != null) {
+            var r = {};
+            r[branch] = 1;
+            branch = r;
+        } else
+            branch = Iterator(this.callbacks, true);
+
+        for (i in branch) {
+            var idx = this.callbacks[i] && this.callbacks[i].indexOf(callback);
+            if (idx != null && idx >= 0) {
+                this.callbacks[i].splice(idx, 1);
+                if (this.callbacks[i].length == 0) {
+                    this.srv.removeObserver(i, this)
+                    delete this.callbacks[i];
+                }
+            }
+        }
+    },
+
     getPref: function(name)
     {
         try {
@@ -142,6 +163,22 @@ _DECL_(PrefManager).prototype =
         for (var name in this.prefs)
             if (name.indexOf(branch) == 0)
                 callback(name, this.prefs[name]);
+    },
+
+    unregisterChangeCallback: function(callback, branch)
+    {
+        if (branch != null) {
+            var r = {};
+            r[branch] = 1;
+            branch = r;
+        } else
+            branch = Iterator(this.callbacks, true);
+
+        for (i in branch) {
+            var idx = this.callbacks[i] && this.callbacks[i].indexOf(callback);
+            if (idx != null && idx >= 0)
+                this.callbacks[i].splice(idx, 1);
+        }
     },
 
     getPref: function(name)
