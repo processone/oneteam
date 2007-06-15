@@ -29,7 +29,7 @@ _DECL_(RosterView, null, ContainerView).prototype =
         a = a.model.visibleName.toLowerCase();
         b = b.model.visibleName.toLowerCase();
 
-        return a > b ? -1 : a == b ? 0 : 1;
+        return a > b ? 1 : a == b ? 0 : -1;
     },
 
     onModelUpdated: function(model, type, data)
