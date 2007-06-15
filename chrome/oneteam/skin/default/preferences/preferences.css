@@ -123,3 +123,7 @@ radio[pane=editor]:hover, radio[pane=editor][selected="true"] {
 #status:hover, #status[selected="true"] {
     -moz-image-region: rect( 32px, 192px, 64px, 160px )
 }
+
+textbox[pref] {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#textbox");
+}

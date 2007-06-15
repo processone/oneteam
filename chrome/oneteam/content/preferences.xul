@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/preferences/preferences.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 
-<dialog id="preferences" windowtype="ot:preferences" title="Preferences"
+<dialog id="preferences" windowtype="ot:preferences" title="_('Preferences')"
   width="600" height="500"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -40,6 +41,11 @@
       for (i = 0; i < prefElems.length; i++) {
         var pref = prefElems[i].getAttribute("pref").split(/[=:]/);
         var val = window.opener.prefManager.getPref(pref[0]);
+        if (pref[2] == "int") {
+            prefElems[i].setAttribute("regex", "^\\d+$");
+            prefElems[i].setAttribute("errortext", _("Please enter number"));
+            //prefElems[i].setAttribute("type", "verifiable");
+        }
         prefElems[i][pref[1]] = val == null ? "" : val;
         if (window.opener.prefManager.builtinPref(pref[0]))
           prefElems[i].disabled = true;
@@ -81,13 +87,7 @@
         var val = prefElems[i][pref[1]];
 
         if (pref[2] == "int" && typeof(val) == "string")
-          if (!/^\d+$/.exec(val)) {
-            focusElement(prefElems[i]);
-            alert("Please enter number");
-
-            return false;
-          } else
-            val = +val;
+          val = +val;
 
         valsToSet.push([pref[0], val]);
       }
