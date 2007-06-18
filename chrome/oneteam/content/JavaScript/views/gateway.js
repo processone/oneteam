@@ -29,8 +29,9 @@ _DECL_(GatewaysMenuView, null, ContainerView).prototype =
 
             node.setAttribute("class", "gateway-view");
             node.setAttribute("oncommand", "this.model.onRegister()");
-            node.setAttribute("label", data.added[i].gatewayName+" ("+
-                              data.added[i].jid.domain+")");
+            node.setAttribute("label", _("Register in '{0} ({1})'",
+                                         data.added[i].gatewayName,
+                                         data.added[i].jid.domain));
 
             node.model = data.added[i];
 
