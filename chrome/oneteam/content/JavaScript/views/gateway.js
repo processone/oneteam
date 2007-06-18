@@ -100,7 +100,6 @@ function GatewayToolbarButton(model, parentView)
     this.node = document.createElement("toolbarbutton");
     this.node.setAttribute("class", "gateway-toolbarbutton");
     this.node.setAttribute("autoCheck", "false");
-    this.node.setAttribute("tooltiptext", model.gatewayName + " ("+model.jid+")");
     this.node.setAttribute("oncommand", "this.checked ? this.model.logout() : this.model.login()")
     this.node.setAttribute("context", "gateway-contextmenu");
     this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
@@ -122,6 +121,12 @@ _DECL_(GatewayToolbarButton).prototype =
     onPresenceUpdated: function()
     {
         this.node.setAttribute("checked", !!this.model.activeResource);
+        this.node.setAttribute("tooltiptext", this.model.activeResource ?
+                               _("Click to connect to {0} ({1})",
+                                 this.model.gatewayName, this.model.jid) :
+                               _("Click to disconnect from {0} ({1})",
+                                 this.model.gatewayName, this.model.jid));
+
         this.node.checked = !!this.model.activeResource;
     },
 
