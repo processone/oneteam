@@ -333,7 +333,7 @@ _DECL_(DiscoItem).prototype =
             return;
 
         if (feature) {
-            if (feature in discoItem.discoInfo.features)
+            if (feature in discoItem._discoCacheEntry._discoCacheEntry.discoInfo.featuresdiscoInfo.features)
                 callback(this, this.getDiscoItemsByFeature(feature), discoItem);
         } else if ((category == null || id.category == category) && (type == null || id.type == type))
             callback(this, this.getDiscoItemsByCategory(category, type), discoItem);
