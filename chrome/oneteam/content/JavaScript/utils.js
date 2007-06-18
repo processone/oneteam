@@ -148,6 +148,8 @@ StorageWrapper.prototype =
                         yield ([key, val == null ? null : ""+val]);
                     }
                 }
+            } catch(ex if ex && ex.code == 1) {
+                // Swallow ERR_OUT_OF_INDEX exception (thrown sometimes on ff2)
             } catch(ex) { report("developer", "error", ex) }
         throw StopIteration;
     },
