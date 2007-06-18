@@ -432,18 +432,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 // #ifdef XULAPP
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
                                      function(account, items, item) {
-                                        var bsp = new JSJaCIQ();
-                                        bsp.setIQ(item._discoCacheEntry.jid, null, "get");
-                                        bsp.setQuery("http://jabber.org/protocol/bytestreams");
-                                        con.send(bsp, account._proxyAddress);
+                                        socks5Service.registerProxy(item._discoCacheEntry.jid);
                                      });
 /* #else
         this.getDiscoItemsByFeature("http://oneteam.im/bs-proxy", false,
                                      function(account, items, item) {
-                                        var bsp = new JSJaCIQ();
-                                        bsp.setIQ(item._discoCacheEntry.jid, null, "get");
-                                        bsp.setQuery("http://jabber.org/protocol/bytestreams");
-                                        con.send(bsp, account._proxyAddress);
+                                        socks5Service.registerProxy(item._discoCacheEntry.jid);
                                      });
 // #endif */
         // Enable auto archiving
@@ -462,20 +456,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                             });
         this.presenceProfiles.loadFromServer();
         this.getVCard(true, function(){});
-    },
-
-    _proxyAddress: function(pkt)
-    {
-        var sh = pkt.getNode().getElementsByTagNameNS(
-          "http://jabber.org/protocol/bytestreams", "streamhost");
-
-        for (var i = 0; i < sh.length; i++)
-            if (sh[i].getAttribute("port")) {
-                socks5Service.proxies[sh[i].getAttribute("jid")] = {
-                    host: sh[i].getAttribute("host"),
-                    port: +sh[i].getAttribute("port")
-                };
-            };
     },
 
     _initialize: function()

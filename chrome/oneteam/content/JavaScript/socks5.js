@@ -8,6 +8,28 @@ _DECL_(SOCKS5Service).prototype =
     transfers: {},
     proxies: {},
 
+    registerProxy: function(jid)
+    {
+        var bsp = new JSJaCIQ();
+        bsp.setIQ(jid, null, "get");
+        bsp.setQuery("http://jabber.org/protocol/bytestreams");
+        con.send(bsp, new Callback(this._onProxyAddress, this));
+    },
+
+    _onProxyAddress: function(pkt)
+    {
+        var sh = pkt.getNode().getElementsByTagNameNS(
+          "http://jabber.org/protocol/bytestreams", "streamhost");
+
+        for (var i = 0; i < sh.length; i++)
+            if (sh[i].getAttribute("port")) {
+                this.proxies[sh[i].getAttribute("jid")] = {
+                    host: sh[i].getAttribute("host"),
+                    port: +sh[i].getAttribute("port")
+                };
+            };
+    },
+
     canSendTo: function(contact)
     {
         return true;
