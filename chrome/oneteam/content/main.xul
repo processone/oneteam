@@ -566,7 +566,7 @@
                         type="checkbox"/>
             </menupopup>
           </menu>
-          <menu id="configuration-menu" label="_('Config')">
+          <menu id="configuration-menu" label="_('_Config')">
             <menupopup id="config-popup">
               <menuitem label="_('_Edit personal info')" command="cmd_ourVCard"/>
               <menuitem label="_('_Change password')" command="cmd_changePassword"/>
@@ -579,7 +579,7 @@
               <menuitem label="_('_Preferences')" command="cmd_prefs"/>
             </menupopup>
           </menu>
-          <menu id="help-menu" label="_('Help')">
+          <menu id="help-menu" label="_('_Help')">
             <menupopup id="help-popup">
               <menuitem label="_('Help _Bot')" command="cmd_help_bot"/>
               <menuitem label="_('_Documentation')" command="cmd_help"/>
