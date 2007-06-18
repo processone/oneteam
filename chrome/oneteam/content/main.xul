@@ -460,6 +460,9 @@
     <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
       oncommand="this.setAttribute('checked', setPresenceUpdater.rosterView.hideOffline =
         !setPresenceUpdater.rosterView.hideOffline)"/>
+    <command id="cmd_toggleShowToolbar" checked="true"
+      oncommand="var c = this.getAttribute('checked') == 'true'; this.setAttribute('checked', !c);
+                 document.getElementById('actions-toolbar').collapsed = c"/>
   </comandset>
 
   <keyset>
@@ -554,6 +557,15 @@
 <!-- #endif -->
             </menupopup>
           </menu>
+          <menu id="configuration-menu" label="_('_View')">
+            <menupopup id="config-popup">
+              <menuitem label="_('Show _Actions Toolbar')" command="cmd_toggleShowToolbar"
+                        type="checkbox"/>
+              <menuseparator/>
+              <menuitem label="_('Hide _Offline Contacts')" command="cmd_toggleShowOffline"
+                        type="checkbox"/>
+            </menupopup>
+          </menu>
           <menu id="configuration-menu" label="_('Config')">
             <menupopup id="config-popup">
               <menuitem label="_('_Edit personal info')" command="cmd_ourVCard"/>
@@ -584,7 +596,7 @@
             </menupopup>
           </menu>
         </menubar>
-        <toolbar id="icones-toolbar">
+        <toolbar id="actions-toolbar">
           <toolbarbutton id="adduser-button" tooltiptext="_('Add new contact')"
               command="cmd_addContact"/>
           <toolbarbutton id="joinroom-button" tooltiptext="_('Join group chat room')"
