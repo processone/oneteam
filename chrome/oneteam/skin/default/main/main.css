@@ -166,18 +166,38 @@ richlistbox {
   list-style-image: url(imgs/gatewayicons/generic.png);
 }
 
+.gateway-toolbarbutton[checked="true"] {
+  list-style-image: url(imgs/gatewayicons/generic-connected.png);
+}
+
 .gateway-toolbarbutton[gateway-type="msn"] {
   list-style-image: url(imgs/gatewayicons/msn.png);
+}
+
+.gateway-toolbarbutton[gateway-type="msn"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/msn-connected.png);
 }
 
 .gateway-toolbarbutton[gateway-type="aim"] {
   list-style-image: url(imgs/gatewayicons/aim.png);
 }
 
+.gateway-toolbarbutton[gateway-type="aim"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/aim-connected.png);
+}
+
 .gateway-toolbarbutton[gateway-type="yahoo"] {
   list-style-image: url(imgs/gatewayicons/yahoo.png);
 }
 
+.gateway-toolbarbutton[gateway-type="yahoo"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/yahoo-connected.png);
+}
+
 .gateway-toolbarbutton[gateway-type="icq"] {
   list-style-image: url(imgs/gatewayicons/icq.png);
+}
+
+.gateway-toolbarbutton[gateway-type="icq"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/icq-connected.png);
 }
