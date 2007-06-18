@@ -527,7 +527,7 @@
     <vbox id="main-box" flex="1">
       <toolbox>
         <menubar>
-          <menu id="lagger-menu" label="_('_OneTeam')">
+          <menu id="lagger-menu" label="_('_Actions')">
             <menupopup id="file-popup">
               <menuitem label="_('_Add Contact')" command="cmd_addContact"/>
 
