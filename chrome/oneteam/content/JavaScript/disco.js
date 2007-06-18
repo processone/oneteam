@@ -312,7 +312,7 @@ _DECL_(DiscoItem).prototype =
             return ret;
 
         for (var i = 0; i < items.length; i++) {
-            var id = items[i].getDiscoIdentity();
+            var id = items[i].getDiscoInfo();
             if (id && (feature in id.features))
                 ret.push(items[i]);
         }
@@ -333,7 +333,7 @@ _DECL_(DiscoItem).prototype =
             return;
 
         if (feature) {
-            if (feature in id.features)
+            if (feature in discoItem.discoInfo.features)
                 callback(this, this.getDiscoItemsByFeature(feature), discoItem);
         } else if ((category == null || id.category == category) && (type == null || id.type == type))
             callback(this, this.getDiscoItemsByCategory(category, type), discoItem);
