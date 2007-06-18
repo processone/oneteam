@@ -446,7 +446,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                         con.send(bsp, account._proxyAddress);
                                      });
 // #endif */
-        if (typeof(socks5Service) == "object")
         // Enable auto archiving
         this.hasDiscoFeature("http://www.xmpp.org/extensions/xep-0136.html#ns", false,
                              function (account, value) {
