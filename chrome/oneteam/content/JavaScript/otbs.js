@@ -24,6 +24,7 @@ _DECL_(SOCKS5Service).prototype =
         for (var i = 0; i < sh.length; i++)
             if (sh[i].getAttribute("port")) {
                 this.proxies[sh[i].getAttribute("jid")] = {
+                    jid: sh[i].getAttribute("jid"),
                     host: sh[i].getAttribute("host"),
                     port: +sh[i].getAttribute("port")
                 };
