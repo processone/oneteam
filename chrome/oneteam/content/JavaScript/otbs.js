@@ -98,7 +98,7 @@ _DECL_(SOCKS5Service).prototype =
               <x xmlns='http://oneteam.im/bs-proxy'/>
             </query>, pkt.getDoc()));
 
-        con.send(pkt, new Callback(this._sendFileStep2, this), token);
+        con.send(iq, new Callback(this._sendFileStep2, this), token);
     },
 
     _sendFileStep2: function(pkt, token)
