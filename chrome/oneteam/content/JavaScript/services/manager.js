@@ -132,10 +132,6 @@ _DECL_(ServicesManager).prototype =
         var ns = query.namespaceURI;
 
         switch (ns) {
-        case "http://jabber.org/protocol/si":
-            fileTransferService.onIQ(pkt);
-            return;
-
         case "http://jabber.org/protocol/disco#info":
             if (pkt.getType() != "get" || query.localName != "query")
                 break;

@@ -23,40 +23,45 @@ _DECL_(FileTransferService, null, Model).prototype =
         return fileTransfer;
     },
 
-    onIQ: function(pkt)
+    onIQ: function(pkt, query)
     {
         if (pkt.getType() != "set")
-            return;
-        var xml = DOMtoE4X(pkt.getNode());
+            return null;
+
         var xdataNS = new Namespace("jabber:x:data")
         var ftNS = new Namespace("http://jabber.org/protocol/si/profile/file-transfer");
-        var siNS = new Namespace("http://jabber.org/protocol/si");
 
-        var file = xml..ftNS::file;
-        if (!file.length()) {
-            sendError(<error code='400' type='cancel'>
+        var file = query..ftNS::file;
+        if (!file.length())
+            return {
+                type: "error",
+                dom: query,
+                e4x: <error code='400' type='cancel'>
                         <bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
                         <bad-profile xmlns='http://jabber.org/protocol/si'/>
-                      </error>, pkt);
-            return;
-        }
-        var streamTypes = xml..xdataNS::field.(@var == "stream-method")..xdataNS::value;
+                     </error>
+            };
+
+        var streamTypes = query..xdataNS::field.(@var == "stream-method")..xdataNS::value;
         var hasByteStreams = false;
         for each (var st in streamTypes)
             if (st == "http://jabber.org/protocol/bytestreams") {
                 hasByteStreams = true;
                 break;
             }
-        if (!hasByteStreams) {
-            sendError(<error code='400' type='cancel'>
+        if (!hasByteStreams)
+            return {
+                type: "error",
+                dom: query,
+                e4x: <error code='400' type='cancel'>
                         <bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
                         <no-valid-streams xmlns='http://jabber.org/protocol/si'/>
-                      </error>, pkt);
-            return;
-        }
+                     </error>
+            }
 
         var fileTransfer = new FileTransfer(pkt.getID(), pkt.getFrom(),
-                                            xml.siNS::si.@id.toString(), +file.@size);
+                                            query.@id.toString(), +file.@size);
+
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
         account.addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getID())),
@@ -64,6 +69,7 @@ _DECL_(FileTransferService, null, Model).prototype =
                             addArgs("ot:fileTransferRequest", "chrome://oneteam/content/fileTransferRequest.xul",
                                     "chrome,modal", fileTransfer, file.@name, +file.@size));
 
+        return null;
    }
 }
 
@@ -258,3 +264,6 @@ _DECL_(FileTransfer, null, Model).prototype =
 }
 
 var fileTransferService = new FileTransferService();
+
+servicesManager.addIQService("http://jabber.org/protocol/si",
+                             new Callback(fileTransferService.onIQ, fileTransferService));
