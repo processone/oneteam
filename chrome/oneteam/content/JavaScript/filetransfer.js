@@ -183,7 +183,8 @@ _DECL_(FileTransfer, null, Model).prototype =
         fileTransferService.fileTransfers.push(this);
         fileTransferService.modelUpdated("fileTransfers", {added: [this]});
 
-        this.file = new File(path)
+        if (path)
+            this.file = new File(path)
         if (this.method == "http://jabber.org/protocol/bytestreams")
             this.socksToken = socks5Service.recvFile(this);
     },
