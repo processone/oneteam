@@ -136,10 +136,6 @@ _DECL_(ServicesManager).prototype =
             fileTransferService.onIQ(pkt);
             return;
 
-        case "http://jabber.org/protocol/bytestreams":
-            socks5Service.onIQ(pkt);
-            return;
-
         case "http://jabber.org/protocol/disco#info":
             if (pkt.getType() != "get" || query.localName != "query")
                 break;
