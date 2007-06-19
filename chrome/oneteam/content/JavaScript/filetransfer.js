@@ -59,10 +59,11 @@ _DECL_(FileTransferService, null, Model).prototype =
                                             xml.siNS::si.@id.toString(), +file.@size);
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
-        addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getID())),
-                 new Callback(openDialogUniq, null).
-                 addArgs("ot:fileTransferRequest", "chrome://oneteam/content/fileTransferRequest.xul",
-                          "chrome,modal", fileTransfer, file.@name, +file.@size));
+        account.addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getID())),
+                         new Callback(openDialogUniq, null).
+                            addArgs("ot:fileTransferRequest", "chrome://oneteam/content/fileTransferRequest.xul",
+                                    "chrome,modal", fileTransfer, file.@name, +file.@size));
+
    }
 }
 
