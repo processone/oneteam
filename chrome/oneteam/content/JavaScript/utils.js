@@ -182,7 +182,7 @@ StorageWrapper.prototype =
 
 function Callback(fun, obj) {
     if (fun._isaCallback) {
-        fun._consArgs = arguments.callee.caller.arguments;
+        fun._consArgs = arguments.callee.caller ? arguments.callee.caller.arguments : [];
         return fun;
     }
 
@@ -204,7 +204,7 @@ function Callback(fun, obj) {
     cb._fun = fun;
     cb._obj = obj;
     cb._args = [];
-    cb._consArgs = arguments.callee.caller.arguments;
+    cb._consArgs = arguments.callee.caller ? arguments.callee.caller.arguments : [];
     cb._callArgs = [];
     cb._isaCallback = true;
     cb.addArgs = function() { this._args.push.apply(this._args, arguments); return this; };
