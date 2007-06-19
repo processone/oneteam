@@ -166,7 +166,7 @@ _DECL_(SOCKS5Service).prototype =
             break;
 
         var iq = new JSJaCIQ();
-        iq.setIQ(this.proxy.jid, null, "set");
+        iq.setIQ(proxy.jid, null, "set");
         iq.getNode().appendChild(E4XtoDOM(node, iq.getDoc()));
 
         con.send(iq, new Callback(this._recvFileStep, this), token);
