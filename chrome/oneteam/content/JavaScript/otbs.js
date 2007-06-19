@@ -137,16 +137,17 @@ _DECL_(SOCKS5Service).prototype =
 
     onSocksIQ: function(pkt, query)
     {
-        alert("S");
+        try{
         if (pkt.getType() != "set")
             return;
 
-        var token;
+        var sid = query.@sid.toString();
+        var token = this.transfers[sid];
 
-        if (!(token = this.transfers[query.@sid]))
+        delete this.transfers[sid];
+
+        if (!token)
             return;
-
-        delete this.transfers[query.@sid];
 
         token.id = pkt.getID();
         token.sidHash = hex_sha1(token.fileTransfer.streamID + token.fileTransfer.jid +
@@ -169,6 +170,7 @@ _DECL_(SOCKS5Service).prototype =
         iq.getNode().appendChild(E4XtoDOM(node, iq.getDoc()));
 
         con.send(iq, new Callback(this._recvFileStep, this), token);
+        }catch(ex){alert(ex)}
     },
 
     _recvFileStep: function(pkt, token)
@@ -198,6 +200,6 @@ _DECL_(SOCKS5Service).prototype =
 var socks5Service = new SOCKS5Service();
 
 servicesManager.addIQService("http://jabber.org/protocol/bytestreams",
-                             socks5Service.onSocksIQ);
+                             new Callback(socks5Service.onSocksIQ, socks5Service));
 servicesManager.addIQService("http://oneteam.im/bs-proxy",
-                             socks5Service.onBSIQ);
+                             new Callback(socks5Service.onBSIQ, socks5Service));

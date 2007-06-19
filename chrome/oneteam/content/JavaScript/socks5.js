@@ -699,4 +699,4 @@ SOCKSBytestreamInitiator.prototype =
 var socks5Service = new SOCKS5Service();
 
 servicesManager.addIQService("http://jabber.org/protocol/bytestreams",
-                             socks5Service.onIQ);
+                             new Callback(socks5Service.onIQ, socks5Service));
