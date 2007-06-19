@@ -195,7 +195,8 @@ _DECL_(ServicesManager).prototype =
                          </error>
                 };
             } else {
-                response = service(pkt, DOMtoE4X(query));
+                response = service(pkt, DOMtoE4X(query), query);
+
                 if (response === 0)
                     break;
                 else if (!response)

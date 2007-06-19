@@ -23,7 +23,7 @@ _DECL_(FileTransferService, null, Model).prototype =
         return fileTransfer;
     },
 
-    onIQ: function(pkt, query)
+    onIQ: function(pkt, query, queryDOM)
     {
         if (pkt.getType() != "set")
             return null;
@@ -31,7 +31,7 @@ _DECL_(FileTransferService, null, Model).prototype =
         if (!socks5Service.canReceive())
             return {
                 type: "error",
-                dom: query,
+                dom: queryDOM,
                 e4x: <error xmlns="jabber:client" type="cancel" code="501">
                         <service-unavailable xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>
                      </error>
@@ -44,7 +44,7 @@ _DECL_(FileTransferService, null, Model).prototype =
         if (!file.length())
             return {
                 type: "error",
-                dom: query,
+                dom: queryDOM,
                 e4x: <error code='400' type='cancel'>
                         <bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
                         <bad-profile xmlns='http://jabber.org/protocol/si'/>
@@ -61,7 +61,7 @@ _DECL_(FileTransferService, null, Model).prototype =
         if (!hasByteStreams)
             return {
                 type: "error",
-                dom: query,
+                dom: queryDOM,
                 e4x: <error code='400' type='cancel'>
                         <bad-request xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
                         <no-valid-streams xmlns='http://jabber.org/protocol/si'/>
