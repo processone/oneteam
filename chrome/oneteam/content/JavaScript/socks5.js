@@ -30,6 +30,10 @@ _DECL_(SOCKS5Service).prototype =
             };
     },
 
+    canReceive: function() {
+        return true;
+    },
+
     canSendTo: function(contact)
     {
         return true;

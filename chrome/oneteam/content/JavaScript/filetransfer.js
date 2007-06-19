@@ -28,6 +28,15 @@ _DECL_(FileTransferService, null, Model).prototype =
         if (pkt.getType() != "set")
             return null;
 
+        if (!socks5Service.canReceive())
+            return {
+                type: "error",
+                dom: query,
+                e4x: <error xmlns="jabber:client" type="cancel" code="501">
+                        <service-unavailable xmlns="urn:ietf:params:xml:ns:xmpp-stanzas"/>
+                     </error>
+            };
+
         var xdataNS = new Namespace("jabber:x:data")
         var ftNS = new Namespace("http://jabber.org/protocol/si/profile/file-transfer");
 

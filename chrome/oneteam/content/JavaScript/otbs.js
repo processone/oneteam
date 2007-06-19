@@ -30,6 +30,10 @@ _DECL_(SOCKS5Service).prototype =
             };
     },
 
+    canReceive: function() {
+        return this.proxies.__count__ > 0;
+    },
+
     canSendTo: function(contact)
     {
         return this.proxies.__count__ > 0;
