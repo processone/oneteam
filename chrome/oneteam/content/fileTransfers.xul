@@ -15,6 +15,16 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     var model;
 
+/* #ifndef XULAPP
+    function onBeforeUnload() {
+      var fts = window.opener.fileTransferService.fileTransfers;
+      for (var i = 0; i < fts.length; i++)
+        if (fts[i].type == "send")
+          return _("If you close this window all file transfers will be aborted.");
+    }
+    window.onbeforeunload = onBeforeUnload;
+// #endif */
+
     function onLoad()
     {
       model = new FileTransfersView(document.getElementById("richlist"));
