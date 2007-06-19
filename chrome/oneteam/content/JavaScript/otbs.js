@@ -181,7 +181,7 @@ _DECL_(SOCKS5Service).prototype =
     _recvFileStep: function(pkt, token)
     {
         if (pkt.getType() != "result") {
-            token.fileTransfer.onRejected();
+            token.fileTransfer.reject();
             return;
         }
 
