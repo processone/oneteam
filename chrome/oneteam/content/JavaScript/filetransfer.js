@@ -210,8 +210,8 @@ _DECL_(FileTransfer, null, Model).prototype =
         pkt.setIQ(this.jid, null, "error", this.offerID);
         pkt.getNode().appendChild(E4XtoDOM(
             <error code='403' type='cancel'>
-            <forbidden xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-            <text xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'>Offer Declined</text>
+                <forbidden xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+                <text xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'>Offer Declined</text>
             </error>, pkt.getDoc()));
         con.send(pkt);
     },
