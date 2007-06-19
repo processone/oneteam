@@ -64,7 +64,7 @@ _DECL_(FileTransferService, null, Model).prototype =
 
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
-        account.addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getID())),
+        account.addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getFrom())),
                          new Callback(openDialogUniq, null).
                             addArgs("ot:fileTransferRequest", "chrome://oneteam/content/fileTransferRequest.xul",
                                     "chrome,modal", fileTransfer, file.@name, +file.@size));
