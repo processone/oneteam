@@ -46,12 +46,9 @@ _DECL_(SOCKS5Service).prototype =
         var xml = <query xmlns="http://jabber.org/protocol/bytestreams" mode="tcp"
                      sid={fileTransfer.streamID}/>;
 
-        var sidHash = hex_sha1(fileTransfer.streamID + account.myJID +
-                               fileTransfer.jid);
-
         var token = {
             fileTransfer: fileTransfer,
-            sidHash: sidHash,
+            sidHash: fileTransfer.sidHash,
             accepted: false
         };
 
@@ -155,8 +152,7 @@ _DECL_(SOCKS5Service).prototype =
             return;
 
         token.id = pkt.getID();
-        token.sidHash = hex_sha1(token.fileTransfer.streamID + token.fileTransfer.jid +
-                                 account.myJID);
+        token.sidHash = token.fileTransfer.sidHash;
 
         var node = <connect xmlns='http://oneteam.im/bs-proxy'
             sid={token.fileTransfer.streamID} jid={token.fileTransfer.jid}/>;

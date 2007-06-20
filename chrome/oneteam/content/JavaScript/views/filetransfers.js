@@ -62,17 +62,21 @@ function FileTransferView(model, parentView)
         this.form.setAttribute("flex", "1");
         this.form.setAttribute("target", id);
         this.form.setAttribute("method", "POST");
+        this.form.setAttribute("enctype", "multipart/form-data");
 
         var e = document.createElement("label");
         e.setAttribute("value", "Please choose file to send");
         this.form.appendChild(e);
 
-        var e = document.createElementNS(ns, "input")
+        e = document.createElementNS(ns, "input")
         e.setAttribute("type", "hidden")
+        e.setAttribute("name", "SIDHASH");
+        e.setAttribute("value", model.sidHash);
         this.form.appendChild(e);
 
-        var e = document.createElementNS(ns, "input")
+        e = document.createElementNS(ns, "input")
         e.setAttribute("type", "file")
+        e.setAttribute("name", "FILE");
         e.setAttribute("onchange", "this.view.onFileChoosen(this.value)");
         e.view = this;
         this.form.appendChild(e);

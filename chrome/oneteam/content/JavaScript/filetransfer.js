@@ -109,6 +109,13 @@ _DECL_(FileTransfer, null, Model).prototype =
     idPrefix: generateRandomName(8),
     idCount: 0,
 
+    get sidHash()
+    {
+        if (this.type == "send")
+            return hex_sha1(this.streamID + account.myJID + this.jid);
+        return hex_sha1(this.streamID + this.jid + account.myJID);
+    },
+
     get ppSize()
     {
         return ppFileSize(this.size);
