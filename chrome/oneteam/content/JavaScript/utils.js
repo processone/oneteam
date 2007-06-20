@@ -58,9 +58,13 @@ function linkEventsRedirector(event)
 //#ifdef XULAPP
 function openDialogUniq(type, url, flags)
 {
-    var wmediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].
-        getService(Components.interfaces.nsIWindowMediator);
-    var win = wmediator.getMostRecentWindow(type);
+    var win;
+
+    if (type) {
+        var wmediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+            getService(Components.interfaces.nsIWindowMediator);
+        win = wmediator.getMostRecentWindow(type);
+    }
 
     if (!win) {
         var args = [url, "_blank"].concat(Array.slice(arguments, 2));
@@ -89,10 +93,11 @@ var _sizes = {
 
 function openDialogUniq(type, url, flags)
 {
-    try {
-        if (_wins[type] && !_wins[type].closed)
-            return;
-    } catch (ex) {}
+    if (type)
+        try {
+            if (_wins[type] && !_wins[type].closed)
+                return _wins[type];
+        } catch (ex) { }
 
     var size = _sizes[url.replace(/.*\//, "")];
     if (size) {
@@ -100,8 +105,14 @@ function openDialogUniq(type, url, flags)
         flags = flags ? size : flags+", "+size;
         flags += ", resizable";
     }
-    _wins[type] = window.open(url, type, flags);
-    _wins[type].arguments = Array.slice(arguments, 3);
+
+    var win = window.open(url, type || "_blank", flags);
+    win.arguments = Array.slice(arguments, 3);
+
+    if (type)
+        _wins[type] = win;
+
+    return win;
 }
 
 function openLink(uri)
