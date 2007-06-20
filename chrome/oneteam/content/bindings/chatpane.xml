@@ -537,13 +537,18 @@
           this.model = model;
         }
 
-        this._output.addEventListener(
-          "mouseup", function(event) {
-            if(!me._output._output.contentWindow.getSelection().toString()) {
-              event.stopPropagation();
+        setTimeout(function(me) {
+          if (!me._output._output) {
+            setTimeout(arguments.callee, 10, me);
+            return;
+          }
+          me._output._output.contentWindow.addEventListener("keypress", function(event) {
+            if (event.charCode && !event.ctrlKey && !event.altKey) {
+              me._input.value += String.fromCharCode(event.charCode);
               me.focus();
             }
           }, false);
+        }, 0, this);
       ]]></constructor>
 
       <method name="focus">
