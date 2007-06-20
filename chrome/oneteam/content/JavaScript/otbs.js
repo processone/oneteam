@@ -111,7 +111,7 @@ _DECL_(SOCKS5Service).prototype =
         var bsNS = new Namespace("http://oneteam.im/bs-proxy");
 
         token.fileTransfer.form.setAttribute("action", xml..bsNS::activated.@url);
-        token.fileTransfer.form.send();
+        token.fileTransfer.form.submit();
         token.fileTransfer.onTransferStart();
         this.transfersBySidHash[token.sidHash] = token.fileTransfer;
     },
