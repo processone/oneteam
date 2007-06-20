@@ -10,6 +10,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/views/filetransfers.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[

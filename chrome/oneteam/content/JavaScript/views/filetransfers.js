@@ -56,9 +56,11 @@ function FileTransferView(model, parentView)
 
     if (model.type == "send" && model.file == null) {
         const ns = "http://www.w3.org/1999/xhtml";
+        var id = generateUniqueId();
+
         this.form = document.createElementNS(ns, "form");
         this.form.setAttribute("flex", "1");
-        this.form.setAttribute("target", model.streamID);
+        this.form.setAttribute("target", id);
         this.form.setAttribute("method", "POST");
 
         var e = document.createElement("label");
@@ -78,7 +80,7 @@ function FileTransferView(model, parentView)
         this.deck.appendChild(this.form);
 
         this.frame = document.createElementNS(ns, "iframe");
-        this.frame.setAttribute("name", model.streamID);
+        this.frame.setAttribute("id", id);
         this.deck.appendChild(this.frame);
     }
 
