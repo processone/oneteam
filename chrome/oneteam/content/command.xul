@@ -48,10 +48,21 @@
     window.opener.console =  {
       info: function(msg) { dump(msg) }
     }
+
+    window.addEventListener("keypress", handleKeyPress, false);
+    output.contentWindow.addEventListener("keypress", handleKeyPress, false);
   }
 
   function onunload() {
     delete window.opener.console;
+  }
+
+  function handleKeyPress(event) {
+      if (!event.charCode || event.ctrlKey || event.altKey || event.target.localName == "textbox")
+        return;
+
+      input.value += String.fromCharCode(event.charCode);
+      input.focus();
   }
 
   function flushChrome() {
@@ -240,6 +251,6 @@
 
   <vbox flex="1">
     <html:iframe flex="1" id="output"/>
-    <textbox type="resizable" id="input" multilinea="true"/>
+    <textbox type="resizable" id="input" multiline="true"/>
   </vbox>
 </window>
