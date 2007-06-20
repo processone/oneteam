@@ -24,11 +24,6 @@
 
           this._msgs = [];
           this._output = document.getAnonymousElementByAttribute(this, "id", "output");
-// #ifdef XULAPP
-          this._output.contentWindow.addEventListener("load", function(){me._onLoad()}, false);
-/* #else
-          this._output.addEventListener("load", function(){me._onLoad()}, false);
-// #endif */
           this.colorMap = {0: 0};
           this.colorIndex = 1;
           this.colorTable = [
@@ -36,6 +31,12 @@
             "#46a", "#c4d", "#3b3", "#fa4", "#79c", "#a7a",
             "#4ca", "#c66", "#aaa", "#ca0", "#770", "#5cc",
           ];
+// #ifdef XULAPP
+          this._output.contentWindow.addEventListener("load", function(){me._onLoad()}, false);
+/* #else
+          this._output.addEventListener("load", function(){me._onLoad()}, false);
+// #endif */
+          this._onLoad();
         ]]>
       </constructor>
 
