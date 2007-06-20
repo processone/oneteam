@@ -535,7 +535,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.addEvent(_("You have got subscription request from <b>{0}</b>",
                             xmlEscape(sender)),
                           new Callback(openDialogUniq, null).
-                          addArgs("ot:subscribe", "chrome://oneteam/content/subscribe.xul",
+                          addArgs(null, "chrome://oneteam/content/subscribe.xul",
                                   "chrome,centerscreen,resizable",
                                   this.getOrCreateContact(sender), packet.getStatus()));
             return;
@@ -611,7 +611,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.addEvent(_("You have been invited to room <b>{0}</b> by <b>{1}</b>",
                             xmlEscape(sender), xmlEscape(invite.getAttribute("from"))),
                           new Callback(openDialogUniq, null).
-                          addArgs("ot:invitation", "chrome://oneteam/content/invitation.xul",
+                          addArgs(null, "chrome://oneteam/content/invitation.xul",
                                   "chrome,centerscreen", conference,
                                   new JID(invite.getAttribute("from")),
                                   reason && reason.textContent));

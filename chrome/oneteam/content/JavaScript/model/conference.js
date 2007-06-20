@@ -104,7 +104,7 @@ _DECL_(Conference, Contact).prototype =
 
         account.addEvent("Joining to room <b>"+this.jid+"</b> failed.<br/>Error message: <em>"+errorMsg+"</em>",
                          new Callback(openDialogUniq).
-                            addArgs("ot:joinRoomError", "chrome://oneteam/content/joinRoomError.xul",
+                            addArgs(null, "chrome://oneteam/content/joinRoomError.xul",
                                     "chrome,centerscreen", this, +errorTag.getAttribute("code"),
                                     errorMsg));
     },
