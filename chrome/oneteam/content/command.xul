@@ -139,48 +139,95 @@
     }
   }
 
+  function extractExpr(str) {
+    const pairs = {
+      "}": "{",
+      "]": "[",
+      ")": "("
+    };
+
+    var stack = [];
+    var r, s = str;
+    var idx = 0;
+
+    while ((r = s.match(/[()\[\]{}"']/))) {
+      idx += r.index+1;
+      s = s.substr(r.index+1);
+      if (r[0] == "\"" || r[0] == "'") {
+        r = s.match(r[0] == "\"" ? /(?:[^\\"]*|\\.)*"/ : /(?:[^\\']*|\\.)*'/);
+        if (!r) {
+          if (stack.length && stack[0][0] == "[" && !/\S/.test(str.substring(stack[0][1], idx-1))) {
+            var start = stack.length ? stack[0][1] : 0;
+            var prevStart = stack.length > 1 ? stack[1][1] : start;
+            return [str.substr(0, prevStart), str.substring(prevStart, start-1),
+                    unescapeJS(str.substr(start+1))];
+          }
+          return null;
+        }
+        idx += r.index + r[0].length;
+        s = s.substr(r.index + r[0].length);
+      } else if (r[0] == "(" || r[0] == "[" || r[0] == "{") {
+        stack.unshift([r[0], idx]);
+      } else {
+        if (!stack.length || stack[0][0] != pairs[r[0]])
+          return null;
+        stack.shift();
+      }
+    }
+
+    var start = stack.length ? stack[0][1] : 0;
+
+    if ((r = str.substr(start).match(/.*[\/*=;,&^%!|+-]+/)))
+      start += r[0].length;
+    s = str.substr(start);
+
+    if ((idx = s.lastIndexOf(".")) > 0)
+      return [str.substr(0, start), s.substr(0, idx), s.substr(idx+1)];
+
+    return [str.substr(0, start), "", s];
+  }
+
   var lastCompletionStr, lastCompletionResults, lastCompletionIdx;
   function complete(prevEntry) {
     var cursPos = input._input.selectionStart;
     var str = input.value.substr(0, cursPos);
-    var rest = input.value.substr(cursPos);
+    var suffix = input.value.substr(cursPos);
 
     if (lastCompletionStr == str) {
       lastCompletionIdx = (lastCompletionResults.length + lastCompletionIdx +
                            (prevEntry ? -1 : 1)) % lastCompletionResults.length;
       lastCompletionStr = lastCompletionResults[lastCompletionIdx];
-      input.value = lastCompletionStr + rest;
+      input.value = lastCompletionStr + suffix;
       input.selectionStart = lastCompletionStr.length;
       return;
     }
 
-    var type, substr;
-    var strPart = str.replace(/(?:(?:(\.)(\w*))|(?:(\[)\s*(?:(?:"((?:[^\\"]|\\.)*))|(?:'((?:[^\\']|\\.)*)))?))$/,
-                              function(all, dot, s1, arr, s2, s3) {
-                                substr = dot ? s1 : unescapeJS(s2 || s3 || "");
-                                return "";
-                              });
-    if (strPart == str) {
-      substr = strPart;
-      strPart = "";
+    var prefix, expr, indexPrefix;
+    var val = extractExpr(str);
+
+    if (val) {
+      prefix = val[0] + val[1];
+      expr = val[1];
+      indexPrefix = val[2];
+
+      val = evalInWindow(expr || "this", window.opener);
     }
 
-    var val = evalInWindow(strPart || "this", window.opener);
-
-    if (val.exception || !val.result) {
+    if (!val || val.exception || !val.result) {
       input._blink();
+      lastCompletionStr = null;
       return;
     }
 
     var res = [];
 
     for (var i in val.result)
-      if (i.indexOf(substr) == 0) {
+      if (i.indexOf(indexPrefix) == 0) {
         var word = i.search(/^[^\W\d]\w*$/) == 0;
-        if (strPart)
-          res.push(word ? strPart+"."+i : strPart+"["+uneval(i)+"]");
+        if (expr)
+          res.push(word ? prefix+"."+i : prefix+"["+uneval(i)+"]");
         else
-          res.push(word ? i : "this["+uneval(i)+"]");
+          res.push(word ? prefix+i : prefix+"this["+uneval(i)+"]");
       }
 
     if (!res.length) {
@@ -194,7 +241,7 @@
     lastCompletionIdx = prevEntry ? res.length-1 : 0;
     lastCompletionResults = res;
     lastCompletionStr = res[lastCompletionIdx];
-    input.value = lastCompletionStr + rest;
+    input.value = lastCompletionStr + suffix;
     input._input.selectionStart = lastCompletionStr.length;
   }
 
