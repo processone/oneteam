@@ -32,8 +32,7 @@
     link.setAttribute("rel", "stylesheet");
 
     output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
-
-    setTimeout(function(a){a.focus()}, 100, input);
+    input.focus();
 
     input._send = function(withEnter) {
       if (!withEnter)
