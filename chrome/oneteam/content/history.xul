@@ -51,6 +51,8 @@
 
       get currentObject()
       {
+        if (this._inClear)
+          return null;
         if (this._treeEl)
           return this._treeEl.body.childNodes[this._treeEl.currentIndex].model;
         return this._results[this._tree.currentIndex];
@@ -69,11 +71,13 @@
 
       _clear: function()
       {
+        this._inClear = true;
         if (this._treeEl) {
           while (this._treeEl.body.firstChild)
             this._treeEl.body.removeChild(this._treeEl.body.firstChild);
         } else
           this._updateTree(null);
+        this._inClear = false;
       },
 
       _startBatchUpdate: function() { },
@@ -179,9 +183,13 @@
       if (view.token) {
         view.token.unregisterFromAll();
         regToken.unmerge(view.token);
+        view.token = null;
       }
-      view.token = account.historyMgr.deliverThreadsWithJid(view, null, tree.myView.currentObject);
-      regToken.merge(view.token);
+      if (tree.myView.currentObject) {
+        view.token = account.historyMgr.deliverThreadsWithJid(view, null, tree.myView.currentObject);
+        regToken.merge(view.token);
+      } else
+        view._clear();
     }
 
     function updateMessages(tree, view)
@@ -189,9 +197,13 @@
       if (view.token) {
         view.token.unregisterFromAll();
         regToken.unmerge(view.token);
+        view.token = null;
       }
-      view.token = account.historyMgr.deliverMessagesFromThread(view, null, tree.myView.currentObject);
-      regToken.merge(view.token);
+      if (tree.myView.currentObject) {
+        view.token = account.historyMgr.deliverMessagesFromThread(view, null, tree.myView.currentObject);
+        regToken.merge(view.token);
+      } else
+        view._clear();
     }
   ]]></script>
 
