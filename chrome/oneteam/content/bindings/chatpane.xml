@@ -10,7 +10,7 @@
     </resources>
 
     <content>
-      <html:iframe id="output" flex="1"/>
+      <html:iframe id="output" flex="1" onload="this.parentNode._onLoad()"/>
     </content>
 
     <implementation>
@@ -31,19 +31,17 @@
             "#46a", "#c4d", "#3b3", "#fa4", "#79c", "#a7a",
             "#4ca", "#c66", "#aaa", "#ca0", "#770", "#5cc",
           ];
-// #ifdef XULAPP
-          this._output.contentWindow.addEventListener("load", function(){me._onLoad()}, false);
-/* #else
-          this._output.addEventListener("load", function(){me._onLoad()}, false);
-// #endif */
-          this._onLoad();
+
+          if (this._loaded)
+            this._onLoad();
         ]]>
       </constructor>
 
       <method name="_onLoad">
-        <parameter name="event"/>
         <body>
           <![CDATA[
+            this._loaded = 1;
+
             if (!this._msgs)
               return;
 
