@@ -308,10 +308,9 @@
             var inputValue;
             if (event.keyCode == KeyEvent.DOM_VK_RETURN)
               if ((inputValue = me._send(!event.shiftKey)) != null) {
-                if (inputValue && (!me._history.length ||
-                                   me._history[me._history.length-1][0] != inputValue))
-                {
-                  me._history.push([inputValue, me._input.selectionEnd]);
+                if (inputValue) {
+                  if (!me._history.length || me._history[me._history.length-1][0] != inputValue)
+                    me._history.push([inputValue, me._input.selectionEnd]);
                   me._historyPosition = me._history.length;
                 }
 
