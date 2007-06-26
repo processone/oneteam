@@ -300,8 +300,19 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
     onMessage: function(packet)
     {
-        if (packet.getType() == "error" || !packet.getBody())
+        if (packet.getType() == "error")
             return;
+
+        var cs = packet.getNode().getElementsByTagNameNS(
+            "http://jabber.org/protocol/chatstates", "*")[0];
+        if (cs && cs.localName != this.chatState) {
+            this.chatState = cs.localName;
+            this.modelUpdated("chatState");
+        }
+
+        if (!packet.getBody())
+            return;
+
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
 
@@ -609,9 +620,11 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         this.presence = new Presence(packet);
         var equal = this.presence.equal(oldPresence)
 
-        if (packet.getType() == "unavailable")
+        if (packet.getType() == "unavailable") {
             this._remove();
-        else {
+            this.chatState = "";
+            this.modelUpdated("chatState");
+        } else {
             if (!this._registered)
                 this.contact._onResourceAdded(this);
             else
@@ -670,7 +683,17 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
     onMessage: function(packet)
     {
-        if (packet.getType() == "error" || !packet.getBody())
+        if (packet.getType() == "error")
+            return;
+
+        var cs = packet.getNode().getElementsByTagNameNS(
+            "http://jabber.org/protocol/chatstates", "*")[0];
+        if (cs && cs.localName != this.chatState) {
+            this.chatState = cs.localName;
+            this.modelUpdated("chatState");
+        }
+
+        if (!packet.getBody())
             return;
 
         var chatPane = this.chatPane && !this.chatPane.closed ?

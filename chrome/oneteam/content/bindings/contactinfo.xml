@@ -21,6 +21,7 @@
         <xul:vbox flex="1">
           <xul:description id="name" flex="1">
             <html:span id="jid"/>
+            <html:span id="chatState"/>
           </xul:description>
           <xul:description id="subject" hidden="true"/>
           <xul:hbox align="center">
@@ -57,6 +58,8 @@
           if (this._token) {
             this._token = this._model.unregisterView(this._token);
             this._token2 = this._model.unregisterView(this._token2);
+            if (this._token3)
+              this._token3 = this._model.unregisterView(this._token3);
           }
 
           this._model = val;
@@ -65,14 +68,17 @@
             this._token = this._model.registerView(this.onNameChange, this, "visibleName");
             if (modelIsConference)
               this._token2 = this._model.registerView(this.onSubjectChanged, this, "subject");
-            else
+            else {
               this._token2 = this._model.registerView(this.onPresenceChange, this, "presence");
+              this._token3 = this._model.registerView(this.onChatStateChanged, this, "chatState");
+            }
           } else
-            this._token = this._token2 = null;
+            this._token = this._token2 = this._token3 = null;
 
           this.onSubjectChanged();
           this.onNameChange();
           this.onPresenceChange();
+          this.onChatStateChanged();
 
           this._avatar.model = modelIsConference ? null : val;
 
@@ -89,6 +95,7 @@
           this._status = document.getAnonymousElementByAttribute(this, "id", "status");
           this._statusIcon = document.getAnonymousElementByAttribute(this, "id", "statusIcon");
           this._statusText = document.getAnonymousElementByAttribute(this, "id", "statusText");
+          this._chatState = document.getAnonymousElementByAttribute(this, "id", "chatState");
 
           var root = window;
 
@@ -117,14 +124,21 @@
           while (this._name.firstChild != this._jid)
             this._name.removeChild(this._name.firstChild);
 
-          while (this._jid.firstChild)
-            this._jid.removeChild(this._jid.firstChild);
-
-          if (!this.model)
+          if (!this.model) {
+            this._jid.hidden = true;
             return;
+          }
 
           this._name.insertBefore(document.createTextNode(this.model.visibleName), this._jid);
-          this._jid.appendChild(document.createTextNode(" ("+this.model.jid+")"));
+
+          if (this.model.visibleName.indexOf(this.model.jid.shortJID) != 0) {
+            var jid = this.model.jid;
+            if (this.model.gateway || this.model.contact && this.model.contact.gateway)
+              jid.replace(/%(.*?)@.*/, "@$1");
+            this._jid.textContent = " ("+jid+")";
+            this._jid.hidden = false;
+          } else
+            this._jid.hidden = true;
         ]]></body>
       </method>
 
@@ -147,12 +161,35 @@
 
       <method name="onSubjectChanged">
         <body><![CDATA[
-          var subject = (this._model && this._model.subject) || "";
+          this._subject.textContent = (this._model && this._model.subject) || "";
+        ]]></body>
+      </method>
 
-          if (this._subject.firstChild)
-            this._subject.firstChild.replaceData(0, 0xffff, subject);
-          else
-            this._subject.appendChild(document.createTextNode(subject));
+      <method name="onChatStateChanged">
+        <body><![CDATA[
+          if (!this.model) {
+            this._chatState.textContent = "";
+            return;
+          }
+          switch (this.model.chatState) {
+            case "active":
+              this._chatState.textContent = _("is paying attention to this conversation");
+              break;
+            case "paused":
+              this._chatState.textContent = _("paused composing message");
+              break;
+            case "composing":
+              this._chatState.textContent = _("is composing message");
+              break;
+            case "inactive":
+              this._chatState.textContent = _("is doing something else");
+              break;
+            case "gone":
+              this._chatState.textContent = _("has closed chat tab");
+              break;
+            default :
+              this._chatState.textContent = "";
+          }
         ]]></body>
       </method>
     </implementation>

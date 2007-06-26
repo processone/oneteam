@@ -14,7 +14,7 @@
 	font-size: 150%;
 }
 
-#jid {
+#jid, #chatState {
 	font-weight: normal;
 	font-size: medium;
 }
