@@ -56,6 +56,35 @@
         this._inSelectTab = 0;
 
         var _this = this;
+
+        window.addEventListener("blur", function(event) {
+          if (!_this._blurTimeout)
+            _this._blurTimeout = setTimeout(function(_this) {
+              if (_this._focusTimeout) {
+                clearTimeout(_this._focusTimeout);
+                _this._focusTimeout = null;
+              }
+              _this._blurTimeout = null;
+              if (_this._windowHasFocus) {
+                _this._windowHasFocus = false;
+                _this._onWindowBlur();
+              }
+            }, 50, _this);
+        }, true);
+
+        window.addEventListener("focus", function(event) {
+          if (_this._blurTimeout) {
+            clearTimeout(_this._blurTimeout);
+            _this._blurTimeout = null;
+          }
+          if (!_this._windowHasFocus && !_this._focusTimeout)
+            _this._focusTimeout = setTimeout(function(_this) {
+              _this._focusTimeout = null;
+              _this._windowHasFocus = true;
+              _this._onWindowFocus();
+            }, 50, _this);
+        }, true);
+
         window.addEventListener("keypress", function(event) {
           if (event.charCode && _this._selectedTab &&
               !event.ctrlKey && !event.altKey &&
@@ -275,6 +304,18 @@
           this._tabs.scrollToTab(null, 1);
         ]]></body>
       </method>
+
+      <method name="_onWindowFocus">
+        <body><![CDATA[
+        if (this._selectedTab)
+          this._selectedTab.controller.focus();
+        ]]></body>
+      </method>
+
+      <method name="_onWindowBlur">
+        <body><![CDATA[
+        ]]></body>
+      </method>
     </implementation>
   </binding>
 
@@ -379,6 +420,7 @@
           else
             this._tabbox._removeTab(this);
 
+          this.chatState = "gone";
           this.unseenCount = 0;
         ]]></body>
       </method>
@@ -393,6 +435,9 @@
           delete this._inFocus;
 
           this.unseenCount = 0;
+          if (this.chatState == "inactive")
+            this.chatState = "active";
+
           this._chatpane.focus();
         ]]></body>
       </method>
@@ -401,7 +446,8 @@
         <parameter name="msg"/>
         <parameter name="threadID"/>
         <body><![CDATA[
-          if (this._tabbox._selectedTab != this._tab && !msg.isSystemMessage)
+          if ((this._tabbox._selectedTab != this._tab || !this._tabbox._windowHasFocus)
+              && !msg.isSystemMessage)
             this.unseenCount++;
 
           this._chatpane.addMessage(msg, threadID);
