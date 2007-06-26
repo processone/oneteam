@@ -16,17 +16,28 @@ my %args = @ARGV;
 my $i = new Linux::Inotify2;
 $i->blocking(0);
 
-sub watch_path{
-    my $path = shift;
+sub watch_path {
+    my ($path, $recursive) = @_;
+
+    return if $path =~ /(\.swp|~)$/ or $path =~ /\/\.#/ or $path =~ m!(^|[/\\]).svn([/\\]|$)!;
+
     $i->watch($path, -d $path ?
               IN_MOVED_TO|IN_CREATE :
               IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
+
+    find(sub {
+            return if $File::Find::name =~ /(\.swp|~)$/ or $File::Find::name =~ /\/\.#/ or
+                $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
+
+            watch_path($File::Find::name, 0);
+
+            $changed_files{File::Spec->abs2rel($File::Find::name, $topdir)} = 1
+                if -f $File::Find::name;
+        }, $path) if $recursive and -d $path;
 }
 
 my $topdir = realpath(File::Spec->catdir($FindBin::Bin, ".."));
 my $dir = realpath(File::Spec->catdir($topdir, qw(chrome oneteam)));
-
-find(sub { watch_path($File::Find::name) },$dir);
 
 my %defs = ( REVISION => sub { get_revision($topdir) },
              DEBUG => 1,
@@ -44,8 +55,12 @@ my @all_files;
 my $locale = ($filters[1]->locales)[0];
 
 find(sub {
-        push @all_files, $File::Find::name
-            if -f and not $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
+        return if $File::Find::name =~ /(\.swp|~)$/ or $File::Find::name =~ /\/\.#/ or
+            $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
+
+        watch_path($File::Find::name);
+
+        push @all_files, $File::Find::name if -f $File::Find::name;
     }, $dir);
 
 for my $file (@all_files) {
@@ -63,10 +78,10 @@ while (1) {
         next if $fn =~ /(\.swp|~)$/ or $fn =~ /\/\.#/;
 
         print "UP: $fn\n";
-        watch_path($_->fullname)
+        watch_path($_->fullname, 1)
             if $_->mask & (IN_MOVED_TO|IN_CREATE);
         $changed_files{$fn} = 1
-            if $_->mask & (IN_MOVED_TO|IN_CREATE|IN_MODIFY);
+            if -f $_->fullname and ($_->mask & (IN_MOVED_TO|IN_CREATE|IN_MODIFY));
         $_->w->cancel
             if $_->mask & (IN_DELETE_SELF|IN_MOVE_SELF);
     }
