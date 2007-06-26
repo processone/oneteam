@@ -301,6 +301,9 @@ _DECL_(Conference, Contact).prototype =
 
     sendMessage: function(body)
     {
+        if (body == null)
+            return;
+
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("groupchat");
