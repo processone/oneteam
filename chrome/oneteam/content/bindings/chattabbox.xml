@@ -350,7 +350,7 @@
           else
             this._tab.removeAttribute("chatstate");
 
-          this._tabbox.unseenCount += val - this._unseenCount;
+          this._tabbox.unseenCount += val - (this._unseenCount || 0);
           this._unseenCount = val;
 
           this._onNameChange();
