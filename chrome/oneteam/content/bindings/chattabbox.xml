@@ -318,10 +318,44 @@
         ]]></setter>
       </property>
 
+      <property name="chatState" onget="return this._chatState">
+        <setter><![CDATA[
+          if (!this._chatStateInitialSend)
+            return;
+
+          var oldState = this._chatState;
+          this._chatState = val;
+
+          if (this._chatStateTimeout) {
+            clearTimeout(this._chatStateTimeout);
+            this._chatStateTimeout = null;
+          }
+          if (val == "composing")
+            this._chatStateTimeout = setTimeout(function(me){ me.chatState = "paused" }, 5000, this);
+          if (val == "active" || val == "paused")
+            this._chatStateTimeout = setTimeout(function(me){ me.chatState = "inactive" }, 30000, this);
+
+          if (!this._chatStatePreventMessage && oldState != this._chatState)
+            this.contact.sendMessage(null, this._chatpane.getThread().threadID, this._chatState);
+        ]]></setter>
+      </property>
+
       <constructor><![CDATA[
         this._chatpane = document.getAnonymousElementByAttribute(this, "anonid", "chatpane");
+        this._chatpane.userTypingHandler = new Callback(function(val, me) {
+            if (val < 0) {
+              me._chatStatePreventMessage = 1;
+              me._chatStateInitialSend = 1;
+            }
+
+            me.chatState = val > 0 ? "composing" : "active";
+
+            if (val < 0 )
+              me._chatStatePreventMessage = 0;
+          }).addArgs(this);
 
         this._unseenCount = 0;
+        this._chatStateInitialSend = false;
         this.closed = false;
 
         if (this.contact) {

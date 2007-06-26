@@ -269,7 +269,9 @@
     <content>
       <xul:deck flex="1">
         <xul:textbox id="_input" flex="1" multiline="true"
-          oninput="this.parentNode.parentNode._maybeResize()"/>
+          oninput="if (this.parentNode.parentNode.userTypingHandler)
+                     this.parentNode.parentNode.userTypingHandler(this.value ? 1 : 0);
+                   this.parentNode.parentNode._maybeResize()"/>
         <xul:vbox flex="1">
           <xul:textbox id="_inputClone" multiline="true"/>
         </xul:vbox>
@@ -505,6 +507,10 @@
         onset="return this._subject.value = val"
         onget="return this._subject.value" />
 
+      <property name="userTypingHandler"
+        onset="return this._input.userTypingHandler = val"
+        onget="return this._input.userTypingHandler" />
+
       <property name="model" onget="return this._model">
         <setter><![CDATA[
           this._model = val;
@@ -529,11 +535,20 @@
         this._input._preMaybeResize = new Callback(this._preMaybeResize, this);
         this._input._postMaybeResize = new Callback(this._postMaybeResize, this);
 
-        if (this._model != this.model) {
-          var model = this.model;
-          delete this.model;
-          this.model = model;
-        }
+        var p = this.__proto__;
+        this.__proto__ = {};
+
+        var state = {};
+        for each (var i in "model userTypingHandler".split(/ /))
+          if (this[i] != null) {
+            state[i] = this[i];
+            delete this[i];
+          }
+
+        this.__proto__ = p;
+
+        for (i in state)
+          this[i] = state[i];
 
         setTimeout(function(me) {
           if (!me._output._output) {
@@ -552,6 +567,14 @@
       <method name="focus">
         <body><![CDATA[
           this._input.focus();
+        ]]></body>
+      </method>
+
+      <method name="getThread">
+        <body><![CDATA[
+          if (!this._thread)
+            this._thread = new MessageThread();
+          return this._thread;
         ]]></body>
       </method>
 
@@ -613,6 +636,9 @@
               var ev = document.createEvent("Events");
               ev.initEvent("chat-send", true, false);
               this.dispatchEvent(ev);
+
+              if (this.userTypingHandler)
+                this.userTypingHandler(-1);
 
               var body = this.content;
               if (!(this._model instanceof Conference)) {
