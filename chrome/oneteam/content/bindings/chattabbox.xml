@@ -442,6 +442,18 @@
         ]]></body>
       </method>
 
+      <method name="updateChatState">
+        <parameter name="state"/>
+        <body><![CDATA[
+          if (this._chatState == state)
+            return;
+
+          this._chatState = state;
+
+          this._chatpane._contactInfo.updateChatState(state)
+        ]]></body>
+      </method>
+
       <method name="addMessage">
         <parameter name="msg"/>
         <parameter name="threadID"/>

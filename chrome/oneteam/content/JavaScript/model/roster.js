@@ -305,16 +305,18 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
         var cs = packet.getNode().getElementsByTagNameNS(
             "http://jabber.org/protocol/chatstates", "*")[0];
-        if (cs && cs.localName != this.chatState) {
-            this.chatState = cs.localName;
-            this.modelUpdated("chatState");
-        }
+
+        if (cs && this.chatPane && !this.chatPane.closed)
+            this.chatPane.updateChatState(cs.localName);
 
         if (!packet.getBody())
             return;
 
         if (!this.chatPane || this.chatPane.closed)
             this.onOpenChat();
+
+        if (cs)
+            this.chatPane.updateChatState(cs.localName);
 
         soundsPlayer.playSound("message1");
         this.chatPane.addMessage(new Message(packet, null, this), packet.getThread());
@@ -621,9 +623,14 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         var equal = this.presence.equal(oldPresence)
 
         if (packet.getType() == "unavailable") {
+            var chatPane = this.chatPane && !this.chatPane.closed ?
+                this.chatPane :
+                this.contact.chatPane && !this.contact.chatPane.closed ?
+                    this.contact.chatPane : null;
+            if (chatPane)
+                chatPane.updateChatState("");
+
             this._remove();
-            this.chatState = "";
-            this.modelUpdated("chatState");
         } else {
             if (!this._registered)
                 this.contact._onResourceAdded(this);
@@ -686,21 +693,27 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (packet.getType() == "error")
             return;
 
+        var chatPane = this.chatPane && !this.chatPane.closed ?
+            this.chatPane :
+            this.contact.chatPane && !this.contact.chatPane.closed ?
+                this.contact.chatPane : null;
+
         var cs = packet.getNode().getElementsByTagNameNS(
             "http://jabber.org/protocol/chatstates", "*")[0];
-        if (cs && cs.localName != this.chatState) {
-            this.chatState = cs.localName;
-            this.modelUpdated("chatState");
-        }
+
+        if (cs && chatPane)
+            chatPane.updateChatState(cs.localName);
 
         if (!packet.getBody())
             return;
 
-        var chatPane = this.chatPane && !this.chatPane.closed ?
-            this.chatPane :
-            this.contact.chatPane && !this.contact.chatPane.closed ?
-                this.contact.chatPane :
-                this.onOpenChat();
+        if (!chatPane) {
+            this.onOpenChat();
+            chatPane = this.chatPane;
+        }
+
+        if (cs)
+            chatPane.updateChatState(cs.localName);
 
         soundsPlayer.playSound("message2");
         chatPane.addMessage(new Message(packet, null, this), packet.getThread());

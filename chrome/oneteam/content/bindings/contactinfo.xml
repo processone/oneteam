@@ -58,8 +58,6 @@
           if (this._token) {
             this._token = this._model.unregisterView(this._token);
             this._token2 = this._model.unregisterView(this._token2);
-            if (this._token3)
-              this._token3 = this._model.unregisterView(this._token3);
           }
 
           this._model = val;
@@ -68,17 +66,15 @@
             this._token = this._model.registerView(this.onNameChange, this, "visibleName");
             if (modelIsConference)
               this._token2 = this._model.registerView(this.onSubjectChanged, this, "subject");
-            else {
+            else
               this._token2 = this._model.registerView(this.onPresenceChange, this, "presence");
-              this._token3 = this._model.registerView(this.onChatStateChanged, this, "chatState");
-            }
           } else
-            this._token = this._token2 = this._token3 = null;
+            this._token = this._token2 = null;
 
           this.onSubjectChanged();
           this.onNameChange();
           this.onPresenceChange();
-          this.onChatStateChanged();
+          this.updateChatState("");
 
           this._avatar.model = modelIsConference ? null : val;
 
@@ -165,13 +161,10 @@
         ]]></body>
       </method>
 
-      <method name="onChatStateChanged">
+      <method name="updateChatState">
+        <parameter name="state"/>
         <body><![CDATA[
-          if (!this.model) {
-            this._chatState.textContent = "";
-            return;
-          }
-          switch (this.model.chatState) {
+          switch (state) {
             case "active":
               this._chatState.textContent = _("is paying attention to this conversation");
               break;
