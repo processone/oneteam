@@ -69,14 +69,15 @@ _DECL_(FileTransferService, null, Model).prototype =
             }
 
         var fileTransfer = new FileTransfer(pkt.getID(), pkt.getFrom(),
-                                            query.@id.toString(), +file.@size);
+                                            query.@id.toString(),
+                                            file.size.length() ? +file.@size : null);
 
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
         account.addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getFrom())),
                          new Callback(openDialogUniq, null).
                             addArgs(null, "chrome://oneteam/content/fileTransferRequest.xul",
-                                    "chrome,modal", fileTransfer, file.@name, +file.@size));
+                                    "chrome,modal", fileTransfer, file.@name));
 
         return null;
    }
