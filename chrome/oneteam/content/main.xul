@@ -294,6 +294,7 @@
       document.getElementById("setPresence-avatar-image").model = account;
       chatTabsController = document.getElementById("chats");
       soundsPlayer = document.getElementById("soundsplayer");
+      document.getElementById("login-signin").disabled = false;
 
       var args = {};
       for each (var part in document.location.toString().replace(/.*?\?/, "").split("&")) {
@@ -362,6 +363,7 @@
 
     function onUnload() {
     //#ifndef XULAPP
+      document.getElementById("login-signin").disabled = true;
       if (window.con)
         window.con.disconnect();
     //#endif */
@@ -512,7 +514,7 @@
       </hbox>
       <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
       <hbox pack="center">
-        <button id="login-signin" label="_('Sign In')" oncommand="connect()"/>
+        <button id="login-signin" disabled="true" label="_('Sign In')" oncommand="connect()"/>
       </hbox>
       <spacer/>
       <hbox id="login-settings-box">
