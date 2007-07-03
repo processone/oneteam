@@ -21,6 +21,12 @@ sub get_revision {
         return $revision;
     }
 
+    if (-d catdir($topdir, '.git')) {
+        $revision = `cd "$topdir"; git-svn log --limit 1 --oneline`;
+        $revision =~ s/.*?(\d+).*/$1/s;
+        return $revision;
+    }
+
     my @mirrors = `svk mi -l`;
     @mirrors = map { (split " ", $_, 2)[0] } @mirrors[2..$#mirrors];
 
@@ -41,7 +47,10 @@ sub get_branch {
 
     if (-d catdir($topdir, '.svn')) {
         ($branch) = grep { /^URL:/ } `svn info "$topdir"`;
-        $branch =~ s/.*?(?:(?:\/branches\/([^\/]+))|\/(trunk))(?:\/.*|$)/$1||$2/e;
+        $branch =~ s/.*?(?:(?:\/branches\/([^\/]+))|\/(trunk))(?:\/.*|$)/$1||$2/es;
+    } elsif (-d catdir($topdir, '.git')) {
+        $branch = `cd "$topdir"; git-name-rev HEAD`;
+        $branch =~ s/HEAD\s+(.*?)\s*$/$1/;
     } else {
         $branch = "UNKNOWN";
     }
