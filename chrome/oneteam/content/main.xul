@@ -843,4 +843,6 @@
   <otsystray id="systray" type="minimizer"/>
   <!-- #endif -->
   <soundsplayer id="soundsplayer"/>
+
+  <vbox id="hiddenContainer" collapsed="true"/>
 </window>

@@ -129,7 +129,9 @@ _DECL_(SOCKS5Service).prototype =
         var ft = this.transfersBySidHash[query.@sidhash];
 
         if (query.localName() == "activated") {
-            ft.frame.src = query.@url;
+            var frame = document.createElementNS("http://www.w3.org/1999/xhtml", "iframe");
+            document.getElementById("hiddenContainer").appendChild(frame);
+            frame.src = query.@url;
             ft.onTransferStart();
         } else if (query.localName() == "progress") {
             ft.size = +query.@total;

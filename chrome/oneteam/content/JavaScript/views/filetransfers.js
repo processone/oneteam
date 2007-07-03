@@ -54,6 +54,10 @@ function FileTransferView(model, parentView)
     this.deck.setAttribute("flex", "1");
     c.appendChild(this.deck);
 
+    var c2 = document.createElement("vbox");
+    c2.setAttribute("flex", "1");
+    this.deck.appendChild(c2);
+
     if (model.type == "send" && model.file == null) {
         const ns = "http://www.w3.org/1999/xhtml";
         var id = generateUniqueId();
@@ -82,15 +86,11 @@ function FileTransferView(model, parentView)
         this.form.appendChild(e);
 
         this.deck.appendChild(this.form);
+
+        this.frame = document.createElementNS(ns, "iframe");
+        this.frame.setAttribute("id", id);
+        this.deck.appendChild(this.frame);
     }
-
-    var c2 = document.createElement("vbox");
-    c2.setAttribute("flex", "1");
-    this.deck.appendChild(c2);
-
-    this.frame = document.createElementNS(ns, "iframe");
-    this.frame.setAttribute("id", id);
-    this.deck.appendChild(this.frame);
 
     this.fileName = document.createElement("label");
     if (this.model.file)
@@ -151,7 +151,13 @@ _DECL_(FileTransferView).prototype =
     {
         var data = this._stateData[this.model.state];
 
-        this.deck.selectedIndex = this.model.state == "selecting" ? 0 : 2;
+        if (this.model.state == "selecting")
+            this.deck.selectedIndex = 1;
+        else {
+            this.deck.selectedIndex = 0;
+            if (this.form)
+                this.form.style.display = "none";
+        }
 
         this.stateLabel.value = data[0];
         this.progressmeter.hidden = !data[1]
