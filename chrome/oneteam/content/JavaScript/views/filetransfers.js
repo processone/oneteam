@@ -179,7 +179,7 @@ _DECL_(FileTransferView).prototype =
 
         if (this.model.size == null) {
             this.progressmeter.mode = "undetermined";
-            this.stateLabel = _("Transfering...");
+            this.stateLabel.value = _("Transfering...");
             return;
         }
 
