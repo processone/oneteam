@@ -362,7 +362,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 // #endif */
         var args = {
             httpbase: httpbase,
-//            oDbg: {log: function(a){window.console ? console.info(a) : dump(a+"\n")}},
+            oDbg: {log: function(a) {
+                if (!account.jsjacDebug)
+                    return
+                window.console ? console.info(a) : dump(a+"\n")
+            }},
             timerval: 2000};
 
         var con = this.connectionInfo.polling ? new JSJaCHttpPollingConnection(args) :
