@@ -41,7 +41,7 @@ sub get_branch {
 
     if (-d catdir($topdir, '.svn')) {
         ($branch) = grep { /^URL:/ } `svn info "$topdir"`;
-        $branch =~ s/.*?(?:(?:\/branch\/([^\/]+))|\/(trunk)\/).*/$1||$2/e;
+        $branch =~ s/.*?(?:(?:\/branches\/([^\/]+))|\/(trunk))(?:\/.*|$)/$1||$2/e;
     } else {
         $branch = "UNKNOWN";
     }
