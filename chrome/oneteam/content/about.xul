@@ -37,7 +37,7 @@
 
       <spacer height="20"/>
 
-      <label value="_('Release {0} ({1})', _('$$branding$$:1.0.0 beta 1'), 'r@@REVISION@@')"/>
+      <label value="_('Release {0} ({1})', _('$$branding$$:1.0.0 beta 1'), '@@BRANCH@@-r@@REVISION@@')"/>
 
       <spacer height="40"/>
 

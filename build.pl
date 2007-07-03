@@ -28,6 +28,7 @@ find(sub {
     }, $dir);
 
 $defs{REVISION} = sub { get_revision($topdir) };
+$defs{BRANCH} = sub { get_branch($topdir) };
 
 my $locale_processor = exists $defs{XULAPP} ?
     new OneTeam::Builder::Filter::LocaleProcessor::XulApp(split /,/, ($defs{LANGS}||"")) :

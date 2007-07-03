@@ -5,9 +5,10 @@ use strict;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(get_revision);
+our @EXPORT = qw(get_revision get_branch);
 
 my $revision;
+my $branch;
 
 sub get_revision {
     my $topdir = shift;
@@ -31,6 +32,20 @@ sub get_revision {
         return $revision = $1 if $mirror and `svk info "$mirror"` =~ /Mirrored From:.*? Rev\.\s+(\d+)/;
     }
     return 0;
+}
+
+sub get_branch {
+    my $topdir = shift;
+
+    return $branch if defined $branch;
+
+    if (-d catdir($topdir, '.svn')) {
+        ($branch) = grep { /^URL:/ } `svn info "$topdir"`;
+        $branch =~ s/.*?(?:(?:\/branch\/([^\/]+))|\/(trunk)\/).*/$1||$2/e;
+    } else {
+        $branch = "UNKNOWN";
+    }
+    return $branch
 }
 
 1;

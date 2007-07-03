@@ -40,6 +40,7 @@ my $topdir = realpath(File::Spec->catdir($FindBin::Bin, ".."));
 my $dir = realpath(File::Spec->catdir($topdir, qw(chrome oneteam)));
 
 my %defs = ( REVISION => sub { get_revision($topdir) },
+             BRANCH => sub { get_branch($topdir) },
              DEBUG => 1,
              NOJAR => 1);
 
