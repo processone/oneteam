@@ -210,7 +210,7 @@ _DECL_(FileTransfer, null, Model).prototype =
             this.file = new File(path)
         if (this.method == "http://jabber.org/protocol/bytestreams")
             this.socksToken = socks5Service.recvFile(this);
-        accept.showTransfersManager();
+        account.showTransfersManager();
     },
 
     reject: function(fileTransfer)
