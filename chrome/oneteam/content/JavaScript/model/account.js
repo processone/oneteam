@@ -32,6 +32,7 @@ function Account()
 _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 {
     bumpPriority: true,
+    jsjacDebug: false,
 
     setPresence: function(show, status, priority, profile, userSet)
     {
@@ -405,7 +406,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             var pkt = new JSJaCIQ();
             pkt.setIQ(null, null, 'get');
             pkt.setQuery('jabber:iq:roster');
-            con.send(pkt);
+            con.send(pkt, this._initialRosterFetch, this);
         }
 
         this.connected = true;
@@ -414,15 +415,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.myJID = new JID(con.fulljid);
         this.jid = new JID(this.myJID.domain);
 
-        if (this.userPresence)
-            this.setPresence(this.userPresence);
-        else
-            this.setPresence();
-
         this.modelUpdated("connected");
 
-        if (this.mucMode)
+        if (this.mucMode) {
+            this._initialRosterFetch(null, this);
             return;
+        }
+
         this.bookmarks.retrieve();
         this.getDiscoItemsByCategory("conference", "text", false,
                                      function(account, items, item) {
@@ -460,6 +459,17 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                             });
         this.presenceProfiles.loadFromServer();
         this.getVCard(true, function(){});
+    },
+
+    _initialRosterFetch: function(pkt, _this)
+    {
+        if (_this.userPresence)
+            _this.setPresence(_this.userPresence);
+        else
+            _this.setPresence();
+
+        if (pkt)
+            _this.onIQ(pkt);
     },
 
     _initialize: function()
