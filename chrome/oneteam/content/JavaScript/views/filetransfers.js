@@ -89,6 +89,9 @@ function FileTransferView(model, parentView)
 
         this.frame = document.createElementNS(ns, "iframe");
         this.frame.setAttribute("id", id);
+        this.frame.setAttribute("onload", "if (this.model.state == 'started')"+
+                                              "this.model.onTransferCompleted()");
+        this.frame.model = model;
         this.deck.appendChild(this.frame);
     }
 
