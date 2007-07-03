@@ -82,15 +82,15 @@ function FileTransferView(model, parentView)
         this.form.appendChild(e);
 
         this.deck.appendChild(this.form);
-
-        this.frame = document.createElementNS(ns, "iframe");
-        this.frame.setAttribute("id", id);
-        this.deck.appendChild(this.frame);
     }
 
     var c2 = document.createElement("vbox");
     c2.setAttribute("flex", "1");
     this.deck.appendChild(c2);
+
+    this.frame = document.createElementNS(ns, "iframe");
+    this.frame.setAttribute("id", id);
+    this.deck.appendChild(this.frame);
 
     this.fileName = document.createElement("label");
     if (this.model.file)

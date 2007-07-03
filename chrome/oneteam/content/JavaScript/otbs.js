@@ -129,7 +129,7 @@ _DECL_(SOCKS5Service).prototype =
         var ft = this.transfersBySidHash[query.@sidhash];
 
         if (query.localName() == "activated") {
-            window.open(query.@url);
+            ft.frame.src = query.@url;
             ft.onTransferStart();
         } else if (query.localName() == "progress") {
             ft.size = +query.@total;
