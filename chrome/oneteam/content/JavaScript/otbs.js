@@ -133,6 +133,7 @@ _DECL_(SOCKS5Service).prototype =
             document.getElementById("hiddenContainer").appendChild(frame);
             frame.src = query.@url;
             ft.onTransferStart();
+            setTimeout(function(a){a.parentNode.removeChild(a)}, 5000, frame);
         } else if (query.localName() == "progress") {
             ft.size = +query.@total;
             ft.onBytestreamProgress(+query.@sent);
