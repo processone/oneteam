@@ -134,7 +134,7 @@ _DECL_(FileTransferView).prototype =
     _stateData: {
         selecting:   ["", 0],
         waiting:   [_("Waiting for acceptance..."), 0],
-        started:   [_("Started..."), 1],
+        started:   [_("Transfering..."), 1],
         completed: [_("Done"), 0],
         canceled:  [_("Canceled"), 0],
         failed:    [_("Failure"), 0],
@@ -159,6 +159,9 @@ _DECL_(FileTransferView).prototype =
                 this.form.style.display = "none";
         }
 
+        if (this.model.size == null)
+            this.progressmeter.mode = "undetermined";
+
         this.stateLabel.value = data[0];
         this.progressmeter.hidden = !data[1]
         this.removeLink.hidden = !this.model.finished;
@@ -169,6 +172,7 @@ _DECL_(FileTransferView).prototype =
     {
         if (this.model.state != "started")
             return;
+        this.progressmeter.mode = "determined";
         this.progressmeter.value = 100*this.model.sent/this.model.size;
         this.stateLabel.value = this.model.ppSent + " of "+ this.model.ppSize;
     },
