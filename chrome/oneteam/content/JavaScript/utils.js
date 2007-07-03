@@ -93,7 +93,11 @@ var _sizes = {
 
 function openDialogUniq(type, url, flags)
 {
+    if (!_wins._prefix)
+        _wins._prefix = generateRandomName(8);
+
     if (type)
+        type = _wins._prefix + type;
         try {
             if (_wins[type] && !_wins[type].closed)
                 return _wins[type];
