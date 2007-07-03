@@ -366,6 +366,7 @@
       document.getElementById("login-signin").disabled = true;
       if (window.con)
         window.con.disconnect();
+      closeAllWindows();
     //#endif */
     }
 

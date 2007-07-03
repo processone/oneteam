@@ -87,6 +87,7 @@ function openLink(uri)
 
 /*#else
 var _wins = {};
+var _allWins = [];
 var _sizes = {
     @SIZES@
 };
@@ -112,11 +113,39 @@ function openDialogUniq(type, url, flags)
 
     var win = window.open(url, type || "_blank", flags);
     win.arguments = Array.slice(arguments, 3);
+    _allWins.push(win);
 
     if (type)
         _wins[type] = win;
 
+    win.addEventListener("unload", function(event) {
+        if (event.target.location.href == "about:blank" || !_allWins)
+            return;
+
+        var win = event.target.__parent__;
+
+        for (var i = 0; i < _allWins.length; i++)
+            if (_allWins[i] == win)
+                _allWins.splice(i, 1);
+
+        for (var i in _wins)
+            if (_wins[i] == win)
+                delete _wins[i];
+        }, false)
+
     return win;
+}
+
+function closeAllWindows()
+{
+    var wins = _allWins;
+    _allWins = null;
+
+    for (var i = 0; i < wins.length; i++)
+        try {
+            if (!wins[i].closed)
+                wins[i].close();
+        } catch (ex) {}
 }
 
 function openLink(uri)
