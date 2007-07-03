@@ -20,7 +20,7 @@
     function onBeforeUnload() {
       var fts = window.opener.fileTransferService.fileTransfers;
       for (var i = 0; i < fts.length; i++)
-        if (fts[i].type == "send")
+        if (fts[i].type == "send" && (fts[i].state == "waiting" || fts[i].state == "started"))
           return _("If you close this window all file transfers will be aborted.");
     }
     window.onbeforeunload = onBeforeUnload;
