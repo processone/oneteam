@@ -5,7 +5,7 @@
 <window id="fileTransfers" windowtype="ot:fileTransfers" title="_('File Transfers')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="500" height="350"
-  onload="onLoad()" onclose="onClose()">
+  onload="onLoad()" onunload="onUnload()">
 
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
@@ -14,7 +14,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/views/filetransfers.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
-    var model;
+    var view;
 
 /* #ifndef XULAPP
     function onBeforeUnload() {
@@ -28,12 +28,12 @@
 
     function onLoad()
     {
-      model = new FileTransfersView(document.getElementById("richlist"));
+      view = new FileTransfersView(document.getElementById("richlist"));
     }
 
-    function onClose()
+    function onUnload()
     {
-      model.destroy();
+      view.destroy();
     }
 
     function cleanUp()
