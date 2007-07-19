@@ -15,9 +15,9 @@ function Account()
 
     self.account = this;
 
-    // XXX use string bundle
-    this.defaultGroup = new Group(null, "Contacts", true);
-    this.notInRosterGroup = new Group(null, "Not in roster", true);
+    this.defaultGroup = new Group(null, _("Contacts"), true, -1);
+    this.notInRosterGroup = new Group(null, _("Not in roster"), true, 1);
+    this.otherResourcesGroup = new Group(null, _("My other resources"), true, -2);
 
     this.connectionInfo = {};
     this.notificationScheme = new NotificationScheme();
@@ -133,6 +133,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (this.resources[normalizedJID])
             return this.resources[normalizedJID];
+
+        if (jid.normalizedJID.shortJID == this.myJID.normalizedJID.shortJID)
+            return (new MyResourcesContact(jid)).createResource(jid);
 
         if (this.allContacts[normalizedJID.shortJID])
             return this.allContacts[normalizedJID.shortJID].createResource(jid);
@@ -479,6 +482,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.contacts = {};
         this.allContacts = {};
         this.resources = {};
+        this.myResources = {};
         this.conferences = [];
         this.allConferences = {};
         this.gateways = {};
@@ -524,14 +528,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         var sender = new JID(packet.getFrom());
 
-        if (this.myJID.normalizedJID.shortJID == sender.normalizedJID.shortJID) {
-            if (this.bumpPriority && +packet.getPriority() > this.currentPresence.priority)
-                openDialogUniq("ot:bumpPriority",
-                               "chrome://oneteam/content/bumpPriority.xul",
-                               "chrome,centerscreen", +packet.getPriority()+1);
-            return;
-        }
-
         //Handle subscription requests
         switch (packet.getType()) {
         case "subscribe":
@@ -572,6 +568,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (item)
             item.onPresence(packet);
+
+        if (this.myJID.normalizedJID.shortJID == sender.normalizedJID.shortJID &&
+                this.bumpPriority && +packet.getPriority() > this.currentPresence.priority)
+            openDialogUniq("ot:bumpPriority",
+                           "chrome://oneteam/content/bumpPriority.xul",
+                           "chrome,centerscreen", +packet.getPriority()+1);
     },
 
     onIQ: function(packet)

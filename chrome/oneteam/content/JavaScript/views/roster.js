@@ -24,10 +24,15 @@ _DECL_(RosterView, null, ContainerView).prototype =
         return this.containerNode.getAttribute("hideOffline") == "true"
     },
 
-    itemComparator: function(a, b)
+    itemComparator: function(ao, bo)
     {
-        a = a.model.visibleName.toLowerCase();
-        b = b.model.visibleName.toLowerCase();
+        var a = 0+ao.model.sortPriority;
+        var b = 0+bo.model.sortPriority;
+
+        if (a == b) {
+            a = ao.model.visibleName.toLowerCase();
+            b = bo.model.visibleName.toLowerCase();
+        }
 
         return a > b ? 1 : a == b ? 0 : -1;
     },

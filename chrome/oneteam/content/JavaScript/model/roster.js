@@ -1,10 +1,11 @@
-function Group(name, visibleName, builtinGroup)
+function Group(name, visibleName, builtinGroup, sortPriority)
 {
     this.name = name;
     this.visibleName = visibleName || name || "XXXunnamed";
     this.contacts = [];
     this.availContacts = 0;
     this.builtinGroup = builtinGroup;
+    this.sortPriority = sortPriority || 0;
 
     if (!builtinGroup)
         account.allGroups[name] = this;
@@ -416,7 +417,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
     createResource: function(jid)
     {
-        return new Resource(jid);
+        return new Resource(jid, this);
     },
 
     showVCard: function()
@@ -563,10 +564,10 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
     }
 }
 
-function Resource(jid)
+function Resource(jid, contact)
 {
     this.jid = new JID(jid);
-    this.contact = account.allContacts[this.jid.normalizedJID.shortJID];
+    this.contact = contact || account.allContacts[this.jid.normalizedJID.shortJID];
 
     account.resources[this.jid.normalizedJID] = this;
     this.init();
@@ -740,6 +741,32 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     }
 }
 
+function MyResourcesContact(jid)
+{
+    this.init();
+
+    this.jid = new JID(jid);
+    this.name = _("{0}/{1}", this.jid.node, this.jid.resource);
+    this.visibleName = _("{0} ({1})", this.jid.node, this.jid.resource);
+    this.groups = [account.otherResourcesGroup];
+    this.resources = []
+    account.otherResourcesGroup._onContactAdded(this);
+
+    account.myResources[this.jid.normalizedJID] = this;
+
+    this.chatPane = chatTabsController.getTab(this);
+}
+
+_DECL_(MyResourcesContact, Contact).prototype =
+{
+    subscription: "both",
+
+    _onResourceRemoved: function()
+    {
+        this.groups[0]._onContactRemoved(this);
+        delete account.myResources[this.jid.normalizedJID]
+    }
+}
 
 function MyResource()
 {
