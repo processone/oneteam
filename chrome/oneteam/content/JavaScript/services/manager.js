@@ -5,6 +5,8 @@ function ServicesManager()
     this._nodes = {};
     this._capsExt = {};
     this._disabledCapsExt = {};
+    this._identities = {};
+    this._items = {};
 
     this._clean();
 }
@@ -12,7 +14,7 @@ function ServicesManager()
 _DECL_(ServicesManager).prototype =
 {
     _capsPrefix: "http://oneteam.im/caps",
-    _capsVersion: "1.0_1",
+    _capsVersion: "1.0_2",
 
     /**
      * Register new handler for iq stanzas from given namespace.
@@ -71,7 +73,15 @@ _DECL_(ServicesManager).prototype =
         this._messageHandlers[ns] = handler;
     },
 
-    publishDiscoInfo: function(ns, capsExt, nodes)
+    publishDiscoItems: function(node, itemNode, itemName)
+    {
+        if (!this._items[node])
+            this._items[node] = [{node: itemNode, name: itemName}];
+        else
+            this._items[node].push({node: itemNode, name: itemName});
+    },
+
+    publishDiscoInfo: function(ns, capsExt, nodes, identity)
     {
         nodes = nodes instanceof Array ? nodes : nodes == null ? [] : [nodes];
         capsExt = capsExt instanceof Array ? capsExt : capsExt == null ? [] : [capsExt];
@@ -85,6 +95,8 @@ _DECL_(ServicesManager).prototype =
             nodes.push(this._capsPrefix+"#"+this._capsVersion);
 
         for (i = 0; i < nodes.length; i++) {
+            if (identity)
+                this._identities[nodes[i]] = identity;
             if (this._nodes[nodes[i]])
                 this._nodes[nodes[i]].push(ns);
             else
@@ -140,6 +152,7 @@ _DECL_(ServicesManager).prototype =
                 default xml namespace = "http://jabber.org/protocol/disco#info";
                 var nodes = [], features = {};
                 var node = query.getAttribute("node");
+                var id;
 
                 response = <query/>;
 
@@ -150,6 +163,8 @@ _DECL_(ServicesManager).prototype =
                         nodes = [node];
                         if (node.indexOf(this._capsPrefix+"#") == 0)
                             response.* += <identity category="client" type="pc" name="OneTeam"/>
+                        else if ((id = this._identities[node]))
+                            response.* += <identity category={id.category} type={id.type} name={id.name}/>
                     } else
                         nodes = [];
                 } else {
@@ -174,10 +189,17 @@ _DECL_(ServicesManager).prototype =
         case "http://jabber.org/protocol/disco#items":
             if (pkt.getType() != "get" || query.localName != "query")
                 break;
+            {
+                default xml namespace = "http://jabber.org/protocol/disco#items";
 
-            response = <query xmlns="http://jabber.org/protocol/disco#items"/>;
-            if (query.getAttribute("node"))
-                response.@node = query.getAttribute("node");
+                response = <query/>;
+                if (query.getAttribute("node"))
+                    response.@node = query.getAttribute("node");
+                var items = this._items[query.getAttribute("node")||""] || [];
+
+                for (var i = 0; i < items.length; i++)
+                    response.* += <item jid={account.myJID} node={items[i].node} name={items[i].name}/>
+            }
             break;
 
         default:
