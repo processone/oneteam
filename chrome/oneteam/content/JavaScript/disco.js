@@ -185,7 +185,6 @@ _DECL_(DiscoCacheEntry).prototype =
             var [featureName, callback, discoItem] = this.discoInfoCallbacks[i];
             callback(discoItem, this._feature(featureName));
         }
-
         if (this._isCapsNode) {
             with (this.discoInfo.identity||{name:"", type:"", category:""})
                 vals.unshift(name||"", type||"", category||"");
@@ -217,7 +216,7 @@ _DECL_(DiscoCacheEntry).prototype =
 
     _gotCapsInfo: function(capsItem, info, nodes, featureName, callback, discoItem)
     {
-        delete nodes[item.node];
+        delete nodes[discoItem.node];
         if (nodes.__count__ != 0)
             return;
 
