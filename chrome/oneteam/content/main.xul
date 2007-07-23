@@ -109,7 +109,7 @@
 
       var ahr = [];
       for (var res in menu.model.resourcesIterator()) {
-        if (res.hasDiscoFeature("http://jabber.org/protocol/commands", function(){}))
+        if (res.hasDiscoFeature("http://jabber.org/protocol/commands"))
           ahr.push(res);
       }
       ah.hidden = ahr.length != 1 || ahr[0] != menu.model.activeResource;
