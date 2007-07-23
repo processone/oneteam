@@ -120,7 +120,7 @@ _DECL_(DiscoCacheEntry).prototype =
             if (info) {
                 if (infos.length == i)
                     infos.push(info);
-            } else if (callback) {
+            } else {
                 if (!capsCallback)
                     capsCallback = new Callback(this._gotCapsInfo, this).
                         addArgs(capsCallbackData = {}, featureName, callback, discoItem);
@@ -221,7 +221,8 @@ _DECL_(DiscoCacheEntry).prototype =
             return;
 
         this._populateDiscoInfoFromCaps();
-        callback(discoItem, this._feature(featureName));
+        if (callback)
+            callback(discoItem, this._feature(featureName));
     }
 }
 
