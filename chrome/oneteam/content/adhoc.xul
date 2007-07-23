@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/main/main.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dataforms/dataforms.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+
+<wizard id="adhoc" windowtype="ot:adhoc" title="_('Ad-Hoc Commands')"
+    onwizardfinish="return true" onwizardcancel="return onWizardCancel()"
+    onwizardnext="return onWizardNext()" onwizardback="return onWizardBack()"
+    persist="width height" width="600" height="500"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var contact = window.arguments[0];
+    var generateXULFromDataForm = window.opener.generateXULFromDataForm;
+    var buildResponseDataFormFromXUL = window.opener.buildResponseDataFormFromXUL;
+
+    var initialized = false;
+    var sessionid, id, form, canGoBack, canGoForward;
+
+    function onWizardCancel()
+    {
+      if (sessionid)
+        sendFormResults("cancel", sessionid, null);
+      return true;
+    }
+
+    function onWizardNext() {
+      var wizard = document.documentElement;
+      wizard.canAdvance = false;
+
+      if (!initialized) {
+        var di = new window.opener.DiscoItem(contact.jid, null, "http://jabber.org/protocol/commands");
+        di.getDiscoItems(true, onDiscoItems);
+        initialized = true;
+
+        return true;
+      }
+
+      var currentPage = wizard.wizardPages[wizard.pageIndex+1];
+      var deck = currentPage.firstChild;
+
+      if (!sessionid)
+        canGoForward = true;
+
+      deck.selectedIndex = 0;
+
+      var p = deck.childNodes[1];
+      while (p.firstChild)
+        p.removeChild(p.firstChild);
+
+      if (canGoForward) {
+        if (wizard.pageIndex+2 == wizard.pageCount) {
+          var newPage = currentPage.cloneNode(true);
+          newPage.setAttribute("pageid", "page"+wizard.pageCount);
+          newPage.pageIndex = wizard.pageCount;
+          currentPage.parentNode.appendChild(newPage);
+          wizard.pageCount++;
+        }
+      } else {
+        while (currentPage.nextSibling) {
+          currentPage.parentNode.removeChild(currentPage.nextSibling);
+          wizard.pageCount--;
+        }
+      }
+
+      if (sessionid)
+        sendFormResults(canGoForward ? null : "execute", sessionid, form)
+      else
+        sendFormResults("execute", null, null);
+
+      return true;
+    }
+
+    function onWizardBack()
+    {
+      if (!canGoBack) {
+        onWizardCancel();
+        document.documentElement.goTo("first");
+        return false;
+      }
+      var deck = wizard.wizardPages[wizard.pageIndex-1].firstChild;
+      deck.selectedIndex = 0;
+
+      var p = deck.childNodes[1];
+      while (p.firstChild)
+        p.removeChild(p.firstChild);
+
+      sendFormResults("prev", sessionid, null)
+    }
+
+    function sendFormResults(action, sessionid, form)
+    {
+      var command = document.getElementById("commands").value;
+      var response = <command xmlns="http://jabber.org/protocol/commands" node={command}/>
+
+      if (action)
+        response.@action = action;
+      if (sessionid)
+        response.@sessionid = sessionid;
+      if (form)
+        response.* += buildResponseDataFormFromXUL(form);
+
+      var iq = new window.opener.JSJaCIQ();
+      iq.setIQ(contact.jid, null, "set", id);
+      iq.getNode().appendChild(window.opener.E4XtoDOM(response, iq.getDoc()))
+      window.opener.con.send(iq, onForm);
+    }
+
+    function onDiscoItems(di, items) {
+      var cmds = document.getElementById("commands");
+
+      for (var i = 0; i < items.length; i++) {
+        var el = document.createElement("radio");
+        el.setAttribute("label", items[i].discoName);
+        el.setAttribute("value", items[i].discoNode);
+        cmds.appendChild(el);
+      }
+      if (items.length == 0) {
+        var wizard = document.documentElement;
+        document.getElementById("noCommands").hidden = false;
+        wizard.pageCount = 1;
+        wizard.pageIndex = 0;
+      }
+      cmds.selectedIndex = 0;
+      document.documentElement.canAdvance = true;
+      document.getElementById("main-deck").selectedIndex = 1;
+    }
+
+    function onForm(pkt)
+    {
+      var wizard = document.documentElement;
+      var cp = wizard.currentPage;
+      var c = cp.firstChild.childNodes[1];
+
+      if (pkt.getType() != "result") {
+        cp.firstChild.childNodes[1].appendChild(document.createElement("label")).
+          setAttribute("label", "Error!");
+        sessionid = null;
+        cp.firstChild.selectedIndex = 1;
+        return;
+      }
+
+      var cmd = window.opener.DOMtoE4X(pkt.getNode().getElementsByTagName("command")[0]);
+      sessionid = cmd.@sessionid.toString();
+      id = pkt.getID();
+
+      const xns = new Namespace("jabber:x:data");
+      const cns = new Namespace("http://jabber.org/protocol/commands");
+
+      for each (var note in cmd.cns::note)
+        c.appendChild(document.createElement("description")).textContent = note.text();
+
+      c.appendChild(form = generateXULFromDataForm(cmd..xns::x, document));
+
+      wizard.canAdvance = true;
+      if (cmd.@status == "completed")
+        wizard.canRewind = false;
+
+      canGoBack = cmd.cns::actions.cns::prev.length();
+      canGoForward = cmd.cns::actions.cns::next.length();
+
+      cp.firstChild.selectedIndex = 1;
+    }
+  ]]></script>
+
+  <wizardpage onpageshow="sessionid=null" pageid="first">
+    <deck id="main-deck">
+      <vbox>
+        <label value="_('Requesting remote commands descriptions')"/>
+        <spacer/>
+        <progressmeter mode="undetermined"/>
+      </vbox>
+      <vbox>
+        <radiogroup id="commands">
+          <caption label="_('List of available commands:')"/>
+        </radiogroup>
+        <label id="noCommands" style="font-weight: bold; margin: 1em 2em"
+               value="_('No commands available')" hidden="true"/>
+      </vbox>
+    </deck>
+  </wizardpage>
+
+  <wizardpage pageid="page1">
+    <deck>
+      <vbox>
+        <label value="_('Requesting command form')"/>
+        <spacer/>
+        <progressmeter mode="undetermined"/>
+      </vbox>
+      <vbox/>
+    </deck>
+  </wizardpage>
+</wizard>

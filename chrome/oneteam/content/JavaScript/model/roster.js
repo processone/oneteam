@@ -426,6 +426,12 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
                        "resizable=no,chrome,dialog", this);
     },
 
+    onAdHocCommand: function()
+    {
+        if (this.activeResource)
+            this.activeResource.onAdHocCommand();
+    },
+
     onSendFile: function()
     {
 // #ifdef XULAPP
@@ -718,6 +724,12 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
         soundsPlayer.playSound("message2");
         chatPane.addMessage(new Message(packet, null, this), packet.getThread());
+    },
+
+    onAdHocCommand: function()
+    {
+        openDialogUniq("ot:adhoc", "chrome://oneteam/content/adhoc.xul",
+                       "resizable=no,chrome,dialog", this);
     },
 
     onShowHistory: function()

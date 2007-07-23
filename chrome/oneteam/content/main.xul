@@ -69,6 +69,8 @@
       var cm = document.getElementById("contact-chat-multi");
       var im = document.getElementById("contact-invite");
       var sf = document.getElementById("contact-send-file");
+      var ah = document.getElementById("contact-adhoc");
+      var ahm = document.getElementById("contact-adhoc-multi");
 
       sf.hidden = !menu.model.activeResource || !socks5Service.canSendTo(menu.model.activeResource);
 
@@ -101,6 +103,29 @@
           item.setAttribute("oncommand", "this.model.invite(this.contact)");
           item.model = account.conferences[i];
           item.contact = menu.model.jid;
+          list.appendChild(item);
+        }
+      }
+
+      var ahr = [];
+      for (var res in menu.model.resourcesIterator()) {
+        if (res.hasDiscoFeature("http://jabber.org/protocol/commands", function(){}))
+          ahr.push(res);
+      }
+      ah.hidden = ahr.length != 1 || ahr[0] != menu.model.activeResource;
+      ahm.hidden = !ah.hidden || ahr.length == 0;
+      if (!ahm.hidden) {
+        list = ahm;
+        while (list && list.firstChild)
+          list.removeChild(list.firstChild);
+        for (i = 0; i < ahr.length; i++) {
+          var item = document.createElement("menuitem");
+          item.model = ahr[i];
+
+          item.setAttribute("label", _("{0} ({1})", ahr[i].jid.resource,
+                                       ahr[i].presence.priority || 0));
+          item.setAttribute("oncommand", "this.model.onAdHocCommand()");
+
           list.appendChild(item);
         }
       }
@@ -729,7 +754,11 @@
       <menuseparator/>
 
       <menuitem label="_('Information...')" oncommand="this.parentNode.model.showVCard()"/>
-      <menuitem label="Show History..."
+      <menuitem id="contact-adhoc" label="_('Execute Command...')" oncommand="this.parentNode.model.onAdHocCommand()"/>
+      <menu id="contact-adhoc-multi" label="_('Execute Command...')" hidden="true">
+        <menupopup/>
+      </menu>
+      <menuitem label="_('Show History...')"
         oncommand="this.parentNode.model.onShowHistory()"/>
       <menuitem id="contact-send-file" label="_('Send file...')"
         oncommand="this.parentNode.model.onSendFile()"/>
