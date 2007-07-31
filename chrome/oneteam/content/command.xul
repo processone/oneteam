@@ -249,6 +249,7 @@
   }
 
   function evalInWindow(expr, win) {
+    var val;
     try {
       win.__CONSOLE_ARGS__ = { scope: {dump: dump, dumps: dumps}, expr: expr };
 
@@ -256,7 +257,7 @@
         "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", win);
       return {result: val};
     } catch (ex) {
-      return {exception: val}
+      return {exception: ex}
     }
   }
 
