@@ -98,6 +98,12 @@
             this._msgs = null;
             for (var i = 0; i < msgs.length; i++)
               this.addMessage(msgs[i]);
+
+            var doc = this._output.contentDocument;
+
+            this._output.contentWindow.addEventListener("resize", function() {
+              doc.body.scrollTop = doc.body.scrollHeight;
+            }, false);
           ]]>
         </body>
       </method>
@@ -409,50 +415,6 @@
 
         if (this._input._loaded && !this._initialized)
           this._init();
-
-        var me = this;
-        this._input.addEventListener("keypress", function (event) {
-          if (event.keyCode == KeyEvent.DOM_VK_TAB) {
-            event.preventDefault();
-
-            var selection = this._input.contentWindow.getSelection();
-            var range = this._input.contentDocument.createRange();
-
-            range.setStart(this._input.contentDocument.body, 0);
-            range.setEnd(selection.anchorNode, selection.anchorOffset);
-
-            var res = me._tryCompletion(range.toString(), event.shiftKey);
-            if (res != null) {
-              range.deleteContent();
-              range.insertNode(this._input.contentDocument.createTextNode(res[0]));
-            }
-            return;
-          }
-
-          var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
-          if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
-              !event.shiftKey && !event.altKey && !event.ctrlKey &&
-              !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
-            if (me._handleHistoryKey(upKey))
-              return false;
-
-          var inputValue;
-          if (event.keyCode == KeyEvent.DOM_VK_RETURN)
-            if ((inputValue = me._send(!event.shiftKey)) != null) {
-              if (inputValue) {
-                if (!me._history.length || me._history[me._history.length-1][0] != inputValue)
-                  me._history.push([inputValue, me._input.selectionEnd]);
-                me._historyPosition = me._history.length;
-              }
-
-              event.stopPropagation();
-              event.preventDefault();
-
-              me.clear();
-            } else
-              return false;
-          return true;
-        }, true);
       ]]></constructor>
 
       <method name="_init">
@@ -468,6 +430,52 @@
           doc.body.bgColor = "#ffffff";
 
           window.addEventListener("resize", function(){ me._maybeResize() }, false);
+
+          doc.addEventListener("keypress", function (event) {
+            try{
+            if (event.keyCode == KeyEvent.DOM_VK_TAB) {
+              event.preventDefault();
+
+              var selection = me._input.contentWindow.getSelection();
+              var range = me._input.contentDocument.createRange();
+
+              range.setStart(me._input.contentDocument.body, 0);
+              range.setEnd(selection.anchorNode, selection.anchorOffset);
+
+              var res = me._tryCompletion(range.toString(), event.shiftKey);
+              if (res != null) {
+                range.deleteContents();
+                range.insertNode(me._input.contentDocument.createTextNode(res));
+              }
+              range.detach();
+              return;
+            }
+
+            var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
+            if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
+                !event.shiftKey && !event.altKey && !event.ctrlKey &&
+                !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
+              if (me._handleHistoryKey(upKey))
+                return false;
+
+            var inputValue;
+            if (event.keyCode == KeyEvent.DOM_VK_RETURN)
+              if ((inputValue = me._send(!event.shiftKey)) != null) {
+                if (inputValue) {
+                  if (!me._history.length || me._history[me._history.length-1][0] != inputValue)
+                    me._history.push([inputValue, me._input.selectionEnd]);
+                  me._historyPosition = me._history.length;
+                }
+
+                event.stopPropagation();
+                event.preventDefault();
+
+                me.clear();
+              } else
+                return false;
+            return true;
+            }catch(ex){alert(ex)}
+          }, true);
 
           for each (var event in "keypress keyup keydown click mousedown mouseup dragdrop".split(" ")) {
             doc.addEventListener(event, function(event){
