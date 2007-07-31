@@ -382,7 +382,8 @@
 
     <content>
       <xul:vbox flex="1">
-        <html:iframe id="_input" style="height: 2em" onload="this.parentNode.parentNode._init()"/>
+        <html:iframe id="_input" style="height: 1.2em" onload="this._loaded = 1;
+          try{this.parentNode.parentNode._init()}catch(ex){}"/>
       </xul:vbox>
     </content>
 
@@ -405,6 +406,9 @@
 
         this._history = [];
         this._historyPosition = 0;
+
+        if (this._input._loaded && !this._initialized)
+          this._init();
 
         var me = this;
         this._input.addEventListener("keypress", function (event) {
@@ -456,6 +460,8 @@
           var me = this;
           var doc = this._input.contentDocument;
           var win = this._input.contentWindow;
+
+          this._initialized = true;
 
           doc.designMode = "on";
           doc.body.style.margin = "0"
