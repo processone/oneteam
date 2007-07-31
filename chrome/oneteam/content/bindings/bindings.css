@@ -16,6 +16,10 @@ textbox[type="resizable-richtext"] {
   -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#resizable-richtextbox");
 }
 
+toolbar[type="chatpane-commands"] {
+  -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#chatpane-toolbar");
+}
+
 chatpane-view {
   -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#chatpane-view");
 }

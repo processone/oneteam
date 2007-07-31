@@ -377,7 +377,8 @@
             this._chatStateTimeout = setTimeout(function(me){ me.chatState = "inactive" }, 30000, this);
 
           if (!this._chatStatePreventMessage && oldState != this._chatState)
-            this.contact.sendMessage(null, this._chatpane.getThread().threadID, this._chatState);
+            this.contact.sendMessage(new Message(null, null, null, 0, null, this._chatpane.getThread()),
+                                     this._chatState);
         ]]></setter>
       </property>
 

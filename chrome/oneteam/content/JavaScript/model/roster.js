@@ -283,15 +283,13 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
                 yield (this.resources[i]);
     },
 
-    sendMessage: function(body, thread, state)
+    sendMessage: function(msg, state)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("chat");
-        if (body != null)
-            message.setBody(body)
-        if (thread)
-            message.setThread(thread);
+        if (msg)
+            msg.fillPacket(message);
 
         message.getNode().appendChild(message.getDoc().
             createElementNS("http://jabber.org/protocol/chatstates", state || "active"));
@@ -679,15 +677,13 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         delete account.resources[this.jid.normalizedJID];
     },
 
-    sendMessage: function(body, thread, state)
+    sendMessage: function(msg, state)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("chat");
-        if (body != null)
-            message.setBody(body)
-        if (thread)
-            message.setThread(thread);
+        if (msg)
+            msg.fillPacket(message);
 
         message.getNode().appendChild(message.getDoc().
             createElementNS("http://jabber.org/protocol/chatstates", state || "active"));

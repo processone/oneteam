@@ -372,7 +372,7 @@
           setTimeout(function (popup, button) {
             popup.showPopup(button, -1, -1, "popup", "bottomleft", "topleft");
           }, 0, this._colorpicker, event.originalTarget);
-        } else {
+        } else if (cmd) {
           this._textbox._input.contentDocument.execCommand(cmd, false, null);
           this._textbox._maybeResize();
         }
@@ -404,7 +404,7 @@
         if (!el)
           el = this.parentNode.previousSibling;
 
-        if (el && el.localName == "toolbar" && el.getAttribute("type") == "richtext-commands")
+        if (el && el.localName == "toolbar" && el.getAttribute("type") == "chatpane-commands")
           this._toolbar = el;
 
         setTimeout(function(body) { body.style.margin = "0"; }, 0,
@@ -459,7 +459,7 @@
                 return false;
 
             var inputValue;
-            if (event.keyCode == KeyEvent.DOM_VK_RETURN)
+            if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
               if ((inputValue = me._send(!event.shiftKey)) != null) {
                 if (inputValue) {
                   if (!me._history.length || me._history[me._history.length-1][0] != inputValue)
@@ -473,6 +473,7 @@
                 me.clear();
               } else
                 return false;
+            }
             return true;
             }catch(ex){alert(ex)}
           }, true);
@@ -502,7 +503,8 @@
 
       <method name="clear">
         <body><![CDATA[
-          this._input.value = "";
+          this._input.contentDocument.execCommand("selectAll", false, null);
+          this._input.contentDocument.execCommand("delete", false, null);
           this._maybeResize();
         ]]></body>
       </method>
@@ -522,7 +524,7 @@
       <method name="_send">
         <parameter name="withEnter"/>
         <body><![CDATA[
-          return withEnter ? null : this._input.value.replace(/\n$/, '');
+          return withEnter ? null : this._input.value;
         ]]></body>
       </method>
 
@@ -587,6 +589,7 @@
             this._input.contentDocument.body.style.overflow = "hidden";
 
           this._input.style.height = h + "px";
+          this._input.parentNode.style.height = (h+4) + "px";
 
           this._postMaybeResize();
         ]]></body>
@@ -644,6 +647,41 @@
     </implementation>
   </binding>
 
+  <binding id="chatpane-toolbar" extends="chatpane.xml#richtext-toolbar">
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://oneteam/skin/chatpane/textbox.css"/>
+    </resources>
+
+    <content tbalign="center">
+      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold"/>
+      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic"/>
+      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline"/>
+      <xul:toolbarseparator/>
+      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize"/>
+      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize"/>
+      <xul:toolbarseparator/>
+      <xul:toolbarbutton id="fontColorButton" cmd="foreColor"/>
+      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor"/>
+      <xul:toolbarseparator/>
+      <xul:toolbarbutton id="smilesList" type="smiles-list"/>
+
+      <xul:popupset>
+        <xul:popup id="colorpicker">
+          <xul:colorpicker allowevents="true"/>
+        </xul:popup>
+      </xul:popupset>
+    </content>
+    <handlers>
+      <handler event="selectedSmile">
+        <![CDATA[
+          if (this._textbox)
+            this._textbox._append(event.originalTarget.selectedSmile.texts[0]);
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+
   <binding id="chatpane">
 
     <resources>
@@ -657,10 +695,7 @@
 
         <xul:chatpane-view id="output-pane" flex="1"/>
 
-        <xul:toolbar type="richtext-commands">
-          <xul:toolbarseparator/>
-          <xul:toolbarbutton id="smilesList" type="smiles-list"/>
-        </xul:toolbar>
+        <xul:toolbar type="chatpane-commands"/>
 
         <xul:hbox align="center">
           <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true"/>
@@ -670,9 +705,6 @@
     </content>
 
     <implementation>
-
-      <property name="content" readonly="true"
-        onget="return this._input.value.replace(/\n$/, '')" />
 
       <property name="hasSubject"
         onset="this._subject.parentNode.hidden = !val; return val"
@@ -811,8 +843,10 @@
           if (!this.sendOnEnter || !withEnter)
             return null;
 
-          if (~this.content.search(/\S/)) {
-            if (!this.completionEngine || !this.completionEngine.execCommand(this._input)) {
+          var text = this._input.value.textContent;
+
+          if (~text.search(/\S/)) {
+            if (!this.completionEngine || !this.completionEngine.execCommand(text)) {
               var ev = document.createEvent("Events");
               ev.initEvent("chat-send", true, false);
               this.dispatchEvent(ev);
@@ -820,18 +854,25 @@
               if (this.userTypingHandler)
                 this.userTypingHandler(-1);
 
-              var body = this.content;
-              if (!(this._model instanceof Conference)) {
-                var myResource = this._model instanceof ConferenceMember ?
-                  this._model.contact.myResource : account.myResource;
-                this.addMessage(new Message(body, null, myResource, 0));
-              }
-
               if (!this._thread)
                 this._thread = new MessageThread();
 
-              this._model.sendMessage(body, this._thread.threadID);
-              return this.content;
+              var body = this._input.value;
+              if (body.lastChild.localName == "BR")
+                body.removeChild(body.lastChild);
+
+              var myResource = this._model instanceof ConferenceMember ?
+                this._model.contact.myResource : account.myResource;
+
+              var msg = new Message(null, body, myResource, 0,
+                                    null, this._thread)
+
+              if (!(this._model instanceof Conference))
+                this.addMessage(msg);
+
+              this._model.sendMessage(msg);
+
+              return msg.html;
             }
           }
           return "";
@@ -840,18 +881,6 @@
     </implementation>
 
     <handlers>
-      <handler event="selectedSmile">
-        <![CDATA[
-          var pos = this._input.selectionStart;
-
-          this._input.value = this._input.value.substr(0, pos)+
-            this._smilesList.selectedSmile.texts[0] +
-            this._input.value.substr(this._input.selectionEnd);
-
-          this._input.selectionStart = this._input.selectionEnd =
-            pos + this._smilesList.selectedSmile.texts[0].length;
-        ]]>
-      </handler>
       <handler event="smilesToggle">
         <![CDATA[
           var enabled = this._contactInfo.parentNode.getAttribute("smiles-enabled") != "true"

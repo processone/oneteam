@@ -299,15 +299,15 @@ _DECL_(Conference, Contact).prototype =
         this.joinRoom(null, newNick);
     },
 
-    sendMessage: function(body)
+    sendMessage: function(msg)
     {
-        if (body == null)
+        if (!msg)
             return;
 
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("groupchat");
-        message.setBody(body)
+        msg.fillPacket(message);
 
         con.send(message);
     },
