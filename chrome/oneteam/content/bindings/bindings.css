@@ -5,7 +5,7 @@ chatpane {
 }
 
 textbox[type="resizable"] {
-  -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#resizable-textbox");
+  -moz-binding: url("chrome://oneteam/content/bindings/resizabletextbox.xml#resizable-textbox");
 }
 
 chatpane-view {
