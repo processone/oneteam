@@ -260,6 +260,375 @@
     </implementation>
   </binding>
 
+  <binding id="richtext-toolbar" extends="chrome://global/content/bindings/toolbar.xml#toolbar">
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://oneteam/skin/chatpane/textbox.css"/>
+    </resources>
+
+    <content tbalign="center">
+      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold"/>
+      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic"/>
+      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline"/>
+      <xul:toolbarseparator/>
+      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize"/>
+      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize"/>
+      <xul:toolbarseparator/>
+      <xul:toolbarbutton id="fontColorButton" cmd="foreColor"/>
+      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor"/>
+      <children/>
+
+      <xul:popupset>
+        <xul:popup id="colorpicker">
+          <xul:colorpicker allowevents="true"/>
+        </xul:popup>
+      </xul:popupset>
+    </content>
+    <implementation>
+
+      <constructor><![CDATA[
+        this._colorpicker = document.getAnonymousElementByAttribute(this, "id", "colorpicker");
+
+        var el = this.nextSibling;
+        if (el && el.localName != "textbox")
+          el = el.firstChild;
+
+        if (el && el.localName == "textbox" && el.getAttribute("type") == "resizable-richtext")
+          this._textbox = el;
+      ]]></constructor>
+
+      <method name="_repairColor">
+        <parameter name="color"/>
+        <body>
+          <![CDATA[
+            var match;
+
+            if (!color)
+              return "#000000";
+            else if (color == "transparent")
+              return "#ffffff";
+            if (match = color.match(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/))
+              return "#"+(+match[1]+256).toString(16).substr(1)+
+                         (+match[2]+256).toString(16).substr(1)+
+                         (+match[3]+256).toString(16).substr(1);
+            return color;
+          ]]>
+        </body>
+      </method>
+
+      <method name="_updateState">
+        <body><![CDATA[
+        if (!this._textbox)
+          return;
+        for each (var cmd in "bold italic underline".split(" ")) {
+          document.getAnonymousElementByAttribute(this, "cmd", cmd).checked =
+            this._textbox._input.contentDocument.queryCommandState(cmd);
+        }
+        ]]></body>
+      </method>
+    </implementation>
+
+    <handlers>
+      <handler event="popuphiding"><![CDATA[
+        if (event.originalTarget != this._colorpicker)
+          return;
+        this._colorpicker.firstChild.removeKeyListener();
+        this._colorpicker.firstChild.mIsPopup = false;
+        this._colorButtonCmd = null;
+      ]]></handler>
+
+      <handler event="select"><![CDATA[
+        if (event.originalTarget != this._colorpicker.firstChild || !this._colorButtonCmd)
+          return;
+
+        if (this._textbox)
+          this._textbox._input.contentDocument.execCommand(this._colorButtonCmd, false,
+            this._repairColor(this._colorpicker.firstChild.color));
+
+        setTimeout(function(me) { me._colorpicker.hidePopup(); }, 0, this)
+      ]]></handler>
+
+      <handler event="command"><![CDATA[
+        if (!this._textbox)
+          return;
+
+        var cmd = event.originalTarget.getAttribute("cmd");
+
+        if (cmd == "foreColor" || cmd == "hiliteColor") {
+          this._colorButtonCmd = cmd;
+
+          this._colorpicker.firstChild.color = this._repairColor(this._textbox._input.
+            contentDocument.queryCommandValue(cmd));
+
+          this._colorpicker.firstChild.addKeyListener();
+          this._colorpicker.firstChild.mIsPopup = true;
+
+          setTimeout(function (popup, button) {
+            popup.showPopup(button, -1, -1, "popup", "bottomleft", "topleft");
+          }, 0, this._colorpicker, event.originalTarget);
+        } else {
+          this._textbox._input.contentDocument.execCommand(cmd, false, null);
+          this._textbox._maybeResize();
+        }
+      ]]></handler>
+    </handlers>
+  </binding>
+
+  <binding id="resizable-richtextbox">
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://oneteam/skin/chatpane/textbox.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <html:iframe id="_input" style="height: 2em" onload="this.parentNode.parentNode._init()"/>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <property name="value" onget="return this._input.contentDocument.body"
+                onset="return this._input.contentDocument.body.innerHTML = val"/>
+
+      <constructor><![CDATA[
+        this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
+
+        var el = this.previousSibling;
+        if (!el)
+          el = this.parentNode.previousSibling;
+
+        if (el && el.localName == "toolbar" && el.getAttribute("type") == "richtext-commands")
+          this._toolbar = el;
+
+        setTimeout(function(body) { body.style.margin = "0"; }, 0,
+                   this._input.contentDocument.body);
+
+        this._history = [];
+        this._historyPosition = 0;
+
+        var me = this;
+        this._input.addEventListener("keypress", function (event) {
+          if (event.keyCode == KeyEvent.DOM_VK_TAB) {
+            event.preventDefault();
+
+            var selection = this._input.contentWindow.getSelection();
+            var range = this._input.contentDocument.createRange();
+
+            range.setStart(this._input.contentDocument.body, 0);
+            range.setEnd(selection.anchorNode, selection.anchorOffset);
+
+            var res = me._tryCompletion(range.toString(), event.shiftKey);
+            if (res != null) {
+              range.deleteContent();
+              range.insertNode(this._input.contentDocument.createTextNode(res[0]));
+            }
+            return;
+          }
+
+          var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
+          if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
+              !event.shiftKey && !event.altKey && !event.ctrlKey &&
+              !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
+            if (me._handleHistoryKey(upKey))
+              return false;
+
+          var inputValue;
+          if (event.keyCode == KeyEvent.DOM_VK_RETURN)
+            if ((inputValue = me._send(!event.shiftKey)) != null) {
+              if (inputValue) {
+                if (!me._history.length || me._history[me._history.length-1][0] != inputValue)
+                  me._history.push([inputValue, me._input.selectionEnd]);
+                me._historyPosition = me._history.length;
+              }
+
+              event.stopPropagation();
+              event.preventDefault();
+
+              me.clear();
+            } else
+              return false;
+          return true;
+        }, true);
+      ]]></constructor>
+
+      <method name="_init">
+        <body><![CDATA[
+          var me = this;
+          var doc = this._input.contentDocument;
+          var win = this._input.contentWindow;
+
+          doc.designMode = "on";
+          doc.body.style.margin = "0"
+          doc.body.bgColor = "#ffffff";
+
+          window.addEventListener("resize", function(){ me._maybeResize() }, false);
+
+          for each (var event in "keypress keyup keydown click mousedown mouseup dragdrop".split(" ")) {
+            doc.addEventListener(event, function(event){
+              if (me._toolbar)
+                me._toolbar._updateState(event);
+              me._maybeResize()
+            }, false);
+          }
+
+          win.focus();
+
+          this._maybeResize()
+
+          doc = win = null;
+        ]]></body>
+      </method>
+
+      <method name="focus">
+        <body><![CDATA[
+          setTimeout(function(el){el.focus()}, 100, this._input.contentWindow);
+        ]]></body>
+      </method>
+
+      <method name="clear">
+        <body><![CDATA[
+          this._input.value = "";
+          this._maybeResize();
+        ]]></body>
+      </method>
+
+      <method name="_append">
+        <parameter name="str"/>
+        <body><![CDATA[
+          this._input.contentDocument.execCommand("insertHTML", false, xmlEscape(str));
+        ]]></body>
+      </method>
+
+      <method name="_tryCompletion">
+        <body><![CDATA[
+        ]]></body>
+      </method>
+
+      <method name="_send">
+        <parameter name="withEnter"/>
+        <body><![CDATA[
+          return withEnter ? null : this._input.value.replace(/\n$/, '');
+        ]]></body>
+      </method>
+
+      <method name="_blink">
+        <parameter name="me"/>
+        <body><![CDATA[
+          if (this == me || !me) {
+            me = this;
+            this._blinkSteps = 20;
+            this._blinkStep = 0;
+            this._blinkSrcColors = document.defaultView.
+              getComputedStyle(this._input, "").borderTopColor.
+                replace(/[^\d,\.]/g, "").split(/,/);
+
+            var n = this._input.parentNode, c;
+            while ((c = document.defaultView.getComputedStyle(n, "").
+                    backgroundColor) == "transparent")
+              n = n.parentNode;
+            this._blinkTargetColors = c.replace(/[^\d,\.]/g, "").split(/,/);
+
+            if (this._blinkSrcColors.length != this._blinkTargetColors.length)
+              if (this._blinkSrcColors.length == 4)
+                this._blinkTargetColors.push(1);
+              else
+                this._blinkSrcColors.push(1);
+
+            if (me._blinkTimeout)
+              return;
+          }
+
+          if (me._blinkStep == me._blinkSteps) {
+            me._input.style.outline = "";
+            delete me._blinkTimeout;
+            return;
+          }
+
+          var color = [];
+          for (var i = 0; i < me._blinkSrcColors.length; i++)
+            color[i] = Math.round((
+              me._blinkSrcColors[i]*(me._blinkSteps-me._blinkStep)+
+              me._blinkTargetColors[i]*me._blinkStep)/me._blinkSteps);
+          me._input.style.outline = "3px solid "+
+            (color.length == 3 ? "rgb(" : "rgba(") + color.join(",")+")";
+          me._blinkStep++;
+          me._blinkTimeout = window.setTimeout(me._blink, 20, me);
+        ]]></body>
+      </method>
+
+      <method name="_maybeResize">
+        <body><![CDATA[
+          this._preMaybeResize();
+
+          var h = this._input.contentDocument.body.parentNode.offsetHeight + 2;
+
+          if (h < 10)
+            h = 10;
+
+          if (h > 0.3*window.innerHeight) {
+            this._input.contentDocument.body.style.overflow = "visible"
+            h = 0.3*window.innerHeight;
+          } else
+            this._input.contentDocument.body.style.overflow = "hidden";
+
+          this._input.style.height = h + "px";
+
+          this._postMaybeResize();
+        ]]></body>
+      </method>
+
+      <method name="_preMaybeResize">
+        <body> </body>
+      </method>
+
+      <method name="_postMaybeResize">
+        <body> </body>
+      </method>
+
+      <method name="_handleHistoryKey">
+        <parameter name="up"/>
+        <body><![CDATA[
+          var histPos = this._historyPosition + (up ? -1 : 1);
+
+          if (histPos < 0 || histPos > this._history.length)
+            return false;
+
+          var height = this._inputClone.inputField.scrollHeight;
+          var cursPos = this._input.selectionStart;
+
+          if (up)
+            this._inputClone.value = this._inputClone.value.substr(cursPos);
+          else
+            this._inputClone.value = this._inputClone.value.substr(0, cursPos);
+
+          var newHeight = this._inputClone.inputField.scrollHeight;
+          if (newHeight < height-4 || newHeight > height+4) {
+            this._inputClone.value = this._input.value;
+            return false;
+          }
+
+          if (this._historyPosition < this._history.length &&
+              this._history[this._historyPosition][0] != this._input.value)
+            this._history[this._historyPosition] =
+              [this._input.value, this._input.selectionStart];
+
+          if (histPos >= this._history.length) {
+            this._input.value = "";
+          } else {
+            this._input.value = this._history[histPos][0];
+            window.setTimeout(function(i, p){i.selectionStart = i.selectionEnd = p},
+                              0, this._input, this._history[histPos][1]);
+          }
+
+          this._historyPosition = histPos;
+          this._maybeResize();
+
+          return true;
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
   <binding id="chatpane">
 
     <resources>
@@ -273,14 +642,13 @@
 
         <xul:chatpane-view id="output-pane" flex="1"/>
 
-        <xul:toolbox class="toolbox-top">
-          <xul:toolbar tbalign="center">
-            <xul:toolbarbutton id="smilesList" type="smiles-list"/>
-          </xul:toolbar>
-        </xul:toolbox>
+        <xul:toolbar type="richtext-commands">
+          <xul:toolbarseparator/>
+          <xul:toolbarbutton id="smilesList" type="smiles-list"/>
+        </xul:toolbar>
 
         <xul:hbox align="center">
-          <xul:textbox type="resizable" id="input" flex="1" multiline="true"/>
+          <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true"/>
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
         </xul:hbox>
       </xul:vbox>
@@ -349,7 +717,7 @@
           }
           me._output._output.contentWindow.addEventListener("keypress", function(event) {
             if (event.charCode && !event.ctrlKey && !event.altKey) {
-              me._input.value += String.fromCharCode(event.charCode);
+              me._input._append(String.fromCharCode(event.charCode));
               me.focus();
             }
           }, false);

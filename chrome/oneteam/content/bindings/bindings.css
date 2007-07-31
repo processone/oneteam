@@ -8,6 +8,14 @@ textbox[type="resizable"] {
   -moz-binding: url("chrome://oneteam/content/bindings/resizabletextbox.xml#resizable-textbox");
 }
 
+toolbar[type="richtext-commands"] {
+  -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#richtext-toolbar");
+}
+
+textbox[type="resizable-richtext"] {
+  -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#resizable-richtextbox");
+}
+
 chatpane-view {
   -moz-binding: url("chrome://oneteam/content/bindings/chatpane.xml#chatpane-view");
 }

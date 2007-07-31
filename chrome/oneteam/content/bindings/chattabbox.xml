@@ -469,7 +469,7 @@
       <method name="_appendToInput">
         <parameter name="str"/>
         <body><![CDATA[
-          this._chatpane._input.value += str;
+          this._chatpane._input._append(str);
         ]]></body>
       </method>
 

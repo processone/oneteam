@@ -6,3 +6,31 @@
   height: 1.5em;
 }
 
+#boldButton {
+    list-style-image: url(imgs/text-style-bold.png);
+}
+
+#italicButton {
+    list-style-image: url(imgs/text-style-italic.png);
+}
+
+#underlineButton {
+    list-style-image: url(imgs/text-style-underline.png);
+}
+
+#smallerFontButton {
+    list-style-image: url(imgs/text-size-smaller.png);
+}
+
+#biggerFontButton {
+    list-style-image: url(imgs/text-size-bigger.png);
+}
+
+#fontColorButton {
+    list-style-image: url(imgs/text-font-color.png);
+}
+
+#fontBackgroundButton {
+    list-style-image: url(imgs/text-font-background.png);
+}
+
