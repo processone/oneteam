@@ -179,10 +179,8 @@ function CompletionEngine(enginesList)
 
 _DECL_(CompletionEngine).prototype =
 {
-    complete: function(control)
+    complete: function(str)
     {
-        var cursPos = control.selectionStart;
-        var str = control.value.substr(0, cursPos);
         var lineStartIdx = str.lastIndexOf("\n")+1;
         var nextEngine, res;
 
@@ -217,18 +215,13 @@ _DECL_(CompletionEngine).prototype =
             if (nextEngine)
                 this.engineIdx = (this.engineIdx+1) % this.engines.length;
 
-            control.value = control.value.substr(0, lineStartIdx) +
-                this.lastMatch + control.value.substr(control.selectionEnd);
-            control.setSelectionRange(lineStartIdx + this.lastMatch.length,
-                                      lineStartIdx + this.lastMatch.length);
-            return true;
+            return this.lastMatch;
         }
-        return false;
+        return null;
     },
 
-    execCommand: function(control)
+    execCommand: function(str)
     {
-        var str = control.value;
         for (var i = 0; i < this.enginesList.length; i++)
             if (this.enginesList[i].execCommand(str))
                 return true;

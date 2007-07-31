@@ -495,7 +495,8 @@
 
       <method name="focus">
         <body><![CDATA[
-          setTimeout(function(el){el.focus()}, 100, this._input.contentWindow);
+          if (this._input)
+            setTimeout(function(el){el.focus()}, 100, this._input.contentWindow);
         ]]></body>
       </method>
 
@@ -533,7 +534,7 @@
             this._blinkSteps = 20;
             this._blinkStep = 0;
             this._blinkSrcColors = document.defaultView.
-              getComputedStyle(this._input, "").borderTopColor.
+              getComputedStyle(this, "").borderTopColor.
                 replace(/[^\d,\.]/g, "").split(/,/);
 
             var n = this._input.parentNode, c;
@@ -563,7 +564,7 @@
             color[i] = Math.round((
               me._blinkSrcColors[i]*(me._blinkSteps-me._blinkStep)+
               me._blinkTargetColors[i]*me._blinkStep)/me._blinkSteps);
-          me._input.style.outline = "3px solid "+
+          me.style.outline = "3px solid "+
             (color.length == 3 ? "rgb(" : "rgba(") + color.join(",")+")";
           me._blinkStep++;
           me._blinkTimeout = window.setTimeout(me._blink, 20, me);
@@ -574,7 +575,7 @@
         <body><![CDATA[
           this._preMaybeResize();
 
-          var h = this._input.contentDocument.body.parentNode.offsetHeight + 2;
+          var h = this._input.contentDocument.body.parentNode.offsetHeight;
 
           if (h < 10)
             h = 10;
@@ -779,9 +780,14 @@
       </method>
 
       <method name="_tryCompletion">
+        <parameter name="str"/>
         <body><![CDATA[
-          if (this.completionEngine && !this.completionEngine.complete(this._input._input))
+          if (!this.completionEngine)
+            return;
+          var res = this.completionEngine.complete(str);
+          if (res == null)
             this._input._blink();
+          return res;
         ]]></body>
       </method>
 
