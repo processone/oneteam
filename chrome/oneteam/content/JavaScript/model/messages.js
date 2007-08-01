@@ -111,7 +111,7 @@ _DECL_(Message).prototype =
             this._html = this.html ? this.html : this._processUrls(this.text);
 
             if (this.text.indexOf("/me ") == 0)
-                this._html = this._html.replace(/\/me\s/, "<b>* "+xmlEscape(this.nick)+"</b>");
+                this._html = this._html.replace(/\/me\s/, "<b>* "+xmlEscape(this.nick)+"</b> ");
         }
 
         return this._html;
