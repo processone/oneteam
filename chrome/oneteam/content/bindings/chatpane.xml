@@ -455,15 +455,18 @@
             if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
                 !event.shiftKey && !event.altKey && !event.ctrlKey &&
                 !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
-              if (me._handleHistoryKey(upKey))
+              if (me._handleHistoryKey(upKey)) {
+                event.preventDefault();
+                event.stopPropagation();
                 return false;
+              }
 
             var inputValue;
             if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
               if ((inputValue = me._send(!event.shiftKey)) != null) {
                 if (inputValue) {
-                  if (!me._history.length || me._history[me._history.length-1][0] != inputValue)
-                    me._history.push([inputValue, me._input.selectionEnd]);
+                  if (!me._history.length || me._history[me._history.length-1] != inputValue)
+                    me._history.push(inputValue);
                   me._historyPosition = me._history.length;
                 }
 
@@ -611,37 +614,59 @@
           if (histPos < 0 || histPos > this._history.length)
             return false;
 
-          var height = this._inputClone.inputField.scrollHeight;
-          var cursPos = this._input.selectionStart;
+          var selection = this._input.contentWindow.getSelection();
+          var range = this._input.contentDocument.createRange();
 
-          if (up)
-            this._inputClone.value = this._inputClone.value.substr(cursPos);
-          else
-            this._inputClone.value = this._inputClone.value.substr(0, cursPos);
-
-          var newHeight = this._inputClone.inputField.scrollHeight;
-          if (newHeight < height-4 || newHeight > height+4) {
-            this._inputClone.value = this._input.value;
-            return false;
+          if (up) {
+            range.setStart(this._input.contentDocument.body, 0);
+            range.setEnd(selection.anchorNode, selection.anchorOffset);
+          } else {
+            range.setStart(selection.focusNode, selection.focusOffset);
+            range.setEndAfter(this._input.contentDocument.body);
           }
 
-          if (this._historyPosition < this._history.length &&
-              this._history[this._historyPosition][0] != this._input.value)
-            this._history[this._historyPosition] =
-              [this._input.value, this._input.selectionStart];
+          var val = this.value.innerHTML.replace(/<br>$/, "");
+          var rangeContent = this._rangeContent(range)
 
-          if (histPos >= this._history.length) {
-            this._input.value = "";
-          } else {
-            this._input.value = this._history[histPos][0];
-            window.setTimeout(function(i, p){i.selectionStart = i.selectionEnd = p},
-                              0, this._input, this._history[histPos][1]);
+          if (rangeContent && rangeContent != "\n")
+            return false;
+
+          if (this._historyPosition < this._history.length && val)
+            this._history[this._historyPosition] = val;
+
+          this.clear();
+          if (histPos < this._history.length) {
+            this._input.contentDocument.execCommand("insertHTML", false, this._history[histPos]);
+            selection = this._input.contentWindow.getSelection();
+            selection.selectAllChildren(this._input.contentDocument.body);
+            if (up)
+              selection.collapseToEnd();
+            else
+              selection.collapseToStart();
           }
 
           this._historyPosition = histPos;
           this._maybeResize();
 
           return true;
+        ]]></body>
+      </method>
+      <method name="_rangeContent">
+        <parameter name="range"/>
+        <body><![CDATA[
+          function toStr(node) {
+            if (node.nodeType == node.TEXT_NODE)
+              return node.nodeValue;
+            if (node.nodeName == "BR")
+              return "\n";
+
+            var res = "";
+            for (var i = 0; i < node.childNodes.length; i++)
+              res += arguments.callee(node.childNodes[i]);
+            return res;
+          }
+
+          return toStr(range.cloneContents());
         ]]></body>
       </method>
     </implementation>
