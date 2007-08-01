@@ -442,10 +442,10 @@
               range.setStart(me._input.contentDocument.body, 0);
               range.setEnd(selection.anchorNode, selection.anchorOffset);
 
-              var res = me._tryCompletion(range.toString(), event.shiftKey);
+              var res = me._tryCompletion(me._rangeContent(range), event.shiftKey);
               if (res != null) {
                 range.deleteContents();
-                range.insertNode(me._input.contentDocument.createTextNode(res));
+                me._input.contentDocument.execCommand("insertHTML", false, xmlEscape(res));
               }
               range.detach();
               return;
@@ -516,6 +516,25 @@
         <parameter name="str"/>
         <body><![CDATA[
           this._input.contentDocument.execCommand("insertHTML", false, xmlEscape(str));
+        ]]></body>
+      </method>
+
+      <method name="_rangeContent">
+        <parameter name="range"/>
+        <body><![CDATA[
+          function toStr(node) {
+            if (node.nodeType == node.TEXT_NODE)
+              return node.nodeValue;
+            if (node.nodeName == "BR")
+              return "\n";
+
+            var res = "";
+            for (var i = 0; i < node.childNodes.length; i++)
+              res += arguments.callee(node.childNodes[i]);
+            return res;
+          }
+
+          return toStr(range.cloneContents());
         ]]></body>
       </method>
 
@@ -626,7 +645,7 @@
           }
 
           var val = this.value.innerHTML.replace(/<br>$/, "");
-          var rangeContent = this._rangeContent(range)
+          var rangeContent = this._input._rangeContent(range)
 
           if (rangeContent && rangeContent != "\n")
             return false;
@@ -649,24 +668,6 @@
           this._maybeResize();
 
           return true;
-        ]]></body>
-      </method>
-      <method name="_rangeContent">
-        <parameter name="range"/>
-        <body><![CDATA[
-          function toStr(node) {
-            if (node.nodeType == node.TEXT_NODE)
-              return node.nodeValue;
-            if (node.nodeName == "BR")
-              return "\n";
-
-            var res = "";
-            for (var i = 0; i < node.childNodes.length; i++)
-              res += arguments.callee(node.childNodes[i]);
-            return res;
-          }
-
-          return toStr(range.cloneContents());
         ]]></body>
       </method>
     </implementation>
