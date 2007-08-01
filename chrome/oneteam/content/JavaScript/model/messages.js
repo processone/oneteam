@@ -126,10 +126,16 @@ _DECL_(Message).prototype =
         pkt.setBody(this.text);
 
         if (this.html) {
+            var dp = new DOMParser();
+            var doc = dp.parseFromString("<body xmlns='http://www.w3.org/1999/xhtml'>"+
+                                         this.sanitizedHtml+"</body>", "text/xml")
+
             var html = pkt.getDoc().createElementNS("http://jabber.org/protocol/xhtml-im", "html");
-            var body = pkt.getDoc().createElementNS("http://www.w3.org/1999/xhtml", "body");
-            html.appendChild(body);
-            body.innerHTML = this.sanitizedHtml;
+            try {
+                html.appendChild(pkt.getDoc().adoptNode(doc.documentElement));
+            } catch (ex) {
+                html.appendChild(doc.documentElement);
+            }
             pkt.getNode().appendChild(html);
         }
     },
