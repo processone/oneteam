@@ -38,9 +38,8 @@
 
   <spacer/>
 
-  <label value="('Groups:')" control="groups"/>
+  <label value="_('Groups:')" control="groups"/>
   <groupselector id="groups" rows="4"/>
 
   <spacer flex="1"/>
 </dialog>
-
