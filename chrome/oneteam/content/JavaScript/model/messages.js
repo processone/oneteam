@@ -159,8 +159,8 @@ _DECL_(Message).prototype =
     },
 
     _elementsConversions: {
-        "b"          : function(el) { return ["strong"] },
-        "i"          : function(el) { return ["em"] },
+        "b"          : function(el) { return ["strong", {}] },
+        "i"          : function(el) { return ["em", {}] },
         "u"          : function(el) { return ["span", {style: {"text-decoration": "underline"}}] },
         "big"        : function(el) { return ["span", {style: {"font-size": "larger"}}] },
         "small"      : function(el) { return ["span", {style: {"font-size": "smaller"}}] },
@@ -187,7 +187,7 @@ _DECL_(Message).prototype =
     },
 
     _processDOM: function(dom, insideLink, indent, counter, block, siblingIsBlock) {
-        var i, info, tag, nodeName, conv, attrs, skip = false;
+        var i, info, tag, nodeName, conv, attrs = {}, skip = false;
         var content = "", textContent = "", sanitizedContent = "", isBlock = false;
 
         if (dom.nodeType == dom.ELEMENT_NODE) {
@@ -203,7 +203,7 @@ _DECL_(Message).prototype =
                     var attr = dom.getAttribute(info[1][i]);
 
                     if (attr) {
-                        if (infop[1][i] == "style")
+                        if (info[1][i] == "style")
                             attrs.style = this._sanitizeCSS(attr, attrs.style);
                         else
                             attrs[info[1][i]] = attr;
@@ -296,7 +296,7 @@ _DECL_(Message).prototype =
         for (var i = 0; i < stylePairs.length; i++) {
             var stylePair = stylePairs[i].split(/\s*:\s*/);
 
-            if ((stylePair[0] in recognizedStyles) && !(stylePair[0] in res))
+            if ((stylePair[0] in this._allowedStyles) && !(stylePair[0] in res))
                 res[stylePair[0]] = stylePair[1];
         }
         return res;
