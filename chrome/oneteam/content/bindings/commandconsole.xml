@@ -1,0 +1,370 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:html="http://www.w3.org/1999/xhtml"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="console">
+    <resources>
+      <stylesheet src="chrome://global/skin"/>
+      <stylesheet href="chrome://oneteam/skin/command/command.css"/>
+      <stylesheet href="chrome://oneteam/content/bindings/bindings.css"/>
+    </resources>
+
+    <content>
+      <xul:vbox flex="1">
+        <html:iframe flex="1" id="output" onload="this.parentNode.parentNode._onLoad(this)"/>
+        <xul:textbox type="resizable" id="input" multiline="true"/>
+      </xul:vbox>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+        this._input = document.getAnonymousElementByAttribute(this, "id", "input");
+
+        this._input.focus();
+
+        var me = this;
+
+        this._input._send = function(withEnter) {
+          if (!withEnter)
+            return null;
+
+          var expr = this._input.value.replace(/\n$/, '');
+          var output = me._output.contentDocument;
+
+          var el = output.createElement("div");
+          el.setAttribute("class", "exec-unit");
+          el.innerHTML += "<div class='exec-expr'>"+me.indent(expr)+"</div>";
+
+          var val = me.evalInWindow(expr, window.opener ? window.opener : window);
+
+          if ("result" in val)
+            el.innerHTML += "<div class='exec-result'>"+me.genOutput(val.result, true)+"</div>";
+          else
+            el.innerHTML += "<div class='exec-exception'>Exception:"+
+              "<div>"+me.indent(exceptionToString(val.exception, ""))+"</div></div>";
+
+          output.body.appendChild(el);
+          output.body.scrollTop = output.body.scrollHeight;
+
+          return expr;
+        }
+
+        this._input._tryCompletion = function(prevEntry) {
+          var cursPos = me._input._input.selectionStart;
+          var suffix = me._input.value.substr(cursPos);
+          var str = me._input.value.substr(0, cursPos);
+
+          if (me._lastCompletionStr == str) {
+            me._lastCompletionIdx = (me._lastCompletionResults.length + me._lastCompletionIdx +
+                                 (prevEntry ? -1 : 1)) % me._lastCompletionResults.length;
+            me._lastCompletionStr = me._lastCompletionPrefix +
+              me._lastCompletionResults[me._lastCompletionIdx];
+            me._input.value = me._lastCompletionStr + suffix;
+            me._input.selectionStart = me._input.selectionEnd = me._lastCompletionStr.length;
+            return;
+          }
+
+          var res = me.findCompletions(str);
+          if (!res) {
+            me._input._blink();
+            me._lastCompletionStr = me._lastCompletionResults = null;
+            return;
+          }
+
+          me._lastCompletionIdx = prevEntry ? res.length-1 : 0;
+          me._lastCompletionPrefix = str.substr(0, res[0]);
+          me._lastCompletionResults = res[1];
+          me._lastCompletionStr = me._lastCompletionPrefix +
+            res[1][me._lastCompletionIdx];
+
+          me._input.value = me._lastCompletionStr + suffix;
+          me._input.selectionStart = me._input.selectionEnd = me._lastCompletionStr.length;
+        };
+
+        this._output.contentWindow.addEventListener("keypress", function(event) {
+          if (!event.charCode || event.ctrlKey || event.altKey || event.target.localName == "textbox")
+            return;
+
+          me._input.value += String.fromCharCode(event.charCode);
+          me._input.focus();
+        }, false);
+
+        this._input.addEventListener("focus", function(event) {
+          event.stopPropagation();
+        }, true);
+
+        this._input.addEventListener("keypress", function(event) {
+          event.stopPropagation();
+        }, true);
+
+        var win = window.opener ? window.opener : window;
+        win.console =  {
+          info: function(value) {
+            var output = me._output.contentDocument;
+            var el = output.createElement("div");
+            el.setAttribute("class", "exec-unit");
+            el.innerHTML += "<div class='exec-expr'>Info:</div>";
+            el.innerHTML += "<div class='exec-result'>"+me.genOutput(value, true)+"</div>";
+            output.body.appendChild(el);
+            output.body.scrollTop = output.body.scrollHeight;
+          }
+        }
+      ]]></constructor>
+
+      <destructor><![CDATA[
+        var win = window.opener ? window.opener : window;
+        delete win.console;
+      ]]></destructor>
+
+      <method name="_onLoad">
+        <parameter name="frame"/>
+        <body><![CDATA[
+          var link = frame.contentDocument.createElement("link");
+          link.setAttribute("href", document.location.href.replace(/content\/.*?$/,
+            "skin/command/content.css"));
+          link.setAttribute("rel", "stylesheet");
+
+          frame.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
+        ]]></body>
+      </method>
+
+      <method name="xmlEscape">
+        <parameter name="str"/>
+        <body><![CDATA[
+          if (str == null)
+            return "";
+
+          return str.toString().
+            replace(/&/g,"&amp;").
+            replace(/</g,"&lt;").
+            replace(/>/g,"&gt;").
+            replace(/\'/g,"&apos;").
+            replace(/\"/g,"&quot;");
+        ]]></body>
+      </method>
+
+      <method name="unescapeJS">
+        <parameter name="str"/>
+        <body><![CDATA[
+          if (str == null)
+            return "";
+          return str.toString().replace(
+            /\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
+            function(r, uni, hex, oct, nl, cr, tab, chr) {
+              var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
+              if (charCode) return String.fromCharCode(charCode);
+              if (nl) return "\n";
+              if (cr) return "\r";
+              if (tab) return "\t";
+              return chr;
+            });
+        ]]></body>
+      </method>
+
+      <method name="indent">
+        <parameter name="value"/>
+        <body><![CDATA[
+          value = this.xmlEscape(value);
+          value = value.replace(/\n(\s*)/g, function(t, a){
+            var val = "<br/>";
+            for (var i = 0; i < a.length; i++)
+              val+="&nbsp;";
+            return val;
+          });
+          return value;
+        ]]></body>
+      </method>
+
+      <method name="genOutput">
+        <parameter name="value"/>
+        <parameter name="topLevel"/>
+        <body><![CDATA[
+          switch (typeof value) {
+            case "object":
+              if (value == null)
+                return "<span class='value-object'>"+uneval(value)+"</span>";
+
+              if ("length" in value && typeof(value.length) == "number") {
+                if (!topLevel)
+                  return "<span class='value-array'>[<span class='value-continue'>...</span>]</span>";
+                var res = "<span class='value-array'>[";
+                for (var i = 0; i < value.length; i++)
+                  if (i > 8) {
+                    res += ", <span class='value-continue'>...</span>";
+                    break;
+                  } else
+                    res += (i > 0 ? ", " : "") + this.genOutput(value[i], false);
+                return res + "]</span>";
+              }
+
+              if (!topLevel)
+                return "<span class='value-object'>{<span class='value-continue'>...</span>}</span>";
+
+              var res = "<span class='value-object'>{", idx = 0;
+              for (var i in value) {
+                if (idx++ > 8) {
+                    res += ", <span class='value-continue'>...</span>";
+                    break;
+                }
+                res += (idx > 1 ? ", " : "") + this.genOutput(i)+": "+this.genOutput(value[i]);
+              }
+              return res += "}</span>";
+
+              break;
+            case "string":
+              value = topLevel ? '"'+this.indent(value)+'"' : this.xmlEscape(uneval(value));
+              return "<span class='value-string'>"+value+"</span>";
+            case "number":
+              return "<span class='value-number'>"+this.xmlEscape(uneval(value))+"</span>";
+            case "boolean":
+              return "<span class='value-boolean'>"+this.xmlEscape(uneval(value))+"</span>";
+            case "xml":
+              var pp = XML.prettyPrinting;
+              XML.prettyPrinting = topLevel;
+              value = topLevel ? this.indent(value.toXMLString()) : this.xmlEscape(value.toXMLString());
+              var val = "<span class='value-xml'>"+value+"</span>";
+              XML.prettyPrinting = pp;
+              return val;
+            case "function":
+              if (!topLevel)
+                return "<span class='value-function'>function(){<span class='value-continue'>...</span>}</span>"
+              return "<span class='value-function'>"+this.indent(uneval(value))+"</span>";
+              break;
+          }
+        ]]></body>
+      </method>
+
+      <method name="extractExpr">
+        <parameter name="str"/>
+        <body><![CDATA[
+          const pairs = {
+            "}": "{",
+            "]": "[",
+            ")": "("
+          };
+
+          var stack = [];
+          var r, s = str;
+          var idx = 0;
+
+          while ((r = s.match(/[()\[\]{}"']/))) {
+            idx += r.index+1;
+            s = s.substr(r.index+1);
+            if (r[0] == "\"" || r[0] == "'") {
+              r = s.match(r[0] == "\"" ? /(?:[^\\"]*|\\.)*"/ : /(?:[^\\']*|\\.)*'/);
+              if (!r) {
+                if (stack.length && stack[0][0] == "[" && !/\S/.test(str.substring(stack[0][1], idx-1))) {
+                  var start = stack.length ? stack[0][1] : 0;
+                  var prevStart = stack.length > 1 ? stack[1][1] : start;
+                  return [str.substr(0, prevStart), str.substring(prevStart, start-1),
+                          this.unescapeJS(str.substr(start+1))];
+                }
+                return null;
+              }
+              idx += r.index + r[0].length;
+              s = s.substr(r.index + r[0].length);
+            } else if (r[0] == "(" || r[0] == "[" || r[0] == "{") {
+              stack.unshift([r[0], idx]);
+            } else {
+              if (!stack.length || stack[0][0] != pairs[r[0]])
+                return null;
+              stack.shift();
+            }
+          }
+
+          var start = stack.length ? stack[0][1] : 0;
+
+          if ((r = str.substr(start).match(/.*[\/*=;,&^%!|+-]+/)))
+            start += r[0].length;
+          s = str.substr(start);
+
+          if ((idx = s.lastIndexOf(".")) > 0)
+            return [str.substr(0, start), s.substr(0, idx), s.substr(idx+1)];
+
+          return [str.substr(0, start), "", s];
+        ]]></body>
+      </method>
+
+      <method name="findCompletions">
+        <parameter name="str"/>
+        <body><![CDATA[
+          var val = this.extractExpr(str);
+
+          if (!val)
+            return null;
+
+          var expr = val[1];
+          var indexPrefix = val[2];
+          var prefixLength = val[0].length+val[1].length;
+
+          val = this.evalInWindow(expr || "this", window.opener ? window.opener : window);
+
+          if (val.exception || !val.result)
+            return null;
+
+          var res = [];
+
+          for (var i in val.result)
+            if (i.indexOf(indexPrefix) == 0) {
+              var word = i.search(/^[^\W\d]\w*$/) == 0;
+              if (expr)
+                res.push(word ? "."+i : "["+uneval(i)+"]");
+              else
+                res.push(word ? i : "this["+uneval(i)+"]");
+            }
+          if (!res.length)
+            return null;
+
+          return [prefixLength, res.sort()];
+        ]]></body>
+      </method>
+
+      <method name="dump">
+        <parameter name="value"/>
+        <body><![CDATA[
+          var output = this._output.contentDocument;
+          var el = output.createElement("div");
+          el.setAttribute("class", "exec-unit");
+          el.innerHTML += "<div class='exec-expr'>Dump result:</div>";
+          el.innerHTML += "<div class='exec-result'>"+this.genOutput(value, true)+"</div>";
+          output.body.appendChild(el);
+          output.body.scrollTop = output.body.scrollHeight;
+        ]]></body>
+      </method>
+
+      <method name="evalInWindow">
+        <parameter name="expr"/>
+        <parameter name="win"/>
+        <body><![CDATA[
+          var me = this;
+          try {
+            win.__CONSOLE_ARGS__ = { scope: {
+              dump: function(value) {
+                var output = me._output.contentDocument;
+                var el = output.createElement("div");
+                el.setAttribute("class", "exec-unit");
+                el.innerHTML += "<div class='exec-expr'>Dump result:</div>";
+                el.innerHTML += "<div class='exec-result'>"+me.genOutput(value, true)+"</div>";
+                output.body.appendChild(el);
+                output.body.scrollTop = output.body.scrollHeight;
+              },
+              dumps: function () {
+                var arr = [];
+                arr.push.apply(arr, arguments);
+                dump(arr);
+              }
+            }, expr: expr };
+
+            val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
+              "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", win);
+            return {result: val};
+          } catch (ex) {
+            return {exception: val}
+          }
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+</bindings>
