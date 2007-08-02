@@ -50,6 +50,7 @@ body {
 }
 
 .body {
+    display: block;
     padding: 3px 6px;
 }
 
