@@ -11,12 +11,12 @@
 
     <content>
       <xul:deck flex="1">
-        <xul:textbox id="_input" flex="1" multiline="true"
+        <xul:textbox id="_input" style="height: 1.2em;" class="inputBox" flex="1" multiline="true"
           oninput="if (this.parentNode.parentNode.userTypingHandler)
                      this.parentNode.parentNode.userTypingHandler(this.value ? 1 : 0);
                    this.parentNode.parentNode._maybeResize()"/>
         <xul:vbox flex="1">
-          <xul:textbox id="_inputClone" multiline="true"/>
+          <xul:textbox id="_inputClone" style="height: 1.2em;" class="inputBox" multiline="true"/>
         </xul:vbox>
       </xul:deck>
     </content>

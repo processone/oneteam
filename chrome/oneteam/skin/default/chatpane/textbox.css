@@ -1,9 +1,14 @@
+#_inputClone.inputBox, #_input.inputBox, .inputBox {
+  padding: 2px 2px 2px 4px !important;
+}
+
 #_input, #_inputClone {
   margin: 0 !important;
-  padding: 2px 2px 2px 4px !important;
+  padding: 0 !important;
   border: none !important;
+  min-height: 1em !important;
   -moz-appearance: none !important;
-  height: 1.5em;
+  /*height: 1.5em;*/
 }
 
 #boldButton {
@@ -33,4 +38,3 @@
 #fontBackgroundButton {
     list-style-image: url(imgs/text-font-background.png);
 }
-

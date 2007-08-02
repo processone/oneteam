@@ -387,8 +387,8 @@
     </resources>
 
     <content>
-      <xul:vbox flex="1" style="overflow: hidden">
-        <html:iframe id="_input" styles="height: 1.2em;border:1px solid red" onload="this._loaded = 1;
+      <xul:vbox flex="1" class="inputBox">
+        <html:iframe id="_input" style="height: 1em;" onload="this._loaded = 1;
           try{this.parentNode.parentNode._init()}catch(ex){}"/>
       </xul:vbox>
     </content>
@@ -608,8 +608,9 @@
 
           var h = me._input.contentDocument.body.parentNode.offsetHeight;
 
-          if (me._sizeDiff == null)
-            me._sizeDiff = me._input.parentNode.boxObject.height - h + 4;
+          if (me._sizeDiff == null) {
+            me._sizeDiff = me._input.parentNode.boxObject.height - me._input.clientHeight;
+          }
 
           if (h < 10)
             h = 10;
@@ -620,8 +621,8 @@
           } else
             me._input.contentDocument.body.style.overflow = "hidden";
 
-          me._input.style.height = h + "px";
-          me._input.parentNode.style.height = (h+me._sizeDiff) + "px";
+          me._input.style.height = (h) + "px";
+          //me._input.parentNode.style.height = (h+me._sizeDiff) + "px";
 
           me._postMaybeResize();
         ]]></body>
