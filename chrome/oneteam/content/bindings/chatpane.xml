@@ -374,7 +374,7 @@
           }, 0, this._colorpicker, event.originalTarget);
         } else if (cmd) {
           this._textbox._input.contentDocument.execCommand(cmd, false, null);
-          this._textbox._maybeResize();
+          this._textbox.maybeResize();
         }
       ]]></handler>
     </handlers>
@@ -387,8 +387,8 @@
     </resources>
 
     <content>
-      <xul:vbox flex="1">
-        <html:iframe id="_input" style="height: 1.2em" onload="this._loaded = 1;
+      <xul:vbox flex="1" style="overflow: hidden">
+        <html:iframe id="_input" styles="height: 1.2em;border:1px solid red" onload="this._loaded = 1;
           try{this.parentNode.parentNode._init()}catch(ex){}"/>
       </xul:vbox>
     </content>
@@ -429,7 +429,7 @@
           doc.body.style.margin = "0"
           doc.body.bgColor = "#ffffff";
 
-          window.addEventListener("resize", function(){ me._maybeResize() }, false);
+          window.addEventListener("resize", function(){ me.maybeResize() }, false);
 
           doc.addEventListener("keypress", function (event) {
             try{
@@ -485,13 +485,13 @@
             doc.addEventListener(event, function(event){
               if (me._toolbar)
                 me._toolbar._updateState(event);
-              me._maybeResize()
+              me.maybeResize()
             }, false);
           }
 
           win.focus();
 
-          this._maybeResize()
+          this.maybeResize()
 
           doc = win = null;
         ]]></body>
@@ -508,7 +508,7 @@
         <body><![CDATA[
           this._input.contentDocument.execCommand("selectAll", false, null);
           this._input.contentDocument.execCommand("delete", false, null);
-          this._maybeResize();
+          this.maybeResize();
         ]]></body>
       </method>
 
@@ -595,25 +595,35 @@
         ]]></body>
       </method>
 
-      <method name="_maybeResize">
+      <method name="maybeResize">
         <body><![CDATA[
-          this._preMaybeResize();
+          setTimeout(this._maybeResize, 0, this);
+        ]]></body>
+      </method>
 
-          var h = this._input.contentDocument.body.parentNode.offsetHeight;
+      <method name="_maybeResize">
+        <parameter name="me"/>
+        <body><![CDATA[
+          me._preMaybeResize();
+
+          var h = me._input.contentDocument.body.parentNode.offsetHeight;
+
+          if (me._sizeDiff == null)
+            me._sizeDiff = me._input.parentNode.boxObject.height - h + 4;
 
           if (h < 10)
             h = 10;
 
           if (h > 0.3*window.innerHeight) {
-            this._input.contentDocument.body.style.overflow = "visible"
+            me._input.contentDocument.body.style.overflow = "auto"
             h = 0.3*window.innerHeight;
           } else
-            this._input.contentDocument.body.style.overflow = "hidden";
+            me._input.contentDocument.body.style.overflow = "hidden";
 
-          this._input.style.height = h + "px";
-          this._input.parentNode.style.height = (h+4) + "px";
+          me._input.style.height = h + "px";
+          me._input.parentNode.style.height = (h+me._sizeDiff) + "px";
 
-          this._postMaybeResize();
+          me._postMaybeResize();
         ]]></body>
       </method>
 
@@ -665,7 +675,7 @@
           }
 
           this._historyPosition = histPos;
-          this._maybeResize();
+          this.maybeResize();
 
           return true;
         ]]></body>
