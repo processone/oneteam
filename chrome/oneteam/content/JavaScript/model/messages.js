@@ -267,11 +267,11 @@ _DECL_(Message).prototype =
         } else if (dom.nodeType == dom.TEXT_NODE) {
             textContent = dom.nodeValue;
             sanitizedContent = insideLink ?
-                this._processSmiles(str, {skipNL: true, skipSmiles: true}) :
-                this._processUrls(dom.nodeValue, {skipNL: true, skipSmiles: true});
+                this._processSmiles(textContent, {skipNL: true, skipSmiles: true}) :
+                this._processUrls(textContent, {skipNL: true, skipSmiles: true});
             content = insideLink ?
-                this._processSmiles(str, {skipNL: true}) :
-                this._processUrls(dom.nodeValue, {skipNL: true});
+                this._processSmiles(textContent, {skipNL: true}) :
+                this._processUrls(textContent, {skipNL: true});
             if (block || siblingIsBlock)
                 textContent = "\n"+textContent;
         }
