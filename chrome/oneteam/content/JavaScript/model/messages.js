@@ -265,7 +265,7 @@ _DECL_(Message).prototype =
                 textContent = "\n";
             }
         } else if (dom.nodeType == dom.TEXT_NODE) {
-            textContent = dom.nodeValue;
+            textContent = dom.nodeValue.replace(/\s/g, " ");
             sanitizedContent = insideLink ?
                 this._processSmiles(textContent, {skipNL: true, skipSmiles: true}) :
                 this._processUrls(textContent, {skipNL: true, skipSmiles: true});
