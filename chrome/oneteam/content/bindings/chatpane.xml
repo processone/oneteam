@@ -273,15 +273,15 @@
     </resources>
 
     <content tbalign="center">
-      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold"/>
-      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic"/>
-      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline"/>
+      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold" tooltiptext="_('Bold')"/>
+      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic" tooltiptext="_('Italic')"/>
+      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline" tooltiptext="_('Underline')"/>
       <xul:toolbarseparator/>
-      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize"/>
-      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize"/>
+      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize" tooltiptext="_('Increase font size')"/>
+      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize" tooltiptext="_('Decrease font size')"/>
       <xul:toolbarseparator/>
-      <xul:toolbarbutton id="fontColorButton" cmd="foreColor"/>
-      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor"/>
+      <xul:toolbarbutton id="fontColorButton" cmd="foreColor" tooltiptext="_('Font color')"/>
+      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor" tooltiptext="_('Background color')"/>
       <children/>
 
       <xul:popupset>
@@ -701,17 +701,18 @@
     </resources>
 
     <content tbalign="center">
-      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold"/>
-      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic"/>
-      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline"/>
+      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold" tooltiptext="_('Bold')"/>
+      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic" tooltiptext="_('Italic')"/>
+      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline" tooltiptext="_('Underline')"/>
       <xul:toolbarseparator/>
-      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize"/>
-      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize"/>
+      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize" tooltiptext="_('Increase font size')"/>
+      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize" tooltiptext="_('Decrease font size')"/>
       <xul:toolbarseparator/>
-      <xul:toolbarbutton id="fontColorButton" cmd="foreColor"/>
-      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor"/>
+      <xul:toolbarbutton id="fontColorButton" cmd="foreColor" tooltiptext="_('Font color')"/>
+      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor" tooltiptext="_('Background color')"/>
       <xul:toolbarseparator/>
-      <xul:toolbarbutton id="smilesList" type="smiles-list"/>
+      <xul:toolbarbutton id="smilesList" type="smiles-list"
+                         tooltiptext="_('Toggle smiles visibility/select smile')"/>
 
       <xul:popupset>
         <xul:popup id="colorpicker">
