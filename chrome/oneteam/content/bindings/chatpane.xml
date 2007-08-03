@@ -425,6 +425,16 @@
 
           this._initialized = true;
 
+          var link = doc.createElement("link");
+// #ifdef XULAPP
+          link.setAttribute("href", "chrome://oneteam/skin/chatpane/content.css");
+/* #else
+          link.setAttribute("href",
+            document.location.href.replace(/content\/.*?$/, "skin/chatpane/content.css"));
+// #endif */
+          link.setAttribute("rel", "stylesheet");
+          doc.getElementsByTagName("HEAD")[0].appendChild(link);
+
           doc.designMode = "on";
           doc.body.style.margin = "0"
           doc.body.bgColor = "#ffffff";
