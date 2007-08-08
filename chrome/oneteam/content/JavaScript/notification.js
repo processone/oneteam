@@ -11,41 +11,49 @@ _DECL_(NotificationScheme).prototype =
         if (kind == "resource") {
             var signed;
 
-            this._showInChatPane(model.visibleName+" is now "+
-                                 type.toString(true, true), model, false, true);
+            this._showInChatPane(_("{0} is now {1}", model.visibleName,
+                                   type.toString(true, true)),
+                                 model, false, true);
 
             if (type.show != "unavailable" && extra.show == "unavailable")
                 signed = true;
             else if (type.show == "unavailable" && extra.show != "unavailable")
                 signed = false;
 
-			var time = connectionTime = model instanceof ConferenceMember ?
-				model.contact.joinedAt : account.connectedAt;
+            var time = connectionTime = model instanceof ConferenceMember ?
+                model.contact.joinedAt : account.connectedAt;
 
-			if (!time || (Date.now()-time < 5*1024))
-				return;
+            if (!time || (Date.now()-time < 5*1024))
+                return;
 
             if (signed != null) {
                 if (model instanceof ConferenceMember)
-					this._showInChatPane(model+" has "+(signed ? "joined" : "left")+" this room",
-										 model, true, false);
-                else
-                    this._showAlert(this, "<b>"+model.visibleName+"</b> signed "+
-                                    (signed ? "in" : "out"), null, "contact",
-                                    model.contact || model);
+                    this._showInChatPane(signed ? _("{0} has joined this room", model) :
+                                                  _("{0} has left this room", model),
+                                         model, true, false);
+                else {
+                    model = model.contact || model;
+                    this._showAlert(signed ? _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
+                                             _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
+                                    xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
+                                    model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+                }
             }
         } else if (kind == "subscription") {
-            var msg = "<b>"+model.visibleName+"</b> ";
-            msg += type == "subscribed" ? "authorised you to see his/her status" :
-                type == "doesn't authorised you to see his/her status"
-            this._showAlert(this, msg, null, "contact", model);
+            model = model.contact || model;
+            var msg = type == "subscribed" ?
+                _("<b>{0}</b> authorised you to see his/her status", xmlEscape(model.visibleName)) :
+                _("<b>{0}</b> doesn't authorised you to see his/her status", xmlEscape(model.visibleName));
+
+            this._showAlert(msg, xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
+                            model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
         } else if (kind == "muc") {
             if (type == "nickChange")
-                this._showInChatPane(extra.resource+" changed nick to "+model.jid.resource,
-                    model, true, true);
+                this._showInChatPane(_("{0} changed nick to {1}", extra.resource, model.jid.resource),
+                                     model, true, true);
             else if (type == "subjectChange")
-	      this._showInChatPane(extra.resource+" changed subject to "+model.subject,
-                model, true, false);
+                this._showInChatPane(_("{0} changed subject to {1}", extra.resource, model.subject),
+                                     model, true, false);
         }
     },
 
@@ -78,7 +86,7 @@ _DECL_(NotificationScheme).prototype =
     },
 
 // #ifdef XULAPP
-    _showAlert: function(msg, clickHandler, type, extra, extra2)
+    _showAlert: function(title, msg, icon, clickHandler)
     {
         if (this._top < 150 || this._wins.length > 8)
             return;
@@ -86,7 +94,7 @@ _DECL_(NotificationScheme).prototype =
         var args = ["../content/notification.xul",
                      "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                      ",screenX="+window.screen.availWidth+
-                     ",screenY="+window.screen.availHeight];
+                     ",screenY="+window.screen.availHeight, this];
         args.push.apply(args, arguments);
         window.openDialog.apply(window, args);
     },
@@ -114,8 +122,11 @@ _DECL_(NotificationScheme).prototype =
         }
     }
 /* #else
-    _showAlert: function(msg, clickHandler, type, extra, extra2)
+    _showAlert: function(title, msg, icon, clickHandler)
     {
+        try {
+            otNotifications.showMessage(title, msg, icon, clickHandler);
+        } catch(ex) {}
     }
 // #endif */
 }
