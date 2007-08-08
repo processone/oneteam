@@ -7,6 +7,7 @@ use Getopt::Long;
 
 my %config;
 my $root_dir;
+my $tools_dir;
 my $force = 0;
 my $config_stamp;
 my $moz_version;
@@ -14,6 +15,7 @@ my $moz_version;
 Getopt::Long::Configure(qw(pass_through));
 GetOptions(
     "root-dir=s" => \$root_dir,
+    "tools-dir=s" => \$tools_dir,
     "force" => \$force);
 
 sub ex {
@@ -67,6 +69,7 @@ sub libtoolize {
         s/\@srcdir\@/$moz_dir/;
         s/\@objdir\@/$moz_obj/;
         s/\@otdir\@/$root_dir/;
+        s/\@ottdir\@/$tools_dir/;
         print OUT;
     }
     close(IN);
@@ -83,7 +86,7 @@ sub configure_component {
 }
 
 sub read_config {
-    my $path = catfile($root_dir, "conf.mk");
+    my $path = shift;
 
     if (open(FH, "<", $path)) {
         while(<FH>) {
@@ -96,9 +99,11 @@ sub read_config {
 }
 
 $root_dir = simplify_path($root_dir);
-$config_stamp = (stat(catfile($root_dir, "conf.mk")))[9];
+$tools_dir =  simplify_path($tools_dir);
+my $config_path = catfile($tools_dir, 'conf.mk');
+$config_stamp = (stat($config_path))[9];
 
-read_config();
+read_config($config_path);
 $moz_version = (sort split /\s+/, $config{MOZILLA_VERSIONS})[-1];
 configure_component();
 

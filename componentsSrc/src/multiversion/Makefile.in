@@ -4,8 +4,9 @@ objdir=@objdir@
 srcdir=.
 VPATH=.
 otdir=@otdir@
+ottdir=@ottdir@
 
-include $(otdir)/config.mk
+include $(ottdir)/config.mk
 
 NO_DIST_INSTALL=1
 MODULE=oneteam
@@ -24,4 +25,4 @@ CPPSRCS= \
 
 FORCE_STATIC_LIB = 1
 
-include $(otdir)/rules.mk
+include $(ottdir)/rules.mk

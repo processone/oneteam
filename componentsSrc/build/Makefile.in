@@ -4,8 +4,9 @@ objdir=@objdir@
 srcdir=.
 VPATH=.
 otdir=@otdir@
+ottdir=@ottdir@
 
-include $(otdir)/config.mk
+include $(ottdir)/config.mk
 
 MODULE = oneteam
 LIBRARY_NAME = oneteam
@@ -59,4 +60,4 @@ EXTRA_DSO_LDOPTS += \
 	$(OT_EXTRA_DYN_LIBS) \
 	$(NULL)
 
-include $(otdir)/rules.mk
+include $(ottdir)/rules.mk

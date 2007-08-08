@@ -4,8 +4,9 @@ objdir=@objdir@
 srcdir=.
 VPATH=.
 otdir=@otdir@
+ottdir=@ottdir@
 
-include $(otdir)/config.mk
+include $(ottdir)/config.mk
 
 MODULE=oneteam
 XPIDL_MODULE=oneteam
@@ -16,4 +17,4 @@ XPIDLSRCS = \
 	$(OT_EXTRA_SRCS) \
 	$(NULL)
 
-include $(otdir)/rules.mk
+include $(ottdir)/rules.mk

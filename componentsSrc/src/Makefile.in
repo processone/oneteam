@@ -4,8 +4,9 @@ objdir=@objdir@
 srcdir=.
 VPATH=.
 otdir=@otdir@
+ottdir=@ottdir@
 
-include $(otdir)/config.mk
+include $(ottdir)/config.mk
 
 ifdef OT_HAS_DEBUG
 	OT_EXTRA_DIRS += debug
@@ -18,5 +19,5 @@ DIRS = \
 	$(OT_EXTRA_DIRS) \
 	$(NULL)
 
-include $(otdir)/rules.mk
+include $(ottdir)/rules.mk
 

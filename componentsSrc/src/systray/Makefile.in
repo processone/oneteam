@@ -4,8 +4,9 @@ objdir=@objdir@
 srcdir=.
 VPATH=.
 otdir=@otdir@
+ottdir=@ottdir@
 
-include $(otdir)/config.mk
+include $(ottdir)/config.mk
 
 ifdef OT_HAS_SYSTRAY_UNIX
 	OT_EXTRA_SRCS += \
@@ -47,7 +48,7 @@ CPPSRCS_1.9= \
 
 FORCE_STATIC_LIB = 1
 
-include $(otdir)/rules.mk
+include $(ottdir)/rules.mk
 
 INCLUDES+= \
 	-I$(otdir)/src/multiversion \

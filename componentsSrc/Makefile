@@ -1,10 +1,12 @@
-ifeq "$(RECURSIVE_CONFIGURE)$(filter conf.mk,$(wildcard conf.mk*))" "conf.mk"
--include $(TOPDIR)/conf.mk
+ottdir=../tools/compile
+conf_mk=$(ottdir)/conf.mk
+ifeq "$(RECURSIVE_CONFIGURE)$(filter $(conf_mk),$(wildcard  $(conf_mk)*))" "$(conf_mk)"
+-include "$(conf_mk)"
 endif
 
 .PHONE: all libtoolize
 
-all: conf.mk idl/Makefile
+all: $(conf_mk) idl/Makefile
 	@$(MAKE) -C idl
 	@$(MAKE) -C src
 	@$(MAKE) -C build
@@ -20,13 +22,13 @@ distclean:
 	@$(MAKE) -C build distclean
 
 %/Makefile: %/Makefile.in
-	perl tools/libtoolize.pl --root-dir=.
+	@perl $(ottdir)/libtoolize.pl --root-dir=. --tools-dir=$(ottdir)
 
-conf.mk:
-	@echo $(error You need to create conf.mk file)
+$(conf_mk):
+	@echo $(error You need to create $(conf_mk) file)
 
-libtoolize: conf.mk
-	@perl tools/libtoolize.pl --force --root-dir=.
+libtoolize: $(conf_mk)
+	@perl $(ottdir)/libtoolize.pl --force --root-dir=. --tools-dir=$(ottdir)
 
 debug-build:
 	$(MAKE) all MOZ_DEBUG=1 STRIP=echo 

@@ -4,8 +4,9 @@ objdir=@objdir@
 srcdir=.
 VPATH=.
 otdir=@otdir@
+ottdir=@ottdir@
 
-include $(otdir)/config.mk
+include $(ottdir)/config.mk
 
 ifdef OT_HAS_IDLE_UNIX
 	OT_EXTRA_SRCS += \
@@ -35,5 +36,5 @@ CPPSRCS= \
 
 FORCE_STATIC_LIB = 1
 
-include $(otdir)/rules.mk
+include $(ottdir)/rules.mk
 
