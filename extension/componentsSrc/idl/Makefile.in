@@ -1,0 +1,21 @@
+DEPTH=../../../..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+ottdir=@ottdir@
+
+include $(ottdir)/config.mk
+
+MODULE=otcompanion
+XPIDL_MODULE=otcompanion
+
+XPIDLSRCS = \
+	otINotificationBox.idl \
+	$(OT_EXTRA_SRCS) \
+	$(NULL)
+#	otIIdle.idl \
+#	otISystray.idl \
+
+include $(ottdir)/rules.mk

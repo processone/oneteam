@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>companion@oneteam.im</em:id>
+    <em:version>0.1</em:version>
+    <em:targetApplication>
+      <Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>2.0.*</em:minVersion>
+        <em:maxVersion>3.0.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+    <em:updateURL>http://oneteam.im/update.rdf</em:updateURL>
+    <em:name>OneTeam Companion</em:name>
+    <em:file>
+      <Description about="urn:mozilla:extension:file:otcompanion.jar">
+        <em:package>content/</em:package>
+        <em:package>skin/classic/</em:package>
+        <em:package>locale/en-US/</em:package>
+      </Description>
+    </em:file>
+    <em:description>OneTeam Companion Extension</em:description>
+    <em:creator>process-one.net</em:creator>
+    <em:homepageURL>http://oneteam.im/</em:homepageURL>
+    <em:iconURL>chrome://otcompanion/skin/images/icon.png</em:iconURL>
+  </Description>
+</RDF:RDF>

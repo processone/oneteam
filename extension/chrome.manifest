@@ -1,0 +1,3 @@
+content	otcompanion	jar:chrome/otcompanion.jar!/content/
+skin	otcompanion	classic/1.0	jar:chrome/otcompanion.jar!/skin/classic/
+locale	otcompanion	en-US	jar:chrome/otcompanion.jar!/locale/en-US/

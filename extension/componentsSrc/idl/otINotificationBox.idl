@@ -1,0 +1,22 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(046e88b2-802f-417c-b709-e928e7e637fd)]
+interface otINotificationBox : nsISupports
+{
+  void showMessage(in string title, in string message, in string iconURI,
+                   in string clickAction);
+};
+
+%{C++
+
+#define OT_NOTIFICATION_BOX_CONTRACTID "@oneteam.im/notifications;1"
+
+#define OT_IDLE_CID \
+{ /* 690a9561-ad0f-4fbe-a7d2-af733dac3637 */ \
+  0x690a9561, \
+  0xadof, \
+  0x4fbe, \
+  {0xa7, 0xd2, 0xaf, 0x73, 0x3d, 0xac, 0x36, 0x37 } \
+}
+
+%}
