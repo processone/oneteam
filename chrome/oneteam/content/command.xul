@@ -83,6 +83,14 @@
     return value;
   }
 
+  function genPropOutput(obj, prop, topLevel) {
+    try {
+      return genOutput(obj[prop], topLevel);
+    } catch (ex) {
+      return "<span class='value-error'>###</span>";
+    }
+  }
+
   function genOutput(value, topLevel) {
     switch (typeof value) {
       case "object":
@@ -98,7 +106,7 @@
               res += ", <span class='value-continue'>...</span>";
               break;
             } else
-              res += (i > 0 ? ", " : "") + genOutput(value[i], false);
+              res += (i > 0 ? ", " : "") + genPropOutput(value, i, false);
           return res + "]</span>";
         }
 
@@ -111,7 +119,7 @@
               res += ", <span class='value-continue'>...</span>";
               break;
           }
-          res += (idx > 1 ? ", " : "") + genOutput(i)+": "+genOutput(value[i]);
+          res += (idx > 1 ? ", " : "") + genOutput(i)+": "+genPropOutput(value, i);
         }
         return res += "}</span>";
 
