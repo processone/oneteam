@@ -666,7 +666,7 @@
           }
 
           var val = this.value.innerHTML.replace(/<br>$/, "");
-          var rangeContent = this._input._rangeContent(range)
+          var rangeContent = this._rangeContent(range)
 
           if (rangeContent && rangeContent != "\n")
             return false;
