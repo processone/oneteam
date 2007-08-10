@@ -48,6 +48,7 @@ sub get_branch {
     if (-d catdir($topdir, '.svn')) {
         ($branch) = grep { /^URL:/ } `svn info "$topdir"`;
         $branch =~ s/.*?(?:(?:\/branches\/([^\/]+))|\/(trunk))(?:\/.*|$)/$1||$2/es;
+        chomp $branch;
     } elsif (-d catdir($topdir, '.git')) {
         $branch = `cd "$topdir"; git-name-rev HEAD`;
         $branch =~ s/HEAD\s+(.*?)\s*$/$1/;
