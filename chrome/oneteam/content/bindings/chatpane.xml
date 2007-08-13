@@ -442,7 +442,6 @@
           window.addEventListener("resize", function(){ me.maybeResize() }, false);
 
           doc.addEventListener("keypress", function (event) {
-            try{
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
               event.preventDefault();
 
@@ -488,7 +487,6 @@
                 return false;
             }
             return true;
-            }catch(ex){alert(ex)}
           }, true);
 
           for each (var event in "keypress keyup keydown click mousedown mouseup dragdrop".split(" ")) {
