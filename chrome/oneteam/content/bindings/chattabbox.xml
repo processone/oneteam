@@ -164,7 +164,18 @@
                   this._content._chatpane.addMessage &&
                   this._content._chatpane._output &&
                   this._content._chatpane._output.addMessage)
+              {
+                for (var i = 0; i < this._callbacks.length; i++)
+                  this._content[this._callbacks[i][0]].
+                    apply(this._content, this._callbacks[i][1]);
+
+                this.__noSuchMethod__ = function(name, args) {
+                  this._content[name].apply(this._content, args);
+                }
+                this._callbacks = [];
+
                 return this._content[name].apply(this._content, args);
+              }
 
               this._callbacks.push([name, args]);
 
@@ -446,11 +457,10 @@
       <method name="updateChatState">
         <parameter name="state"/>
         <body><![CDATA[
-          if (this._chatState == state)
+          if (this._chatState == state || !this._chatpane._contactInfo.updateChatState)
             return;
 
           this._chatState = state;
-
           this._chatpane._contactInfo.updateChatState(state)
         ]]></body>
       </method>
