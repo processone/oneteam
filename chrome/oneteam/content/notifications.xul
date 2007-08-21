@@ -89,17 +89,22 @@
       document.getElementById("titleContent").innerHTML = sanitizeHtml(_title);
       document.getElementById("messageContent").innerHTML = sanitizeHtml(msg);
 
-      if (icon && /^(?:(?:(?:jar:)?http:\/\/)|data:|chrome:)/.test(icon))
+      if (icon && /^(?:(?:(?:jar:)?http[s]?:\/\/)|data:|chrome:)/.test(icon))
         document.getElementById("messageImg").src = icon;
-
-      sizeChange();
+      else
+        updatePosition();
     }
 
-    function sizeChange() {
+    function updateSize() {
+      window.sizeToContent();
+      updatePosition();
+    }
+
+    function updatePosition() {
       if (window.outerHeight > 1)
         service._updatePositions(window, false);
       else
-        window.setTimeout(sizeChange, 50);
+        window.setTimeout(updatePosition, 50);
     }
 
     function onClick() {
@@ -114,7 +119,7 @@
       <span xmlns="http://www.w3.org/1999/xhtml" id="titleContent"/>
     </description>
     <hbox id="messageInfo" align="center">
-      <image id="messageImg"/>
+      <image id="messageImg" onload="updateSize()" onerror="updatePosition()"/>
       <description id="message">
         <span xmlns="http://www.w3.org/1999/xhtml" id="messageContent"/>
       </description>

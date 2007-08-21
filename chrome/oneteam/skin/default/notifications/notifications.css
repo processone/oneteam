@@ -1,8 +1,14 @@
 #container {
-  border: 2px solid black;
-  padding: 2px;
+  border: 1px solid black;
+  background-color: white;
+  padding: 8px 12px;
 }
 
 #title {
+  margin-left: 20px;
   font-size: 1.2em;
+}
+
+#messageImg {
+  margin-right: 8px;
 }
