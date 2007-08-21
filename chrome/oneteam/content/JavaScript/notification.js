@@ -140,6 +140,9 @@ _DECL_(NotificationScheme).prototype =
 /* #else
     _showAlert: function(title, msg, icon, clickHandler)
     {
+        if (icon.indexOf("..") == 0)
+            icon = document.location.href.replace(/content\/.*?$/, "content/"+icon);
+
         try {
             otNotifications.showMessage(title, msg, icon, clickHandler);
         } catch(ex) {}
