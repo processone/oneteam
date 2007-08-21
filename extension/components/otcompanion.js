@@ -8,7 +8,6 @@ const nsISupports = Components.interfaces.nsISupports;
 
 function NotificationService()
 {
-  this.wrappedJSObject = this;
 }
 
 NotificationService.prototype =
