@@ -54,6 +54,22 @@ _DECL_(NotificationScheme).prototype =
             else if (type == "subjectChange")
                 this._showInChatPane(_("{0} changed subject to {1}", extra.resource, model.subject),
                                      model, true, false);
+        } else if (kind == "message") {
+            var gcMessage = model.isSystemMessage || extra instanceof ConferenceMember;
+            soundsPlayer.playSound( gcMessage ? "message2" : "message1");
+
+            if (gcMessage || type != "first")
+                return;
+
+            var text = model.text.replace(/[ \t]+/g, " ")+" ";
+            text = text.replace(/([^\n]{1,58}|\S{58,})\s+/g, function(x, a) {
+                    return a.length > 59 ? a.substr(0, 55)+"...\n" : a+"\n"});
+            text = text.replace(/\s+$/, "").split(/\n/).slice(0, 8).
+                map(xmlEscape).join("<br/>");
+
+            this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
+                            text,
+                            "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
         }
     },
 

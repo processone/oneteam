@@ -421,8 +421,9 @@ _DECL_(Conference, Contact).prototype =
         if (this._checkForSubject(packet, this.jid) && packet.getBody() &&
             this.chatPane && !this.chatPane.closed)
         {
-            soundsPlayer.playSound("message2");
-            this.chatPane.addMessage(new Message(packet.getBody(), null, null, 4));
+            var message = new Message(packet, null, null, 4);
+            account.notificationScheme.show("message", "next", message, this);
+            this.chatPane.addMessage(message);
         }
     },
 
@@ -636,8 +637,8 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
                 getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "decline")[0];
             if (decline) {
                 var reason = decline.getElementsByTagName("reason")[0];
-                this.notificationScheme.show("invitation", "decline", this.contact, reason,
-                                             decline.getAttribute("from"));
+                account.notificationScheme.show("invitation", "decline", this.contact, reason,
+                                                decline.getAttribute("from"));
                 return;
             }
         }
@@ -651,8 +652,9 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             if (!this.contact.chatPane || this.contact.chatPane.closed)
                 this.contact.onOpenChat();
 
-            soundsPlayer.playSound("message2");
-            this.contact.chatPane.addMessage(new Message(packet, null, this));
+            var message = new Message(packet, null, this);
+            account.notificationScheme.show("message", "next", message, this);
+            this.contact.chatPane.addMessage(message, packet.getThread());
         } else {
             // Open tab because resource implementation will use our
             // "contact" (conference) chatpane.

@@ -304,21 +304,23 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
         var cs = packet.getNode().getElementsByTagNameNS(
             "http://jabber.org/protocol/chatstates", "*")[0];
+        var firstMsg = !this.chatPane || this.chatPane.closed;
 
-        if (cs && this.chatPane && !this.chatPane.closed)
+        if (cs && !firstMsg)
             this.chatPane.updateChatState(cs.localName);
 
         if (!packet.getBody())
             return;
 
-        if (!this.chatPane || this.chatPane.closed)
+        if (firstMsg)
             this.onOpenChat();
 
         if (cs)
             this.chatPane.updateChatState(cs.localName);
 
-        soundsPlayer.playSound("message1");
-        this.chatPane.addMessage(new Message(packet, null, this), packet.getThread());
+        var message = new Message(packet, null, this);
+        account.notificationScheme.show("message", firstMsg ? "first": "next" , message, this);
+        this.chatPane.addMessage(message, packet.getThread());
     },
 
     subscribe: function(reason, allowToSeeMe)
@@ -700,6 +702,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
             this.chatPane :
             this.contact.chatPane && !this.contact.chatPane.closed ?
                 this.contact.chatPane : null;
+        var firstMsg = !chatPane;
 
         var cs = packet.getNode().getElementsByTagNameNS(
             "http://jabber.org/protocol/chatstates", "*")[0];
@@ -718,8 +721,9 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (cs)
             chatPane.updateChatState(cs.localName);
 
-        soundsPlayer.playSound("message2");
-        chatPane.addMessage(new Message(packet, null, this), packet.getThread());
+        var message = new Message(packet, null, this);
+        account.notificationScheme.show("message", firstMsg ? "first": "next" , message, this);
+        this.chatPane.addMessage(message, packet.getThread());
     },
 
     onAdHocCommand: function()
