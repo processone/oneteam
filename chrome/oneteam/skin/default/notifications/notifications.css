@@ -2,3 +2,7 @@
   border: 2px solid black;
   padding: 2px;
 }
+
+#title {
+  font-size: 1.2em;
+}
