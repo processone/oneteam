@@ -30,7 +30,7 @@ NotificationService.prototype =
     var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
         getService(Components.interfaces.nsIWindowWatcher);
 
-    win = ww.openWindow(null, "chrome://otcompanion/content/notification.xul",
+    win = ww.openWindow(null, "chrome://otcompanion/content/notifications.xul",
                         "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                         ",screenX="+ww.activeWindow.screen.availWidth+
                         ",screenY="+ww.activeWindow.screen.availHeight, null);

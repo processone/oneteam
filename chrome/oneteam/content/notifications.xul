@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/notifications/notifications.css" type="text/css"?>
+
+<window id="ot:popupnotification" windowtype="ot:notification" onload="onLoad()"
+  onunload="service._updatePositions(window, true)"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var [service, _title, msg, icon, clickHandler] = window.arguments;
+
+    function xmlEscape(str)
+    {
+        if (str == null)
+            return "";
+        return str.toString().
+            replace(/&/g,"&amp;").
+            replace(/</g,"&lt;").
+            replace(/>/g,"&gt;").
+            replace(/\'/g,"&apos;").
+            replace(/\"/g,"&quot;");
+    }
+
+    function xmlUnescape(str)
+    {
+        if (str == null)
+            return "";
+        return str.toString().
+            replace(/&lt;/g,"<").
+            replace(/&gt;/g,">").
+            replace(/&apos;/g,"'").
+            replace(/&quot;/g,"\"").
+            replace(/&amp;/g,"&");
+    }
+
+    function sanitizeHtml(str) {
+      const re = /<(\/?)(b|i|u|span|br)((?:\s+(?:\w+\s*=\s*(?:'[^']*'|"[^"]")))*)\s*(\/?)>/gi
+      const are = /\s*(\w+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g
+      var match, match2, pos = 0, stack = [[null, "", ""]];
+
+      while (match = re.exec(str)) {
+        stack[stack.length-1][2] += xmlEscape(xmlUnescape(str.substring(pos, match.index)));
+        pos = match.index + match[0].length;
+        var tagName = match[2].toLowerCase();
+
+        if (match[4] && tagName != "br") {
+          pos = match.index;
+          continue;
+        }
+
+        if (match[1]) {
+          if (tagName == stack[stack.length-1][0]) {
+            var inf = stack.pop();
+            stack[stack.length-1][2] += "<"+inf[0]+inf[1]+">"+inf[2]+"</"+inf[0]+">";
+          }
+        } else {
+          if (tagName == "br") {
+            stack[stack.length-1][2] += "<br/>";
+          } else {
+            var attrs = "";
+            while (match2 = are.exec(match[3])) {
+              if (match2[1] == "style") {
+                var styles = xmlUnescape(match2[2]||match2[3]).split(/\s*;\s*/), stylesRes = "";
+                for (var i = 0; i < styles.length; i+=2) {
+                  var pair = styles[i].split(/\s*:\s*/, 2);
+                  if (/^(?:font-size|color|font-family|font-style|font-weight|text-decoration)$/.test(pair[0]))
+                    stylesRes += pair[0]+":"+pair[1]+";";
+                }
+                if (stylesRes)
+                  attrs += " style=\""+xmlEscape(stylesRes)+"\"";
+              }
+            }
+            stack.push([tagName, attrs, ""]);
+          }
+        }
+      }
+      stack[stack.length-1][2] += xmlEscape(xmlUnescape(str.substring(pos)));
+
+      while (stack.length > 1) {
+        var inf = stack.pop();
+        stack[stack.length-1][2] += "<"+inf[0]+inf[1]+">"+inf[2]+"</"+inf[0]+">";
+      }
+      return stack[0][2];
+    }
+
+    function onLoad() {
+      window.setTimeout("window.close()", 5000);
+      document.getElementById("titleContent").innerHTML = sanitizeHtml(_title);
+      document.getElementById("messageContent").innerHTML = sanitizeHtml(msg);
+
+      if (icon && /^(?:(?:(?:jar:)?http:\/\/)|data:|chrome:)/.test(icon))
+        document.getElementById("messageImg").src = icon;
+
+      sizeChange();
+    }
+
+    function sizeChange() {
+      if (window.outerHeight > 1)
+        service._updatePositions(window, false);
+      else
+        window.setTimeout(sizeChange, 50);
+    }
+
+    function onClick() {
+      if (clickHandler)
+        clickHandler.call();
+      window.close();
+    }
+  ]]></script>
+
+  <vbox id="container" onclick="onClick()">
+    <description id="title">
+      <span xmlns="http://www.w3.org/1999/xhtml" id="titleContent"/>
+    </description>
+    <hbox id="messageInfo" align="center">
+      <image id="messageImg"/>
+      <description id="message">
+        <span xmlns="http://www.w3.org/1999/xhtml" id="messageContent"/>
+      </description>
+    </hbox>
+  </vbox>
+
+</window>

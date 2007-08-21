@@ -91,7 +91,7 @@ _DECL_(NotificationScheme).prototype =
         if (this._top < 150 || this._wins.length > 8)
             return;
 
-        var args = ["../content/notification.xul",
+        var args = ["../content/notifications.xul",
                      "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                      ",screenX="+window.screen.availWidth+
                      ",screenY="+window.screen.availHeight, this];
