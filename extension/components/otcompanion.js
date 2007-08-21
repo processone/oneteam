@@ -23,7 +23,7 @@ NotificationService.prototype =
   flags: nsIClassInfo.SINGLETON,
 
   showMessage: function(title, message, iconURI, clickAction)
-  {try{
+  {
     if (this._top < 150 || this._wins.length > 8)
       return;
 
@@ -35,11 +35,10 @@ NotificationService.prototype =
                         ",screenX="+ww.activeWindow.screen.availWidth+
                         ",screenY="+ww.activeWindow.screen.availHeight, null);
     win.arguments = [this, title, message, iconURI, clickAction];
-  }catch(ex){dump(ex+"\n")};
   },
 
   _updatePositions: function(win, closing)
-  {try{
+  {
     var _top = win.screen.availHeight + win.screen.availTop;
     var _left = win.screen.availWidth + win.screen.availLeft;
 
@@ -58,7 +57,7 @@ NotificationService.prototype =
       this._wins.push(win);
       this._top -= win.outerHeight + 1;
       win.moveTo(_left - win.outerWidth, this._top);
-    }}catch(ex){dump(ex+"\n")};
+    }
   },
 
   QueryInterface: function(iid)
