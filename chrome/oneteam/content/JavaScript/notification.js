@@ -68,8 +68,7 @@ _DECL_(NotificationScheme).prototype =
                 map(xmlEscape).join("<br/>");
 
             this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
-                            text,
-                            "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+                            text, "chrome://oneteam/skin/main/imgs/msgicon.png");
         }
     },
 
