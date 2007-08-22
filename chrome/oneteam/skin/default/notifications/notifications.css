@@ -1,14 +1,21 @@
 #container {
   border: 1px solid black;
   background-color: white;
-  padding: 8px 12px;
+  background-image: url(imgs/gradient.png);
+  background-repeat: repeat-y;
+  padding: 8px 4px 8px 0px;
 }
 
 #title {
-  margin-left: 20px;
+  margin-left: 24px;
   font-size: 1.2em;
 }
 
 #messageImg {
-  margin-right: 8px;
+  min-width: 8px;
+  margin: 0 8px;
+}
+
+#message {
+  margin-left: 0;
 }
