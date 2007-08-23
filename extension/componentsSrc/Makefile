@@ -6,8 +6,7 @@ endif
 
 .PHONE: all clean distclean libtoolize
 
-all: $(conf_mk) idl/Makefile
-	@$(MAKE) -C idl
+all: idl/Makefile ../components/otcompanion.xpt
 
 clean:
 	@$(MAKE) -C idl clean
@@ -15,11 +14,11 @@ clean:
 distclean:
 	@$(MAKE) -C idl distclean
 
+../components/otcompanion.xpt: idl/otINotificationBox.idl
+	@$(MAKE) -C idl
+
 %/Makefile: %/Makefile.in
 	@perl $(ottdir)/libtoolize.pl --root-dir=. --tools-dir=$(ottdir)
-
-$(conf_mk):
-	@echo $(error You need to create $(conf_mk) file)
 
 libtoolize: $(conf_mk)
 	@perl $(ottdir)/libtoolize.pl --force --root-dir=. --tools-dir=$(ottdir)
