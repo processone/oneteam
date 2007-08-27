@@ -312,12 +312,11 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         if (!packet.getBody())
             return;
 
-        if (firstMsg)
+        if (firstMsg) {
             this.onOpenChat();
-
-        if (cs)
-            this.chatPane.updateChatState(cs.localName);
-
+            if (cs)
+                this.chatPane.updateChatState(cs.localName);
+        }
         var message = new Message(packet, null, this);
         account.notificationScheme.show("message", firstMsg ? "first": "next" , message, this);
         this.chatPane.addMessage(message, packet.getThread());
@@ -716,14 +715,14 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (!chatPane) {
             this.onOpenChat();
             chatPane = this.chatPane;
+            if (cs)
+                chatPane.updateChatState(cs.localName);
         }
 
-        if (cs)
-            chatPane.updateChatState(cs.localName);
 
         var message = new Message(packet, null, this);
         account.notificationScheme.show("message", firstMsg ? "first": "next" , message, this);
-        this.chatPane.addMessage(message, packet.getThread());
+        chatPane.addMessage(message, packet.getThread());
     },
 
     onAdHocCommand: function()
