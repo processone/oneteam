@@ -12,7 +12,7 @@ use Cwd;
 sub new {
     my ($class, $topdir) = @_;
     my $self = {
-        topdir => $topdir
+        topdir => $topdir,
         outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
     };
     bless $self, $class;
@@ -28,8 +28,6 @@ sub analyze {
     if ($file =~ /(?:^|[\\\/])skin[\\\/]([^\\\/]*)[\\\/]/) {
         $self->{skins}->{$1} = 1;
     }
-
-    @locales = ("en-US");
 
     return $content;
 }
