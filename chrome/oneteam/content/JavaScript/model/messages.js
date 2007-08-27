@@ -215,10 +215,8 @@ _DECL_(Message).prototype =
                             attrs[info[1][i]] = attr;
                     }
                 }
-                if (info[3] && !attrs.__count__) {
+                if (info[3] && !attrs.__count__)
                     nodeName = null;
-                    skip = true;
-                }
                 if (!info[0])
                     skip = true;
             } else
