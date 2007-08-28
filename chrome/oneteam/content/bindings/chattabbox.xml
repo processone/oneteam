@@ -57,32 +57,12 @@
 
         var _this = this;
 
-        window.addEventListener("blur", function(event) {
-          if (!_this._blurTimeout)
-            _this._blurTimeout = setTimeout(function(_this) {
-              if (_this._focusTimeout) {
-                clearTimeout(_this._focusTimeout);
-                _this._focusTimeout = null;
-              }
-              _this._blurTimeout = null;
-              if (_this._windowHasFocus) {
-                _this._windowHasFocus = false;
-                _this._onWindowBlur();
-              }
-            }, 50, _this);
+        window.addEventListener("focus", function(event) {
+          _this._windowFocusHandler(_this, event)
         }, true);
 
-        window.addEventListener("focus", function(event) {
-          if (_this._blurTimeout) {
-            clearTimeout(_this._blurTimeout);
-            _this._blurTimeout = null;
-          }
-          if (!_this._windowHasFocus && !_this._focusTimeout)
-            _this._focusTimeout = setTimeout(function(_this) {
-              _this._focusTimeout = null;
-              _this._windowHasFocus = true;
-              _this._onWindowFocus();
-            }, 50, _this);
+        window.addEventListener("blur", function(event) {
+          _this._windowBlurHandler(_this, event)
         }, true);
 
         window.addEventListener("keypress", function(event) {
@@ -124,6 +104,8 @@
 
           var content = document.createElementNS(ns, "chattab-content");
 
+          content._tabbox = this;
+
           tabpanel = content._tabpanel = document.createElementNS(ns, "tabpanel");
           tabpanel.setAttribute("flex", "1");
           this._tabpanels.appendChild(tabpanel);
@@ -146,7 +128,6 @@
             tab.previousSibling.removeAttribute("last-tab");
 
           content.contact = contact;
-          content._tabbox = this;
 
           // Magic - cache calls to _content until it is properly initialized
           var wrappedContent = {
@@ -316,10 +297,51 @@
         ]]></body>
       </method>
 
+      <method name="_windowFocusHandler">
+        <parameter name="_this"/>
+        <parameter name="event"/>
+        <body><![CDATA[
+          if (event.target.nodeType != 9)
+            return;
+
+          if (_this._blurTimeout) {
+            clearTimeout(_this._blurTimeout);
+            _this._blurTimeout = null;
+          }
+          if (!_this._windowHasFocus && !_this._focusTimeout)
+            _this._focusTimeout = setTimeout(function(_this) {
+              _this._focusTimeout = null;
+              _this._windowHasFocus = true;
+              _this._onWindowFocus();
+            }, 50, _this);
+        ]]></body>
+      </method>
+
+      <method name="_windowBlurHandler">
+        <parameter name="_this"/>
+        <parameter name="event"/>
+        <body><![CDATA[
+          if (event.target.nodeType != 9 || _this._blurTimeout)
+            return;
+
+          _this._blurTimeout = setTimeout(function(_this) {
+            if (_this._focusTimeout) {
+              clearTimeout(_this._focusTimeout);
+              _this._focusTimeout = null;
+            }
+            _this._blurTimeout = null;
+            if (_this._windowHasFocus) {
+              _this._windowHasFocus = false;
+              _this._onWindowBlur();
+            }
+          }, 50, _this);
+        ]]></body>
+      </method>
+
       <method name="_onWindowFocus">
         <body><![CDATA[
-        if (this._selectedTab)
-          this._selectedTab.controller.focus();
+          if (this._selectedTab)
+            this._selectedTab.controller.focused();
         ]]></body>
       </method>
 
@@ -395,6 +417,7 @@
 
       <constructor><![CDATA[
         this._chatpane = document.getAnonymousElementByAttribute(this, "anonid", "chatpane");
+        this._chatpane.focusHandler = this._tabbox;
         this._chatpane.userTypingHandler = new Callback(function(val, me) {
             if (val < 0) {
               me._chatStatePreventMessage = 1;
@@ -442,6 +465,17 @@
           if (this.closed || this._inFocus)
             return;
 
+          this.focused();
+
+          this._chatpane.focus();
+        ]]></body>
+      </method>
+
+      <method name="focused">
+        <body><![CDATA[
+          if (this.closed || this._inFocus)
+            return;
+
           this._inFocus = true;
           this._tabbox._selectTab(this);
           delete this._inFocus;
@@ -449,8 +483,6 @@
           this.unseenCount = 0;
           if (this.chatState == "inactive")
             this.chatState = "active";
-
-          this._chatpane.focus();
         ]]></body>
       </method>
 

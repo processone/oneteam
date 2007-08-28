@@ -765,6 +765,10 @@
         onset="return this._input.userTypingHandler = val"
         onget="return this._input.userTypingHandler" />
 
+      <property name="focusHandler"
+        onset="this._attachFocusHandler(this, val); return val"
+        onget="return this._focusHandler" />
+
       <property name="model" onget="return this._model">
         <setter><![CDATA[
           this._model = val;
@@ -793,7 +797,7 @@
         this.__proto__ = {};
 
         var state = {};
-        for each (var i in "model userTypingHandler".split(/ /))
+        for each (var i in "model userTypingHandler focusHandler".split(/ /))
           if (this[i] != null) {
             state[i] = this[i];
             delete this[i];
@@ -817,6 +821,55 @@
           }, false);
         }, 0, this);
       ]]></constructor>
+
+      <method name="_attachFocusHandler">
+        <parameter name="_this"/>
+        <parameter name="handler"/>
+        <parameter name="internal"/>
+        <body><![CDATA[
+          if (!internal) {
+            if (_this._focusHandler == handler)
+              return;
+            _this._focusHandler = handler;
+          } else
+            delete _this._focusHandlerAttachTimeout;
+
+          if (!_this._output || !_this._input ||
+              !_this._output._initialized || !_this._input._initialized)
+          {
+            if (_this._focusHandlerAttachTimeout == null)
+              _this._focusHandlerAttachTimeout = window.setTimeout(arguments.callee, 10, _this, null, true);
+            return;
+          }
+
+          if (_this._focusHandler) {
+            if (!_this._focusHandlers) {
+              _this._focusHandlers = [];
+              _this._focusHandlers[0] = function(event) {
+                if (event.target.nodeType == 9 && _this._focusHandler)
+                  _this._focusHandler._windowFocusHandler(_this._focusHandler, event);
+              };
+              _this._focusHandlers[1] = function(event) {
+                if (event.target.nodeType == 9 && _this._focusHandler)
+                  _this._focusHandler._windowBlurHandler(_this._focusHandler, event);
+              };
+            }
+            if (!_this._focusHandlerAttached) {
+              _this._input._input.contentWindow.addEventListener("focus", _this._focusHandlers[0], true);
+              _this._input._input.contentWindow.addEventListener("blur", _this._focusHandlers[1], true);
+              _this._output._output.contentWindow.addEventListener("focus", _this._focusHandlers[0], true);
+              _this._output._output.contentWindow.addEventListener("blur", _this._focusHandlers[1], true);
+              _this._focusHandlerAttached = true;
+            }
+          } else if (_this._focusHandlerAttached) {
+            _this._input._input.contentWindow.removeEventListener("focus", _this._focusHandlers[0], true);
+            _this._input._input.contentWindow.removeEventListener("blur", _this._focusHandlers[1], true);
+            _this._output._output.contentWindow.removeEventListener("focus", _this._focusHandlers[0], true);
+            _this._output._output.contentWindow.removeEventListener("blur", _this._focusHandlers[1], true);
+            _this._focusHandlerAttached = false;
+          }
+        ]]></body>
+      </method>
 
       <method name="focus">
         <body><![CDATA[
