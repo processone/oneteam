@@ -98,12 +98,13 @@
 
     function updateSize() {
       var img = document.getElementById("messageImg");
-      var ratioW = 120/img.width;
-      var ratioH = 90/img.height;
+      var ratioW = 120/img.boxObject.width;
+      var ratioH = 90/img.boxObject.height;
 
       if (ratioW < 1 || ratioH < 1) {
         var ratio = ratioW > ratioH ? ratioH : ratioW;
-        img.width = img.width * ratio;
+        img.style.width = parseInt(img.boxObject.width * ratio)+"px";
+        img.style.height = parseInt(img.boxObject.height * ratio)+"px";
       }
       window.sizeToContent();
       updatePosition();
@@ -128,7 +129,7 @@
       <span xmlns="http://www.w3.org/1999/xhtml" id="titleContent"/>
     </description>
     <hbox id="messageInfo" align="center">
-      <html:img id="messageImg" onload="updateSize()" onerror="updatePosition()"/>
+      <image id="messageImg" onload="updateSize()" onerror="updatePosition()"/>
       <description id="message">
         <span xmlns="http://www.w3.org/1999/xhtml" id="messageContent"/>
       </description>
