@@ -10,7 +10,8 @@
     </resources>
 
     <content>
-      <html:iframe id="output" flex="1" onload="this.parentNode._onLoad()"/>
+      <html:iframe id="output" flex="1" onload="this._loaded = true;
+                   try { this.parentNode._onLoad() } catch(e) {}"/>
     </content>
 
     <implementation>
@@ -32,7 +33,7 @@
             "#4ca", "#c66", "#aaa", "#ca0", "#770", "#5cc",
           ];
 
-          if (this._loaded)
+          if (this._output._loaded && !this._initialized)
             this._onLoad();
         ]]>
       </constructor>
@@ -40,7 +41,7 @@
       <method name="_onLoad">
         <body>
           <![CDATA[
-            this._loaded = 1;
+            this._initialized = true;
 
             if (!this._msgs)
               return;
