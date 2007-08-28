@@ -5,6 +5,7 @@
 
 <window id="ot:popupnotification" windowtype="ot:notification" onload="onLoad()"
   onunload="service._updatePositions(window, true)"
+  xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7"><![CDATA[
@@ -96,6 +97,14 @@
     }
 
     function updateSize() {
+      var img = document.getElementById("messageImg");
+      var ratioW = 120/img.width;
+      var ratioH = 90/img.height;
+
+      if (ratioW < 1 || ratioH < 1) {
+        var ratio = ratioW > ratioH ? ratioH : ratioW;
+        img.width = img.width * ratio;
+      }
       window.sizeToContent();
       updatePosition();
     }
@@ -119,7 +128,7 @@
       <span xmlns="http://www.w3.org/1999/xhtml" id="titleContent"/>
     </description>
     <hbox id="messageInfo" align="center">
-      <image id="messageImg" onload="updateSize()" onerror="updatePosition()"/>
+      <html:img id="messageImg" onload="updateSize()" onerror="updatePosition()"/>
       <description id="message">
         <span xmlns="http://www.w3.org/1999/xhtml" id="messageContent"/>
       </description>
