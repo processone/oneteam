@@ -36,7 +36,7 @@ _DECL_(SOCKS5Service).prototype =
 
     canSendTo: function(contact)
     {
-        return true;
+        return contact != null;
     },
 
     sendFile: function(fileTransfer, rangeOffset, rangeLength)

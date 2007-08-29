@@ -42,3 +42,11 @@
 #vcardButton {
     list-style-image: url(imgs/vcard.png);
 }
+
+#sendFile {
+    list-style-image: url(imgs/send-file.png);
+}
+
+#sendFile[disabled=true] {
+    list-style-image: url(imgs/send-file-disabled.png);
+}

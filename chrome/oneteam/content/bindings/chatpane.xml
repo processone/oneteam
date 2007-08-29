@@ -712,6 +712,8 @@
       <xul:toolbarseparator/>
       <xul:toolbarbutton id="vcardButton" oncommand="this.parentNode.model.showVCard()"
                          tooltiptext="_('Show contact information')"/>
+      <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
+                         tooltiptext="_('Send file')"/>
       <xul:toolbarseparator/>
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
@@ -722,6 +724,36 @@
         </xul:popup>
       </xul:popupset>
     </content>
+
+    <implementation>
+      <property name="model" onget="return this._model">
+        <setter><![CDATA[
+          this._model = val;
+
+          this._sendFile.hidden = !val || typeof(socks5Service) == "undefined" ||
+            !socks5Service.canSendTo(val.contact ? val : val.activeResource);
+        ]]></setter>
+      </property>
+
+      <constructor><![CDATA[
+        this._sendFile = document.getAnonymousElementByAttribute(this, "id", "sendFile");
+        var p = this.__proto__;
+        this.__proto__ = {};
+
+        var state = {};
+        for each (var i in "model".split(/ /))
+          if (this[i] != null) {
+            state[i] = this[i];
+            delete this[i];
+          }
+
+        this.__proto__ = p;
+
+        for (i in state)
+          this[i] = state[i];
+      ]]></constructor>
+    </implementation>
+
     <handlers>
       <handler event="selectedSmile">
         <![CDATA[
