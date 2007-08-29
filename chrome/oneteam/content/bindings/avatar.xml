@@ -156,8 +156,9 @@
           this._cache = root.account.cache;
           this._rootWin = root;
 
-          for (var [key, val] in this._cache.iterator("avatar-", true))
-            this.addAvatar(val, key.slice(7));
+          for (var key in this._cache.iterator("avatar-", true)) {
+            this.addAvatar(this._cache.getValue(key, true), key.slice(7));
+          }
          ]]>
       </constructor>
 
