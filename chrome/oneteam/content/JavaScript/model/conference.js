@@ -312,7 +312,7 @@ _DECL_(Conference, Contact).prototype =
         con.send(message);
     },
 
-    setSubject: function(subject)
+    changeSubject: function(subject)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
@@ -320,6 +320,12 @@ _DECL_(Conference, Contact).prototype =
         message.setSubject(subject)
 
         con.send(message);
+    },
+
+    onChangeSubject: function()
+    {
+        openDialogUniq("ot:changeSubject", "chrome://oneteam/content/changeSubject.xul",
+                       "chrome,centerscreen", this);
     },
 
     createResource: function(jid)
