@@ -38,3 +38,7 @@
 #fontBackgroundButton {
     list-style-image: url(imgs/text-font-background.png);
 }
+
+#vcardButton {
+    list-style-image: url(imgs/vcard.png);
+}

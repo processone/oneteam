@@ -710,6 +710,9 @@
       <xul:toolbarbutton id="fontColorButton" cmd="foreColor" tooltiptext="_('Font color')"/>
       <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor" tooltiptext="_('Background color')"/>
       <xul:toolbarseparator/>
+      <xul:toolbarbutton id="vcardButton" oncommand="this.parentNode.model.showVCard()"
+                         tooltiptext="_('Show contact information')"/>
+      <xul:toolbarseparator/>
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
 
@@ -773,6 +776,7 @@
         <setter><![CDATA[
           this._model = val;
           this._contactInfo.model = val;
+          this._chatpaneCommands.model = val;
           this.completionEngine = val ? val.createCompletionEngine() : null;
 
           return val;
@@ -786,6 +790,7 @@
         this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
         this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
         this._contactInfo = document.getAnonymousElementByAttribute(this, "id", "contactInfo");
+        this._chatpaneCommands = document.getAnonymousElementByAttribute(this, "type", "chatpane-commands");
         this._smilesList = document.getAnonymousElementByAttribute(this, "id", "smilesList");
 
         this._input._tryCompletion = new Callback(this._tryCompletion, this);
