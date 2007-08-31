@@ -26,7 +26,7 @@
       <property name="tabCount" onget="return this._tabs.childNodes.length"
                 readonly="true"/>
 
-      <property name="unseenCount" onget="return this._unseenCount">
+      <property name="unseenCount" onget="return this._unseenCount || 0">
         <setter><![CDATA[
           if (val == this._unseenCount)
             return val;
@@ -52,10 +52,24 @@
       <constructor><![CDATA[
         this._tabs = document.getAnonymousElementByAttribute(this, "anonid", "tabs");
         this._tabpanels = document.getAnonymousElementByAttribute(this, "anonid", "tabpanels");
-        this._unseenCount = 0;
         this._inSelectTab = 0;
 
         var _this = this;
+
+        var p = this.__proto__;
+        this.__proto__ = {};
+
+        var state = {};
+        for each (var i in "unseenCount".split(/ /))
+          if (this[i] != null) {
+            state[i] = this[i];
+            delete this[i];
+          }
+
+        this.__proto__ = p;
+
+        for (i in state)
+          this[i] = state[i];
 
         window.addEventListener("focus", function(event) {
           _this._windowFocusHandler(_this, event)
@@ -373,7 +387,7 @@
         ]]></setter>
       </property>
 
-      <property name="unseenCount" onget="return this._unseenCount">
+      <property name="unseenCount" onget="return this._unseenCount || 0">
         <setter><![CDATA[
           if (val == this._unseenCount)
             return val;
@@ -430,7 +444,21 @@
               me._chatStatePreventMessage = 0;
           }).addArgs(this);
 
-        this._unseenCount = 0;
+        var p = this.__proto__;
+        this.__proto__ = {};
+
+        var state = {};
+        for each (var i in "unseenCount chatState contact".split(/ /))
+          if (this[i] != null) {
+            state[i] = this[i];
+            delete this[i];
+          }
+
+        this.__proto__ = p;
+
+        for (i in state)
+          this[i] = state[i];
+
         this._chatStateInitialSend = false;
         this.closed = false;
 
@@ -518,7 +546,7 @@
 
       <method name="_onNameChange">
         <body><![CDATA[
-          var countStr = this._unseenCount == 0 ? "" : this._unseenCount == 1 ?
+          var countStr = !this._unseenCount ? "" : this._unseenCount == 1 ?
             "* " : "["+this._unseenCount+"] ";
 
           this._tab.setAttribute("label", countStr + (this._contact ? this._contact.visibleName : ""));
