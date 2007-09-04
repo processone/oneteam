@@ -247,6 +247,11 @@
         }
         if (!account.connected)
           chatTabsController.closeTabs();
+        else
+          account.hasDiscoFeature("http://jabber.org/protocol/commands", false, function(a, val) {
+            document.getElementById("cmd_adhoc").hidden = !val;
+          });
+
       },
 
       onCommand: function()
@@ -491,6 +496,7 @@
     <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
     <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
+    <command id="cmd_adhoc" oncommand="account.onAdHocCommand()"/>
     <command id="cmd_disconnect" oncommand="con.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
 
@@ -589,14 +595,14 @@
         <menubar>
           <menu id="lagger-menu" label="_('_Actions')">
             <menupopup id="file-popup">
-              <menuitem label="_('_Add Contact')" command="cmd_addContact"/>
+              <menuitem label="_('_Add Contact...')" command="cmd_addContact"/>
 
               <menu label="_('_Join Chat Room')">
                 <menupopup>
-                  <menuitem label="_('Join Chat Room')" command="cmd_joinRoom"/>
+                  <menuitem label="_('Join Chat Room...')" command="cmd_joinRoom"/>
                   <menuseparator/>
                   <menuseparator id="conference-menu-separator" hidden="true"/>
-                  <menuitem label="_('_Manage Bookmarks')" command="cmd_manageBookmarks"/>
+                  <menuitem label="_('_Manage Bookmarks...')" command="cmd_manageBookmarks"/>
                 </menupopup>
               </menu>
               <menu label="_('_Gateways')" id="gateways-menu">
@@ -605,8 +611,9 @@
               <menuseparator/>
 <!--          <menuitem label="_('_Services Discovery')" command="cmd_disco"/>
               <menuitem label="_('Administration Tools')"/> -->
-              <menuitem label="_('_History Manager')" command="cmd_history"/>
-              <menuitem label="_('File _Transfers')" command="cmd_transfers"/>
+              <menuitem label="_('_Server Commands...')" command="cmd_adhoc"/>
+              <menuitem label="_('_History Manager...')" command="cmd_history"/>
+              <menuitem label="_('File _Transfers...')" command="cmd_transfers"/>
               <menuseparator/>
               <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
 <!-- #ifdef XULAPP -->
@@ -625,15 +632,15 @@
           </menu>
           <menu id="configuration-menu" label="_('_Config')">
             <menupopup id="config-popup">
-              <menuitem label="_('_Edit personal info')" command="cmd_ourVCard"/>
-              <menuitem label="_('_Change password')" command="cmd_changePassword"/>
+              <menuitem label="_('_Edit personal info...')" command="cmd_ourVCard"/>
+              <menuitem label="_('_Change password...')" command="cmd_changePassword"/>
               <menuseparator/>
 <!-- #ifdef XULAPP -->
-              <menuitem label="_('Plugins')" command="cmd_extensions"/>
-              <menuitem label="_('_Themes')" command="cmd_themes"/>
+              <menuitem label="_('Plugins...')" command="cmd_extensions"/>
+              <menuitem label="_('_Themes...')" command="cmd_themes"/>
               <menuseparator/>
 <!-- #endif -->
-              <menuitem label="_('_Preferences')" command="cmd_prefs"/>
+              <menuitem label="_('_Preferences...')" command="cmd_prefs"/>
             </menupopup>
           </menu>
           <menu id="help-menu" label="_('_Help')">
@@ -641,15 +648,15 @@
               <menuitem label="_('Help _Bot')" command="cmd_help_bot"/>
               <menuitem label="_('_Documentation')" command="cmd_help"/>
               <menuitem label="_('_Report Bug')" command="cmd_bug"/>
-              <menuitem label="_('XML _Console')" command="cmd_xmlConsole"/>
+              <menuitem label="_('XML _Console...')" command="cmd_xmlConsole"/>
 <!-- #ifdef DEBUG -->
 <!-- #ifdef XULAPP -->
-              <menuitem label="JavaScript Console" command="cmd_jsConsole"/>
+              <menuitem label="JavaScript Console..." command="cmd_jsConsole"/>
 <!-- #endif -->
-              <menuitem label="Command Console" command="cmd_cmdConsole"/>
+              <menuitem label="Command Console..." command="cmd_cmdConsole"/>
 <!-- #endif -->
               <menuseparator/>
-              <menuitem label="_('About')" command="cmd_about"/>
+              <menuitem label="_('About...')" command="cmd_about"/>
             </menupopup>
           </menu>
         </menubar>
