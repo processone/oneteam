@@ -154,7 +154,8 @@ function ContactView(model, parentView)
     this.node.setAttribute("tooltip", this.tooltip.id);
 
     this.node.setAttribute("class", "contact-view");
-    this.node.setAttribute("context", "contact-contextmenu");
+    this.node.setAttribute("context", model instanceof MyResourcesContact ?
+                           "resource-contextmenu" : "contact-contextmenu");
     this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
     this.label.setAttribute("value", model.name || model.jid);
@@ -163,7 +164,7 @@ function ContactView(model, parentView)
 
     this.node.model = this.model;
     this.node.view = this;
-    this.node._contextMenu = document.getElementById("contact-contextmenu");
+    this.node._contextMenu = document.getElementById(this.node.getAttribute("context"));
 
     var box = document.createElement("vbox");
     box.setAttribute("pack", "center");

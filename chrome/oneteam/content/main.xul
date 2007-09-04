@@ -138,6 +138,34 @@
         setAttribute("disabled", !menu.model.canSeeMe);
     }
 
+    function updateResourceContextMenu(menu, event) {
+      if (event.target != menu)
+        return;
+
+      var im = document.getElementById("resource-invite");
+      var sf = document.getElementById("resource-send-file");
+      var ah = document.getElementById("resource-adhoc");
+
+      sf.hidden = !socks5Service.canSendTo(menu.model);
+
+      im.hidden = !account.conferences.length;
+      if (!im.hidden) {
+        list = im.firstChild;
+        while (list && list.firstChild)
+          list.removeChild(list.firstChild);
+        for (var i = 0; i < account.conferences.length; i++) {
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", account.conferences[i].jid);
+          item.setAttribute("oncommand", "this.model.invite(this.contact)");
+          item.model = account.conferences[i];
+          item.contact = menu.model.jid;
+          list.appendChild(item);
+        }
+      }
+
+      ah.hidden = !menu.model.hasDiscoFeature("http://jabber.org/protocol/commands");
+    }
+
     function updateConferenceMemberContextMenu(menu, event) {
       if (event.target != menu)
         return;
@@ -761,6 +789,22 @@
       <menuitem label="_('Show History...')"
         oncommand="this.parentNode.model.onShowHistory()"/>
       <menuitem id="contact-send-file" label="_('Send file...')"
+        oncommand="this.parentNode.model.onSendFile()"/>
+    </popup>
+
+    <popup id="resource-contextmenu" onpopupshowing="updateResourceContextMenu(this, event)">
+      <menuitem label="_('Send Message...')" oncommand="this.parentNode.model.onOpenChat()"/>
+      <menu id="resource-invite" label="Invite to" hidden="true">
+        <menupopup/>
+      </menu>
+
+      <menuseparator/>
+
+      <menuitem label="_('Information...')" oncommand="this.parentNode.model.showVCard()"/>
+      <menuitem id="resource-adhoc" label="_('Execute Command...')" oncommand="this.parentNode.model.onAdHocCommand()"/>
+      <menuitem label="_('Show History...')"
+        oncommand="this.parentNode.model.onShowHistory()"/>
+      <menuitem id="resource-send-file" label="_('Send file...')"
         oncommand="this.parentNode.model.onSendFile()"/>
     </popup>
 
