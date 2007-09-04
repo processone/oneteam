@@ -288,6 +288,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         callback(pkt);
     },
 
+    onAdHocCommand: function()
+    {
+        openDialogUniq("ot:adhoc", "chrome://oneteam/content/adhoc.xul",
+                       "resizable=no,chrome,dialog", this);
+    },
+
     onPrefChange: function(name, value)
     {
         var namePart;
