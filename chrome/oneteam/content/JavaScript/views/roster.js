@@ -150,12 +150,18 @@ function ContactView(model, parentView)
     this.avatar.model = this.model;
     this.avatar.hidden = !prefManager.getPref("chat.general.showavatars");
 
-    this.tooltip = new ContactTooltip(model, this.parentNode);
+    if (model instanceof MyResourcesContact) {
+        this.tooltip = new ResourceTooltip(model, this.parentNode);
+        this.node.setAttribute("context", "resource-contextmenu");
+    window.tt = this;
+    } else {
+        this.tooltip = new ContactTooltip(model, this.parentNode);
+        this.node.setAttribute("context", "contact-contextmenu");
+    }
+
     this.node.setAttribute("tooltip", this.tooltip.id);
 
     this.node.setAttribute("class", "contact-view");
-    this.node.setAttribute("context", model instanceof MyResourcesContact ?
-                           "resource-contextmenu" : "contact-contextmenu");
     this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
     this.label.setAttribute("value", model.name || model.jid);
@@ -357,6 +363,99 @@ _DECL_(ContactTooltip).prototype =
             }
         }
         this.resourcesLabel.setAttribute("hidden", firstResource);
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        rootNode.insertBefore(this.node, insertBefore);
+    },
+
+    destroy: function()
+    {
+        if (this.node.parentNode)
+            this.node.parentNode.removeChild(this.node);
+    }
+}
+
+function ResourceTooltip(model, parentView)
+{
+    this.model = model;
+    this.parentView = parentView;
+
+    this.node = document.createElement("tooltip");
+    this.avatar = document.createElement("image");
+    this.icon = document.createElement("image");
+    this.name = document.createElement("label");
+    this.showLabel = document.createElement("label");
+    this.status = document.createElement("description");
+
+    this.id = generateUniqueId();
+
+    this.node.setAttribute("onpopupshowing", "this.view.onTooltipShowing()");
+    this.node.setAttribute("id", this.id);
+    this.node.setAttribute("class", "resource-tooltip");
+    this.name.setAttribute("class", "resource-tooltip-name");
+
+    var box = document.createElement("hbox");
+    box.setAttribute("flex", "1");
+    box.setAttribute("align", "start");
+    this.node.appendChild(box);
+
+    var grid = document.createElement("grid");
+    box.appendChild(grid);
+    box.appendChild(this.avatar);
+
+    var cols = document.createElement("columns");
+    grid.appendChild(cols);
+    var col = document.createElement("column");
+    cols.appendChild(col);
+    col = document.createElement("column");
+    col.setAttribute("flex", "1");
+    cols.appendChild(col);
+
+    var rows = document.createElement("rows");
+    grid.appendChild(rows);
+    var box = document.createElement("hbox");
+    box.setAttribute("class", "resource-tooltip-name-container");
+    box.setAttribute("align", "center");
+    rows.appendChild(box);
+
+    box.appendChild(this.icon);
+    box.appendChild(this.name);
+    var label = document.createElement("label");
+    label.setAttribute("value", "-");
+    box.appendChild(label);
+    box.appendChild(this.showLabel);
+    this.showLabel.setAttribute("class", "resource-tooltip-resource-show");
+
+    var row = document.createElement("row");
+    rows.appendChild(row);
+    var label = document.createElement("label");
+    label.setAttribute("value", "Jabber ID:");
+    row.appendChild(label);
+    label = document.createElement("label");
+    label.setAttribute("value", this.model.jid);
+    row.appendChild(label);
+
+    rows.appendChild(this.status);
+    this.status.setAttribute("class", "resource-tooltip-resource-status");
+    this.status.setAttribute("style", "margin-left: 1em");
+
+    this.node.model = this.model;
+    this.node.view = this;
+}
+
+_DECL_(ResourceTooltip).prototype =
+{
+    onTooltipShowing: function()
+    {
+        this.avatar.setAttribute("src", this.model.avatar);
+        this.name.setAttribute("value", _("{0} ({1})", this.model.name,
+                                          this.model.activeResource.presence.priority || 0));
+        this.icon.setAttribute("src", this.model.activeResource.getStatusIcon());
+        this.showLabel.setAttribute("value", this.model.activeResource.presence);
+        this.showLabel.setAttribute("style", "color: "+this.model.activeResource.presence.getColor());
+        this.status.setAttribute("value", this.model.activeResource.presence.status);
     },
 
     show: function(rootNode, insertBefore)
