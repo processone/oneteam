@@ -772,6 +772,13 @@ _DECL_(MyResourcesContact, Contact).prototype =
 {
     subscription: "both",
 
+    onPresence: function() {
+        Contact.onPresence.apply(this, arguments);
+
+        // Explicitly request disco info our other resources
+        this.getDiscoInfo(false, function() {});
+    },
+
     _onResourceRemoved: function()
     {
         this.groups[0]._onContactRemoved(this);
