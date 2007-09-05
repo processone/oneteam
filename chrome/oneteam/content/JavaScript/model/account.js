@@ -134,8 +134,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (this.resources[normalizedJID])
             return this.resources[normalizedJID];
 
-        if (jid.normalizedJID.shortJID == this.myJID.normalizedJID.shortJID)
-            return (new MyResourcesContact(jid)).createResource(jid);
+        if (normalizedJID.shortJID == this.myJID.normalizedJID.shortJID)
+            if (normalizedJID == this.myJID.normalizedJID)
+                return null;
+            else
+                return (new MyResourcesContact(jid)).createResource(jid);
 
         if (this.allContacts[normalizedJID.shortJID])
             return this.allContacts[normalizedJID.shortJID].createResource(jid);
