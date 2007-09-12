@@ -119,7 +119,7 @@ _DECL_(Message).prototype =
 
     fillPacket: function(pkt)
     {
-        if (this.thread)
+        if (!this.isMucMessage && this.thread)
             pkt.setThread(this.thread.threadID);
         if (!this.text)
             return;
