@@ -408,7 +408,7 @@
 
       <property name="chatState" onget="return this._chatState">
         <setter><![CDATA[
-          if (!this._chatStateInitialSend)
+          if (!this._chatStateInitialSend || this.contact instanceof Conference)
             return;
 
           var oldState = this._chatState;
