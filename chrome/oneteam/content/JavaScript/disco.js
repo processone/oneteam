@@ -39,7 +39,7 @@ _DECL_(DiscoCacheEntry).prototype =
         if (!this.discoInfo || (!this.capsNode && !this._isCapsNode && forceUpdate)) {
             if (!this.discoInfoCallbacks) {
                 var iq = new JSJaCIQ();
-                iq.setIQ(this.jid, null, "get");
+                iq.setIQ(this.jid, "get");
                 iq.setQuery("http://jabber.org/protocol/disco#info");
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);
@@ -62,7 +62,7 @@ _DECL_(DiscoCacheEntry).prototype =
         if (!this.discoItems || forceUpdate) {
             if (!this.discoItemsCallbacks) {
                 var iq = new JSJaCIQ();
-                iq.setIQ(this.jid, null, "get");
+                iq.setIQ(this.jid, "get");
                 iq.setQuery("http://jabber.org/protocol/disco#items");
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);

@@ -31,8 +31,8 @@ var handlers =
     onModelUpdated: function()
     {
         if (window.opener.con) {
-            window.opener.con.registerHandler("onpacketsend", this.onPacketSend);
-            window.opener.con.registerHandler("onpacketrecv", this.onPacketRecv);
+            window.opener.con.registerHandler("packet_in", this.onPacketSend);
+            window.opener.con.registerHandler("packet_out", this.onPacketRecv);
         }
     },
 
@@ -46,8 +46,8 @@ var handlers =
     {
         window.opener.account.unregisterView(this._token);
         if (window.opener.con) {
-            window.opener.con.unregisterHandler("onpacketsend", this.onPacketSend);
-            window.opener.con.unregisterHandler("onpacketrecv", this.onPacketRecv);
+            window.opener.con.unregisterHandler("packet_in", this.onPacketSend);
+            window.opener.con.unregisterHandler("packet_out", this.onPacketRecv);
         }
     }
 };

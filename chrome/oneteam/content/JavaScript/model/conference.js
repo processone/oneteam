@@ -194,7 +194,7 @@ _DECL_(Conference, Contact).prototype =
     requestRoomConfiguration: function(callback)
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "get");
+        iq.setIQ(this.jid, "get");
         iq.setQuery("http://jabber.org/protocol/muc#owner");
         con.send(iq, callback);
     },
@@ -202,7 +202,7 @@ _DECL_(Conference, Contact).prototype =
     changeRoomConfiguration: function(payload)
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "set");
+        iq.setIQ(this.jid, "set");
         iq.setQuery("http://jabber.org/protocol/muc#owner").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
         con.send(iq);
@@ -212,7 +212,7 @@ _DECL_(Conference, Contact).prototype =
     {
         const ns = "http://jabber.org/protocol/muc#owner";
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "get");
+        iq.setIQ(this.jid, "get");
         var query = iq.setQuery(ns);
         var destroy = query.appendChild(iq.getDoc().createElementNS(ns, "destroy"));
 
@@ -234,7 +234,7 @@ _DECL_(Conference, Contact).prototype =
     {
         const ns = "http://jabber.org/protocol/muc#admin";
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "get");
+        iq.setIQ(this.jid, "get");
 
         var query = iq.setQuery(ns);
         query.appendChild(iq.getDoc().createElementNS(ns, "item")).
@@ -273,7 +273,7 @@ _DECL_(Conference, Contact).prototype =
     changeUsersList: function(payload)
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "set");
+        iq.setIQ(this.jid, "set");
         iq.setQuery("http://jabber.org/protocol/muc#admin").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
         con.send(iq);
@@ -449,7 +449,7 @@ _DECL_(Conference, Contact).prototype =
 
     _checkForSubject: function(pkt, jid)
     {
-        subject = pkt._getChildNode("subject");
+        subject = pkt.getChild("subject");
         if (!subject)
             return true;
         if ((subject = subject.textContent) == this.subject)
@@ -532,7 +532,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         const ns = "http://jabber.org/protocol/muc#admin";
 
         var iq = new JSJaCIQ();
-        iq.setIQ(this.contact.jid, null, "set");
+        iq.setIQ(this.contact.jid, "set");
 
         var item = iq.getDoc().createElementNS(ns, "item");
         item.setAttribute("affiliation", affiliation);
@@ -555,7 +555,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         const ns = "http://jabber.org/protocol/muc#admin";
 
         var iq = new JSJaCIQ();
-        iq.setIQ(this.contact.jid, null, "set");
+        iq.setIQ(this.contact.jid, "set");
 
         var item = iq.getDoc().createElementNS(ns, "item");
         item.setAttribute("role", role);

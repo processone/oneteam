@@ -11,13 +11,20 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
+  <script type="text/javascript" src="lib/jsjac/jsextras.js"/>
   <script type="text/javascript" src="lib/jsjac/crypt.js"/>
-  <script type="text/javascript" src="lib/jsjac/json.js"/>
-  <script type="text/javascript" src="lib/jsjac/qm_cookie.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
+  <!--<script type="text/javascript" src="lib/jsjac/json.js"/>-->
+  <script type="text/javascript" src="lib/jsjac/JSJaCConfig.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCCookie.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCJID.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCBuilder.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCError.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCKeys.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCConsoleLogger.js"/>
 
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>

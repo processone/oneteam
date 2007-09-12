@@ -161,7 +161,7 @@ _DECL_(FileTransfer, null, Model).prototype =
             node.child(0).@size = this.size;
 
         var pkt = new JSJaCIQ();
-        pkt.setIQ(this.jid, null, "set");
+        pkt.setIQ(this.jid, "set");
         pkt.getNode().appendChild(E4XtoDOM(node, pkt.getDoc()));
 
         con.send(pkt, new Callback(this._sendOfferStep, this));
@@ -190,7 +190,7 @@ _DECL_(FileTransfer, null, Model).prototype =
     accept: function(path)
     {
         var pkt = new JSJaCIQ();
-        pkt.setIQ(this.jid, null, "result", this.offerID);
+        pkt.setIQ(this.jid, "result", this.offerID);
         pkt.getNode().appendChild(E4XtoDOM(
             <si xmlns='http://jabber.org/protocol/si' id={this.streamID}>
                 <feature xmlns='http://jabber.org/protocol/feature-neg'>
@@ -216,7 +216,7 @@ _DECL_(FileTransfer, null, Model).prototype =
     reject: function(fileTransfer)
     {
         var pkt = new JSJaCIQ();
-        pkt.setIQ(this.jid, null, "error", this.offerID);
+        pkt.setIQ(this.jid, "error", this.offerID);
         pkt.getNode().appendChild(E4XtoDOM(
             <error code='403' type='cancel'>
                 <forbidden xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>

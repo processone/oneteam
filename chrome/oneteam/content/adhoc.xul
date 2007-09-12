@@ -104,7 +104,7 @@
         response.* += buildResponseDataFormFromXUL(form);
 
       var iq = new window.opener.JSJaCIQ();
-      iq.setIQ(contact.jid, null, "set", id);
+      iq.setIQ(contact.jid, "set", id);
       iq.getNode().appendChild(window.opener.E4XtoDOM(response, iq.getDoc()))
       window.opener.con.send(iq, onForm);
     }

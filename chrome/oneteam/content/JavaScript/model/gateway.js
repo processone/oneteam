@@ -48,7 +48,7 @@ _DECL_(Gateway, Contact).prototype =
     requestRegistrationForm: function(callback)
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "get");
+        iq.setIQ(this.jid, "get");
         iq.setQuery('jabber:iq:register');
         con.send(iq, callback);
     },
@@ -56,7 +56,7 @@ _DECL_(Gateway, Contact).prototype =
     register: function(payload, callback)
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "set");
+        iq.setIQ(this.jid, "set");
         iq.setQuery("jabber:iq:register").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
         con.send(iq, callback);
@@ -87,7 +87,7 @@ _DECL_(Gateway, Contact).prototype =
     {
         if (force || !this._mapNameForm) {
             var iq = new JSJaCIQ();
-            iq.setIQ(this.jid, null, "get");
+            iq.setIQ(this.jid, "get");
             iq.setQuery('jabber:iq:gateway');
             con.send(iq, new Callback(this._mapNameFormRecv, this).
                      addArgs(callback).fromCall());
@@ -116,7 +116,7 @@ _DECL_(Gateway, Contact).prototype =
     mapName: function(payload, callback)
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, "set");
+        iq.setIQ(this.jid, "set");
         iq.setQuery('jabber:iq:gateway').
             appendChild(E4XtoDOM(payload, iq.getDoc()));
         con.send(iq, callback);

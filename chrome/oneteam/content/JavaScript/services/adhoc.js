@@ -29,7 +29,7 @@ var adhocCmds = {
 
             if (show == "unavailable") {
                 var iq = new JSJaCIQ();
-                iq.setIQ(pkt.getFrom(), null, "result", pkt.getID());
+                iq.setIQ(pkt.getFrom(), "result", pkt.getID());
                 iq.getNode().appendChild(E4XtoDOM(
                     <command xmlns="http://jabber.org/protocol/commands"
                         node={query.@node} sessionid={query.@sessionid} status="completed"/>,

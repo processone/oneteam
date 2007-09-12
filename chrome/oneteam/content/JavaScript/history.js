@@ -255,7 +255,7 @@ _DECL_(XEPArchiveThreadsRetriever).prototype =
     requestNextChunk: function(rsm)
     {
         var pkt = new JSJaCIQ();
-        pkt.setIQ(account.jid, null, "get");
+        pkt.setIQ(account.jid, "get");
 
         var query =
             <list xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
@@ -377,7 +377,7 @@ _DECL_(XEPArchiveMessagesRetriever, null, MessageThread).prototype =
     requestNextChunk: function(rsm)
     {
         var pkt = new JSJaCIQ();
-        pkt.setIQ(account.jid, null, "get");
+        pkt.setIQ(account.jid, "get");
 
         var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
         var query =

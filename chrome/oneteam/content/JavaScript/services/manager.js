@@ -288,7 +288,7 @@ _DECL_(ServicesManager).prototype =
             response = {dom: response};
 
         var pkt = new JSJaCIQ();
-        pkt.setIQ(response.to || packet.getFrom(), null, response.type || "result", packet.getID());
+        pkt.setIQ(response.to || packet.getFrom(), response.type || "result", packet.getID());
         if (response.dom)
             pkt.getNode().appendChild(pkt.getDoc().adoptNode(response.dom));
         if (response.e4x)

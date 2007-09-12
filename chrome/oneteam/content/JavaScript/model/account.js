@@ -184,7 +184,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     setVCard: function(vcardE4X)
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(null, null, 'set');
+        iq.setIQ(null, 'set');
         iq.getNode().appendChild(E4XtoDOM(vcardE4X, iq.getDoc()));
 
         con.send(iq);
@@ -269,7 +269,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         const ns = "jabber:iq:register";
         var iq = new JSJaCIQ();
 
-        iq.setIQ(null, null, 'set');
+        iq.setIQ(null, 'set');
         var query = iq.setQuery(ns);
 
         query.appendChild(iq.getDoc().createElementNS(ns, "username")).
@@ -416,7 +416,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         if (!this.mucMode) {
             var pkt = new JSJaCIQ();
-            pkt.setIQ(null, null, 'get');
+            pkt.setIQ(null, 'get');
             pkt.setQuery('jabber:iq:roster');
             con.send(pkt, this._initialRosterFetch, this);
         }
@@ -461,7 +461,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                 if (!value)
                                     return;
                                 var pkt = new JSJaCIQ();
-                                pkt.setIQ(account.jid, null, "set");
+                                pkt.setIQ(account.jid, "set");
                                 var auto = pkt.getDoc().
                                     createElementNS("http://www.xmpp.org/extensions/xep-0136.html#ns",
                                                     "auto");
@@ -653,7 +653,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     _generateVCardPkt: function()
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(null, null, 'get');
+        iq.setIQ(null, 'get');
         iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
         return iq;
     },

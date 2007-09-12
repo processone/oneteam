@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Collection of MD5 and SHA1 hashing and encoding
+ * methods.
+ * @author Stefan Strigler steve@zeank.in-berlin.de
+ * @version $Revision$
+ */
+
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -612,7 +619,7 @@ function cnonce(size) {
   var tab = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   var cnonce = '';
   for (var i=0; i<size; i++) {
-    cnonce += tab.charAt(Math.round(Math.random(new Date().getTime())*(size-1)));
+    cnonce += tab.charAt(Math.round(Math.random(new Date().getTime())*(tab.length-1)));
   }
   return cnonce;
 }

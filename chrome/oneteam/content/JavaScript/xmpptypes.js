@@ -236,7 +236,7 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
     _generateVCardPkt: function()
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, null, 'get');
+        iq.setIQ(this.jid, 'get');
         iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
         return iq;
     }

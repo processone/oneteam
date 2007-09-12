@@ -11,7 +11,7 @@ _DECL_(SOCKS5Service).prototype =
     registerProxy: function(jid)
     {
         var bsp = new JSJaCIQ();
-        bsp.setIQ(jid, null, "get");
+        bsp.setIQ(jid, "get");
         bsp.setQuery("http://jabber.org/protocol/bytestreams");
         con.send(bsp, new Callback(this._onProxyAddress, this));
     },
@@ -73,7 +73,7 @@ _DECL_(SOCKS5Service).prototype =
                                 port={this.proxies[i].port} />);
 
         var pkt = new JSJaCIQ();
-        pkt.setIQ(fileTransfer.jid, null, "set");
+        pkt.setIQ(fileTransfer.jid, "set");
         pkt.getNode().appendChild(E4XtoDOM(xml, pkt.getDoc()));
 
         con.send(pkt, new Callback(this._sendFileStep, this), token);
@@ -189,7 +189,7 @@ _DECL_(SOCKS5Service).prototype =
             token.bytestream = initiator;
 
             var pkt = new JSJaCIQ();
-            pkt.setIQ(token.fileTransfer.jid, null, "result", token.id);
+            pkt.setIQ(token.fileTransfer.jid, "result", token.id);
             pkt.getNode().appendChild(E4XtoDOM(
                 <query xmlns='http://jabber.org/protocol/bytestreams'>
                     <streamhost-used jid={initiator._jid}/>
@@ -206,7 +206,7 @@ _DECL_(SOCKS5Service).prototype =
 
         if (token.proxy) {
             var pkt = new JSJaCIQ();
-            pkt.setIQ(token.proxy, null, "set");
+            pkt.setIQ(token.proxy, "set");
             pkt.getNode().appendChild(E4XtoDOM(
                 <query xmlns='http://jabber.org/protocol/bytestreams'
                         sid={token.fileTransfer.streamID}>
