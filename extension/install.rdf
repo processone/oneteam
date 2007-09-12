@@ -12,7 +12,7 @@
         <em:maxVersion>3.0.*</em:maxVersion>
       </Description>
     </em:targetApplication>
-    <em:updateURL>http://oneteam.im/update.rdf</em:updateURL>
+    <em:updateURL>https://oneteam.im/update.rdf</em:updateURL>
     <em:name>OneTeam Companion</em:name>
     <em:file>
       <Description about="urn:mozilla:extension:file:otcompanion.jar">
