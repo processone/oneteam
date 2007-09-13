@@ -170,6 +170,31 @@ _DECL_(Conference, Contact).prototype =
         con.send(pkt);
     },
 
+    inviteByMail: function(email) {
+        var url = prefManager.getPref('chat.muc.anonymousJid').
+                              replace(/%s/, this.myResource.shortJID);
+        if (account._hasInvitationsService) {
+            const ns = "http://oneteam.im/invitations";
+            var iq = new JSJaCIQ();
+            iq.setIQ(account.myJID, "get");
+
+            var node = iq.getDoc().createElementNS(ns, "invite");
+            iq.getNode().appendChild(node);
+            node.setAttribute("email", email);
+            node.setAttribute("url", url);
+            node.setAttribute("nick", this.myResource.resource);
+            con.send(iq);
+        } else {
+            openLink("mailto:"+encodeURIComponent(email)+"?subject="+
+                     encodeURIComponent(_("Invitation into {0} conference", this.conference.jid))+
+                     "&body="+
+                     encodeURIComponent(_("User *{0}* invited You to conference *{1}*.\nTo join this conference please click on this link: {2}",
+                                          this.myResourceJID.resource,
+                                          this.myResourceJID.shortJID,
+                                          url)));
+        }
+    },
+
     declineInvitation: function(from, reason)
     {
         const ns = "http://jabber.org/protocol/muc#user";
@@ -349,6 +374,7 @@ _DECL_(Conference, Contact).prototype =
             new LeaveCommand(this),
             new NickCommand(this),
             new InviteCommand(this),
+            new InviteByMailCommand(this),
             new JoinCommand(),
             new KickCommand(this),
             new BanCommand(this),

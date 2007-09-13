@@ -366,6 +366,22 @@ _DECL_(InviteCommand, CommandCompletionEngine).prototype =
     }
 }
 
+function InviteByMailCommand(conference)
+{
+    this.conference = conference
+    CommandCompletionEngine.call(this, "/invitebymail",
+        []);
+}
+
+_DECL_(InviteByMailCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function(args)
+    {
+        args = args.match(/(\S+)(?:\s+(.*))?/)
+        ithis.conference.inviteByMail(args[1]);
+    }
+}
+
 function InviteToCommand(contact)
 {
     this.contact = contact;
@@ -407,7 +423,7 @@ _DECL_(TopicCommand, CommandCompletionEngine).prototype =
 {
     doCommand: function(topic)
     {
-        this.conference.setSubject(topic);
+        this.conference.changeSubject(topic);
     }
 }
 
