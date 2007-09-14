@@ -128,9 +128,9 @@
           this._name.insertBefore(document.createTextNode(this.model.visibleName), this._jid);
 
           if (this.model.visibleName.indexOf(this.model.jid.shortJID) != 0) {
-            var jid = this.model.jid;
+            var jid = this.model.jid.toString();
             if (this.model.gateway || this.model.contact && this.model.contact.gateway)
-              jid.replace(/%(.*?)@.*/, "@$1");
+              jid = jid.replace(/%(.*?)@.*/, "@$1");
             this._jid.textContent = " ("+jid+")";
             this._jid.hidden = false;
           } else
