@@ -81,8 +81,8 @@
       if (gateway) {
         _mapNameFormReady(gateway, gateway._mapNameForm || {});
         if (!gateway._mapNameForm) {
-          gateway.requestMapNameForm(_mapNameFormReady);
           progressmeter.style.visibility = "visible";
+          gateway.requestMapNameForm(_mapNameFormReady);
         }
       } else
         progressmeter.style.visibility = "hidden";
@@ -102,8 +102,8 @@
       el.appendChild(document.createTextNode(map.desc || ""));
     }
 
-    function addContact() {
-      if (currentGateway) {
+    function addContact(internal) {
+      if (currentGateway && !internal) {
         progressmeter.style.visibility = "visible";
         document.documentElement.getButton("accept").disabled = true;
         currentGateway.mapName(<prompt>{document.getElementById("gateway-id").value}</prompt>,
@@ -131,11 +131,16 @@
       return true;
     }
 
-    function _mapNameReady(pkt) {
-      document.getElementById("jid").value = pkt.getNode().
-        getElementsByTagNameNS("jabber:iq:gateway", "jid")[0].textContent;
+    function _mapNameReady(jid) {
+      progressmeter.style.visibility = "hidden";
+      if (!jid) {
+        alert(_("Gateway can't convert ID into Jabber ID"));
+        document.documentElement.getButton("accept").disabled = false;
+        return;
+      }
+      document.getElementById("jid").value = jid;
 
-      addContact();
+      addContact(true);
       window.close();
     }
   ]]></script>

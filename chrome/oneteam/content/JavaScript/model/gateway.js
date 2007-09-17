@@ -31,12 +31,9 @@ _DECL_(Gateway, Contact).prototype =
         this.gatewayName = identity.name;
         account._onGatewayAdded(this);
 
-        for (var i in account.allContacts) {
-            if (account.allContacts[i].jid.normalizedJID.domain !=
-                this.jid.normalizedJID.domain)
-                continue;
-            account.allContacts[i]._setGateway(this);
-        }
+        for (var i in account.allContacts)
+            if (account.allContacts[i].jid.normalizedJID.domain == this.jid.normalizedJID.domain)
+                account.allContacts[i]._setGateway(this);
     },
 
     onRegister: function()
@@ -85,7 +82,7 @@ _DECL_(Gateway, Contact).prototype =
 
     requestMapNameForm: function(callback, force)
     {
-        if (force || !this._mapNameForm) {
+        if (force || !("_mapNameForm" in this)) {
             var iq = new JSJaCIQ();
             iq.setIQ(this.jid, "get");
             iq.setQuery('jabber:iq:gateway');
@@ -93,13 +90,16 @@ _DECL_(Gateway, Contact).prototype =
                      addArgs(callback).fromCall());
             return;
         }
-        callback(this, this._mapNameForm);
+        callback(this, this._mapNameForm || {});
     },
 
     _mapNameFormRecv: function(callback, pkt)
     {
-        if (pkt.getType() != "result")
-            return callback(this._mapNameForm = null);
+        if (pkt.getType() != "result") {
+            this._mapNameForm = null;
+            callback(this, {});
+            return
+        }
 
         var ns = "jabber:iq:gateway";
         var desc = pkt.getNode().getElementsByTagNameNS(ns, "desc")[0];
@@ -110,15 +110,33 @@ _DECL_(Gateway, Contact).prototype =
             prompt : prompt && prompt.textContent
         };
 
-        return callback(this, this._mapNameForm);
+        callback(this, this._mapNameForm);
     },
 
     mapName: function(payload, callback)
     {
+        if (!this._mapNameForm) {
+            callback(payload.text().toString().replace(/@/g, "%")+"@"+this.jid);
+            return
+        }
+
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, "set");
         iq.setQuery('jabber:iq:gateway').
             appendChild(E4XtoDOM(payload, iq.getDoc()));
-        con.send(iq, callback);
+        con.send(iq, new Callback(this._mapNameRecv, this).
+                     addArgs(callback).fromCall());
+    },
+
+    _mapNameRecv: function(callback, payload, pkt)
+    {
+        try {
+            if (pkt.getType() == "result") {
+                callback(pkt.getNode().getElementsByTagNameNS("jabber:iq:gateway", "jid")[0].textContent);
+                return;
+            }
+        } catch (ex) {};
+
+        callback(null);
     }
 }
