@@ -34,6 +34,9 @@ _DECL_(Gateway, Contact).prototype =
         for (var i in account.allContacts)
             if (account.allContacts[i].jid.normalizedJID.domain == this.jid.normalizedJID.domain)
                 account.allContacts[i]._setGateway(this);
+
+        //XXXpfx Hack needed for gateway specific icons in roster.
+        account.style.modelUpdated("defaultSet");
     },
 
     onRegister: function()
