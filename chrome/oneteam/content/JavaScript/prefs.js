@@ -104,6 +104,7 @@ function PrefManager()
         "chat.connection.priority": 5,
         "chat.general.iconset": "oneteam",
         "chat.general.smilesset": "oneteam",
+        "chat.general.usegatewayicons": true,
         "chat.muc.nickname": "",
         "chat.roster.showoffline": false,
         "chat.sounds": true,

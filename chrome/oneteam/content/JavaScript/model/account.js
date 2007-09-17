@@ -314,6 +314,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.style.setDefaultIconSet(value);
         } else if (name == "chat.general.smilesset") {
             this.style.setDefaultSmilesSet(value);
+        } else if (name == "chat.general.usegatewayicons") {
+            this.style.setUseGatewayIcons(value);
         }
     },
 

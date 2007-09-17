@@ -230,6 +230,7 @@
                                 if(__value__.toLowerCase() == c[i].model.name.toLowerCase())
                                   return this.selectedIndex = i"
                      prefGet="this.selectedItem &amp;&amp; this.selectedItem.model.name"/>
+        <checkbox label="_('Use gateway specific icons')" pref="chat.general.usegatewayicons=checked"/>
         <spacer/>
         <label value="_('Default smiles set:')"/>
         <richlistbox id="smileSet"

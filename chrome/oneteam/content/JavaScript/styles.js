@@ -18,7 +18,8 @@ function StylesRegistry(cache)
     styles = ["chrome://oneteam/content/data/smiles/oneteam",
               "chrome://oneteam/content/data/status-icons/oneteam",
               "chrome://oneteam/content/data/status-icons/crystal",
-              "chrome://oneteam/content/data/status-icons/dcraven"]
+              "chrome://oneteam/content/data/status-icons/dcraven",
+              "chrome://oneteam/content/data/status-icons/msn"]
 
     for (i = 0; i < styles.length; i++)
         if (!stylesUrls[styles[i]])
@@ -37,6 +38,11 @@ _DECL_(StylesRegistry, null, Model).prototype =
                 this.modelUpdated("defaultSet");
                 return;
             }
+    },
+
+    setUseGatewayIcons: function(val)
+    {
+        this.modelUpdated("defaultSet");
     },
 
     setDefaultSmilesSet: function(setName)
@@ -248,13 +254,15 @@ function StatusIconStyle(url, iconDefData)
         filters.push("/"+data.text()+"/.test(client.clientName)");
 
     for each (data in iconDefData.*::x.(function::namespace()=="transport:name"))
-        filters.push("(client.gateway && client.gateway.gatewayType == "+
+        filters.push("(useGatewayIcons && client.gateway && client.gateway.gatewayType == "+
                     uneval(data.text().toString())+")");
     for each (data in iconDefData.*::x.(function::namespace()=="transport:regexp"))
-        filters.push("(client.gateway && /"+data.text()+"/.test(client.gateway.gatewayType))");
+        filters.push("(useGatewayIcons && client.gateway && /"+data.text()+"/.test(client.gateway.gatewayType))");
 
     if (filters.length)
-        this.filter = new Function("client", "return "+filters.join("||"));
+        this.filter = new Function("client", "var useGatewayIcons = "+
+                                   "prefManager.getPref('chat.general.usegatewayicons');"+
+                                   "return "+filters.join("||"));
 
     var ns = new Namespace("name");
     for each (var icon in iconDefData.icon) {

@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+	<x xmlns="transport:name">msn</x>
+	<meta>
+		<name>MSN by Peppers</name>
+		<description>MSN Iconset by Peppers</description>
+		<version>0.2</version>
+ 		<creation>2006-04-15</creation>
+ 		<author www='http://www.patryk.cholody.com'>Patryk Cholody (pcholody@gmail.com)</author>
+	</meta>
+
+	<!-- Normal status icons -->
+	<icon>
+		<x xmlns='name'>status/online</x>
+		<object mime='image/png'>online.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/offline</x>
+		<object mime='image/png'>offline.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/away</x>
+		<object mime='image/png'>away.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/xa</x>
+		<object mime='image/png'>xa.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/dnd</x>
+		<object mime='image/png'>dnd.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/invisible</x>
+		<object mime='image/png'>invisible.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/chat</x>
+		<object mime='image/png'>chatty.png</object>
+	</icon>
+
+	<!-- Special statuses -->
+	<icon>
+		<x xmlns='name'>status/ask</x>
+		<object mime='image/png'>ask.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/noauth</x>
+		<object mime='image/png'>noauth.png</object>
+	</icon>
+
+	<!-- FIXME -->
+	<!--<icon>
+		<x xmlns='name'>status/error</x>
+		<object mime='image/png'>perr.png</object>
+	</icon>-->
+</icondef>
