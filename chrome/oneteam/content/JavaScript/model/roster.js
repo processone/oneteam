@@ -122,7 +122,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         checkIfGateway(this);
 
     account.allContacts[this.jid.normalizedJID] = this;
-    this.gateways = account.gateways[this.jid.normalizedJID.domain];
+    this.gateway = account.gateways[this.jid.normalizedJID.domain];
 
     this.chatPane = chatTabsController.getTab(this);
 }
