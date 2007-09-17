@@ -205,3 +205,11 @@ richlistbox {
 .gateway-toolbarbutton[gateway-type="icq"][checked="true"] {
   list-style-image: url(imgs/gatewayicons/icq-connected.png);
 }
+
+.gateway-toolbarbutton[gateway-type="gadu-gadu"] {
+  list-style-image: url(imgs/gatewayicons/gadu-gadu.png);
+}
+
+.gateway-toolbarbutton[gateway-type="gadu-gadu"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/gadu-gadu-connected.png);
+}
