@@ -9,17 +9,24 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="400" height="450"
   buttonlabelaccept="_('Invite')" buttonlabelcancel="_('Cancel')"
-  buttons="accept,cancel"
+  buttons="accept,cancel" buttondisabledaccept="true"
   ondialogaccept="return invite()" onload="onLoad()">
 
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];
+    var emails;
 
     function onLoad() {
+      var emails = document.getElementById("emails");
+
       document.getElementById("header").setAttribute("title",
         _("Invite users to room {0}", conference.jid));
+
+      emails.addEventListener("listEmptyStateChanged", function(ev) {
+        document.documentElement.getButton("accept").disabled = ev.target.values.length == 0
+      }, false);
     }
 
     function invite() {

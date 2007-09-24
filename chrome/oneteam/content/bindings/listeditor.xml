@@ -111,19 +111,30 @@
           this._values.push(this._textbox.value);
           this._list.ensureElementIsVisible(i);
           this._list.selectItem(i);
+          if (this._values.length == 1) {
+            var event = document.createEvent("Events");
+            event.initEvent("listEmptyStateChanged", false, true);
+            this.dispatchEvent(event);
+          }
         ]]></body>
       </method>
 
       <method name="_remove">
         <body><![CDATA[
             var idx = this._list.selectedIndex;
-            delete this._hasValue[this._list.selectedItem.label];
-            this._values.splice(idx, 1);
-            this._list.removeItemAt(idx);
+          delete this._hasValue[this._list.selectedItem.label];
+          this._values.splice(idx, 1);
+          this._list.removeItemAt(idx);
 
-            var rc = this._list.getRowCount();
-            if (rc != 0)
-              this._list.selectedIndex = idx == rc ? idx-1 : idx;
+          var rc = this._list.getRowCount();
+          if (rc != 0)
+            this._list.selectedIndex = idx == rc ? idx-1 : idx;
+
+          if (this._values.length == 0) {
+            var event = document.createEvent("Events");
+            event.initEvent("listEmptyStateChanged", false, true);
+            this.dispatchEvent(event);
+          }
         ]]></body>
       </method>
     </implementation>
