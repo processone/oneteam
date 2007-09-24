@@ -9,25 +9,32 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="400" height="450"
   buttonlabelaccept="_('Invite')" buttonlabelcancel="_('Cancel')"
-  buttons="accept,cancel"
+  buttons="accept,cancel" buttondisabledaccept="true"
   ondialogaccept="return invite()" onload="onLoad()">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];
 
     function onLoad() {
+      var contacts = document.getElementById("contacts");
+
+      contacts.addEventListener("listEmptyStateChanged", function(ev) {
+        document.documentElement.getButton("accept").disabled = ev.target.choosenCount == 0
+      }, false);
+
       document.getElementById("header").setAttribute("title",
         _("Invite contacts to room {0}", conference.jid));
     }
 
     function invite() {
-      var contacts = document.getElementById("contacts").choosenContacts;
+      var choosenContacts = contacts.choosenContacts;
       var reason = document.getElementById("reason").value;
 
-      for (var i = 0; i < contacts.length; i++)
-        conference.invite(contacts[i], reason);
+      for (var i = 0; i < choosenContacts.length; i++)
+        conference.invite(choosenContacts[i], reason);
       return true;
     }
   ]]></script>

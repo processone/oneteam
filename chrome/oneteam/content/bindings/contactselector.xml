@@ -30,6 +30,8 @@
       <property name="disabled" onget="return this.getAttribute('disabled') == 'true'"
         onset="this.setAttribute('disabled', !!val); return val;"/>
 
+      <property name="choosenCount" onget="return this._choosenCount" readonly="true"/>
+
       <property name="choosenContacts">
         <getter><![CDATA[
           var count = this._listbox.getRowCount();
@@ -95,17 +97,36 @@
               groupItem.contacts = [];
               groupItem.checkedCount = 0;
               for (var contact in group.contactsIterator()) {
-                var contactItem = this._listbox.appendItem("  "+contact.visibleName, contact.jid);
+                var jid = contact.jid.normalizedJID;
+                var contactItem = this._listbox.appendItem("  "+contact.visibleName, jid);
                 contactItem.setAttribute("type", "checkbox");
+                contactItem.lastChecked = false;
                 contactItem.group = groupItem;
-                (contactItem.dups = contactsHash[contact.jid] = contactsHash[contact.jid] || []).
+                (contactItem.dups = contactsHash[jid] = contactsHash[jid] || []).
                   push(contactItem);
                 groupItem.contacts.push(contactItem);
               }
             }
           }
+          this._choosenCount = 0;
         ]]>
       </constructor>
+
+      <method name="_choosenCountChange">
+        <parameter name="diff"/>
+        <body><![CDATA[
+          if (diff == 0)
+            return;
+
+          this._choosenCount += diff;
+
+          if (this._choosenCount == 0 || this._choosenCount == diff) {
+            var event = document.createEvent("Events");
+            event.initEvent("listEmptyStateChanged", false, true);
+            this.dispatchEvent(event);
+          }
+        ]]></body>
+      </method>
 
       <method name="addContact">
         <parameter name="jid"/>
@@ -130,8 +151,11 @@
           item.setAttribute("checked", "true");
           item.setAttribute("label", jid);
           item.setAttribute("value", jid);
+          item.lastChecked = true;
 
           this._listbox.appendChild(item);
+          this._choosenCountChange(1);
+
           if (scroll)
             this._listbox.ensureElementIsVisible(item);
         ]]></body>
@@ -153,9 +177,21 @@
 
         var item = event.originalTarget;
         if (item.contacts) {
+          var changesCount = 0;
+          this._insideGroupChange = true;
+
           for (var i = 0; i < item.contacts.length; i++)
-            item.contacts[i].checked = item.checked;
+            if (item.contacts[i].checked != item.checked) {
+              item.contacts[i].checked = item.checked
+              changesCount += item.checked ? 1 : -1;
+            }
+
+          this._choosenCountChange(changesCount);
+          this._insideGroupChange = false;
         } else if (item.dups) {
+          if (item.checked == item.lastChecked)
+            return;
+
           this._internal = true;
 
           for (var i = 0; i < item.dups.length; i++) {
@@ -172,8 +208,13 @@
             } else if (item.dups[i].group.checkedCount-- == item.dups[i].group.contacts.length)
                 item.dups[i].group.checked = false;
           }
+          if (!this._insideGroupChange)
+            this._choosenCountChange(item.checked ? 1 : -1);
 
           this._internal = false;
+        } else if (item.checked != item.lastChecked) {
+          this._choosenCountChange(item.checked ? 1 : -1);
+          item.lastChecked = item.checked;
         }
       ]]></handler>
     </handlers>
