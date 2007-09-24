@@ -19,7 +19,7 @@
 
     function onLoad() {
       document.getElementById("header").setAttribute("title",
-        _("Invite users to room {0}", conference.jid));
+        _("Invite contacts to room {0}", conference.jid));
     }
 
     function invite() {
@@ -32,7 +32,7 @@
     }
   ]]></script>
 
-  <dialogheader id="header" title="Invite users"/>
+  <dialogheader id="header" title="Invite contacts"/>
 
   <label value="_('Contacts:')" control="contacts"/>
   <contactselector id="contacts" rows="6"/>

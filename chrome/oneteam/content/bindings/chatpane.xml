@@ -720,7 +720,7 @@
                         oncommand="this.parentNode.parentNode.parentNode._model.onInvite()"/>
           <xul:menuitem label="_('Invite contact')" cmdTarget="conference"
                         oncommand="this.parentNode.parentNode.parentNode._model.onInvite()"/>
-          <xul:menuitem label="_('Invite contact by mail')" cmdTarget="conference"
+          <xul:menuitem label="_('Invite user by mail')" cmdTarget="conference"
                         oncommand="this.parentNode.parentNode.parentNode._model.onInviteByMail()"/>
         </xul:menupopup>
       </xul:toolbarbutton>
