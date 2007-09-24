@@ -178,17 +178,17 @@ _DECL_(Conference, Contact).prototype =
 
     inviteByMail: function(email) {
         var url = prefManager.getPref('chat.muc.anonymousUrl').
-                              replace(/%s/, this.myResource.shortJID);
+                              replace(/%s/, this.myResource.jid.shortJID);
         if (account._hasInvitationsService) {
             const ns = "http://oneteam.im/invitations";
             var iq = new JSJaCIQ();
-            iq.setIQ(account.myJID, "get");
+            iq.setIQ(account.jid, "get");
 
             var node = iq.getDoc().createElementNS(ns, "invite");
             iq.getNode().appendChild(node);
             node.setAttribute("email", email);
             node.setAttribute("url", url);
-            node.setAttribute("nick", this.myResource.resource);
+            node.setAttribute("nick", this.myResource.jid.resource);
             con.send(iq);
         } else {
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
