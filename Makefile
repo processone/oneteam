@@ -6,11 +6,11 @@ ext:
 xulapp:
 	perl build.pl XULAPP 1
 
-webjar: ext
+webjar:
 	perl build.pl
 
-webjardbg: ext
+webjardbg:
 	perl build.pl DEBUG 1
 
-webdir: ext
+webdir:
 	perl build.pl NOJAR 1 DEBUG 1
