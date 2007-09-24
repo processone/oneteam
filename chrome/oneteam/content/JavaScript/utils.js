@@ -153,7 +153,7 @@ function openLink(uri)
     if (/^(?:http|https|ftp):/.exec(uri))
         window.open(uri, "_blank");
     else if (/^mailto:/.exec(uri))
-        document.location = uri;
+        document.getElementById("hiddenFrame").src = uri;
 }
 
 function StorageWrapper(prefix)

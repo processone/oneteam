@@ -935,5 +935,7 @@
   <!-- #endif -->
   <soundsplayer id="soundsplayer"/>
 
-  <vbox id="hiddenContainer" collapsed="true"/>
+  <vbox id="hiddenContainer" collapsed="true">
+    <html:iframe id="hiddenFrame"/>
+  </vbox>
 </window>

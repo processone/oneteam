@@ -194,7 +194,7 @@ _DECL_(Conference, Contact).prototype =
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
                      encodeURIComponent(_("Invitation into {0} conference", this.jid))+
                      "&body="+
-                     encodeURIComponent(_("User *{0}* invited You to conference *{1}*.\nTo join this conference please click on this link: {2}",
+                     encodeURIComponent(_("User *{0}* invited you to conference *{1}*.\n\nTo join this conference please click on this link:\n{2}\n",
                                           this.myResourceJID.resource,
                                           this.myResourceJID.shortJID,
                                           url)));
