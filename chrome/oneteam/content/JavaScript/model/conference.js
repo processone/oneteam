@@ -171,7 +171,7 @@ _DECL_(Conference, Contact).prototype =
     },
 
     inviteByMail: function(email) {
-        var url = prefManager.getPref('chat.muc.anonymousJid').
+        var url = prefManager.getPref('chat.muc.anonymousUrl').
                               replace(/%s/, this.myResource.shortJID);
         if (account._hasInvitationsService) {
             const ns = "http://oneteam.im/invitations";
@@ -186,7 +186,7 @@ _DECL_(Conference, Contact).prototype =
             con.send(iq);
         } else {
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
-                     encodeURIComponent(_("Invitation into {0} conference", this.conference.jid))+
+                     encodeURIComponent(_("Invitation into {0} conference", this.jid))+
                      "&body="+
                      encodeURIComponent(_("User *{0}* invited You to conference *{1}*.\nTo join this conference please click on this link: {2}",
                                           this.myResourceJID.resource,
