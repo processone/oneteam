@@ -1,3 +1,4 @@
 chat.connection.domain = "xmpp.server.address.tld"
 chat.connection.base = "http-poll"
 chat.connection.polling = true
+chat.muc.anonymousUrl = "http://xmpp.server.address.tld/indexMUC.html?room=%s"
