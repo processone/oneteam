@@ -715,12 +715,17 @@
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
                          tooltiptext="_('Send file')"/>
       <xul:toolbarbutton id="extraCmds" tooltiptext="_('Extra Commands')" type="menu">
-        <xul:menupopup>
-          <xul:menuitem label="_('Invite to conference')" cmdTarget="contact"
+        <xul:menupopup onpopupshowing="this.parentNode.parentNode._syncMenu()">
+          <xul:menuitem label="_('Invite to group chat room')"
+                        onmenushowing="this.hidden = contact instanceof ConferenceMember ||
+                                       contact instanceof Conference;
+                                       this.disabled = account.conferences.length == 0"
                         oncommand="this.parentNode.parentNode.parentNode._model.onInvite()"/>
-          <xul:menuitem label="_('Invite contact')" cmdTarget="conference"
+          <xul:menuitem label="_('Invite contact')"
+                        onmenushowing="this.hidden = !(contact instanceof Conference)"
                         oncommand="this.parentNode.parentNode.parentNode._model.onInvite()"/>
-          <xul:menuitem label="_('Invite user by mail')" cmdTarget="conference"
+          <xul:menuitem label="_('Invite user by mail')"
+                        onmenushowing="this.hidden = !(contact instanceof Conference)"
                         oncommand="this.parentNode.parentNode.parentNode._model.onInviteByMail()"/>
         </xul:menupopup>
       </xul:toolbarbutton>
@@ -742,19 +747,14 @@
 
           this._sendFile.hidden = !val || typeof(socks5Service) == "undefined" ||
             !socks5Service.canSendTo(val.contact ? val : val.activeResource);
-
-          var isConference = val instanceof Conference;
-          var list = document.getAnonymousElementByAttribute(this, "id", "extraCmds").
-            firstChild.childNodes;
-          for (var i = 0; i < list.length; i++) {
-            var target = list[i].getAttribute("cmdTarget");
-            list[i].hidden = !val || target == "contact" ? isConference : !isConference;
-          }
+          this._syncMenu();
         ]]></setter>
       </property>
 
       <constructor><![CDATA[
         this._sendFile = document.getAnonymousElementByAttribute(this, "id", "sendFile");
+        this._extraCmds = document.getAnonymousElementByAttribute(this, "id", "extraCmds");
+
         var p = this.__proto__;
         this.__proto__ = {};
 
@@ -770,6 +770,25 @@
         for (i in state)
           this[i] = state[i];
       ]]></constructor>
+
+      <method name="_syncMenu">
+        <body><![CDATA[
+          var list = this._extraCmds.firstChild.childNodes;
+          var hasAnyEntry = false;
+
+          for (var i = 0; i < list.length; i++) {
+            if (!list[i].onmenushowing)
+              list[i].onmenushowing = new Function("contact", list[i].getAttribute("onmenushowing"));
+
+            list[i].onmenushowing(this._model);
+
+            if (!list[i].hidden)
+              hasAnyEntry = true;
+          }
+
+          this._extraCmds.hidden = !hasAnyEntry;
+       ]]></body>
+      </method>
     </implementation>
 
     <handlers>

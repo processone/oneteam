@@ -404,6 +404,12 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         account.showHistoryManager(this);
     },
 
+    onInvite: function()
+    {
+        openDialogUniq("ot:inviteToRoom", "chrome://oneteam/content/inviteToRoom.xul",
+                       "chrome,centerscreen", this);
+    },
+
     onOpenChat: function()
     {
         if (!this.chatPane || this.chatPane.closed)

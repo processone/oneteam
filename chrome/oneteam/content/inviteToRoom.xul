@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+
+<dialog id="invite" windowtype="ot:invite" title="_('Invite to group chat room')"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  width="400" height="450"
+  buttonlabelaccept="_('Invite')" buttonlabelcancel="_('Cancel')"
+  buttons="accept,cancel" buttondisabledaccept="true"
+  ondialogaccept="return invite()" onload="onLoad()">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var contact = window.arguments[0];
+    var rooms;
+
+    function onLoad() {
+      rooms = document.getElementById("rooms");
+      document.getElementById("header").setAttribute("title",
+        _("Invite {0} to group chat room", contact.visibleName));
+
+      var conferences = window.opener.account.conferences;
+      for (var i = 0; i < conferences.length; i++)
+        rooms.appendItem(conferences[i].jid, conferences[i].jid);
+    }
+
+    function invite() {
+      var conference = window.opener.getOrCreateConference(rooms.value);
+      var reason = document.getElementById("reason").value;
+
+      conference.invite(contact.jid, reason);
+      return true;
+    }
+  ]]></script>
+
+  <dialogheader id="header" title="Invite to room"/>
+
+  <label value="_('Rooms:')" control="rooms"/>
+  <listbox id="rooms" onselect="document.documentElement.getButton('accept').disabled = this.selectedCount == 0"/>
+
+  <spacer/>
+
+  <label value="_('Reason:')" />
+  <textbox id="reason" multiline="true" rows="2"/>
+</dialog>
