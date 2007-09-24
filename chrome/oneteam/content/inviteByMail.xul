@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+
+<dialog id="invite" windowtype="ot:invite" title="_('Invite users by mail')"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  width="400" height="450"
+  buttonlabelaccept="_('Invite')" buttonlabelcancel="_('Cancel')"
+  buttons="accept,cancel"
+  ondialogaccept="return invite()" onload="onLoad()">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var conference = window.arguments[0];
+
+    function onLoad() {
+      document.getElementById("header").setAttribute("title",
+        _("Invite users to room {0}", conference.jid));
+    }
+
+    function invite() {
+      var emails = document.getElementById("emails").values;
+
+      for (var i = 0; i < emails.length; i++)
+        conference.inviteByMail(emails[i]);
+      return true;
+    }
+  ]]></script>
+
+  <dialogheader id="header" title="_('Invite users by mail')"/>
+
+  <label value="_('E-mails:')" control="emails"/>
+  <listeditor id="emails" flex="1" regex="^(?:[^@]+@)(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
+</dialog>

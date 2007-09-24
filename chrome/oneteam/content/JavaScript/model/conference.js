@@ -170,6 +170,12 @@ _DECL_(Conference, Contact).prototype =
         con.send(pkt);
     },
 
+    onInviteByMail: function()
+    {
+        openDialogUniq("ot:invite", "chrome://oneteam/content/inviteByMail.xul",
+                       "chrome,centerscreen", this);
+    },
+
     inviteByMail: function(email) {
         var url = prefManager.getPref('chat.muc.anonymousUrl').
                               replace(/%s/, this.myResource.shortJID);
