@@ -429,12 +429,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.myJID = new JID(con.fulljid);
         this.jid = new JID(this.myJID.domain);
 
-        this.modelUpdated("connected");
-
         if (this.mucMode) {
             this._initialRosterFetch(null, this);
+            this.modelUpdated("connected");
             return;
         }
+
+        this.modelUpdated("connected");
 
         this.bookmarks.retrieve();
         this.getDiscoItemsByCategory("conference", "text", false,
