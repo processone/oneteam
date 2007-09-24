@@ -378,7 +378,7 @@ _DECL_(InviteByMailCommand, CommandCompletionEngine).prototype =
     doCommand: function(args)
     {
         args = args.match(/(\S+)(?:\s+(.*))?/)
-        ithis.conference.inviteByMail(args[1]);
+        this.conference.inviteByMail(args[1]);
     }
 }
 
