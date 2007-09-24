@@ -12,6 +12,7 @@
   buttons="accept,cancel" buttondisabledaccept="true"
   ondialogaccept="return invite()" onload="onLoad()">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
