@@ -50,3 +50,8 @@
 #sendFile[disabled=true] {
     list-style-image: url(imgs/send-file-disabled.png);
 }
+
+#extraCmds {
+    list-style-image: url(imgs/extra-cmds.png);
+}
+

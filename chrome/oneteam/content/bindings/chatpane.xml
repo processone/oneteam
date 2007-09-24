@@ -714,6 +714,16 @@
                          tooltiptext="_('Show contact information')"/>
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
                          tooltiptext="_('Send file')"/>
+      <xul:toolbarbutton id="extraCmds" tooltiptext="_('Extra Commands')" type="menu">
+        <xul:menupopup>
+          <xul:menuitem label="_('Invite to conference')" cmdTarget="contact"
+                        oncommand="this.parentNode.parentNode.parentNode._model.onInvite()"/>
+          <xul:menuitem label="_('Invite contact')" cmdTarget="conference"
+                        oncommand="this.parentNode.parentNode.parentNode._model.onInvite()"/>
+          <xul:menuitem label="_('Invite contact by mail')" cmdTarget="conference"
+                        oncommand="this.parentNode.parentNode.parentNode._model.onInviteByMail()"/>
+        </xul:menupopup>
+      </xul:toolbarbutton>
       <xul:toolbarseparator/>
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
@@ -732,6 +742,14 @@
 
           this._sendFile.hidden = !val || typeof(socks5Service) == "undefined" ||
             !socks5Service.canSendTo(val.contact ? val : val.activeResource);
+
+          var isConference = val instanceof Conference;
+          var list = document.getAnonymousElementByAttribute(this, "id", "extraCmds").
+            firstChild.childNodes;
+          for (var i = 0; i < list.length; i++) {
+            var target = list[i].getAttribute("cmdTarget");
+            list[i].hidden = !val || target == "contact" ? isConference : !isConference;
+          }
         ]]></setter>
       </property>
 
