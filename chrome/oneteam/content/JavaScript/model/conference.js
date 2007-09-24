@@ -172,7 +172,7 @@ _DECL_(Conference, Contact).prototype =
 
     onInviteByMail: function()
     {
-        openDialogUniq("ot:invite", "chrome://oneteam/content/inviteByMail.xul",
+        openDialogUniq("ot:inviteByMail", "chrome://oneteam/content/inviteByMail.xul",
                        "chrome,centerscreen", this);
     },
 
