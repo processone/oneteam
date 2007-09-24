@@ -11,13 +11,20 @@
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
+  <script type="text/javascript" src="lib/jsjac/jsextras.js"/>
   <script type="text/javascript" src="lib/jsjac/crypt.js"/>
-  <script type="text/javascript" src="lib/jsjac/json.js"/>
-  <script type="text/javascript" src="lib/jsjac/qm_cookie.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
+  <!--<script type="text/javascript" src="lib/jsjac/json.js"/>-->
+  <script type="text/javascript" src="lib/jsjac/JSJaCConfig.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCCookie.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCJID.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCBuilder.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCError.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCKeys.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCConsoleLogger.js"/>
 
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
@@ -70,15 +77,23 @@
       var kick = document.getElementById("conferencemember-kick");
       var ban = document.getElementById("conferencemember-ban");
       var affiliations = document.getElementById("conferencemember-affiliations");
+      var roles = document.getElementById("conferencemember-roles");
 
       kick.previousSibling.hidden = kick.hidden = ban.hidden = !confMemb.canBeKicked;
 
       affiliations.hidden = !(conf.iAmAdmin && conf.myResource.isGt(confMemb) || conf.iAmOwner);
+      roles.hidden = confMemb.isAdmin || !conf.iAmModerator;
 
-      for each (affiliation in "owner admin member none".split(" ")) {
+      for each (var affiliation in "owner admin member none".split(" ")) {
         var el = document.getElementById("conferencemember-affiliation-"+affiliation);
         el.hidden = !conf.iAmOwner && conf.myResource.cmp(affiliation, true) >= 0;
         el.setAttribute("checked", confMemb.affiliation == affiliation);
+      }
+
+      for each (var role in "moderator participant visitor none".split(" ")) {
+        var el = document.getElementById("conferencemember-role-"+role);
+        el.hidden = confMemb.isAdmin || (role == "moderator" && conf.iAmModerator && !conf.iAmAdmin);
+        el.setAttribute("checked", confMemb.role == role);
       }
     }
 
@@ -210,6 +225,8 @@
     };
 
     var chatTabsController;
+    var soundsPlayer;
+
     var args = {};
     var search = window.top.location.search.substr(1);
 
@@ -222,6 +239,7 @@
       account.mucMode = true;
       setPresenceUpdater.init();
       chatTabsController = document.getElementById("chats");
+      soundsPlayer = document.getElementById("soundsplayer");
 
       chatTabsController.addEventListener("tab-removed", function(event) {
         if (!conf.joined) {
@@ -327,6 +345,9 @@
     <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
       oncommand="this.setAttribute('checked', setPresenceUpdater.rosterView.hideOffline =
         !setPresenceUpdater.rosterView.hideOffline)"/>
+    <command id="cmd_toggleShowToolbar" checked="true"
+      oncommand="var c = this.getAttribute('checked') == 'true'; this.setAttribute('checked', !c);
+                 document.getElementById('actions-toolbar').collapsed = c"/>
   </comandset>
 
   <deck id="main-deck" flex="1" selectedIndex="0">
@@ -409,6 +430,23 @@
         </menupopup>
       </menu>
 
+      <menu id="conferencemember-roles" label="Role">
+        <menupopup>
+          <menuitem id="conferencemember-role-moderator" name="roles"
+            type="radio" label="Moderator"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('moderator')"/>
+          <menuitem id="conferencemember-role-participant" name="roles"
+            type="radio" label="Participant"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('participant')"/>
+          <menuitem id="conferencemember-role-visitor" name="roles"
+            type="radio" label="Visitor"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('visitor')"/>
+          <menuitem id="conferencemember-role-none" name="roles"
+            type="radio" label="None"
+            oncommand="this.parentNode.parentNode.parentNode.model.setRole('none')"/>
+        </menupopup>
+      </menu>
+
       <menuseparator/>
 
       <menuitem label="_('Information...')"
@@ -425,4 +463,9 @@
   <!-- #ifdef XULAPP -->
   <otsystray id="systray" type="minimizer"/>
   <!-- #endif -->
+  <soundsplayer id="soundsplayer"/>
+
+  <vbox id="hiddenContainer" collapsed="true">
+    <html:iframe id="hiddenFrame"/>
+  </vbox>
 </window>
