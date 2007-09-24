@@ -9,14 +9,18 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://oneteam/skin/listeditor/listeditor.css"/>
     </resources>
 
     <content>
       <xul:vbox flex="1">
-        <xul:hbox flex="1">
-          <xul:textbox id="name-textbox" flex="1" xbl:inherits="disabled"/>
-          <xul:button id="add-button" label="Add" xbl:inherits="disabled"/>
-        </xul:hbox>
+        <xul:verifier orient="horizontal" flex="1">
+          <xul:textbox type="verifiable" id="name-textbox" flex="1"
+                       regex="[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"
+                       xbl:inherits="disabled"/>
+          <xul:button class="add-button" id="add-button" ifinvalidset="@disabled=true"
+                      xbl:inherits="disabled"/>
+        </xul:verifier>
         <xul:listbox id="contacts-listbox" xbl:inherits="disabled,rows">
         </xul:listbox>
       </xul:vbox>
@@ -138,13 +142,6 @@
       <handler event="command"><![CDATA[
         if (event.originalTarget.id != "add-button")
           return;
-
-        if (!this._textbox.value)
-          return;
-        if (!~this._textbox.value.search(/^[^@]+@(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-          alert("Please give correct Jabber ID");
-          return;
-        }
 
         this.addContact(this._textbox.value, true);
         this._textbox.value = "";
