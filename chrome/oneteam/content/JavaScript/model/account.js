@@ -474,7 +474,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                             });
         this.hasDiscoFeature("http://oneteam.im/invitations", false,
                              function(account, val) {
-                                this._hasInvitationsService = val;
+                                account._hasInvitationsService = val;
                              });
         this.presenceProfiles.loadFromServer();
         this.getVCard(true, function(){});
