@@ -166,9 +166,11 @@
         <parameter name="hash"/>
         <parameter name="data"/>
         <body><![CDATA[
-          if (this._selectedItem.firstChild.avatarHash == hash)
-            return;
-          this._selectedItem.removeAttribute("selected");
+          if (this._selectedItem) {
+            if (this._selectedItem.firstChild.avatarHash == hash)
+              return;
+            this._selectedItem.removeAttribute("selected");
+          }
 
           for (var i = 0; i < this._container.childNodes.length; i++)
             if (this._container.childNodes[i].firstChild.avatarHash == hash) {
