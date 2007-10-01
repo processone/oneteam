@@ -4,6 +4,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dataforms/dataforms.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
 <dialog id="registerGateway" windowtype="ot:registerGateway" title="Gateway Registration"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"

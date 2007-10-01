@@ -2,6 +2,7 @@
 
 <?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
 <dialog id="bumpPriority" windowtype="ot:bumpPriority" title="_('Another client active')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"

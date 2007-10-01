@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<!-- TODO: Translate About and Release -->
-<!-- TODO: Font-style should be defined in CSS -->
-<!-- TODO: Logo should be defined in CSS -->
-<!-- TODO: Refactor the function to open the browser on Process-one in a separate Javascript module -->
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
 <dialog id="about" windowtype="ot:about" title="_('About {0}', _('$$branding$$:OneTeam'))"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"

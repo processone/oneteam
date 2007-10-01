@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
 <window id="fileTransfers" windowtype="ot:fileTransfers" title="_('File Transfers')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
