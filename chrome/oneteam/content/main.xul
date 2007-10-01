@@ -689,6 +689,9 @@
         <!-- #else
         <vbox width="250">
         // #endif -->
+          <vbox id="presenceBoxLogo">
+            <image />
+          </vbox>
           <hbox id="setPresence-box">
             <vbox flex="1">
               <hbox align="center">
