@@ -29,6 +29,10 @@ find(sub {
 
 $defs{REVISION} = sub { get_revision($topdir) };
 $defs{BRANCH} = sub { get_branch($topdir) };
+$defs{PREFS} = sub { extract_prefs(qr/^chat\./,
+    File::Spec->catfile($topdir, "defaults", "preferences", "pref.js"),
+    File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"));
+};
 
 my $locale_processor = exists $defs{XULAPP} ?
     new OneTeam::Builder::Filter::LocaleProcessor::XulApp(split /,/, ($defs{LANGS}||"")) :

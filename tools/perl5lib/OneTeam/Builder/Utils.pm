@@ -1,14 +1,16 @@
 package OneTeam::Builder::Utils;
 
 use File::Spec::Functions qw(catdir);
+use OneTeam::Utils;
 use strict;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(get_revision get_branch);
+our @EXPORT = qw(get_revision get_branch extract_prefs);
 
 my $revision;
 my $branch;
+my %prefs;
 
 sub get_revision {
     my $topdir = shift;
@@ -56,6 +58,51 @@ sub get_branch {
         $branch = "UNKNOWN";
     }
     return $branch
+}
+
+sub extract_prefs {
+    my $prefs_id = join ",",@_;
+
+    return $prefs{$prefs_id} if $prefs{$prefs_id};
+
+    my $match = shift;
+    my %p;
+
+    %p = (%p, _extract_prefs($match, $_)) for @_;
+
+    my $res;
+    $res .= "\t\"$_\": $p{$_},\n" for sort keys %p;
+
+    return $prefs{$prefs_id} = $res;
+}
+
+sub _extract_prefs {
+    my ($match, $path) = @_;
+    my $file = slurp($path);
+    my $ws = qr!(?>(?:\s*|//[^\n]*|/\*.*?\*/)*)!;
+    my %prefs;
+
+    while ($file =~ m!$ws pref $ws
+           \( $ws
+             (?:
+              " ((?:[^"\\]|\\.)*) " |
+              ' ((?:[^"\\]|\\.)*) '
+             ) $ws , $ws
+             (
+              " (?:[^"\\]|\\.)* " |
+              ' (?:[^"\\]|\\.)* ' |
+              [+-]?\d+(?:\.\d+) |
+              true |
+              false
+             ) $ws
+            \)!gx)
+    {
+        my $name = $1 || $2;
+        my $val = $3;
+        $prefs{$name} = $val if not $match or $name =~ $match;
+    }
+
+    return %prefs;
 }
 
 1;

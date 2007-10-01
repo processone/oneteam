@@ -41,6 +41,10 @@ my $dir = realpath(File::Spec->catdir($topdir, qw(chrome oneteam)));
 
 my %defs = ( REVISION => sub { get_revision($topdir) },
              BRANCH => sub { get_branch($topdir) },
+             PREFS => sub { extract_prefs(qr/^chat\./,
+                File::Spec->catfile($topdir, "defaults", "preferences", "pref.js"),
+                File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"))
+             },
              DEBUG => 1,
              NOJAR => 1);
 

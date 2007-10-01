@@ -98,18 +98,7 @@ function PrefManager()
 {
     this.callbacks = {};
     this.prefs = {
-        "chat.connection.user": "",
-        "chat.connection.pass": "",
-        "chat.connection.resource": "OneTeam",
-        "chat.connection.priority": 5,
-        "chat.general.iconset": "oneteam",
-        "chat.general.smilesset": "oneteam",
-        "chat.general.usegatewayicons": true,
-        "chat.muc.nickname": "",
-        "chat.roster.showoffline": false,
-        "chat.sounds": true,
-        "chat.general.showavatars": true,
-        "chat.roster.sortbystatus": true,
+        @@PREFS@@
     };
 
     this.builtinPrefs = {}
