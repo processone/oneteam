@@ -37,10 +37,7 @@ pref("network.protocol-handler.warn-external.https", false);
 pref("network.protocol-handler.warn-external.ftp", false);
 pref("network.protocol-handler.warn-external.mailto", false);
 
-//pref("network.protocol-handler.external.mailto", true);
-
 pref ("general.skins.selectedSkin","");
-
 
 pref("chat.connection.priority", 5);
 pref("chat.connection.base", "http-poll");
@@ -67,19 +64,10 @@ pref("chat.general.keepproperties", false);
 pref("chat.general.iconset", "oneteam");
 pref("chat.general.smilesset", "oneteam");
 
-pref("chat.editor.incomingmessagecolor", "#000000");
-pref("chat.editor.outgoingmessagecolor", "#CC33CC");
-pref("chat.editor.statusmessagecolor", "");
-pref("chat.editor.urlmessagecolor", "");
-pref("chat.editor.consoleinmessagecolor", "#CC0000");
-pref("chat.editor.consoleoutmessagecolor", "#003399");
-
+pref("chat.messages.colors", "#ff0000,#6978a3,#46a,#c4d,#3b3,#fa4,#79c,#a7a,#4ca,#c66,#aaa,#ca0,#770,#5cc");
+				    
 pref("chat.editor.font", "serif");
 pref("chat.editor.size", "5");
-
-pref ("chat.advanced.browser","Default");
-pref ("chat.advanced.mail","Default");
-pref ("chat.advanced.fs","Default");
 
 pref("chat.status.autoaway",5);
 pref("chat.status.autoxa",10);

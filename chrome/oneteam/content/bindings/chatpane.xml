@@ -27,11 +27,7 @@
           this._output = document.getAnonymousElementByAttribute(this, "id", "output");
           this.colorMap = {0: 0};
           this.colorIndex = 1;
-          this.colorTable = [
-            "#ff0000", "#6978a3",
-            "#46a", "#c4d", "#3b3", "#fa4", "#79c", "#a7a",
-            "#4ca", "#c66", "#aaa", "#ca0", "#770", "#5cc",
-          ];
+          this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
 
           if (this._output._loaded && !this._initialized)
             this._onLoad();
