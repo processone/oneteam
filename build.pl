@@ -29,7 +29,7 @@ find(sub {
 
 $defs{REVISION} = sub { get_revision($topdir) };
 $defs{BRANCH} = sub { get_branch($topdir) };
-$defs{PREFS} = sub { extract_prefs(qr/^chat\./,
+$defs{PREFS} = sub { extract_prefs(sub { $_[0] =~ /^chat\./ and $_[0] !~ /^chat\.connection\.(base|host|port|ssl|overridehost|polling|user|pass)/ },
     File::Spec->catfile($topdir, "defaults", "preferences", "pref.js"),
     File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"));
 };

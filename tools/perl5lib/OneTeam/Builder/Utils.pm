@@ -99,7 +99,7 @@ sub _extract_prefs {
     {
         my $name = $1 || $2;
         my $val = $3;
-        $prefs{$name} = $val if not $match or $name =~ $match;
+        $prefs{$name} = $val if not $match or $match->($name);
     }
 
     return %prefs;
