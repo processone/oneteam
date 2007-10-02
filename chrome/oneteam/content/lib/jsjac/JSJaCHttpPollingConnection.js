@@ -5,7 +5,7 @@
  */
 
 /**
- * Instantiates an HTTP Polling session 
+ * Instantiates an HTTP Polling session
  * @class Implementation of {@link
  * http://www.xmpp.org/extensions/xep-0025.html HTTP Polling}
  * @extends JSJaCConnection
@@ -28,7 +28,7 @@ function JSJaCHttpPollingConnection(oArg) {
    * Useful if it needs to be decided
    * whether it makes sense to allow for adjusting or adjust the
    * polling interval {@link JSJaCConnection#setPollInterval}
-   * @return <code>true</code> if this is a polling connection, 
+   * @return <code>true</code> if this is a polling connection,
    * <code>false</code> otherwise.
    * @type boolean
    */
@@ -39,7 +39,7 @@ function JSJaCHttpPollingConnection(oArg) {
    */
   this._getFreeSlot = function() {
     if (typeof(this._req[0]) == 'undefined' || typeof(this._req[0].r) == 'undefined' || this._req[0].r.readyState == 4)
-      return 0; 
+      return 0;
     else
       return -1;
   }
@@ -56,7 +56,7 @@ function JSJaCHttpPollingConnection(oArg) {
   /**
    * @private
    */
-  this._resume = function() { 
+  this._resume = function() {
     this._process(this._timerval);
     this._interval= setInterval("oCon._checkQueue()",JSJAC_CHECKQUEUEINTERVAL);
     this._inQto = setInterval("oCon._checkInQ();",JSJAC_CHECKINQUEUEINTERVAL);
@@ -130,7 +130,7 @@ function JSJaCHPCPrepareResponse(r) {
     this._handleEvent('ondisconnect');
     this._handleEvent('onerror',JSJaCError('503','cancel','service-unavailable'));
     return null;
-  } 
+  }
 
   this.oDbg.log(req.getAllResponseHeaders(),4);
   var aPList = req.getResponseHeader('Set-Cookie');
@@ -175,7 +175,7 @@ function JSJaCHPCPrepareResponse(r) {
     return null;
 
   try {
-		
+
     var doc = JSJaCHttpPollingConnection.parseTree("<body>"+req.responseText+"</body>");
 
     if (!doc || doc.tagName == 'parsererror') {
@@ -187,7 +187,7 @@ function JSJaCHPCPrepareResponse(r) {
 
         if (doc.getElementsByTagName('conflict').length > 0)
           this._setStatus("session-terminate-conflict");
-				
+
         clearTimeout(this._timeout); // remove timer
         clearInterval(this._interval);
         clearInterval(this._inQto);
@@ -197,7 +197,7 @@ function JSJaCHPCPrepareResponse(r) {
         this._handleEvent('ondisconnect');
       } else
         this.oDbg.log("parsererror:"+doc,1);
-			
+
       return doc;
     }
 
@@ -239,7 +239,7 @@ function JSJaCHPCConnect(oArg) {
   reqstr += ",<stream:stream to='"+streamto+"' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>";
   this.oDbg.log(reqstr,4);
 
-  this._req[0] = this._setupRequest(false);	
+  this._req[0] = this._setupRequest(false);
   this._req[0].r.send(reqstr);
 
   // extract session ID
@@ -316,7 +316,7 @@ function JSJaCHPCGetStream() {
 
   if (this.register)
     this._doInBandReg();
-  else 
+  else
     this._doAuth();
 
   this._connected = true;
@@ -346,7 +346,7 @@ function JSJaCHPCDisconnect() {
     clearTimeout(this._timeout); // remove timer
 
   this._req[0] = this._setupRequest(false);
-	
+
   if (JSJAC_HAVEKEYS)
     this._req[0].r.send(this._sid+";"+this._keys.getKey()+",</stream:stream>");
   else
