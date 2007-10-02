@@ -794,7 +794,7 @@ JSJaCConnection.prototype._handleResponse = function(req) {
   return null;
 };
 
-/** 
+/**
  * @private
  */
 JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
@@ -803,11 +803,14 @@ JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
     return false;
   }
 
-  this.mechs = new Object(); 
+  if (doc.getElementsByTagNameNS("http://etherx.jabber.org/streams", "error")[0])
+    return false;
+
+  this.mechs = new Object();
   var lMec1 = doc.getElementsByTagName("mechanisms");
   this.has_sasl = false;
   for (var i=0; i<lMec1.length; i++)
-    if (lMec1.item(i).namespaceURI == 
+    if (lMec1.item(i).namespaceURI ==
         "urn:ietf:params:xml:ns:xmpp-sasl") {
       this.has_sasl=true;
       var lMec2 = lMec1.item(i).getElementsByTagName("mechanism");
@@ -822,13 +825,14 @@ JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
     this.oDbg.log("No support for SASL detected",2);
   }
 
-  /* [TODO] 
+  /* [TODO]
    * check if in-band registration available
    * check for session and bind features
    */
+  return true;
 };
 
-/** 
+/**
  * @private
  */
 JSJaCConnection.prototype._process = function(timerval) {

@@ -295,8 +295,21 @@ function JSJaCHPCGetStream() {
 
   try {
     doc = XmlDocument.create("doc");
-    doc.loadXML(this._req[0].r.responseText+'</stream:stream>');
-    this._parseStreamFeatures(doc);
+    var rp = this._req[0].r.responseText;
+    if (!/<\/stream:stream>/.exec(rp))
+      rp += "</stream:stream>";
+    doc.loadXML(rp);
+    if (!this._parseStreamFeatures(doc)) {
+      this._setStatus("internal_server_error");
+      clearTimeout(this._timeout); // remove timer
+      clearInterval(this._interval);
+      clearInterval(this._inQto);
+      this._handleEvent('onerror',JSJaCError('503','cancel','session-terminate'));
+      this._connected = false;
+      this.oDbg.log("Disconnected.",1);
+      this._handleEvent('ondisconnect');
+      return;
+    }
   } catch(e) {
     this.oDbg.log("loadXML: "+e.toString(),1);
   }

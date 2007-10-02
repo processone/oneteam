@@ -351,8 +351,18 @@ function JSJaCHBCGetStreamID(slot) {
 
   this._timeout = setTimeout("oCon._process()",this.getPollInterval());
 
-  this._parseStreamFeatures(body);
-	
+  if (!this._parseStreamFeatures(body)) {
+    this._setStatus("internal_server_error");
+    clearTimeout(this._timeout); // remove timer
+    clearInterval(this._interval);
+    clearInterval(this._inQto);
+    this._handleEvent('onerror',JSJaCError('503','cancel','session-terminate'));
+    this._connected = false;
+    this.oDbg.log("Disconnected.",1);
+    this._handleEvent('ondisconnect');
+    return;
+  }
+
   if (this.register)
     this._doInBandReg();
   else
