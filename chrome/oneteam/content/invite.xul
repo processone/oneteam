@@ -18,9 +18,10 @@
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     var conference = window.arguments[0];
+    var contacts;
 
     function onLoad() {
-      var contacts = document.getElementById("contacts");
+      contacts = document.getElementById("contacts");
 
       contacts.addEventListener("listEmptyStateChanged", function(ev) {
         document.documentElement.getButton("accept").disabled = ev.target.choosenCount == 0
