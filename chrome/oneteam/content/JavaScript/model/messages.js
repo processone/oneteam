@@ -5,19 +5,133 @@ function ContactInfo(jid, visibleName, representsMe)
     this.representsMe = representsMe;
 }
 
-function MessageThread(threadID)
+function MessagesThreadsContainer(contact, parentContainer)
 {
-    this._threadID = threadID
-    this._contactIds = [];
+    this.init();
+    this.contact = contact;
+    this.activeThreads = {};
+    this.oldThreads = {};
+    this.msgsInQueue = 0;
+    this.parentContainer = parentContainer;
 }
 
-_DECL_(MessageThread).prototype =
+_DECL_(MessagesThreadsContainer, Model).prototype =
+{
+    handleMessage: function(msg, startNewThread)
+    {
+        var thread;
+
+        if (msg.threadID) {
+            thread = this.activeThreads[msg.threadID];
+            if (!thread)
+                thread = this.oldThreads[msg.threadID];
+            if (!thread)
+                thread = this.newThread;
+        } else {
+            if (this.newThread)
+                thread = this.newThread;
+            else
+                for each (var thr in this.activeThreads)
+                    if (!thr._sessionStarted && (!thread || thread._lastMessageTime < thr._lastMessageTime))
+                        thread = thr;
+        }
+        if (!thread && startNewThread) {
+            thread = new MessagesThread(msg.threadID, this.contact);
+            thread.registerView(this._onMsgCountChanged, this, "messages");
+            this.activeThreads[thread.threadID] = thread;
+        }
+        if (!thread)
+            return false;
+
+        thread.addMessage(msg);
+        return true;
+    },
+
+    openChatTab: function(onlyWithMessages)
+    {
+        var thread, tabOpened = false;
+
+        for each (var thr in this.activeThreads) {
+            if (thr.messages.length) {
+                tabOpened = true;
+                thr.openChatTab();
+            } else if (thr.chatPane) {
+                if (!thread || !thread.chatPane || thread._lastMessageTime < thr._lastMessageTime)
+                    thread = thr;
+            } else if (!thread || (!thread.chatPane && thread._lastMessageTime < thr._lastMessageTime))
+                thread = thr
+        }
+        if (tabOpened)
+            return true;
+        if (thread && thread.chatPane) {
+            thread.openChatTab();
+            return true;
+        }
+        if (onlyWithMessages)
+            return false;
+
+        if (this.newThread)
+            thread = this.newThread;
+
+        if (!thread)
+            this.newThread = thread = new MessagesThread(null, this.contact);
+
+        thread.openChatTab();
+        return true;
+    },
+
+    _changeInQueueCount: function(diff)
+    {
+        this.msgsInQueue += diff;
+
+        this.modelUpdated("msgsInQueue");
+        if (this.parentContainer)
+            this.parentContainer._changeInQueueCount(diff);
+    },
+
+    _onMsgCountChanged: function(model, type, data)
+    {
+        if (data)
+            this._changeInQueueCount((data.added ? data.added.length : 0) -
+                (data.removed ? data.removed.length : 0));
+    }
+}
+
+function MessagesThread(threadID, contact)
+{
+    this.init();
+    this.messages = [];
+    this.archivedMessages = [];
+    this._threadID = threadID;
+    this._contactIds = [];
+    if (contact) {
+        this.contact = contact;
+        this._handleChatState = !(contact instanceof Conference);
+        this._handleXhtmlIM = !contact.hasCapsInformations() ||
+            contact.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
+    }
+}
+
+_DECL_(MessagesThread, Model).prototype =
 {
     get threadID()
     {
         if (!this._threadID)
-            this._threadID = generateRandomName(12);
+            this.threadID = generateRandomName(12);
         return this._threadID;
+    },
+
+    set threadID(val)
+    {
+        if (!val || val == this._threadID)
+            return val;
+
+        if (this.contact && this.contact.msgThreads.newThread == this) {
+            this.contact.msgThreads.newThread = null;
+            this.contact.msgThreads.activeThreads[this._threadID] = this;
+        }
+
+        return this._threadID = val;
     },
 
     getContactID: function(contact)
@@ -31,6 +145,104 @@ _DECL_(MessageThread).prototype =
 
         this._contactIds.push(contact);
         return this._contactIds.length;
+    },
+
+    get chatState() {
+        return this._chatState;
+    },
+
+    set chatState(val) {
+        if (val == this._chatState || this.contact instanceof Conference)
+            return;
+
+        this._chatState = val;
+
+        if (this._afterFirstMessage)
+            this.contact.sendMessage(new Message(null, null, null, 0, null, this.threadID),
+                                     this._chatState);
+    },
+
+    openChatTab: function()
+    {
+        if (this.chatPane) {
+            this.chatPane.focus();
+            return;
+        }
+        this.chatState = "active";
+        this.chatPane = chatTabsController.openTab(this)
+    },
+
+    addMessage: function(msg) {
+        this._handleChatState = this._handleChatState || msg.chatState;
+        this._sessionStarted = this._sessionStarted || msg.threadID;
+
+        this.threadID = msg.threadID;
+
+        if (this.peerChatState != msg.chatState) {
+            this.peerChatState = msg.chatState;
+            this.modelUpdated("peerChatState");
+        }
+
+        if (!msg.text)
+            return;
+
+        msg.thread = this;
+        this._lastMessageTime = msg.time.getTime();
+        this._handleXhtmlIM = this._handleXhtmlIM || msg.html;
+
+        msg.queues.push(this);
+        this.messages.push(msg);
+        this.archivedMessages.push(msg);
+        if (this.archivedMessages.length > 10)
+            this.archivedMessages.shift();
+        this.modelUpdated("messages", {added: [msg]});
+
+        account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" , msg, this);
+    },
+
+    removeMessages: function()
+    {
+        if (!this.messages.length)
+            return;
+
+        var msgs = this.messages;
+        this.messages = [];
+        //this.archivedMessages
+
+        this.modelUpdated("messages", {removed: msgs});
+    },
+
+    sendMessage: function(msg) {
+        this._afterFirstMessage = true;
+        msg.chatState = this._chatState = "active";
+        this.threadID;
+
+        msg.thread = this;
+        msg.sendChatState = this._handleChatState;
+        msg.sendXhtmlIM = this._handleXhtmlIM;
+
+        if (!(this.contact instanceof Conference) && msg.text) {
+            msg.queues.push(this);
+            this.messages.push(msg);
+            this.archivedMessages.push(msg);
+            if (this.archivedMessages.length > 10)
+                this.archivedMessages.shift();
+            this.modelUpdated("messages", {added: [msg]});
+        }
+
+        this.contact.sendMessage(msg);
+    },
+
+    _onChatPaneClosed: function() {
+        this.chatState = "gone";
+        this.chatPane = null;
+        this._afterFirstMessage = false;
+
+        if (this._threadID) {
+            delete this.contact.msgThreads.activeThreads[this._threadID]
+            if (this.archivedMessages.length)
+                this.contact.msgThreads.oldThreads[this._threadID] = this;
+        }
     }
 }
 
@@ -43,6 +255,11 @@ function Message(body, body_html, contact, type, time, thread)
         this.time = stamp ? utcStringToDate(stamp) : new Date();
         type = (type&~3) | ({normal: 0, groupchat: 1, headline: 2,
                              chat: 3}[body.getType()] || 0);
+
+        var cs = body.getNode().getElementsByTagNameNS(
+            "http://jabber.org/protocol/chatstates", "*")[0];
+        if (cs)
+            this.chatState = cs.localName;
 
         var html = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
         if (html)
@@ -61,7 +278,9 @@ function Message(body, body_html, contact, type, time, thread)
     }
     this.contact = contact;
     this.type = type;
-    this.thread = thread;
+    this.threadID = thread;
+    this.queues = [];
+    this.unseen = true;
 }
 
 _DECL_(Message).prototype =
@@ -117,6 +336,17 @@ _DECL_(Message).prototype =
         return this._html;
     },
 
+    msgDelivered: function()
+    {
+        for (var i = 0; i < this.queues.length; i++)
+            this.queues[i].removeMessage(this);
+        this.queues = [];
+    },
+
+    markAsSeen: function()
+    {
+    },
+
     fillPacket: function(pkt)
     {
         if (!this.isMucMessage && this.thread)
@@ -125,7 +355,7 @@ _DECL_(Message).prototype =
             return;
         pkt.setBody(this.text);
 
-        if (this.html) {
+        if (this.sendXhtmlIM && this.html) {
             var dp = new DOMParser();
             var doc = dp.parseFromString("<body xmlns='http://www.w3.org/1999/xhtml'>"+
                                          this.sanitizedHtml+"</body>", "text/xml")
@@ -137,7 +367,11 @@ _DECL_(Message).prototype =
                 html.appendChild(doc.documentElement);
             }
             pkt.getNode().appendChild(html);
+
         }
+        if (this.chatState || this.sendChatState)
+            pkt.getNode().appendChild(pkt.getDoc().createElementNS(
+                "http://jabber.org/protocol/chatstates", this.chatState));
     },
 
     /*   tag name       can have childrens              keep only if has childrens

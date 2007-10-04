@@ -53,6 +53,7 @@
         this._tabs = document.getAnonymousElementByAttribute(this, "anonid", "tabs");
         this._tabpanels = document.getAnonymousElementByAttribute(this, "anonid", "tabpanels");
         this._inSelectTab = 0;
+        this._detachedTabs = [];
 
         var _this = this;
 
@@ -92,27 +93,28 @@
       ]]></constructor>
 
       <method name="getTab">
-        <parameter name="contact"/>
+        <parameter name="thread"/>
         <body><![CDATA[
-          var cn = this._tabs.childNodes;
+          var cn = this._detachedTabs;
           for (var i = 0; i < cn.length; i++)
-            if (cn[i].controller.contact.jid.normalizedJID == contact.jid.normalizedJID) {
-              cn[i].controller.contact = contact;
-              return cn[i].controller;
+            if (cn[i].jid == thread.contact.jid.normalizedJID) {
+              cn[i].thread = thread;
+              this._detachedTabs.splice(i, 1);
+              return cn[i];
             }
             return null;
         ]]></body>
       </method>
 
       <method name="openTab">
-        <parameter name="contact"/>
+        <parameter name="thread"/>
         <body><![CDATA[
           // Search for tab with this same jid (contact may lost track of chatpane
           //  after resource disconnection/connection
           var tab, tabpanel;
 
-          if ((tab = this.getTab(contact)))
-              return tab;
+          if ((tab = this.getTab(thread)))
+            return tab;
 
           const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
@@ -141,63 +143,10 @@
           else
             tab.previousSibling.removeAttribute("last-tab");
 
-          content.contact = contact;
+          content.thread = thread;
 
-          // Magic - cache calls to _content until it is properly initialized
-          var wrappedContent = {
-            _content: content,
-            _callbacks: [],
-
-            get contact() { return this._content.contact },
-            set contact(val) { return this._content.contact = val },
-            get unseenCount() { return this._content.unseenCount || 0 },
-            get closed() { return this._content.closed || false },
-
-            __noSuchMethod__: function(name, args)
-            {
-              if (this._content._chatpane &&
-                  this._content._chatpane.addMessage &&
-                  this._content._chatpane._output &&
-                  this._content._chatpane._output.addMessage)
-              {
-                for (var i = 0; i < this._callbacks.length; i++)
-                  this._content[this._callbacks[i][0]].
-                    apply(this._content, this._callbacks[i][1]);
-
-                this.__noSuchMethod__ = function(name, args) {
-                  this._content[name].apply(this._content, args);
-                }
-                this._callbacks = [];
-
-                return this._content[name].apply(this._content, args);
-              }
-
-              this._callbacks.push([name, args]);
-
-              if (this._callbacks.length == 1)
-                window.setTimeout(function(me) {
-                  if (me._content._chatpane &&
-                      me._content._chatpane.addMessage &&
-                      me._content._chatpane._output &&
-                      me._content._chatpane._output.addMessage)
-                  {
-                    for (var i = 0; i < me._callbacks.length; i++)
-                      me._content[me._callbacks[i][0]].apply(me._content,
-                                                             me._callbacks[i][1]);
-
-                    me.__noSuchMethod__ = function(name, args) {
-                      this._content[name].apply(this._content, args);
-                    }
-                  }
-                  else
-                    window.setTimeout(arguments.callee, 10, me);
-                }, 0, this);
-              return null;
-            }
-          };
-
-          tabpanel.controller = wrappedContent;
-          tab.controller = wrappedContent;
+          tabpanel.controller = content;
+          tab.controller = content;
 
           this._selectTab(content);
 
@@ -205,9 +154,9 @@
           ev.initEvent("tab-added", true, false);
           this.dispatchEvent(ev);
 
-          wrappedContent.focus();
+          content.focus();
 
-          return wrappedContent;
+          return content;
         ]]></body>
       </method>
 
@@ -227,6 +176,10 @@
         <body><![CDATA[
           if (!content._tab.parentNode)
             return;
+
+          var idx = this._detachedTabs.indexOf(content)
+          if (idx >= 0)
+            this._detachedTabs.splice(idx, 1);
 
           if (this._inCloseTabs) {
             content._tabpanel.parentNode.removeChild(content._tabpanel);
@@ -264,6 +217,16 @@
           var ev = document.createEvent("Events");
           ev.initEvent("tab-removed", true, false);
           this.dispatchEvent(ev);
+        ]]></body>
+      </method>
+
+      <method name="_detachTab">
+        <parameter name="content"/>
+        <body><![CDATA[
+          if (!content._tab.parentNode)
+            return;
+
+          this._detachedTabs.push(content);
         ]]></body>
       </method>
 
@@ -372,18 +335,18 @@
     </content>
 
     <implementation>
-      <property name="contact" onget="return this._contact">
+      <property name="thread" onget="return this._thread">
         <setter><![CDATA[
-          if (this._contact && this._token)
-            this._contact.unregisterView(this._token)
+          if (this._thread && this._token)
+            this._thread.contact.unregisterView(this._token)
 
-          this._contact = val;
+          this._thread = val;
           this._chatpane.model = val;
 
           this._onNameChange();
 
           if (val)
-            this._token = val.registerView(this._onNameChange, this, "visibleName");
+            this._token = val.contact.registerView(this._onNameChange, this, "visibleName");
         ]]></setter>
       </property>
 
@@ -408,7 +371,7 @@
 
       <property name="chatState" onget="return this._chatState">
         <setter><![CDATA[
-          if (!this._chatStateInitialSend || this.contact instanceof Conference)
+          if (!this._chatStateInitialSend || this.thread.contact instanceof Conference)
             return;
 
           var oldState = this._chatState;
@@ -424,8 +387,7 @@
             this._chatStateTimeout = setTimeout(function(me){ me.chatState = "inactive" }, 30000, this);
 
           if (!this._chatStatePreventMessage && oldState != this._chatState)
-            this.contact.sendMessage(new Message(null, null, null, 0, null, this._chatpane.getThread()),
-                                     this._chatState);
+            this.thread.chatState = this._chatState;
         ]]></setter>
       </property>
 
@@ -448,7 +410,7 @@
         this.__proto__ = {};
 
         var state = {};
-        for each (var i in "unseenCount chatState contact".split(/ /))
+        for each (var i in "unseenCount chatState thread".split(/ /))
           if (this[i] != null) {
             state[i] = this[i];
             delete this[i];
@@ -461,27 +423,37 @@
 
         this._chatStateInitialSend = false;
         this.closed = false;
-
-        if (this.contact) {
-          var contact = this.contact;
-          delete this.contact;
-          this.contact = contact;
-        }
       ]]></constructor>
 
       <destructor><![CDATA[
-        if (this._contact && this._token)
-          this._contact.unregisterView(this._token);
+        if (this._thread && this._token)
+          this._thread.contact.unregisterView(this._token);
       ]]></destructor>
+
+      <method name="detach">
+        <body><![CDATA[
+          this.closed = true;
+
+          if (this.thread.contact instanceof Conference)
+            setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
+          else
+            this._tabbox._deremoveTab(this);
+
+          this.chatState = "gone";
+          this.unseenCount = 0;
+        ]]></body>
+      </method>
 
       <method name="close">
         <body><![CDATA[
           this.closed = true;
 
-          if (this.contact instanceof Conference)
-            setTimeout(function(me){me.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
+          if (this.thread.contact instanceof Conference)
+            setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
           else
             this._tabbox._removeTab(this);
+
+          this.thread._onChatPaneClosed();
 
           this.chatState = "gone";
           this.unseenCount = 0;
@@ -549,7 +521,7 @@
           var countStr = !this._unseenCount ? "" : this._unseenCount == 1 ?
             "* " : "["+this._unseenCount+"] ";
 
-          this._tab.setAttribute("label", countStr + (this._contact ? this._contact.visibleName : ""));
+          this._tab.setAttribute("label", countStr + (this._thread ? this._thread.contact.visibleName : ""));
         ]]></body>
       </method>
     </implementation>

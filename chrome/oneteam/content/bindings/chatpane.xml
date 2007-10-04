@@ -16,31 +16,57 @@
 
     <implementation>
       <property name="smilesEnabled"
-                onget="this._output.contentDocument.body.className == 'smiles-enabled'"
+                onget="return this._output.contentDocument.body.className == 'smiles-enabled'"
                 onset="this._output.contentDocument.body.className = val ? 'smiles-enabled' : '';
                        return val"/>
-      <constructor>
-        <![CDATA[
-          var me = this;
 
-          this._msgs = [];
-          this._output = document.getAnonymousElementByAttribute(this, "id", "output");
-          this.colorMap = {0: 0};
-          this.colorIndex = 1;
-          this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
+      <property name="model" onget="return this._model">
+        <setter><![CDATA[
+          if (val == this._model)
+            return;
 
-          if (this._output._loaded && !this._initialized)
-            this._onLoad();
-        ]]>
-      </constructor>
+          if (this._model)
+            this._model.unregisterView(this._regToken);
+
+          if (val) {
+            this._regToken = val.registerView(this._onMessageQueueChanged, this, "messages");
+            if (val.messages.length || !this._archiveMsgsAdded && val.archivedMessages.length)
+              this._onMessageQueueChanged(val, "messages", {added: val.messages});
+          }
+
+          return this._model = val;
+        ]]></setter>
+      </property>
+
+      <constructor><![CDATA[
+        var p = this.__proto__;
+        this.__proto__ = {};
+
+        var state = {};
+        for each (var i in "model smilesEnabled".split(/ /))
+          if (this[i] != null) {
+            state[i] = this[i];
+            delete this[i];
+          }
+
+        this.__proto__ = p;
+
+        for (i in state)
+          this[i] = state[i];
+
+        this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+        this.colorMap = {0: 0};
+        this.colorIndex = 1;
+        this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
+
+        if (this._output._loaded && !this._initialized)
+          this._onLoad();
+      ]]></constructor>
 
       <method name="_onLoad">
         <body>
           <![CDATA[
             this._initialized = true;
-
-            if (!this._msgs)
-              return;
 
             var link = this._output.contentDocument.createElement("link");
 // #ifdef XULAPP
@@ -91,10 +117,9 @@
 
             this._output.contentDocument.addEventListener("click", linkEventsRedirector, true)
 
-            var msgs = this._msgs;
-            this._msgs = null;
-            for (var i = 0; i < msgs.length; i++)
-              this.addMessage(msgs[i]);
+            if (this._model && this._model.messages.length ||
+                !this._archiveMsgsAdded && this._model.archivedMessages.length)
+              this._onMessageQueueChanged(this._model, "messages", {added: this._model.messages});
 
             var doc = this._output.contentDocument;
 
@@ -105,21 +130,128 @@
         </body>
       </method>
 
-      <method name="_performDomAppends">
-        <parameter name="me"/>
+      <method name="_onMessageQueueChanged">
+        <parameter name="model"/>
+        <parameter name="name"/>
+        <parameter name="arg"/>
         <body><![CDATA[
-          var doc = me._output.contentDocument;
+          if (!this._initialized || !arg || !arg.added)
+            return;
 
-          if (me._clusterFragments)
-            me._lastInDomCluster.appendChild(me._clusterFragments);
+          if (this._appendTimeout)
+            window.clearTimeout(this._appendTimeout);
+          this._appendTimeout = window.setTimeout(function(t){t._appendMessages()}, 50, this);
+        ]]></body>
+      </method>
 
-          if (me._contentFragments)
-            me._content.appendChild(me._contentFragments);
+      <method name="_appendMessages">
+        <body><![CDATA[
+        try{
+          var doc = this._output.contentDocument;
 
-          me._contentFragments = me._clusterFragments =
-            me._lastInDomCluster = null;
+          if (!doc) {
+            this._appendTimeout = window.setTimeout(function(t){t._appendMessages()}, 50, this);
+            return
+          }
 
-          if (!me._scrollToBottom)
+          var scrollToBottom = doc.body.scrollTop + doc.body.clientHeight >=
+            doc.body.scrollHeight - 8;
+
+          this._appendTimeout = null;
+
+          if (!this._content) {
+            this._content = doc.createElement("div");
+            doc.body.appendChild(this._content);
+          }
+
+          var msgsChunk, containersChunk;
+
+          var msgs = this._archiveMsgsAdded ? this._model.messages :
+            this._model.archivedMessages.concat(this._model.messages);
+
+          this._archiveMsgsAdded = true;
+
+          for (var i = 0; i < msgs.length; i++) {
+            var msg = msgs[i];
+
+            if (msg.isSystemMessage || this._lastContactId != msg.contactId ||
+                msg.time - this._lastMessageTime > 5*60*1000)
+            {
+              if (!containersChunk && msgsChunk)
+                this._msgsContainer.appendChild(msgsChunk);
+
+              this._msgsContainer = msgsChunk = doc.createElement("div");
+
+              if (!(msg.contactId in this.colorMap)) {
+                this.colorMap[msg.contactId] = this.colorIndex;
+                this.colorIndex = this.colorIndex%(this.colorTable.length-1) + 1;
+              }
+              this._msgsContainer.setAttribute("class", "messageChunk");
+              this._msgsContainer.setAttribute("author-id", msg.contactId);
+              this._msgsContainer.setAttribute("color-id", this.colorMap[msg.contactId]);
+
+              if (!containersChunk)
+                containersChunk = doc.createDocumentFragment();
+              containersChunk.appendChild(this._msgsContainer);
+            }
+
+            this._lastContactId = msg.contactId
+            this._lastMessageTime = msg.time;
+
+            if (!msgsChunk)
+              msgsChunk = doc.createDocumentFragment();
+
+            var msgEl = doc.createElement("div");
+            msgsChunk.appendChild(msgEl);
+            msgEl.setAttribute("class", msg.isSystemMessage ?
+                               "systemMessage" : "message");
+
+            var h = doc.createElement("span");
+            h.setAttribute("class", "header");
+            msgEl.appendChild(h);
+
+            var e = doc.createElement("span");
+            e.setAttribute("class", "to-copy-paste");
+            e.appendChild(doc.createTextNode("["));
+            h.appendChild(e);
+
+            e = doc.createElement("span");
+            e.setAttribute("class", "date");
+            e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
+            h.appendChild(e);
+
+            e = doc.createElement("span");
+            e.setAttribute("class", "to-copy-paste");
+            e.appendChild(doc.createTextNode("] "));
+            h.appendChild(e);
+
+            if (!msg.isSystemMessage) {
+              e = doc.createElement("span");
+              e.setAttribute("class", "author");
+              e.appendChild(doc.createTextNode(msg.nick));
+              h.appendChild(e);
+
+              e = doc.createElement("span");
+              e.setAttribute("class", "to-copy-paste");
+              e.appendChild(doc.createTextNode(": "));
+              h.appendChild(e);
+            }
+
+            e = doc.createElement("span");
+            e.setAttribute("class", "body "+msg.classes);
+            e.innerHTML = msg.formatedHtml;
+
+            msgEl.appendChild(e);
+          }
+
+          if (containersChunk)
+            this._content.appendChild(containersChunk);
+          else if (msgsChunk)
+            this._msgsContainer.appendChild(msgsChunk);
+
+          this._model.removeMessages();
+
+          if (!scrollToBottom)
             return;
 
           doc.body.scrollTop = doc.body.scrollHeight;
@@ -130,121 +262,8 @@
           setTimeout(function(body, pos) {
               if (body.scrollTop == pos) body.scrollTop = body.scrollHeight
             }, 100, doc.body, doc.body.scrollTop);
+        }catch(ex){alert(ex)}
         ]]></body>
-      </method>
-
-      <method name="_scheduleDomAppend">
-        <parameter name="parentEl"/>
-        <parameter name="childEl"/>
-        <body><![CDATA[
-          var doc = this._output.contentDocument;
-
-          if (!this._lastInDomCluster) {
-            this._lastInDomCluster = this._messagesCluster;
-            this._scrollToBottom = doc.body.scrollTop + doc.body.clientHeight >=
-              doc.body.scrollHeight - 8;
-
-            setTimeout(this._performDomAppends, 50, this);
-          }
-
-          if (parentEl == this._content) {
-            if (!this._contentFragments)
-              this._contentFragments = doc.createDocumentFragment();
-            this._contentFragments.appendChild(childEl);
-          } else if (parentEl == this._lastInDomCluster) {
-            if (!this._clusterFragments)
-              this._clusterFragments = doc.createDocumentFragment();
-            this._clusterFragments.appendChild(childEl);
-          } else
-            parentEl.appendChild(childEl);
-        ]]></body>
-      </method>
-
-      <method name="addMessage">
-        <parameter name="message"/>
-        <body>
-          <![CDATA[
-            if (this._msgs) {
-              this._msgs.push(message);
-              return;
-            }
-
-            var doc = this._output.contentDocument;
-
-            if (!this._content) {
-              this._content = doc.createElement("div");
-              doc.body.appendChild(this._content);
-            }
-
-            if (message.isSystemMessage) {
-              var messageEl = doc.createElement("div");
-
-              messageEl.setAttribute("class", "systemMessage");
-              messageEl.innerHTML = message.formatedHtml;
-
-              this._scheduleDomAppend(this._content, messageEl);
-              this._messagesCluster = this._lastContactId = null;
-              return;
-            }
-
-            if (!this._messagesCluster || this._lastContactId != message.contactId ||
-                message.time - this._lastMessageTime > 5*60*1000)
-            {
-              this._messagesCluster = doc.createElement("div");
-              this._lastContactId = message.contactId;
-              this._lastMessageTime = message.time;
-
-              if (!(message.contactId in this.colorMap)) {
-                this.colorMap[message.contactId] = this.colorIndex;
-                this.colorIndex = this.colorIndex%(this.colorTable.length-1) + 1;
-              }
-              this._messagesCluster.setAttribute("class", "messageChunk");
-              this._messagesCluster.setAttribute("author-id", message.contactId);
-              this._messagesCluster.setAttribute("color-id", this.colorMap[message.contactId]);
-              this._scheduleDomAppend(this._content, this._messagesCluster);
-            }
-
-            messageEl = doc.createElement("div");
-            messageEl.setAttribute("class", "message");
-
-            this._scheduleDomAppend(this._messagesCluster, messageEl);
-
-            var h = doc.createElement("span");
-            h.setAttribute("class", "header");
-            messageEl.appendChild(h);
-
-            var e = doc.createElement("span");
-            e.setAttribute("class", "to-copy-paste");
-            e.appendChild(doc.createTextNode("["));
-            h.appendChild(e);
-
-            e = doc.createElement("span");
-            e.setAttribute("class", "date");
-            e.appendChild(doc.createTextNode(readableTimestamp(message.time)));
-            h.appendChild(e);
-
-            var e = doc.createElement("span");
-            e.setAttribute("class", "to-copy-paste");
-            e.appendChild(doc.createTextNode("] "));
-            h.appendChild(e);
-
-            e = doc.createElement("span");
-            e.setAttribute("class", "author");
-            e.appendChild(doc.createTextNode(message.nick));
-            h.appendChild(e);
-
-            var e = doc.createElement("span");
-            e.setAttribute("class", "to-copy-paste");
-            e.appendChild(doc.createTextNode(": "));
-            h.appendChild(e);
-
-            e = doc.createElement("span");
-            e.setAttribute("class", "body "+message.classes);
-            e.innerHTML = message.formatedHtml;
-
-            messageEl.appendChild(e);
-          ]]>
-        </body>
       </method>
 
       <method name="clear">
@@ -253,10 +272,10 @@
             if (this._content)
               this._content.parentNode.removeChild(this._content);
 
-            this._messagesCluster = this._lastContactId =
-              this._contentFragments = this._clusterFragments =
-              this._content = this._lastInDomCluster =
-              this._scrollToBottom = null;
+            this._content = this._msgsContainer =
+              this._lastMessageTime = this._lastContactId = null;
+
+            this._archiveMsgsAdded = false;
           ]]>
         </body>
       </method>
@@ -840,9 +859,10 @@
       <property name="model" onget="return this._model">
         <setter><![CDATA[
           this._model = val;
-          this._contactInfo.model = val;
-          this._chatpaneCommands.model = val;
-          this.completionEngine = val ? val.createCompletionEngine() : null;
+          this._contactInfo.model = val && val.contact;
+          this._output.model = val;
+          this._chatpaneCommands.model = val && val.contact;
+          this.completionEngine = val && val.contact.createCompletionEngine();
 
           return val;
         ]]></setter>
@@ -947,28 +967,6 @@
         ]]></body>
       </method>
 
-      <method name="getThread">
-        <body><![CDATA[
-          if (!this._thread)
-            this._thread = new MessageThread();
-          return this._thread;
-        ]]></body>
-      </method>
-
-      <method name="addMessage">
-        <parameter name="msg"/>
-        <parameter name="thread"/>
-        <body><![CDATA[
-          if (!this._thread)
-            this._thread = new MessageThread(thread);
-          else if (thread)
-            this._thread._threadID = thread;
-
-          msg.thread = this._thread;
-          this._output.addMessage(msg);
-        ]]></body>
-      </method>
-
       <method name="clear">
         <body><![CDATA[
           this._input.clear();
@@ -1024,22 +1022,16 @@
               if (this.userTypingHandler)
                 this.userTypingHandler(-1);
 
-              if (!this._thread)
-                this._thread = new MessageThread();
-
               var body = this._input.value;
               if (body.lastChild.localName == "BR")
                 body.removeChild(body.lastChild);
 
-              var myResource = this._model instanceof ConferenceMember ?
-                this._model.contact.myResource : account.myResource;
+              var myResource = this._model.contact instanceof ConferenceMember ?
+                this._model.contact.contact.myResource : account.myResource;
 
               var msg = new Message(null, body, myResource,
-                                    this._model instanceof Conference ? 1 : 3,
-                                    null, this._thread)
-
-              if (!(this._model instanceof Conference))
-                this.addMessage(msg);
+                                    this._model.contact instanceof Conference ? 1 : 3,
+                                    null, this._model)
 
               this._model.sendMessage(msg);
 

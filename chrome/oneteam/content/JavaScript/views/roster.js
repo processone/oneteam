@@ -187,6 +187,7 @@ function ContactView(model, parentView)
     this._bundle.register(this.model, this.onNameChange, "name");
     this._bundle.register(this.model, this.onActiveResourceChange, "activeResource");
     this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
+    this._bundle.register(this.model.msgThreads, this.onMsgsInQueueChanged, "msgsInQueue");
 
     this.onActiveResourceChange();
 }
@@ -222,10 +223,18 @@ _DECL_(ContactView).prototype =
 
     onModelUpdated: function()
     {
-        this.statusIcon.setAttribute("src", this.model.getStatusIcon());
         this.label.setAttribute("style", "color: "+this.model.presence.getColor());
+        this.onMsgsInQueueChanged();
 
         this.parentView.onItemUpdated(this);
+    },
+
+    onMsgsInQueueChanged: function()
+    {
+        this.statusIcon.setAttribute("src", this.model.msgThreads.msgsInQueue ?
+                                     account.style.defaultSet.iconsMap["psi/message"] ||
+                                        "chrome://oneteam/skin/main/imgs/roster-msgicon.png" :
+                                     this.model.getStatusIcon());
     },
 
     show: function(rootNode, insertBefore)

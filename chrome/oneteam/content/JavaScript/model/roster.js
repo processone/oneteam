@@ -91,6 +91,8 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     if (jid instanceof Node)
         [jid, name, subscription, subscriptionAsk, groups] = this._parseNode(jid);
 
+    this.msgThreads = new MessagesThreadsContainer(this);
+
     this.jid = new JID(jid);
     this.resources = [];
     if (newItem) {
@@ -123,8 +125,6 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 
     account.allContacts[this.jid.normalizedJID] = this;
     this.gateway = account.gateways[this.jid.normalizedJID.domain];
-
-    this.chatPane = chatTabsController.getTab(this);
 }
 
 _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype =
@@ -283,16 +283,13 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
                 yield (this.resources[i]);
     },
 
-    sendMessage: function(msg, state)
+    sendMessage: function(msg)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("chat");
         if (msg)
             msg.fillPacket(message);
-
-        message.getNode().appendChild(message.getDoc().
-            createElementNS("http://jabber.org/protocol/chatstates", state || "active"));
 
         con.send(message);
     },
@@ -302,24 +299,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         if (packet.getType() == "error")
             return;
 
-        var cs = packet.getNode().getElementsByTagNameNS(
-            "http://jabber.org/protocol/chatstates", "*")[0];
-        var firstMsg = !this.chatPane || this.chatPane.closed;
-
-        if (cs && !firstMsg)
-            this.chatPane.updateChatState(cs.localName);
-
-        if (!packet.getBody())
-            return;
-
-        if (firstMsg) {
-            this.onOpenChat();
-            if (cs)
-                this.chatPane.updateChatState(cs.localName);
-        }
-        var message = new Message(packet, null, this);
-        account.notificationScheme.show("message", firstMsg ? "first": "next" , message, this);
-        this.chatPane.addMessage(message, packet.getThread());
+        this.msgThreads.handleMessage(new Message(packet, null, this, null, null,
+                                                  packet.getThread()), true);
     },
 
     subscribe: function(reason, allowToSeeMe)
@@ -412,12 +393,11 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
     onOpenChat: function()
     {
-        if (!this.chatPane || this.chatPane.closed)
-            this.chatPane = chatTabsController.openTab(this);
-        else
-            this.chatPane.focus();
-
-        return this.chatPane;
+        var tabOpened = false;
+        for (i = 0; i < this.resources.length; i++)
+            tabOpened = tabOpened || this.resources[i].msgThreads.openChatTab(true);
+        if (!tabOpened)
+            this.msgThreads.openChatTab();
     },
 
     createResource: function(jid)
@@ -582,8 +562,7 @@ function Resource(jid, contact)
 
     account.resources[this.jid.normalizedJID] = this;
     this.init();
-
-    this.chatPane = chatTabsController.getTab(this);
+    this.msgThreads = new MessagesThreadsContainer(this, this.contact.msgThreads);
 }
 
 _DECL_(Resource, null, Model, DiscoItem, Comparator,
@@ -607,12 +586,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
     onOpenChat: function()
     {
-        if (!this.chatPane || this.chatPane.closed)
-            this.chatPane = chatTabsController.openTab(this);
-        else
-            this.chatPane.focus();
-
-        return this.chatPane;
+        this.msgThreads.openChatTab();
     },
 
     onPresence: function(packet, dontNotifyViews)
@@ -684,16 +658,13 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         delete account.resources[this.jid.normalizedJID];
     },
 
-    sendMessage: function(msg, state)
+    sendMessage: function(msg)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("chat");
         if (msg)
             msg.fillPacket(message);
-
-        message.getNode().appendChild(message.getDoc().
-            createElementNS("http://jabber.org/protocol/chatstates", state || "active"));
 
         con.send(message);
     },
@@ -702,33 +673,12 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     {
         if (packet.getType() == "error")
             return;
+try{
+        var msg = new Message(packet, null, this, null, null, packet.getThread());
 
-        var chatPane = this.chatPane && !this.chatPane.closed ?
-            this.chatPane :
-            this.contact.chatPane && !this.contact.chatPane.closed ?
-                this.contact.chatPane : null;
-        var firstMsg = !chatPane;
-
-        var cs = packet.getNode().getElementsByTagNameNS(
-            "http://jabber.org/protocol/chatstates", "*")[0];
-
-        if (cs && chatPane)
-            chatPane.updateChatState(cs.localName);
-
-        if (!packet.getBody())
-            return;
-
-        if (!chatPane) {
-            this.onOpenChat();
-            chatPane = this.chatPane;
-            if (cs)
-                chatPane.updateChatState(cs.localName);
-        }
-
-
-        var message = new Message(packet, null, this);
-        account.notificationScheme.show("message", firstMsg ? "first": "next" , message, this);
-        chatPane.addMessage(message, packet.getThread());
+        if (!this.contact.msgThreads.handleMessage(msg, false))
+            this.msgThreads.handleMessage(msg, true);
+}catch(ex){alert(ex)}
     },
 
     onAdHocCommand: function()
@@ -772,6 +722,7 @@ function MyResourcesContact(jid)
     account.myResources[this.jid.normalizedJID] = this;
 
     this.chatPane = chatTabsController.getTab(this);
+    this.msgThreads = new MessagesThreadsContainer(this);
 }
 
 _DECL_(MyResourcesContact, Contact).prototype =

@@ -318,7 +318,7 @@ _DECL_(XEPArchiveThreadsRetriever).prototype =
 
 function XEPArchiveMessagesRetriever(jid, stamp)
 {
-    MessageThread.call(this);
+    MessagesThread.call(this);
 
     this.jid = jid;
     this.stamp = stamp;
@@ -327,7 +327,7 @@ function XEPArchiveMessagesRetriever(jid, stamp)
     this._nicksHash = {}
 }
 
-_DECL_(XEPArchiveMessagesRetriever, null, MessageThread).prototype =
+_DECL_(XEPArchiveMessagesRetriever, null, MessagesThread).prototype =
 {
     getContact: function(nick, jid, representsMe)
     {

@@ -246,6 +246,11 @@ _DECL_(DiscoItem).prototype =
         this._discoCacheEntry.updateCapsInfo(node);
     },
 
+    hasCapsInformations: function()
+    {
+        return this._discoCacheEntry.capsNode != null;
+    },
+
     /**
      * Check if given disco item report feature <em>name</em> as implemented.
      *
