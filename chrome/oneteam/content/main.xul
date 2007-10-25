@@ -48,6 +48,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/services/manager.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/services/rosterx.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/services/adhoc.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/services/privacy.js"/>
 <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
 <!-- #else

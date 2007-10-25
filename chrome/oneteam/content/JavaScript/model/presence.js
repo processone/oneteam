@@ -240,19 +240,83 @@ _DECL_(PresenceProfile, null, Model).prototype =
 {
     _recalcHashes: function()
     {
-        this._defaultPresence = null;
+        var matchRestRule = <list xmlns="jabber:iq:privacy"/>, matchRestKey = "";
+        var matchRestId, matchRestIdx = 0;
+
+        this._privacyRules = [];
 
         for (var i = 0; i < this.presences.length; i++) {
-            for (var j = 0; j < this.presences[i].groups.length; j++)
-                this._groupsHash[this.presences[i].groups[j]] =
-                    this.presences[i].presence;
-            for (var j = 0; j < this.presences[i].jids.length; j++)
-                this._jidsHash[this.presences[i].jids[j]] =
-                    this.presences[i].presence;
+            var id, idx = 0, key = "", rule = <list xmlns="jabber:iq:privacy"/>;
+
+            for (var j = 0; j < this.presences[i].groups.length; j++) {
+                this._groupsHash[this.presences[i].groups[j]] = this.presences[i].presence;
+                id = "g:"+this.presences[i].groups[j]+"\n";
+                key += id;
+                matchRestKey += id;
+
+                rule.* += <item xmlns="jabber:iq:privacy" type="group" value={this.presences[i].groups[j]}
+                              action="allow" order={++idx}>
+                            <presence-out/>
+                          </item>
+                matchRestRule.* += <item xmlns="jabber:iq:privacy" type="group"
+                                         value={this.presences[i].groups[j]}
+                                         action="deny" order={++matchRestIdx}>
+                                     <presence-out/>
+                                   </item>
+            }
+            for (var j = 0; j < this.presences[i].jids.length; j++) {
+                this._jidsHash[this.presences[i].jids[j]] = this.presences[i].presence;
+                id = "j:"+this.presences[i].jids[j]+"\n";
+                key += id;
+                matchRestKey += id;
+
+                rule.* += <item xmlns="jabber:iq:privacy" type="jid" value={this.presences[i].jids[j]}
+                              action="allow" order={++idx}>
+                            <presence-out/>
+                          </item>
+                matchRestRule.* += <item xmlns="jabber:iq:privacy" type="jid"
+                                       value={this.presences[i].jids[j]}
+                                       action="deny" order={++matchRestIdx}>
+                                     <presence-out/>
+                                   </item>
+            }
             if (this.presences[i].groups.length == 0 &&
                 this.presences[i].jids.length == 0)
-                this._defaultPresence = this.presences[i].presence;
+            {
+                this._matchRestPresence = this.presences[i].presence;
+                matchRestId = i;
+            } else {
+                rule.@name = "ot-pr-"+hex_sha1(key);
+                rule.* += <item xmlns="jabber:iq:privacy" action="deny" order={++idx}>
+                            <presence-out/>
+                          </item>;
+                this._privacyRules[i] = rule;
+            }
+
+            if (!this.presences[i].presence)
+                this._inheritedPresence = i;
         }
+
+        if (this._inheritedPresence == null)
+            this._inheritedPresence = i;
+
+        matchRestRule.@name = "ot-pr-rev-"+hex_sha1(matchRestKey);
+        this._privacyRules[matchRestId == null ? i : matchRestId] = matchRestRule;
+    },
+
+    activate: function()
+    {
+        for (i = 0; i < this._privacyRules.length; i++)
+            if (!privacyService.lists[this._privacyRules[i].@name])
+                privacyService.sendList(this._privacyRules[i]);
+
+        for (i = 0; i < this._privacyRules.length; i++)
+            if (i != this._inheritedPresence) {
+                privacyService.activateList(this._privacyRules[i].@name);
+                con.send(this.presences[i].presence.generatePacket());
+            }
+
+        privacyService.activateList(this._privacyRules[this._inheritedPresence].@name);
     },
 
     update: function(newName, newPresences)
@@ -278,23 +342,26 @@ _DECL_(PresenceProfile, null, Model).prototype =
         var jid, groups;
 
         if (!contact)
-            return this._defaultPresence;
+            return this._matchRestPresence;
 
-        if (typeof(contact) == "string" || contact instanceof JID) {
+        if (typeof(contact) == "string") {
             jid = contact;
             groups = [];
+        } else if (contact instanceof JID) {
+            jid = contact.normalizedJID;
+            groups = [];
         } else {
-            jid = contact.jid;
+            jid = contact.jid.normalizedJID;
             groups = contact.groups;
         }
 
         if (jid in this._jidsHash)
             return this._jidsHash[jid];
         for (var i = 0; i < groups.length; i++)
-           if (groups[i] in this._groupsHash)
-               return this._groupsHash[groups[i]];
+            if (groups[i] in this._groupsHash)
+                return this._groupsHash[groups[i]];
 
-        return this._defaultPresence;
+        return this._matchRestPresence;
     },
 
     getNotificationSchemeFor: function(contact)

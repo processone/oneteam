@@ -45,11 +45,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var presence = show instanceof Object ? show :
             new Presence(show, status, priority, profile);
 
-        if (!presence.profile)
-            con.send(presence.generatePacket());
-        else if (presence.profile != this.currentPresence.profile)
-            for (var c in this.contactsIterator())
-                c._sendPresence(presence)
+        if (!presence.profile) {
+            if (this.currentPresence.profile)
+                privacyService.deactivate();
+        } else if (presence.profile != this.currentPresence.profile)
+            presence.profile.activate();
+
+        con.send(presence.generatePacket());
 
         for (var i = 0; i < this._presenceObservers.length; i++)
             this._presenceObservers[i]._sendPresence(presence);
