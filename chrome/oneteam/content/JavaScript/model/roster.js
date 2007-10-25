@@ -673,12 +673,11 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     {
         if (packet.getType() == "error")
             return;
-try{
+
         var msg = new Message(packet, null, this, null, null, packet.getThread());
 
         if (!this.contact.msgThreads.handleMessage(msg, false))
             this.msgThreads.handleMessage(msg, true);
-}catch(ex){alert(ex)}
     },
 
     onAdHocCommand: function()
