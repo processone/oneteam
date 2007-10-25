@@ -227,9 +227,6 @@ _DECL_(MessagesThread, Model).prototype =
         if (!(this.contact instanceof Conference) && msg.text) {
             msg.queues.push(this);
             this.messages.push(msg);
-            this.archivedMessages.push(msg);
-            if (this.archivedMessages.length > 10)
-                this.archivedMessages.shift();
             this.modelUpdated("messages", {added: [msg]});
         }
 
@@ -240,6 +237,7 @@ _DECL_(MessagesThread, Model).prototype =
         this.chatState = "gone";
         this.chatPane = null;
         this._afterFirstMessage = false;
+        this._firstMessageInThread = true;
 
         if (this._threadID) {
             delete this.contact.msgThreads.activeThreads[this._threadID]
