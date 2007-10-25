@@ -434,12 +434,9 @@
 
       <method name="detach">
         <body><![CDATA[
-          this.closed = true;
+          this._tabbox._deremoveTab(this);
 
-          if (this.thread.contact instanceof Conference)
-            setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
-          else
-            this._tabbox._deremoveTab(this);
+          this.thread = null;
 
           this.chatState = "gone";
           this.unseenCount = 0;
@@ -450,15 +447,16 @@
         <body><![CDATA[
           this.closed = true;
 
-          if (this.thread.contact instanceof Conference)
-            setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
-          else
-            this._tabbox._removeTab(this);
-
-          this.thread._onChatPaneClosed();
+          if (this.thread)
+            this.thread._onChatPaneClosed();
 
           this.chatState = "gone";
           this.unseenCount = 0;
+
+          if (this.thread && this.thread.contact instanceof Conference)
+            setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
+          else
+            this._tabbox._removeTab(this);
         ]]></body>
       </method>
 
