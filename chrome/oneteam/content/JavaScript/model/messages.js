@@ -192,9 +192,6 @@ _DECL_(MessagesThread, Model).prototype =
 
         msg.queues.push(this);
         this.messages.push(msg);
-        this.archivedMessages.push(msg);
-        if (this.archivedMessages.length > 10)
-            this.archivedMessages.shift();
         this.modelUpdated("messages", {added: [msg]});
 
         account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" , msg, this);
@@ -207,7 +204,9 @@ _DECL_(MessagesThread, Model).prototype =
 
         var msgs = this.messages;
         this.messages = [];
-        //this.archivedMessages
+
+        this.archivedMessages.push.apply(this.archivedMessages, msgs);
+        this.archivedMessages.splice(0,this.archivedMessages.length-10);
 
         this.modelUpdated("messages", {removed: msgs});
     },
