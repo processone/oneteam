@@ -299,8 +299,15 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         if (packet.getType() == "error")
             return;
 
-        this.msgThreads.handleMessage(new Message(packet, null, this, null, null,
-                                                  packet.getThread()), true);
+        var paneOpened = false;
+        var msg = new Message(packet, null, this, null, null,
+                              packet.getThread());
+
+        for (var res in this.resourcesIterator())
+            paneOpened = res.msgThreads.handleMessage(msg, false) || paneOpened;
+
+        if (!paneOpened)
+            this.msgThreads.handleMessage(msg, true);
     },
 
     subscribe: function(reason, allowToSeeMe)
