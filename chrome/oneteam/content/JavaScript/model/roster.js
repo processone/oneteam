@@ -709,19 +709,20 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
 function MyResourcesContact(jid)
 {
-    this.init();
-
     this.jid = new JID(jid);
     this.name = _("{0}/{1}", this.jid.node, this.jid.resource);
     this.visibleName = _("{0} ({1})", this.jid.node, this.jid.resource);
     this.groups = [account.otherResourcesGroup];
     this.resources = []
-    account.otherResourcesGroup._onContactAdded(this);
 
     account.myResources[this.jid.normalizedJID] = this;
 
     this.chatPane = chatTabsController.getTab(this);
     this.msgThreads = new MessagesThreadsContainer(this);
+
+    this.init();
+
+    account.otherResourcesGroup._onContactAdded(this);
 }
 
 _DECL_(MyResourcesContact, Contact).prototype =
