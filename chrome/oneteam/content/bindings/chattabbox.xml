@@ -177,6 +177,8 @@
           if (!content._tab.parentNode)
             return;
 
+          content.destroy();
+
           var idx = this._detachedTabs.indexOf(content)
           if (idx >= 0)
             this._detachedTabs.splice(idx, 1);
@@ -428,9 +430,17 @@
       ]]></constructor>
 
       <destructor><![CDATA[
-        if (this._thread && this._token)
-          this._thread.contact.unregisterView(this._token);
+        this.destroy();
       ]]></destructor>
+
+      <method name="destroy">
+        <body><![CDATA[
+          if (this._thread && this._token)
+            this._thread.contact.unregisterView(this._token);
+          this._chatpane.destroy();
+          this._token = null;
+        ]]></body>
+      </method>
 
       <method name="detach">
         <body><![CDATA[
@@ -559,9 +569,6 @@
         var me = this;
         window.addEventListener("resize", function(){me.scrollToTab(null, 2)}, false);
       ]]></constructor>
-
-      <destructor><![CDATA[
-      ]]></destructor>
 
       <method name="scrollToTab">
         <parameter name="tab"/>

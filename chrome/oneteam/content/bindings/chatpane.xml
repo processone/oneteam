@@ -63,6 +63,18 @@
           this._onLoad();
       ]]></constructor>
 
+      <destructor><![CDATA[
+        this.destroy();
+      ]]></destructor>
+
+      <method name="destroy">
+        <body><![CDATA[
+          if (this._model && this._regToken)
+            this._model.unregisterView(this._regToken);
+          this._regToken = null;
+        ]]></body>
+      </method>
+
       <method name="_onLoad">
         <body>
           <![CDATA[
@@ -912,6 +924,12 @@
         }, 0, this);
       ]]></constructor>
 
+      <method name="destroy">
+        <body><![CDATA[
+          this._output.destroy()
+        ]]></body>
+      </method>
+
       <method name="_attachFocusHandler">
         <parameter name="_this"/>
         <parameter name="handler"/>
@@ -993,6 +1011,9 @@
 
       <method name="_preMaybeResize">
         <body><![CDATA[
+          if (!this._output || !this._output._output || !this._output._output.contentDocument)
+            return;
+
           var outputBody = this._output._output.contentDocument.body;
           this._outputScrollPos = outputBody.scrollTop + outputBody.clientHeight;
         ]]></body>
