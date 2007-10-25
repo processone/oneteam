@@ -9,8 +9,7 @@ function MessagesThreadsContainer(contact, parentContainer)
 {
     this.init();
     this.contact = contact;
-    this.activeThreads = {};
-    this.oldThreads = {};
+    this.threads = {};
     this.msgsInQueue = 0;
     this.parentContainer = parentContainer;
 }
@@ -22,23 +21,21 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
         var thread;
 
         if (msg.threadID) {
-            thread = this.activeThreads[msg.threadID];
-            if (!thread)
-                thread = this.oldThreads[msg.threadID];
+            thread = this.threads[msg.threadID];
             if (!thread)
                 thread = this.newThread;
         } else {
             if (this.newThread)
                 thread = this.newThread;
             else
-                for each (var thr in this.activeThreads)
+                for each (var thr in this.threads)
                     if (!thr._sessionStarted && (!thread || thread._lastMessageTime < thr._lastMessageTime))
                         thread = thr;
         }
         if (!thread && startNewThread) {
             thread = new MessagesThread(msg.threadID, this.contact);
-            thread.registerView(this._onMsgCountChanged, this, "messages");
-            this.activeThreads[thread.threadID] = thread;
+            thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
+            this.threads[thread.threadID] = thread;
         }
         if (!thread || (onlyInOpenTab && !thread.chatPane))
             return false;
@@ -51,7 +48,7 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
     {
         var thread, tabOpened = false;
 
-        for each (var thr in this.activeThreads) {
+        for each (var thr in this.threads) {
             if (thr.messages.length) {
                 tabOpened = true;
                 thr.openChatTab();
@@ -73,8 +70,10 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
         if (this.newThread)
             thread = this.newThread;
 
-        if (!thread)
+        if (!thread) {
             this.newThread = thread = new MessagesThread(null, this.contact);
+            thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
+        }
 
         thread.openChatTab();
         return true;
@@ -94,6 +93,12 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
         if (data)
             this._changeInQueueCount((data.added ? data.added.length : 0) -
                 (data.removed ? data.removed.length : 0));
+    },
+
+    _onThreadDestroyed: function(thread)
+    {
+        delete this.threads[thread._threadID];
+        thread.unregisterView(thread._msgThreadsToken);
     }
 }
 
@@ -104,7 +109,6 @@ function MessagesThread(threadID, contact)
     this.archivedMessages = [];
     this._threadID = threadID;
     this._contactIds = [];
-    this._firstMessageInThread = true;
     if (contact) {
         this.contact = contact;
         this._handleChatState = !(contact instanceof Conference);
@@ -129,7 +133,7 @@ _DECL_(MessagesThread, Model).prototype =
 
         if (this.contact && this.contact.msgThreads.newThread == this) {
             this.contact.msgThreads.newThread = null;
-            this.contact.msgThreads.activeThreads[this._threadID] = this;
+            this.contact.msgThreads.threads[val] = this;
         }
 
         return this._threadID = val;
@@ -195,10 +199,9 @@ _DECL_(MessagesThread, Model).prototype =
         this.messages.push(msg);
         this.modelUpdated("messages", {added: [msg]});
 
-        account.notificationScheme.show("message", this._firstMessageInThread ? "first" : "next" ,
+        account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" ,
                                         msg, msg.contact);
 
-        this._firstMessageInThread = false;
     },
 
     removeMessages: function()
@@ -237,13 +240,9 @@ _DECL_(MessagesThread, Model).prototype =
         this.chatState = "gone";
         this.chatPane = null;
         this._afterFirstMessage = false;
-        this._firstMessageInThread = true;
 
-        if (this._threadID) {
-            delete this.contact.msgThreads.activeThreads[this._threadID]
-            if (this.archivedMessages.length)
-                this.contact.msgThreads.oldThreads[this._threadID] = this;
-        }
+        if (this._threadID && !this.archivedMessages.length)
+            this.contact.msgThreads._onThreadDestroyed(this)
     }
 }
 
