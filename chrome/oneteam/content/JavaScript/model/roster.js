@@ -562,7 +562,7 @@ function Resource(jid, contact)
 
     account.resources[this.jid.normalizedJID] = this;
     this.init();
-    this.msgThreads = new MessagesThreadsContainer(this, this.contact.msgThreads);
+    this.msgThreads = new MessagesThreadsContainer(this, this.contact && this.contact.msgThreads);
 }
 
 _DECL_(Resource, null, Model, DiscoItem, Comparator,
