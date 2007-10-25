@@ -337,6 +337,33 @@ _DECL_(PresenceProfile, null, Model).prototype =
         this.modelUpdated.apply(this, flags);
     },
 
+    inheritsPresence: function(contact)
+    {
+        var jid, groups;
+
+        if (!contact)
+            return true;
+
+        if (typeof(contact) == "string") {
+            jid = contact;
+            groups = [];
+        } else if (contact instanceof JID) {
+            jid = contact.normalizedJID;
+            groups = [];
+        } else {
+            jid = contact.jid.normalizedJID;
+            groups = contact.groups;
+        }
+
+        if (jid in this._jidsHash)
+            return !this._jidsHash[jid];
+        for (var i = 0; i < groups.length; i++)
+            if (groups[i] in this._groupsHash)
+                return !this._groupsHash[groups[i]];
+
+        return true;
+    },
+
     getPresenceFor: function(contact)
     {
         var jid, groups;

@@ -33,6 +33,8 @@ _DECL_(NotificationScheme).prototype =
                                          model, true, false);
                 else {
                     model = model.contact || model;
+                    if (!this._showNotifications(model))
+                        return;
                     this._showAlert(signed ? _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
                                              _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
                                     xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
@@ -55,6 +57,9 @@ _DECL_(NotificationScheme).prototype =
                 this._showInChatPane(_("{0} changed subject to {1}", extra.resource, model.subject),
                                      model, true, false);
         } else if (kind == "message") {
+            if (!this._showNotifications(extra))
+                return;
+
             var gcMessage = model.isSystemMessage || extra instanceof ConferenceMember;
             soundsPlayer.playSound( gcMessage ? "message2" : "message1");
 
@@ -70,6 +75,11 @@ _DECL_(NotificationScheme).prototype =
             this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
                             text, "chrome://oneteam/skin/main/imgs/msgicon.png");
         }
+    },
+
+    _showNotifications: function(contact)
+    {
+        return !account.currentPresence.profile || account.currentPresence.profile.inheritsPresence(contact);
     },
 
     _showInChatPane: function(msg, contact, showInMUC, showInPersonal)
