@@ -417,7 +417,7 @@
     <content>
       <xul:vbox flex="1" class="inputBox">
         <html:iframe id="_input" style="height: 1em;" onload="this._loaded = 1;
-          try{this.parentNode.parentNode._init()}catch(ex){}"/>
+          try{if (this.parentNode.parentNode._input) this.parentNode.parentNode._init()}catch(ex){}"/>
       </xul:vbox>
     </content>
 
