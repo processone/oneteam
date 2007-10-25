@@ -687,7 +687,6 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
                 return;
 
             var message = new Message(packet, null, this);
-            account.notificationScheme.show("message", "next", message, this);
             this.contact.msgThreads.handleMessage(message, false);
         } else {
             var msg = new Message(packet, null, this, null, null, packet.getThread());

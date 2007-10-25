@@ -104,6 +104,7 @@ function MessagesThread(threadID, contact)
     this.archivedMessages = [];
     this._threadID = threadID;
     this._contactIds = [];
+    this._firstMessageInThread = true;
     if (contact) {
         this.contact = contact;
         this._handleChatState = !(contact instanceof Conference);
@@ -194,7 +195,10 @@ _DECL_(MessagesThread, Model).prototype =
         this.messages.push(msg);
         this.modelUpdated("messages", {added: [msg]});
 
-        account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" , msg, this);
+        account.notificationScheme.show("message", this._firstMessageInThread ? "first" : "next" ,
+                                        msg, msg.contact);
+
+        this._firstMessageInThread = false;
     },
 
     removeMessages: function()
