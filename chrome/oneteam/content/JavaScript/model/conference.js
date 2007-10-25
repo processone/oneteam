@@ -9,6 +9,7 @@ function Conference(jid)
     this.groups = [];
 
     account.allConferences[this.jid.normalizedJID] = this;
+    this.msgThreads = new MessagesThreadsContainer(this);
 }
 
 _DECL_(Conference, Contact).prototype =
@@ -395,6 +396,8 @@ _DECL_(Conference, Contact).prototype =
         delete this._myResourceJID;
         this._joinRequested = false;
 
+        this.msgThreads.openChatTab();
+
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
 
@@ -619,10 +622,6 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         if (pkt.getType() == "error")
             return;
 
-        if ((!this.contact.chatPane || this.contact.chatPane.closed) &&
-                pkt.getType() != "unavailable")
-            this.contact.onOpenChat();
-
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
 
@@ -687,18 +686,13 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             if (!packet.getBody())
                 return;
 
-            if (!this.contact.chatPane || this.contact.chatPane.closed)
-                this.contact.onOpenChat();
-
             var message = new Message(packet, null, this);
             account.notificationScheme.show("message", "next", message, this);
-            this.contact.chatPane.addMessage(message, packet.getThread());
+            this.contact.msgThreads.handleMessage(message, false);
         } else {
-            // Open tab because resource implementation will use our
-            // "contact" (conference) chatpane.
-            if (!this.chatPane || this.chatPane.closed)
-                this.onOpenChat();
-            Resource.prototype.onMessage.call(this, packet);
+            var msg = new Message(packet, null, this, null, null, packet.getThread());
+
+            this.msgThreads.handleMessage(msg, true);
         }
     },
 
