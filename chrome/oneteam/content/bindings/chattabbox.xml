@@ -211,6 +211,8 @@
 
           if (nextTab)
             nextTab.controller.focus();
+          else
+            this._selectedTab = null;
 
           this._tabs._fixupScrollPosition();
 
