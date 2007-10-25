@@ -17,7 +17,7 @@ function MessagesThreadsContainer(contact, parentContainer)
 
 _DECL_(MessagesThreadsContainer, Model).prototype =
 {
-    handleMessage: function(msg, startNewThread)
+    handleMessage: function(msg, startNewThread, onlyInOpenTab)
     {
         var thread;
 
@@ -40,7 +40,7 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
             thread.registerView(this._onMsgCountChanged, this, "messages");
             this.activeThreads[thread.threadID] = thread;
         }
-        if (!thread)
+        if (!thread || (onlyInOpenTab && !thread.chatPane))
             return false;
 
         thread.addMessage(msg);

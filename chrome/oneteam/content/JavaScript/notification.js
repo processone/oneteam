@@ -75,28 +75,26 @@ _DECL_(NotificationScheme).prototype =
     _showInChatPane: function(msg, contact, showInMUC, showInPersonal)
     {
         var msgObj;
-        var chatPanes = [];
+        var mts = [];
 
         if (showInMUC)
             if (contact instanceof Conference)
-                chatPanes.push(contact.chatPane);
+                mts.push(contact.msgThreads);
             else if (contact instanceof ConferenceMember &&
                      contact.contact.myResource != contact)
-                chatPanes.push(contact.contact.chatPane);
+                mts.push(contact.contact.msgThreads);
 
         if (showInPersonal && !(contact instanceof Conference)) {
-            chatPanes.push(contact.chatPane);
+            mts.push(contact.msgThreads);
             if (!(contact instanceof ConferenceMember))
-                chatPanes.push(contact.contact.chatPane);
+                mts.push(contact.contact.msgThreads);
         }
 
-        for each (var chatPane in chatPanes) {
-            if (!chatPane || chatPane.closed)
-                continue;
+        for each (var mt in mts) {
             if (!msgObj)
                 msgObj = new Message(msg, null, this, 4);
 
-            chatPane.addMessage(msgObj);
+            mt.handleMessage(msgObj, false, true);
         }
     },
 
