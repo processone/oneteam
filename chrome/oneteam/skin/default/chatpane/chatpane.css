@@ -16,3 +16,8 @@ vbox {
   list-style-image: url(imgs/send.png);
   -moz-binding: url(chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image);
 }
+
+.marker-arrow {
+  border: 8px solid transparent;
+  border-left: 0;
+}

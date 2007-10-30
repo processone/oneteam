@@ -12,6 +12,12 @@
     <content>
       <html:iframe id="output" flex="1" onload="this._loaded = true;
                    try { this.parentNode._onLoad() } catch(e) {}"/>
+      <xul:stack id="chatMarkers">
+        <xul:vbox id="lastSeenMarker" collapsed2="true" class="marker-arrow"
+                  style="top: 0"
+                  onclick="this.parentNode.parentNode._moveToLastSeenMessage()"
+                  tooltiptext="Move to last seen message"/>
+      </xul:stack>
     </content>
 
     <implementation>
@@ -23,7 +29,7 @@
       <property name="model" onget="return this._model">
         <setter><![CDATA[
           if (val == this._model)
-            return;
+            return val;
 
           if (this._model)
             this._model.unregisterView(this._regToken);
@@ -38,12 +44,27 @@
         ]]></setter>
       </property>
 
+      <property name="visible" onget="return this._visible">
+        <setter><![CDATA[
+          if (!val == !this._visible)
+            return this._visible = val;
+
+          this._visible = val
+          this._updateNonSeenStatus();
+
+          if (!val)
+            this._markMessagesAsSeen();
+
+          return val;
+        ]]></setter>
+      </property>
+
       <constructor><![CDATA[
         var p = this.__proto__;
         this.__proto__ = {};
 
         var state = {};
-        for each (var i in "model smilesEnabled".split(/ /))
+        for each (var i in "visible model smilesEnabled".split(/ /))
           if (this[i] != null) {
             state[i] = this[i];
             delete this[i];
@@ -54,7 +75,11 @@
         for (i in state)
           this[i] = state[i];
 
+        if (this._visible == null)
+          this._visible = true;
+
         this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+        this._lastSeenMarker = document.getAnonymousElementByAttribute(this, "id", "lastSeenMarker");
         this.colorMap = {0: 0};
         this.colorIndex = 1;
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
@@ -90,7 +115,7 @@
             link.setAttribute("rel", "stylesheet");
             this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
 
-            var colorScheme = "";
+            var colorScheme = ".msgEl { opacity: 1 } .msgEl.notSeen { opacity: 1 }";
             var white = new RGBColor(1, 1, 1);
             for (var i = 0; i < this.colorTable.length; i++) {
               var base = new RGBColor(this.colorTable[i]);
@@ -99,7 +124,7 @@
 
               colorScheme +=
                 <style>
-                  .messageChunk[color-id="{i}"] {"{"}
+                  .messageChunk[color-id="{i}"] .msgEl {"{"}
                       background: {bg};
                   }
 
@@ -134,9 +159,14 @@
               this._onMessageQueueChanged(this._model, "messages", {added: this._model.messages});
 
             var doc = this._output.contentDocument;
+            var me = this;
 
             this._output.contentWindow.addEventListener("resize", function() {
+              me._updateNonSeenStatus();
               doc.body.scrollTop = doc.body.scrollHeight;
+            }, false);
+            this._output.contentWindow.addEventListener("scroll", function() {
+              me._updateNonSeenStatus(true);
             }, false);
           ]]>
         </body>
@@ -153,6 +183,104 @@
           if (this._appendTimeout)
             window.clearTimeout(this._appendTimeout);
           this._appendTimeout = window.setTimeout(function(t){t._appendMessages()}, 50, this);
+        ]]></body>
+      </method>
+
+      <method name="_updateNonSeenStatus">
+        <parameter name="fromScroll"/>
+        <body><![CDATA[
+          var doc = this._output.contentDocument;
+
+          if (!this._firstNotSeenMsg) {
+            doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 1";
+            return;
+          }
+
+          var body = doc.body;
+
+          var p = this._firstNotSeenMsg;
+          var top = 0;
+          do {
+            top += p.offsetTop;
+            p = p.offsetParent;
+          } while (p);
+
+
+          var msgInViewport = top >= body.scrollTop && top < (body.scrollTop + body.clientHeight);
+
+          if (msgInViewport)
+            this._lastSeenMarker.style.borderRightColor = "transparent";
+          else {
+            this._lastSeenMarker.style.top = parseInt(top/body.scrollHeight*(body.clientHeight-8))+"px";
+            this._lastSeenMarker.style.borderRightColor = "black";
+          }
+
+          if (fromScroll && this._clearNonSeenMarkersTimeout) {
+            window.clearTimeout(this._clearNonSeenMarkersTimeout);
+            this._clearNonSeenMarkersTimeout = null;
+          }
+
+          if (!this._clearNonSeenMarkersTimeout) {
+            if (!this._visible)
+              doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 0.3";
+            else if (msgInViewport)
+              this._clearNonSeenMarkersTimeout = window.setTimeout(this._clearNonSeenMarkerFun, 3000, this);
+          } else if (!msgInViewport) {
+            window.clearTimeout(this._clearNonSeenMarkersTimeout);
+            this._clearNonSeenMarkersTimeout = null;
+          }
+        ]]></body>
+      </method>
+
+      <method name="_clearNonSeenMarkerFun">
+        <parameter name="_this"/>
+        <body><![CDATA[
+          _this._clearNonSeenMarkersTimeout = null;
+          _this._lastSeenMarker.style.borderRightColor = "transparent";
+          _this._firstNotSeenMsg = null;
+
+          var token = {step: 0, steps: 20, el: _this, doc: _this._output.contentDocument};
+
+          token.timeout = window.setInterval(function(t) {
+            if (t.step++ == t.steps) {
+              window.clearInterval(t.timeout);
+              t.doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 1";
+
+              _this._markMessagesAsSeen();
+
+              return;
+            }
+            t.doc.styleSheets[1].cssRules[0].style.cssText = "opacity: "+(0.3+0.7*t.step/t.steps);
+          }, 20, token);
+        ]]></body>
+      </method>
+
+      <method name="_moveToLastSeenMessage">
+        <body><![CDATA[
+          if (!this._firstNotSeenMsg)
+            return;
+
+          var p = this._firstNotSeenMsg;
+          var top = 0;
+          var body = this._output.contentDocument.body;
+          do {
+            top += p.offsetTop;
+            p = p.offsetParent;
+          } while (p);
+
+          body.scrollTop = p - body.clientHeight/5;
+        ]]></body>
+      </method>
+
+      <method name="_markMessagesAsSeen">
+        <body><![CDATA[
+          var els = this._output.contentDocument.getElementsByTagName("div");
+          for (var i = els.length-1; i >= 0; i--) {
+            var classes = els[i].className;
+            var newClasses = classes.replace(/notSeen/, "");
+            if (newClasses != classes)
+              els[i].className = newClasses;
+          }
         ]]></body>
       </method>
 
@@ -215,8 +343,11 @@
 
             var msgEl = doc.createElement("div");
             msgsChunk.appendChild(msgEl);
-            msgEl.setAttribute("class", msg.isSystemMessage ?
-                               "systemMessage" : "message");
+            msgEl.setAttribute("class", msg.classes+" msgEl notSeen "+
+                               (msg.isSystemMessage ? "systemMessage" : "message"));
+
+            if (!this._visible && !this._firstNotSeenMsg)
+                this._firstNotSeenMsg = msgEl;
 
             var h = doc.createElement("span");
             h.setAttribute("class", "header");
@@ -250,7 +381,7 @@
             }
 
             e = doc.createElement("span");
-            e.setAttribute("class", "body "+msg.classes);
+            e.setAttribute("class", "body");
             e.innerHTML = msg.formatedHtml;
 
             msgEl.appendChild(e);
@@ -267,6 +398,8 @@
             return;
 
           doc.body.scrollTop = doc.body.scrollHeight;
+
+          this._updateNonSeenStatus();
 
           // To eliminate small gap from late style resolution, scroll
           // once more from timeout, but only if scroll position is still

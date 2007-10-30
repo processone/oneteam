@@ -263,6 +263,10 @@
               this._selectedTab.previousSibling.removeAttribute("beforeselected");
             if (this._selectedTab.nextSibling)
               this._selectedTab.nextSibling.removeAttribute("afterselected");
+
+            try {
+              this._selectedTab.controller._chatpane._output.visible = false;
+            } catch(ex) {};
           }
 
           this._selectedTab = content._tab;
@@ -272,6 +276,10 @@
             content._tab.previousSibling.setAttribute("beforeselected", "true");
           if (content._tab.nextSibling)
             content._tab.nextSibling.setAttribute("afterselected", "true");
+
+          try {
+            this._selectedTab.controller._chatpane._output.visible = true;
+          } catch(ex) {};
 
           this._inSelectTab--;
           this._tabs.scrollToTab(null, 1);
@@ -321,13 +329,21 @@
 
       <method name="_onWindowFocus">
         <body><![CDATA[
-          if (this._selectedTab)
+          if (this._selectedTab) {
             this._selectedTab.controller.focused();
+            try {
+              this._selectedTab.controller._chatpane._output.visible = true;
+            } catch (ex) {}
+          }
         ]]></body>
       </method>
 
       <method name="_onWindowBlur">
         <body><![CDATA[
+        try {
+          if (this._selectedTab)
+            this._selectedTab.controller._chatpane._output.visible = false;
+        } catch(ex) {alert(ex)};
         ]]></body>
       </method>
     </implementation>
