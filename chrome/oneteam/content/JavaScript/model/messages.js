@@ -212,6 +212,9 @@ _DECL_(MessagesThread, Model).prototype =
         var msgs = this.messages;
         this.messages = [];
 
+        for (var i = 0; i < msgs.length; i++)
+            msgs[i].offline = true;
+
         this.archivedMessages.push.apply(this.archivedMessages, msgs);
         this.archivedMessages.splice(0,this.archivedMessages.length-10);
 
@@ -321,6 +324,8 @@ _DECL_(Message).prototype =
 
         if (this.text.indexOf("/me ") == 0)
             res.push("meMessage");
+        if (this.offline)
+            res.push("offline");
 
         return res.join(" ");
     },

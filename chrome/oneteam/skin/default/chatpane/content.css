@@ -10,6 +10,10 @@ body {
     font-style: italic;
 }
 
+.offline {
+    font-size: 0.85em;
+}
+
 .messageChunk {
     margin: 8px;
     border-width: 1px;
