@@ -115,7 +115,7 @@
             link.setAttribute("rel", "stylesheet");
             this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
 
-            var colorScheme = ".msgEl { opacity: 1 } .msgEl.notSeen { opacity: 1 }";
+            var colorScheme = ".message { opacity: 1 }\n.message[not-seen=\"true\"] { opacity: 1 }\n";
             var white = new RGBColor(1, 1, 1);
             for (var i = 0; i < this.colorTable.length; i++) {
               var base = new RGBColor(this.colorTable[i]);
@@ -124,18 +124,19 @@
 
               colorScheme +=
                 <style>
-                  .messageChunk[color-id="{i}"] .msgEl {"{"}
+                  .message[color-id="{i}"] {"{"}
                       background: {bg};
                   }
 
-                  .messageChunk[color-id="{i}"], .messageChunk[color-id="{i}"] .message {"{"}
+                  .message[color-id="{i}"] {"{"}
                       border-color: {border};
                   }
 
-                  .messageChunk[color-id="{i}"] .header {"{"}
+                  .message[color-id="{i}"] > .header {"{"}
                       background-color: {base}
                   }
-                  .messageChunk[color-id="{i}"] .meMessage {"{"}
+
+                  .meMessage.message[color-id="{i}"] {"{"}
                       color: {base}
                   }
                 </style>;
@@ -275,12 +276,8 @@
       <method name="_markMessagesAsSeen">
         <body><![CDATA[
           var els = this._output.contentDocument.getElementsByTagName("div");
-          for (var i = els.length-1; i >= 0; i--) {
-            var classes = els[i].className;
-            var newClasses = classes.replace(/notSeen/, "");
-            if (newClasses != classes)
-              els[i].className = newClasses;
-          }
+          for (var i = els.length-1; i >= 0; i--)
+            els[i].removeAttribute("not-seen");
         ]]></body>
       </method>
 
@@ -304,47 +301,39 @@
             doc.body.appendChild(this._content);
           }
 
-          var msgsChunk, containersChunk;
-
           var msgs = this._archiveMsgsAdded ? this._model.messages :
             this._model.archivedMessages.concat(this._model.messages);
 
           this._archiveMsgsAdded = true;
 
+          var msgsChunk = doc.createDocumentFragment();
+
           for (var i = 0; i < msgs.length; i++) {
             var msg = msgs[i];
 
-            if (msg.isSystemMessage || this._lastContactId != msg.contactId ||
-                msg.time - this._lastMessageTime > 5*60*1000)
-            {
-              if (!containersChunk && msgsChunk)
-                this._msgsContainer.appendChild(msgsChunk);
+            var msgEl = doc.createElement("div");
+            msgsChunk.appendChild(msgEl);
+            msgEl.setAttribute("class", "message "+msg.classes);
+            msgEl.setAttribute("not-seen", "true")
 
-              this._msgsContainer = msgsChunk = doc.createElement("div");
-
+            if (msg.isSystemMessage) {
+              msgEl.setAttribute("starts-chunk", "true");
+              this._lastContactId = null;
+            } else {
               if (!(msg.contactId in this.colorMap)) {
                 this.colorMap[msg.contactId] = this.colorIndex;
                 this.colorIndex = this.colorIndex%(this.colorTable.length-1) + 1;
               }
-              this._msgsContainer.setAttribute("class", "messageChunk");
-              this._msgsContainer.setAttribute("author-id", msg.contactId);
-              this._msgsContainer.setAttribute("color-id", this.colorMap[msg.contactId]);
 
-              if (!containersChunk)
-                containersChunk = doc.createDocumentFragment();
-              containersChunk.appendChild(this._msgsContainer);
+              msgEl.setAttribute("author-id", msg.contactId);
+              msgEl.setAttribute("color-id", this.colorMap[msg.contactId]);
+
+              if (this._lastContactId != msg.contactId || msg.time - this._lastMessageTime > 5*60*1000)
+                msgEl.setAttribute("starts-chunk", "true");
+
+              this._lastContactId = msg.contactId;
+              this._lastMessageTime = msg.time;
             }
-
-            this._lastContactId = msg.contactId
-            this._lastMessageTime = msg.time;
-
-            if (!msgsChunk)
-              msgsChunk = doc.createDocumentFragment();
-
-            var msgEl = doc.createElement("div");
-            msgsChunk.appendChild(msgEl);
-            msgEl.setAttribute("class", msg.classes+" msgEl notSeen "+
-                               (msg.isSystemMessage ? "systemMessage" : "message"));
 
             if (!this._visible && !this._firstNotSeenMsg)
                 this._firstNotSeenMsg = msgEl;
@@ -387,10 +376,7 @@
             msgEl.appendChild(e);
           }
 
-          if (containersChunk)
-            this._content.appendChild(containersChunk);
-          else if (msgsChunk)
-            this._msgsContainer.appendChild(msgsChunk);
+          this._content.appendChild(msgsChunk);
 
           this._model.removeMessages();
 

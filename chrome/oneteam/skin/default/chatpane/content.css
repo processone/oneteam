@@ -4,38 +4,43 @@ body {
     margin: 0;
 }
 
-.systemMessage {
-    margin: 2px 8px;
-    color: #081;
-    font-style: italic;
-}
-
-.offline {
-    font-size: 0.85em;
-}
-
-.messageChunk {
-    margin: 8px;
+.message {
+    margin: 0 8px;
     border-width: 1px;
+    border-top-width: 0;
     border-style: solid;
 }
 
+.message[starts-chunk=true] {
+    border-top-width: 1px;
+    margin-top: 8px;
+}
+
 .header {
-    display: block;
+    display: none;
     margin: 1px;
     padding: 1px 6px;
     background: url(imgs/header-gradient.png);
     color: white;
 }
 
-.message:not(:first-child) {
-    border-width: 0px;
-    border-top-width: 1px;
-    border-style: solid;
+.message[starts-chunk=true] > .header {
+    display: block;
 }
 
-.message:not(:first-child) > .header {
-    display: none;
+.systemMessage {
+    border: 0 !important;
+    margin: 2px 4px !important;
+    color: #081;
+    font-style: italic;
+}
+
+.systemMessage > .header {
+    display: none !important;
+}
+
+.offline {
+    font-size: 0.85em;
 }
 
 .to-copy-paste {
