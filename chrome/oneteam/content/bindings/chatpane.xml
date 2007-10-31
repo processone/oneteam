@@ -52,7 +52,7 @@
           this._visible = val
           this._updateNonSeenStatus();
 
-          if (!val)
+          if (!val && !this._firstNotSeenMsg)
             this._markMessagesAsSeen();
 
           return val;
