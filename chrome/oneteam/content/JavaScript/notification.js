@@ -102,9 +102,9 @@ _DECL_(NotificationScheme).prototype =
 
         for each (var mt in mts) {
             if (!msgObj)
-                msgObj = new Message(msg, null, this, 4);
+                msgObj = new Message(msg, null, null, 4);
 
-            mt.handleMessage(msgObj, false, true);
+            mt.showMessageInOpenTabs(msgObj);
         }
     },
 

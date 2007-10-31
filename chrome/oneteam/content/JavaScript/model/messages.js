@@ -16,7 +16,7 @@ function MessagesThreadsContainer(contact, parentContainer)
 
 _DECL_(MessagesThreadsContainer, Model).prototype =
 {
-    handleMessage: function(msg, startNewThread, onlyInOpenTab)
+    handleMessage: function(msg, startNewThread)
     {
         var thread;
 
@@ -37,11 +37,19 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
             this.threads[thread.threadID] = thread;
         }
-        if (!thread || (onlyInOpenTab && !thread.chatPane))
-            return false;
+        if (thread)
+            thread.addMessage(msg);
 
-        thread.addMessage(msg);
-        return true;
+        return !!thread;
+    },
+
+    showMessageInOpenTabs: function(msg)
+    {
+        if (this.newThread && this.newThread.chatPane)
+            this.newThread.addMessage(msg);
+        for each (var thread in this.threads)
+            if (thread.chatPane)
+                thread.addMessage(msg);
     },
 
     openChatTab: function(onlyWithMessages)
@@ -210,12 +218,17 @@ _DECL_(MessagesThread, Model).prototype =
             return;
 
         var msgs = this.messages;
+        var msgsToArchive = [];
         this.messages = [];
 
-        for (var i = 0; i < msgs.length; i++)
+        for (var i = msgs.length-1; i >= 0 && msgsToArchive.length < 10; i--) {
+            if (msgs[i].isSystemMessage)
+                continue;
             msgs[i].offline = true;
+            msgsToArchive.unshift(msgs[i]);
+        }
 
-        this.archivedMessages.push.apply(this.archivedMessages, msgs);
+        this.archivedMessages.push.apply(this.archivedMessages, msgsToArchive);
         this.archivedMessages.splice(0,this.archivedMessages.length-10);
 
         this.modelUpdated("messages", {removed: msgs});
