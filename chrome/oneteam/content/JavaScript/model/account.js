@@ -491,6 +491,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (pkt)
             _this.onIQ(pkt);
+
+        _this.connectionInitialized = true;
+        _this.modelUpdated("connectionInitialized");
     },
 
     _initialize: function()
@@ -518,9 +521,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             report("user", "error", "Error during connection. (Wrong username or password?)");
 
         this.connected = false;
+        this.connectionInitialized = false;
         self.con = null;
 
-        this.modelUpdated("con", null, "connected");
+        this.modelUpdated("con", null, "connected", null, "connectionInitialized");
 
         var groups = this.groups;
         var conferences = this.conferences;

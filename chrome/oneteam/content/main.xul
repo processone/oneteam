@@ -386,8 +386,21 @@
       document.getElementById("login-pass").value = password;
       document.getElementById("login-savePass").checked = savePass;
 
-      if (("login" in args) && username && password)
+      if (("login" in args || args.openchat || args.openconference) && username && password) {
         connect();
+        if (args.openchat || args.openconference)
+          account.registerView(function() {
+            if (!account.connectionInitialized)
+              return;
+
+            if (args.openchat)
+              account.getOrCreateContact(args.openchat).onOpenChat();
+            if (args.openconference) {
+              var jid = new JID(args.openconference);
+              account.getOrCreateConference(jid.shortJID).joinRoom(function(){}, jid.resource || username);
+            }
+          }, null, "connectionInitialized");
+      }
 
 // #ifdef XULAPP
       chatTabsController.addEventListener("tab-added", function(event) {
