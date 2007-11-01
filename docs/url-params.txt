@@ -1,0 +1,2 @@
+main.xul: username=<username>, password=<password>, login, openchat=<contact.jid>, openconference=<confernece.jid>%2f<nickname>
+muc.xul: room=<room.jid>, nick=<nickname>, login
