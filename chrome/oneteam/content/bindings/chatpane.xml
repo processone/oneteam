@@ -52,6 +52,11 @@
           this._visible = val
           this._updateNonSeenStatus();
 
+          if (!val && this._clearNonSeenMarkersTimeout) {
+            window.clearTimeout(this._clearNonSeenMarkersTimeout);
+            this._clearNonSeenMarkersTimeout = null;
+          }
+
           if (!val && !this._firstNotSeenMsg)
             this._markMessagesAsSeen();
 
