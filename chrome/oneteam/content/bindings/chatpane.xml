@@ -10,7 +10,7 @@
     </resources>
 
     <content>
-      <html:iframe id="output" flex="1" onload="this._loaded = true;
+      <html:iframe src="../content/blank.html" id="output" flex="1" onload="this._loaded = true;
                    try { this.parentNode._onLoad() } catch(e) {}"/>
       <xul:stack id="chatMarkers">
         <xul:vbox id="lastSeenMarker" collapsed2="true" class="marker-arrow"
@@ -193,7 +193,9 @@
           var doc = this._output.contentDocument;
 
           if (!this._firstNotSeenMsg) {
-            doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 1";
+            try {
+              doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 1";
+            } catch (ex) {}
             return;
           }
 
@@ -283,7 +285,6 @@
 
       <method name="_appendMessages">
         <body><![CDATA[
-        try{
           var doc = this._output.contentDocument;
 
           if (!doc) {
@@ -393,7 +394,6 @@
           setTimeout(function(body, pos) {
               if (body.scrollTop == pos) body.scrollTop = body.scrollHeight
             }, 100, doc.body, doc.body.scrollTop);
-        }catch(ex){alert(ex)}
         ]]></body>
       </method>
 
