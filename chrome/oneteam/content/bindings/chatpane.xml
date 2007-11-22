@@ -297,14 +297,14 @@
             return
           }
 
-          var scrollToBottom = doc.body.scrollTop + doc.body.clientHeight >=
-            doc.body.scrollHeight - 8;
+          var scrollToBottom = doc.documentElement.scrollTop + doc.documentElement.clientHeight >=
+            doc.documentElement.scrollHeight - 8;
 
           this._appendTimeout = null;
 
           if (!this._content) {
             this._content = doc.createElement("div");
-            doc.body.appendChild(this._content);
+            doc.documentElement.appendChild(this._content);
           }
 
           var msgs = this._archiveMsgsAdded ? this._model.messages :
@@ -389,7 +389,7 @@
           if (!scrollToBottom)
             return;
 
-          doc.body.scrollTop = doc.body.scrollHeight;
+          doc.documentElement.scrollTop = doc.documentElement.scrollHeight;
 
           this._updateNonSeenStatus();
 
@@ -398,7 +398,7 @@
           // this same.
           setTimeout(function(body, pos) {
               if (body.scrollTop == pos) body.scrollTop = body.scrollHeight
-            }, 100, doc.body, doc.body.scrollTop);
+            }, 100, doc.documentElement, doc.documentElement.scrollTop);
         ]]></body>
       </method>
 
