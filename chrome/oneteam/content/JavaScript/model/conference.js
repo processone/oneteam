@@ -689,7 +689,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             var message = new Message(packet, null, this);
             this.contact.msgThreads.handleMessage(message, false);
         } else {
-            var msg = new Message(packet, null, this, null, null, packet.getThread());
+            var msg = new Message(packet, null, this);
 
             this.msgThreads.handleMessage(msg, true);
         }

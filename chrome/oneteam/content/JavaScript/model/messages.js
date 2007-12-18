@@ -276,6 +276,8 @@ function Message(body, body_html, contact, type, time, thread)
             "http://jabber.org/protocol/chatstates", "*")[0];
         if (cs)
             this.chatState = cs.localName;
+        if (!thread)
+            thread = body.getThread()
 
         var html = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
         if (html)

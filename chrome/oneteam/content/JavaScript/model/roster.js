@@ -300,8 +300,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
             return;
 
         var paneOpened = false;
-        var msg = new Message(packet, null, this, null, null,
-                              packet.getThread());
+        var msg = new Message(packet, null, this);
 
         for (var res in this.resourcesIterator())
             paneOpened = res.msgThreads.handleMessage(msg, false) || paneOpened;
@@ -681,7 +680,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (packet.getType() == "error")
             return;
 
-        var msg = new Message(packet, null, this, null, null, packet.getThread());
+        var msg = new Message(packet, null, this);
 
         if (!this.contact.msgThreads.handleMessage(msg, false))
             this.msgThreads.handleMessage(msg, true);
