@@ -251,6 +251,10 @@
               break;
             }
 
+          try {
+            content._tab.controller._chatpane._output.visible = true;
+          } catch(ex) {};
+
           if (content._tab == this._selectedTab) {
             this._tabs.scrollToTab(null, 1);
             this._inSelectTab--;
@@ -276,10 +280,6 @@
             content._tab.previousSibling.setAttribute("beforeselected", "true");
           if (content._tab.nextSibling)
             content._tab.nextSibling.setAttribute("afterselected", "true");
-
-          try {
-            this._selectedTab.controller._chatpane._output.visible = true;
-          } catch(ex) {};
 
           this._inSelectTab--;
           this._tabs.scrollToTab(null, 1);
@@ -329,21 +329,15 @@
 
       <method name="_onWindowFocus">
         <body><![CDATA[
-          if (this._selectedTab) {
+          if (this._selectedTab)
             this._selectedTab.controller.focused();
-            try {
-              this._selectedTab.controller._chatpane._output.visible = true;
-            } catch (ex) {}
-          }
         ]]></body>
       </method>
 
       <method name="_onWindowBlur">
         <body><![CDATA[
-        try {
           if (this._selectedTab)
-            this._selectedTab.controller._chatpane._output.visible = false;
-        } catch(ex) {alert(ex)};
+            this._selectedTab.controller.blured();
         ]]></body>
       </method>
     </implementation>
@@ -506,9 +500,24 @@
           this._tabbox._selectTab(this);
           delete this._inFocus;
 
+          try {
+            this._chatpane._output.visible = true;
+          } catch (ex) {}
+
           this.unseenCount = 0;
           if (this.chatState == "inactive")
             this.chatState = "active";
+        ]]></body>
+      </method>
+
+      <method name="blured">
+        <body><![CDATA[
+          if (this.closed)
+            return;
+
+          try {
+            this._chatpane._output.visible = false;
+          } catch (ex) {}
         ]]></body>
       </method>
 
