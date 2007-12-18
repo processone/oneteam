@@ -122,7 +122,7 @@ function sendToServer() {
     if (intoInput.checked)
         window.opener.con._inQ.push(node);
     else
-        window.opener.con.send(window.opener.JSJaCPWrapNode(node));
+        window.opener.con.send(window.opener.JSJaCPacket.wrapNode(node));
 
     inputEditor.value = "";
 }
