@@ -118,17 +118,19 @@ function launch(internal) {
 
     if (!internal) {
         var inNewWindow = false;
+
         if (typeof(otOpenInNewWindow) == "boolean")
             inNewWindow = otOpenInNewWindow;
         else if (otOpenInNewWindow instanceof Element)
             storage[schema+":openInNewWindow"] = inNewWindow =
                 !!otOpenInNewWindow.checked;
 
+        otArgs.lang = typeof(otLanguage) == "string" ? otLanguage : otLanguage.value;
         otArgs.launch = "";
+
         var searchStr = [[encodeURIComponent(i), encodeURIComponent(otArgs[i])] for (i in otArgs)].
             map(function(a){return a[1] ? a[0]+"="+a[1] : a[0]}).join("&")
-        for (var arg in otArgs)
-            if (otArgs[arg])
+
         if (inNewWindow) {
             window.open(document.location.href+"?"+searchStr, "_blank",
                         "chrome,resizable=yes,dialog=no,all");
