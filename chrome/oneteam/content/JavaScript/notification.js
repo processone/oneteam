@@ -57,10 +57,10 @@ _DECL_(NotificationScheme).prototype =
                 this._showInChatPane(_("{0} changed subject to {1}", extra.resource, model.subject),
                                      model, true, false);
         } else if (kind == "message") {
-            if (!this._showNotifications(extra))
+            if (!this._showNotifications(extra) || model.isSystemMessage)
                 return;
 
-            var gcMessage = model.isSystemMessage || extra instanceof ConferenceMember;
+            var gcMessage = extra instanceof ConferenceMember;
             soundsPlayer.playSound( gcMessage ? "message2" : "message1");
 
             if (gcMessage || type != "first")
