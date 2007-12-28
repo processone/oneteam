@@ -35,6 +35,7 @@ _DECL_(NotificationScheme).prototype =
                     model = model.contact || model;
                     if (!this._showNotifications(model))
                         return;
+                    soundsPlayer.playSound(signed ? "connected" : "disconnected");
                     this._showAlert(signed ? _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
                                              _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
                                     xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
