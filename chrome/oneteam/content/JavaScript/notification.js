@@ -20,7 +20,7 @@ _DECL_(NotificationScheme).prototype =
             else if (type.show == "unavailable" && extra.show != "unavailable")
                 signed = false;
 
-            var time = connectionTime = model instanceof ConferenceMember ?
+            var time = model instanceof ConferenceMember ?
                 model.contact.joinedAt : account.connectedAt;
 
             if (!time || (Date.now()-time < 5*1024))
