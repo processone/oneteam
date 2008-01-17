@@ -32,6 +32,10 @@ _DECL_(MessagesRouter).prototype =
             thread = this.threads[msg.threadID] || this.newThreads[contact.jid];
         else {
             thread = this.newThreads[contact.jid];
+
+            if (!thread && this.contact.activeResource == contact)
+                thread = this.newThreads[this.contact.jid];
+
             if (!thread) {
                 for each (var thr in this.threads) {
                     if (!thr._sessionStarted &&
