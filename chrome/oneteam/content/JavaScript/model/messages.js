@@ -284,13 +284,18 @@ _DECL_(MessagesThread, Model).prototype =
             this._lastActivity = msg.time.getTime();
         this._handleXhtmlIM = this._handleXhtmlIM || msg.html;
 
+        var len = this.messages.length;
+
         msg.queues.push(this);
         this.messages.push(msg);
         this.modelUpdated("messages", {added: [msg]});
 
         account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" ,
                                         msg, msg.contact);
-
+        if (this.messages.length > len && !msg.isSystemMessage)
+            msg._eventKey = account.addEvent(_("You have new message from <b>{0}</b>",
+                                               xmlEscape(msg.contact.visibleName)),
+                                             new Callback(msg.contact.onOpenChat, msg.contact));
     },
 
     removeMessages: function()
@@ -302,11 +307,15 @@ _DECL_(MessagesThread, Model).prototype =
         var msgsToArchive = [];
         this.messages = [];
 
-        for (var i = msgs.length-1; i >= 0 && msgsToArchive.length < 10; i--) {
-            if (msgs[i].isSystemMessage)
-                continue;
-            msgs[i].offline = true;
-            msgsToArchive.unshift(msgs[i]);
+        for (var i = msgs.length-1; i >= 0; i--) {
+            if (msgs[i]._eventKey)
+                account.removeEventsByKey(msgs[i]._eventKey);
+            if (msgsToArchive.length < 10) {
+                if (msgs[i].isSystemMessage)
+                    continue;
+                msgs[i].offline = true;
+                msgsToArchive.unshift(msgs[i]);
+            }
         }
 
         this.archivedMessages.push.apply(this.archivedMessages, msgsToArchive);
