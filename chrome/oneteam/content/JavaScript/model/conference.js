@@ -1,6 +1,7 @@
 function Conference(jid)
 {
     this.init();
+    MessagesRouter.call(this);
 
     this.jid = new JID(jid);
     this.name = this.jid.shortJID;
@@ -9,7 +10,6 @@ function Conference(jid)
     this.groups = [];
 
     account.allConferences[this.jid.normalizedJID] = this;
-    this.msgThreads = new MessagesThreadsContainer(this);
 }
 
 _DECL_(Conference, Contact).prototype =
@@ -396,7 +396,7 @@ _DECL_(Conference, Contact).prototype =
         delete this._myResourceJID;
         this._joinRequested = false;
 
-        this.msgThreads.openChatTab();
+        this.openChatTab();
 
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
@@ -518,6 +518,8 @@ _DECL_(Conference, Contact).prototype =
 function ConferenceMember(jid)
 {
     Resource.call(this, jid);
+    this.parentRouter = null; // Hack: don't deliver messages to conference window
+
     this.contact = account.allConferences[this.jid.normalizedJID.shortJID];
     this.name = this.jid.resource;
     this.visibleName =  this.name + " from " + this.jid.node;
@@ -686,12 +688,12 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             if (!packet.getBody())
                 return;
 
-            var message = new Message(packet, null, this);
-            this.contact.msgThreads.handleMessage(message, false);
+            var msg = new Message(packet, null, this);
+            this.contact.routeMessage(msg);
         } else {
             var msg = new Message(packet, null, this);
 
-            this.msgThreads.handleMessage(msg, true);
+            this.routeMessage(msg);
         }
     },
 

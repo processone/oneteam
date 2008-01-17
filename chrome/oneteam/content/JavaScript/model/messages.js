@@ -5,108 +5,188 @@ function ContactInfo(jid, visibleName, representsMe)
     this.representsMe = representsMe;
 }
 
-function MessagesThreadsContainer(contact)
+function MessagesRouter(parentRouter)
 {
-    this.init();
-    this.contact = contact;
+    this.parentRouter = parentRouter;
     this.threads = {};
+    this.newThreads = {};
     this.chatPanes = [];
     this.msgsInQueue = 0;
 }
 
-_DECL_(MessagesThreadsContainer, Model).prototype =
+_DECL_(MessagesRouter).prototype =
 {
-    handleMessage: function(msg, contact, startNewThread)
+    routeMessage: function(msg, contact)
     {
         var thread;
 
-        if (msg.threadID) {
-            thread = this.threads[msg.threadID];
-            if (!thread)
-                thread = this.newThread;
-        } else {
-            if (this.newThread)
-                thread = this.newThread;
-            else
-                for each (var thr in this.threads)
-                    if (!thr._sessionStarted && (!thread || thread._lastMessageTime < thr._lastMessageTime))
-                        thread = thr;
+        if (this.parentRouter) {
+            this.parentRouter.routeMessage(msg, this);
+            return;
         }
-        if (!thread && startNewThread) {
+
+        if (!contact)
+            contact = this;
+
+        if (msg.threadID)
+            thread = this.threads[msg.threadID] || this.newThreads[contact.jid];
+        else {
+            thread = this.newThreads[contact.jid];
+            if (!thread) {
+                for each (var thr in this.threads)
+                    if (!thr._sessionStarted &&
+                        (thr.contact == contact || thr.contact == contact.activeResource) &&
+                        (!thread || thread._lastActivity < thr._lastActivity))
+                        thread = thr;
+            }
+        }
+        if (!thread) {
             thread = new MessagesThread(msg.threadID, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
-            this.threads[thread.threadID] = thread;
+            if (msg.threadID)
+                this.threads[thread.threadID] = thread;
+            else
+                this.newThreads[contact.jid] = thread;
         }
-        if (thread)
-            thread.addMessage(msg);
-
-        return !!thread;
+        thread.addMessage(msg);
     },
 
-    showMessageInOpenTabs: function(msg)
+    _openChatTab: function(contact, thread)
     {
-        if (this.newThread && this.newThread.chatPane)
-            this.newThread.addMessage(msg);
-        for each (var thread in this.threads)
-            if (thread.chatPane)
-                thread.addMessage(msg);
+        if (!thread.chatPane) {
+            var oldestPane;
+
+            for (var i = 0; i < this.chatPanes.length; i++) {
+                if (this.chatPanes[i].thread.contact != contact &&
+                    this.chatPanes[i].thread.contact != contact.activeResource)
+                    continue;
+                if (!oldestPane || this.chatPanes[i].thread._lastActivity <
+                    oldestPane.thread._lastActivity)
+                    oldestPane = this.chatPanes[i];
+            }
+
+            if (oldestPane && (oldestPane.thread._lastActivity < Date.now() - 5*60*1000)) {
+                oldestPane.thread.chatPane = null;
+                thread.chatPane = oldestPane;
+                oldestPane.thread = thread;
+            } else
+                thread.chatPane = chatTabsController.openTab(thread);
+        }
+
+        thread.chatPane.focus();
     },
 
-    openChatTab: function(contact, onlyWithMessages)
+    openChatTab: function(contact)
     {
-        var thread, tabOpened = false;
+        if (this.parentRouter) {
+            this.parentRouter.openChatTab(this);
+            return;
+        }
+
+        var tabOpened = false, thread;
 
         for each (var thr in this.threads) {
+            if (contact && contact != thr.contact)
+                continue;
+
             if (thr.messages.length) {
                 tabOpened = true;
-                thr.openChatTab();
-            } else if (thr.chatPane) {
-                if (!thread || !thread.chatPane || thread._lastMessageTime < thr._lastMessageTime)
-                    thread = thr;
-            } else if (!thread || (!thread.chatPane && thread._lastMessageTime < thr._lastMessageTime))
+                this._openChatTab(contact || this, thr);
+            }
+
+            if (!tabOpened && (!thread || thread._lastActivity < thr._lastActivity))
                 thread = thr;
         }
         if (tabOpened)
-            return true;
-        if (thread && thread.chatPane) {
-            thread.openChatTab();
-            return true;
+            return;
+
+        var activePane = chatTabsController._selectedTab &&
+            chatTabsController._selectedTab.controller;
+
+        if (activePane && activePane.thread.contact == (contact || this.activeResource || this)) {
+            var paneToActivate;
+
+            for (var i = 0; i < this.chatPanes.length; i++) {
+                if (contact && contact != this.chatPanes[i].thread.contact)
+                    continue;
+                if (!activePane || !paneToActivate)
+                    paneToActivate = this.chatPanes[i];
+                if (this.chatPanes[i] == activePane)
+                    activePane = null;
+            }
+            paneToActivate.focus();
+        } else {
+            if (!contact)
+                contact = this;
+
+            if (!thread)
+                thread = this.newThreads[contact.jid]
+            if (!thread) {
+                thread = new MessagesThread(null, contact);
+                thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
+                this.newThreads[contact.jid] = thread;
+            }
+            this._openChatTab(contact, thread);
         }
-        if (onlyWithMessages)
-            return false;
-
-        if (this.newThread)
-            thread = this.newThread;
-
-        if (!thread) {
-            this.newThread = thread = new MessagesThread(null, contact);
-            thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
-        }
-
-        thread.openChatTab();
-        return true;
     },
 
-    _changeInQueueCount: function(diff)
+    showSystemMessage: function(msg, contact)
     {
-        this.msgsInQueue += diff;
+        if (this.parentRouter) {
+            this.parentRouter.showSystemMessage(msg, contact);
+            return;
+        }
 
-        this.modelUpdated("msgsInQueue");
-        if (this.parentContainer)
-            this.parentContainer._changeInQueueCount(diff);
+        if (!contact)
+            contact = this;
+
+        for (var i = 0; i < this.chatPanes.length; i++)
+            if (this.chatPanes[i].thread.contact == contact ||
+                this.chatPanes[i].thread.contact == contact.activeResource)
+            this.chatPanes[i].thread.addMessage(msg);
+    },
+
+    _markThreadAsActive: function(thread, contact)
+    {
+        if (this.parentRouter) {
+            this.parentRouter._markThreadAsActive(thread, this);
+            return;
+        }
+
+        if (!contact)
+            contact = this;
+
+        if (this.newThreads[contact.jid] == thread) {
+            this.threads[thread.threadID] = thread;
+            this.newThreads[contact.jid];
+        }
     },
 
     _onMsgCountChanged: function(model, type, data)
     {
-        if (data)
-            this._changeInQueueCount((data.added ? data.added.length : 0) -
-                (data.removed ? data.removed.length : 0));
+        var diff = data ? (data.added ? data.added.length : 0) -
+                          (data.removed ? data.removed.length : 0) : 0;
+        this.msgsInQueue += diff;
+        if (diff)
+            this.modelUpdated("msgsInQueue");
     },
 
     _onThreadDestroyed: function(thread)
     {
+        if (this.parentRouter) {
+            this.parentRouter._onThreadDestroyed(thread);
+            return;
+        }
+
         delete this.threads[thread._threadID];
         thread.unregisterView(thread._msgThreadsToken);
+    },
+
+    _onChatPaneClosed: function(chatPane)
+    {
+        var idx = this.chatPanes.indexOf(chatPane);
+        if (idx >= 0)
+            this.chatPanes.splice(idx, 1);
     }
 }
 
@@ -139,12 +219,12 @@ _DECL_(MessagesThread, Model).prototype =
         if (!val || val == this._threadID)
             return val;
 
-        if (this.contact && this.contact.msgThreads.newThread == this) {
-            this.contact.msgThreads.newThread = null;
-            this.contact.msgThreads.threads[val] = this;
-        }
+        this._threadID = val;
 
-        return this._threadID = val;
+        if (this.contact)
+            this.contact._markThreadAsActive(this);
+
+        return val;
     },
 
     getContactID: function(contact)
@@ -200,7 +280,8 @@ _DECL_(MessagesThread, Model).prototype =
             return;
 
         msg.thread = this;
-        this._lastMessageTime = msg.time.getTime();
+        if (!msg.isSystemMessage)
+            this._lastActivity = msg.time.getTime();
         this._handleXhtmlIM = this._handleXhtmlIM || msg.html;
 
         msg.queues.push(this);
@@ -253,12 +334,13 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     _onChatPaneClosed: function() {
+        this.contact._onChatPaneClosed(this.chatPane);
         this.chatState = "gone";
         this.chatPane = null;
         this._afterFirstMessage = false;
 
         if (this._threadID && !this.archivedMessages.length)
-            this.contact.msgThreads._onThreadDestroyed(this)
+            this.contact._onThreadDestroyed(this)
     }
 }
 

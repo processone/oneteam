@@ -88,10 +88,10 @@ _DECL_(Group, null, Model).prototype =
 function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 {
     this.init();
+    MessagesRouter.call(this);
+
     if (jid instanceof Node)
         [jid, name, subscription, subscriptionAsk, groups] = this._parseNode(jid);
-
-    this.msgThreads = new MessagesThreadsContainer(this);
 
     this.jid = new JID(jid);
     this.resources = [];
@@ -127,7 +127,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     this.gateway = account.gateways[this.jid.normalizedJID.domain];
 }
 
-_DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype =
+_DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesRouter).prototype =
 {
     get canSeeMe() {
         return this.subscription == "both" || this.subscription == "from";
@@ -299,14 +299,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
         if (packet.getType() == "error")
             return;
 
-        var paneOpened = false;
-        var msg = new Message(packet, null, this);
-
-        for (var res in this.resourcesIterator())
-            paneOpened = res.msgThreads.handleMessage(msg, false) || paneOpened;
-
-        if (!paneOpened)
-            this.msgThreads.handleMessage(msg, true);
+        this.routeMessage(new Message(packet, null, this));
     },
 
     subscribe: function(reason, allowToSeeMe)
@@ -399,11 +392,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem).prototype
 
     onOpenChat: function()
     {
-        var tabOpened = false;
-        for (i = 0; i < this.resources.length; i++)
-            tabOpened = tabOpened || this.resources[i].msgThreads.openChatTab(true);
-        if (!tabOpened)
-            this.msgThreads.openChatTab();
+        this.openChatTab();
     },
 
     createResource: function(jid)
@@ -568,7 +557,7 @@ function Resource(jid, contact)
 
     account.resources[this.jid.normalizedJID] = this;
     this.init();
-    this.msgThreads = new MessagesThreadsContainer(this, this.contact && this.contact.msgThreads);
+    MessagesRouter.call(this, this.contact);
 }
 
 _DECL_(Resource, null, Model, DiscoItem, Comparator,
@@ -576,7 +565,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
             var iq = new JSJaCIQ();
             iq.setQuery('jabber:iq:version');
             return iq;
-       })).prototype =
+       }), MessagesRouter).prototype =
 {
     _registered: false,
     presence: new Presence("unavailable"),
@@ -592,7 +581,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
     onOpenChat: function()
     {
-        this.msgThreads.openChatTab();
+        this.openChatTab();
     },
 
     onPresence: function(packet, dontNotifyViews)
@@ -680,10 +669,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (packet.getType() == "error")
             return;
 
-        var msg = new Message(packet, null, this);
-
-        if (!this.contact.msgThreads.handleMessage(msg, false))
-            this.msgThreads.handleMessage(msg, true);
+        this.routeMessage(new Message(packet, null, this));
     },
 
     onAdHocCommand: function()
@@ -724,7 +710,6 @@ function MyResourcesContact(jid)
     account.myResources[this.jid.normalizedJID] = this;
 
     this.chatPane = chatTabsController.getTab(this);
-    this.msgThreads = new MessagesThreadsContainer(this);
 
     this.init();
 

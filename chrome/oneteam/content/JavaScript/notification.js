@@ -88,25 +88,17 @@ _DECL_(NotificationScheme).prototype =
         var msgObj;
         var mts = [];
 
-        if (showInMUC)
-            if (contact instanceof Conference)
-                mts.push(contact.msgThreads);
-            else if (contact instanceof ConferenceMember &&
-                     contact.contact.myResource != contact)
-                mts.push(contact.contact.msgThreads);
-
-        if (showInPersonal && !(contact instanceof Conference)) {
-            mts.push(contact.msgThreads);
-            if (!(contact instanceof ConferenceMember))
-                mts.push(contact.contact.msgThreads);
+        if (showInMUC) {
+            var c = contact instanceof Conference ? contact :
+                (contact instanceof ConferenceMember &&
+                    contact.contact.myResource != contact) ?
+                    contact.contact : null;
+            if (c)
+                c.showSystemMessage(msgObj = new Message(msg, null, null, 4));
         }
 
-        for each (var mt in mts) {
-            if (!msgObj)
-                msgObj = new Message(msg, null, null, 4);
-
-            mt.showMessageInOpenTabs(msgObj);
-        }
+        if (showInPersonal && !(contact instanceof Conference))
+            contact.showSystemMessage(msgObj || new Message(msg, null, null, 4));
     },
 
 // #ifdef XULAPP
