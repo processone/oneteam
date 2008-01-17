@@ -5,18 +5,18 @@ function ContactInfo(jid, visibleName, representsMe)
     this.representsMe = representsMe;
 }
 
-function MessagesThreadsContainer(contact, parentContainer)
+function MessagesThreadsContainer(contact)
 {
     this.init();
     this.contact = contact;
     this.threads = {};
+    this.chatPanes = [];
     this.msgsInQueue = 0;
-    this.parentContainer = parentContainer;
 }
 
 _DECL_(MessagesThreadsContainer, Model).prototype =
 {
-    handleMessage: function(msg, startNewThread)
+    handleMessage: function(msg, contact, startNewThread)
     {
         var thread;
 
@@ -33,7 +33,7 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
                         thread = thr;
         }
         if (!thread && startNewThread) {
-            thread = new MessagesThread(msg.threadID, this.contact);
+            thread = new MessagesThread(msg.threadID, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
             this.threads[thread.threadID] = thread;
         }
@@ -52,7 +52,7 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
                 thread.addMessage(msg);
     },
 
-    openChatTab: function(onlyWithMessages)
+    openChatTab: function(contact, onlyWithMessages)
     {
         var thread, tabOpened = false;
 
@@ -64,7 +64,7 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
                 if (!thread || !thread.chatPane || thread._lastMessageTime < thr._lastMessageTime)
                     thread = thr;
             } else if (!thread || (!thread.chatPane && thread._lastMessageTime < thr._lastMessageTime))
-                thread = thr
+                thread = thr;
         }
         if (tabOpened)
             return true;
@@ -79,7 +79,7 @@ _DECL_(MessagesThreadsContainer, Model).prototype =
             thread = this.newThread;
 
         if (!thread) {
-            this.newThread = thread = new MessagesThread(null, this.contact);
+            this.newThread = thread = new MessagesThread(null, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
         }
 
