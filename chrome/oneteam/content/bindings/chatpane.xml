@@ -36,8 +36,7 @@
 
           if (val) {
             this._regToken = val.registerView(this._onMessageQueueChanged, this, "messages");
-            if (val.messages.length || !this._archiveMsgsAdded && val.archivedMessages.length)
-              this._onMessageQueueChanged(val, "messages", {added: val.messages});
+            this._onMessageQueueChanged();
           }
 
           return this._model = val;
@@ -160,9 +159,8 @@
 
             this._output.contentDocument.addEventListener("click", linkEventsRedirector, true)
 
-            if (this._model && this._model.messages.length ||
-                !this._archiveMsgsAdded && this._model.archivedMessages.length)
-              this._onMessageQueueChanged(this._model, "messages", {added: this._model.messages});
+            if (this._model)
+              this._onMessageQueueChanged();
 
             var doc = this._output.contentDocument;
             var me = this;
@@ -183,7 +181,22 @@
         <parameter name="name"/>
         <parameter name="arg"/>
         <body><![CDATA[
-          if (!this._initialized || !arg || !arg.added)
+          if (!this._initialized)
+            return;
+
+          if (!this._msgs)
+            // use concat because we need a copy
+            this._msgs = this._model.archivedMessages.concat([]);
+
+          if (arg && arg.added) {
+            this._msgs.push.apply(this._msgs, arg.added);
+            this._model.removeMessages();
+          } else if (!arg && this._model.messages.length) {
+            this._msgs.push.apply(this._msgs, this._model.messages);
+            this._model.removeMessages();
+          }
+
+          if (!this._msgs.length)
             return;
 
           if (this._appendTimeout)
@@ -307,10 +320,8 @@
             doc.body.appendChild(this._content);
           }
 
-          var msgs = this._archiveMsgsAdded ? this._model.messages :
-            this._model.archivedMessages.concat(this._model.messages);
-
-          this._archiveMsgsAdded = true;
+          var msgs = this._msgs;
+          this._msgs = [];
 
           var msgsChunk = doc.createDocumentFragment();
 
@@ -410,8 +421,7 @@
 
             this._content = this._msgsContainer =
               this._lastMessageTime = this._lastContactId = null;
-
-            this._archiveMsgsAdded = false;
+            this._msgs = null;
           ]]>
         </body>
       </method>
