@@ -102,6 +102,19 @@ _DECL_(MessagesRouter).prototype =
             if (!tabOpened && (!thread || thread._lastActivity < thr._lastActivity))
                 thread = thr;
         }
+
+        for each (var thr in this.newThreads) {
+            if (contact && contact != thr.contact)
+                continue;
+
+            if (thr.messages.length) {
+                tabOpened = true;
+                this._openChatTab(contact || this, thr);
+            }
+
+            if (!tabOpened && (!thread || thread._lastActivity < thr._lastActivity))
+                thread = thr;
+        }
         if (tabOpened)
             return;
 
