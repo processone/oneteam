@@ -321,11 +321,18 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         }
     },
 
-    addEvent: function(title, callback)
+    _uniqEventId: 0,
+
+    addEvent: function(title, callback, key)
     {
-        var token = [title, callback];
+        if (!key)
+            key = "autogen"+(++this._uniqEventId);
+
+        var token = [title, callback, key];
         this.events.push(token);
         this.modelUpdated("events", {added: [token]});
+
+        return key;
     },
 
     removeEvent: function(token)
@@ -335,6 +342,22 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.events.splice(idx, 1);
             this.modelUpdated("events", {removed: [token]});
         }
+    },
+
+    removeEventsByKey: function()
+    {
+        var keys = {}
+        for (var i = 0; i < arguments.length; i++)
+            keys[arguments[i]] = 1;
+
+        var removed = [];
+        for (var i = this.events.length-1; i >= 0; i--)
+            if (this.events[i][2] in keys) {
+                removed.push(this.events[i]);
+                this.events.splice(i, 1);
+            }
+        if (removed.length)
+            this.modelUpdated("events", {removed: removed});
     },
 
     setUserAndPass: function(user, pass, savePass)
