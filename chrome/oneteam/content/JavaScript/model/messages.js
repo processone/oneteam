@@ -33,13 +33,16 @@ _DECL_(MessagesRouter).prototype =
         else {
             thread = this.newThreads[contact.jid];
             if (!thread) {
-                for each (var thr in this.threads)
+                for each (var thr in this.threads) {
                     if (!thr._sessionStarted &&
-                        (thr.contact == contact || thr.contact == contact.activeResource) &&
+                        (thr.contact == contact || thr.contact == contact.activeResource ||
+                         thr.contact.activeResource == contact) &&
                         (!thread || thread._lastActivity < thr._lastActivity))
                         thread = thr;
+                }
             }
         }
+
         if (!thread) {
             thread = new MessagesThread(msg.threadID, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
@@ -270,8 +273,10 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     addMessage: function(msg) {
-        this._handleChatState = this._handleChatState || msg.chatState;
-        this._sessionStarted = this._sessionStarted || msg.threadID;
+        if (!msg.contact.representsMe) {
+            this._handleChatState = this._handleChatState || msg.chatState;
+            this._sessionStarted = this._sessionStarted || msg.threadID;
+        }
 
         this.threadID = msg.threadID;
 
