@@ -69,8 +69,10 @@ _DECL_(MessagesRouter).prototype =
                 oldestPane.thread.chatPane = null;
                 thread.chatPane = oldestPane;
                 oldestPane.thread = thread;
-            } else
-                thread.chatPane = chatTabsController.openTab(thread);
+            } else {
+                thread.chatPane = chatTabsController.openTab(thread)
+                this.chatPanes.push(thread.chatPane);
+            }
         }
 
         thread.chatPane.focus();
@@ -133,17 +135,19 @@ _DECL_(MessagesRouter).prototype =
     showSystemMessage: function(msg, contact)
     {
         if (this.parentRouter) {
-            this.parentRouter.showSystemMessage(msg, contact);
+            this.parentRouter.showSystemMessage(msg, this);
             return;
         }
 
         if (!contact)
             contact = this;
 
-        for (var i = 0; i < this.chatPanes.length; i++)
+        for (var i = 0; i < this.chatPanes.length; i++) {
             if (this.chatPanes[i].thread.contact == contact ||
+                this.chatPanes[i].thread.contact == contact.contact ||
                 this.chatPanes[i].thread.contact == contact.activeResource)
             this.chatPanes[i].thread.addMessage(msg);
+        }
     },
 
     _markThreadAsActive: function(thread, contact)

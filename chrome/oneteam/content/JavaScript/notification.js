@@ -86,7 +86,6 @@ _DECL_(NotificationScheme).prototype =
     _showInChatPane: function(msg, contact, showInMUC, showInPersonal)
     {
         var msgObj;
-        var mts = [];
 
         if (showInMUC) {
             var c = contact instanceof Conference ? contact :
