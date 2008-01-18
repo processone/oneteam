@@ -205,7 +205,7 @@ _DECL_(MessagesRouter).prototype =
 
         if (this.newThreads[contact.jid] == thread) {
             this.threads[thread.threadID] = thread;
-            this.newThreads[contact.jid];
+            delete this.newThreads[contact.jid];
         }
     },
 
