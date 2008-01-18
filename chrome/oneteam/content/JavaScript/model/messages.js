@@ -94,6 +94,11 @@ _DECL_(MessagesRouter).prototype =
 
     _findTabForThread: function(contact, thread)
     {
+        if (this.parentRouter) {
+            this.parentRouter._findTabForThread(contact, thread);
+            return;
+        }
+
         if (!thread.chatPane) {
             if (!this._findUnusedTab(contact, thread)) {
                 thread.chatPane = chatTabsController.openTab(thread)
