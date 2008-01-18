@@ -57,6 +57,8 @@ _DECL_(MessagesRouter).prototype =
                 contact = this;
             thread = new MessagesThread(msg.threadID, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
+            this._findUnusedTab(contact, thread);
+
             if (msg.threadID)
                 this.threads[thread.threadID] = thread;
             else
@@ -65,25 +67,35 @@ _DECL_(MessagesRouter).prototype =
         thread.addMessage(msg);
     },
 
-    _openChatTab: function(contact, thread)
+    _findUnusedTab: function(contact, thread)
+    {
+        var oldestPane;
+        var borderDate = Date.now() - 2*60*1000;
+
+        for (var i = 0; i < this.chatPanes.length; i++) {
+            var cp = this.chatPanes[i];
+            var thr = cp.thread;
+
+            if (!thr || thr.contact != contact || thr._lastActivity > borderDate)
+                continue;
+            if (!oldestPane || thr._lastActivity < oldestPane.thread._lastActivity)
+                oldestPane = cp;
+        }
+
+        if (!oldestPane)
+            return false;
+
+        oldestPane.thread.chatPane = null;
+        thread.chatPane = oldestPane;
+        oldestPane.thread = thread;
+
+        return true;
+    },
+
+    _findTabForThread: function(contact, thread)
     {
         if (!thread.chatPane) {
-            var oldestPane;
-
-            for (var i = 0; i < this.chatPanes.length; i++) {
-                if (this.chatPanes[i].thread.contact != contact &&
-                    this.chatPanes[i].thread.contact != contact.activeResource)
-                    continue;
-                if (!oldestPane || this.chatPanes[i].thread._lastActivity <
-                    oldestPane.thread._lastActivity)
-                    oldestPane = this.chatPanes[i];
-            }
-
-            if (oldestPane && (oldestPane.thread._lastActivity < Date.now() - 5*60*1000)) {
-                oldestPane.thread.chatPane = null;
-                thread.chatPane = oldestPane;
-                oldestPane.thread = thread;
-            } else {
+            if (!this._findUnusedTab(contact, thread)) {
                 thread.chatPane = chatTabsController.openTab(thread)
                 this.chatPanes.push(thread.chatPane);
             }
@@ -92,71 +104,81 @@ _DECL_(MessagesRouter).prototype =
         thread.chatPane.focus();
     },
 
-    openChatTab: function(contact)
+    _cycleNextTab: function(contact)
     {
-        if (this.parentRouter) {
-            this.parentRouter.openChatTab(this);
-            return;
-        }
-
-        var tabOpened = false, thread;
-
-        for each (var thr in this.threads) {
-            if (contact && contact != thr.contact)
-                continue;
-
-            if (thr.messages.length) {
-                tabOpened = true;
-                this._openChatTab(contact || this, thr);
-            }
-
-            if (!tabOpened && (!thread || thread._lastActivity < thr._lastActivity))
-                thread = thr;
-        }
-
-        for each (var thr in this.newThreads) {
-            if (contact && contact != thr.contact)
-                continue;
-
-            if (thr.messages.length) {
-                tabOpened = true;
-                this._openChatTab(contact || this, thr);
-            }
-
-            if (!tabOpened && (!thread || thread._lastActivity < thr._lastActivity))
-                thread = thr;
-        }
-        if (tabOpened)
-            return;
-
+        var paneToActivate;
         var activePane = chatTabsController._selectedTab &&
             chatTabsController._selectedTab.controller;
 
-        if (activePane && activePane.thread.contact == (contact || this.activeResource || this)) {
-            var paneToActivate;
+        if (!activePane || activePane.thread.contact != (contact || this.activeResource || this))
+            return false;
 
-            for (var i = 0; i < this.chatPanes.length; i++) {
-                if (contact && contact != this.chatPanes[i].thread.contact)
-                    continue;
-                if (!activePane || !paneToActivate)
-                    paneToActivate = this.chatPanes[i];
-                if (this.chatPanes[i] == activePane)
-                    activePane = null;
-            }
-            paneToActivate.focus();
-        } else {
-            if (!contact)
-                contact = this;
-
-            if (!thread)
-                thread = this.newThreads[contact.jid]
-            if (!thread) {
-                thread = new MessagesThread(null, contact);
-                thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
-                this.newThreads[contact.jid] = thread;
-            }
-            this._openChatTab(contact, thread);
+        for (var i = 0; i < this.chatPanes.length; i++) {
+            if (contact && contact != this.chatPanes[i].thread.contact)
+                continue;
+            if (!activePane || !paneToActivate)
+                paneToActivate = this.chatPanes[i];
+            if (this.chatPanes[i] == activePane)
+                activePane = null;
         }
+        paneToActivate.focus();
+
+        return true;
+    },
+
+    _selectOrCreateTab: function(contact, thread)
+    {
+        if (!thread)
+            thread = this.newThreads[contact.jid]
+        if (!thread) {
+            thread = new MessagesThread(null, contact);
+            thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
+            this.newThreads[contact.jid] = thread;
+        }
+        this._findTabForThread(contact, thread);
+    },
+
+    _ictHelper: function(thr, contact, tabOpened, thread)
+    {
+        if (thr.messages.length) {
+            tabOpened = true;
+            this._findTabForThread(contact, thr);
+        }
+
+        if (!tabOpened && (!thread || thread._lastActivity < thr._lastActivity))
+            thread = thr;
+        return [tabOpened, thread]
+    },
+
+    openChatTab: function(contact)
+    {
+        var tabOpened = false, thread;
+        if (this.parentRouter) {
+            contact = this;
+
+            for each (var thr in this.parentRouter.threads) {
+                if (contact != thr.contact)
+                    continue;
+                [tabOpened, thread] = this.parentRouter._ictHelper(thr, contact, tabOpened, thread);
+            }
+            if ((thr = this.parentRouter.newThreads[contact.jid]))
+                [tabOpened, thread] = this.parentRouter._ictHelper(thr, contact, tabOpened, thread);
+        } else {
+            for each (var thr in this.threads)
+                [tabOpened, thread] = this._ictHelper(thr, contact, tabOpened, thread);
+            for each (var thr in this.newThreads)
+                [tabOpened, thread] = this._ictHelper(thr, contact, tabOpened, thread);
+        }
+
+        if (tabOpened)
+            return;
+
+        if (this.parentRouter)
+            this.parentRouter._cycleNextTab(contact) ||
+                this.parentRouter._selectOrCreateTab(contact||this, thread);
+        else
+            this._cycleNextTab(contact) ||
+                this._selectOrCreateTab(contact||this, thread);
     },
 
     showSystemMessage: function(msg, contact)
