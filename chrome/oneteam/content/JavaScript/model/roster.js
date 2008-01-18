@@ -632,7 +632,8 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (!dontNotifyViews && !equal)
             this.modelUpdated("presence");
 
-        if (!equal)
+        if (this.presence.show != oldPresence.show ||
+            this.presence.status != oldPresence.status)
             account.notificationScheme.show("resource", this.presence,
                                             this, oldPresence);
 
