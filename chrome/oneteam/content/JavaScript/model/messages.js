@@ -150,7 +150,8 @@ _DECL_(MessagesRouter).prototype =
             this._findTabForThread(contact, thr);
         }
 
-        if (!tabOpened && (!thread || thread._lastActivity < thr._lastActivity))
+        if (!tabOpened && thr.contact == contact &&
+            (!thread || thread._lastActivity < thr._lastActivity))
             thread = thr;
         return [tabOpened, thread]
     },
