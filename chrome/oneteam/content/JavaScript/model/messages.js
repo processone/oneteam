@@ -92,10 +92,10 @@ _DECL_(MessagesRouter).prototype =
         return true;
     },
 
-    _findTabForThread: function(contact, thread)
+    _showTabForThread: function(contact, thread)
     {
         if (this.parentRouter) {
-            this.parentRouter._findTabForThread(contact, thread);
+            this.parentRouter._showTabForThread(contact, thread);
             return;
         }
 
@@ -140,14 +140,14 @@ _DECL_(MessagesRouter).prototype =
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
             this.newThreads[contact.jid] = thread;
         }
-        this._findTabForThread(contact, thread);
+        this._showTabForThread(contact, thread);
     },
 
     _ictHelper: function(thr, contact, tabOpened, thread)
     {
         if (thr.messages.length) {
             tabOpened = true;
-            this._findTabForThread(contact, thr);
+            this._showTabForThread(contact, thr);
         }
 
         if (!tabOpened && thr.contact == contact &&
@@ -350,7 +350,7 @@ _DECL_(MessagesThread, Model).prototype =
 
     openChatTab: function()
     {
-        this.contact._findTabForThread(this.contact, this);
+        this.contact._showTabForThread(this.contact, this);
         this.chatState = "active";
     },
 
