@@ -603,18 +603,11 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
         var oldPresence = this.presence;
         this.presence = new Presence(packet);
-        var equal = this.presence.equal(oldPresence)
+        var equal = this.presence.equal(oldPresence);
 
-        if (packet.getType() == "unavailable") {
-            var chatPane = this.chatPane && !this.chatPane.closed ?
-                this.chatPane :
-                this.contact.chatPane && !this.contact.chatPane.closed ?
-                    this.contact.chatPane : null;
-            if (chatPane)
-                chatPane.updateChatState("");
-
+        if (packet.getType() == "unavailable")
             this._remove();
-        } else {
+        else {
             if (!this._registered)
                 this.contact._onResourceAdded(this);
             else
