@@ -367,7 +367,7 @@ _DECL_(MessagesThread, Model).prototype =
         if (this.messages.length > len && !msg.isSystemMessage)
             msg._eventKey = account.addEvent(_("You have new message from <b>{0}</b>",
                                                xmlEscape(msg.contact.visibleName)),
-                                             new Callback(msg.contact.onOpenChat, msg.contact));
+                                             new Callback(this.openChatTab, this));
     },
 
     removeMessages: function()
