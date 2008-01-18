@@ -313,7 +313,7 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     addMessage: function(msg) {
-        if (!msg.contact.representsMe) {
+        if (msg.contact && !msg.contact.representsMe) {
             this._handleChatState = this._handleChatState || msg.chatState;
             this._sessionStarted = this._sessionStarted || msg.threadID;
         }
