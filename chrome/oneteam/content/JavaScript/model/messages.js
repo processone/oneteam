@@ -155,35 +155,31 @@ _DECL_(MessagesRouter).prototype =
         return [tabOpened, thread]
     },
 
-    openChatTab: function(contact)
+    openChatTab: function()
     {
         var tabOpened = false, thread;
         if (this.parentRouter) {
-            contact = this;
-
             for each (var thr in this.parentRouter.threads) {
-                if (contact != thr.contact)
-                    continue;
-                [tabOpened, thread] = this.parentRouter._ictHelper(thr, contact, tabOpened, thread);
+                [tabOpened, thread] = this.parentRouter._ictHelper(thr, this, tabOpened, thread);
             }
-            if ((thr = this.parentRouter.newThreads[contact.jid]))
-                [tabOpened, thread] = this.parentRouter._ictHelper(thr, contact, tabOpened, thread);
+            if ((thr = this.parentRouter.newThreads[this.jid]))
+                [tabOpened, thread] = this.parentRouter._ictHelper(thr, this, tabOpened, thread);
         } else {
             for each (var thr in this.threads)
-                [tabOpened, thread] = this._ictHelper(thr, contact, tabOpened, thread);
+                [tabOpened, thread] = this._ictHelper(thr, this, tabOpened, thread);
             for each (var thr in this.newThreads)
-                [tabOpened, thread] = this._ictHelper(thr, contact, tabOpened, thread);
+                [tabOpened, thread] = this._ictHelper(thr, this, tabOpened, thread);
         }
 
         if (tabOpened)
             return;
 
         if (this.parentRouter)
-            this.parentRouter._cycleNextTab(contact) ||
-                this.parentRouter._selectOrCreateTab(contact||this, thread);
+            this.parentRouter._cycleNextTab(this) ||
+                this.parentRouter._selectOrCreateTab(this, thread);
         else
-            this._cycleNextTab(contact) ||
-                this._selectOrCreateTab(contact||this, thread);
+            this._cycleNextTab(this) ||
+                this._selectOrCreateTab(this, thread);
     },
 
     showSystemMessage: function(msg, contact)
