@@ -28,13 +28,18 @@ _DECL_(MessagesRouter).prototype =
         if (!contact)
             contact = this;
 
-        if (msg.threadID)
-            thread = this.threads[msg.threadID] || this.newThreads[contact.jid];
-        else {
-            thread = this.newThreads[contact.jid];
-
-            if (!thread && this.contact.activeResource == contact)
+        if (msg.threadID) {
+            thread = this.threads[msg.threadID];
+            if (!threads && this.contact.activeResource == contact)
                 thread = this.newThreads[this.contact.jid];
+            if (!thread)
+                thread = this.newThreads[contact.jid];
+        } else {
+            if (this.contact.activeResource == contact)
+                thread = this.newThreads[this.contact.jid];
+
+            if (!thread)
+                thread = this.newThreads[contact.jid];
 
             if (!thread) {
                 for each (var thr in this.threads) {
@@ -48,6 +53,8 @@ _DECL_(MessagesRouter).prototype =
         }
 
         if (!thread) {
+            if (contact == this.contact.activeResource)
+                contact = this.contact;
             thread = new MessagesThread(msg.threadID, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
             if (msg.threadID)
