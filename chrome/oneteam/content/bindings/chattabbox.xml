@@ -351,35 +351,20 @@
     <implementation>
       <property name="thread" onget="return this._thread">
         <setter><![CDATA[
-          if (this._thread && this._token)
-            this._thread.contact.unregisterView(this._token)
+          if (this._thread && this._token) {
+            this._thread.contact.unregisterView(this._token);
+            this._thread.unregisterView(this._token2);
+          }
 
           this._thread = val;
           this._chatpane.model = val;
 
           this._onNameChange();
 
-          if (val)
+          if (val) {
             this._token = val.contact.registerView(this._onNameChange, this, "visibleName");
-        ]]></setter>
-      </property>
-
-      <property name="unseenCount" onget="return this._unseenCount || 0">
-        <setter><![CDATA[
-          if (val == this._unseenCount)
-            return val;
-
-          if (val)
-            this._tab.setAttribute("chatstate", "modified");
-          else
-            this._tab.removeAttribute("chatstate");
-
-          this._tabbox.unseenCount += val - (this._unseenCount || 0);
-          this._unseenCount = val;
-
-          this._onNameChange();
-
-          return val;
+            this._token2 = val.registerView(this._onUnseenCountChange, this, "unseenCount");
+          }
         ]]></setter>
       </property>
 
@@ -424,7 +409,7 @@
         this.__proto__ = {};
 
         var state = {};
-        for each (var i in "unseenCount chatState thread".split(/ /))
+        for each (var i in "chatState thread".split(/ /))
           if (this[i] != null) {
             state[i] = this[i];
             delete this[i];
@@ -445,8 +430,10 @@
 
       <method name="destroy">
         <body><![CDATA[
-          if (this._thread && this._token)
+          if (this._thread && this._token) {
             this._thread.contact.unregisterView(this._token);
+            this._thread.unregisterView(this._token2);
+          }
           this._chatpane.destroy();
           this._token = null;
         ]]></body>
@@ -459,7 +446,6 @@
           this.thread = null;
 
           this.chatState = "gone";
-          this.unseenCount = 0;
         ]]></body>
       </method>
 
@@ -471,7 +457,6 @@
             this.thread._onChatPaneClosed();
 
           this.chatState = "gone";
-          this.unseenCount = 0;
 
           if (this.thread && this.thread.contact instanceof Conference)
             setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
@@ -504,7 +489,6 @@
             this._chatpane._output.visible = true;
           } catch (ex) {}
 
-          this.unseenCount = 0;
           if (this.chatState == "inactive")
             this.chatState = "active";
         ]]></body>
@@ -532,18 +516,6 @@
         ]]></body>
       </method>
 
-      <method name="addMessage">
-        <parameter name="msg"/>
-        <parameter name="threadID"/>
-        <body><![CDATA[
-          if ((this._tabbox._selectedTab != this._tab || !this._tabbox._windowHasFocus)
-              && !msg.isSystemMessage)
-            this.unseenCount++;
-
-          this._chatpane.addMessage(msg, threadID);
-        ]]></body>
-      </method>
-
       <method name="_appendToInput">
         <parameter name="str"/>
         <body><![CDATA[
@@ -553,10 +525,29 @@
 
       <method name="_onNameChange">
         <body><![CDATA[
-          var countStr = !this._unseenCount ? "" : this._unseenCount == 1 ?
-            "* " : "["+this._unseenCount+"] ";
+          var count = this._thread ? this._thread.unseenCount : 0;
+          var countStr = !count ? "" : count == 1 ?
+            "* " : "["+count+"] ";
 
           this._tab.setAttribute("label", countStr + (this._thread ? this._thread.contact.visibleName : ""));
+        ]]></body>
+      </method>
+
+      <method name="_onUnseenCountChange">
+        <parameter name="model"/>
+        <parameter name="name"/>
+        <parameter name="arg"/>
+        <body><![CDATA[
+          if (this._thread.unseenCount)
+            this._tab.setAttribute("chatstate", "modified");
+          else
+            this._tab.removeAttribute("chatstate");
+
+          this._tabbox.unseenCount += arg.diff;
+
+          this._onNameChange();
+
+          return val;
         ]]></body>
       </method>
     </implementation>

@@ -268,6 +268,7 @@ function MessagesThread(threadID, contact)
     this.archivedMessages = [];
     this._threadID = threadID;
     this._contactIds = [];
+    this.unseenCount = 0;
     if (contact) {
         this.contact = contact;
         this._handleChatState = !(contact instanceof Conference);
@@ -294,6 +295,27 @@ _DECL_(MessagesThread, Model).prototype =
 
         if (this.contact)
             this.contact._markThreadAsActive(this);
+
+        return val;
+    },
+
+    get visible()
+    {
+        return this._visible;
+    },
+
+    set visible(val)
+    {
+        if (!this._visible == !val)
+            return val;
+
+        this._visible = val;
+
+        if (val && this.unseenCount) {
+            var diff = this.unseenCount;
+            this.unseenCount = 0;
+            this.modelUpdated("unseenCount", {diff: -diff});
+        }
 
         return val;
     },
@@ -361,6 +383,12 @@ _DECL_(MessagesThread, Model).prototype =
 
         account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" ,
                                         msg, msg.contact);
+
+        if (!this._visible) {
+            this.unseenCount++;
+            this.modelUpdated("unseenCount", {diff: 1});
+        }
+
         if (this.messages.length > len && !msg.isSystemMessage)
             msg._eventKey = account.addEvent(_("You have new message from <b>{0}</b>",
                                                xmlEscape(msg.contact.visibleName)),
@@ -416,6 +444,8 @@ _DECL_(MessagesThread, Model).prototype =
         this.chatState = "gone";
         this.chatPane = null;
         this._afterFirstMessage = false;
+
+        this.visible = true;
 
         if (this._threadID && !this.archivedMessages.length)
             this.contact._onThreadDestroyed(this)
