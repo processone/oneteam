@@ -469,6 +469,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     {
         var notifyGroups = !this.activeResource;
 
+        this.recoverResourceThreads(resource);
+
         this.resources.push(resource);
         if (!this.activeResource || this.activeResource.isLt(resource)) {
             this.activeResource = resource;

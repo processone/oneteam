@@ -177,6 +177,22 @@ _DECL_(MessagesRouter).prototype =
         }
     },
 
+    recoverResourceThreads: function(resource)
+    {
+        for each (var thr in this.threads) {
+            if (thr.contact.jid == resource.jid) {
+                thr.contact = resource;
+                if (thr.chatPane)
+                    thr.chatPane.thread = thr;
+            }
+        }
+        if ((thr = this.newThreads[resource.jid])) {
+            thr.contact = resource;
+            if (thr.chatPane)
+                thr.chatPane.thread = thr;
+        }
+    },
+
     _markThreadAsActive: function(thread, contact)
     {
         if (this.parentRouter) {
