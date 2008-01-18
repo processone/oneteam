@@ -77,12 +77,12 @@ _DECL_(Presence, null, Comparator).prototype =
     toString: function(showStatus, lowerCase)
     {
         var showStrs = {
-            available: "Available",
-            chat: "Avaialble for chat",
-            dnd: "Busy",
-            away: "Away",
-            xa: "Not available",
-            unavailable: "Offline"
+            available: _("Available"),
+            chat: _("Avaialble for chat"),
+            dnd: _("Busy"),
+            away: _("Away"),
+            xa: _("Not available"),
+            unavailable: _("Offline")
         };
 
         var showStr = showStrs[this.show];
