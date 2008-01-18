@@ -20,27 +20,28 @@ _DECL_(NotificationScheme).prototype =
             else if (type.show == "unavailable" && extra.show != "unavailable")
                 signed = false;
 
+            if (signed == null)
+                return;
+
             var time = model instanceof ConferenceMember ?
                 model.contact.joinedAt : account.connectedAt;
 
             if (!time || (Date.now()-time < 5*1024))
                 return;
 
-            if (signed != null) {
-                if (model instanceof ConferenceMember)
-                    this._showInChatPane(signed ? _("{0} has joined this room", model) :
-                                                  _("{0} has left this room", model),
-                                         model, true, false);
-                else {
-                    model = model.contact || model;
-                    if (!this._showNotifications(model))
-                        return;
-                    soundsPlayer.playSound(signed ? "connected" : "disconnected");
-                    this._showAlert(signed ? _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
-                                             _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
-                                    xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
-                                    model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
-                }
+            if (model instanceof ConferenceMember)
+                this._showInChatPane(signed ? _("{0} has joined this room", model) :
+                                              _("{0} has left this room", model),
+                                     model, true, false);
+            else {
+                model = model.contact || model;
+                if (!this._showNotifications(model))
+                    return;
+                soundsPlayer.playSound(signed ? "connected" : "disconnected");
+                this._showAlert(signed ? _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
+                                         _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
+                                xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
+                                model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
             }
         } else if (kind == "subscription") {
             model = model.contact || model;
