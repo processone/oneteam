@@ -326,12 +326,8 @@ _DECL_(MessagesThread, Model).prototype =
 
     openChatTab: function()
     {
-        if (this.chatPane) {
-            this.chatPane.focus();
-            return;
-        }
+        this.contact._findTabForThread(this.contact, this);
         this.chatState = "active";
-        this.chatPane = chatTabsController.openTab(this)
     },
 
     addMessage: function(msg) {
