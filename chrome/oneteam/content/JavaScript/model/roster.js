@@ -705,8 +705,6 @@ function MyResourcesContact(jid)
 
     account.myResources[this.jid.normalizedJID] = this;
 
-    this.chatPane = chatTabsController.getTab(this);
-
     this.init();
 
     account.otherResourcesGroup._onContactAdded(this);
