@@ -40,12 +40,26 @@
 
       <method name="playSound">
         <parameter name="type"/>
+        <parameter name="loops"/>
         <body><![CDATA[
           try {
             if (!prefManager.getPref("chat.sounds"))
               return;
             if (this._flash)
               this._flash.playSound(document.location.toString().
+                replace(/(?:jar:)?(.*?)(?:(?:\/[^\/!]+!\/)|\/content\/).*/, "$1/sounds/"+type+".mp3"),
+                loops);
+          } catch(ex){}
+        ]]></body>
+      </method>
+      <method name="stopSound">
+        <parameter name="type"/>
+        <body><![CDATA[
+          try {
+            if (!prefManager.getPref("chat.sounds"))
+              return;
+            if (this._flash)
+              this._flash.stopSound(document.location.toString().
                 replace(/(?:jar:)?(.*?)(?:(?:\/[^\/!]+!\/)|\/content\/).*/, "$1/sounds/"+type+".mp3"));
           } catch(ex){}
         ]]></body>
