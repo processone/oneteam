@@ -323,12 +323,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     _uniqEventId: 0,
 
-    addEvent: function(title, callback, key)
+    addEvent: function(content, callback, key)
     {
         if (!key)
             key = "autogen"+(++this._uniqEventId);
 
-        var token = [title, callback, key];
+        var token = [content, callback, key];
+        content.token = token;
+        content.key = key;
+
         this.events.push(token);
         this.modelUpdated("events", {added: [token]});
 

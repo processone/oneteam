@@ -214,3 +214,30 @@ richlistbox {
 .gateway-toolbarbutton[gateway-type="gadu-gadu"][checked="true"] {
   list-style-image: url(imgs/gatewayicons/gadu-gadu-connected.png);
 }
+
+#eventBoxPrev, #eventBoxNext {
+  list-style-image: url(imgs/gatewayicons/gadu-gadu.png);
+  -moz-binding: url(chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image);
+}
+
+#eventBoxPrev {
+  list-style-image: url(../chattabbox/imgs/scroll-left.png);
+}
+
+#eventBoxPrev[disabled="true"] {
+  list-style-image: url(../chattabbox/imgs/scroll-left-disabled.png);
+}
+
+#eventBoxNext {
+  list-style-image: url(../chattabbox/imgs/scroll-right.png);
+}
+
+#eventBoxNext[disabled="true"] {
+  list-style-image: url(../chattabbox/imgs/scroll-right-disabled.png);
+}
+
+#eventBoxCounterBox {
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  border-bottom: 1px solid #999;
+}

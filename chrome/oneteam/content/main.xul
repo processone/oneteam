@@ -481,12 +481,14 @@
     }
 
     eventBoxHandler = {
+      eventNum: 0,
+
       init: function()
       {
         this.eventBox = document.getElementById("eventBox");
-        this.title = this.eventBox.getElementsByTagName("div")[0];
-        this.tooltip = document.getElementById("eventBoxTooltip").
-          getElementsByTagName("div")[0];
+        this.counter = document.getElementById("eventBoxCounter");
+        this.prevButton = document.getElementById("eventBoxPrev")
+        this.nextButton = document.getElementById("eventBoxNext")
         account.registerView(this.onEventsChanged, this, "events");
       },
 
@@ -495,18 +497,48 @@
         this.eventBox.collapsed = account.events.length == 0;
 
         if (account.events.length) {
-          this.title.innerHTML = _("You have {0} new {0, plurals, message, messages}",
-                                   account.events.length);
-          this.tooltip.innerHTML = account.events[0][0];
+          if (this.eventNum > account.events.length)
+            this.eventNum = account.events.length-1;
+
+          this.counter.textContent = _("Event {0} of {1}", this.eventNum+1, account.events.length);
+          this.prevButton.disabled = this.eventNum == 0;
+          this.nextButton.disabled = this.eventNum+1 == account.events.length;
+
+          if (this.eventBox.childNodes[1])
+            this.eventBox.removeChild(this.eventBox.childNodes[1]);
+
+          var event = account.events[this.eventNum];
+
+          if (typeof(event[0]) == "string") {
+            var description = document.createElement("description");
+            var div = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+
+            div.innerHTML = event[0];
+
+            description.appendChild(div);
+            this.eventBox.appendChild(description);
+          } else
+            this.eventBox.appendChild(event[0].generate());
         }
       },
 
-      onClick: function()
+      prevMsg: function() {
+        this.eventNum--;
+        this.onEventsChanged();
+      },
+
+      nextMsg: function() {
+        this.eventNum++;
+        this.onEventsChanged();
+      },
+
+      onClick: function(ev)
       {
-        if (account.events.length) {
-          account.events[0][1]();
-          account.removeEvent(account.events[0]);
-        }
+        if (!account.events[this.eventNum] || ev.target == this.prevButton || ev.target == this.nextButton)
+          return;
+
+        account.events[0][1]();
+        account.removeEvent(account.events[0]);
       }
     }
   ]]></script>
@@ -746,10 +778,13 @@
             </vbox>
             <avatar id="setPresence-avatar-image" showBlankAvatar="true"/>
           </hbox>
-          <description id="eventBox" collapsed="true" onclick="eventBoxHandler.onClick()"
-              tooltip="eventBoxTooltip">
-            <div xmlns="http://www.w3.org/1999/xhtml"/>
-          </description>
+          <vbox id="eventBox" collapsed="true" onclick="eventBoxHandler.onClick(event)">
+            <hbox id="eventBoxCounterBox">
+              <button id="eventBoxPrev" oncommand="eventBoxHandler.prevMsg()"/>
+              <description id="eventBoxCounter" flex="1"/>
+              <button id="eventBoxNext" oncommand="eventBoxHandler.nextMsg()"/>
+            </hbox>
+          </vbox>
           <tabbox id="roster" flex="1">
             <tabs>
               <tab label="Contacts"/>
@@ -776,12 +811,6 @@
     </vbox>
   </deck>
   <popupset>
-    <tooltip id="eventBoxTooltip">
-      <description>
-        <div xmlns="http://www.w3.org/1999/xhtml">empty</div>
-      </description>
-    </tooltip>
-
     <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
       <menuitem id="contact-chat-single" label="_('Send Message...')"
           oncommand="this.parentNode.model.onOpenChat()"/>
