@@ -209,8 +209,10 @@ _DECL_(Conference, Contact).prototype =
         var x = pkt.getNode().appendChild(pkt.getDoc().createElementNS(ns, "x"));
         var node = x.appendChild(pkt.getDoc().createElementNS(ns, "decline"));
 
+        from = new JID(from);
+
         pkt.setTo(this.jid);
-        node.setAttribute('to', from);
+        node.setAttribute('to', from.shortJID);
         node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
             appendChild(pkt.getDoc().createTextNode(reason || "Sorry i can't join now"));
 
