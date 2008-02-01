@@ -459,12 +459,10 @@ _DECL_(Conference, Contact).prototype =
         if (packet.getType() == "error")
             return;
 
-        if (this._checkForSubject(packet, this.jid) && packet.getBody() &&
-            this.chatPane && !this.chatPane.closed)
-        {
+        if (this._checkForSubject(packet, this.jid) && packet.getBody()) {
             var message = new Message(packet, null, null, 4);
             account.notificationScheme.show("message", "next", message, this);
-            this.chatPane.addMessage(message);
+            this.routeMessage(message);
         }
     },
 
