@@ -1,3 +1,37 @@
+/* Copyright (c) 1998 - 2007, Paul Johnston & Contributors
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following
+ * disclaimer. Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ *
+ * Neither the name of the author nor the names of its contributors
+ * may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ *
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
 /**
  * @fileoverview Collection of MD5 and SHA1 hashing and encoding
  * methods.
@@ -126,17 +160,6 @@ function core_hmac_sha1(key, data)
 
   var hash = core_sha1(ipad.concat(str2binb(data)), 512 + data.length * chrsz);
   return core_sha1(opad.concat(hash), 512 + 160);
-}
-
-/*
- * Add integers, wrapping at 2^32. This uses 16-bit operations internally
- * to work around bugs in some JS interpreters.
- */
-function safe_add(x, y)
-{
-  var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-  return (msw << 16) | (lsw & 0xFFFF);
 }
 
 /*
@@ -487,7 +510,7 @@ function utf8t2d(t)
 {
   t = t.replace(/\r\n/g,"\n");
   var d=new Array; var test=String.fromCharCode(237);
-  if (test.charCodeAt(0) < 0) 
+  if (test.charCodeAt(0) < 0)
     for(var n=0; n<t.length; n++)
       {
         var c=t.charCodeAt(n);
@@ -516,7 +539,7 @@ function utf8t2d(t)
       }
   return d;
 }
-		
+	
 // returns plaintext from an array of bytesrepresenting dezimal numbers, which
 // represent an UTF-8 encoded text; browser which does not understand unicode
 // like NN401 will show "?"-signs instead
@@ -565,8 +588,6 @@ function b64d2t(d) {
       r[r.length] = b64[((d[i]&3)<<4) | (d[i+1]>>4)];
       r[r.length] = b64[((d[i+1]&15)<<2) | (d[i+2]>>6)];
       r[r.length] = b64[d[i+2]&63];
-      if ((i%57)==54)
-        r[r.length] = "\n";
       i+=3;
     }
   // this is again for the padding
@@ -605,12 +626,12 @@ if (typeof(atob) == 'undefined' || typeof(btoa) == 'undefined')
 
 if (typeof(atob) == 'undefined') {
   atob = function(s) {
-    return utf8d2t(b64t2d(s)); 
+    return utf8d2t(b64t2d(s));
   }
 }
 
 if (typeof(btoa) == 'undefined') {
-  btoa = function(s) { 
+  btoa = function(s) {
     return b64d2t(utf8t2d(s));
   }
 }

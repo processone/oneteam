@@ -9,13 +9,13 @@
  * list of forbidden chars for nodenames
  * @private
  */
-var JSJACJID_FORBIDDEN = ['"',' ','&','\'','/',':','<','>','@']; 
+var JSJACJID_FORBIDDEN = ['"',' ','&','\'','/',':','<','>','@'];
 
 /**
  * Creates a new JSJaCJID object
  * @class JSJaCJID models xmpp jid objects
  * @constructor
- * @param {Object} jid jid may be either of type String or a JID represented 
+ * @param {Object} jid jid may be either of type String or a JID represented
  * by JSON with fields 'node', 'domain' and 'resource'
  * @throws JSJaCJIDInvalidException Thrown if jid is not valid
  * @return a new JSJaCJID object
@@ -90,7 +90,7 @@ JSJaCJID.prototype.setNode = function(node) {
 /**
  * Sets the domain part of the jid
  * @param {String} domain Name of the domain
- * @throws JSJaCJIDInvalidException Thrown if domain name contains invalid 
+ * @throws JSJaCJIDInvalidException Thrown if domain name contains invalid
  * chars or is empty
  * @return This object
  * @type JSJaCJID
@@ -100,7 +100,7 @@ JSJaCJID.prototype.setDomain = function(domain) {
     throw new JSJaCJIDInvalidException("domain name missing");
   // chars forbidden for a node are not allowed in domain names
   // anyway, so let's check
-  JSJaCJID._checkNodeName(domain); 
+  JSJaCJID._checkNodeName(domain);
   this._domain = domain;
   return this;
 };
@@ -138,6 +138,28 @@ JSJaCJID.prototype.toString = function() {
  */
 JSJaCJID.prototype.removeResource = function() {
   return this.setResource();
+};
+
+/**
+ * creates a copy of this JSJaCJID object
+ * @return A copy of this
+ * @type JSJaCJID
+ */
+JSJaCJID.prototype.clone = function() {
+  return new JSJaCJID(this.toString());
+};
+
+/**
+ * Compares two jids if they belong to the same entity (i.e. w/o resource)
+ * @param {String} jid a jid as string or JSJaCJID object
+ * @return 'true' if jid is same entity as this
+ * @type Boolean
+ */
+JSJaCJID.prototype.isEntity = function(jid) {
+  if (typeof jid == 'string')
+	  jid = (new JSJaCJID(jid));
+  jid.removeResource();
+  return (this.clone().removeResource().toString() === jid.toString());
 };
 
 /**

@@ -14,7 +14,7 @@
   <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
   <script type="text/javascript" src="lib/jsjac/jsextras.js"/>
   <script type="text/javascript" src="lib/jsjac/crypt.js"/>
-  <!--<script type="text/javascript" src="lib/jsjac/json.js"/>-->
+  <script type="text/javascript" src="lib/jsjac/JSJaCConstants.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCConfig.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCCookie.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCJID.js"/>

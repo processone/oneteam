@@ -9,7 +9,7 @@ var JSJACPACKET_USE_XMLNS = true;
 /**
  * Creates a new packet with given root tag name (for internal use)
  * @class Somewhat abstract base class for all kinds of specialised packets
- * @param {String} name The root tag name of the packet 
+ * @param {String} name The root tag name of the packet
  * (i.e. one of 'message', 'iq' or 'presence')
  */
 function JSJaCPacket(name) {
@@ -42,33 +42,33 @@ JSJaCPacket.prototype.pType = function() { return this.name; };
  * Gets the associated Document for this packet.
  * @type {@link http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#i-Document Document}
  */
-JSJaCPacket.prototype.getDoc = function() { 
-  return this.doc; 
+JSJaCPacket.prototype.getDoc = function() {
+  return this.doc;
 };
 /**
  * Gets the root node of this packet
  * @type {@link http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247 Node}
  */
-JSJaCPacket.prototype.getNode = function() { 
-  if (this.getDoc() && this.getDoc().documentElement) 
-    return this.getDoc().documentElement; 
+JSJaCPacket.prototype.getNode = function() {
+  if (this.getDoc() && this.getDoc().documentElement)
+    return this.getDoc().documentElement;
   else
     return null;
 };
 
 /**
  * Sets the 'to' attribute of the root node of this packet
- * @param {String} to 
+ * @param {String} to
  * @type JSJaCPacket
  */
 JSJaCPacket.prototype.setTo = function(to) {
   if (!to || to == '')
     this.getNode().removeAttribute('to');
   else if (typeof(to) == 'string')
-    this.getNode().setAttribute('to',to); 
-  else 
+    this.getNode().setAttribute('to',to);
+  else
     this.getNode().setAttribute('to',to.toString());
-  return this; 
+  return this;
 };
 /**
  * Sets the 'from' attribute of the root node of this
@@ -80,8 +80,8 @@ JSJaCPacket.prototype.setFrom = function(from) {
   if (!from || from == '')
     this.getNode().removeAttribute('from');
   else if (typeof(from) == 'string')
-    this.getNode().setAttribute('from',from); 
-  else 
+    this.getNode().setAttribute('from',from);
+  else
     this.getNode().setAttribute('from',from.toString());
   return this;
 };
@@ -90,24 +90,24 @@ JSJaCPacket.prototype.setFrom = function(from) {
  * @param {String} id The id of the packet.
  * @type JSJaCPacket
  */
-JSJaCPacket.prototype.setID = function(id) { 
+JSJaCPacket.prototype.setID = function(id) {
   if (!id || id == '')
     this.getNode().removeAttribute('id');
   else
-    this.getNode().setAttribute('id',id); 
-  return this; 
+    this.getNode().setAttribute('id',id);
+  return this;
 };
 /**
  * Sets the 'type' attribute of the root node of this packet.
  * @param {String} type The type of the packet.
  * @type JSJaCPacket
  */
-JSJaCPacket.prototype.setType = function(type) { 
+JSJaCPacket.prototype.setType = function(type) {
   if (!type || type == '')
     this.getNode().removeAttribute('type');
   else
     this.getNode().setAttribute('type',type);
-  return this; 
+  return this;
 };
 /**
  * Sets 'xml:lang' for this packet
@@ -126,86 +126,91 @@ JSJaCPacket.prototype.setXMLLang = function(xmllang) {
  * Gets the 'to' attribute of this packet
  * @type String
  */
-JSJaCPacket.prototype.getTo = function() { 
-  return this.getNode().getAttribute('to'); 
+JSJaCPacket.prototype.getTo = function() {
+  return this.getNode().getAttribute('to');
 };
 /**
  * Gets the 'from' attribute of this packet.
  * @type String
  */
-JSJaCPacket.prototype.getFrom = function() { 
-  return this.getNode().getAttribute('from'); 
+JSJaCPacket.prototype.getFrom = function() {
+  return this.getNode().getAttribute('from');
 };
 /**
  * Gets the 'to' attribute of this packet as a JSJaCJID object
  * @type JSJaCJID
  */
-JSJaCPacket.prototype.getToJID = function() { 
-  return new JSJaCJID(this.getTo()); 
+JSJaCPacket.prototype.getToJID = function() {
+  return new JSJaCJID(this.getTo());
 };
 /**
  * Gets the 'from' attribute of this packet as a JSJaCJID object
  * @type JSJaCJID
  */
-JSJaCPacket.prototype.getFromJID = function() { 
-  return new JSJaCJID(this.getFrom()); 
+JSJaCPacket.prototype.getFromJID = function() {
+  return new JSJaCJID(this.getFrom());
 };
 /**
  * Gets the 'id' of this packet
  * @type String
  */
-JSJaCPacket.prototype.getID = function() { 
-  return this.getNode().getAttribute('id'); 
+JSJaCPacket.prototype.getID = function() {
+  return this.getNode().getAttribute('id');
 };
 /**
  * Gets the 'type' of this packet
  * @type String
  */
-JSJaCPacket.prototype.getType = function() { 
-  return this.getNode().getAttribute('type'); 
+JSJaCPacket.prototype.getType = function() {
+  return this.getNode().getAttribute('type');
 };
 /**
  * Gets the 'xml:lang' of this packet
  * @type String
  */
-JSJaCPacket.prototype.getXMLLang = function() { 
-  return this.getNode().getAttribute('xml:lang'); 
+JSJaCPacket.prototype.getXMLLang = function() {
+  return this.getNode().getAttribute('xml:lang');
 };
 /**
  * Gets the 'xmlns' (xml namespace) of the root node of this packet
  * @type String
  */
-JSJaCPacket.prototype.getXMLNS = function() { 
-  return this.getNode().namespaceURI; 
+JSJaCPacket.prototype.getXMLNS = function() {
+  return this.getNode().namespaceURI;
 };
 
 /**
- * Gets a child element of this packet.
- * @param {String} name Tagname of child to retrieve.
- * @param {String} ns   Namespace of child
+ * Gets a child element of this packet. If no params given returns first child.
+ * @param {String} name Tagname of child to retrieve. Use '*' to match any tag. [optional]
+ * @param {String} ns   Namespace of child. Use '*' to match any ns.[optional]
  * @return The child node, null if none found
  * @type {@link http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247 Node}
- */ 
+ */
 JSJaCPacket.prototype.getChild = function(name, ns) {
   if (!this.getNode()) {
     return null;
   }
-  if (!name && this.getNode().firstChild) {
-    // best practice
-    return this.getNode().firstChild;
-  } else {
-    var nodes = this.getNode().getElementsByTagName(name);
-    if (nodes.length == 0 && this.getNode().getElementsByTagNameNS)
-      nodes = this.getNode().getElementsByTagNameNS("*", name);
-    for (var i=0; i<nodes.length; i++) {
-      if (ns && nodes.item(i).namespaceURI != ns) {
-        continue;
-      }
-      return nodes.item(i);
-    }
+ 
+  name = name || '*';
+  ns = ns || '*';
+
+  if (this.getNode().getElementsByTagNameNS) {
+    return this.getNode().getElementsByTagNameNS(ns, name).item(0);
   }
-  return null; // fallback
-};
+
+  // fallback
+  var nodes = this.getNode().getElementsByTagName(name);
+  if (ns != '*') {
+    for (var i=0; i<nodes.length; i++) {
+      if (nodes.item(i).namespaceURI == ns) {
+        return nodes.item(i);
+      }
+    }
+  } else {
+    return nodes.item(0);
+  }
+  return null; // nothing found
+}
 
 /**
  * Gets the node value of a child element of this packet.
@@ -213,7 +218,7 @@ JSJaCPacket.prototype.getChild = function(name, ns) {
  * @param {String} ns   Namespace of child
  * @return The value of the child node, empty string if none found
  * @type String
- */ 
+ */
 JSJaCPacket.prototype.getChildVal = function(name, ns) {
   var node = this.getChild(name, ns);
   if (node && node.firstChild) {
@@ -228,27 +233,55 @@ JSJaCPacket.prototype.getChildVal = function(name, ns) {
  * @return a copy of this node
  * @type JSJaCPacket
  */
-JSJaCPacket.prototype.clone = function() { 
-  return JSJaCPacket.wrapNode(this.getNode()); 
+JSJaCPacket.prototype.clone = function() {
+  return JSJaCPacket.wrapNode(this.getNode());
+};
+
+/**
+ * Checks if packet is of type 'error'
+ * @return 'true' if this packet is of type 'error', 'false' otherwise
+ * @type boolean
+ */
+JSJaCPacket.prototype.isError = function() {
+  return (this.getType() == 'error');
+};
+
+/**
+ * Returns an error condition reply according to {@link http://www.xmpp.org/extensions/xep-0086.html XEP-0086}. Creates a clone of the calling packet with senders and recipient exchanged and error stanza appended.
+ * @param {STANZA_ERROR} stanza_error an error stanza containing error cody, type and condition of the error to be indicated
+ * @return an error reply packet
+ * @type JSJaCPacket
+ */
+JSJaCPacket.prototype.errorReply = function(stanza_error) {
+  var rPacket = this.clone();
+  rPacket.setTo(this.getFrom());
+  rPacket.setFrom();
+  rPacket.setType('error');
+
+  rPacket.appendNode('error',
+                     {code: stanza_error.code, type: stanza_error.type},
+                     [[stanza_error.cond]]);
+
+  return rPacket;
 };
 
 /**
  * Returns a string representation of the raw xml content of this packet.
  * @type String
  */
-JSJaCPacket.prototype.xml = function() { 
+JSJaCPacket.prototype.xml = function() {
 
   if (this.getDoc().xml) // IE
     return this.getDoc().xml;
 
   var xml = (new XMLSerializer()).serializeToString(this.getNode());
-  if (typeof(xml) != 'undefined') 
+  if (typeof(xml) != 'undefined')
     return xml;
   return (new XMLSerializer()).serializeToString(this.doc); // oldschool
 
 };
 
-// PRIVATE METHODS DOWN HERE 
+// PRIVATE METHODS DOWN HERE
 
 /**
  * Gets an attribute of the root element
@@ -278,7 +311,7 @@ JSJaCPacket.prototype._replaceNode = function(aNode) {
     else
       this.getNode().appendChild(aNode.childNodes.item(i).cloneNode(true));
 };
-  
+ 
 /**
  * Set node value of a child node
  * @private
@@ -319,9 +352,9 @@ JSJaCPacket.prototype._setChildNode = function(nodeName, nodeValue) {
  * @type {@link http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247 Node}
  */
 JSJaCPacket.prototype.buildNode = function(elementName) {
-  return JSJaCBuilder.buildNode(this.getDoc(), 
-                                elementName, 
-                                arguments[1], 
+  return JSJaCBuilder.buildNode(this.getDoc(),
+                                elementName,
+                                arguments[1],
                                 arguments[2]);
 };
 
@@ -337,8 +370,8 @@ JSJaCPacket.prototype.appendNode = function(element) {
   if (typeof element=='object') { // seems to be a prebuilt node
     return this.getNode().appendChild(element)
   } else { // build node
-    return this.getNode().appendChild(this.buildNode(element, 
-                                                     arguments[1], 
+    return this.getNode().appendChild(this.buildNode(element,
+                                                     arguments[1],
                                                      arguments[2]));
   }
 };
@@ -368,18 +401,19 @@ JSJaCPresence.prototype = new JSJaCPacket;
  */
 JSJaCPresence.prototype.setStatus = function(status) {
   this._setChildNode("status", status);
-  return this; 
+  return this;
 };
-/** 
- * Sets the online status for this presence packet. 
+/**
+ * Sets the online status for this presence packet.
  * @param {String} show An XMPP complient status indicator. Must
- * be one of 'chat', 'away', 'xa', 'dnd', 'available', 'unavailable'
+ * be one of 'chat', 'away', 'xa', 'dnd'
  * @return this
  * @type JSJaCPacket
  */
 JSJaCPresence.prototype.setShow = function(show) {
-  this._setChildNode("show",show);
-  return this; 
+  if (show == 'chat' || show == 'away' || show == 'xa' || show == 'dnd')
+    this._setChildNode("show",show);
+  return this;
 };
 /**
  * Sets the priority of the resource bind to with this connection
@@ -389,7 +423,7 @@ JSJaCPresence.prototype.setShow = function(show) {
  */
 JSJaCPresence.prototype.setPriority = function(prio) {
   this._setChildNode("priority", prio);
-  return this; 
+  return this;
 };
 /**
  * Some combined method that allowes for setting show, status and
@@ -407,32 +441,33 @@ JSJaCPresence.prototype.setPresence = function(show,status,prio) {
     this.setStatus(status);
   if (prio)
     this.setPriority(prio);
-  return this; 
+  return this;
 };
 
 /**
- * Gets the status of this presence
- * @return The status indicator as defined by XMPP
+ * Gets the status message of this presence
+ * @return The (human readable) status message
  * @type String
  */
 JSJaCPresence.prototype.getStatus = function() {
-  return this.getChildVal('status');	
+  return this.getChildVal('status');
 };
 /**
- * Gets the status message of this presence
- * @return The status message
+ * Gets the status of this presence.
+ * Either one of 'chat', 'away', 'xa' or 'dnd' or null.
+ * @return The status indicator as defined by XMPP
  * @type String
  */
-JSJaCPresence.prototype.getShow = function() { 
-  return this.getChildVal('show'); 
+JSJaCPresence.prototype.getShow = function() {
+  return this.getChildVal('show');
 };
 /**
  * Gets the priority of this status message
  * @return A resource priority
  * @type int
  */
-JSJaCPresence.prototype.getPriority = function() { 
-  return this.getChildVal('priority'); 
+JSJaCPresence.prototype.getPriority = function() {
+  return this.getChildVal('priority');
 };
 
 
@@ -465,7 +500,7 @@ JSJaCIQ.prototype.setIQ = function(to,type,id) {
     this.setType(type);
   if (id)
     this.setID(id);
-  return this; 
+  return this;
 };
 /**
  * Creates a 'query' child node with given XMLNS
@@ -507,6 +542,32 @@ JSJaCIQ.prototype.getQueryXMLNS = function() {
     return null;
 };
 
+/**
+ * Creates an IQ reply with type set to 'result'. If given appends payload to first child if IQ. Payload maybe XML as string or a DOM element (or an array of such elements as well).
+ * @param {Element} payload A payload to be appended [optional]
+ * @return An IQ reply packet
+ * @type JSJaCIQ
+ */
+JSJaCIQ.prototype.reply = function(payload) {
+  var rIQ = this.clone();
+  rIQ.setTo(this.getFrom());
+  rIQ.setType('result');
+  if (payload) {
+    if (typeof payload == 'string')
+      rIQ.getChild.appendChild(rIQ.getDoc().loadXML(payload));
+    else if (payload.constructor == Array) {
+      var node = rIQ.getChild();
+      for (var i=0; i<payload.length; i++)
+        if(typeof payload[i] == 'string')
+          node.appendChild(rIQ.getDoc().loadXML(payload[i]));
+        else if (typeof payload[i] == 'object')
+          node.appendChild(payload[i]);
+    }
+    else if (typeof payload == 'object')
+      rIQ.getChild().appendChild(payload);
+  }
+  return rIQ;
+};
 
 /**
  * A jabber/XMPP message packet
@@ -530,7 +591,7 @@ JSJaCMessage.prototype = new JSJaCPacket;
  */
 JSJaCMessage.prototype.setBody = function(body) {
   this._setChildNode("body",body);
-  return this; 
+  return this;
 };
 /**
  * Sets the subject of the message
@@ -540,7 +601,7 @@ JSJaCMessage.prototype.setBody = function(body) {
  */
 JSJaCMessage.prototype.setSubject = function(subject) {
   this._setChildNode("subject",subject);
-  return this; 
+  return this;
 };
 /**
  * Sets the 'tread' attribute for this message. This is used to identify
@@ -551,36 +612,36 @@ JSJaCMessage.prototype.setSubject = function(subject) {
  */
 JSJaCMessage.prototype.setThread = function(thread) {
   this._setChildNode("thread", thread);
-  return this; 
+  return this;
 };
 /**
  * Gets the 'thread' identifier for this message
  * @return A thread identifier
  * @type String
  */
-JSJaCMessage.prototype.getThread = function() { 
-  return this.getChildVal('thread'); 
+JSJaCMessage.prototype.getThread = function() {
+  return this.getChildVal('thread');
 };
 /**
  * Gets the body of this message
  * @return The body of this message
  * @type String
  */
-JSJaCMessage.prototype.getBody = function() { 
-  return this.getChildVal('body'); 
+JSJaCMessage.prototype.getBody = function() {
+  return this.getChildVal('body');
 };
 /**
  * Gets the subject of this message
  * @return The subject of this message
  * @type String
  */
-JSJaCMessage.prototype.getSubject = function() { 
-  return this.getChildVal('subject') 
+JSJaCMessage.prototype.getSubject = function() {
+  return this.getChildVal('subject')
 };
 
 
 /**
- * Tries to transform a w3c DOM node to JSJaC's internal representation 
+ * Tries to transform a w3c DOM node to JSJaC's internal representation
  * (JSJaCPacket type, one of JSJaCPresence, JSJaCMessage, JSJaCIQ)
  * @param: {Node
  * http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247}

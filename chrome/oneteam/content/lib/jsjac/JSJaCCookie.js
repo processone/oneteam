@@ -1,7 +1,15 @@
+/* Copyright 2003-2006 Peter-Paul Koch
+ */
+
 /**
  * @fileoverview OO interface to handle cookies.
- * Taken from {@link http://www.quirksmode.org/js/cookies.html 
+ * Taken from {@link http://www.quirksmode.org/js/cookies.html
  * http://www.quirksmode.org/js/cookies.html}
+ * Regarding licensing of this code the author states:
+ *
+ * "You may copy, tweak, rewrite, sell or lease any code example on
+ * this site, with one single exception."
+ *
  * @author Stefan Strigler
  * @version $Revision$
  */
@@ -16,10 +24,10 @@
  */
 function JSJaCCookie(name,value,secs)
 {
-  if (window == this) 
+  if (window == this)
     return new JSJaCCookie(name, value, secs);
 
-  /** 
+  /**
    * This cookie's name
    * @type String
    */
@@ -32,7 +40,7 @@ function JSJaCCookie(name,value,secs)
   /**
    * Time in seconds when cookie expires (thus being delete by
    * browser). A value of -1 denotes a session cookie which means that
-   * stored data gets lost when browser is being closed.  
+   * stored data gets lost when browser is being closed. 
    * @type int
    */
   this.expires = secs;
@@ -55,7 +63,7 @@ function JSJaCCookie(name,value,secs)
   this.erase = function() {
     var c = new JSJaCCookie(this.getName(),"",-1);
     c.write();
-  }
+  };
 
   /**
    * Gets the name of this cookie
@@ -64,8 +72,8 @@ function JSJaCCookie(name,value,secs)
    */
   this.getName = function() {
     return this.name;
-  }
-  
+  };
+ 
   /**
    * Sets the name of this cookie
    * @param {String} name The name for this cookie
@@ -75,7 +83,7 @@ function JSJaCCookie(name,value,secs)
   this.setName = function(name) {
     this.name = name;
     return this;
-  }
+  };
 
   /**
    * Gets the value of this cookie
@@ -84,8 +92,8 @@ function JSJaCCookie(name,value,secs)
    */
   this.getValue = function() {
     return this.value;
-  }
-  
+  };
+ 
   /**
    * Sets the value of this cookie
    * @param {String} value The value for this cookie
@@ -95,7 +103,7 @@ function JSJaCCookie(name,value,secs)
   this.setValue = function(value) {
     this.value = value;
     return this;
-  }
+  };
 }
 
 /**
@@ -118,7 +126,7 @@ JSJaCCookie.read = function(name) {
 };
 
 /**
- * Reads the value for given <code>name</code> from cookies and returns 
+ * Reads the value for given <code>name</code> from cookies and returns
  * its valued new
  * @param {String} name The name of the cookie to read
  * @return The value of the cookie read
