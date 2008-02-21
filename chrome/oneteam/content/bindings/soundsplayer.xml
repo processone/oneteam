@@ -19,7 +19,7 @@
     <implementation>
       <constructor><![CDATA[
         if (window.top.playSound) {
-          this._flash = { playSound: window.top.playSound };
+          this._flash = { playSound: window.top.playSound,  stopSound: window.top.stopSound };
           return;
         }
         var plugin = window.navigator.mimeTypes.namedItem("application/x-shockwave-flash");

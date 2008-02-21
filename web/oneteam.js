@@ -224,7 +224,12 @@ function changeFavIcon(newFavIcon) {
     link.parentNode.replaceChild(newLink, link);
 }
 
-function playSound(url)
+function playSound(url, loops)
 {
-    otFlash.playSound(url);
+    otFlash.playSound(url, loops);
+}
+
+function stopSound(url)
+{
+    otFlash.stopSound(url);
 }
