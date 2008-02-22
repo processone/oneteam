@@ -333,6 +333,10 @@ _DECL_(MessagesThread, Model).prototype =
         return this._contactIds.length;
     },
 
+    get peerHandlesChatState() {
+        return this._afterFirstMessage && this._handleChatState;
+    },
+
     get chatState() {
         return this._chatState;
     },

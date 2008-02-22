@@ -367,28 +367,6 @@
         ]]></setter>
       </property>
 
-      <property name="chatState" onget="return this._chatState">
-        <setter><![CDATA[
-          if (!this._chatStateInitialSend || this.thread.contact instanceof Conference)
-            return;
-
-          var oldState = this._chatState;
-          this._chatState = val;
-
-          if (this._chatStateTimeout) {
-            clearTimeout(this._chatStateTimeout);
-            this._chatStateTimeout = null;
-          }
-          if (val == "composing")
-            this._chatStateTimeout = setTimeout(function(me){ me.chatState = "paused" }, 5000, this);
-          if (val == "active" || val == "paused")
-            this._chatStateTimeout = setTimeout(function(me){ me.chatState = "inactive" }, 30000, this);
-
-          if (!this._chatStatePreventMessage && oldState != this._chatState)
-            this.thread.chatState = this._chatState;
-        ]]></setter>
-      </property>
-
       <constructor><![CDATA[
         this._regBundle = new RegsBundle(this);
 
@@ -399,7 +377,7 @@
         this.__proto__ = {};
 
         var state = {};
-        for each (var i in "chatState thread".split(/ /))
+        for each (var i in "thread".split(/ /))
           if (this[i] != null) {
             state[i] = this[i];
             delete this[i];
@@ -410,7 +388,6 @@
         for (i in state)
           this[i] = state[i];
 
-        this._chatStateInitialSend = false;
         this.closed = false;
       ]]></constructor>
 
@@ -428,10 +405,8 @@
       <method name="detach">
         <body><![CDATA[
           this._tabbox._deremoveTab(this);
-
           this.thread = null;
-
-          this.chatState = "gone";
+          this._updateChatState("gone");
         ]]></body>
       </method>
 
@@ -442,7 +417,7 @@
           if (this.thread)
             this.thread._onChatPaneClosed();
 
-          this.chatState = "gone";
+          this._updateChatState("gone");
 
           if (this.thread && this.thread.contact instanceof Conference)
             setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
@@ -475,8 +450,7 @@
             this._chatpane._output.visible = true;
           } catch (ex) {}
 
-          if (this.chatState == "inactive")
-            this.chatState = "active";
+          this._updateChatState("active");
         ]]></body>
       </method>
 
@@ -488,6 +462,29 @@
           try {
             this._chatpane._output.visible = false;
           } catch (ex) {}
+        ]]></body>
+      </method>
+
+      <method name="_updateChatState">
+        <parameter name="state"/>
+        <parameter name="_this"/>
+        <body><![CDATA[
+          if (!_this)
+            _this = this;
+
+          if (!_this.thread || !_this.thread.peerHandlesChatState)
+            return;
+
+          if (_this._chatStateTimeout) {
+            clearTimeout(_this._chatStateTimeout);
+            this._chatStateTimeout = null;
+          }
+          if (state == "composing")
+            _this._chatStateTimeout = setTimeout(_this._updateChatState, 5000, "paused", _this);
+          if (state == "active" || state == "paused")
+            _this._chatStateTimeout = setTimeout(_this._updateChatState, 30000, "inactive", _this);
+
+          _this.thread.chatState = state;
         ]]></body>
       </method>
 
