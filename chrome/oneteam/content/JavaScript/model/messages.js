@@ -271,9 +271,10 @@ function MessagesThread(threadID, contact)
     this.unseenCount = 0;
     if (contact) {
         this.contact = contact;
-        this._handleChatState = !(contact instanceof Conference);
-        this._handleXhtmlIM = !contact.hasCapsInformations() ||
-            contact.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
+        this._handleChatState = contact instanceof Conference ? false :
+            contact.hasDiscoFeature("http://jabber.org/protocol/chatstates");
+
+        this._handleXhtmlIM = contact.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
     }
 }
 
@@ -342,7 +343,7 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     set chatState(val) {
-        if (val == this._chatState || this.contact instanceof Conference)
+        if (this._handleChatState == false || val == this._chatState)
             return;
 
         this._chatState = val;
@@ -360,7 +361,9 @@ _DECL_(MessagesThread, Model).prototype =
 
     addMessage: function(msg) {
         if (msg.contact && !msg.contact.representsMe) {
-            this._handleChatState = this._handleChatState || msg.chatState;
+            this._afterFirstMessage = true;
+            if (this._handleChatState == null)
+                this._handleChatState = !!msg.chatState;
             this._sessionStarted = this._sessionStarted || msg.threadID;
         }
 
@@ -377,7 +380,9 @@ _DECL_(MessagesThread, Model).prototype =
         msg.thread = this;
         if (!msg.isSystemMessage)
             this._lastActivity = msg.time.getTime();
-        this._handleXhtmlIM = this._handleXhtmlIM || msg.html;
+
+        if (this._handleXhtmlIM == null)
+            this._handleXhtmlIM = msg.html;
 
         var len = this.messages.length;
 
@@ -431,8 +436,11 @@ _DECL_(MessagesThread, Model).prototype =
         this.threadID;
 
         msg.thread = this;
-        msg.sendChatState = this._handleChatState;
-        msg.sendXhtmlIM = this._handleXhtmlIM;
+
+        if (this.peerHandlesChatState)
+            msg.chatState = this._chatState;
+
+        msg.sendXhtmlIM = this._handleXhtmlIM != false;
 
         if (!(this.contact instanceof Conference) && msg.text) {
             msg.queues.push(this);
