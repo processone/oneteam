@@ -348,9 +348,9 @@ _DECL_(MessagesThread, Model).prototype =
 
         this._chatState = val;
 
-        if (this._afterFirstMessage)
-            this.contact.sendMessage(new Message(null, null, null, 0, null, this.threadID),
-                                     this._chatState);
+        if (this.peerHandlesChatState)
+            this.contact.sendMessage(new Message(null, null, null, 0, null,
+                                                 this, val));
     },
 
     openChatTab: function()
@@ -464,7 +464,7 @@ _DECL_(MessagesThread, Model).prototype =
     }
 }
 
-function Message(body, body_html, contact, type, time, thread)
+function Message(body, body_html, contact, type, time, thread, chatState)
 {
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
@@ -495,10 +495,16 @@ function Message(body, body_html, contact, type, time, thread)
         }
 
         this.time = time || new Date();
+        this.chatState = chatState;
     }
     this.contact = contact;
     this.type = type;
-    this.threadID = thread;
+
+    if (thread instanceof MessagesThread)
+        this.thread = thread;
+    else
+        this._threadID = thread;
+
     this.queues = [];
     this.unseen = true;
 }
@@ -510,6 +516,12 @@ _DECL_(Message).prototype =
             this._contactId = this.thread.getContactID(this.contact)
 
         return this._contactId;
+    },
+
+    get threadID() {
+        if (!this._threadID && this.thread)
+            this._threadID = this.thread.threadID;
+        return this._threadID;
     },
 
     get isNormalMessage() {
@@ -571,8 +583,13 @@ _DECL_(Message).prototype =
 
     fillPacket: function(pkt)
     {
-        if (!this.isMucMessage && this.thread)
-            pkt.setThread(this.thread.threadID);
+        if (!this.isMucMessage && (this.thread || this._threadID))
+            pkt.setThread(this.threadID);
+
+        if (this.chatState)
+            pkt.getNode().appendChild(pkt.getDoc().createElementNS(
+                "http://jabber.org/protocol/chatstates", this.chatState));
+
         if (!this.text)
             return;
         pkt.setBody(this.text);
@@ -589,11 +606,7 @@ _DECL_(Message).prototype =
                 html.appendChild(doc.documentElement);
             }
             pkt.getNode().appendChild(html);
-
         }
-        if (this.chatState || this.sendChatState)
-            pkt.getNode().appendChild(pkt.getDoc().createElementNS(
-                "http://jabber.org/protocol/chatstates", this.chatState));
     },
 
     /*   tag name       can have childrens              keep only if has childrens
