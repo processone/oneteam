@@ -647,7 +647,8 @@
                 me._input.contentDocument.execCommand("insertHTML", false, xmlEscape(res));
               }
               range.detach();
-              return;
+              me._onUserType();
+              return false;
             }
 
             var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
@@ -657,6 +658,7 @@
               if (me._handleHistoryKey(upKey)) {
                 event.preventDefault();
                 event.stopPropagation();
+                me._onUserType();
                 return false;
               }
 
@@ -673,9 +675,13 @@
                 event.preventDefault();
 
                 me.clear();
-              } else
+                return true;
+              } else {
+                me._onUserType();
                 return false;
+              }
             }
+            me._onUserType();
             return true;
           }, true);
 
@@ -714,6 +720,17 @@
         <parameter name="str"/>
         <body><![CDATA[
           this._input.contentDocument.execCommand("insertHTML", false, xmlEscape(str));
+          this._onUserType();
+        ]]></body>
+      </method>
+
+      <method name="_onUserType">
+        <body><![CDATA[
+          setTimeout(function(_this) {
+            var event = document.createEvent("Events");
+            event.initEvent("userTyping", false, true);
+            _this.dispatchEvent(event);
+          }, 100, this)
         ]]></body>
       </method>
 

@@ -12,9 +12,7 @@
     <content>
       <xul:deck flex="1">
         <xul:textbox id="_input" style="height: 1.2em;" class="inputBox" flex="1" multiline="true"
-          oninput="if (this.parentNode.parentNode.userTypingHandler)
-                     this.parentNode.parentNode.userTypingHandler(this.value ? 1 : 0);
-                   this.parentNode.parentNode._maybeResize()"/>
+          oninput="this.parentNode.parentNode._onUserTyping()"/>
         <xul:vbox flex="1">
           <xul:textbox id="_inputClone" style="height: 1.2em;" class="inputBox" multiline="true"/>
         </xul:vbox>
@@ -91,6 +89,14 @@
         <parameter name="withEnter"/>
         <body><![CDATA[
           return withEnter ? null : this._input.value.replace(/\n$/, '');
+        ]]></body>
+      </method>
+
+      <method name="_onUserTyping">
+        <body><![CDATA[
+          var event = document.createEvent("Events");
+          event.initEvent("userTyping", false, true);
+          this.dispatchEvent(event);
         ]]></body>
       </method>
 
