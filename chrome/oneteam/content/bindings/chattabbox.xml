@@ -492,6 +492,7 @@
         <body><![CDATA[
           if (this._chatpane._contactInfo && this._chatpane._contactInfo.updateChatState)
             this._chatpane._contactInfo.updateChatState((this._thread && this._thread.peerChatState) || "");
+          this._syncTabColor();
         ]]></body>
       </method>
 
@@ -512,18 +513,25 @@
         ]]></body>
       </method>
 
+      <method name="_syncTabColor">
+        <body><![CDATA[
+          if (this._thread.unseenCount)
+            this._tab.setAttribute("chatstate", "modified");
+          else if (this._thread.peerChatState == "composing")
+            this._tab.setAttribute("chatstate", "composing");
+          else
+            this._tab.removeAttribute("chatstate");
+        ]]></body>
+      </method>
+
       <method name="_onUnseenCountChange">
         <parameter name="model"/>
         <parameter name="name"/>
         <parameter name="arg"/>
         <body><![CDATA[
-          if (this._thread.unseenCount)
-            this._tab.setAttribute("chatstate", "modified");
-          else
-            this._tab.removeAttribute("chatstate");
-
           this._tabbox.unseenCount += arg.diff;
 
+          this._syncTabColor();
           this._onNameChange();
 
           return val;

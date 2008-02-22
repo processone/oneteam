@@ -25,7 +25,7 @@ tab[chatstate=modified] .tab-text {
   color: red;
 }
 
-tab[chatstate=editing] .tab-text {
+tab[chatstate=composing] .tab-text {
   color: green;
 }
 
