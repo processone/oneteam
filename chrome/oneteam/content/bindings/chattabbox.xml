@@ -394,17 +394,6 @@
 
         this._chatpane = document.getAnonymousElementByAttribute(this, "anonid", "chatpane");
         this._chatpane.focusHandler = this._tabbox;
-        this._chatpane.userTypingHandler = new Callback(function(val, me) {
-            if (val < 0) {
-              me._chatStatePreventMessage = 1;
-              me._chatStateInitialSend = 1;
-            }
-
-            me.chatState = val > 0 ? "composing" : "active";
-
-            if (val < 0 )
-              me._chatStatePreventMessage = 0;
-          }).addArgs(this);
 
         var p = this.__proto__;
         this.__proto__ = {};
@@ -544,6 +533,12 @@
         ]]></body>
       </method>
     </implementation>
+
+    <handlers>
+      <handler event="userTyping"><![CDATA[
+        this._updateChatState(event.originalTarget.isEmpty ? "active" : "composing");
+      ]]></handler>
+    </handlers>
   </binding>
 
   <binding id="tabs-with-scroll"

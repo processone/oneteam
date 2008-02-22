@@ -1031,6 +1031,8 @@
 
     <implementation>
 
+      <property name="inputIsEmpty" onget="return this._input.isEmpty" readonly="true"/>
+
       <property name="hasSubject"
         onset="this._subject.parentNode.hidden = !val; return val"
         onget="return !this._subject.parentNode.hidden" />
@@ -1038,10 +1040,6 @@
       <property name="subject"
         onset="return this._subject.value = val"
         onget="return this._subject.value" />
-
-      <property name="userTypingHandler"
-        onset="return this._input.userTypingHandler = val"
-        onget="return this._input.userTypingHandler" />
 
       <property name="focusHandler"
         onset="this._attachFocusHandler(this, val); return val"
@@ -1078,7 +1076,7 @@
         this.__proto__ = {};
 
         var state = {};
-        for each (var i in "model userTypingHandler focusHandler".split(/ /))
+        for each (var i in "model focusHandler".split(/ /))
           if (this[i] != null) {
             state[i] = this[i];
             delete this[i];
@@ -1218,9 +1216,6 @@
               var ev = document.createEvent("Events");
               ev.initEvent("chat-send", true, false);
               this.dispatchEvent(ev);
-
-              if (this.userTypingHandler)
-                this.userTypingHandler(-1);
 
               var body = this._input.value;
               if (body.lastChild.localName == "BR")
