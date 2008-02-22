@@ -55,21 +55,17 @@
           document.getAnonymousElementByAttribute(this, "id", "conferenceIcon").
             hidden = !modelIsConference;
 
-          if (this._token) {
-            this._token = this._model.unregisterView(this._token);
-            this._token2 = this._model.unregisterView(this._token2);
-          }
+          this._regBundle.unregister();
 
           this._model = val;
 
           if (val) {
-            this._token = this._model.registerView(this.onNameChange, this, "visibleName");
+            this._regBundle.register(val, this.onNameChange, "visibleName");
             if (modelIsConference)
-              this._token2 = this._model.registerView(this.onSubjectChanged, this, "subject");
+              this._regBundle.register(val, this.onSubjectChanged, "subject");
             else
-              this._token2 = this._model.registerView(this.onPresenceChange, this, "presence");
-          } else
-            this._token = this._token2 = null;
+              this._regBundle.register(val, this.onPresenceChange, "presence");
+          }
 
           this.onSubjectChanged();
           this.onNameChange();
@@ -92,6 +88,8 @@
           this._statusIcon = document.getAnonymousElementByAttribute(this, "id", "statusIcon");
           this._statusText = document.getAnonymousElementByAttribute(this, "id", "statusText");
           this._chatState = document.getAnonymousElementByAttribute(this, "id", "chatState");
+
+          this._regBundle = new RegsBundle(this);
 
           var root = window;
 

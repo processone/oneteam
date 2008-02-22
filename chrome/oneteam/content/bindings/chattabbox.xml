@@ -351,19 +351,18 @@
     <implementation>
       <property name="thread" onget="return this._thread">
         <setter><![CDATA[
-          if (this._thread && this._token) {
-            this._thread.contact.unregisterView(this._token);
-            this._thread.unregisterView(this._token2);
-          }
-
           this._thread = val;
           this._chatpane.model = val;
 
           this._onNameChange();
+          this._onPeerChatStateChange();
+
+          this._regBundle.unregister();
 
           if (val) {
-            this._token = val.contact.registerView(this._onNameChange, this, "visibleName");
-            this._token2 = val.registerView(this._onUnseenCountChange, this, "unseenCount");
+            this._regBundle.register(val.contact, this._onNameChange, "visibleName");
+            this._regBundle.register(val, this._onUnseenCountChange, "unseenCount");
+            this._regBundle.register(val, this._onPeerChatStateChange, "peerChatState");
           }
         ]]></setter>
       </property>
@@ -391,6 +390,8 @@
       </property>
 
       <constructor><![CDATA[
+        this._regBundle = new RegsBundle(this);
+
         this._chatpane = document.getAnonymousElementByAttribute(this, "anonid", "chatpane");
         this._chatpane.focusHandler = this._tabbox;
         this._chatpane.userTypingHandler = new Callback(function(val, me) {
@@ -430,12 +431,8 @@
 
       <method name="destroy">
         <body><![CDATA[
-          if (this._thread && this._token) {
-            this._thread.contact.unregisterView(this._token);
-            this._thread.unregisterView(this._token2);
-          }
+          this._regBundle.unregister();
           this._chatpane.destroy();
-          this._token = null;
         ]]></body>
       </method>
 
@@ -505,14 +502,10 @@
         ]]></body>
       </method>
 
-      <method name="updateChatState">
-        <parameter name="state"/>
+      <method name="_onPeerChatStateChange">
         <body><![CDATA[
-          if (this._chatState == state || !this._chatpane._contactInfo.updateChatState)
-            return;
-
-          this._chatState = state;
-          this._chatpane._contactInfo.updateChatState(state)
+          if (this._chatpane._contactInfo && this._chatpane._contactInfo.updateChatState)
+            this._chatpane._contactInfo.updateChatState((this._thread && this._thread.peerChatState) || "");
         ]]></body>
       </method>
 
