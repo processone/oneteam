@@ -25,6 +25,8 @@
       <property name="value" onget="return this._input.value"
                 onset="return this._input.value = val"/>
 
+      <property name="isEmpty" onget="return this._input.value == ''" readonly="true"/>
+
       <constructor><![CDATA[
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
         this._inputClone = document.getAnonymousElementByAttribute(this, "id", "_inputClone");

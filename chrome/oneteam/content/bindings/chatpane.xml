@@ -568,6 +568,25 @@
       <property name="value" onget="return this._input.contentDocument.body"
                 onset="return this._input.contentDocument.body.innerHTML = val"/>
 
+      <property name="isEmpty" readonly="true">
+        <getter><![CDATA[
+          var brCount = 0;
+          function empty(node, firstLevel) {
+            if (node.nodeType == node.TEXT_NODE)
+              return node.nodeValue == "";
+            if (node.nodeName == "BR")
+              return !firstLevel || brCount++ > 0;
+
+            for (var i = 0; i < node.childNodes.length; i++)
+              if (!arguments.callee(node.childNodes[i]))
+                return false;
+            return true;
+          }
+
+          return empty(this._input.contentDocument.body, true);
+        ]]></getter>
+      </property>
+
       <constructor><![CDATA[
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
 
