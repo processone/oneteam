@@ -65,9 +65,9 @@ pref("chat.general.iconset", "oneteam");
 pref("chat.general.smilesset", "oneteam");
 
 pref("chat.messages.colors", "#ff0000,#6978a3,#46a,#c4d,#3b3,#fa4,#79c,#a7a,#4ca,#c66,#aaa,#ca0,#770,#5cc");
-				    
+
 pref("chat.editor.font", "serif");
-pref("chat.editor.size", "5");
+pref("chat.editor.size", 5);
 
 pref("chat.status.autoaway",5);
 pref("chat.status.autoxa",10);
