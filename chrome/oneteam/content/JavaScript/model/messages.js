@@ -393,7 +393,7 @@ _DECL_(MessagesThread, Model).prototype =
         account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" ,
                                         msg, msg.contact);
 
-        if (!this._visible) {
+        if (!this._visible && !msg.isSystemMessage) {
             this.unseenCount++;
             this.modelUpdated("unseenCount", {diff: 1});
         }
