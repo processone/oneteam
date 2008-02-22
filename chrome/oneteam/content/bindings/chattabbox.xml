@@ -354,6 +354,9 @@
           this._thread = val;
           this._chatpane.model = val;
 
+          if (val)
+            val.visible = true;
+
           this._onNameChange();
           this._onPeerChatStateChange();
 
