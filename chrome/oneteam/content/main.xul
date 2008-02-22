@@ -26,6 +26,7 @@
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCConsoleLogger.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaC.js"/>
 
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>

@@ -72,9 +72,12 @@ JSJaCHttpBindingConnection.prototype.inherit = function(oArg) {
 
   this._handleEvent('onconnect');
 
-  this._interval= setInterval("oCon._checkQueue()",JSJAC_CHECKQUEUEINTERVAL);
-  this._inQto = setInterval("oCon._checkInQ();",JSJAC_CHECKINQUEUEINTERVAL);
-  this._timeout = setTimeout("oCon._process()",this.getPollInterval());
+  this._interval= setInterval(JSJaC.bind(this._checkQueue, this),
+                              JSJAC_CHECKQUEUEINTERVAL);
+  this._inQto = setInterval(JSJaC.bind(this._checkInQ, this),
+                            JSJAC_CHECKINQUEUEINTERVAL);
+  this._timeout = setTimeout(JSJaC.bind(this._process, this),
+                             this.getPollInterval());
 };
 
 /**
@@ -82,18 +85,16 @@ JSJaCHttpBindingConnection.prototype.inherit = function(oArg) {
  * @param {int} timerval the interval in seconds
  */
 JSJaCHttpBindingConnection.prototype.setPollInterval = function(timerval) {
-  if (!timerval || isNaN(timerval)) {
-    this.oDbg.log("Invalid timerval: " + timerval,1);
-    return -1;
+  if (timerval && !isNaN(timerval)) {
+    if (!this.isPolling())
+      this._timerval = 100;
+    else if (this._min_polling && timerval < this._min_polling*1000)
+      this._timerval = this._min_polling*1000;
+    else if (this._inactivity && timerval > this._inactivity*1000)
+      this._timerval = this._inactivity*1000;
+    else
+      this._timerval = timerval;
   }
-  if (!this.isPolling())
-    this._timerval = 100;
-  else if (this._min_polling && timerval < this._min_polling*1000)
-    this._timerval = this._min_polling*1000;
-  else if (this._inactivity && timerval > this._inactivity*1000)
-    this._timerval = this._inactivity*1000;
-  else
-    this._timerval = timerval;
   return this._timerval;
 };
 
@@ -148,7 +149,8 @@ JSJaCHttpBindingConnection.prototype._getRequestString = function(raw, last) {
     if (last)
       reqstr += "type='terminate' ";
     else if (this._reinit) {
-      reqstr += "xmpp:restart='true' ";
+      if (JSJACHBC_USE_BOSH_VER) 
+        reqstr += "xmpp:restart='true' ";
       this._reinit = false;
     }
 
@@ -216,11 +218,13 @@ JSJaCHttpBindingConnection.prototype._getStreamID = function(slot) {
     this.streamid = body.getAttribute('authid');
     this.oDbg.log("got streamid: "+this.streamid,2);
   } else {
-    this._timeout = setTimeout("oCon._sendEmpty()",this.getPollInterval());
+    this._timeout = setTimeout(JSJaC.bind(this._sendEmpty, this),
+                               this.getPollInterval());
     return;
   }
 
-  this._timeout = setTimeout("oCon._process()",this.getPollInterval());
+  this._timeout = setTimeout(JSJaC.bind(this._process, this),
+                             this.getPollInterval());
 
   if (!this._parseStreamFeatures(body))
     return;
@@ -301,9 +305,10 @@ JSJaCHttpBindingConnection.prototype._handleInitialResponse = function(slot) {
   /* start sending from queue for not polling connections */
   this._connected = true;
 
-  oCon = this;
-  this._inQto = setInterval("oCon._checkInQ();",JSJAC_CHECKINQUEUEINTERVAL);
-  this._interval= setInterval("oCon._checkQueue()",JSJAC_CHECKQUEUEINTERVAL);
+  this._inQto = setInterval(JSJaC.bind(this._checkInQ, this),
+                            JSJAC_CHECKINQUEUEINTERVAL);
+  this._interval= setInterval(JSJaC.bind(this._checkQueue, this),
+                              JSJAC_CHECKQUEUEINTERVAL);
 
   /* wait for initial stream response to extract streamid needed
    * for digest auth
@@ -343,7 +348,8 @@ JSJaCHttpBindingConnection.prototype._parseResponse = function(req) {
       this._setStatus('proto_error_fallback');
      
       // schedule next tick
-      setTimeout("oCon._resume()",this.getPollInterval());
+      setTimeout(JSJaC.bind(this._resume, this),
+                 this.getPollInterval());
      
       return null;
     }
@@ -359,7 +365,8 @@ JSJaCHttpBindingConnection.prototype._parseResponse = function(req) {
 	  this._setStatus('proto_error_fallback');
      
 	  // schedule next tick
-	  setTimeout("oCon._resume()",this.getPollInterval()); 
+	  setTimeout(JSJaC.bind(this._resume, this),
+                     this.getPollInterval()); 
     }
     return null;
   }
@@ -425,8 +432,8 @@ JSJaCHttpBindingConnection.prototype._reInitStream = function(to,cb,arg) {
    */
 
   // tell http binding to reinit stream with/before next request
-  oCon._reinit = true;
-  eval("oCon."+cb+"("+arg+")"); // proceed with next callback
+  this._reinit = true;
+  cb.call(this,arg); // proceed with next callback
 
   /* [TODO] make sure that we're checking for new stream features when
    * 'cb' finishes
@@ -505,9 +512,6 @@ JSJaCHttpBindingConnection.prototype._suspend = function() {
   //reqstr += "<presence type='unavailable' xmlns='jabber:client'/>";
   reqstr += "</body>";
 
-  // Wait for response (for a limited time, 5s)
-  var abortTimerID = setTimeout("oCon._req["+slot+"].r.abort();", 5000);
   this.oDbg.log("Disconnecting: " + reqstr,4);
   this._req[slot].r.send(reqstr);
-  clearTimeout(abortTimerID);
 };
