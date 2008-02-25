@@ -89,7 +89,11 @@
           this._statusText = document.getAnonymousElementByAttribute(this, "id", "statusText");
           this._chatState = document.getAnonymousElementByAttribute(this, "id", "chatState");
 
-          this._regBundle = new RegsBundle(this);
+          var top = window;
+          while (top.opener)
+            top = top.opener;
+
+          this._regBundle = new top.RegsBundle(this);
 
           var root = window;
 
