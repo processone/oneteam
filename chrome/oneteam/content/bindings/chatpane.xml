@@ -629,7 +629,7 @@
           doc.body.style.margin = "0"
           doc.body.bgColor = "#ffffff";
 
-          window.addEventListener("resize", function(){ me.maybeResize() }, false);
+          window.addEventListener("resize", function(){ try{me.maybeResize()}catch(ex){} }, false);
 
           doc.addEventListener("keypress", function (event) {
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
