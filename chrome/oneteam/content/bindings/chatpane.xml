@@ -173,7 +173,7 @@
 
             this._output.contentWindow.addEventListener("resize", function() {
               me._updateNonSeenStatus();
-              doc.body.scrollTop = doc.body.scrollHeight;
+              doc.documentElement.scrollTop = doc.documentElement.scrollHeight;
             }, false);
             this._output.contentWindow.addEventListener("scroll", function() {
               me._updateNonSeenStatus(true);
@@ -289,7 +289,7 @@
 
           var p = this._firstNotSeenMsg;
           var top = 0;
-          var body = this._output.contentDocument.body;
+          var body = this._output.contentDocument.documentElement;
           do {
             top += p.offsetTop;
             p = p.offsetParent;
@@ -416,8 +416,8 @@
           // To eliminate small gap from late style resolution, scroll
           // once more from timeout, but only if scroll position is still
           // this same.
-          setTimeout(function(body, pos) {
-              if (body.scrollTop == pos) body.scrollTop = body.scrollHeight
+          setTimeout(function(el, pos) {
+              if (el.scrollTop == pos) el.scrollTop = el.scrollHeight
             }, 100, doc.documentElement, doc.documentElement.scrollTop);
         ]]></body>
       </method>
