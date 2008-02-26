@@ -17,6 +17,7 @@
 
   <script type="text/javascript;version=1.7"><![CDATA[
     account = window.opener.account;
+    prefManager = window.opener.prefManager;
     contact = window.arguments && window.arguments[0];
 
     function TreeView(tree) {
