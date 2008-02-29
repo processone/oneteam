@@ -597,9 +597,9 @@ var Animator = {
         return value;
     },
 
-    _animate: function(token, obj) {
+    _animateColor: function(token, animator) {
         if (token.step == token.steps) {
-            token.valueSetter(obj._toCssValue(token.values[token.values-1]));
+            token.valueSetter(animator._toCssValue(token.values[token.values-1]));
             token.timeout = null;
             if (token.stopCallback)
                 token.stopCallback(token.element);
@@ -622,9 +622,23 @@ var Animator = {
         } else
             val = token.values[idx]*(1-proportion) + token.values[idx+1]*proportion;
 
-        token.valueSetter(obj._toCssValue(val));
+        token.valueSetter(animator._toCssValue(val));
         token.step++;
-        token.timeout = setTimeout(arguments.callee, token.tick, token, obj);
+        token.timeout = setTimeout(arguments.callee, token.tick, token, animator);
+
+        return token;
+    },
+
+    _animateScroll: function(token) {
+        token.element.scrollLeft = token.startX + token.step*token.diffX/token.steps;
+        token.element.scrollTop = token.startY + token.step*token.diffY/token.steps;
+
+        if (token.step == token.steps) {
+            token.timeout = null;
+            return null;
+        }
+        token.step++;
+        token.timeout = setTimeout(arguments.callee, token.tick, token);
 
         return token;
     },
@@ -653,7 +667,7 @@ var Animator = {
             stopCallback: stopCallback,
             valueSetter: function(value) { selector.style[style] = value }
         };
-        return this._animate(token, this);
+        return this._animateColor(token, this);
     },
 
     animateStyle: function(element, style, steps, tick, stopCallback) {
@@ -674,7 +688,57 @@ var Animator = {
             stopCallback: stopCallback,
             valueSetter: function(value) { element.style[style] = value }
         };
-        return this._animate(token, this);
+        return this._animateColor(token, this);
+    },
+
+    animateScroll: function(element, targetX, targetY, steps, tick) {
+        targetX = targetX == null ? element.scrollLeft :
+            Math.min(Math.max(targetX, 0), element.scrollWidth - element.clientWidth);
+        targetY = targetY == null ? element.scrollTop :
+            Math.min(Math.max(targetY, 0), element.scrollHeight - element.clientHeight);
+
+        var token = {
+            element: element,
+            startX: element.scrollLeft,
+            startY: element.scrollTop,
+            diffX: targetX - element.scrollLeft,
+            diffY: targetY - element.scrollTop,
+            step: 0,
+            steps: steps,
+            tick: tick
+        }
+
+        return this._animateScroll(token);
+    },
+
+    animateScrollToElement: function(element, steps, tick) {
+        var top = element.offsetTop;
+        var left = element.offsetLeft;
+        var p = element.parentNode;
+        var op = element.offsetParent
+
+        while (p && p.clientWidth == p.scrollWidth & p.clientHeight == p.scrollHeight) {
+            if (p == op) {
+                top += op.offsetTop;
+                left += op.offsetLeft;
+                op = op.offsetParent;
+            }
+            p = p.parentNode;
+        }
+
+        if (!p)
+            return null;
+
+        if (left + element.clientWidth > p.scrollLeft)
+            left += element.clientWidth;
+        if (top + element.clientHeight > p.scrollTop)
+            top += element.clientHeight;
+
+        return this.animateScroll(p, left, top, steps, tick);
+    },
+
+    animationIsRunning: function(token) {
+        return token && token.timeout;
     },
 
     stopAnimation: function(token) {
@@ -682,6 +746,7 @@ var Animator = {
             return;
 
         clearTimeout(token.timeout);
-        token.stopCallback(token.element);
+        if (token.stopCallback)
+            token.stopCallback(token.element);
     }
 }
