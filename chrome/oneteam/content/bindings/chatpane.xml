@@ -766,47 +766,14 @@
       </method>
 
       <method name="_blink">
-        <parameter name="me"/>
         <body><![CDATA[
-          if (this == me || !me) {
-            me = this;
-            this._blinkSteps = 20;
-            this._blinkStep = 0;
-            this._blinkSrcColors = document.defaultView.
-              getComputedStyle(this, "").borderTopColor.
-                replace(/[^\d,\.]/g, "").split(/,/);
+          if (this._blinkToken)
+            Animator.stopAnimation(this._blinkToken);
 
-            var n = this._input.parentNode, c;
-            while ((c = document.defaultView.getComputedStyle(n, "").
-                    backgroundColor) == "transparent")
-              n = n.parentNode;
-            this._blinkTargetColors = c.replace(/[^\d,\.]/g, "").split(/,/);
-
-            if (this._blinkSrcColors.length != this._blinkTargetColors.length)
-              if (this._blinkSrcColors.length == 4)
-                this._blinkTargetColors.push(1);
-              else
-                this._blinkSrcColors.push(1);
-
-            if (me._blinkTimeout)
-              return;
-          }
-
-          if (me._blinkStep == me._blinkSteps) {
-            me._input.style.outline = "";
-            delete me._blinkTimeout;
-            return;
-          }
-
-          var color = [];
-          for (var i = 0; i < me._blinkSrcColors.length; i++)
-            color[i] = Math.round((
-              me._blinkSrcColors[i]*(me._blinkSteps-me._blinkStep)+
-              me._blinkTargetColors[i]*me._blinkStep)/me._blinkSteps);
-          me.style.outline = "3px solid "+
-            (color.length == 3 ? "rgb(" : "rgba(") + color.join(",")+")";
-          me._blinkStep++;
-          me._blinkTimeout = window.setTimeout(me._blink, 20, me);
+          this.style.outline = "3px solid transparent";
+          this._blinkToken = Animator.animateStyle(this, "outlineColor", 20, 20, function(el){
+            el.style.outline = "";
+          }, "transparent", "borderTopColor", "transparent");
         ]]></body>
       </method>
 

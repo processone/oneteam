@@ -543,3 +543,145 @@ function report(to, level, info, context)
         throw new Error("Error while trying to reporting error, unrecognized receiver type: " + to);
     }
 }
+
+var Animator = {
+    _parseCssValue: function(color, styles, parent, opacity) {
+        var colorRe = /^\s*(?:#(.)(.)(.)|#(..)(..)(..)|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|(transparent)|(\d+(?:\.\d+)?))\s*$/;
+        var match = (""+color).match(colorRe);
+        if (!match) {
+            if (!styles)
+                throw Error("Can't retrieve color from style rule");
+            match = styles[color].match(colorRe);
+        }
+        if (!match)
+            throw Error("Invalid color definition");
+
+        if (opacity) {
+            if (match[15])
+                return +match[15];
+            throw Error("Invalid opacity value");
+        }
+
+        if (match[14]) { // transparent
+            if (!parent)
+                throw Error("Can't resolve transparent color");
+            var parentStyle = color == "color" ? "color" : "backgroundColor";
+            var view = parent.ownerDocument.defaultView;
+            var style;
+
+            var p = parent;
+            while ((style = view.getComputedStyle(p, "")[parentStyle]) == "transparent")
+                p  = p.parentNode;
+
+            match = style.match(colorRe);
+
+            if (!match)
+                throw Error("Invalid color definition");
+        }
+
+        if (match[1]) // #rgb
+            return [parseInt(match[1], 16)*17, parseInt(match[2], 16)*17, parseInt(match[3], 16)*17];
+        else if (match[4]) // #rrggbb
+            return [parseInt(match[4], 16), parseInt(match[5], 16), parseInt(match[6], 16)];
+        else if (match[7]) // rgb(r,g,b)
+            return [+match[7], +match[8], +match[9]];
+
+        // rgba(r,g,b,a)
+        return [+match[10], +match[11], +match[12], +match[13]];
+    },
+
+    _toCssValue: function(value) {
+        if (value instanceof Array)
+            return (value.length == 3 ? "rgb(" : "rgba(")+
+                value.map(function(a){return a.toFixed(0)}).join(",")+")";
+        return value;
+    },
+
+    _animate: function(token, obj) {
+        if (token.step == token.steps) {
+            token.valueSetter(obj._toCssValue(token.values[token.values-1]));
+            token.timeout = null;
+            if (token.stopCallback)
+                token.stopCallback(token.element);
+            return null;
+        }
+
+        var proportion = token.step*(token.values.length-1)/token.steps;
+        var idx = Math.floor(proportion);
+        var val;
+        proportion = proportion - idx;
+
+        if (token.values[idx] instanceof Array) {
+            val = [token.values[idx][0]*(1-proportion) + token.values[idx+1][0]*proportion,
+                   token.values[idx][1]*(1-proportion) + token.values[idx+1][1]*proportion,
+                   token.values[idx][2]*(1-proportion) + token.values[idx+1][2]*proportion]
+            if (token.values[idx].length == 4)
+                val[4] = token.values[idx][3]*(1-proportion) + (token.values[idx+1][3]||255)*proportion;
+            else if (token.values[idx].length == 4)
+                val[4] = 255*(1-proportion) + (token.values[idx+1][3])*proportion;
+        } else
+            val = token.values[idx]*(1-proportion) + token.values[idx+1]*proportion;
+
+        token.valueSetter(obj._toCssValue(val));
+        token.step++;
+        token.timeout = setTimeout(arguments.callee, token.tick, token, obj);
+
+        return token;
+    },
+
+    animateCssRule: function(stylesheet, selector, style, steps, tick, stopCallback) {
+        var values = [];
+
+        for (var i = 6; i < arguments.length; i++)
+            values.push(this._parseCssValue(arguments[i], typeof(selector) == "string" ? null : selector,
+                                            null, style == "opacity"));
+
+        if (values.length < 2)
+            return null;
+
+        if (typeof(selector) == "string") {
+            selector = stylesheet.insertRule(selector+"{"+style+":"+this._toCssValue(values[0])+"}",
+                                             stylesheet.cssRules.length)
+            selector = stylesheet.cssRules[selector];
+        }
+        var token = {
+            element: selector,
+            values: values,
+            tick: tick,
+            steps: steps,
+            step: 0,
+            stopCallback: stopCallback,
+            valueSetter: function(value) { selector.style[style] = value }
+        };
+        return this._animate(token, this);
+    },
+
+    animateStyle: function(element, style, steps, tick, stopCallback) {
+        var values = [];
+        var compStyle = element.ownerDocument.defaultView.getComputedStyle(element, "");
+        for (var i = 5; i < arguments.length; i++)
+            values.push(this._parseCssValue(arguments[i], compStyle, element, style == "opacity"));
+
+        if (values.length < 2)
+            return null;
+
+        var token = {
+            element: element,
+            values: values,
+            tick: tick,
+            steps: steps,
+            step: 0,
+            stopCallback: stopCallback,
+            valueSetter: function(value) { element.style[style] = value }
+        };
+        return this._animate(token, this);
+    },
+
+    stopAnimation: function(token) {
+        if (!token || !token.timeout)
+            return;
+
+        clearTimeout(token.timeout);
+        token.stopCallback(token.element);
+    }
+}
