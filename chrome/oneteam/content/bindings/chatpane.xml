@@ -12,11 +12,8 @@
     <content>
       <html:iframe src="../content/blank.html" id="output" flex="1" onload="this._loaded = true;
                    try { this.parentNode._onLoad() } catch(e) {}"/>
-      <xul:stack id="chatMarkers">
-        <xul:vbox id="lastSeenMarker" collapsed2="true" class="marker-arrow"
-                  style="top: 0"
-                  onclick="this.parentNode.parentNode._moveToLastSeenMessage()"
-                  tooltiptext="Move to last seen message"/>
+      <xul:stack id="markersContainer">
+        <xul:vbox class="marker-arrow"/>
       </xul:stack>
     </content>
 
@@ -48,21 +45,11 @@
           if (!val == !this._visible)
             return this._visible = val;
 
-          this._visible = val
+          this._visible = val;
           this._updateNonSeenStatus();
+          this._syncMarkers();
 
-          if (val)
-            return val;
-
-          if (this._clearNonSeenMarkersTimeout) {
-            window.clearTimeout(this._clearNonSeenMarkersTimeout);
-            this._clearNonSeenMarkersTimeout = null;
-          }
-
-          if (!this._firstNotSeenMsg)
-            this._markMessagesAsSeen();
-
-          if (this._model)
+          if (!val && this._model)
             this._model.visible = false;
 
           return val;
@@ -89,7 +76,8 @@
           this._visible = true;
 
         this._output = document.getAnonymousElementByAttribute(this, "id", "output");
-        this._lastSeenMarker = document.getAnonymousElementByAttribute(this, "id", "lastSeenMarker");
+        this._markersContainer = document.getAnonymousElementByAttribute(this, "id", "markersContainer");
+        this._markers = [];
         this.colorMap = {0: 0};
         this.colorIndex = 1;
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
@@ -107,6 +95,107 @@
           if (this._model && this._regToken)
             this._model.unregisterView(this._regToken);
           this._regToken = null;
+        ]]></body>
+      </method>
+
+      <method name="addMarker">
+        <parameter name="element"/>
+        <parameter name="markerColor"/>
+        <parameter name="tooltip"/>
+        <parameter name="clickHandler"/>
+        <parameter name="seenHandler"/>
+        <body><![CDATA[
+          var marker = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "vbox");
+
+          marker.setAttribute("class", "marker-arrow");
+          marker.setAttribute("left", "0");
+          marker.setAttribute("onclick", "this.token.obj.scrollToElement(this.token.element);"+
+                                         "this.token.clickHandler()");
+          if (tooltip)
+            marker.setAttribute("tooltiptext", tooltip);
+
+          this._markersContainer.appendChild(marker);
+
+          var token = {
+            element: element,
+            markerElement: marker,
+            markerColor: markerColor,
+            clickHandler: clickHandler || function(){},
+            seenHandler: seenHandler,
+            obj: this
+          };
+
+          this._syncMarker(token);
+          this._markers.push(token);
+
+          return marker.token = token;
+        ]]></body>
+      </method>
+
+      <method name="removeMarker">
+        <parameter name="token"/>
+        <body><![CDATA[
+          var idx = this._markers.indexOf(token);
+          if (idx < 0)
+            return;
+
+          this._markers.splice(idx, 1);
+          token.markerElement.parentNode.removeChild(token.markerElement);
+
+          if (token.seenTimeout)
+            clearTimeout(token.seenTimeout);
+        ]]></body>
+      </method>
+
+      <method name="_syncMarker">
+        <parameter name="token"/>
+        <body><![CDATA[
+          var p = token.element;
+          var scrEl = token.element.parentNode;
+          var top = 0;
+          var visible = token.seenHandler;
+
+          while (scrEl && scrEl.scrollHeight == scrEl.clientHeight)
+            scrEl = scrEl.parentNode;
+
+          if (scrEl)
+            do {
+              top += p.offsetTop;
+              p = p.offsetParent;
+            } while (p);
+
+
+          if (scrEl && (top < scrEl.scrollTop || top >= (scrEl.scrollTop + scrEl.clientHeight))) {
+            token.markerElement.style.top = parseInt(top/scrEl.scrollHeight*(scrEl.clientHeight-8))+"px";
+            token.markerElement.style.borderRightColor = token.markerColor;
+            visible = false;
+          } else
+            token.markerElement.style.borderRightColor = "transparent";
+
+          if (visible && this.visible && !token.seenTimeout)
+            token.seenTimeout = setTimeout(token.seenHandler, 3000, token, this);
+          else if ((!visible || !this.visible) && token.seenTimeout) {
+            clearTimeout(token.seenTimeout);
+            token.seenTimeout = null;
+          }
+        ]]></body>
+      </method>
+
+      <method name="_syncMarkers">
+        <parameter name="token"/>
+        <body><![CDATA[
+          if (!this._markers)
+            return;
+          for (var i = 0; i < this._markers.length; i++)
+            this._syncMarker(this._markers[i]);
+        ]]></body>
+      </method>
+
+      <method name="scrollToElement">
+        <parameter name="element"/>
+        <body><![CDATA[
+          Animator.stopAnimation(this._scrollToken);
+          return this._scrollToken = Animator.animateScrollToElement(element, 20, 20);
         ]]></body>
       </method>
 
@@ -172,11 +261,11 @@
             var me = this;
 
             this._output.contentWindow.addEventListener("resize", function() {
-              me._updateNonSeenStatus();
+              me._syncMarkers();
               doc.documentElement.scrollTop = doc.documentElement.scrollHeight;
             }, false);
             this._output.contentWindow.addEventListener("scroll", function() {
-              me._updateNonSeenStatus(true);
+              me._syncMarkers();
             }, false);
           ]]>
         </body>
@@ -217,91 +306,34 @@
           var doc = this._output.contentDocument;
 
           if (!this._firstNotSeenMsg) {
-            try {
-              doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 1";
-            } catch (ex) {}
+            if (!this.visible)
+              this._markMessagesAsSeen();
             return;
           }
 
-          var body = doc.body;
+          var rule = doc.styleSheets[1].cssRules[0];
+          rule.style.cssText = "opacity: 0.3";
 
-          var p = this._firstNotSeenMsg;
-          var top = 0;
-          do {
-            top += p.offsetTop;
-            p = p.offsetParent;
-          } while (p);
-
-
-          var msgInViewport = top >= body.scrollTop && top < (body.scrollTop + body.clientHeight);
-
-          if (msgInViewport)
-            this._lastSeenMarker.style.borderRightColor = "transparent";
-          else {
-            this._lastSeenMarker.style.top = parseInt(top/body.scrollHeight*(body.clientHeight-8))+"px";
-            this._lastSeenMarker.style.borderRightColor = "black";
-          }
-
-          if (fromScroll && this._clearNonSeenMarkersTimeout) {
-            window.clearTimeout(this._clearNonSeenMarkersTimeout);
-            this._clearNonSeenMarkersTimeout = null;
-          }
-
-          if (!this._clearNonSeenMarkersTimeout) {
-            if (!this._visible)
-              doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 0.3";
-            else if (msgInViewport)
-              this._clearNonSeenMarkersTimeout = window.setTimeout(this._clearNonSeenMarkerFun, 3000, this);
-          } else if (!msgInViewport) {
-            window.clearTimeout(this._clearNonSeenMarkersTimeout);
-            this._clearNonSeenMarkersTimeout = null;
-          }
-        ]]></body>
-      </method>
-
-      <method name="_clearNonSeenMarkerFun">
-        <parameter name="_this"/>
-        <body><![CDATA[
-          _this._clearNonSeenMarkersTimeout = null;
-          _this._lastSeenMarker.style.borderRightColor = "transparent";
-          _this._firstNotSeenMsg = null;
-
-          var token = {step: 0, steps: 20, el: _this, doc: _this._output.contentDocument};
-
-          token.timeout = window.setInterval(function(t) {
-            if (t.step++ == t.steps) {
-              window.clearInterval(t.timeout);
-              t.doc.styleSheets[1].cssRules[0].style.cssText = "opacity: 1";
-
-              _this._markMessagesAsSeen();
-
-              return;
-            }
-            t.doc.styleSheets[1].cssRules[0].style.cssText = "opacity: "+(0.3+0.7*t.step/t.steps);
-          }, 20, token);
-        ]]></body>
-      </method>
-
-      <method name="_moveToLastSeenMessage">
-        <body><![CDATA[
-          if (!this._firstNotSeenMsg)
+          if (this._unseenMarker)
             return;
 
-          var p = this._firstNotSeenMsg;
-          var top = 0;
-          var body = this._output.contentDocument.documentElement;
-          do {
-            top += p.offsetTop;
-            p = p.offsetParent;
-          } while (p);
-
-          body.scrollTop = p - body.clientHeight/5;
+          this._unseenMarker = this.addMarker(this._firstNotSeenMsg, "black",
+            _("Click to scroll to first non-seen message"), null, function(token, el) {
+              el.removeMarker(token);
+              el._unseenMarker = null;
+              el._firstNotSeenMsg = null;
+              Animator.animateCssRule(null, rule, "opacity", 20, 20, function(rule){
+                rule.style.outline = "";
+                el._markMessagesAsSeen();
+              }, 0.3, 1);
+            });
         ]]></body>
       </method>
 
       <method name="_markMessagesAsSeen">
         <body><![CDATA[
           var els = this._output.contentDocument.getElementsByTagName("div");
+
           for (var i = els.length-1; i >= 0; i--)
             els[i].removeAttribute("not-seen");
 
@@ -313,14 +345,15 @@
       <method name="_appendMessages">
         <body><![CDATA[
           var doc = this._output.contentDocument;
+          var scrEl = doc.documentElement;
 
           if (!doc) {
             this._appendTimeout = window.setTimeout(function(t){t._appendMessages()}, 50, this);
             return
           }
 
-          var scrollToBottom = doc.documentElement.scrollTop + doc.documentElement.clientHeight >=
-            doc.documentElement.scrollHeight - 8;
+          var scrollToBottom = scrEl.scrollTop + scrEl.clientHeight >= scrEl.scrollHeight - 8 ||
+            Animator.animationIsRunning(this._scrollToBottomToken);
 
           this._appendTimeout = null;
 
@@ -362,7 +395,7 @@
             }
 
             if (!this._visible && !this._firstNotSeenMsg)
-                this._firstNotSeenMsg = msgEl;
+              this._firstNotSeenMsg = msgEl;
 
             var h = doc.createElement("span");
             h.setAttribute("class", "header");
@@ -406,19 +439,11 @@
 
           this._model.removeMessages();
 
-          if (!scrollToBottom)
-            return;
-
-          doc.documentElement.scrollTop = doc.documentElement.scrollHeight;
+          if (scrollToBottom)
+            this._scrollToBottomToken = this.scrollToElement(msgEl);
 
           this._updateNonSeenStatus();
-
-          // To eliminate small gap from late style resolution, scroll
-          // once more from timeout, but only if scroll position is still
-          // this same.
-          setTimeout(function(el, pos) {
-              if (el.scrollTop == pos) el.scrollTop = el.scrollHeight
-            }, 100, doc.documentElement, doc.documentElement.scrollTop);
+          this._syncMarkers();
         ]]></body>
       </method>
 
