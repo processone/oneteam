@@ -53,7 +53,7 @@ _DECL_(MessagesRouter).prototype =
         }
 
         if (!thread) {
-            if (contact == this.activeResource)
+            if (contact == this.activeResource && !(this instanceof MyResourcesContact))
                 contact = this;
             thread = new MessagesThread(msg.threadID, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");

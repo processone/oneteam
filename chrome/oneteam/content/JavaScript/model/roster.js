@@ -575,7 +575,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
     get visibleName()
     {
-        if (this.jid.resource)
+        if (!this.contact.jid.resource && this.jid.resource)
             return this.contact.visibleName + " ("+this.jid.resource+")";
 
         return this.contact.visibleName;
@@ -706,6 +706,7 @@ function MyResourcesContact(jid)
     account.myResources[this.jid.normalizedJID] = this;
 
     this.init();
+    MessagesRouter.call(this);
 
     account.otherResourcesGroup._onContactAdded(this);
 }
@@ -713,6 +714,18 @@ function MyResourcesContact(jid)
 _DECL_(MyResourcesContact, Contact).prototype =
 {
     subscription: "both",
+
+    onOpenChat: function()
+    {
+        this.resources[0].openChatTab();
+    },
+
+    onMessage: function(pkt) {
+        if (packet.getType() == "error")
+            return;
+
+        this.routeMessage(new Message(packet, null, this.resources[0]), this.resources[0]);
+    },
 
     onPresence: function() {
         Contact.onPresence.apply(this, arguments);
@@ -724,7 +737,7 @@ _DECL_(MyResourcesContact, Contact).prototype =
     _onResourceRemoved: function()
     {
         this.groups[0]._onContactRemoved(this);
-        delete account.myResources[this.jid.normalizedJID]
+        delete account.myResources[this.jid.normalizedJID];
     }
 }
 
