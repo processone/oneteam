@@ -19,7 +19,10 @@ function StylesRegistry(cache)
               "chrome://oneteam/content/data/status-icons/oneteam",
               "chrome://oneteam/content/data/status-icons/crystal",
               "chrome://oneteam/content/data/status-icons/dcraven",
-              "chrome://oneteam/content/data/status-icons/msn"]
+              "chrome://oneteam/content/data/status-icons/msn",
+              "chrome://oneteam/content/data/status-icons/aim",
+              "chrome://oneteam/content/data/status-icons/yahoo",
+              "chrome://oneteam/content/data/status-icons/icq"]
 
     for (i = 0; i < styles.length; i++)
         if (!stylesUrls[styles[i]])

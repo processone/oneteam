@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+	<x xmlns="transport:name">msn</x>
+	<meta>
+		<name>Stellar ICQ</name>
+		<version>1.0</version>
+		<description>Stellar ICQ theme</description>
+		<creation>2003-07-29</creation>
+		<home>http://psi.affinix.com</home>
+		<author jid='mblsha@jabber.ru' email='mblsha@users.sourceforge.net' www='http://maz.sf.net'>Michail Pishchagin</author>
+	</meta>
+
+	<icon>
+		<x xmlns='name'>status/online</x>
+		<object mime='image/png'>online.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/offline</x>
+		<object mime='image/png'>offline.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/away</x>
+		<object mime='image/png'>away.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/xa</x>
+		<object mime='image/png'>xa.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/dnd</x>
+		<object mime='image/png'>dnd.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/invisible</x>
+		<object mime='image/png'>invisible.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/chat</x>
+		<object mime='image/png'>ffc.png</object>
+	</icon>
+
+	<!-- Special icons -->
+	<icon>
+		<x xmlns='name'>status/ask</x>
+		<object mime='image/png'>ask.png</object>
+	</icon>	
+
+	<icon>
+		<x xmlns='name'>status/noauth</x>
+		<object mime='image/png'>noauth.png</object>
+	</icon>	
+</icondef>

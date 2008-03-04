@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<icondef>
+	<x xmlns="transport:name">msn</x>
+	<meta>
+		<name>Yahoo!</name>
+		<version>1.0</version>
+		<description>Default Yahoo! messenger iconset</description>
+		<creation>2003-07-17</creation>
+		<home>http://messenger.yahoo.com</home>
+		<author jid='mblsha@jabber.ru' email='mblsha@users.sourceforge.net' www='http://maz.sf.net'>Michail Pishchagin (not the icons, just this icondef.xml)</author>
+		<author>Yahoo! messenger artists</author>
+	</meta>
+
+	<icon>
+		<x xmlns='name'>status/online</x>
+		<object mime='image/png'>online.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/chat</x>
+		<object mime='image/png'>online.png</object> <!-- FIXME -->
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/invisible</x>
+		<object mime='image/png'>online.png</object> <!-- FIXME -->
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/offline</x>
+		<object mime='image/png'>offline.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/away</x>
+		<object mime='image/png'>away.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/xa</x>
+		<object mime='image/png'>xa.png</object>
+	</icon>
+
+	<icon>
+		<x xmlns='name'>status/dnd</x>
+		<object mime='image/png'>dnd.png</object>
+	</icon>
+</icondef>
