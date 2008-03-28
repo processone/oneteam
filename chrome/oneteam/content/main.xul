@@ -444,7 +444,9 @@
     }
 
     function onUnload() {
-    //#ifndef XULAPP
+    //#ifdef XULAPP
+      chatTabsController.closeTabs();
+    /*#else
       document.getElementById("login-signin").disabled = true;
       if (window.con)
         window.con.disconnect();
@@ -463,6 +465,14 @@
         window.con.disconnect();
 
     //#ifdef XULAPP
+      if (chatTabsController.tabCount) {
+        chatTabsController.closeTabs();
+        var splitter = document.getElementById("chats-splitter");
+        var width = +splitter.previousSibling.getAttribute("width");
+
+        splitter.setAttribute("rightWidth", self.outerWidth - width);
+        self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
+      }
       Components.classes['@mozilla.org/toolkit/app-startup;1'].
         getService(Components.interfaces.nsIAppStartup).
           quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
