@@ -264,12 +264,13 @@ _DECL_(MessagesRouter).prototype =
 function MessagesThread(threadID, contact)
 {
     this.init();
+
     this.messages = [];
     this.archivedMessages = [];
     this._threadID = threadID;
     this._contactIds = [];
     this.unseenCount = 0;
-    if (contact) {
+    if (contact && contact.hasDiscoFeature) {
         this.contact = contact;
         this._handleChatState = contact instanceof Conference ? false :
             contact.hasDiscoFeature("http://jabber.org/protocol/chatstates");
