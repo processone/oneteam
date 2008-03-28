@@ -192,10 +192,8 @@
 
     function updateMessages(tree, view)
     {
-      try{
       view.clear();
       view.model = tree.myView.currentObject;
-      }catch(ex){alert("V"+ex)}
     }
   ]]></script>
 
