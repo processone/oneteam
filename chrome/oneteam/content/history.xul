@@ -16,6 +16,9 @@
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
+    JID = window.opener.JID;
+    MessagesThread = window.opener.MessagesThread;
+    Message = window.opener.Message;
     account = window.opener.account;
     prefManager = window.opener.prefManager;
     contact = window.arguments && window.arguments[0];
@@ -32,15 +35,7 @@
 
     TreeView.prototype =
     {
-      get rowCount() { return this._results ? this._results.length : 0 },
-      getCellText : function(row, column)
-      {
-        if (row > this._results.length)
-          return "ERROR";
-        return column.id == "jid" ? this._results[row].jid :
-          formatDate(this._results[row].time, null, "short", "long");
-      },
-      setTree: function(tree) { this._tree = tree; },
+      selection: null,
       isContainer: function(row) { return false; },
       isSeparator: function(row) { return false; },
       isSorted: function() { return true; },
@@ -49,15 +44,32 @@
       getRowProperties: function(row,props) {},
       getCellProperties: function(row,col,props) {},
       getColumnProperties: function(colid,col,props) {},
+      selectionChanged: function() {},
       cycleHeader: function(){},
+
+      get rowCount() {
+        return this._results ? this._results.length : 0
+      },
 
       get currentObject()
       {
-        if (this._inClear)
+        if (this._inClear || !this._results)
           return null;
         if (this._treeEl)
           return this._treeEl.body.childNodes[this._treeEl.currentIndex].model;
-        return this._results[this._tree.currentIndex];
+        return this._results[this.selection.currentIndex];
+      },
+
+      getCellText : function(row, column)
+      {
+        if (row > this._results.length)
+          return "ERROR";
+        return column.id == "jid" ? this._results[row].jid :
+          formatDate(this._results[row].time, null, "short", "long");
+      },
+
+      setTree: function(tree) {
+        this._tree = tree;
       },
 
       _updateTree: function(newValue)
@@ -73,6 +85,8 @@
 
       _clear: function()
       {
+        if (this.selection)
+          this.selection.clearSelection();
         this._inClear = true;
         if (this._treeEl) {
           while (this._treeEl.body.firstChild)
@@ -82,11 +96,11 @@
         this._inClear = false;
       },
 
-      _startBatchUpdate: function() { },
+      _startBatchUpdate: function() { this._inBatch++ },
 
       _endBatchUpdate: function()
       {
-        if (!this._treeEl)
+        if (--this._inBatch == 0 && !this._treeEl)
           this._updateTree([].concat(this._newResults || []));
       },
 
@@ -108,31 +122,13 @@
           this._treeEl.body.insertBefore(item, this._treeEl.body.firstChild);
 
           return;
+        } else if (this._inBatch) {
+          if (!this._newResults)
+            this._newResults = []
+          this._newResults.push(value);
+        } else {
+          this._updateTree((this._results || []).concat([value]));
         }
-        if (!this._newResults)
-          this._newResults = []
-        this._newResults.push(value);
-      }
-    };
-
-    function MessagesView(chatpaneView)
-    {
-      this.chatpaneView = chatpaneView
-    }
-
-    MessagesView.prototype =
-    {
-      _startBatchUpdate: function() { },
-      _endBatchUpdate: function() { },
-
-      _clear: function()
-      {
-        this.chatpaneView.clear();
-      },
-
-      _addRecord: function(value)
-      {
-        this.chatpaneView.addMessage(value);
       }
     };
 
@@ -148,7 +144,7 @@
 
       contactsList = new TreeView(document.getElementById("contacts-list"));
       contactsThreads = new TreeView(document.getElementById("contacts-threads"));
-      contactsMessages = new MessagesView(document.getElementById("contacts-view"));
+      contactsMessages = document.getElementById("contacts-view");
 
       if (contact) {
         var list = document.getElementById("contacts-list");
@@ -163,7 +159,7 @@
 
       conferencesList = new TreeView(document.getElementById("conferences-list"));
       conferencesThreads = new TreeView(document.getElementById("conferences-threads"));
-      conferencesMessages = new MessagesView(document.getElementById("conferences-view"));
+      conferencesMessages = document.getElementById("conferences-view");
 
       account.historyMgr.deliverContactsList(contactsList, regToken);
       account.historyMgr.deliverConferencesList(conferencesList, regToken);
@@ -187,25 +183,19 @@
         regToken.unmerge(view.token);
         view.token = null;
       }
+      view._clear();
       if (tree.myView.currentObject) {
         view.token = account.historyMgr.deliverThreadsWithJid(view, null, tree.myView.currentObject);
         regToken.merge(view.token);
-      } else
-        view._clear();
+      }
     }
 
     function updateMessages(tree, view)
     {
-      if (view.token) {
-        view.token.unregisterFromAll();
-        regToken.unmerge(view.token);
-        view.token = null;
-      }
-      if (tree.myView.currentObject) {
-        view.token = account.historyMgr.deliverMessagesFromThread(view, null, tree.myView.currentObject);
-        regToken.merge(view.token);
-      } else
-        view._clear();
+      try{
+      view.clear();
+      view.model = tree.myView.currentObject;
+      }catch(ex){alert("V"+ex)}
     }
   ]]></script>
 

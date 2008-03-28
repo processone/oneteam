@@ -1,6 +1,8 @@
 // #ifdef XULAPP
 function HistoryManager()
 {
+    CallbacksList.call(this, true);
+
     var file = Components.classes["@mozilla.org/file/directory_service;1"].
         getService(Components.interfaces.nsIProperties).
         get("ProfD", Components.interfaces.nsIFile);
@@ -26,6 +28,7 @@ function HistoryManager()
             BEGIN IMMEDIATE TRANSACTION;
                 CREATE TABLE messages (id INTEGER PRIMARY KEY, jid_id INTEGER NOT NULL,
                                        flags INTEGER NOT NULL, body TEXT NOT NULL,
+                                       body_html TEXT,
                                        nick TEXT NOT NULL, time INTEGER(64) NOT NULL,
                                        thread_id INTEGER NOT NULL);
                 CREATE TABLE jids (id INTEGER PRIMARY KEY, jid TEXT UNIQUE NOT NULL);
@@ -51,8 +54,8 @@ function HistoryManager()
             INSERT INTO threads (jid_id, time, type) VALUES (?1, ?2, ?3);
         </sql>.toString());
     this.addMessageStmt = this.db.createStatement(<sql>
-            INSERT INTO messages (jid_id, flags, body, nick, time, thread_id)
-                VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+            INSERT INTO messages (jid_id, flags, body, body_html, nick, time, thread_id)
+                VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
         </sql>.toString());
     this.getThreadsForJidIdsStmt = this.db.createStatement(<sql>
             SELECT DISTINCT T.id, J.jid, T.time FROM threads T, jids J
@@ -66,161 +69,241 @@ function HistoryManager()
                 ORDER BY T.time DESC;
         </sql>.toString());
     this.getThreadMessagesStmt = this.db.createStatement(<sql>
-            SELECT J.jid, M.flags, body, nick, time FROM messages M, jids J
-                WHERE thread_id = ?1 AND jid_id = J.id ORDER BY time ASC;
+            SELECT J.jid, M.flags, body, body_html, nick, time FROM messages M, jids J
+                WHERE thread_id = ?1 AND jid_id = J.id AND time > ?2 ORDER BY time ASC;
         </sql>.toString());
 }
 
-_DECL_(HistoryManager).prototype =
+_DECL_(HistoryManager, null, CallbacksList).prototype =
 {
-    _loadJids: function()
-    {
+    canPerformSearches: true,
+    _archivedThreads: {},
+    _sessionThreads: [],
+    _sessionArchivedThreads: [],
+
+    _loadJIDs: function() {
         var jidsById = {};
 
-        this._jids = {};
+        this._jidIds = {};
+        this._contacts = [];
+        this._conferences = [];
 
         var stmt = this.db.createStatement("SELECT id, jid FROM jids");
         while (stmt.executeStep()) {
-            var jid = stmt.getString(1);
             var jidId = stmt.getInt32(0)
-            jidsById[jidId] = this._jids[jid] = { id: jidId, jid: jid };
+            var jid = stmt.getString(1);
+            this._jidIds[jid] = jidId;
+            jidsById[jidId] = jid;
         }
         stmt.reset();
 
-        this._threadJids = [{ hash: {}, val: []}, { hash: {}, val: []}];
         var stmt = this.db.createStatement("SELECT DISTINCT jid_id, type FROM threads");
         while (stmt.executeStep()) {
             var jid = jidsById[stmt.getInt32(0)];
-            var type = stmt.getInt32(1)
-            this._threadJids[type].hash[jid.jid] = 1;
-            this._threadJids[type].val.push(jid);
+            var type = stmt.getInt32(1);
+            if  (type == 0)
+                this._contacts.push(account.getOrCreateContact(jid));
+            else
+                this._conferences.push(account.getOrCreateConference(jid));
         }
         stmt.reset();
     },
 
-    _getJidId: function(jid, threadJid, type)
-    {
-        if (!this._jids)
-            this._loadJids();
+    _getJidId: function(jid) {
+        if (!this._jidIds)
+            this._loadJIDs();
 
-        if (this._jids[jid]) {
-            if (threadJid && !this._threadJids[type].hash[jid]) {
-                this._threadJids[type].hash[jid] = 1;
-                this._threadJids[type].val.push(this._jids[jid]);
-            }
-            return this._jids[jid].id;
+        if (!this._jidIds[jid]) {
+            this.addJidStmt.bindStringParameter(0, jid);
+            this.addJidStmt.execute();
+            return this._jidIds[jid] = this.db.lastInsertRowID;
         }
-
-        this.addJidStmt.bindStringParameter(0, jid);
-        this.addJidStmt.execute();
-
-        var jidId = this.db.lastInsertRowID;
-
-        this._jids[jid] = { id: jidId, jid: jid };
-
-        if (threadJid && !this._threadJids[type].hash[jid]) {
-            this._threadJids[type].hash[jid] = 1;
-            this._threadJids[type].val.push(this._jids[jid]);
-        }
-
-        return jidId;
+        return this._jidIds[jid];
     },
 
-    getThreadJids: function(type)
-    {
-        if (!this._threadJids)
-            this._loadJids();
+    _getArchivedThread: function(contact, id, date) {
+        if (this._archivedThreads[id])
+            return this._archivedThreads[id];
 
-        return this._threadJids[type].val;
+        return this._archivedThreads[id] = new ArchivedMessagesThread(contact, id, date);
     },
 
-    addMessage: function(jid, type, flags, message, nick, time, thread, threadJid)
+    deliverContactsList: function(observer, token)
     {
-        time = time ? time.getTime() : Date.now();
-        if (thread == null) {
-            this.addThreadStmt.bindStringParameter(0,
-                this._getJidId(threadJid, true, type));
-            this.addThreadStmt.bindInt64Parameter(1, time);
-            this.addThreadStmt.bindInt32Parameter(2, type);
-            this.addThreadStmt.execute();
+        if (!this._contacts)
+            this._loadJIDs();
 
-            thread = this.db.lastInsertRowID;
-        }
-        this.addMessageStmt.bindInt32Parameter(0, this._getJidId(jid));
-        this.addMessageStmt.bindInt32Parameter(1, flags);
-        this.addMessageStmt.bindStringParameter(2, message);
-        this.addMessageStmt.bindStringParameter(3, nick);
-        this.addMessageStmt.bindInt64Parameter(4, time);
-        this.addMessageStmt.bindStringParameter(5, thread);
-        this.addMessageStmt.execute();
+        observer._startBatchUpdate();
+        for (var i = 0; i < this._contacts.length; i++)
+            observer._addRecord(this._contacts[i]);
+        observer._endBatchUpdate(true);
 
-        return thread;
+        return this._registerCallback(observer, token, "contacts");
     },
 
-    getThreadsForJidIds: function(jidId)
+    deliverConferencesList: function(observer, token)
     {
-        var res = [];
-        this.getThreadsForJidIdsStmt.bindInt32Parameter(0, jidId);
-        while (this.getThreadsForJidIdsStmt.executeStep()) {
-            res.push({threadId: this.getThreadsForJidIdsStmt.getInt32(0),
-                      jid: this.getThreadsForJidIdsStmt.getString(1),
-                      time: new Date(this.getThreadsForJidIdsStmt.getInt64(2))});
-        }
-        this.getThreadsForJidIdsStmt.reset();
-        return res;
+        if (!this._conferences)
+            this._loadJIDs();
+
+        observer._startBatchUpdate();
+        for (var i = 0; i < this._conferences.length; i++)
+            observer._addRecord(this._conferences[i]);
+        observer._endBatchUpdate(true);
+
+        return this._registerCallback(observer, token, "conferences");
     },
 
-    findMessages: function(word)
+    deliverThreadsWithJid: function(observer, token, contact)
     {
-        var res = [];
+        var stmt = this.getThreadsForJidIdsStmt;
 
-        this.findMsgsStmt.bindStringParameter(0, word);
+        stmt.bindInt32Parameter(0, this._jidIds[contact.jid]);
 
-        while (this.findMsgsStmt.executeStep()) {
-            res.push({msgId: this.findMsgsStmt.getInt32(0),
-                      threadId: this.findMsgsStmt.getInt32(1),
-                      jid: this.findMsgsStmt.getString(2),
-                      time: new Date(this.findMsgsStmt.getInt64(3))});
-        }
-        this.findMsgsStmt.reset();
-        return res;
+        observer._startBatchUpdate();
+        while (stmt.executeStep())
+            observer._addRecord(this._getArchivedThread(contact, stmt.getInt32(0),
+                                                        new Date(stmt.getInt64(2))));
+
+        stmt.reset();
+        observer._endBatchUpdate(true);
+
+        return this._registerCallback(observer, token, "threads-"+contact.jid);
     },
 
-    getThreadMessagesIterator: function(threadId)
+    deliverSearchResult: function(observer, token, searchPhrase)
     {
-        try {
-            this.getThreadMessagesStmt.bindInt32Parameter(0, threadId);
-
-            while (this.getThreadMessagesStmt.executeStep()) {
-                yield ({
-                    jid: this.getThreadMessagesStmt.getString(0),
-                    flags: this.getThreadMessagesStmt.getInt32(1),
-                    body: this.getThreadMessagesStmt.getString(2),
-                    nick: this.getThreadMessagesStmt.getString(3),
-                    time: new Date(this.getThreadMessagesStmt.getInt64(4))
-                });
-            }
-        } finally {
-            this.getThreadMessagesStmt.reset();
-        }
+        return null;
     },
 
-    getThreadMessages: function(threadId)
+    addMessage: function(msg)
     {
-        var res = [];
-        this.getThreadMessagesStmt.bindInt32Parameter(0, threadId);
+        var archivedThread, idx = this._sessionThreads.indexOf(msg.thread);
+        if (idx < 0) {
+            var stmt = this.addThreadStmt;
+            var threadContact = msg.thread.contact;
+            if (threadContact.contact && (!threadContact.contact.exitRoom || !msg.isMucMessage))
+                threadContact = threadContact.contact;
 
-        while (this.getThreadMessagesStmt.executeStep()) {
-            res.push({jid: this.getThreadMessagesStmt.getString(0),
-                      flags: this.getThreadMessagesStmt.getInt32(1),
-                      body: this.getThreadMessagesStmt.getString(2),
-                      nick: this.getThreadMessagesStmt.getString(3),
-                      time: new Date(this.getThreadMessagesStmt.getInt64(4))});
-        }
-        this.getThreadMessagesStmt.reset();
-        return res;
+            stmt.bindInt32Parameter(0, this._getJidId(threadContact.jid))
+            stmt.bindInt64Parameter(1, msg.time.getTime());
+            stmt.bindInt32Parameter(2, msg.isMucMessage ? 1 : 0);
+            stmt.execute();
+            var rowId = this.db.lastInsertRowID;
+
+            archivedThread = this._archivedThreads[rowId] =
+                new ArchivedMessagesThread(threadContact, rowId, msg.time);
+            this._sessionThreads.push(msg.thread);
+            this._sessionArchivedThreads.push(archivedThread)
+
+            for (var observer in this._iterateCallbacks("threads-"+threadContact.jid))
+                observer._addRecord(archivedThread);
+
+            if (msg.isMucMessage)
+                if (this._conferences.indexOf(threadContact) < 0)
+                    for (observer in this._iterateCallbacks("conferences"))
+                        observer._addRecord(threadContact);
+                else if (this._contacts.indexOf(threadContact) < 0)
+                    for (observer in this._iterateCallbacks("contacts"))
+                        observer._addRecord(threadContact);
+        } else
+            archivedThread = this._sessionArchivedThreads[idx];
+
+        var stmt = this.addMessageStmt;
+        stmt.bindInt32Parameter(0, this._getJidId(msg.contact.jid));
+        stmt.bindInt32Parameter(1, msg.type)
+        stmt.bindStringParameter(2, msg.text);
+        stmt.bindStringParameter(3, msg.html);
+        stmt.bindStringParameter(4, msg.nick);
+        stmt.bindInt64Parameter(5, msg.time.getTime());
+        stmt.bindInt32Parameter(6, archivedThread.threadID);
+        stmt.execute();
+
+        if (archivedThread.watched)
+            archivedThread.addMessage(msg, true);
     }
 }
+
+function ArchivedMessagesThread(contact, threadID, time)
+{
+    MessagesThread.call(this, threadID, contact);
+    this.time = time;
+    this.jid = contact.jid;
+    this._nicksHash = {};
+}
+
+_DECL_(ArchivedMessagesThread, MessagesThread).prototype =
+{
+    _lastMessageTime: 0,
+
+    _getContact: function(nick, jid, representsMe)
+    {
+        var contact = account.getContactOrResource(jid);
+        if (contact)
+            return contact;
+        if (nick)
+            if (this._nicksHash[nick])
+                return this._nicksHash[nick];
+            else
+                return this._nicksHash[nick] = {
+                    visibleName: nick,
+                    jid: jid || "dummy@jid/"+nick,
+                    representsMe: representsMe
+                };
+
+        return {visibleName: jid, jid: jid, representsMe: representsMe};
+    },
+
+    addMessage: function(msg, clone) {
+        if (!msg.text)
+            return msg;
+
+        if (clone)
+            msg = new Message(msg.text, msg.html, msg.contact, msg.type,
+                              msg.time, this);
+
+        this.messages.push(msg);
+        this.modelUpdated("messages", {added: [msg]});
+
+        return msg;
+    },
+
+    registerView: function(method, obj)
+    {
+        var watched = this._views["messages"];
+
+        MessagesThread.prototype.registerView.apply(this, arguments);
+
+        if (!watched && this._views["messages"]) {
+            var stmt = account.historyMgr.getThreadMessagesStmt;
+
+            this.watched = true;
+            stmt.bindInt32Parameter(0, this.threadID);
+            stmt.bindInt64Parameter(1, this._lastMessageTime);
+            while (stmt.executeStep()) {
+                try {
+                    var jid = new JID(stmt.getString(0));
+                    var contact = this._getContact(stmt.getString(4), jid,
+                        this.contact.jid.normalizedJID == jid.normalizedJID);
+
+                    this._lastMessageTime = stmt.getInt64(5);
+
+                    this.addMessage(new Message(stmt.getString(2), stmt.getString(3),
+                                                contact, stmt.getInt32(1),
+                                                new Date(this._lastMessageTime), this));
+                } catch (ex) { }
+            }
+            stmt.reset();
+        }
+    },
+
+    unregisterView: function(token)
+    {
+        MessagesThread.prototype.unregisterView.apply(this, arguments);
+        this.watched = this._views["messages"];
+    }
+}
+
 /* #else
 function XEPArchiveThreadsRetriever(jid)
 {
