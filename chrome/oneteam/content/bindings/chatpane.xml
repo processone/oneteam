@@ -10,8 +10,9 @@
     </resources>
 
     <content>
-      <html:iframe src="../content/blank.html" id="output" flex="1" onload="this._loaded = true;
-                   try { this.parentNode._onLoad() } catch(e) {}"/>
+      <html:iframe src="../content/blank.html" id="output" flex="1"
+                   onload="this._loaded = true; var p = this.parentNode;
+                           try { if (!p._initialized &amp;&amp; p._output) p._init() } catch(e) {}"/>
       <xul:stack id="markersContainer">
         <xul:vbox class="marker-arrow"/>
       </xul:stack>
@@ -82,8 +83,12 @@
         this.colorIndex = 1;
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
 
+        //#ifdef XULAP
+        setTimeout(function(a){a._init()}, 200, this);
+        /*#else
         if (this._output._loaded && !this._initialized)
-          this._onLoad();
+          this._init();
+        //#endif*/
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -199,7 +204,7 @@
         ]]></body>
       </method>
 
-      <method name="_onLoad">
+      <method name="_init">
         <body>
           <![CDATA[
             this._initialized = true;
@@ -584,8 +589,9 @@
 
     <content>
       <xul:vbox flex="1" class="inputBox">
-        <html:iframe id="_input" style="height: 1em;" onload="this._loaded = 1;
-          try{if (this.parentNode.parentNode._input) this.parentNode.parentNode._init()}catch(ex){}"/>
+        <html:iframe id="_input" style="height: 1em"
+                     onload="this._loaded = true; var p = this.parentNode.parentNode;
+                             try { if (!p._initialized &amp;&amp; p._input) p._init() } catch(ex) {}"/>
       </xul:vbox>
     </content>
 
@@ -627,9 +633,12 @@
 
         this._history = [];
         this._historyPosition = 0;
-
+        //#ifdef XULAP
+        setTimeout(function(a){a._init()}, 200, this);
+        /*#else
         if (this._input._loaded && !this._initialized)
           this._init();
+        //#endif*/
       ]]></constructor>
 
       <method name="_init">
