@@ -33,6 +33,7 @@
             this._model.unregisterView(this._regToken);
 
           if (val) {
+            this._model = val;
             this._regToken = val.registerView(this._onMessageQueueChanged, this, "messages");
             this._onMessageQueueChanged();
           }
