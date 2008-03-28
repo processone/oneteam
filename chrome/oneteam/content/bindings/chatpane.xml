@@ -666,6 +666,7 @@
           window.addEventListener("resize", function(){ try{me.maybeResize()}catch(ex){} }, false);
 
           doc.addEventListener("keypress", function (event) {
+            event.stopPropagation();
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
               event.preventDefault();
 
@@ -691,7 +692,6 @@
                 !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
               if (me._handleHistoryKey(upKey)) {
                 event.preventDefault();
-                event.stopPropagation();
                 me._onUserType();
                 return false;
               }
@@ -705,7 +705,6 @@
                   me._historyPosition = me._history.length;
                 }
 
-                event.stopPropagation();
                 event.preventDefault();
 
                 me.clear();
@@ -715,6 +714,7 @@
                 return false;
               }
             }
+
             me._onUserType();
             return true;
           }, true);
