@@ -183,6 +183,18 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("conferences", {removed: [conference]});
     },
 
+    getContactOrResource: function(jid) {
+        jid = new JID(jid);
+
+        if (this.allContacts[jid.normalizedJID])
+            return this.allContacts[jid.normalizedJID];
+        if (this.allConferences[jid.normalizedJID])
+            return this.allConferences[jid.normalizedJID];
+        if (this.myResource.jid.normalizedJID == jid.normalizedJID)
+            return this.myResource;
+        return this.resources[jid.normalizedJID];
+    },
+
     setVCard: function(vcardE4X)
     {
         var iq = new JSJaCIQ();
