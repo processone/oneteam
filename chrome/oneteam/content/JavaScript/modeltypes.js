@@ -121,9 +121,12 @@ _DECL_(Model).prototype =
     {
         var idx;
 
-        for each (var view in this._views) {
-            if ((idx = view.indexOf(callback)) >= 0)
-                view.splice(idx, 1);
+        for (var name in this._views) {
+            if ((idx = this._views[name].indexOf(callback)) >= 0)
+                if (this._views[name].length == 1)
+                    delete this._views[name];
+                else
+                    this._views[name].splice(idx, 1);
         }
     },
 
