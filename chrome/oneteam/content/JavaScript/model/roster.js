@@ -728,7 +728,7 @@ _DECL_(MyResourcesContact, Contact).prototype =
     },
 
     onPresence: function() {
-        Contact.onPresence.apply(this, arguments);
+        Contact.prototype.onPresence.apply(this, arguments);
 
         // Explicitly request disco info our other resources
         this.getDiscoInfo(false, function() {});
