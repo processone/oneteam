@@ -3,7 +3,7 @@ package OneTeam::Utils;
 use Exporter;
 
 @ISA = qw(Exporter);
-@EXPORT = qw(slurp unescape_js);
+@EXPORT = qw(slurp unescape_js escape_js_str escape_xml);
 
 sub slurp {
     my $file = shift;
@@ -33,6 +33,29 @@ sub unescape_js {
             length $6 ? "\t" :
             $7
         /gex;
+    return $str;
+}
+
+sub escape_js_str {
+    my $str = shift;
+
+    $str =~ s/(["\\])/\\$1/g;
+    $str =~ s/\n/\\n/g;
+    $str =~ s/\r/\\r/g;
+    $str =~ s/\t/\\t/g;
+
+    return "\"$str\"";
+}
+
+sub escape_xml {
+    my $str = shift;
+
+    $str =~ s/&/&amp;/g;
+    $str =~ s/'/&apos;/g;
+    $str =~ s/"/&quot;/g;
+    $str =~ s/</&lt;/g;
+    $str =~ s/>/&gt;/g;
+
     return $str;
 }
 

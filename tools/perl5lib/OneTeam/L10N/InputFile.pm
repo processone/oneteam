@@ -277,6 +277,7 @@ package OneTeam::L10N::InputFile::String;
 use Moose;
 use Moose::Util::TypeConstraints;
 use OneTeam::L10N::FormattedString;
+use OneTeam::Utils;
 
 coerce 'OneTeam::L10N::FormattedString'
     => from 'Str'
@@ -344,6 +345,12 @@ sub resolve {
     return ($str, "", -1);
 }
 
+sub _cut_flags {
+    my $str = shift;
+    $str =~ s/^\$\$\w+\$\$:\s*//;
+    return $str;
+}
+
 sub _resolve_array {
     my ($self, $array, $locale_bundle, $raw_value) = @_;
     my $result = "";
@@ -359,12 +366,6 @@ sub _resolve {
     my $result;
     my $str = $locale_bundle ? $locale_bundle->get($self->str) : $self->str;
 
-    sub cut_flags {
-        my $str = shift;
-        $str =~ s/^\$\$\w+\$\$:\s*//;
-        return $str;
-    }
-
     if (not $self->js_code) {
         die "Localized string can not be resolved at compilation time at ".
             $self->file->path.":".$self->line unless $self->compile_time_resolvable;
@@ -374,18 +375,11 @@ sub _resolve {
         $result = $str->resolve(@args);
     } else {
         my $to_js = $raw_value ?
-            sub { cut_flags(shift) } :
-            sub {
-                my $str = cut_flags(shift);
-                $str =~ s/(["\\])/\\$1/g;
-                $str =~ s/\n/\\n/g;
-                $str =~ s/\r/\\r/g;
-                $str =~ s/\t/\\t/g;
-                return "\"$str\"";
-            };
+            sub { _cut_flags(shift) } :
+            sub { escape_js_str(_cut_flags(shift)) };
 
         if ($self->compile_time_resolvable) {
-            my @args = map { ref $_ ? $self->_resolve_array($_, $locale_bundle, 1) : cut_flags($_)}
+            my @args = map { ref $_ ? $self->_resolve_array($_, $locale_bundle, 1) : _cut_flags($_)}
                 @{$self->args};
             $result = $to_js->($str->resolve(@args));
         } else {
@@ -395,15 +389,7 @@ sub _resolve {
         }
     }
 
-    if (not $raw_value and $self->escape_xml) {
-        $result =~ s/&/&amp;/g;
-        $result =~ s/'/&apos;/g;
-        $result =~ s/"/&quot;/g;
-        $result =~ s/</&lt;/g;
-        $result =~ s/>/&gt;/g;
-    }
-
-    return $result;
+    return (!$raw_value and $self->escape_xml) ? ::escape_xml($result) : $result;
 }
 
 1;
