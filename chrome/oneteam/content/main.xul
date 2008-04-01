@@ -633,9 +633,9 @@
       </vbox>
       <hbox pack="center">
 <!-- #ifdef XULAPP -->
-        <checkbox id="login-savePass" checked="true" label="Remember password"/>
+        <checkbox id="login-savePass" checked="true" label="_('Remember password')"/>
 <!-- #else
-        <checkbox id="login-savePass" checked="false" label="Remember password"/>
+        <checkbox id="login-savePass" checked="false" label="_('Remember password')"/>
 // #endif -->
       </hbox>
       <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
