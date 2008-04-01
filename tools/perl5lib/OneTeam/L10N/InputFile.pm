@@ -37,12 +37,14 @@ has 'translatable_strings' => (
 );
 
 sub translate {
-    my ($self, $locale_bundle) = @_;
+    my ($self, $locale_bundle, $xulapp_strings) = @_;
     my $content = $self->content;
     local $_;
 
     for (reverse @{$self->strings}) {
-        my ($str, $accesskey, $accesskey_pos) = $_->resolve($locale_bundle);
+        my ($str, $accesskey, $accesskey_pos) = $xulapp_strings ?
+            $_->resolve_for_xulapp($xulapp_strings) :
+            $_->resolve($locale_bundle);
 
         substr($content, $accesskey_pos, 0, " accesskey=\"$accesskey\"")
             if $accesskey_pos > 0;
@@ -335,14 +337,50 @@ has 'translatable_strings' => (
     }
 );
 
+sub _hash_helper {
+    my $str = shift;
+    $str =~ s/\\/\\\\/g;
+    $str =~ s/([\[\]])/\\$1/g;
+    return $str;
+}
+
+sub hash {
+    my $self = shift;
+    my $hash = $self->str->str;
+
+    $hash =~ s/(\$\$.*?\$\$:)\s*/$1/;
+    $hash = _hash_helper($hash);
+
+    for (@{$self->args}) {
+        $hash .= ",[";
+        if (ref $_) {
+            $hash .= "[".join(",", map {ref $_ ? $_->hash : _hash_helper($_)} @$_)."]";
+        } else {
+            $hash .= _hash_helper($_);
+        }
+        $hash .= "]";
+    }
+
+    return "[$hash]";
+}
+
 sub resolve {
-    my ($self, $locale_bundle) = @_;
+    my ($self, $locale_bundle, $xulapp) = @_;
+
     my $str = $self->_resolve($locale_bundle);
 
     return ($str, $1, $self->accesskey_pos)
         if $self->accesskey_pos > 0 and $str =~ s/_(\w)/$1/;
 
     return ($str, "", -1);
+}
+
+sub resolve_for_xulapp {
+    my ($self, $xulapp_strings) = @_;
+
+    my ($str_ref, $accesskey_ref) = $xulapp_strings->get_string_ref($self);
+
+    return ($str_ref, $accesskey_ref, $accesskey_ref ? $self->accesskey_pos : -1);
 }
 
 sub _cut_flags {

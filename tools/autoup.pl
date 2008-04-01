@@ -48,12 +48,13 @@ my %defs = ( REVISION => sub { get_revision($topdir) },
              DEBUG => 1,
              NOJAR => 1);
 
+my $saver = new OneTeam::Builder::Filter::Saver::WebDir($topdir);
 @filters = (
     new OneTeam::Builder::Filter::Preprocessor(%defs),
-    new OneTeam::Builder::Filter::LocaleProcessor::Web(1, split /,/, ($args{LANGS}||"")),
+    new OneTeam::Builder::Filter::LocaleProcessor::Web($saver, 1, split /,/, ($args{LANGS}||"")),
     new OneTeam::Builder::Filter::PathConverter::Web(),
     new OneTeam::Builder::Filter::DialogSizeProcessor(),
-    new OneTeam::Builder::Filter::Saver::WebDir($topdir)
+    $saver
 );
 
 my @all_files;

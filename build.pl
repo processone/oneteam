@@ -34,25 +34,26 @@ $defs{PREFS} = sub { extract_prefs(sub { $_[0] =~ /^chat\./ and $_[0] !~ /^chat\
     File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"));
 };
 
-my $locale_processor = exists $defs{XULAPP} ?
-    new OneTeam::Builder::Filter::LocaleProcessor::XulApp(split /,/, ($defs{LANGS}||"")) :
-    new OneTeam::Builder::Filter::LocaleProcessor::Web(exists $defs{NOJAR}, split /,/, ($defs{LANGS}||""));
+my $saver = exists $defs{XULAPP} ? new OneTeam::Builder::Filter::Saver::XulApp($topdir) :
+    exists $defs{NOJAR} ? new OneTeam::Builder::Filter::Saver::WebDir($topdir) :
+        new OneTeam::Builder::Filter::Saver::WebJar($topdir);
 
-my @filters = exists $defs{XULAPP} ?
+my $locale_processor = exists $defs{XULAPP} ?
+    new OneTeam::Builder::Filter::LocaleProcessor::XulApp($saver, split /,/, ($defs{LANGS}||"")) :
+    new OneTeam::Builder::Filter::LocaleProcessor::Web($saver, exists $defs{NOJAR}, split /,/, ($defs{LANGS}||""));
+
+my @filters = (exists $defs{XULAPP} ?
     (
         new OneTeam::Builder::Filter::Preprocessor(%defs),
         $locale_processor,
-        new OneTeam::Builder::Filter::Saver::XulApp($topdir),
     ) :
     (
         new OneTeam::Builder::Filter::Preprocessor(%defs),
         $locale_processor,
         new OneTeam::Builder::Filter::PathConverter::Web(),
         new OneTeam::Builder::Filter::DialogSizeProcessor(),
-        exists $defs{NOJAR} ?
-            new OneTeam::Builder::Filter::Saver::WebDir($topdir) :
-            new OneTeam::Builder::Filter::Saver::WebJar($topdir),
-    );
+    ),
+    $saver);
 
 my @locales = $locale_processor->locales;
 

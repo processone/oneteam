@@ -50,15 +50,15 @@ sub finalize {
     rcopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
 
     open(my $fh, ">", catfile($chromedir, 'chrome.manifest')) or
-        die "Uanble to create file: $!";
+        die "Unable to create file: $!";
     print $fh "content oneteam jar:oneteam.jar!/content/\n";
 
     print $fh "skin oneteam ".($_ eq 'default' ? 'classic' : $_)."/1.0 ".
-        "jar:oneteam.jar!/skin/$_\n" for keys %{$self->{skins}};
+        "jar:oneteam.jar!/skin/$_/\n" for keys %{$self->{skins}};
 
-    print $fh "locale oneteam $_ jar:oneteam.jar!/locale/$_\n"
-        for keys %{$self->{locales}};
-    print $fh "locale branding en-US jar:oneteam.jar!/locale/branding\n";
+    print $fh "locale oneteam $_ jar:oneteam.jar!/locale/$_/\n"
+        for @{$self->{locales}};
+    print $fh "locale branding en-US jar:oneteam.jar!/locale/branding/\n";
     close($fh);
 
     system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, "oneteam.xulapp")."' .");

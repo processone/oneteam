@@ -83,20 +83,32 @@ var l10nFormatService = {
 }
 
 //#ifdef XULAPP
-function __ (id) {
+function _ (id) {
+    if (id.search(/^p[a-zA-Z]\d*$/) == 0) {
+        id = id.replace(/^\$\$\w+\$\$:\s*/, "");
+
+        if (arguments.length == 1)
+            return id;
+
+        return l10nFormatService.formatString.apply(l10nFormatService, arguments);
+    }
+
     if (!l10nFormatService._bundle) {
         var svc = Components.classes["@mozilla.org/intl/stringbundle;1"].
             getService(Components.interfaces.nsIStringBundleService);
         l10nFormatService._bundle = svc.
             createBundle("chrome://oneteam/locale/oneteam.properties");
     }
-    id = _ (l10nFormatService._bundle.GetStringFromName(id));
+    id = l10nFormatService._bundle.GetStringFromName(id);
+
+    if (arguments.length == 1)
+        return id;
 
     return l10nFormatService.formatString.apply(l10nFormatService, arguments);
 }
-// #endif
-
+/* #else
 function _ (id) {
-    id = id.replace(/^\$\$\w+\$\$:\s*/, "");
+    id = id.replace(/^\$\$\w+\$\$:(?:\s*)/, "");
     return l10nFormatService.formatString.apply(l10nFormatService, arguments);
 }
+// #endif */
