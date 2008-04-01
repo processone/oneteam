@@ -21,19 +21,16 @@ sub new {
 sub analyze {
     my ($self, $content, $file) = @_;
 
-    if ($file =~ /(?:^|[\\\/])locale[\\\/]([^\\\/]*)[\\\/]/ && $1 ne 'branding') {
-        $self->{locales}->{$1} = 1;
-    }
-
-    if ($file =~ /(?:^|[\\\/])skin[\\\/]([^\\\/]*)[\\\/]/) {
-        $self->{skins}->{$1} = 1;
-    }
+    $self->{skins}->{$1} = 1 if $file =~ /(?:^|[\\\/])skin[\\\/]([^\\\/]*)[\\\/]/;
 
     return $content;
 }
 
 sub path_convert {
     my ($self, $file, $locale) = @_;
+
+    return catfile($self->{outputdir}, "locale", $file)
+        if $file =~ /(?:^|[\\\/])branding[\\\/]/;
 
     return catfile($self->{outputdir}, $file);
 }

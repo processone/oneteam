@@ -94,9 +94,9 @@ function __ (id) {
 
     return l10nFormatService.formatString.apply(l10nFormatService, arguments);
 }
-/* #else
+// #endif
+
 function _ (id) {
-    id = id.replace(/^\$\$\w+\$\$:(?:\s*)/, "");
+    id = id.replace(/^\$\$\w+\$\$:\s*/, "");
     return l10nFormatService.formatString.apply(l10nFormatService, arguments);
 }
-// #endif */
