@@ -10,7 +10,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7"><![CDATA[
-    var [service, _title, msg, icon, clickHandler] = window.arguments;
+    var [service, _title, msg, icon, clickAction, win] = window.arguments;
 
     function xmlEscape(str)
     {
@@ -119,8 +119,9 @@
     }
 
     function onClick() {
-      if (clickHandler)
-        clickHandler.call();
+      win.focus();
+      if (clickAction)
+        clickAction.call();
       window.close();
     }
   ]]></script>

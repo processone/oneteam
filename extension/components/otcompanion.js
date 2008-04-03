@@ -38,11 +38,15 @@ NotificationService.prototype =
       this._wwSrv.registerNotification(this);
     }
 
+    var p = arguments.callee;
+    while (p && !(p.__parent__ instanceof nsIDOMWindow))
+        p = p.caller;
+
     win = this._wwSrv.openWindow(null, "chrome://otcompanion/content/notifications.xul",
                                  "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                                  ",screenX="+this._wwSrv.activeWindow.screen.availWidth+
                                  ",screenY="+this._wwSrv.activeWindow.screen.availHeight, null);
-    win.arguments = [this, title, message, iconURI, clickAction];
+    win.arguments = [this, title, message, iconURI, clickAction, p && p.__parent__];
   },
 
   _updatePositions: function(win, closing)

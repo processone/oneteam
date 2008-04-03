@@ -107,10 +107,14 @@ _DECL_(NotificationScheme).prototype =
         if (this._top < 150 || this._wins.length > 8)
             return;
 
+        var p = arguments.callee;
+        while (p.caller)
+            p = p.caller;
+
         var args = ["../content/notifications.xul",
                      "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                      ",screenX="+window.screen.availWidth+
-                     ",screenY="+window.screen.availHeight, this];
+                     ",screenY="+window.screen.availHeight, this, p.__parent__];
         args.push.apply(args, arguments);
         window.openDialog.apply(window, args);
     },
