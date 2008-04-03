@@ -120,8 +120,14 @@
 
     function onClick() {
       win.focus();
-      if (clickAction)
-        clickAction.call();
+      try {
+        if (typeof(clickAction) == "string") {
+          var sandbox = Components.utils.Sandbox(win);
+          sandbox.window = win;
+          Components.utils.evalInSandbox("with(window){(function(){"+clickAction+"}).call(window)}", sandbox);
+        } else if (clickAction)
+          clickAction.call();
+      } catch(ex) {}
       window.close();
     }
   ]]></script>

@@ -142,13 +142,19 @@ _DECL_(NotificationScheme).prototype =
         }
     }
 /* #else
+    _clickHandlers = {},
+    _clickHandlersIdx = 0;
     _showAlert: function(title, msg, icon, clickHandler)
     {
         if (icon.indexOf("..") == 0)
             icon = document.location.href.replace(/content\/.*?$/, "content/"+icon);
 
         try {
-            otNotifications.showMessage(title, msg, icon, clickHandler);
+            otNotifications.showMessage(title, msg, icon, "var s=account.notificationScheme;"+
+                "var h=s["+this._clickHandlersIdx+"];"+
+                "delete s["+this._clickHandlersIdx+"];"+
+                "h.call();");
+            _clickHandlers[this._clickHandlersIdx] = clickHandler;
         } catch(ex) {}
     }
 // #endif */
