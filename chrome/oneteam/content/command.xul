@@ -18,8 +18,6 @@
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
 
   <script type="application/x-javascript;version=1.7"><![CDATA[
-  xmlEscape = window.opener.xmlEscape;
-
   var input;
 
   function onload() {
@@ -259,6 +257,8 @@
 
   function evalInWindow(expr, win) {
     var val;
+    if (!win)
+      win = window;
     try {
       win.__CONSOLE_ARGS__ = { scope: {dump: dump, dumps: dumps}, expr: expr };
 
