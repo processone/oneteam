@@ -5,6 +5,8 @@ const nsIProgrammingLanguage = Components.interfaces.nsIProgrammingLanguage;
 const nsIClassInfo = Components.interfaces.nsIClassInfo;
 const nsISecurityCheckedComponent = Components.interfaces.nsISecurityCheckedComponent;
 const nsISupports = Components.interfaces.nsISupports;
+const nsIDOMWindow = Components.interfaces.nsIDOMWindow;
+const nsIObserver = Components.interfaces.nsIObserver;
 
 function NotificationService()
 {
@@ -16,7 +18,7 @@ NotificationService.prototype =
   _wins: [],
 
   contractID: CONTRACTID,
-  classDescription: "otINotificationBox",
+  classDescription: "otINotificationService",
   classID: CID,
   implementationLanguage: nsIProgrammingLanguage.JAVASCRIPT,
   flags: nsIClassInfo.SINGLETON,
@@ -26,13 +28,20 @@ NotificationService.prototype =
     if (this._top < 150 || this._wins.length > 8)
       return;
 
-    var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
-        getService(Components.interfaces.nsIWindowWatcher);
+    if (!this._wwSrv) {
+      this._obsSrv = Components.classes["@mozilla.org/observer-service;1"].
+        getService(Components.interfaces.nsIObserverService);
+      this._wwSrv = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
+          getService(Components.interfaces.nsIWindowWatcher);
 
-    win = ww.openWindow(null, "chrome://otcompanion/content/notifications.xul",
-                        "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
-                        ",screenX="+ww.activeWindow.screen.availWidth+
-                        ",screenY="+ww.activeWindow.screen.availHeight, null);
+      this._obsSrv.addObserver(this, "quit-application", false);
+      this._wwSrv.registerNotification(this);
+    }
+
+    win = this._wwSrv.openWindow(null, "chrome://otcompanion/content/notifications.xul",
+                                 "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
+                                 ",screenX="+this._wwSrv.activeWindow.screen.availWidth+
+                                 ",screenY="+this._wwSrv.activeWindow.screen.availHeight, null);
     win.arguments = [this, title, message, iconURI, clickAction];
   },
 
@@ -59,11 +68,31 @@ NotificationService.prototype =
     }
   },
 
+  observe: function(subject, topic, data) {
+    if (topic == "domwindowclosed") {
+      var en = this._wwSrv.getWindowEnumerator();
+      while (en.hasMoreElements()) {
+        var w = en.getNext();
+        if (!(w instanceof nsIDOMWindow) ||
+            w.location.href != "chrome://otcompanion/content/notifications.xul")
+          return;
+      }
+    } else if (topic != "quit-application")
+      return;
+
+    this._obsSrv.removeObserver(this, "quit-application");
+    this._wwSrv.unregisterNotification(this);
+
+    for (var i = 0; i < this._wins.length; i++)
+      this._wins[i].close();
+  },
+
   QueryInterface: function(iid)
   {
     if (!iid.equals(otINotificationBox) &&
         !iid.equals(nsISecurityCheckedComponent) &&
         !iid.equals(nsIClassInfo) &&
+        !iid.equals(nsIObserver) &&
         !iid.equals(nsISupports))
       throw Components.results.NS_ERROR_NO_INTERFACE;
 
