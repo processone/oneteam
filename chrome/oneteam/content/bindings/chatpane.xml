@@ -84,7 +84,7 @@
         this.colorIndex = 1;
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
 
-        //#ifdef XULAP
+        //#ifdef XULAPP
         setTimeout(function(a){a._init()}, 200, this);
         /*#else
         if (this._output._loaded && !this._initialized)
@@ -634,7 +634,7 @@
 
         this._history = [];
         this._historyPosition = 0;
-        //#ifdef XULAP
+        //#ifdef XULAPP
         setTimeout(function(a){a._init()}, 200, this);
         /*#else
         if (this._input._loaded && !this._initialized)
