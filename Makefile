@@ -6,6 +6,9 @@ ext:
 xulapp:
 	perl build.pl XULAPP 1
 
+xulappdbg:
+	perl build.pl XULAPP 1 DEBUG 1
+
 webjar:
 	perl build.pl
 
