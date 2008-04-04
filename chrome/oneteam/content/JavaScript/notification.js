@@ -142,8 +142,8 @@ _DECL_(NotificationScheme).prototype =
         }
     }
 /* #else
-    _clickHandlers = {},
-    _clickHandlersIdx = 0;
+    _clickHandlers: {},
+    _clickHandlersIdx: 0,
     _showAlert: function(title, msg, icon, clickHandler)
     {
         if (icon.indexOf("..") == 0)
