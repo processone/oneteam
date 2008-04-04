@@ -8,7 +8,7 @@ use lib qw(tools/perl5lib tools/perl5lib/3rdparty);
 eval {
     require Sub::Name;
 };
-die "Please install perl Sub::Name module (libsub-name-perl in perl)" if $@;
+die "Please install perl Sub::Name module (libsub-name-perl in debian)" if $@;
 
 use File::Find;
 use File::Spec;
