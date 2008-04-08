@@ -12,6 +12,7 @@
   buttonlabelaccept="Join Room" buttonlabelcancel="_('Cancel')"
   onload="onLoad()" ondialogaccept="return joinRoom()">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     var [conference, errorCode, errorMsg] = window.arguments;
     var nick, password;

@@ -10,6 +10,7 @@
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return onAccept();">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     var messages;
     var listControl, typeControl, textControl;

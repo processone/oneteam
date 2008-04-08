@@ -8,6 +8,7 @@
     onload="onLoad()" onunload="onUnload()" persist="width height" windowtype="ot:history"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>

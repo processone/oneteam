@@ -12,6 +12,7 @@
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel" onload="onLoad()" ondialogaccept="return savePrefs()">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     function enableDisableAutoAway(event)
     {

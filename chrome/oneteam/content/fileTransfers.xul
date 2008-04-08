@@ -8,6 +8,7 @@
   width="500" height="350"
   onload="onLoad()" onunload="onUnload()">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>

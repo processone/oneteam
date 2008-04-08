@@ -12,6 +12,7 @@
   buttons="accept,cancel" defaultButton="cancel"
   onload="onLoad()" ondialogaccept="onAccept()">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="application/x-javascript"><![CDATA[
     var contact = window.arguments[0];
 

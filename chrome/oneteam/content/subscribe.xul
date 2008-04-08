@@ -12,6 +12,7 @@
   onload="onLoad()" ondialogaccept="return subscribeContact()"
   ondialogextra2="return denySubscription()">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     var contact = window.arguments[0]
     var reason = window.arguments[1];
