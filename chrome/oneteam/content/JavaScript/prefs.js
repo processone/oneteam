@@ -65,7 +65,9 @@ _DECL_(PrefManager).prototype =
             "number": "setIntPref",
             "boolean": "setBoolPref"
         };
-        this.srv[ map[typeof(value)] || "setCharPref" ](name, value);
+        try {
+            this.srv[ map[typeof(value)] || "setCharPref" ](name, value);
+        } catch(ex) { }
     },
 
     builtinPref: function(name)
@@ -75,7 +77,9 @@ _DECL_(PrefManager).prototype =
 
     deletePref: function(name)
     {
-        this.srv.clearUserPref(name);
+        try {
+            this.srv.clearUserPref(name);
+        } catch(ex) { }
     },
 
     observe: function(subject, topic, value)
