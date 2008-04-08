@@ -407,10 +407,10 @@
   <binding id="dialog" extends="chrome://global/content/bindings/dialog.xml#dialog">
     <content>
       <xul:verifier-error-box flex="1">
-        <xul:verifier flex="1"
+        <xul:verifier flex="1" orient="vertical"
             oninvalid="this.parentNode.parentNode.getButton('accept').disabled = true"
             onvalid="this.parentNode.parentNode.getButton('accept').disabled = false">
-          <xul:vbox class="box-inherit dialog-content-box" flex="1">
+          <xul:vbox class="dialog-content-box" flex="1">
             <children/>
           </xul:vbox>
 
