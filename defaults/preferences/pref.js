@@ -69,5 +69,7 @@ pref("chat.messages.colors", "#ff0000,#6978a3,#46a,#c4d,#3b3,#fa4,#79c,#a7a,#4ca
 pref("chat.editor.font", "serif");
 pref("chat.editor.size", 5);
 
-pref("chat.status.autoaway",5);
-pref("chat.status.autoxa",10);
+pref("chat.status.autoaway", true);
+pref("chat.status.autoaway.time",5);
+pref("chat.status.autoxa", true);
+pref("chat.status.autoxa.time",10);
