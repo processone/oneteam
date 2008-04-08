@@ -3,8 +3,9 @@
 [scriptable, uuid(046e88b2-802f-417c-b709-e928e7e637fd)]
 interface otINotificationBox : nsISupports
 {
-  void showMessage(in AString title, in AString message, in AString iconURI,
-                   in AString clickAction);
+  boolean canShowMessage();
+  boolean showMessage(in AString title, in AString message, in AString iconURI,
+                      in AString clickAction);
 };
 
 %{C++

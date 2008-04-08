@@ -23,10 +23,43 @@ NotificationService.prototype =
   implementationLanguage: nsIProgrammingLanguage.JAVASCRIPT,
   flags: nsIClassInfo.SINGLETON,
 
+  _canShowMessage: function()
+  {
+    var win = arguments.callee;
+    while (win && !(win.__parent__ instanceof nsIDOMWindow))
+        win = win.caller;
+    win = win && win.__parent__;
+
+    if (!win)
+      return null;
+
+    if (!this._popupMgr) {
+      this._popupMgr = Components.classes["@mozilla.org/PopupWindowManager;1"].
+        getService(Components.interfaces.nsIPopupWindowManager);
+      this._ios = Components.classes["@mozilla.org/network/io-service;1"].
+        getService(Components.interfaces.nsIIOService);
+    }
+
+    var uri = this._ios.newURI(win.document.location.href, null, null);
+    if (this._popupMgr.testPermission(uri) != 1)
+      return null;
+
+    return win;
+  },
+
+  canShowMessage: function()
+  {
+    return !!this._canShowMessage();
+  },
+
   showMessage: function(title, message, iconURI, clickAction)
   {
     if (this._top < 150 || this._wins.length > 8)
-      return;
+      return false;
+
+    var cwin = this._canShowMessage();
+    if (!cwin)
+      return false;
 
     if (!this._wwSrv) {
       this._obsSrv = Components.classes["@mozilla.org/observer-service;1"].
@@ -38,15 +71,14 @@ NotificationService.prototype =
       this._wwSrv.registerNotification(this);
     }
 
-    var p = arguments.callee;
-    while (p && !(p.__parent__ instanceof nsIDOMWindow))
-        p = p.caller;
+    var win = this._wwSrv.openWindow(null, "chrome://otcompanion/content/notifications.xul",
+                                     "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
+                                     ",screenX="+this._wwSrv.activeWindow.screen.availWidth+
+                                     ",screenY="+this._wwSrv.activeWindow.screen.availHeight,
+                                     null);
+    win.arguments = [this, title, message, iconURI, clickAction, cwin];
 
-    win = this._wwSrv.openWindow(null, "chrome://otcompanion/content/notifications.xul",
-                                 "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
-                                 ",screenX="+this._wwSrv.activeWindow.screen.availWidth+
-                                 ",screenY="+this._wwSrv.activeWindow.screen.availHeight, null);
-    win.arguments = [this, title, message, iconURI, clickAction, p && p.__parent__];
+    return true;
   },
 
   _updatePositions: function(win, closing)
@@ -127,12 +159,12 @@ NotificationService.prototype =
 
   canCallMethod: function(iid, name)
   {
-    return name == "showMessage" ? "allaccess" : "noaccess";
+    return this.canGetProperty(iid, name);
   },
 
   canGetProperty: function(iid, name)
   {
-    return name == "showMessage" ? "allaccess" : "noaccess";
+    return name == "showMessage" || name == "canShowMessage" ? "allaccess" : "noaccess";
   },
 
   canSetProperty: function(iid, name)
