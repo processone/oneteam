@@ -383,8 +383,8 @@
         savePass = false;
       }
 
-      document.getElementById("login-user").value = username;
-      document.getElementById("login-pass").value = password;
+      document.getElementById("login-user").value = username || "";
+      document.getElementById("login-pass").value = password || "";
       document.getElementById("login-savePass").checked = savePass;
 
       if (("login" in args || args.openchat || args.openconference) && username && password) {
