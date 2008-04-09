@@ -644,14 +644,14 @@
       </hbox>
       <spacer/>
       <hbox id="login-settings-box">
-        <label crop="end" class="text-link" value="_('Startup Settings')"
+        <label flex="1" crop="end" class="text-link" value="_('Startup Settings')"
           onclick="account.showPrefs();"/>
         <label value="|"/>
-        <label crop="end" class="text-link" value="_('New Account')"
+        <label flex="1" crop="end" class="text-link" value="_('New Account')"
           onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
 <!-- #ifdef DEBUG -->
         <label value="|"/>
-        <label crop="end" class="text-link" value="_('Command Console')"
+        <label flex="1" crop="end" class="text-link" value="_('Command Console')"
           onclick="document.getElementById('cmd_cmdConsole').doCommand()"/>
 <!-- #endif -->
       </hbox>
