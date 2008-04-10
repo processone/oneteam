@@ -5,20 +5,20 @@
 
 .closebutton {
   -moz-appearance: none;
-  -moz-image-region: rect(0px, 16px, 16px, 0px);
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
   height: 24px;
   border: none !important;
   padding: 0 0 0 4px;
   cursor: default;
-  list-style-image: url("chrome://global/skin/icons/close.png");
+  list-style-image: url("imgs/close.png");
 }
 
 .closebutton:hover {
-  -moz-image-region: rect(0px, 32px, 16px, 16px);
+  -moz-image-region: rect(0px, 28px, 14px, 14px);
 }
 
 .closebutton:hover:active {
-  -moz-image-region: rect(0px, 48px, 16px, 32px);
+  -moz-image-region: rect(0px, 42px, 14px, 28px);
 }
 
 tab[chatstate=modified] .tab-text {
