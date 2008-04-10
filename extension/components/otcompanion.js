@@ -25,10 +25,10 @@ NotificationService.prototype =
 
   _canShowMessage: function()
   {
-    var win = arguments.callee;
-    while (win && !(win.__parent__ instanceof nsIDOMWindow))
+    var win = arguments.callee.caller;
+    while (win && !(win.__proto__.__parent__ instanceof nsIDOMWindow))
         win = win.caller;
-    win = win && win.__parent__;
+    win = win && win.__proto__.__parent__;
 
     if (!win)
       return null;
