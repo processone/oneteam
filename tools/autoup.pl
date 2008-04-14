@@ -1,12 +1,16 @@
 #!/usr/bin/perl
 
 use Linux::Inotify2;
-use FindBin;
+use FindBin qw($Bin);
 use File::Find;
 use File::Spec;
 use Cwd qw(realpath);
 
-use lib ("$FindBin::Bin/perl5lib", "$FindBin::Bin/perl5lib/3rdparty");
+BEGIN {
+    if ($Bin =~ /^(.*)$/) {$Bin = $1} else {die "BOGUS"}
+};
+
+use lib ("$Bin/perl5lib", "$Bin/perl5lib/3rdparty");
 
 use OneTeam::Builder::Bundle;
 use OneTeam::Utils;
@@ -16,27 +20,7 @@ my %args = @ARGV;
 my $i = new Linux::Inotify2;
 $i->blocking(0);
 
-sub watch_path {
-    my ($path, $recursive) = @_;
-
-    return if $path =~ /(\.swp|~)$/ or $path =~ /\/\.#/ or $path =~ m!(^|[/\\]).svn([/\\]|$)!;
-
-    $i->watch($path, -d $path ?
-              IN_MOVED_TO|IN_CREATE :
-              IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
-
-    find(sub {
-            return if $File::Find::name =~ /(\.swp|~)$/ or $File::Find::name =~ /\/\.#/ or
-                $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
-
-            watch_path($File::Find::name, 0);
-
-            $changed_files{File::Spec->abs2rel($File::Find::name, $topdir)} = 1
-                if -f $File::Find::name;
-        }, $path) if $recursive and -d $path;
-}
-
-my $topdir = realpath(File::Spec->catdir($FindBin::Bin, ".."));
+my $topdir = realpath(File::Spec->catdir($Bin, ".."));
 my $dir = realpath(File::Spec->catdir($topdir, qw(chrome oneteam)));
 
 my %defs = ( REVISION => sub { get_revision($topdir) },
@@ -115,4 +99,24 @@ while (1) {
     }
 
     %changed_files = ();
+}
+
+sub watch_path {
+    my ($path, $recursive) = @_;
+
+    return if $path =~ /(\.swp|~)$/ or $path =~ /\/\.#/ or $path =~ m!(^|[/\\]).svn([/\\]|$)!;
+
+    $i->watch($path, -d $path ?
+              IN_MOVED_TO|IN_CREATE :
+              IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
+
+    find(sub {
+            return if $File::Find::name =~ /(\.swp|~)$/ or $File::Find::name =~ /\/\.#/ or
+                $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
+
+            watch_path($File::Find::name, 0);
+
+            $changed_files{File::Spec->abs2rel($File::Find::name, $topdir)} = 1
+                if -f $File::Find::name;
+        }, $path) if $recursive and -d $path;
 }
