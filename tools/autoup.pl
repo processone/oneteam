@@ -30,17 +30,27 @@ my %defs = ( REVISION => sub { get_revision($topdir) },
                 File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"))
              },
              DEBUG => 1,
+             defined $args{XULAPP} ? (XULAPP => 1) : (),
              NOJAR => 1);
 
-my $saver = new OneTeam::Builder::Filter::Saver::WebDir($topdir);
-@filters = (
-    new OneTeam::Builder::Filter::Preprocessor(%defs),
-    new OneTeam::Builder::Filter::LocaleProcessor::Web($saver, 1, split /,/, ($args{LANGS}||"")),
-    new OneTeam::Builder::Filter::PathConverter::Web(),
-    new OneTeam::Builder::Filter::DialogSizeProcessor(),
-    $saver
-);
-
+my $saver;
+if (defined $args{XULAPP}) {
+    $saver = new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir);
+    @filters = (
+        new OneTeam::Builder::Filter::Preprocessor(%defs),
+        new OneTeam::Builder::Filter::LocaleProcessor::XulApp($saver, split /,/, ($args{LANGS}||"")),
+        $saver
+    );
+} else {
+    $saver = new OneTeam::Builder::Filter::Saver::WebDir($topdir);
+    @filters = (
+        new OneTeam::Builder::Filter::Preprocessor(%defs),
+        new OneTeam::Builder::Filter::LocaleProcessor::Web($saver, 1, split /,/, ($args{LANGS}||"")),
+        new OneTeam::Builder::Filter::PathConverter::Web(),
+        new OneTeam::Builder::Filter::DialogSizeProcessor(),
+        $saver
+    );
+}
 my @all_files;
 my $locale = ($filters[1]->locales)[0];
 
@@ -94,6 +104,8 @@ while (1) {
 
             $input = $_->process($input, File::Spec->abs2rel($file, $dir), $locale)
                 for @filters;
+
+            $_->finalize() for @filters;
         };
         print "ERROR: $@" if $@;
     }

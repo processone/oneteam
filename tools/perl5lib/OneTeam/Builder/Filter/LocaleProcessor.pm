@@ -58,9 +58,9 @@ sub analyze {
 }
 
 package OneTeam::Builder::Filter::LocaleProcessor::Web;
+
 our @ISA;
 push @ISA, 'OneTeam::Builder::Filter::LocaleProcessor';
-#use base 'OneTeam::Builder::Filter::LocaleProcessor';
 
 sub process {
     my ($self, $content, $file, $locale) = @_;
@@ -72,10 +72,10 @@ sub process {
 }
 
 package OneTeam::Builder::Filter::LocaleProcessor::XulApp;
+use File::Spec::Functions qw(catfile);
+
 our @ISA;
 push @ISA, 'OneTeam::Builder::Filter::LocaleProcessor';
-#use base 'OneTeam::Builder::Filter::LocaleProcessor';
-use File::Spec::Functions qw(catfile);
 
 sub new {
     my $class = shift;
@@ -110,6 +110,8 @@ sub finalize {
 
     $self->{saver}->{locales} = $self->{locales};
 
+    return if not $self->{xulapp_strings}->changed;
+
     for (@{$self->{locales}}) {
         my ($props, $entities) = $self->{xulapp_strings}->
             get_locale_files_content($self->{po_files}->{$_});
@@ -130,6 +132,15 @@ sub new {
         string_refs => {},
     };
     bless $self, $class;
+}
+
+sub changed {
+    my $self = shift;
+    my $changed = $self->{changed};
+
+    $self->{changed} = 0;
+
+    return $changed;
 }
 
 sub _gen_js_args {
@@ -155,6 +166,7 @@ sub get_string_ref {
     my $hash = $inp_str->hash();
 
     if (not exists $self->{strings}->{$hash}) {
+        $self->{changed} = 1;
         my $s = $str;
         my $branding_str = $s =~ s/^\$\$branding\$\$://;
 

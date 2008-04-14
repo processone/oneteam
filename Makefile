@@ -9,6 +9,9 @@ xulapp:
 xulappdbg:
 	perl build.pl XULAPP 1 DEBUG 1
 
+xulappflat:
+	perl build.pl XULAPP 1 NOJAR 1 DEBUG 1
+
 webjar:
 	perl build.pl
 
@@ -17,3 +20,9 @@ webjardbg:
 
 webdir:
 	perl build.pl NOJAR 1 DEBUG 1
+
+watch:
+	perl tools/autoup.pl
+
+watchxulapp:
+	perl tools/autoup.pl XULAPP 1

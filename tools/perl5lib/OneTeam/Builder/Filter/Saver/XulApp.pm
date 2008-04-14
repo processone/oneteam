@@ -64,4 +64,43 @@ sub finalize {
     system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, "oneteam.xulapp")."' .");
 }
 
+package OneTeam::Builder::Filter::Saver::XulApp::Flat;
+use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
+use File::Copy;
+use File::Copy::Recursive qw(rcopy);
+
+our @ISA;
+push @ISA, 'OneTeam::Builder::Filter::Saver::XulApp';
+
+sub new {
+    my ($class, $topdir) = @_;
+    my $self = {
+        topdir => $topdir,
+        appdir => catdir($topdir, 'app'),
+        outputdir => catdir($topdir, 'app', 'chrome', 'oneteam'),
+    };
+    bless $self, $class;
+}
+
+sub finalize {
+    my $self = shift;
+
+    copy('application.ini', $self->{appdir});
+    rcopy('defaults', catdir($self->{appdir}, 'defaults'));
+    rcopy('components', catdir($self->{appdir}, 'components'));
+    rcopy(catdir(qw(chrome icons)), catdir($self->{appdir}, 'chrome', 'icons'));
+
+    open(my $fh, ">", catfile($self->{appdir}, 'chrome', 'chrome.manifest')) or
+        die "Unable to create file: $!";
+    print $fh "content oneteam oneteam/content/\n";
+
+    print $fh "skin oneteam ".($_ eq 'default' ? 'classic' : $_)."/1.0 ".
+        "oneteam/skin/$_/\n" for keys %{$self->{skins}};
+
+    print $fh "locale oneteam $_ oneteam/locale/$_/\n"
+        for @{$self->{locales}};
+    print $fh "locale branding en-US oneteam/locale/branding/\n";
+    close($fh);
+}
+
 1;
