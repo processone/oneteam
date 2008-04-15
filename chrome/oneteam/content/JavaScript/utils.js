@@ -310,12 +310,18 @@ _DECL_(CallbacksList).prototype =
         var idx;
 
         if (this._callbacks instanceof Array) {
-            if ((idx = this._callbacks.indexOf(callback)) >= 0)
+            if ((idx = this._callbacks.indexOf(callback)) >= 0) {
+                if (this._callbacks[idx] && this._callbacks[idx].__unregister_handler)
+                    this._callbacks[idx].__unregister_handler();
                 this._callbacks.splice(idx, 1);
+            }
         } else
             for each (var context in this._callbacks)
-                if ((idx = context.indexOf(callback)) >= 0)
+                if ((idx = context.indexOf(callback)) >= 0) {
+                    if (context[idx] && context[idx].__unregister_handler)
+                        context[idx].__unregister_handler();
                     context.splice(idx, 1);
+                }
     },
 
     _dumpStats: function()
