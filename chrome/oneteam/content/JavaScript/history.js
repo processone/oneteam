@@ -421,60 +421,18 @@ _DECL_(XEPArchiveThreadsRetriever).prototype =
 
 function XEPArchiveMessagesRetriever(jid, stamp)
 {
-    MessagesThread.call(this);
+    ArchivedMessagesThreadBase.call(this, jid, null, iso8601TimestampToDate(stamp));
 
-    this.jid = jid;
     this.stamp = stamp;
-    this.date = iso8601TimestampToDate(stamp);
-    this.cache = [];
-    this._nicksHash = {}
+    this._messagesCount = 0;
 }
 
-_DECL_(XEPArchiveMessagesRetriever, null, MessagesThread).prototype =
+_DECL_(XEPArchiveMessagesRetriever, ArchivedMessagesThreadBase).prototype =
 {
-    getContact: function(nick, jid, representsMe)
+    getNewMessages: function()
     {
-        if (nick)
-            if (this._nicksHash[nick])
-                return this._nicksHash[nick];
-            else
-                return this._nicksHash[nick] = {
-                    visibleName: nick,
-                    jid: jid || "dumy@jid/"+nick,
-                    representsMe: representsMe};
-        if (jid == account.myResource)
-            return jid;
-        if (account.contacts[jid])
-            return account.contacts[jid];
-
-        return {visibleName: jid, jid: jid, representsMe: representsMe};
-    },
-
-    deliverData: function(observer)
-    {
-        observer._clear();
-        observer._startBatchUpdate();
-        for (var i = 0; i < this.cache.length; i++)
-            observer._addRecord(this.cache[i]);
-
-        // XXXpfx Find a method for requesting only new messages in collection.
-        // For now request messages only when we don't have nothing in cache.
-        observer._endBatchUpdate(this.cache.length > 0);
-        if (!this.cache.length) {
+        if (!this._messagesCount)
             this.requestNextChunk();
-        }
-    },
-
-    _deliverNewData: function(newMessagesCount, lastChunk, failed)
-    {
-        for (observer in account.historyMgr._iterateCallbacks("messages-"+this.jid+"-"+this.stamp)) {
-            observer._startBatchUpdate();
-            for (var i = newMessagesCount-1; i >= 0; i--)
-                observer._addRecord(this.cache[this.cache.length - i - 1]);
-            observer._endBatchUpdate(lastChunk);
-        }
-        if (lastChunk && !failed)
-            this.lastCheck = new Date();
     },
 
     requestNextChunk: function(rsm)
@@ -502,18 +460,15 @@ _DECL_(XEPArchiveMessagesRetriever, null, MessagesThread).prototype =
 
     processChunk: function(pkt)
     {
-        if (pkt.getType() != "result") {
-            this._deliverNewData(0, true, true);
+        if (pkt.getType() != "result")
             return;
-        }
 
         for (var i = 0, query = pkt.getNode().childNodes;
                 i < query.length && query[i].nodeType != 1; i++)
             ;
-        if (i >= query.length) {
-            this._deliverNewData(0, true, true);
+        if (i >= query.length)
             return;
-        }
+
         query = DOMtoE4X(query[i]);
 
         var archNS = new Namespace("http://www.xmpp.org/extensions/xep-0136.html#ns");
@@ -528,19 +483,16 @@ _DECL_(XEPArchiveMessagesRetriever, null, MessagesThread).prototype =
                                           msg.@jid.toString() || (representsMe ?
                                             account.myResource : this.jid),
                                           representsMe);
-
-            this.cache.push(new Message(msg.archNS::body.text(), null, contact,
+            this.addMessage(new Message(msg.archNS::body.text(), null, contact,
                                         msg.@name.toString().length ? 1 : 0,
                                         new Date(startTime + 1000*msg.@secs),
                                         this));
             newMessagesCount++;
         }
+        this._messagesCount += newMessagesCount;
 
-        if (this.cache.length < +query.rsmNS::count.text()) {
-            this._deliverNewData(newMessagesCount, false)
+        if (this._messagesCount < +query.rsmNS::count.text())
             this.requestNextChunk(query.rsmNS::last.text());
-        } else
-            this._deliverNewData(newMessagesCount, true)
     }
 }
 
@@ -580,16 +532,6 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
         this._threadsRetrv[contact.jid].deliverData(observer);
         return this._registerCallback(observer, token, "threads-"+contact.jid);
-    },
-
-    deliverMessagesFromThread: function(observer, token, thread)
-    {
-        var id = thread.jid+"-"+thread.stamp;
-        if (!this._msgsRetrv[id])
-            this._msgsRetrv[id] = new XEPArchiveMessagesRetriever(thread.jid, thread.stamp)
-
-        this._msgsRetrv[id].deliverData(observer);
-        return this._registerCallback(observer, token, "messages-"+id);
     },
 
     deliverSearchResult: function(observer, token, searchPhrase)
