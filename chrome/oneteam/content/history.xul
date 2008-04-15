@@ -133,7 +133,7 @@
       }
     };
 
-    var searchThreads;
+    var searchThreads, searchMessages;
     var contactsList, contactsThreads, contactsMessages;
     var conferencesList, conferencesThreads, conferencesMessages;
     var regToken = new window.opener.RegistrationToken();
@@ -141,6 +141,7 @@
     function onLoad() {
 // #ifdef XULAPP
       searchThreads = new TreeView(document.getElementById("search-threads"));
+      searchMessages = document.getElementById("search-view");
 // #endif
 
       contactsList = new TreeView(document.getElementById("contacts-list"));
@@ -174,7 +175,15 @@
     {
       if (ev.keyCode != KeyEvent.DOM_VK_RETURN)
         return;
-      searchThreads._update(window.opener.account.historyMgr.findMessages(val));
+
+      if (searchThreads.token){
+        searchThreads.token.unregisterFromAll();
+        regToken.unmerge(searchThreads.token);
+        searchThreads.token = null;
+      }
+      searchThreads._clear();
+
+      searchThreads.token = account.historyMgr.deliverSearchResults(searchThreads, regToken, val);
     }
 
     function updateThreads(tree, view)

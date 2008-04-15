@@ -130,7 +130,7 @@ function HistoryManager()
                     ORDER BY time ASC;
         </sql>.toString());
     this.findMsgsStmt = this.db.createStatement(<sql>
-            SELECT M.id, thread_id, J.jid, M.time FROM messages M, threads T, jids J
+            SELECT thread_id, J.jid, T.time FROM messages M, threads T, jids J
                 WHERE body LIKE '%'|| ?1 ||'%' AND T.id = M.thread_id AND J.id = T.jid_id
                 GROUP BY thread_id
                 ORDER BY T.time DESC;
@@ -147,6 +147,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
     _archivedThreads: {},
     _sessionThreads: [],
     _sessionArchivedThreads: [],
+    _searchPhrases: [],
 
     _loadJIDs: function() {
         var jidsById = {};
@@ -195,6 +196,14 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         return this._archivedThreads[id] = new ArchivedMessagesThread(contact, id, date);
     },
 
+    _removeSearchPhrase: function() {
+        var sp = HistoryManager.prototype._searchPhrases;
+        var idx = sp.indexOf(this);
+
+        if (idx >= 0)
+            sp.splice(idx, 1);
+    },
+
     deliverContactsList: function(observer, token)
     {
         if (!this._contacts)
@@ -238,9 +247,27 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         return this._registerCallback(observer, token, "threads-"+contact.jid);
     },
 
-    deliverSearchResult: function(observer, token, searchPhrase)
+    deliverSearchResults: function(observer, token, searchPhrase)
     {
-        return null;
+        var info = {
+            observer: observer,
+            phrase: searchPhrase,
+            __unregister_handler: this._removeSearchPhrase
+        };
+
+        var stmt = this.findMsgsStmt;
+        stmt.bindStringParameter(0, searchPhrase);
+
+        observer._startBatchUpdate();
+        while (stmt.executeStep())
+            observer._addRecord(this._getArchivedThread(stmt.getString(1),
+                                                        stmt.getInt32(0),
+                                                        new Date(stmt.getInt64(2))));
+
+        stmt.reset();
+        observer._endBatchUpdate(true);
+
+        return this._registerCallback(info, token, "searches");
     },
 
     addMessage: function(msg)
@@ -534,7 +561,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         return this._registerCallback(observer, token, "threads-"+contact.jid);
     },
 
-    deliverSearchResult: function(observer, token, searchPhrase)
+    deliverSearchResults: function(observer, token, searchPhrase)
     {
         return null;
     },
