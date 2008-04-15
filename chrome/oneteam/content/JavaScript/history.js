@@ -252,6 +252,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         var info = {
             observer: observer,
             phrase: searchPhrase,
+            threads: [],
             __unregister_handler: this._removeSearchPhrase
         };
 
@@ -259,13 +260,18 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         stmt.bindStringParameter(0, searchPhrase);
 
         observer._startBatchUpdate();
-        while (stmt.executeStep())
-            observer._addRecord(this._getArchivedThread(stmt.getString(1),
-                                                        stmt.getInt32(0),
-                                                        new Date(stmt.getInt64(2))));
+        while (stmt.executeStep()) {
+            var thr = this._getArchivedThread(stmt.getString(1),
+                                              stmt.getInt32(0),
+                                              new Date(stmt.getInt64(2)));
+            info.threads.push(thr);
+            observer._addRecord(thr);
+        }
 
         stmt.reset();
         observer._endBatchUpdate(true);
+
+        this._searchPhrases.push(info);
 
         return this._registerCallback(info, token, "searches");
     },
@@ -315,6 +321,14 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
         if (archivedThread.watched)
             archivedThread.addMessage(msg, true);
+
+        for (var i = 0; i < this._searchPhrases.length; i++)
+            if (msg.text.indexOf(this._searchPhrases[i].phrase) >= 0 &&
+                this._searchPhrases[i].threads.indexOf(archivedThread) < 0)
+            {
+                this._searchPhrases[i].observer._addRecord(archivedThread);
+                this._searchPhrases[i].threads.push(archivedThread);
+            }
     }
 }
 
