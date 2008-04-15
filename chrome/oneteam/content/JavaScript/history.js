@@ -1,5 +1,11 @@
 function ArchivedMessagesThreadBase(contact, threadID, time)
 {
+    if (typeof(contact) == "string")
+        contact = new JID(contact);
+
+    if (contact instanceof JID)
+        contact = this._getContact(contact.node, contact, false);
+
     MessagesThread.call(this, threadID, contact);
     this.time = time;
     this.jid = contact.jid;
