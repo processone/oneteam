@@ -603,7 +603,7 @@
     <key id="key_themes" modifiers="control" key="T" command="cmd_themes"/>
 <!-- #endif -->
     <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
-    <key id="key_help" modifiers="control" key="H" command="cmd_help"/>
+    <key id="key_help" key="F1" command="cmd_help"/>
 <!-- #ifdef DEBUG -->
     <key id="key_xmlConsole" modifiers="control" key="C" command="cmd_xmlConsole"/>
 <!-- #ifdef XULAPP -->
