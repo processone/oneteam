@@ -52,7 +52,9 @@ _DECL_(XMPPSocket).prototype =
     },
 
     startTLS: function() {
-        this.transport.securityInfo.StartTLS();
+        this.transport.securityInfo.
+            QueryInterface(Components.interfaces.nsISSLSocketControl).
+            StartTLS();
     },
 
     reset: function() {
