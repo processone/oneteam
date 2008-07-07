@@ -20,8 +20,10 @@ sub new {
 sub path_convert {
     my ($self, $file, $locale) = @_;
 
-    return if
-        $file =~ /skin[\/\\](?!default)/;
+    return undef if
+        $file =~ /skin[\/\\](?!default)/i or
+        $file =~ /content[\/\\]data[\/\\]sounds/i or
+        $file =~ /jsjac[\/\\](COPYING|AUTHORS)/i;
 
     $file =~ s!^skin[/\\]default!skin!;
 
