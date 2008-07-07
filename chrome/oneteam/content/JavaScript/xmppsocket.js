@@ -121,7 +121,12 @@ _DECL_(XMPPSocket).prototype =
 
     characters: function(data)
     {
-        if (this.parent)
+        if (!this.parent)
+            return;
+
+        if (this.parent.lastChild && this.parent.lastChild.nodeType == this.parent.TEXT_NODE)
+            this.parent.lastChild.appendData(data);
+        else
             this.parent.appendChild(this.doc.createTextNode(data));
     },
 
