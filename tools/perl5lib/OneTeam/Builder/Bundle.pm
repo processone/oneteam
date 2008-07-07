@@ -7,6 +7,7 @@ sub import {
             Preprocessor Saver Saver::WebDir Saver::WebJar Saver::XulApp);
 
     eval("package ".scalar(caller()).";".(join "", map "use $_;", @pkgs));
+    die $@ if $@;
 }
 
 1;
