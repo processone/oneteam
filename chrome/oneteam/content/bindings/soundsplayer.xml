@@ -18,6 +18,12 @@
 
     <implementation>
       <constructor><![CDATA[
+// #ifdef XULAPP
+        this._player = Components.classes["@mozilla.org/sound;1"].
+          createInstance(Components.interfaces.nsISound);
+        this._ios = Components.classes["@mozilla.org/network/io-service;1"].
+          getService(Components.interfaces.nsIIOService);
+/* #else
         if (window.top.playSound) {
           this._flash = { playSound: window.top.playSound,  stopSound: window.top.stopSound };
           return;
@@ -32,10 +38,11 @@
         flash.setAttribute("type", "application/x-shockwave-flash");
         flash.setAttribute("bgcolor", "#FFFFFF");
         flash.setAttribute("src", document.location.toString().
-          replace(/(?:jar:)?(.*?)(?:(?:\/[^\/!]+!\/)|\/content\/).*/, "$1/sounds/player.swf"));
+          replace(/(?:jar:)?(.*?)(?:(?:\/[^\/!]+!\/)|\/content\/).*$/, "$1/sounds/player.swf"));
         document.getAnonymousElementByAttribute(this, "anonid", "box").appendChild(flash);
 
         this._flash = flash;
+// #endif */
       ]]></constructor>
 
       <method name="playSound">
@@ -45,11 +52,15 @@
           try {
             if (!prefManager.getPref("chat.sounds"))
               return;
-            if (this._flash)
+            if (this._player) {
+              var url = this._ios.newURI("chrome://oneteam/content/data/sounds/"+
+                                         type+".wav", null, null);
+              this._player.play(url);
+            } else if (this._flash)
               this._flash.playSound(document.location.toString().
                 replace(/(?:jar:)?(.*?)(?:(?:\/[^\/!]+!\/)|\/content\/).*/, "$1/sounds/"+type+".mp3"),
                 loops);
-          } catch(ex){}
+          } catch(ex){ alert(ex)}
         ]]></body>
       </method>
       <method name="stopSound">
