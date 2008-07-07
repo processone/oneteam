@@ -261,7 +261,14 @@
     if (!win)
       win = window;
     try {
-      win.__CONSOLE_ARGS__ = { scope: {dump: dump, dumps: dumps}, expr: expr };
+      win.__CONSOLE_ARGS__ = {
+        scope: {
+          dump: dump,
+          dumps: dumps,
+          startVenkman: startVenkman
+        },
+        expr: expr
+      };
 
       val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
         "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", win);
@@ -307,6 +314,11 @@
     var arr = [];
     arr.push.apply(arr, arguments);
     dump(arr);
+  }
+
+  function startVenkman() {
+    window.open("chrome://venkman/content/venkman.xul", "mozapp:venkman",
+                "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar");
   }
   ]]></script>
 
