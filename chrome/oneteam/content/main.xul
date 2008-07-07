@@ -25,6 +25,7 @@
   <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
+  <script type="text/javascript" src="lib/jsjac/JSJaCMozillaConnection.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaCConsoleLogger.js"/>
   <script type="text/javascript" src="lib/jsjac/JSJaC.js"/>
 
@@ -50,6 +51,7 @@
   <script type="text/javascript;version=1.7" src="JavaScript/services/rosterx.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/services/adhoc.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/services/privacy.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/xmppsocket.js"/>
 <!-- #ifdef XULAPP -->
   <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
 <!-- #else

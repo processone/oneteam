@@ -316,7 +316,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var namePart;
         if ((namePart = name.replace(/^chat\.connection\./, "")) != name) {
             if (namePart != "host" && namePart != "base" && namePart != "user" &&
-                namePart != "pass" && namePart != "port" && namePart != "polling" &&
+                namePart != "pass" && namePart != "port" && namePart != "type" &&
                 namePart != "domain")
                 return;
 
@@ -424,8 +424,19 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             }},
             timerval: 2000};
 
-        var con = this.connectionInfo.polling ? new JSJaCHttpPollingConnection(args) :
-            new JSJaCHttpBindingConnection(args);
+        var con;
+        switch (this.connectionInfo.type) {
+// #ifdef XULAPP
+            case "native":
+                con = new JSJaCMozillaConnection(args);
+                break;
+// #endif
+            case "http-bind":
+                con = new JSJaCHttpBindingConnection(args);
+                break;
+            default:
+                con = new JSJaCHttpPollingConnection(args);
+        }
 
         con.registerHandler("message", function(p){account.onMessage(p)});
         con.registerHandler("presence", function(p){account.onPresence(p)});

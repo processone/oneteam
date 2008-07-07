@@ -43,10 +43,10 @@ pref("chat.connection.priority", 5);
 pref("chat.connection.base", "http-poll");
 pref("chat.connection.resource", "OneTeam");
 pref("chat.connection.host", "process-one.net");
-pref("chat.connection.port", 5280);
+pref("chat.connection.port", 5222);
+pref("chat.connection.type", "native");
 pref("chat.connection.ssl", false);
 pref("chat.connection.overridehost", false);
-pref("chat.connection.polling", true);
 
 pref("chat.roster.showoffline", false);
 pref("chat.roster.filtered", false);

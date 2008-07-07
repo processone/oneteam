@@ -217,3 +217,9 @@ _DECL_(PrefManager).prototype =
 //#endif */
 
 var prefManager = new PrefManager();
+if (!prefManager.getPref("chat.connection.type")) {
+    this.prefManager.setPref("chat.connection.type",
+                             prefManager.getPref("chat.connection.polling") ?
+                                "http-polling" : "http-bind");
+    this.prefManager.deletePref("chat.connection.polling");
+}

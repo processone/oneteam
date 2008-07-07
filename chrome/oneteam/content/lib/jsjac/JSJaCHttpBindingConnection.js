@@ -149,7 +149,7 @@ JSJaCHttpBindingConnection.prototype._getRequestString = function(raw, last) {
     if (last)
       reqstr += "type='terminate' ";
     else if (this._reinit) {
-      if (JSJACHBC_USE_BOSH_VER) 
+      if (JSJACHBC_USE_BOSH_VER)
         reqstr += "xmpp:restart='true' ";
       this._reinit = false;
     }
@@ -169,7 +169,7 @@ JSJaCHttpBindingConnection.prototype._getRequestString = function(raw, last) {
           i < this._rid-this._hold)
         delete(this._last_requests[i]); // truncate
   }
-	
+
   return reqstr;
 };
 
@@ -344,13 +344,13 @@ JSJaCHttpBindingConnection.prototype._parseResponse = function(req) {
         return null;
       }
       this.oDbg.log("repeating ("+this._errcnt+")",1);
-     
+
       this._setStatus('proto_error_fallback');
-     
+
       // schedule next tick
       setTimeout(JSJaC.bind(this._resume, this),
                  this.getPollInterval());
-     
+
       return null;
     }
   } catch (e) {
@@ -361,12 +361,12 @@ JSJaCHttpBindingConnection.prototype._parseResponse = function(req) {
 	  this._abort();
 	} else {
 	  this.oDbg.log("repeating ("+this._errcnt+")",1);
-     
+
 	  this._setStatus('proto_error_fallback');
-     
+
 	  // schedule next tick
 	  setTimeout(JSJaC.bind(this._resume, this),
-                     this.getPollInterval()); 
+                     this.getPollInterval());
     }
     return null;
   }

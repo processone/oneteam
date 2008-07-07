@@ -65,6 +65,7 @@
         if (window.opener.prefManager.builtinPref(pref[0]))
           prefElems[i].disabled = true;
       }
+      switchHTTPOptions(document.getElementById("protocol"));
     }
 
     function focusElement(el)
@@ -140,6 +141,36 @@
       rli.appendChild(label);
       return rli;
     }
+
+    var prevType;
+    function switchHTTPOptions(el) {
+      el.parentNode.nextSibling.collapsed = el.value != "native";
+      el.parentNode.nextSibling.nextSibling.collapsed = el.value == "native";
+
+      if (!prevType) {
+        prevType = el.value;
+        return;
+      }
+
+      var port = document.getElementById("port");
+      var portVal = el.parentNode.nextSibling.checked ? "5223" : "5222"
+
+      if (prevType == "native") {
+        if (el.value != "native" && port.value == portVal)
+          port.value = 5280
+      } else if (el.value == "native"  && port.value == "5280")
+        port.value = portVal;
+
+      prevType = el.value;
+    }
+
+    function switchSSLOption(el) {
+      var port = document.getElementById("port");
+      if (el.checked && port.value == "5222")
+        port.value = 5223;
+      if (!el.checked && port.value == "5223")
+        port.value = 5222;
+    }
   ]]></script>
 
   <tabbox flex="1">
@@ -169,7 +200,7 @@
             </row>
             <row>
               <label value="_('Port:')"/>
-              <textbox pref="chat.connection.port=value:int"/>
+              <textbox id="port" pref="chat.connection.port=value:int"/>
             </row>
             <row>
               <label value="_('Resource:')"/>
@@ -180,11 +211,22 @@
               <textbox pref="chat.connection.priority=value:int"/>
             </row>
             <row>
+              <label value="_('Protocol:')"/>
+              <menulist id="protocol" pref="chat.connection.type=value"
+                        oncommand="switchHTTPOptions(this)">
+                <menupopup>
+                  <menuitem label="Native" value="native"/>
+                  <menuitem label="HTTP Bind" value="http-bind"/>
+                  <menuitem label="HTTP Polling" value="http-polling"/>
+                </menupopup>
+              </menulist>
+            </row>
+            <checkbox label="_('SSL Connection')" pref="chat.connection.ssl=checked"
+                      oncommand="switchSSLOption(this)"/>
+            <row>
               <label value="_('HTTP Base:')"/>
               <textbox pref="chat.connection.base=value"/>
             </row>
-            <checkbox label="_('Use HTTP-Polling')"
-                      pref="chat.connection.polling=checked"/>
           </rows>
         </grid>
       </tabpanel>
