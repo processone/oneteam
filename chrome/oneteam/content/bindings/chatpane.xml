@@ -1096,6 +1096,8 @@
           }
           me._output._output.contentWindow.addEventListener("keypress", function(event) {
             if (event.charCode && !event.ctrlKey && !event.altKey) {
+              event.stopPropagation();
+              event.preventDefault();
               me._input._append(String.fromCharCode(event.charCode));
               me.focus();
             }
