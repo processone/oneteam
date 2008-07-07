@@ -164,7 +164,10 @@ _DECL_(XMPPSocket).prototype =
 
     onStopRequest: function(request, context, status)
     {
-        this.saxParser.onStopRequest.apply(this.saxParser, arguments);
+        this.listener._handleDisconnect();
+        try {
+            this.saxParser.onStopRequest.apply(this.saxParser, arguments);
+        } catch(ex) { }
     },
 
     // EventSink
