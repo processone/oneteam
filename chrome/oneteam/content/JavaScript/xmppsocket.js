@@ -48,8 +48,10 @@ _DECL_(XMPPSocket).prototype =
     },
 
     send: function(data) {
-        data = this.converter.encode(data);
-        this.bos.writeBytes(data, data.length);
+        try {
+            data = this.converter.encode(data);
+            this.bos.writeBytes(data, data.length);
+        } catch(ex) {}
     },
 
     startTLS: function() {
