@@ -17,6 +17,7 @@
     <implementation implements="otISystrayListener">
       <constructor>
         <![CDATA[
+          try {
             this._systray = Components.classes["@process-one.net/systray;1"].
               createInstance(Components.interfaces.otISystray);
             this._systray.init(this);
@@ -26,6 +27,7 @@
             this.icon = this.getAttribute("icon");
             this._win = window.openDialog("chrome://oneteam/content/bindings/systrayhelper.xul",
                                           "_blank", "chrome=yes,dialog=no,popup=yes");
+          } catch (ex) { this._systray = null; report("developer", "error", ex) }
         ]]>
       </constructor>
 
@@ -54,7 +56,7 @@
                 img.src = val;
                 this._systray.icon = img;
                 this.hidden = this._hidden;
-              } catch(ex) {alert(ex)}
+              } catch(ex) { report("developer", "error", ex) }
             }
 
             return val;
@@ -241,4 +243,3 @@
     </handlers>
   </binding>
 </bindings>
-
