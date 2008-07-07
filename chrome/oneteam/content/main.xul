@@ -932,12 +932,12 @@
 
       <menuitem label="_('Information...')"
         oncommand="this.parentNode.model.showVCard()"/>
-      <menuitem label="Show History..."
+      <menuitem label="_('Show History...')"
         oncommand="this.parentNode.model.onShowHistory()"/>
 
       <menuseparator/>
 
-      <menuitem id="conference-leave" label="Leave conference"
+      <menuitem id="conference-leave" label="_('Leave conference')"
           oncommand="this.parentNode.model.exitRoom()"/>
     </popup>
 
@@ -947,40 +947,40 @@
 
       <menuseparator/>
 
-      <menuitem id="conferencemember-kick" label="Kick..."
+      <menuitem id="conferencemember-kick" label="_('Kick...')"
           oncommand="this.parentNode.model.onKick()"/>
-      <menuitem id="conferencemember-ban" label="Ban..."
+      <menuitem id="conferencemember-ban" label="_('Ban...')"
           oncommand="this.parentNode.model.onBan()"/>
-      <menu id="conferencemember-affiliations" label="Affiliation">
+      <menu id="conferencemember-affiliations" label="_('Affiliation')">
         <menupopup>
           <menuitem id="conferencemember-affiliation-owner" name="affiliations"
-            type="radio" label="Owners"
+            type="radio" label="_('Owner')"
             oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('owner')"/>
           <menuitem id="conferencemember-affiliation-admin" name="affiliations"
-            type="radio" label="Administrators"
+            type="radio" label="_('Administrator')"
             oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('admin')"/>
           <menuitem id="conferencemember-affiliation-member" name="affiliations"
-            type="radio" label="Members"
+            type="radio" label="_('Member')"
             oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('member')"/>
           <menuitem id="conferencemember-affiliation-none" name="affiliations"
-            type="radio" label="None"
+            type="radio" label="_('None')"
             oncommand="this.parentNode.parentNode.parentNode.model.setAffiliation('none')"/>
         </menupopup>
       </menu>
 
-      <menu id="conferencemember-roles" label="Role">
+      <menu id="conferencemember-roles" label="_('Role')">
         <menupopup>
           <menuitem id="conferencemember-role-moderator" name="roles"
-            type="radio" label="Moderator"
+            type="radio" label="_('Moderator')"
             oncommand="this.parentNode.parentNode.parentNode.model.setRole('moderator')"/>
           <menuitem id="conferencemember-role-participant" name="roles"
-            type="radio" label="Participant"
+            type="radio" label="_('Participant')"
             oncommand="this.parentNode.parentNode.parentNode.model.setRole('participant')"/>
           <menuitem id="conferencemember-role-visitor" name="roles"
-            type="radio" label="Visitor"
+            type="radio" label="_('Visitor')"
             oncommand="this.parentNode.parentNode.parentNode.model.setRole('visitor')"/>
           <menuitem id="conferencemember-role-none" name="roles"
-            type="radio" label="None"
+            type="radio" label="_('None')"
             oncommand="this.parentNode.parentNode.parentNode.model.setRole('none')"/>
         </menupopup>
       </menu>
@@ -989,7 +989,7 @@
 
       <menuitem label="_('Information...')"
         oncommand="this.parentNode.model.showVCard()"/>
-      <menuitem label="Show History..."
+      <menuitem label="_('Show History...')"
         oncommand="this.parentNode.model.onShowHistory()"/>
       <menuitem id="conferencemember-send-file" label="_('Send file...')"
         oncommand="this.parentNode.model.onSendFile()"/>
@@ -1001,21 +1001,21 @@
 
       <menuseparator/>
 
-      <menuitem id="gateway-login" label="Login"
+      <menuitem id="gateway-login" label="_('Login')"
         oncommand="this.parentNode.model.login()"/>
-      <menuitem id="gateway-logout" label="Logout"
+      <menuitem id="gateway-logout" label="_('Logout')"
         oncommand="this.parentNode.model.logout()"/>
 
       <menuseparator/>
 
       <menuitem label="_('Information...')"
         oncommand="this.parentNode.model.showVCard()"/>
-      <menuitem label="Show History..."
+      <menuitem label="_('Show History...')"
         oncommand="this.parentNode.model.onShowHistory()"/>
 
       <menuseparator/>
 
-      <menuitem label="Remove..."
+      <menuitem label="_('Remove...')"
         oncommand="this.parentNode.model.onRemove()"/>
     </popup>
   </popupset>
