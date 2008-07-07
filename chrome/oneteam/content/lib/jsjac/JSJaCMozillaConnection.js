@@ -106,7 +106,7 @@ JSJaCMozillaConnection.prototype = {
           this._onDisconnect();
           return;
         case "features":
-          if (node.getElementsByTagNameNS("urn:ietf:params:xml:ns:xmpp-tls", "starttls").length) {
+          if (node.getElementsByTagNameNS("urn:ietf:params:xml:ns:xmpp-tls", "starttls").length && 0) {
             this._sendRaw("<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>")
             return;
           }
