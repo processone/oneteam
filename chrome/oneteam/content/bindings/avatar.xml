@@ -87,17 +87,28 @@
         ]]></body>
       </method>
 
+      <method name="_normalize_url">
+        <parameter name="url"/>
+        <body><![CDATA[
+          var tmp;
+
+          if (/^file:/.test(url))
+            return url.replace(/.*[\\\/]/, "");
+
+          if (!/^\w+:/.test(url))
+            url = document.location.href.replace(/[^\/]+$/, "/")+url;
+
+          while ((tmp = url.replace(/\/[^\/]\/\.\.\//g, "/")) != url)
+            url = tmp;
+          return tmp.replace(/\\/g, "/");
+        ]]></body>
+      </method>
+
       <method name="onImageLoad">
         <body><![CDATA[
-          if (this._src != this._image.src) {
-            relD = this._src.split(/\.\.\//);
-            idx = relD.lastIndexOf("")+1;
-            var absSrc = document.location.href.split(/\//).slice(0, -idx-1).
-              concat(relD[idx]).join("/");
-            if (absSrc != this._image.src) {
-              this._image.src = this._src;
-              return;
-            }
+          if (this._normalize_url(this._src) != this._normalize_url(this._image.src)) {
+            this._image.src = this._src;
+            return;
           }
 
           this._image.width = this._image.height = 1;
