@@ -190,7 +190,7 @@ JSJaCPacket.prototype.getChild = function(name, ns) {
   if (!this.getNode()) {
     return null;
   }
- 
+
   name = name || '*';
   ns = ns || '*';
 
@@ -311,7 +311,7 @@ JSJaCPacket.prototype._replaceNode = function(aNode) {
     else
       this.getNode().appendChild(aNode.childNodes.item(i).cloneNode(true));
 };
- 
+
 /**
  * Set node value of a child node
  * @private
@@ -324,8 +324,13 @@ JSJaCPacket.prototype._setChildNode = function(nodeName, nodeValue) {
       aNode.replaceChild(tNode,aNode.firstChild);
     } catch (e) { }
   else {
-    aNode = this.getNode().appendChild(this.getDoc().
-                                       createElement(nodeName));
+    try {
+      aNode = this.getDoc().createElementNS(this.getNode().namespaceURI,
+                                            nodeName);
+    } catch (ex) {
+      aNode = this.getDoc().createElement(nodeName)
+    }
+    this.getNode().appendChild(aNode);
     aNode.appendChild(tNode);
   }
   return aNode;
@@ -671,4 +676,3 @@ JSJaCPacket.wrapNode = function(node) {
 
   return aNode;
 };
-
