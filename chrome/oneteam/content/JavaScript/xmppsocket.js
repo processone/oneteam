@@ -34,6 +34,7 @@ _DECL_(XMPPSocket).prototype =
 
         this.transport = stSrv.createTransport([this.ssl ? "ssl" : "starttls"], 1,
                                                this.host, this.port, proxyInfo);
+        this.transport.setEventSink(this, mainThread);
         this.is = this.transport.openInputStream(0, 0, 0);
         var pump = Components.classes['@mozilla.org/network/input-stream-pump;1'].
             createInstance(Components.interfaces.nsIInputStreamPump);
@@ -161,5 +162,36 @@ _DECL_(XMPPSocket).prototype =
     onStopRequest: function(request, context, status)
     {
         this.saxParser.onStopRequest.apply(this.saxParser, arguments);
+    },
+
+    // EventSink
+
+    onTransportStatus: function(transport, status, progress, progressMax)
+    {
+        if (status != transport.STATUS_CONNECTING_TO)
+            return;
+
+        try {
+            var si = this.transport.securityInfo.
+                QueryInterface(Components.interfaces.nsISSLSocketControl);
+            if (si)
+                si.notificationCallbacks = {
+                    notifyCertProblem: function(info, status, host) {
+                        return false;
+                    },
+
+                    getInterface: function(iid) {
+                        return this.QueryInterface(iid);
+                    },
+
+                    QueryInterface: function(iid) {
+                        if (!iid.equals(Components.interfaces.nsISupports) &&
+                            !iid.equals(Components.interfaces.nsIInterfaceRequestor) &&
+                            !iid.equals(Components.interfaces.nsBadCertListener2))
+                            throw Components.results.NS_ERROR_NO_INTERFACE;
+                        return this;
+                    }
+                }
+        } catch (ex) {alert(ex)}
     }
 };
