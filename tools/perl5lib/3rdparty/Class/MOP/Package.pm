@@ -8,17 +8,10 @@ use warnings;
 use Scalar::Util 'blessed';
 use Carp         'confess';
 
-our $VERSION   = '0.05';
+our $VERSION   = '0.62';
 our $AUTHORITY = 'cpan:STEVAN';
 
 use base 'Class::MOP::Object';
-
-# introspection
-
-sub meta { 
-    require Class::MOP::Class;
-    Class::MOP::Class->initialize(blessed($_[0]) || $_[0]);
-}
 
 # creation ...
 
@@ -47,7 +40,7 @@ sub initialize {
 # all these attribute readers will be bootstrapped 
 # away in the Class::MOP bootstrap section
 
-sub name      { $_[0]->{'$!package'}   }
+sub name      { $_[0]->{'$!package'} }
 sub namespace { 
     # NOTE:
     # because of issues with the Perl API 
@@ -57,7 +50,7 @@ sub namespace {
     # we could just store a ref and it would
     # Just Work, but oh well :\    
     no strict 'refs';    
-    \%{$_[0]->name . '::'} 
+    \%{$_[0]->{'$!package'} . '::'} 
 }
 
 # utility methods
@@ -76,7 +69,7 @@ sub namespace {
         (defined $variable)
             || confess "You must pass a variable name";    
 
-        my ($sigil, $name) = ($variable =~ /^(.)(.*)$/); 
+        my $sigil = substr($variable, 0, 1, '');
 
         (defined $sigil)
             || confess "The variable name must include a sigil";    
@@ -84,7 +77,7 @@ sub namespace {
         (exists $SIGIL_MAP{$sigil})
             || confess "I do not recognize that sigil '$sigil'";    
         
-        return ($name, $sigil, $SIGIL_MAP{$sigil});
+        return ($variable, $sigil, $SIGIL_MAP{$sigil});
     }
 }
 
@@ -95,11 +88,15 @@ sub namespace {
 sub add_package_symbol {
     my ($self, $variable, $initial_value) = @_;
 
-    my ($name, $sigil, $type) = $self->_deconstruct_variable_name($variable); 
+    my ($name, $sigil, $type) = ref $variable eq 'HASH'
+        ? @{$variable}{qw[name sigil type]}
+        : $self->_deconstruct_variable_name($variable); 
+
+    my $pkg = $self->{'$!package'};
 
     no strict 'refs';
     no warnings 'redefine', 'misc';    
-    *{$self->name . '::' . $name} = ref $initial_value ? $initial_value : \$initial_value;      
+    *{$pkg . '::' . $name} = ref $initial_value ? $initial_value : \$initial_value;      
 }
 
 sub remove_package_glob {
@@ -113,9 +110,13 @@ sub remove_package_glob {
 sub has_package_symbol {
     my ($self, $variable) = @_;
 
-    my ($name, $sigil, $type) = $self->_deconstruct_variable_name($variable); 
+    my ($name, $sigil, $type) = ref $variable eq 'HASH'
+        ? @{$variable}{qw[name sigil type]}
+        : $self->_deconstruct_variable_name($variable);
     
-    return 0 unless exists $self->namespace->{$name};   
+    my $namespace = $self->namespace;
+    
+    return 0 unless exists $namespace->{$name};   
     
     # FIXME:
     # For some really stupid reason 
@@ -125,55 +126,83 @@ sub has_package_symbol {
     # this. Which of course means that 
     # if you put \undef in your scalar
     # then this is broken.
-    
-    if ($type eq 'SCALAR') {    
-        my $val = *{$self->namespace->{$name}}{$type};
-        defined(${$val}) ? 1 : 0;        
+
+    if (ref($namespace->{$name}) eq 'SCALAR') {
+        return ($type eq 'CODE' ? 1 : 0);
+    }
+    elsif ($type eq 'SCALAR') {    
+        my $val = *{$namespace->{$name}}{$type};
+        return defined(${$val}) ? 1 : 0;        
     }
     else {
-        defined(*{$self->namespace->{$name}}{$type}) ? 1 : 0;
+        defined(*{$namespace->{$name}}{$type}) ? 1 : 0;
     }
 }
 
 sub get_package_symbol {
     my ($self, $variable) = @_;    
 
-    my ($name, $sigil, $type) = $self->_deconstruct_variable_name($variable); 
+    my ($name, $sigil, $type) = ref $variable eq 'HASH'
+        ? @{$variable}{qw[name sigil type]}
+        : $self->_deconstruct_variable_name($variable);
+
+    my $namespace = $self->namespace;
 
     $self->add_package_symbol($variable)
-        unless exists $self->namespace->{$name};
-    return *{$self->namespace->{$name}}{$type};
+        unless exists $namespace->{$name};
+
+    if (ref($namespace->{$name}) eq 'SCALAR') {
+        if ($type eq 'CODE') {
+            no strict 'refs';
+            return \&{$self->name.'::'.$name};
+        }
+        else {
+            return undef;
+        }
+    }
+    else {
+        return *{$namespace->{$name}}{$type};
+    }
 }
 
 sub remove_package_symbol {
     my ($self, $variable) = @_;
 
-    my ($name, $sigil, $type) = $self->_deconstruct_variable_name($variable); 
+    my ($name, $sigil, $type) = ref $variable eq 'HASH'
+        ? @{$variable}{qw[name sigil type]}
+        : $self->_deconstruct_variable_name($variable);
 
     # FIXME:
     # no doubt this is grossly inefficient and 
     # could be done much easier and faster in XS
 
+    my ($scalar_desc, $array_desc, $hash_desc, $code_desc) = (
+        { sigil => '$', type => 'SCALAR', name => $name },
+        { sigil => '@', type => 'ARRAY',  name => $name },
+        { sigil => '%', type => 'HASH',   name => $name },
+        { sigil => '&', type => 'CODE',   name => $name },
+    );
+
     my ($scalar, $array, $hash, $code);
     if ($type eq 'SCALAR') {
-        $array  = $self->get_package_symbol('@' . $name) if $self->has_package_symbol('@' . $name);
-        $hash   = $self->get_package_symbol('%' . $name) if $self->has_package_symbol('%' . $name);     
-        $code   = $self->get_package_symbol('&' . $name) if $self->has_package_symbol('&' . $name);     
+        $array  = $self->get_package_symbol($array_desc)  if $self->has_package_symbol($array_desc);
+        $hash   = $self->get_package_symbol($hash_desc)   if $self->has_package_symbol($hash_desc);     
+        $code   = $self->get_package_symbol($code_desc)   if $self->has_package_symbol($code_desc);     
     }
     elsif ($type eq 'ARRAY') {
-        $scalar = $self->get_package_symbol('$' . $name) if $self->has_package_symbol('$' . $name);
-        $hash   = $self->get_package_symbol('%' . $name) if $self->has_package_symbol('%' . $name);     
-        $code   = $self->get_package_symbol('&' . $name) if $self->has_package_symbol('&' . $name);
+        $scalar = $self->get_package_symbol($scalar_desc) if $self->has_package_symbol($scalar_desc);
+        $hash   = $self->get_package_symbol($hash_desc)   if $self->has_package_symbol($hash_desc);     
+        $code   = $self->get_package_symbol($code_desc)   if $self->has_package_symbol($code_desc);
     }
     elsif ($type eq 'HASH') {
-        $scalar = $self->get_package_symbol('$' . $name) if $self->has_package_symbol('$' . $name);
-        $array  = $self->get_package_symbol('@' . $name) if $self->has_package_symbol('@' . $name);        
-        $code   = $self->get_package_symbol('&' . $name) if $self->has_package_symbol('&' . $name);      
+        $scalar = $self->get_package_symbol($scalar_desc) if $self->has_package_symbol($scalar_desc);
+        $array  = $self->get_package_symbol($array_desc)  if $self->has_package_symbol($array_desc);        
+        $code   = $self->get_package_symbol($code_desc)   if $self->has_package_symbol($code_desc);      
     }
     elsif ($type eq 'CODE') {
-        $scalar = $self->get_package_symbol('$' . $name) if $self->has_package_symbol('$' . $name);
-        $array  = $self->get_package_symbol('@' . $name) if $self->has_package_symbol('@' . $name);        
-        $hash   = $self->get_package_symbol('%' . $name) if $self->has_package_symbol('%' . $name);        
+        $scalar = $self->get_package_symbol($scalar_desc) if $self->has_package_symbol($scalar_desc);
+        $array  = $self->get_package_symbol($array_desc)  if $self->has_package_symbol($array_desc);        
+        $hash   = $self->get_package_symbol($hash_desc)   if $self->has_package_symbol($hash_desc);        
     }    
     else {
         confess "This should never ever ever happen";
@@ -181,21 +210,47 @@ sub remove_package_symbol {
         
     $self->remove_package_glob($name);
     
-    $self->add_package_symbol(('$' . $name) => $scalar) if defined $scalar;      
-    $self->add_package_symbol(('@' . $name) => $array)  if defined $array;    
-    $self->add_package_symbol(('%' . $name) => $hash)   if defined $hash;
-    $self->add_package_symbol(('&' . $name) => $code)   if defined $code;            
+    $self->add_package_symbol($scalar_desc => $scalar) if defined $scalar;      
+    $self->add_package_symbol($array_desc  => $array)  if defined $array;    
+    $self->add_package_symbol($hash_desc   => $hash)   if defined $hash;
+    $self->add_package_symbol($code_desc   => $code)   if defined $code;            
 }
 
 sub list_all_package_symbols {
     my ($self, $type_filter) = @_;
-    return keys %{$self->namespace} unless defined $type_filter;
+
+    my $namespace = $self->namespace;
+    return keys %{$namespace} unless defined $type_filter;
+    
     # NOTE:
     # or we can filter based on 
     # type (SCALAR|ARRAY|HASH|CODE)
-    my $namespace = $self->namespace;
     return grep { 
-        defined(*{$namespace->{$_}}{$type_filter}) 
+        (ref($namespace->{$_})
+            ? (ref($namespace->{$_}) eq 'SCALAR' && $type_filter eq 'CODE')
+            : (ref(\$namespace->{$_}) eq 'GLOB'
+               && defined(*{$namespace->{$_}}{$type_filter})));
+    } keys %{$namespace};
+}
+
+sub get_all_package_symbols {
+    my ($self, $type_filter) = @_;
+    my $namespace = $self->namespace;
+    return %{$namespace} unless defined $type_filter;
+    
+    # NOTE:
+    # or we can filter based on 
+    # type (SCALAR|ARRAY|HASH|CODE)
+    no strict 'refs';
+    return map { 
+        $_ => (ref($namespace->{$_}) eq 'SCALAR'
+                    ? ($type_filter eq 'CODE' ? \&{$self->name . '::' . $_} : undef)
+                    : *{$namespace->{$_}}{$type_filter})
+    } grep { 
+        (ref($namespace->{$_})
+            ? (ref($namespace->{$_}) eq 'SCALAR' && $type_filter eq 'CODE')
+            : (ref(\$namespace->{$_}) eq 'GLOB'
+               && defined(*{$namespace->{$_}}{$type_filter})));
     } keys %{$namespace};
 }
 
@@ -203,4 +258,4 @@ sub list_all_package_symbols {
 
 __END__
 
-#line 286
+#line 352

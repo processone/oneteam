@@ -5,7 +5,7 @@ package Moose::Meta::Instance;
 use strict;
 use warnings;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.51';
 our $AUTHORITY = 'cpan:STEVAN';
 
 use base "Class::MOP::Instance";
@@ -14,4 +14,4 @@ use base "Class::MOP::Instance";
 
 __END__
 
-#line 51
+#line 61

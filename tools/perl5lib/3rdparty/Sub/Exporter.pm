@@ -1,19 +1,19 @@
 #line 1 "Sub/Exporter.pm"
-package Sub::Exporter;
-
+use 5.006;
 use strict;
 use warnings;
+package Sub::Exporter;
 
 use Carp ();
 use Data::OptList ();
 use Params::Util ();
 use Sub::Install 0.92 ();
 
-#line 22
+#line 20
 
-our $VERSION = '0.974';
+our $VERSION = '0.979';
 
-#line 375
+#line 400
 
 # Given a potential import name, this returns the group name -- if it's got a
 # group prefix.
@@ -107,7 +107,7 @@ sub _expand_group {
     delete $group_arg->{-prefix};
     delete $group_arg->{-suffix};
 
-    my $group = Params::Util::_CODELIKE($exports)
+    my $group = Params::Util::_CODELIKE($exports) ## no critic Private
               ? $exports->($class, $group_name, $group_arg, $collection)
               : $class->$$exports($group_name, $group_arg, $collection);
 
@@ -128,25 +128,17 @@ sub _expand_group {
   }
 }
 
-# Given a config and pre-canonicalized importer args, remove collections from
-# the args and return them.
-sub _collect_collections {
-  my ($config, $import_args, $class, $into) = @_;
-  my %collection;
-
-  my @collections
-    = map  { splice @$import_args, $_, 1 }
-      grep { exists $config->{collectors}{ $import_args->[$_][0] } }
-      reverse 0 .. $#$import_args;
+sub _mk_collection_builder {
+  my ($col, $etc) = @_;
+  my ($config, $import_args, $class, $into) = @$etc;
 
   my %seen;
-  for my $collection (@collections) {
+  sub {
+    my ($collection) = @_;
     my ($name, $value) = @$collection;
 
     Carp::croak "collection $name provided multiple times in import"
       if $seen{ $name }++;
-
-    $collection{ $name } = $value;
 
     if (ref(my $hook = $config->{collectors}{$name})) {
       my $arg = {
@@ -158,26 +150,44 @@ sub _collect_collections {
       };
 
       my $error_msg = "collection $name failed validation";
-      if (Params::Util::_SCALAR0($hook)) {
+      if (Params::Util::_SCALAR0($hook)) { ## no critic Private
         Carp::croak $error_msg unless $class->$$hook($value, $arg);
       } else {
         Carp::croak $error_msg unless $hook->($value, $arg);
       }
     }
-  }
 
-  return \%collection;
+    $col->{ $name } = $value;
+  }
 }
 
-#line 554
+# Given a config and pre-canonicalized importer args, remove collections from
+# the args and return them.
+sub _collect_collections {
+  my ($config, $import_args, $class, $into) = @_;
 
-# \%special is for experimental options that may or may not be kept around and,
-# probably, moved to \%config.  These are also passed along to build_exporter.
+  my @collections
+    = map  { splice @$import_args, $_, 1 }
+      grep { exists $config->{collectors}{ $import_args->[$_][0] } }
+      reverse 0 .. $#$import_args;
+
+  unshift @collections, [ INIT => {} ] if $config->{collectors}{INIT};
+
+  my $col = {};
+  my $builder = _mk_collection_builder($col, \@_);
+  for my $collection (@collections) {
+    $builder->($collection)
+  }
+
+  return $col;
+}
+
+#line 592
 
 sub setup_exporter {
   my ($config)  = @_;
 
-  Carp::croak q(into and into_level may not both be supplied to exporter)
+  Carp::croak 'into and into_level may not both be supplied to exporter'
     if exists $config->{into} and exists $config->{into_level};
 
   my $as   = delete $config->{as}   || 'import';
@@ -195,7 +205,7 @@ sub setup_exporter {
   });
 }
 
-#line 589
+#line 624
 
 sub _key_intersection {
   my ($x, $y) = @_;
@@ -211,7 +221,17 @@ my %valid_config_key;
 BEGIN {
   %valid_config_key =
     map { $_ => 1 }
-    qw(collectors exporter exports groups into into_level)
+    qw(as collectors installer generator exports groups into into_level),
+    qw(exporter), # deprecated
+}
+
+sub _assert_collector_names_ok {
+  my ($collectors) = @_;
+
+  for my $reserved_name (grep { /\A[_A-Z]+\z/ } keys %$collectors) {
+    Carp::croak "unknown reserved collector name: $reserved_name"
+      if $reserved_name ne 'INIT';
+  }
 }
 
 sub _rewrite_build_config {
@@ -224,6 +244,15 @@ sub _rewrite_build_config {
   Carp::croak q(into and into_level may not both be supplied to exporter)
     if exists $config->{into} and exists $config->{into_level};
 
+  # XXX: Remove after deprecation period.
+  if ($config->{exporter}) {
+    Carp::cluck "'exporter' argument to build_exporter is deprecated. Use 'installer' instead; the semantics are identical.";
+    $config->{installer} = delete $config->{exporter};
+  }
+
+  Carp::croak q(into and into_level may not both be supplied to exporter)
+    if exists $config->{into} and exists $config->{into_level};
+
   for (qw(exports collectors)) {
     $config->{$_} = Data::OptList::mkopt_hash(
       $config->{$_},
@@ -231,6 +260,8 @@ sub _rewrite_build_config {
       [ 'CODE', 'SCALAR' ],
     );
   }
+
+  _assert_collector_names_ok($config->{collectors});
 
   if (my @names = _key_intersection(@$config{qw(exports collectors)})) {
     Carp::croak "names (@names) used in both collections and exports";
@@ -252,6 +283,9 @@ sub _rewrite_build_config {
 
   # by default, build an all-inclusive 'all' group
   $config->{groups}{all} ||= [ keys %{ $config->{exports} } ];
+
+  $config->{generator} ||= \&default_generator;
+  $config->{installer} ||= \&default_installer;
 }
 
 sub build_exporter {
@@ -267,6 +301,11 @@ sub build_exporter {
     Carp::croak q(into and into_level may not both be supplied to exporter)
       if exists $special->{into} and exists $special->{into_level};
 
+    if ($special->{exporter}) {
+      Carp::cluck "'exporter' special import argument is deprecated. Use 'installer' instead; the semantics are identical.";
+      $special->{installer} = delete $special->{exporter};
+    }
+
     my $into
       = defined $special->{into}       ? delete $special->{into}
       : defined $special->{into_level} ? caller(delete $special->{into_level})
@@ -274,9 +313,8 @@ sub build_exporter {
       : defined $config->{into_level}  ? caller($config->{into_level})
       :                                  caller(0);
 
-    my $export = delete $special->{exporter}
-              || $config->{exporter}
-              || \&default_exporter;
+    my $generator = delete $special->{generator} || $config->{generator};
+    my $installer = delete $special->{installer} || $config->{installer};
 
     # this builds a AOA, where the inner arrays are [ name => value_ref ]
     my $import_args = Data::OptList::mkopt([ @_ ]);
@@ -289,51 +327,67 @@ sub build_exporter {
     my $to_import = _expand_groups($class, $config, $import_args, $collection);
 
     # now, finally $import_arg is really the "to do" list
-    for (@$to_import) {
-      _do_import($class, @$_, $collection, $config, $into, $export);
-    }
+    _do_import(
+      {
+        class     => $class,
+        col       => $collection,
+        config    => $config,
+        into      => $into,
+        generator => $generator,
+        installer => $installer,
+      },
+      $to_import,
+    );
   };
 
   return $import;
 }
 
 sub _do_import {
-  my ($class, $name, $arg, $collection, $config, $into, $export) = @_;
+  my ($arg, $to_import) = @_;
 
-  my ($generator, $as);
+  my @todo;
 
-  if ($arg and Params::Util::_CODELIKE($arg)) { ## no critic
-    # This is the case when a group generator has inserted name/code pairs.
-    $generator = sub { $arg };
-    $as = $name;
-  } else {
-    $arg = { $arg ? %$arg : () };
+  for my $pair (@$to_import) {
+    my ($name, $import_arg) = @$pair;
 
-    Carp::croak qq("$name" is not exported by the $class module)
-      unless (exists $config->{exports}{$name});
+    my ($generator, $as);
 
-    $generator = $config->{exports}{$name};
+    if ($import_arg and Params::Util::_CODELIKE($import_arg)) { ## no critic
+      # This is the case when a group generator has inserted name/code pairs.
+      $generator = sub { $import_arg };
+      $as = $name;
+    } else {
+      $import_arg = { $import_arg ? %$import_arg : () };
 
-    $as = exists $arg->{-as} ? (delete $arg->{-as}) : $name;
+      Carp::croak qq("$name" is not exported by the $arg->{class} module)
+        unless exists $arg->{config}{exports}{$name};
+
+      $generator = $arg->{config}{exports}{$name};
+
+      $as = exists $import_arg->{-as} ? (delete $import_arg->{-as}) : $name;
+    }
+
+    my $code = $arg->{generator}->(
+      { 
+        class     => $arg->{class},
+        name      => $name,
+        arg       => $import_arg,
+        col       => $arg->{col},
+        generator => $generator,
+      }
+    );
+
+    push @todo, $as, $code;
   }
 
-  $export->($class, $generator, $name, $arg, $collection, $as, $into);
-}
-
-# XXX: Consider implementing a _export_args routine that takes the arguments to
-# _export and returns a hash of named params.  This lets other people write
-# exporters without tying me down to one set of @_ contents.  Maybe that's
-# premature guarantee, though, unless I guarantee that @_ will never get
-# /smaller/.
-
-#line 730
-
-sub default_exporter {
-  my ($class, $generator, $name, $arg, $collection, $as, $into) = @_;
-  _install(
-    _generate($class, $generator, $name, $arg, $collection),
-    $into,
-    $as,
+  $arg->{installer}->(
+    {
+      class => $arg->{class},
+      into  => $arg->{into},
+      col   => $arg->{col},
+    },
+    \@todo,
   );
 }
 
@@ -352,8 +406,11 @@ sub default_exporter {
 #   }
 # }
 
-sub _generate {
-  my ($class, $generator, $name, $arg, $collection) = @_;
+#line 842
+
+sub default_generator {
+  my ($arg) = @_;
+  my ($class, $name, $generator) = @$arg{qw(class name generator)};
 
   if (not defined $generator) {
     my $code = $class->can($name)
@@ -364,29 +421,45 @@ sub _generate {
   # I considered making this "$class->$generator(" but it seems that
   # overloading precedence would turn an overloaded-as-code generator object
   # into a string before code. -- rjbs, 2006-06-11
-  return $generator->($class, $name, $arg, $collection)
-    if Params::Util::_CODELIKE($generator);
+  return $generator->($class, $name, $arg->{arg}, $arg->{col})
+    if Params::Util::_CODELIKE($generator); ## no critic Private
 
   # This "must" be a scalar reference, to a generator method name.
   # -- rjbs, 2006-12-05
-  return $class->$$generator($name, $arg, $collection);
+  return $class->$$generator($name, $arg->{arg}, $arg->{col});
 }
 
-sub _install {
-  my ($code, $into, $as) = @_;
-  # Allow as isa ARRAY to push onto an array?
-  # Allow into isa HASH to install name=>code into hash?
+#line 881
 
-  if (ref $as eq 'SCALAR') {
-    $$as = $code;
-  } elsif (ref $as) {
-    Carp::croak "invalid reference type for $as: " . ref $as;
-  } else {
-    Sub::Install::reinstall_sub({ code => $code, into => $into, as => $as });
+sub default_installer {
+  my ($arg, $to_export) = @_;
+
+  for (my $i = 0; $i < @$to_export; $i += 2) {
+    my ($as, $code) = @$to_export[ $i, $i+1 ];
+
+    # Allow as isa ARRAY to push onto an array?
+    # Allow into isa HASH to install name=>code into hash?
+
+    if (ref $as eq 'SCALAR') {
+      $$as = $code;
+    } elsif (ref $as) {
+      Carp::croak "invalid reference type for $as: " . ref $as;
+    } else {
+      Sub::Install::reinstall_sub({
+        code => $code,
+        into => $arg->{into},
+        as   => $as
+      });
+    }
   }
 }
 
-#line 796
+sub default_exporter {
+  Carp::cluck "default_exporter is deprecated; call default_installer instead; the semantics are identical";
+  goto &default_installer;
+}
+
+#line 933
 
 setup_exporter({
   exports => [
@@ -413,8 +486,8 @@ sub _setup {
   return;
 }
 
-#line 927
+#line 1064
 
-#line 964
+#line 1100
 
 "jn8:32"; # <-- magic true value

@@ -7,34 +7,31 @@ use warnings;
 
 use Scalar::Util 'weaken', 'blessed';
 
-our $VERSION   = '0.03';
+our $VERSION   = '0.62';
 our $AUTHORITY = 'cpan:STEVAN';
 
-sub meta { 
-    require Class::MOP::Class;
-    Class::MOP::Class->initialize(blessed($_[0]) || $_[0]);
-}
+use base 'Class::MOP::Object';
 
-sub new { 
+sub new {
     my ($class, $meta, @attrs) = @_;
     my @slots = map { $_->slots } @attrs;
     my $instance = bless {
         # NOTE:
         # I am not sure that it makes
         # sense to pass in the meta
-        # The ideal would be to just 
-        # pass in the class name, but 
-        # that is placing too much of 
-        # an assumption on bless(), 
+        # The ideal would be to just
+        # pass in the class name, but
+        # that is placing too much of
+        # an assumption on bless(),
         # which is *probably* a safe
-        # assumption,.. but you can 
+        # assumption,.. but you can
         # never tell <:)
         '$!meta'  => $meta,
         '@!slots' => { map { $_ => undef } @slots },
-    } => $class; 
-    
+    } => $class;
+
     weaken($instance->{'$!meta'});
-    
+
     return $instance;
 }
 
@@ -64,14 +61,14 @@ sub get_all_slots {
 
 sub is_valid_slot {
     my ($self, $slot_name) = @_;
-    exists $self->{'@!slots'}->{$slot_name} ? 1 : 0;
+    exists $self->{'@!slots'}->{$slot_name};
 }
 
 # operations on created instances
 
 sub get_slot_value {
     my ($self, $instance, $slot_name) = @_;
-    return $instance->{$slot_name};
+    $instance->{$slot_name};
 }
 
 sub set_slot_value {
@@ -81,7 +78,7 @@ sub set_slot_value {
 
 sub initialize_slot {
     my ($self, $instance, $slot_name) = @_;
-    $self->set_slot_value($instance, $slot_name, undef);
+    #$self->set_slot_value($instance, $slot_name, undef);
 }
 
 sub deinitialize_slot {
@@ -105,17 +102,22 @@ sub deinitialize_all_slots {
 
 sub is_slot_initialized {
     my ($self, $instance, $slot_name, $value) = @_;
-    exists $instance->{$slot_name} ? 1 : 0;
+    exists $instance->{$slot_name};
 }
 
 sub weaken_slot_value {
-	my ($self, $instance, $slot_name) = @_;
-	weaken $instance->{$slot_name};
+    my ($self, $instance, $slot_name) = @_;
+    weaken $instance->{$slot_name};
 }
 
 sub strengthen_slot_value {
-	my ($self, $instance, $slot_name) = @_;
-	$self->set_slot_value($instance, $slot_name, $self->get_slot_value($instance, $slot_name));
+    my ($self, $instance, $slot_name) = @_;
+    $self->set_slot_value($instance, $slot_name, $self->get_slot_value($instance, $slot_name));
+}
+
+sub rebless_instance_structure {
+    my ($self, $instance, $metaclass) = @_;
+    bless $instance, $metaclass->name;
 }
 
 # inlinable operation snippets
@@ -139,7 +141,7 @@ sub inline_get_slot_value {
 
 sub inline_set_slot_value {
     my ($self, $instance, $slot_name, $value) = @_;
-    $self->inline_slot_access($instance, $slot_name) . " = $value", 
+    $self->inline_slot_access($instance, $slot_name) . " = $value",
 }
 
 sub inline_initialize_slot {
@@ -153,7 +155,7 @@ sub inline_deinitialize_slot {
 }
 sub inline_is_slot_initialized {
     my ($self, $instance, $slot_name) = @_;
-    "exists " . $self->inline_slot_access($instance, $slot_name) . " ? 1 : 0";
+    "exists " . $self->inline_slot_access($instance, $slot_name);
 }
 
 sub inline_weaken_slot_value {
@@ -170,5 +172,5 @@ sub inline_strengthen_slot_value {
 
 __END__
 
-#line 339
+#line 336
 

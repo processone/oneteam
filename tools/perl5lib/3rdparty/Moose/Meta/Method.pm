@@ -4,7 +4,7 @@ package Moose::Meta::Method;
 use strict;
 use warnings;
 
-our $VERSION   = '0.01';
+our $VERSION   = '0.51';
 our $AUTHORITY = 'cpan:STEVAN';
 
 use base 'Class::MOP::Method';
@@ -13,4 +13,4 @@ use base 'Class::MOP::Method';
 
 __END__
 
-#line 48
+#line 47

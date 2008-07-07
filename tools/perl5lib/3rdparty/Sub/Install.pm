@@ -9,7 +9,7 @@ use Scalar::Util ();
 
 #line 20
 
-our $VERSION = '0.92';
+our $VERSION = '0.924';
 
 #line 89
 
@@ -23,8 +23,9 @@ sub _name_of_code {
 
 # See also Params::Util, to which this code was donated.
 sub _CODELIKE {
-  (Scalar::Util::reftype($_[0])||'') eq 'CODE' or Scalar::Util::blessed($_[0])
-    and overload::Method($_[0],'&{}') ? $_[0] : undef;
+  (Scalar::Util::reftype($_[0])||'') eq 'CODE'
+  || Scalar::Util::blessed($_[0])
+  && (overload::Method($_[0],'&{}') ? $_[0] : undef);
 }
 
 # do the heavy lifting
@@ -80,7 +81,7 @@ sub _do_with_warn {
   my $wants_code = sub {
     my $code = shift;
     sub {
-      my $warn = $SIG{__WARN__} ? $SIG{__WARN__} : sub { warn @_ };
+      my $warn = $SIG{__WARN__} ? $SIG{__WARN__} : sub { warn @_ }; ## no critic
       local $SIG{__WARN__} = sub {
         my ($error) = @_;
         for (@{ $arg->{suppress} }) {
@@ -94,7 +95,6 @@ sub _do_with_warn {
         for (@{ $arg->{carp} }) {
           if (my ($base_error) = $error =~ /\A($_) $eow_re/x) {
             return $warn->(Carp::shortmess $base_error);
-            last;
           }
         }
         ($arg->{default} || $warn)->($error);
@@ -109,7 +109,7 @@ sub _do_with_warn {
 sub _installer {
   sub {
     my ($pkg, $name, $code) = @_;
-    no strict 'refs';
+    no strict 'refs'; ## no critic ProhibitNoStrict
     *{"$pkg\::$name"} = $code;
     return $code;
   }

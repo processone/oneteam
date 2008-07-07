@@ -6,8 +6,12 @@ use strict;
 use warnings;
 use metaclass;
 
-our $VERSION   = '0.04';
+use Moose::Meta::TypeCoercion::Union;
+
+our $VERSION   = '0.51';
 our $AUTHORITY = 'cpan:STEVAN';
+
+use base 'Moose::Meta::TypeConstraint';
 
 __PACKAGE__->meta->add_attribute('type_constraints' => (
     accessor  => 'type_constraints',
@@ -15,76 +19,60 @@ __PACKAGE__->meta->add_attribute('type_constraints' => (
 ));
 
 sub new { 
-    my $class = shift;
-    my $self  = $class->meta->new_object(@_);
+    my ($class, %options) = @_;
+    my $self = $class->SUPER::new(
+        name     => (join ' | ' => map { $_->name } @{$options{type_constraints}}),
+        parent   => undef,
+        message  => undef,
+        hand_optimized_type_constraint => undef,
+        compiled_type_constraint => sub {
+            my $value = shift;
+            foreach my $type (@{$options{type_constraints}}) {
+                return 1 if $type->check($value);
+            }
+            return undef;    
+        },
+        %options
+    );
+    $self->_set_constraint(sub { $self->check($_[0]) });
+    $self->coercion(Moose::Meta::TypeCoercion::Union->new(
+        type_constraint => $self
+    ));
     return $self;
 }
 
-sub name { join ' | ' => map { $_->name } @{$_[0]->type_constraints} }
+sub equals {
+    my ( $self, $type_or_name ) = @_;
 
-# NOTE:
-# this should probably never be used
-# but we include it here for completeness
-sub constraint    { 
+    my $other = Moose::Util::TypeConstraints::find_type_constraint($type_or_name);
+
+    return unless $other->isa(__PACKAGE__);
+
+    my @self_constraints  = @{ $self->type_constraints };
+    my @other_constraints = @{ $other->type_constraints };
+
+    return unless @self_constraints == @other_constraints;
+
+    # FIXME presort type constraints for efficiency?
+    constraint: foreach my $constraint ( @self_constraints ) {
+        for ( my $i = 0; $i < @other_constraints; $i++ ) {
+            if ( $constraint->equals($other_constraints[$i]) ) {
+                splice @other_constraints, $i, 1;
+                next constraint;
+            }
+        }
+    }
+
+    return @other_constraints == 0;
+}
+
+sub parents {
     my $self = shift;
-    sub { $self->check($_[0]) }; 
-}
-
-# conform to the TypeConstraint API
-sub parent        { undef  }
-sub message       { undef  }
-sub has_message   { 0      }
-
-# FIXME:
-# not sure what this should actually do here
-sub coercion { undef  }
-
-# this should probably be memoized
-sub has_coercion  {
-    my $self  = shift;
-    foreach my $type (@{$self->type_constraints}) {
-        return 1 if $type->has_coercion
-    }
-    return 0;    
-}
-
-# NOTE:
-# this feels too simple, and may not always DWIM
-# correctly, especially in the presence of 
-# close subtype relationships, however it should 
-# work for a fair percentage of the use cases
-sub coerce { 
-    my $self  = shift;
-    my $value = shift;
-    foreach my $type (@{$self->type_constraints}) {
-        if ($type->has_coercion) {
-            my $temp = $type->coerce($value);
-            return $temp if $self->check($temp);
-        }
-    }
-    return undef;    
-}
-
-sub _compiled_type_constraint {
-    my $self  = shift;
-    return sub {
-        my $value = shift;
-        foreach my $type (@{$self->type_constraints}) {
-            return 1 if $type->check($value);
-        }
-        return undef;    
-    }
-}
-
-sub check {
-    my $self  = shift;
-    my $value = shift;
-    $self->_compiled_type_constraint->($value);
+    $self->type_constraints;
 }
 
 sub validate {
-    my $self  = shift;
-    my $value = shift;
+    my ($self, $value) = @_;
     my $message;
     foreach my $type (@{$self->type_constraints}) {
         my $err = $type->validate($value);
@@ -115,4 +103,4 @@ sub is_subtype_of {
 
 __END__
 
-#line 209
+#line 205

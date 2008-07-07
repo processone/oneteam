@@ -7,7 +7,7 @@ use POSIX;
 has 'path' => (is => 'ro', isa => 'Str');
 has 'parent' => (is => 'rw', isa => 'OneTeam::L10N::POFile');
 has 'comments' => (is => 'rw', isa => 'ArrayRef', default => sub { [] });
-has 'branding_po_file' => (is => 'ro', isa => 'OneTeam::L10N::POFile');
+has 'branding_po_file' => (is => 'ro', isa => 'Maybe[OneTeam::L10N::POFile]');
 has 'is_branding_file' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'plural_forms' => (
     is => 'ro',

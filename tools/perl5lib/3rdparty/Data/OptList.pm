@@ -4,25 +4,23 @@ package Data::OptList;
 use strict;
 use warnings;
 
-#line 17
-
-our $VERSION = '0.101';
-
-#line 81
-
 use List::Util ();
 use Params::Util ();
 use Sub::Install 0.92 ();
 
-#line 120
+#line 19
+
+our $VERSION = '0.103';
+
+#line 127
 
 my %test_for;
 BEGIN {
   %test_for = (
-    CODE   => \&Params::Util::_CODELIKE,
-    HASH   => \&Params::Util::_HASHLIKE,
-    ARRAY  => \&Params::Util::_ARRAYLIKE,
-    SCALAR => \&Params::Util::_SCALAR0,
+    CODE   => \&Params::Util::_CODELIKE,  ## no critic
+    HASH   => \&Params::Util::_HASHLIKE,  ## no critic
+    ARRAY  => \&Params::Util::_ARRAYLIKE, ## no critic
+    SCALAR => \&Params::Util::_SCALAR0,   ## no critic
   );
 }
 
@@ -31,9 +29,11 @@ sub __is_a {
 
   return List::Util::first { __is_a($got, $_) } @$expected if ref $expected;
 
-  return defined
-    (exists($test_for{$expected}) ? $test_for{$expected}->($got)
-                                 : Params::Util::_INSTANCE($got, $expected));
+  return defined (
+    exists($test_for{$expected})
+    ? $test_for{$expected}->($got)
+    : Params::Util::_INSTANCE($got, $expected) ## no critic
+  );
 }
 
 sub mkopt {
@@ -48,7 +48,7 @@ sub mkopt {
   my @return;
   my %seen;
 
-  for (my $i = 0; $i < @$opt_list; $i++) {
+  for (my $i = 0; $i < @$opt_list; $i++) { ## no critic
     my $name = $opt_list->[$i];
     my $value;
 
@@ -74,7 +74,7 @@ sub mkopt {
   return \@return;
 }
 
-#line 187
+#line 196
 
 sub mkopt_hash {
   my ($opt_list, $moniker, $must_be) = @_;
@@ -85,7 +85,7 @@ sub mkopt_hash {
   return \%hash;
 }
 
-#line 203
+#line 211
 
 BEGIN {
   *import = Sub::Install::exporter {
@@ -93,6 +93,6 @@ BEGIN {
   };
 }
 
-#line 227
+#line 234
 
 1;
