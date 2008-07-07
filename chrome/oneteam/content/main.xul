@@ -227,6 +227,7 @@
       document.getElementById("gateway-login").disabled = !!menu.model.activeResource;
       document.getElementById("gateway-logout").disabled = !menu.model.activeResource;
     }
+    var loginProgress;
 
     var setPresenceUpdater = {
       onPresenceChange: function() {
@@ -238,9 +239,16 @@
       {
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
         document.getElementById("setPresence-nick").value = account.connectionInfo.user;
-        document.getElementById("login-progress").style.visibility = "hidden";
         document.getElementById("login-signin").disabled = false;
         document.getElementById("roster").selectedIndex = 0;
+
+        // Workaround for mozilla bug 432028
+        var progress = document.getElementById("login-progress");
+        if (progress) {
+          loginProgress = progress;
+          progress.parentNode.removeChild(progress);
+        }
+
         if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
           this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
@@ -484,8 +492,15 @@
     }
 
     function connect() {
-      document.getElementById("login-progress").style.visibility = "visible";
       document.getElementById("login-signin").disabled = true;
+
+      // Workaround for mozilla bug 432028
+      var progress = document.getElementById("login-progress");
+      if (!progress) {
+        var before = document.getElementById("before-login-progress");
+        before.parentNode.insertBefore(loginProgress, before);
+      } else
+        progress.style.visibility = "visible";
 
       account.setUserAndPass(document.getElementById("login-user").value,
         document.getElementById("login-pass").value,
@@ -633,7 +648,7 @@
         <label control="login-pass" value="_('Password')"/>
         <textbox id="login-pass" type="password"/>
       </vbox>
-      <hbox pack="center">
+      <hbox pack="center" id="before-login-progress">
 <!-- #ifdef XULAPP -->
         <checkbox id="login-savePass" checked="true" label="_('Remember password')"/>
 <!-- #else
@@ -995,7 +1010,6 @@
   <otsystray id="systray" type="minimizer"/>
   <!-- #endif -->
   <soundsplayer id="soundsplayer"/>
-
   <vbox id="hiddenContainer" collapsed="true">
     <html:iframe id="hiddenFrame"/>
   </vbox>
