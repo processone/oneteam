@@ -92,7 +92,7 @@
       document.getElementById("titleContent").innerHTML = sanitizeHtml(_title);
       document.getElementById("messageContent").innerHTML = sanitizeHtml(msg);
 
-      if (icon && /^(?:(?:(?:jar:)?http[s]?:\/\/)|data:|chrome:)/.test(icon))
+      if (icon && /^(?:(?:(?:jar:)?http[s]?:\/\/)|data:|chrome:|file:)/.test(icon))
         document.getElementById("messageImg").src = icon;
       else
         updatePosition();

@@ -111,12 +111,11 @@ _DECL_(NotificationScheme).prototype =
         while (p.caller)
             p = p.caller;
 
-        var args = ["../content/notifications.xul",
-                     "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
-                     ",screenX="+window.screen.availWidth+
-                     ",screenY="+window.screen.availHeight, this, p.__parent__];
-        args.push.apply(args, arguments);
-        window.openDialog.apply(window, args);
+        window.openDialog("../content/notifications.xul",
+                          "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
+                            ",screenX="+window.screen.availWidth+
+                            ",screenY="+window.screen.availHeight,
+                          this, title, msg, icon, clickHandler, p.__parent__);
     },
 
     _updatePositions: function(win, closing)
