@@ -51,12 +51,14 @@ my @filters = (exists $defs{XULAPP} ?
     (
         new OneTeam::Builder::Filter::Preprocessor(%defs),
         $locale_processor,
+        new OneTeam::Builder::Filter::CommentsStripper(),
     ) :
     (
         new OneTeam::Builder::Filter::Preprocessor(%defs),
         $locale_processor,
         new OneTeam::Builder::Filter::PathConverter::Web(),
         new OneTeam::Builder::Filter::DialogSizeProcessor(),
+        new OneTeam::Builder::Filter::CommentsStripper(),
     ),
     $saver);
 
