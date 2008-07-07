@@ -137,7 +137,8 @@ _DECL_(XMPPSocket).prototype =
 
     fatalError: function(locator, error)
     {
-        this.listener._handleError();
+        if (this.is || this.os)
+            this.listener._handleError();
     },
 
     ignorableWarning: function(locator, error)
