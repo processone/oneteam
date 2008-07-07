@@ -7,7 +7,7 @@
 
 <window id="ot:main" title="OneTeam"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
-    persist="width height" width="170" height="450"
+    width="300" height="600"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -436,6 +436,7 @@
 
         splitter.collapsed = true;
         event.target.collapsed = true;
+
         splitter.previousSibling.flex = "1";
         splitter.setAttribute("rightWidth", self.outerWidth - width);
 
@@ -455,7 +456,19 @@
 
     function onUnload() {
     //#ifdef XULAPP
-      chatTabsController.closeTabs();
+      var width = self.outerWidth;
+
+      if (chatTabsController.tabCount) {
+        var splitter = document.getElementById("chats-splitter");
+        var w = splitter.previousSibling.getAttribute("width");
+        splitter.setAttribute("rightWidth", self.outerWidth - w);
+        width = self.outerWidth - self.innerWidth + w;
+      }
+
+      document.documentElement.setAttribute("width", width)
+      document.documentElement.setAttribute("height", self.outerHeight)
+      document.persist(document.documentElement.getAttribute("id"), "width");
+      document.persist(document.documentElement.getAttribute("id"), "height");
     /*#else
       document.getElementById("login-signin").disabled = true;
       if (window.con)
