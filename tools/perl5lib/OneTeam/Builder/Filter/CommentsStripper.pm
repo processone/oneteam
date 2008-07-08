@@ -6,10 +6,10 @@ sub process {
     my ($self, $content, $file) = @_;
 
     if ($file =~ /\.js$/) {
-        $content =~ s![\s\t]*//.*?\n!\n!g;
-        $content =~ s!/\*(.*?)[\s\t]*\*/!my $t = $1; $t =~ s{[^\n]}{}g; "/*$t*/"!ges;
+#        $content =~ s!([^\n\r]*/\*.*?\*[^\n\r]*)/!my $t = $1; $t =~ s{[^\n]}{}g; $t!ges;
+#        $content =~ s![\s\t]*//[^\n\r]*!!g;
     } elsif ($file =~ /\.(xml|xul)$/) {
-        $content =~ s/<!--(.*?)[\s\t]*--/my $t = $1; $t =~ s{[^\n]}{}g; "<!--$t--"/ges;
+        $content =~ s/([^\n\r]*<!--.*?-->[^\n\r]*)/my $t = $1; $t =~ s{[^\n]}{}g; $t/ges;
     }
 
     return $content;
