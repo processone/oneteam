@@ -330,8 +330,8 @@ SOCKSBytestreamTarget.prototype =
         this.ilen = 0;
         this.state = this.state > 9 ? 8 : 6;
 
-        this.is.close()
-        this.os.close()
+        this.is.close();
+        this.os.close();
 
         this.os.asyncWait(this, this.os.WAIT_CLOSURE_ONLY, 0, this.eventQ);
         this.is.asyncWait(this, this.is.WAIT_CLOSURE_ONLY, 0, this.eventQ);
@@ -395,7 +395,6 @@ SOCKSBytestreamTarget.prototype =
                     break;
                 case 9:
                     this.callback.onBytestreamComplete(this, this.token);
-                    this.finish();
                     break;
                 case 11:
                     data = this.bis.readBytes(this.is.available());
@@ -522,7 +521,7 @@ SOCKSBytestreamInitiator.prototype =
     {
         this.socket.close();
         if (this.is) {
-            transport.close();
+            transport.close(Components.results.NS_OK);
             return;
         }
         this.is = transport.openInputStream(0, 0, 0).
