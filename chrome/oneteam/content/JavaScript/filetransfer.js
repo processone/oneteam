@@ -70,7 +70,7 @@ _DECL_(FileTransferService, null, Model).prototype =
 
         var fileTransfer = new FileTransfer(pkt.getID(), pkt.getFrom(),
                                             query.@id.toString(),
-                                            file.size.length() ? +file.@size : null);
+                                            file.@size.length() ? +file.@size : null);
 
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
@@ -90,6 +90,7 @@ function FileTransfer(offerID, jid, streamID, size, file)
     this.state = "waiting";
     this.sent = 0;
     this.size = size;
+    this._rates = [];
     this.accepted = false;
     this.init();
     this.streamID = streamID;
@@ -125,6 +126,49 @@ _DECL_(FileTransfer, null, Model).prototype =
     get ppSent()
     {
         return ppFileSize(this.sent);
+    },
+
+    get rateAndTime() {
+        var now = Date.now();
+
+        if (!this._lastMetering) {
+            this._lastMetering = { sent: this.sent, date: now, rate: -1, time: -1 };
+            this._rates.push([this.sent, now]);
+            return [-1, -1];
+        }
+
+        if (now - this._lastMetering.date < 1000)
+            return [this._lastMetering.rate, this._lastMetering.time];
+
+        var rate = this.sent/(now - this._startTime)*1000;
+        for (var i = 0; i < this._rates.length; i++) {
+            var cRate = (this.sent - this._rates[i][0])/(now - this._rates[i][1])*1000;
+            rate = 0.8*rate + 0.2*cRate;
+        }
+        this._rates.push([this.sent, now]);
+        if (this._rates.length > 5)
+            this._rates.shift();
+
+        var time = (this.size - this.sent)/rate, lastTime = this._lastMetering.time;
+
+        if (time/lastTime > 2 || lastTime/time > 2) {
+            var diff = time - lastTime;
+            time = lastTime + (diff < 0 ? 0.3 : 0.1)*diff;
+        }
+
+        this._lastMetering = { sent: this.sent, date: now, rate: rate, time: time };
+
+        return [rate, time];
+    },
+
+    get ppRateAndTime()
+    {
+        var [rate, time] = this.rateAndTime;
+
+        return [rate < 0 ? "" : _("{0}/sec", ppFileSize(rate)),
+                time < 0 ? _("Unknown time remaining") :
+                    time < 5 ? _("A few seconds remaining") :
+                                _("{0} remaining", ppTimeInterval(time))];
     },
 
     get finished()
@@ -258,6 +302,7 @@ _DECL_(FileTransfer, null, Model).prototype =
 
     onTransferStart: function()
     {
+        this._startTime = Date.now();
         this.state = "started";
         this.modelUpdated("state");
     },
@@ -272,7 +317,7 @@ _DECL_(FileTransfer, null, Model).prototype =
     {
         this.sent += bytes;
         if (!this._timeout)
-            this._timeout = setTimeout(this._progressNotificationCallback, 200, this);
+            this._timeout = setTimeout(this._progressNotificationCallback, 500, this);
     },
 
     _progressNotificationCallback: function(_this)

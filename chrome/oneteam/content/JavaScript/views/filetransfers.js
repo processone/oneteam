@@ -47,7 +47,6 @@ function FileTransferView(model, parentView)
 
     var c = document.createElement("hbox");
     c.setAttribute("flex", "1");
-    c.setAttribute("style", "border: 1px solid red");
     this.node.appendChild(c);
 
     this.deck = document.createElement("deck");
@@ -73,12 +72,6 @@ function FileTransferView(model, parentView)
         this.form.appendChild(e);
 
         e = document.createElementNS(ns, "input")
-        e.setAttribute("type", "hidden")
-        e.setAttribute("name", "SIDHASH");
-        e.setAttribute("value", model.sidHash);
-        this.form.appendChild(e);
-
-        e = document.createElementNS(ns, "input")
         e.setAttribute("type", "file")
         e.setAttribute("name", "FILE");
         e.setAttribute("onchange", "this.view.onFileChoosen(this.value)");
@@ -95,10 +88,18 @@ function FileTransferView(model, parentView)
         this.deck.appendChild(this.frame);
     }
 
+    var c3 = document.createElement("hbox");
+    c3.setAttribute("class", "filenamebox");
+    var c4 = document.createElement("label");
+    c4.setAttribute("value", this.model.jid+" —");
+    c3.appendChild(c4);
+
     this.fileName = document.createElement("label");
+    this.fileName.setAttribute("class", "filename");
     if (this.model.file)
-        this.fileName.setAttribute("value", this.model.file.path.match(/[^/\\]+$/)[0]);
-    c2.appendChild(this.fileName);
+        this.fileName.setAttribute("value", this.model.file.path.match(/[^\/\\]+$/)[0]);
+    c3.appendChild(this.fileName);
+    c2.appendChild(c3);
 
     this.progressmeter = document.createElement("progressmeter");
     this.progressmeter.setAttribute("flex", "1");
@@ -146,7 +147,7 @@ _DECL_(FileTransferView).prototype =
 
     onFileChoosen: function(path)
     {
-        this.fileName.setAttribute("value", path.match(/[^/\\]+$/)[0]);
+        this.fileName.setAttribute("value", path.match(/[^\/\\]+$/)[0]);
         this.model.onFileChoosen(path, this.form);
     },
 
@@ -185,7 +186,11 @@ _DECL_(FileTransferView).prototype =
 
         this.progressmeter.mode = "determined";
         this.progressmeter.value = 100*this.model.sent/this.model.size;
-        this.stateLabel.value = this.model.ppSent + " of "+ this.model.ppSize;
+
+        var [rate, time] = this.model.ppRateAndTime;
+        this.stateLabel.value = rate ?
+            _("{0} — {1} of {2} ({3})", time, this.model.ppSent, this.model.ppSize, rate) :
+            _("{0} — {1} of {2}", time, this.model.ppSent, this.model.ppSize);
     },
 
     show: function(rootNode, insertBefore)

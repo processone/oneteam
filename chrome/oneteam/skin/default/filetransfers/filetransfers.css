@@ -1,0 +1,23 @@
+#richlist {
+  -moz-appearance: none !important;
+  margin: 0;
+  border-bottom: 2px solid;
+  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
+}
+
+richlistitem {
+  padding: 4px 8px 4px 4px;
+  min-height: 46px;
+}
+
+richlistitem[alternate="true"]:not([selected="true"]) {
+  background-color: -moz-oddtreerow;
+}
+
+.filenamebox {
+  font-size: 120%;
+}
+
+.filename {
+  font-weight: bold;
+}
