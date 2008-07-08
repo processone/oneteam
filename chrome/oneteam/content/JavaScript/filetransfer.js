@@ -203,11 +203,12 @@ _DECL_(FileTransfer, null, Model).prototype =
             </si>, pkt.getDoc()));
         con.send(pkt);
 
+        if (path)
+            this.file = new File(path)
+
         fileTransferService.fileTransfers.push(this);
         fileTransferService.modelUpdated("fileTransfers", {added: [this]});
 
-        if (path)
-            this.file = new File(path)
         if (this.method == "http://jabber.org/protocol/bytestreams")
             this.socksToken = socks5Service.recvFile(this);
         account.showTransfersManager();
