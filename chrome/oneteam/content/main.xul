@@ -604,7 +604,8 @@
     <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
 <!-- #endif -->
     <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "command.xul", "chrome,dialog=no,all", "")'/>
-    <command id="cmd_cmdVenkman" oncommand='window.openDialogUniq("mozapp:venkman", "chrome://venkman/content/venkman.xul", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar", "")'/>
+    <command id="cmd_cmdVenkman" oncommand='window.openDialogUniq("mozapp:venkman", "chrome://venkman/content/venkman.xul", "chrome,dialog=no,all", "")'/>
+    <command id="cmd_cmdDOMInspector" oncommand='window.openDialogUniq("mozapp:dominspector", "chrome://inspector/content/", "chrome,dialog=no,all", "")'/>
 <!-- #endif -->
     <command id="cmd_about" oncommand="account.showAbout()"/>
 
@@ -634,6 +635,7 @@
 <!-- #endif -->
     <key id="key_cmdConsole" modifiers="control" key="2" command="cmd_cmdConsole"/>
     <key id="key_cmdVenkman" modifiers="control" key="3" command="cmd_cmdVenkman"/>
+    <key id="key_cmdDOMInspector" modifiers="control" key="4" command="cmd_cmdDOMInspector"/>
 <!-- #endif -->
     <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
     <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
