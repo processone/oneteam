@@ -194,7 +194,7 @@ _DECL_(FileTransfer, null, Model).prototype =
         pkt.getNode().appendChild(E4XtoDOM(
             <si xmlns='http://jabber.org/protocol/si' id={this.streamID}>
                 <feature xmlns='http://jabber.org/protocol/feature-neg'>
-                    <x xmlns='jabber:x:data' type='form'>
+                    <x xmlns='jabber:x:data' type='submit'>
                         <field var='stream-method' type='list-single'>
                             <value>{this.method}</value>
                         </field>
