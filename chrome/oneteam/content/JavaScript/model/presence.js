@@ -136,7 +136,7 @@ _DECL_(PresenceProfiles, null, Model).prototype =
        </profile>
      </profiles> */
 
-    loadFromServer: function()
+    loadFromServer: function(callback)
     {
         const ns = "oneteam:presence-profiles";
 
@@ -145,7 +145,8 @@ _DECL_(PresenceProfiles, null, Model).prototype =
         var query = iq.setQuery("jabber:iq:private");
         query.appendChild(iq.getDoc().createElementNS(ns, "profiles"));
 
-        con.send(iq, new Callback(this._onPresenceProfiles, this));
+        con.send(iq, new Callback(this._onPresenceProfiles, this).
+                        addArgs(callback).fromCall());
     },
 
     storeOnServer: function()
@@ -202,7 +203,7 @@ _DECL_(PresenceProfiles, null, Model).prototype =
         this.modelUpdated("profiles", {added: addedProfiles, removed: rp});
     },
 
-    _onPresenceProfiles: function(packet)
+    _onPresenceProfiles: function(callback, packet)
     {
         if (packet.getType() != "result")
             return;
@@ -231,6 +232,9 @@ _DECL_(PresenceProfiles, null, Model).prototype =
         }
         this.profiles = profiles;
         this.modelUpdated("profiles", {added: profiles});
+
+        if (callback)
+            callback();
     }
 }
 

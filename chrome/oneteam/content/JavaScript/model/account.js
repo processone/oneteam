@@ -32,18 +32,23 @@ function Account()
 _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 {
     bumpPriority: true,
-    jsjacDebug: true||false,
+    jsjacDebug: false,
 
     setPresence: function(show, status, priority, profile, userSet)
     {
         // XXXpfx: invisibility by using privacy lists removed, will be
         //  added again during rewriting presenceProfiles to use privacy lists.
 
-        if (priority == null && this.currentPresence)
-            priority = this.currentPresence.priority;
 
-        var presence = show instanceof Object ? show :
-            new Presence(show, status, priority, profile);
+        var presence;
+        if (show instanceof Object) {
+            presence = show;
+            userSet = userSet == null ? status : userSet;
+        } else
+            presence = new Presence(show, status, priority, profile);
+
+        if (this.currentPresence.show == "unavailable" && presence.show == "unavailable")
+            return;
 
         if (!presence.profile) {
             if (this.currentPresence.profile)
@@ -158,7 +163,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
 
         if (!oldAvatarRetrieved || this.avatarHash != oldHash)
-            this.setPresence(this.currentPresence);
+            this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
     },
 
     getOrCreateConference: function(jid)
@@ -469,6 +474,29 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         if (this.currentPresence.profile)
             privacyService.deactivate();
+
+        const ns = "oneteam:presence";
+        var iq = new JSJaCIQ();
+        iq.setType("set")
+
+        var query = iq.setQuery("jabber:iq:private");
+        var node = query.appendChild(iq.getDoc().createElementNS(ns, "presence"));
+        var node2 = iq.getDoc().createElementNS(ns, "saved");
+
+        var presence = this.userPresence || this.currentPresence;
+
+        node2.setAttribute("show", presence.show);
+        if (presence.status)
+            node2.setAttribute("status", presence.status);
+        if (presence.priority != null)
+            node2.setAttribute("priority", presence.priority);
+
+        if (presence.profile)
+            node2.setAttribute("profile", presence.profile.name);
+
+        node.appendChild(node2);
+        con.send(iq);
+
         window.con.disconnect();
     },
 
@@ -492,6 +520,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.modelUpdated("connected");
             return;
         }
+        this._getDefaultPresence();
+        this.presenceProfiles.loadFromServer(new Callback(this._onPresenceProfiles, this));
 
         this.modelUpdated("connected");
 
@@ -534,22 +564,72 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                              function(account, val) {
                                 account._hasInvitationsService = val;
                              });
-        this.presenceProfiles.loadFromServer();
+
         this.getVCard(true, function(){});
+    },
+
+    _getDefaultPresence: function() {
+        var iq = new JSJaCIQ();
+        iq.setType("get")
+
+        var query = iq.setQuery("jabber:iq:private");
+        var node = query.appendChild(iq.getDoc().createElementNS("oneteam:presence", "presence"));
+
+        con.send(iq, new Callback(this._onDefaultPresence, this));
+    },
+
+    _onDefaultPresence: function(pkt)
+    {
+        if (pkt.getType() != "result") {
+            this._initConnectionStep(6);
+            return;
+        }
+
+        var node = pkt.getNode().getElementsByTagNameNS("oneteam:presence", "saved")[0];
+
+        if (!node) {
+            this._initConnectionStep(6);
+            return;
+        }
+
+        this._defaultPresence = new Presence(node.getAttribute("show") || "available",
+                                             node.getAttribute("status"),
+                                             node.getAttribute("priority"),
+                                             node.getAttribute("profile"));
+        this._initConnectionStep(this._defaultPresence.profile ? 2 : 6);
+    },
+
+    _onPresenceProfiles: function()
+    {
+        this._initConnectionStep(4);
+    },
+
+    _initConnectionStep: function(flags) {
+        if (this._initConnectionState == 7)
+            return;
+
+        this._initConnectionState |= flags;
+
+        if (this._initConnectionState != 7)
+            return;
+
+        var profiles = account.presenceProfiles.profiles;
+        if (this._defaultPresence && typeof(this._defaultPresence.profile) == "string")
+            for (var i = 0; i < profiles.length; i++)
+                if (profiles[i].name == this._defaultPresence.profile)
+                    this._defaultPresence.profile = profiles[i];
+
+        this.setPresence(this._defaultPresence, true);
+        this.connectionInitialized = true;
+        this.modelUpdated("connectionInitialized");
     },
 
     _initialRosterFetch: function(pkt, _this)
     {
-        if (_this.userPresence)
-            _this.setPresence(_this.userPresence);
-        else
-            _this.setPresence();
-
         if (pkt)
             _this.onIQ(pkt);
 
-        _this.connectionInitialized = true;
-        _this.modelUpdated("connectionInitialized");
+        _this._initConnectionStep(1);
     },
 
     _initialize: function()
@@ -566,6 +646,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this._presenceObservers = [];
         this.avatarHash = this.avatar = null;
         this.avatarRetrieved = false;
+        this._initConnectionState = 0;
     },
 
     onDisconnect: function()

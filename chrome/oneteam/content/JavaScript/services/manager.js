@@ -322,7 +322,7 @@ _DECL_(ServicesManager).prototype =
     _sendCaps: function()
     {
         if (this._initialPresenceSent)
-            account.setPresence(account.currentPresence);
+            account.setPresence(account.currentPresence, account.currentPresence == account.userPresence);
     }
 }
 

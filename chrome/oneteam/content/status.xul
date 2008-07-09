@@ -57,7 +57,10 @@
           messages[i] = messages[i].replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
         window.opener.account.cache.setValue("statusMessages", messages.join("\n"));
       }
-      window.opener.account.setPresence(typeControl.value, textControl.value);
+      var profile = window.opener.account.userPresence;
+      profile = profile && profile.profile;
+
+      window.opener.account.setPresence(typeControl.value, textControl.value, null, profile, true);
 
       return true;
     }
