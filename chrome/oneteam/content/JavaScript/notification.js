@@ -6,6 +6,10 @@ function NotificationScheme()
 
 _DECL_(NotificationScheme).prototype =
 {
+    _nopCanceler: {
+        cancel: function() {}
+    },
+
     show: function(kind, type, model, extra)
     {
         if (kind == "resource") {
@@ -21,13 +25,13 @@ _DECL_(NotificationScheme).prototype =
                 signed = false;
 
             if (signed == null)
-                return;
+                return this._nopCanceler;
 
             var time = model instanceof ConferenceMember ?
                 model.contact.joinedAt : account.connectedAt;
 
             if (!time || (Date.now()-time < 5*1024))
-                return;
+                return this._nopCanceler;
 
             if (model instanceof ConferenceMember)
                 this._showInChatPane(signed ? _("{0} has joined this room", model) :
@@ -36,12 +40,13 @@ _DECL_(NotificationScheme).prototype =
             else {
                 model = model.contact || model;
                 if (!this._showNotifications(model))
-                    return;
+                    return this._nopCanceler;
                 soundsPlayer.playSound(signed ? "connected" : "disconnected");
-                this._showAlert(signed ? _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
-                                         _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
-                                xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
-                                model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+                return this._showAlert(signed ?
+                    _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
+                    _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
+                    xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
+                    model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
             }
         } else if (kind == "subscription") {
             model = model.contact || model;
@@ -60,13 +65,13 @@ _DECL_(NotificationScheme).prototype =
                                      model, true, false);
         } else if (kind == "message") {
             if (!this._showNotifications(extra) || model.isSystemMessage)
-                return;
+                return this._nopCanceler;
 
             var gcMessage = extra instanceof ConferenceMember;
             soundsPlayer.playSound( gcMessage ? "message2" : "message1");
 
             if (gcMessage || type != "first")
-                return;
+                return this._nopCanceler;
 
             var text = model.text.replace(/[ \t]+/g, " ")+" ";
             text = text.replace(/([^\n]{1,58}|\S{58,})\s+/g, function(x, a) {
@@ -74,9 +79,10 @@ _DECL_(NotificationScheme).prototype =
             text = text.replace(/\s+$/, "").split(/\n/).slice(0, 8).
                 map(xmlEscape).join("<br/>");
 
-            this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
-                            text, "chrome://oneteam/skin/main/imgs/msgicon.png");
+            return this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
+                                   text, "chrome://oneteam/skin/main/imgs/msgicon.png");
         }
+        return this._nopCanceler;
     },
 
     _showNotifications: function(contact)
@@ -105,17 +111,24 @@ _DECL_(NotificationScheme).prototype =
     _showAlert: function(title, msg, icon, clickHandler)
     {
         if (this._top < 150 || this._wins.length > 8)
-            return;
+            return this._nopCanceler;
 
         var p = arguments.callee;
         while (p.caller)
             p = p.caller;
 
-        window.openDialog("../content/notifications.xul",
-                          "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
-                            ",screenX="+window.screen.availWidth+
-                            ",screenY="+window.screen.availHeight,
-                          this, title, msg, icon, clickHandler, p.__parent__);
+        return {
+            win: window.openDialog("../content/notifications.xul",
+                                   "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
+                                   ",screenX="+window.screen.availWidth+
+                                   ",screenY="+window.screen.availHeight,
+                                   this, title, msg, icon, clickHandler, p.__parent__),
+            cancel: function() {
+                try {
+                    this.win.close();
+                } catch (ex) { }
+            }
+        };
     },
 
     _updatePositions: function(win, closing)
@@ -155,6 +168,8 @@ _DECL_(NotificationScheme).prototype =
                 "h.call();");
             _clickHandlers[this._clickHandlersIdx] = clickHandler;
         } catch(ex) {}
+
+        return this._nopCanceler;
     }
 // #endif */
 }
