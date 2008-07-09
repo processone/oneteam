@@ -35,7 +35,7 @@ var adhocCmds = {
                         node={query.@node} sessionid={query.@sessionid} status="completed"/>,
                     iq.getDoc()));
                 con.send(iq);
-                window.con.disconnect();
+                account.disconnect();
                 return;
             }
             account.setPresence(show, status, null, null, true);

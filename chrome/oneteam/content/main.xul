@@ -472,7 +472,7 @@
     /*#else
       document.getElementById("login-signin").disabled = true;
       if (window.con)
-        window.con.disconnect();
+        account.disconnect();
       closeAllWindows();
     //#endif */
     }
@@ -485,7 +485,7 @@
 
     function quit() {
       if (window.con)
-        window.con.disconnect();
+        account.disconnect();
 
     //#ifdef XULAPP
       Components.classes['@mozilla.org/toolkit/app-startup;1'].
@@ -584,7 +584,7 @@
     <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
     <command id="cmd_adhoc" oncommand="account.onAdHocCommand()"/>
-    <command id="cmd_disconnect" oncommand="con.disconnect()"/>
+    <command id="cmd_disconnect" oncommand="account.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
 
     <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>

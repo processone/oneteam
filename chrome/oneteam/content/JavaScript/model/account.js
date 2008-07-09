@@ -32,7 +32,7 @@ function Account()
 _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 {
     bumpPriority: true,
-    jsjacDebug: false,
+    jsjacDebug: true||false,
 
     setPresence: function(show, status, priority, profile, userSet)
     {
@@ -463,6 +463,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         self.con = con;
         this.modelUpdated("con");
         con.connect(args);
+    },
+
+    disconnect: function()
+    {
+        if (this.currentPresence.profile)
+            privacyService.deactivate();
+        window.con.disconnect();
     },
 
     onConnect: function()
