@@ -59,9 +59,18 @@ _DECL_(SOCKS5Service).prototype =
             var ds = Components.classes["@mozilla.org/network/dns-service;1"].
                 getService(Components.interfaces.nsIDNSService);
 
-            var record = ds.resolve(ds.myHostName, 0);
-            while (record && record.hasMore())
-                this.ipAddresses.push(record.getNextAddrAsString());
+            var IPs = {};
+            for each (var name in [ds.myHostName, "localhost"])
+                try {
+                    var record = ds.resolve(name, 0);
+                    while (record && record.hasMore()) {
+                        var ip = record.getNextAddrAsString();
+                        if (ip in IPs)
+                            continue;
+                        IPs[ip] = 1;
+                        this.ipAddresses.push(ip);
+                    }
+                } catch (ex) { }
         }
 
         for (var i = 0; i < this.ipAddresses.length; i++)
