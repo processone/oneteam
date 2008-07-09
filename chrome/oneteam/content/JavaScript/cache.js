@@ -163,7 +163,7 @@ _DECL_(PersistantCache).prototype =
             __iterator__: function(onlyKeys) {
                 if (onlyKeys) {
                     try {
-                        this.keyStmt.bindStringParameter(this.prefix);
+                        this.keyStmt.bindStringParameter(0, this.prefix);
                         while (this.keyStmt.executeStep())
                             yield (this.keyStmt.getString(0));
                     } finally {
