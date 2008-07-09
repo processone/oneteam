@@ -120,7 +120,8 @@
     }
 
     function onClick() {
-      win.focus();
+      if (win)
+        win.focus();
       try {
         if (typeof(clickAction) == "string") {
           var sandbox = Components.utils.Sandbox(win);
