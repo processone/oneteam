@@ -12,7 +12,7 @@ function Presence(show, status, priority, profile)
     } else {
         this.show = show == null ? "available" : show;
         this.status = status;
-        this.priority = priority;
+        this.priority = isNaN(+priority) ? this._priorityMap[this.show] : +priority;
     }
     this.profile = profile;
 }
@@ -100,6 +100,15 @@ _DECL_(Presence, null, Comparator).prototype =
     getIcon: function()
     {
         return account.style.getStatusIcon(this.show);
+    },
+
+    _priorityMap: {
+        available: 50,
+        chat: 50,
+        dnd: 40,
+        away: 30,
+        xa: 20,
+        unavailable: 0
     }
 }
 
