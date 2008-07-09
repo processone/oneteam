@@ -74,10 +74,19 @@ _DECL_(FileTransferService, null, Model).prototype =
 
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
-        account.addEvent(_("<b>{0}</b> want to send you file", xmlEscape(pkt.getFrom())),
-                         new Callback(openDialogUniq, null).
-                            addArgs(null, "chrome://oneteam/content/fileTransferRequest.xul",
-                                    "chrome,modal", fileTransfer, file.@name));
+        var canceler = new NotificationsCanceler();
+        var callback = new Callback(function(ft, name, canceler) {
+            if (!canceler.cancel())
+                return;
+            openDialogUniq(null, "chrome://oneteam/content/fileTransferRequest.xul",
+                           "chrome,modal", ft, name)
+        }, null).addArgs(fileTransfer, file.@name, canceler);
+
+        canceler.add = account.addEvent(_("<b>{0}</b> want to send you file",
+                                          xmlEscape(pkt.getFrom())),
+                                        callback);
+        canceler.add = account.notificationScheme.show("filetransfer", callback,
+                                                       pkt.getFrom(), file.@name);
 
         return null;
    }

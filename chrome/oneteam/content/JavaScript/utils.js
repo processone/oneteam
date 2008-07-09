@@ -450,6 +450,31 @@ _DECL_(Comparator).prototype =
     }
 }
 
+function NotificationsCanceler()
+{
+    this.notifications = [];
+}
+_DECL_(NotificationsCanceler).prototype =
+{
+    set add(val) {
+        this.notifications.push(val)
+    },
+
+    cancel: function() {
+        if (!this.notifications.length)
+            return false;
+
+        for (var i = 0; i < this.notifications.length; i++)
+            if (typeof(this.notifications[i].cancel) == "function")
+                this.notifications[i].cancel()
+            else
+                account.removeEventsByKey(this.notifications[i]);
+        this.notifications = [];
+
+        return true;
+    }
+}
+
 function xmlEscape(str)
 {
     if (str == null)
