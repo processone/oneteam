@@ -210,21 +210,27 @@
           el.appendChild(img);
           el.appendChild(size);
 
-// TODOpfx implement size calculation for standalone version
-
           var fileSize;
-          if (hash) {
+          if (/^file:/.test(data)) {
+            var file = new this._rootWin.File(data);
+            fileSize = file.size;
+
             img.setAttribute("src", data);
             img.avatarHash = hash;
-
-            fileSize = data.length;
-            var pad = 0;
-            while (data[fileSize-pad-1] == "=")
-              pad++;
-            fileSize = (fileSize-22)/4*3-pad;
           } else {
-            img.setAttribute("src", "data:image/png;base64,"+btoa(data));
-            fileSize = data.length;
+            if (hash) {
+              img.setAttribute("src", data);
+              img.avatarHash = hash;
+
+              fileSize = data.length;
+              var pad = 0;
+              while (data[fileSize-pad-1] == "=")
+                pad++;
+              fileSize = (fileSize-22)/4*3-pad;
+            } else {
+              img.setAttribute("src", "data:image/png;base64,"+btoa(data));
+              fileSize = data.length;
+            }
           }
 
           size.setAttribute("class", "size");
