@@ -153,6 +153,8 @@
       }
 
       var port = document.getElementById("port");
+      var httpBase = document.getElementById("http-base");
+
       var portVal = el.parentNode.nextSibling.checked ? "5223" : "5222"
 
       if (prevType == "native") {
@@ -160,6 +162,11 @@
           port.value = 5280
       } else if (el.value == "native"  && port.value == "5280")
         port.value = portVal;
+
+      if (el.value == "http-bind")
+        httpBase.value = httpBase.value.replace(/http-poll/, "http-bind");
+      else if (el.value == "http-polling")
+        httpBase.value = httpBase.value.replace(/http-bind/, "http-poll");
 
       prevType = el.value;
     }
@@ -225,7 +232,7 @@
                       oncommand="switchSSLOption(this)"/>
             <row>
               <label value="_('HTTP Base:')"/>
-              <textbox pref="chat.connection.base=value"/>
+              <textbox id="http-base" pref="chat.connection.base=value"/>
             </row>
           </rows>
         </grid>
