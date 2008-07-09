@@ -412,7 +412,9 @@ function File(path)
 
             if (path instanceof File)
                 this.file.initWithPath(path.path);
-            else if (path.search(/\w+:\/\//) == -1)
+            else if (path.search(/file:\/\//) == 0) {
+                this.file.initWithPath(path.replace(/^file:\/\//, ""));
+            } else if (path.search(/\w+:\/\//) == -1)
                 this.file.initWithPath(path);
             else {
                 Reader.call(arguments);
@@ -714,4 +716,3 @@ function slurpFile()
     file.open(null, 1);
     return file.read();
 }
-
