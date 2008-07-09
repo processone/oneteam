@@ -201,6 +201,22 @@
       return true;
     }
 
+    function addImage() {
+      var path = window.opener.pickFile(_("Select avatar image"), false, "images",
+                                        false, window);
+      if (!path)
+        return;
+
+      var data = window.opener.slurpFile(path);
+      var hash = window.opener.hex_sha1(data);
+
+      window.opener.account.cache.setValue("avatar-"+hash, data,
+                                           new Date(Date.now()+30*24*60*60*1000),
+                                           true);
+      data = window.opener.account.cache.getValue("avatar-"+hash, true);
+      avatarList.addAvatar(data, hash);
+    }
+
     function avatarSubmited(tag) {
       tag.parentNode.collapsed = false; // form box
       tag.parentNode.nextSibling.hidden = true;
@@ -396,18 +412,25 @@
             <caption label="_('Avatar')"/>
             <avatarlist id="avatarList" flex="1"/>
           </groupbox>
+<!-- #ifdef XULAPP -->
+          <hbox>
+            <spacer flex="1"/>
+            <button label="_('Add image...')" oncommand="addImage()"/>
+          </hbox>
+<!-- #else
           <hbox>
             <spacer flex="1"/>
             <html:form id="avatarUploadForm" method="post"
                        enctype="multipart/form-data" onsubmit="submitAvatar(this)"
                        target="avatarIframe">
               <html:input type="file" name="avatar" flex="1"/>
-              <html:input type="submit" value="Add image..."/>
+              <html:input type="submit" value="_('Add image...')"/>
             </html:form>
             <html:iframe id="avatarIframe" style="visibility: collapse"
                          onload="avatarSubmited(this)"/>
           </hbox>
           <progressmeter mode="undetermined" hidden="true"/>
+// #endif -->
         </tabpanel>
       </tabpanels>
     </tabbox>
