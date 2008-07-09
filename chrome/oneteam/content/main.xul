@@ -232,6 +232,7 @@
     var setPresenceUpdater = {
       onPresenceChange: function() {
         this.chooser.value = account.currentPresence.show || "available";
+        this.profile = account.currentPresence.profile;
         this.onIconSetChange();
       },
 
@@ -299,6 +300,20 @@
         return null;
       },
 
+      set profile(val)
+      {
+        this.profileEnable.checked = val != null;
+        if (!val)
+          return val;
+        var profiles = this.profileChooser.childNodes;
+        for (var i = 0 ; i < profiles.length; i++)
+          if (profiles[i].model == val) {
+            this.profileChooser.selectedIndex = i;
+            break;
+          }
+        return val;
+      },
+
       onProfileCommand: function()
       {
         if (this._skip)
@@ -317,7 +332,7 @@
         }
       },
 
-      onProfileEnable: function(enabled)
+      onProfileEnable: function()
       {
           account.setPresence(this.presence, null, null,
             this.profileEnable.checked ? this.profile : null, true);
