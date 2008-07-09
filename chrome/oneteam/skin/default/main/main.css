@@ -215,6 +215,14 @@ richlistbox {
   list-style-image: url(imgs/gatewayicons/gadu-gadu-connected.png);
 }
 
+.gateway-toolbarbutton[gateway-type="xmpp"] {
+  list-style-image: url(imgs/gatewayicons/xmpp.png);
+}
+
+.gateway-toolbarbutton[gateway-type="xmpp"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/xmpp-connected.png);
+}
+
 #eventBoxPrev, #eventBoxNext {
   list-style-image: url(imgs/gatewayicons/gadu-gadu.png);
   -moz-binding: url(chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image);
