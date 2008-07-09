@@ -418,14 +418,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         if (!this.activeResource)
             return;
 
-        const nsIFilePicker = Components.interfaces.nsIFilePicker;
-        var picker = Components.classes["@mozilla.org/filepicker;1"].
-            createInstance(nsIFilePicker);
-
-        picker.init(window, "Select a File", nsIFilePicker.modeOpen);
-
-        if (picker.show() != nsIFilePicker.returnCancel)
-            this.sendFile(picker.file.path);
+        var path = pickFile(_("Select a File"), false);
+        if (path)
+            this.sendFile(path);
 /* #else
         this.sendFile();
 // #endif */

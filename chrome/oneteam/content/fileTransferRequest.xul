@@ -37,15 +37,9 @@
     function acceptFileTransfer()
     {
 //#ifdef XULAPP
-      const nsIFilePicker = Components.interfaces.nsIFilePicker;
-      var picker = Components.classes["@mozilla.org/filepicker;1"].
-        createInstance(nsIFilePicker);
-
-      picker.init(window, _("Select a File"), nsIFilePicker.modeSave);
-      picker.defaultString = fileName;
-
-      if (picker.show() != nsIFilePicker.returnCancel) {
-        fileTransfer.accept(picker.file.path);
+      var path = window.opener.pickFile(_("Select a File"), true, fileName, window);
+      if (path) {
+        fileTransfer.accept(path);
         return true;
       }
 

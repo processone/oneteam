@@ -107,6 +107,45 @@ function openLink(uri)
     extps.loadURI(uriToOpen, null);
 }
 
+function pickFile(title, forSave, filters, path, win)
+{
+    var filtersMask;
+    var picker = Components.classes["@mozilla.org/filepicker;1"].
+        createInstance(Components.interfaces.nsIFilePicker);
+
+    picker.init(win||window, title, forSave ? picker.modeSave : picker.modeOpen);
+
+    if (filters) {
+        filters = filters.split(/\s*,\s*/);
+        for (var i = 0; i < filters.length; i++) {
+            var f = "filter" + filters[i][0].toUpperCase() + filters[i].substr(1);
+            if (f in picker)
+                filtersMask |= picker[f];
+        }
+        if (filtersMask)
+            picker.appendFilters(filtersMask);
+    }
+
+    if (path) {
+        try {
+            var file = Components.classes["@mozilla.org/file/local;1"].
+                createInstance(Components.interfaces.nsILocalFile);
+            file.initWithPath(path);
+
+            if (file.exists() && file.isDirectory())
+                picker.displayDirectory = file;
+            else {
+                picker.displayDirectory = file.parent;
+                picker.defaultString = file.leafName;
+            }
+        } catch(ex) {
+            picker.defaultString = path;
+        }
+    }
+
+    return picker.show() != picker.returnCancel ? picker.file.path : null;
+}
+
 /*#else
 var _wins = {};
 var _allWins = [];
