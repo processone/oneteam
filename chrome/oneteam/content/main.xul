@@ -266,13 +266,13 @@
           document.getElementById("conference-contextmenu").view = this.conferencesView;
           document.getElementById("conferencemember-contextmenu").view = this.conferencesView;
         }
-        if (!account.connected)
-          chatTabsController.closeTabs();
-        else
+        if (!account.connected) {
+          if (!quitSequence)
+            chatTabsController.closeTabs();
+        } else
           account.hasDiscoFeature("http://jabber.org/protocol/commands", false, function(a, val) {
             document.getElementById("cmd_adhoc").hidden = !val;
           });
-
       },
 
       onCommand: function()
@@ -498,7 +498,10 @@
     }
     window.onbeforeunload = onBeforeUnload;
 
+    var quitSequence = false;
     function quit() {
+      quitSequence = true;
+
       if (window.con)
         account.disconnect();
 

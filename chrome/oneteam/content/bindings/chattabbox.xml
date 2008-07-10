@@ -164,8 +164,10 @@
         <body><![CDATA[
           this._inCloseTabs = true;
 
-          for (var i = this._tabs.length-1; i >= 0; i--)
-            this._tabs[i].controller.close();
+          for (var i = this._tabs.childNodes.length-1; i >= 0; i--)
+            this._tabs.childNodes[i].controller.close();
+
+          this._selectedTab = null;
 
           this._inCloseTabs = false;
         ]]></body>
