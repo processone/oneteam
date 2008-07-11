@@ -18,6 +18,7 @@ vbox {
 }
 
 .marker-arrow {
+  background: transparent;
   border: 8px solid transparent;
   border-left: 0;
 }
