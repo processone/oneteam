@@ -288,7 +288,7 @@
             return;
 
           if (!this._msgs)
-            // use concat because we need a copy
+            // we need snapshot of archivedMessage, thats why we use concat here
             this._msgs = this._model.archivedMessages.concat([]);
 
           if (arg && arg.added) {
