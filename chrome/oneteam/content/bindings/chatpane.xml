@@ -367,6 +367,7 @@
 
           if (!this._content) {
             this._content = doc.createElement("div");
+            this._content.setAttribute("class", "mainContainer");
             doc.body.appendChild(this._content);
           }
 

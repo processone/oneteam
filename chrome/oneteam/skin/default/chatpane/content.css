@@ -4,6 +4,10 @@ body {
     margin: 0;
 }
 
+.mainContainer {
+    margin-bottom: 8px;
+}
+
 .message {
     margin: 0 8px;
     border-width: 1px;
