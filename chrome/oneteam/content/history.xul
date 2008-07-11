@@ -150,8 +150,10 @@
 
       if (contact) {
         var list = document.getElementById("contacts-list");
+        var tabs = document.getElementById("tabs");
+        tabs.value = "chats";
 
-        document.getElementById("tabs").collapsed = list.collapsed =
+        tabs.collapsed = list.collapsed =
           list.nextSibling.collapsed = true;
 
         regToken.merge(account.historyMgr.deliverThreadsWithJid(contactsThreads, null, contact));
@@ -210,10 +212,10 @@
   <tabbox flex="1">
     <tabs id="tabs">
 <!-- #ifdef XULAPP -->
-      <tab label="Search"/>
+      <tab value="search" label="Search"/>
 <!-- #endif -->
-      <tab label="Chats"/>
-      <tab label="Conferences"/>
+      <tab value="chats" label="Chats"/>
+      <tab value="conferences" label="Conferences"/>
     </tabs>
     <tabpanels flex="1">
 <!-- #ifdef XULAPP -->

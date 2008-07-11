@@ -232,6 +232,9 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
     deliverThreadsWithJid: function(observer, token, contact)
     {
+        if (!this._jidIds)
+            this._loadJIDs();
+
         var stmt = this.getThreadsForJidIdsStmt;
 
         stmt.bindInt32Parameter(0, this._jidIds[contact.jid]);
