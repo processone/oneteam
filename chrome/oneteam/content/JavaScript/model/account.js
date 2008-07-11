@@ -195,7 +195,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return this.allContacts[jid.normalizedJID];
         if (this.allConferences[jid.normalizedJID])
             return this.allConferences[jid.normalizedJID];
-        if (this.myResource.jid.normalizedJID == jid.normalizedJID)
+        if (this.myResource.jid && this.myResource.jid.normalizedJID == jid.normalizedJID)
             return this.myResource;
         return this.resources[jid.normalizedJID];
     },
