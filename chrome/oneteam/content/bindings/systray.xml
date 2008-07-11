@@ -73,7 +73,7 @@
         <setter>
           <![CDATA[
             //alert("VISCH1: "+this._icon +", "+!val +", "+!this._reallyHidden);
-            if (this._icon && !val != !this._reallyHidden) {
+            if (this._systray && this._icon && !val != !this._reallyHidden) {
             //alert("VISCH");
               this._reallyHidden = !!val;
               if (val)
