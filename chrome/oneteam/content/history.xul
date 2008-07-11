@@ -142,11 +142,13 @@
 // #ifdef XULAPP
       searchThreads = new TreeView(document.getElementById("search-threads"));
       searchMessages = document.getElementById("search-view");
+      searchMessages.scrollToBottom = false;
 // #endif
 
       contactsList = new TreeView(document.getElementById("contacts-list"));
       contactsThreads = new TreeView(document.getElementById("contacts-threads"));
       contactsMessages = document.getElementById("contacts-view");
+      contactsMessages.scrollToBottom = false;
 
       if (contact) {
         var list = document.getElementById("contacts-list");
@@ -164,6 +166,7 @@
       conferencesList = new TreeView(document.getElementById("conferences-list"));
       conferencesThreads = new TreeView(document.getElementById("conferences-threads"));
       conferencesMessages = document.getElementById("conferences-view");
+      conferencesMessages.scrollToBottom = false;
 
       account.historyMgr.deliverContactsList(contactsList, regToken);
       account.historyMgr.deliverConferencesList(conferencesList, regToken);

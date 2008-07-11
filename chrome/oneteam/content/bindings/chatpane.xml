@@ -19,6 +19,8 @@
     </content>
 
     <implementation>
+      <field name="scrollToBottom">true</field>
+
       <property name="smilesEnabled"
                 onget="return this._output.contentDocument.body.className == 'smiles-enabled'"
                 onset="this._output.contentDocument.body.className = val ? 'smiles-enabled' : '';
@@ -445,7 +447,7 @@
 
           this._model.removeMessages();
 
-          if (scrollToBottom)
+          if (this.scrollToBottom && scrollToBottom)
             this._scrollToBottomToken = this.scrollToElement(msgEl);
 
           this._updateNonSeenStatus();
