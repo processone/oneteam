@@ -107,39 +107,14 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
   if (NS_FAILED(rv))
     return rv;
 
-#ifndef MOZ_CAIRO_GFX
-  if (alphaBits) {
-    rv = imageFrame->LockAlphaData();
-    if (NS_FAILED(rv)) {
-    DEBUG_DUMP1("otPr0nObserver19::FrameChanged (2.1) rv=%x",rv);
-      imageFrame->UnlockImageData();
-      return rv;
-    }
-    rv = imageFrame->GetAlphaBytesPerRow(&alphaStride);
-    rv |= imageFrame->GetAlphaData(&alphaData, &alphaLen);
-    if (NS_FAILED(rv)) {
-      imageFrame->UnlockAlphaData();
-      imageFrame->UnlockImageData();
-      return rv;
-    }
-  }
-#endif
-
   rv = imageFrame->GetImageBytesPerRow(&rgbStride);
   rv |= imageFrame->GetImageData(&rgbData, &rgbLen);
   if (NS_SUCCEEDED(rv)) {
     DEBUG_DUMP("otPr0nObserver19::FrameChanged (6)");
-#ifdef MOZ_CAIRO_GFX
     rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
                                      alphaData, alphaStride, alphaBits, PR_TRUE);
-#else
-    rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
-                                     alphaData, alphaStride, alphaBits, PR_FALSE);
-#endif
   }
 
-  if (alphaData)
-    imageFrame->UnlockAlphaData();
   imageFrame->UnlockImageData();
 
   return rv;
