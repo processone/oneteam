@@ -129,10 +129,19 @@
                 this._input.inputField.offsetHeight;
 
           var h = this._sizeOffset + this._inputClone.inputField.scrollHeight;
+          var inpf, inpf2;
 
+          try {
+            inpf = this._input.inputField.style;
+            inpf2 = this._inputClone.inputField.style;
+          } catch (ex) {}
 
-          if (h > 0.3*window.innerHeight)
+          if (h > 0.3*window.innerHeight) {
+            if (inpf)
+              inpf.overflow = inpf2.overflow = "auto";
             h = 0.3*window.innerHeight;
+          } else if (inpf)
+              inpf.overflow = inpf2.overflow = "hidden";
 
           this._input.style.height = h + "px";
 
