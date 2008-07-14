@@ -1,18 +1,34 @@
 function dumpStack(stackFrame, indent)
 {
     var stacktrace = "";
+    var skipFrames = 0;
 
-// #ifdef XULAPP
-    stackFrame = stackFrame || Components.stack.caller;
     indent = indent || "";
-
-    while (stackFrame && stackFrame.caller) {
-        stacktrace += indent+stackFrame.name+"(<unknown>) at "+
-            (stackFrame.filename||"<unknown>")+":"+
-            (stackFrame.lineNumber||"<unknown>")+"\n";
-        stackFrame = stackFrame.caller;
+    if (!stackFrame) {
+        stackFrame = (new Error()).stack;
+        skipFrames = 2;
     }
-// #endif
+
+    if (typeof(stackFrame) == "string") {
+        var tmp = stackFrame.split("\n");
+
+        for (var i = 0; i < tmp.length-1; i++) {
+            if (skipFrames-- > 0)
+                continue;
+            var m = tmp[i].lastIndexOf("@");
+            var fun = tmp[i].slice(0, m);
+            if (fun[0] == "(")
+                fun = "anonymous"+fun;
+            stacktrace += indent+fun+" at "+tmp[i].slice(m+1)+"\n";
+        }
+    } else if ("filename" in stackFrame) {
+        while (stackFrame && stackFrame.caller) {
+            stacktrace += indent+stackFrame.name+"(<unknown>) at "+
+                (stackFrame.filename||"<unknown>")+":"+
+                (stackFrame.lineNumber||"<unknown>")+"\n";
+            stackFrame = stackFrame.caller;
+        }
+    }
     return stacktrace;
 }
 
@@ -49,32 +65,14 @@ function exceptionToString(exc, indent)
 /* #else
         if (exc instanceof Error || exc.stack) {
 // #endif */
-            tmp = exc.stack.split("\n");
-            frames = [];
-
-            for (i = 0; i < tmp. length; i++) {
-                var m = tmp[i].lastIndexOf("@");
-                frames[i] = [tmp[i].slice(0, m), tmp[i].slice(m+1)];
-            }
-
-            stacktrace = "";
-            pos = exc.fileName+":"+exc.lineNumber;
-
-            for (i = 0; i < frames.length && frames[i][1] != pos; i++)
-                ;
-
-            for (; i < frames.length-2; i++)
-                stacktrace += indent+"  "+frames[i][0]+
-                    " at "+frames[i][1]+"\n";
-
             msg = indent+"Exception '"+exc.message+"' thrown at " +
             exc.fileName+":"+exc.lineNumber +"\n";
 
             if (exc.reason)
-                msg += indent+"Caused by:\n" +
-                    arguments.callee(exc.reason, indent+"  ");
+                msg += indent+"Caused by:\n" + arguments.callee(exc.reason, indent+"  ");
 
-            return msg+indent+"Stacktrace:\n"+stacktrace;
+            return msg+indent+"Stacktrace:\n"+
+                dumpStack(exc.stack, indent+"   ");
         } else if (exc.code) {
             var codeStr = "";
             for (var i in exc)
