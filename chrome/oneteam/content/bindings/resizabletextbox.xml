@@ -65,6 +65,12 @@
                 return false;
             return true;
           }, true);
+
+          for each (var event in "keypress keyup keydown click mousedown mouseup dragdrop".split(" ")) {
+            this._input.addEventListener(event, function(event){
+              me._maybeResize()
+            }, false);
+          }
       ]]></constructor>
 
       <method name="focus">
