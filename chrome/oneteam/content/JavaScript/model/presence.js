@@ -140,6 +140,12 @@ _DECL_(PresenceProfiles, null, Model).prototype =
     {
         const ns = "oneteam:presence-profiles";
 
+        if (this.profiles.length) {
+            var p = this.profiles;
+            this.profiles = [];
+            this.modelUpdated("profiles", {removed: p});
+        }
+
         var iq = new JSJaCIQ();
         iq.setType("get")
         var query = iq.setQuery("jabber:iq:private");
