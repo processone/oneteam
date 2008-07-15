@@ -8,8 +8,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="200"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
-  buttons="accept,cancel"
-  onload="onLoad()"  ondialogaccept="return onAccept();">
+  buttons="accept,cancel" ondialogaccept="return onAccept();">
 
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
@@ -22,11 +21,11 @@
     }
   ]]></script>
 
-  <hbox class="entry">
+  <vbox class="entry">
     <description>_("Another client active on your account. Because it has
                  higher priority that this client, messages usualy will be routed to
                  that client.")</description>
     <description>_("Do you want to bump this client priority to make it main client?")</description>
-  </hbox>
+  </vbox>
 
 </dialog>
