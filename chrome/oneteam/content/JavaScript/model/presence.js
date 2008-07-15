@@ -12,7 +12,8 @@ function Presence(show, status, priority, profile)
     } else {
         this.show = show == null ? "available" : show;
         this.status = status;
-        this.priority = isNaN(+priority) ? this._priorityMap[this.show] : +priority;
+        this.priority = priority == null || isNaN(+priority) ?
+            this._priorityMap[this.show] : +priority;
     }
     this.profile = profile;
 }
