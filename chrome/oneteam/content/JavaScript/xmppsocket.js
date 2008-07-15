@@ -115,7 +115,7 @@ _DECL_(XMPPSocket).prototype =
         if (this.parent)
             this.parent = this.parent.parentNode;
 
-        if (!this.parent)
+        if (el && !this.parent)
             this.listener._handleElement(el);
     },
 
