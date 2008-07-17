@@ -429,14 +429,14 @@ _DECL_(Conference, Contact).prototype =
 
         if (errorTag) {
             const errorCodesMap = {
-              401: "This room requires password",
-              403: "You are banned from this room",
-              404: "This room doesn't exist",
-              405: "This room doesn't exist, and can be created only by administrator",
-              406: "This room can be accessed only by registered persons",
-              407: "You are not member of this room",
-              409: "You nick name is already used, try another nick",
-              503: "This room reached maximum number of uses"
+              401: _("This room requires password"),
+              403: _("You are banned from this room"),
+              404: _("This room doesn't exist"),
+              405: _("This room doesn't exist, and can be created only by administrator"),
+              406: _("This room can be accessed only by registered persons"),
+              407: _("You are not member of this room"),
+              409: _("You nick name is already used, try another nick"),
+              503: _("Conference server can't be contacted or room reached maximum number of users")
             };
             errorMsg = errorCodesMap[+errorTag.getAttribute("code")] ||
                 "Joining that room failed";
