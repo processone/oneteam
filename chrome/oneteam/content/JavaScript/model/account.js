@@ -522,8 +522,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.modelUpdated("connected");
             return;
         }
-        this._getDefaultPresence();
-        this.presenceProfiles.loadFromServer(new Callback(this._onPresenceProfiles, this));
+        this._getSavedPresence();
+        this.presenceProfiles.loadFromServer(new Callback(this._gotPresenceProfiles, this));
 
         this.modelUpdated("connected");
 
@@ -570,17 +570,17 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.getVCard(true, function(){});
     },
 
-    _getDefaultPresence: function() {
+    _getSavedPresence: function() {
         var iq = new JSJaCIQ();
         iq.setType("get")
 
         var query = iq.setQuery("jabber:iq:private");
         var node = query.appendChild(iq.getDoc().createElementNS("oneteam:presence", "presence"));
 
-        con.send(iq, new Callback(this._onDefaultPresence, this));
+        con.send(iq, new Callback(this._gotSavedPresence, this));
     },
 
-    _onDefaultPresence: function(pkt)
+    _gotSavedPresence: function(pkt)
     {
         if (pkt.getType() != "result") {
             this._initConnectionStep(6);
@@ -594,19 +594,19 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return;
         }
 
-        this._defaultPresence = new Presence(node.getAttribute("show") || "available",
+        this._savedPresence = new Presence(node.getAttribute("show") || "available",
                                              node.getAttribute("status"),
                                              node.getAttribute("priority"),
                                              node.getAttribute("profile"));
-        if (this._defaultPresence.show == "unavailable") {
-            this._defaultPresence = null;
+        if (this._savedPresence.show == "unavailable") {
+            this._savedPresence = null;
             this._initConnectionStep(6)
             return;
         }
-        this._initConnectionStep(this._defaultPresence.profile ? 2 : 6);
+        this._initConnectionStep(this._savedPresence.profile ? 2 : 6);
     },
 
-    _onPresenceProfiles: function()
+    _gotPresenceProfiles: function()
     {
         this._initConnectionStep(4);
     },
@@ -621,14 +621,14 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return;
 
         var profiles = account.presenceProfiles.profiles;
-        if (this._defaultPresence && typeof(this._defaultPresence.profile) == "string")
+        if (this._savedPresence && typeof(this._savedPresence.profile) == "string")
             for (var i = 0; i < profiles.length; i++)
-                if (profiles[i].name == this._defaultPresence.profile)
-                    this._defaultPresence.profile = profiles[i];
+                if (profiles[i].name == this._savedPresence.profile)
+                    this._savedPresence.profile = profiles[i];
 
-        this.setPresence(this._defaultPresence || new Presence(), true);
+        this.setPresence(this._savedPresence || new Presence(), true);
         this.connectionInitialized = true;
-        this._defaultPresence = null;
+        this._savedPresence = null;
         this.modelUpdated("connectionInitialized");
     },
 
