@@ -479,23 +479,25 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var iq = new JSJaCIQ();
         iq.setType("set")
 
-        var query = iq.setQuery("jabber:iq:private");
-        var node = query.appendChild(iq.getDoc().createElementNS(ns, "presence"));
-        var node2 = iq.getDoc().createElementNS(ns, "saved");
-
         var presence = this.userPresence || this.currentPresence;
 
-        node2.setAttribute("show", presence.show);
-        if (presence.status)
-            node2.setAttribute("status", presence.status);
-        if (presence.priority != null)
-            node2.setAttribute("priority", presence.priority);
+        if (!presence.show == "unavailable") {
+            var query = iq.setQuery("jabber:iq:private");
+            var node = query.appendChild(iq.getDoc().createElementNS(ns, "presence"));
+            var node2 = iq.getDoc().createElementNS(ns, "saved");
 
-        if (presence.profile)
-            node2.setAttribute("profile", presence.profile.name);
+            node2.setAttribute("show", presence.show);
+            if (presence.status)
+                node2.setAttribute("status", presence.status);
+            if (presence.priority != null)
+                node2.setAttribute("priority", presence.priority);
 
-        node.appendChild(node2);
-        con.send(iq);
+            if (presence.profile)
+                node2.setAttribute("profile", presence.profile.name);
+
+            node.appendChild(node2);
+            con.send(iq);
+        }
 
         window.con.disconnect();
     },
@@ -596,6 +598,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                              node.getAttribute("status"),
                                              node.getAttribute("priority"),
                                              node.getAttribute("profile"));
+        if (this._defaultPresence.show == "unavailable") {
+            this._defaultPresence = null;
+            this._initConnectionStep(6)
+            return;
+        }
         this._initConnectionStep(this._defaultPresence.profile ? 2 : 6);
     },
 
@@ -621,6 +628,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.setPresence(this._defaultPresence, true);
         this.connectionInitialized = true;
+        this._defaultPresence = null;
         this.modelUpdated("connectionInitialized");
     },
 
