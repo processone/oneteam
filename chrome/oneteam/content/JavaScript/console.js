@@ -120,7 +120,10 @@ function sendToServer() {
         firstChild.firstChild;
 
     if (intoInput.checked)
-        window.opener.con._inQ.push(node);
+        if (window.opener.con._handleElement)
+            window.opener.con._handleElement(node);
+        else
+            window.opener.con._inQ.push(node);
     else
         window.opener.con.send(window.opener.JSJaCPacket.wrapNode(node));
 
