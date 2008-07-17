@@ -55,63 +55,64 @@ sub translate {
     return $content;
 }
 
+my ($str_re, $brackets_re, $nextarg_re);
+
+$str_re = qr/
+    '
+        (?:
+            [^'\\] | \\.
+        )+
+    ' |
+    "
+        (?:
+            [^"\\] | \\.
+        )+
+    "/x;
+
+$brackets_re = qr/
+    \[
+        (?:
+            (?> [^()"'\[\]{}]+ ) |
+            (??{$str_re}) |
+            (??{$brackets_re})
+        )*
+    \] |
+    \(
+        (?:
+            (?> [^()"'\[\]{}]+ ) |
+            (??{$str_re}) |
+            (??{$brackets_re})
+        )*
+    \) |
+    \{
+        (?:
+            (?> [^()"'\[\]{}]+ ) |
+            (??{$str_re}) |
+            (??{$brackets_re})
+        )*
+    \}
+/x;
+
+$nextarg_re = qr/
+    \G (?:
+        ( \) ) |
+        , \s* (
+            (?: ( $str_re ) \s* (?= [,\)] ) ) |
+            (?: ( \d+(?:\.\d*)? ) \s* (?= [,\)] ) ) |
+            (?:
+                (?:
+                    (?> [^,()"'\[\]{}]+ )
+                    $brackets_re ?
+                ) +
+            )
+        ) \s*
+    )
+/x;
+
 sub _extract_strings {
     my ($self, $str, $start, $accesskey_pos, $xml_escaped, $in_js_code, $unescaped, @pos_map) = @_;
-    my ($str_re, $brackets_re, $nextarg_re);
-    my @strings;
     my %ent_map = ( apos => "'", quot => "\"", lt => "<", gt => ">", amp => "&");
-
-    $str_re = qr/
-        '
-            (?:
-                [^'\\] | \\.
-            )+
-        ' |
-        "
-            (?:
-                [^"\\] | \\.
-            )+
-        "/x;
-
-    $brackets_re = qr/
-        \[
-            (?:
-                (?> [^()"'\[\]{}]+ ) |
-                (??{$str_re}) |
-                (??{$brackets_re})
-            )*
-        \] |
-        \(
-            (?:
-                (?> [^()"'\[\]{}]+ ) |
-                (??{$str_re}) |
-                (??{$brackets_re})
-            )*
-        \) |
-        \{
-            (?:
-                (?> [^()"'\[\]{}]+ ) |
-                (??{$str_re}) |
-                (??{$brackets_re})
-            )*
-        \}
-    /x;
-
-    $nextarg_re = qr/
-        \G (?:
-            ( \) ) |
-            , \s* (
-                (?: ( $str_re ) \s* (?= [,\)] ) ) |
-                (?: ( \d+(?:\.\d*)? ) \s* (?= [,\)] ) ) |
-                (?:
-                    (?:
-                        (?> [^,()"'\[\]{}]+ )
-                        $brackets_re ?
-                    ) +
-                )
-            ) \s*
-        )
-    /x;
+    my @strings;
 
     if ($xml_escaped and not $unescaped) {
         my $pos_diff = 0;
