@@ -398,8 +398,6 @@ _DECL_(Conference, Contact).prototype =
         delete this._myResourceJID;
         this._joinRequested = false;
 
-        this.openChatTab();
-
         var x = pkt.getNode().
             getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "x")[0];
 
@@ -450,8 +448,10 @@ _DECL_(Conference, Contact).prototype =
 
         if (errorTag)
             this._exitRoomCleanup();
-        else
+        else {
+            this.openChatTab();
             this._getRoomName();
+        }
 
         return false;
     },
