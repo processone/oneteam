@@ -620,11 +620,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (this._initConnectionState != 7)
             return;
 
-        var profiles = account.presenceProfiles.profiles;
-        if (this._savedPresence && typeof(this._savedPresence.profile) == "string")
+        var profiles = account.presenceProfiles.profiles, profile;
+        if (this._savedPresence && typeof(profile = this._savedPresence.profile) == "string") {
+            this._savedPresence.profile = null;
             for (var i = 0; i < profiles.length; i++)
-                if (profiles[i].name == this._savedPresence.profile)
+                if (profiles[i].name == profile)
                     this._savedPresence.profile = profiles[i];
+        }
 
         this.setPresence(this._savedPresence || new Presence(), true);
         this.connectionInitialized = true;
