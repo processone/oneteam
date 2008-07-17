@@ -379,7 +379,8 @@ sub resolve {
 sub resolve_for_xulapp {
     my ($self, $xulapp_strings) = @_;
 
-    my ($str_ref, $accesskey_ref) = $xulapp_strings->get_string_ref($self);
+    my ($str_ref, $accesskey_ref) = $xulapp_strings->
+        get_string_ref($self, $self->escape_xml);
 
     return ($str_ref, $accesskey_ref, $accesskey_ref ? $self->accesskey_pos : -1);
 }

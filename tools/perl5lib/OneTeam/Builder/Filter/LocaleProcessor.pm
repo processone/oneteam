@@ -158,10 +158,12 @@ sub _gen_js_args {
 }
 
 sub get_string_ref {
-    my ($self, $inp_str) = @_;
+    my ($self, $inp_str, $escape_xml) = @_;
     my $str = $inp_str->str->str;
 
-    return "_('plural.forms')" if $str =~ /^\$\$plural_forms\$\$:/;
+    my $esc = $escape_xml ? sub {::escape_xml(shift)} : sub { shift };
+
+    return $esc->('_("plural.forms")') if $str =~ /^\$\$plural_forms\$\$:/;
 
     my $hash = $inp_str->hash();
 
@@ -190,7 +192,7 @@ sub get_string_ref {
         my $str = join (", ", escape_js_str("p$str->[1]"),
                               $self->_gen_js_args($inp_str->args));
 
-        return "_(".$str.")";
+        return $esc->("_(".$str.")");
     }
 
     die "Localized string can not be resolved at compilation time at ".
