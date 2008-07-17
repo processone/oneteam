@@ -626,7 +626,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 if (profiles[i].name == this._defaultPresence.profile)
                     this._defaultPresence.profile = profiles[i];
 
-        this.setPresence(this._defaultPresence, true);
+        this.setPresence(this._defaultPresence || new Presence(), true);
         this.connectionInitialized = true;
         this._defaultPresence = null;
         this.modelUpdated("connectionInitialized");
