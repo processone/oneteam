@@ -30,7 +30,8 @@
 
     function acceptInvitation()
     {
-      window.opener.account.onJoinRoom(conference);
+      window.opener.setTimeout(function(a,c){a.onJoinRoom(c)}, 100,
+                               window.opener.account, conference);
       return true;
     }
 
