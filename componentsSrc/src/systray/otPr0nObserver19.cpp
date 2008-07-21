@@ -110,7 +110,7 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
   if (NS_SUCCEEDED(rv)) {
     DEBUG_DUMP("otPr0nObserver19::FrameChanged (6)");
     rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
-                                     NULL, 0, alphaBits, PR_TRUE);
+                                     NULL, 0, alphaBits);
   }
 
   imageFrame->UnlockImageData();

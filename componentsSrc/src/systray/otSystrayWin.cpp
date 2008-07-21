@@ -71,8 +71,7 @@ nsresult
 otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
                                PRUint8 *rgbData, PRUint32 rgbStride,
                                PRUint32 rgbLen, PRUint8 *alphaData,
-                               PRUint32 alphaStride, PRUint32 alphaBits,
-                               PRBool packedPixel)
+                               PRUint32 alphaStride, PRUint32 alphaBits)
 {
   ICONINFO ii;
   NOTIFYICONDATA nid;
@@ -146,10 +145,10 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
 
   w = dex - dsx;
 
-  rgbPixel = rgbData + rgbStride*ssy + ssx*(packedPixel ? 4 : 3);
+  rgbPixel = rgbData + rgbStride*ssy + ssx*(alphaData ? 3 : 4);
 
   if (alphaBits == 8) {
-    if (packedPixel) {
+    if (!alphaData) {
       colorBits += (ICON_WIDTH*dsy + dsx)*4;
       for (y = dsy; y < dey; ++y) {
         memcpy(colorBits, rgbPixel, (dex-dsx)*4);
@@ -194,7 +193,7 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
 
           maskBits[x] = (~(mask>>w)) & 0xff;
         }
-        // Why windows requires needs to multiply that by two?
+
         maskBits += ICON_WIDTH/8 * 2;
         alphaPixel += alphaStride;
       }

@@ -26,8 +26,7 @@ protected:
   nsresult ProcessImageData(PRInt32 width, PRInt32 height,
                             PRUint8 *rgbData, PRUint32 rgbStride,
                             PRUint32 rgbLen, PRUint8 *alphaData,
-                            PRUint32 alphaStride, PRUint32 alphaBits,
-                            PRBool packedPixel);
+                            PRUint32 alphaStride, PRUint32 alphaBits);
   void RegisterInManager();
   void UpdateManager();
 

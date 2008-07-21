@@ -76,8 +76,7 @@ nsresult
 otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
                                 PRUint8 *rgbData, PRUint32 rgbStride,
                                 PRUint32 rgbLen, PRUint8 *alphaData,
-                                PRUint32 alphaStride, PRUint32 alphaBits,
-                                PRBool packedPixel)
+                                PRUint32 alphaStride, PRUint32 alphaBits)
 {
   DEBUG_DUMP("otSystrayGtk2::ProcessImageData (ENTER)");
   if (!rgbData)
@@ -89,7 +88,7 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
   if (!pixels)
     return NS_ERROR_OUT_OF_MEMORY;
 
-  if (packedPixel) {
+  if (!alphaData) {
     // XXXpfx: will it work on little endian?
     for (PRUint32 i = 0; i < rgbLen/4; i++) {
       pixels[i*4+0] = rgbData[i*4+2];
@@ -110,7 +109,7 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
-  if (!packedPixel && alphaBits) {
+  if (alphaData && alphaBits) {
     GdkPixbuf *alphaPixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
     g_object_unref(pixbuf);
