@@ -179,30 +179,61 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
       }
     }
   } else {
-    colorBits += (ICON_WIDTH*dsy + dsx)*3;
-    if (reversed)
-      rgbPixel += rgbStride*(dey-dsy);
-    for (y = dsy; y < dey; ++y) {
-      memcpy(colorBits, rgbPixel, w*3);
-      colorBits += ICON_WIDTH*3;
-      rgbPixel += reversed ? -rgbStride : rgbStrides;
+    if (!alphaData) {
+      colorBits += (ICON_WIDTH*dsy + dsx)*3;
+      if (reversed)
+        rgbPixel += rgbStride*(dey-dsy);
+      for (y = dsy; y < dey; ++y) {
+        for (x = dsx; x < dex; ++x) {
+          colorBits[0] = rgbPixel[0];
+          colorBits[1] = rgbPixel[1];
+          colorBits[2] = rgbPixel[2];
+          rgbPixel+=4;
+          colorBits+=3;
+        }
+        colorBits += ICON_WIDTH*3 - w*3;
+        rgbPixel += (reversed ? -rgbStride : rgbStride) - w*4;
+      }
+    } else {
+      colorBits += (ICON_WIDTH*dsy + dsx)*3;
+      if (reversed)
+        rgbPixel += rgbStride*(dey-dsy);
+      for (y = dsy; y < dey; ++y) {
+        memcpy(colorBits, rgbPixel, w*3);
+        colorBits += ICON_WIDTH*3;
+        rgbPixel += reversed ? -rgbStride : rgbStrides;
+      }
     }
     if (alphaBits == 1) {
       memset(maskBits, 0xff, ICON_WIDTH*ICON_HEIGHT/8*2);
-      w = ssx-dsx;
-      alphaPixel = alphaData + alphaStride*ssy + w/8;
-      w = 8-(w&7);
-      for (y = dsy; y < dey; ++y) {
-        mask = alphaPixel[0];
-        for (x = dsx/8; x < (dex+7)/8; ++x) {
-          mask = mask << 8;
-          mask |= alphaPixel[x+1-dsx/8];
+      if (!alphaData) {
+        alphaPixel = rgbData + rgbStride*ssy + (ssx-dsx)*4 + 3;
+        if (reversed)
+          alphaPixel += rgbStride*(dey-dsy);
+        for (y = dsy; y < dey; ++y) {
+          for (x = dsx; x < dex; ++x)
+            if (alphaPixel[x*4] > 128)
+              maskBits[x/8] &=  ~(128>>(x&7));
 
-          maskBits[x] = (~(mask>>w)) & 0xff;
+          maskBits += ICON_WIDTH/8 * 2;
+          alphaPixel += reversed ? -rgbStride : rgbStride;
         }
+      } else {
+        w = ssx-dsx;
+        alphaPixel = alphaData + alphaStride*ssy + w/8;
+        w = 8-(w&7);
+        for (y = dsy; y < dey; ++y) {
+          mask = alphaPixel[0];
+          for (x = dsx/8; x < (dex+7)/8; ++x) {
+            mask = mask << 8;
+            mask |= alphaPixel[x+1-dsx/8];
 
-        maskBits += ICON_WIDTH/8 * 2;
-        alphaPixel += alphaStride;
+            maskBits[x] = (~(mask>>w)) & 0xff;
+          }
+
+          maskBits += ICON_WIDTH/8 * 2;
+          alphaPixel += alphaStride;
+        }
       }
     }
   }
