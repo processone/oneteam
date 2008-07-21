@@ -847,6 +847,7 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
             if (this.bookmarks[i].bookmarkName == conference.bookmarkName &&
                 this.bookmarks[i] != conference)
             {
+                this.modelUpdated("bookmarks", {removed: [this.bookmarks[i]]});
                 this.bookmarks[i].bookmark(null, null, null, null, true);
                 this.bookmarks.splice(i, 1);
                 break;
