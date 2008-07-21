@@ -134,7 +134,7 @@ function HistoryManager()
             SELECT thread_id, J.jid, T.time FROM messages M, threads T, jids J
                 WHERE body LIKE '%'|| ?1 ||'%' AND T.id = M.thread_id AND J.id = T.jid_id
                 GROUP BY thread_id
-                ORDER BY T.time DESC;
+                ORDER BY T.time ASC;
         </sql>.toString());
     this.getThreadMessagesStmt = this.db.createStatement(<sql>
             SELECT J.jid, M.flags, body, body_html, nick, time FROM messages M, jids J

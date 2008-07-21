@@ -24,8 +24,9 @@
     prefManager = window.opener.prefManager;
     contact = window.arguments && window.arguments[0];
 
-    function TreeView(tree) {
+    function TreeView(tree, reversed) {
       this.wrappedJSObject = this;
+      this._reversed = reversed;
       tree.myView = this;
 // #ifdef XULAPP
       tree.view = this;
@@ -48,6 +49,15 @@
       selectionChanged: function() {},
       cycleHeader: function(){},
 
+      _rowIdx: function(row) {
+        if (this._reversed) {
+          var len = this._treeEl ? this._treeEl.body.childNodes.length :
+            this._results ? this._results.length : 0;
+          return len - 1 - row;
+        }
+        return row;
+      },
+
       get rowCount() {
         return this._results ? this._results.length : 0
       },
@@ -56,9 +66,11 @@
       {
         if (this._inClear || !this._results)
           return null;
+
         if (this._treeEl)
           return this._treeEl.body.childNodes[this._treeEl.currentIndex].model;
-        return this._results[this.selection.currentIndex];
+
+        return this._results[this._rowIdx(this.selection.currentIndex)];
       },
 
       _cellText: function(id, value) {
@@ -82,7 +94,7 @@
         if (row > this._results.length)
           return "ERROR";
 
-        return this._cellText(column.id, this._results[row]);
+        return this._cellText(column.id, this._results[this._rowIdx(row)]);
       },
 
       setTree: function(tree) {
@@ -95,8 +107,7 @@
         this._results = newValue;
         if (this._tree) {
           var len2 = newValue ? this._results.length : 0;
-          this._tree.rowCountChanged(len1 > len2 ? len1 : len2, len2 - len1);
-          this._tree.invalidate()
+          this._tree.rowCountChanged(this._reversed ? 0 : len1, len2 - len1);
         }
       },
 
@@ -139,15 +150,21 @@
             row.appendChild(document.createElement("treecell")).
                         setAttribute("label", readableTimestamp(value.date));
 
-          this._treeEl.body.insertBefore(item, this._treeEl.body.firstChild);
+          if (this._reversed)
+            this._treeEl.body.insertBefore(item, this._treeEl.body.firstChild);
+          else
+            this._treeEl.body.appendChild(item);
 
           return;
-        } else if (this._inBatch) {
+        }
+
+        if (this._inBatch) {
           if (!this._newResults)
             this._newResults = []
           this._newResults.push(value);
         } else {
-          this._updateTree((this._results || []).concat([value]));
+          var val = this._results || [];
+          this._updateTree(val.concat([value]));
         }
       }
     };
@@ -159,13 +176,13 @@
 
     function onLoad() {
 // #ifdef XULAPP
-      searchThreads = new TreeView(document.getElementById("search-threads"));
+      searchThreads = new TreeView(document.getElementById("search-threads"), true);
       searchMessages = document.getElementById("search-view");
       searchMessages.scrollToBottom = false;
 // #endif
 
       contactsList = new TreeView(document.getElementById("contacts-list"));
-      contactsThreads = new TreeView(document.getElementById("contacts-threads"));
+      contactsThreads = new TreeView(document.getElementById("contacts-threads"), true);
       contactsMessages = document.getElementById("contacts-view");
       contactsMessages.scrollToBottom = false;
 
@@ -183,7 +200,7 @@
       }
 
       conferencesList = new TreeView(document.getElementById("conferences-list"));
-      conferencesThreads = new TreeView(document.getElementById("conferences-threads"));
+      conferencesThreads = new TreeView(document.getElementById("conferences-threads"), true);
       conferencesMessages = document.getElementById("conferences-view");
       conferencesMessages.scrollToBottom = false;
 
@@ -226,6 +243,8 @@
 
     function updateMessages(tree, view)
     {
+      if (view.model == tree.myView.currentObject)
+        return;
       view.clear();
       view.model = tree.myView.currentObject;
     }
