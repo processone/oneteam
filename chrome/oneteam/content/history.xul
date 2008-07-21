@@ -97,12 +97,15 @@
         this._inClear = false;
       },
 
+      _inBatch: 0,
+
       _startBatchUpdate: function() { this._inBatch++ },
 
       _endBatchUpdate: function()
       {
         if (--this._inBatch == 0 && !this._treeEl)
-          this._updateTree([].concat(this._newResults || []));
+          this._updateTree(this._newResults || []);
+        this._newResults = null;
       },
 
       _addRecord: function(value)
