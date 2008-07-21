@@ -345,6 +345,12 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
 {
     _lastMessageTime: 0,
 
+    addMessage: function(msg, clone)
+    {
+        this._lastMessageTime = Date.now();
+        ArchivedMessagesThreadBase.prototype.addMessage.call(this, msg, clone);
+    },
+
     getNewMessages: function()
     {
         var stmt = account.historyMgr.getThreadMessagesStmt;
