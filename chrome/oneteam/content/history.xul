@@ -61,12 +61,28 @@
         return this._results[this.selection.currentIndex];
       },
 
+      _cellText: function(id, value) {
+        if (id == "jid") {
+          var contact = value.contact ? value.contact : value;
+
+          if (contact.bookmarkName)
+            return contact.bookmarkName;
+
+          if (contact.name)
+            return contact.name;
+
+          return value.jid;
+        }
+
+        return readableTimestamp(value.time);
+      },
+
       getCellText : function(row, column)
       {
         if (row > this._results.length)
           return "ERROR";
-        return column.id == "jid" ? this._results[row].jid :
-          formatDate(this._results[row].time, null, "short", "long");
+
+        return this._cellText(column.id, this._results[row]);
       },
 
       setTree: function(tree) {
@@ -118,7 +134,7 @@
           item.model = value;
 
           row.appendChild(document.createElement("treecell")).
-                      setAttribute("label", value.jid);
+                      setAttribute("label", this._cellText("jid", value));
           if (value.date)
             row.appendChild(document.createElement("treecell")).
                         setAttribute("label", readableTimestamp(value.date));
@@ -234,7 +250,7 @@
           <tree id="search-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, searchMessages)">
             <treecols>
-              <treecol primary="true" flex="5" label="JID" id="jid"/>
+              <treecol primary="true" flex="5" label="Contact" id="jid"/>
               <splitter class="tree-splitter"/>
               <treecol flex="1" label="Date" id="date"/>
             </treecols>
@@ -259,7 +275,7 @@
             <tree id="contacts-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, contactsMessages)">
               <treecols>
-                <treecol primary="true" flex="5" label="JID" id="jid"/>
+                <treecol primary="true" flex="5" label="Contact" id="jid"/>
                 <splitter class="tree-splitter"/>
                 <treecol flex="1" label="Date" id="date"/>
               </treecols>
@@ -284,7 +300,7 @@
             <tree id="conferences-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, conferencesMessages)">
               <treecols>
-                <treecol primary="true" flex="5" label="JID" id="jid"/>
+                <treecol primary="true" flex="5" label="Conference" id="jid"/>
                 <splitter class="tree-splitter"/>
                 <treecol flex="1" label="Date" id="date"/>
               </treecols>
