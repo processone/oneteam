@@ -303,13 +303,13 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             for (var observer in this._iterateCallbacks("threads-"+threadContact.jid))
                 observer._addRecord(archivedThread);
 
-            if (msg.isMucMessage)
+            if (msg.isMucMessage) {
                 if (this._conferences.indexOf(threadContact) < 0)
                     for (observer in this._iterateCallbacks("conferences"))
                         observer._addRecord(threadContact);
-                else if (this._contacts.indexOf(threadContact) < 0)
-                    for (observer in this._iterateCallbacks("contacts"))
-                        observer._addRecord(threadContact);
+            } else if (this._contacts.indexOf(threadContact) < 0)
+                for (observer in this._iterateCallbacks("contacts"))
+                    observer._addRecord(threadContact);
         } else
             archivedThread = this._sessionArchivedThreads[idx];
 
