@@ -71,7 +71,8 @@ nsresult
 otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
                                PRUint8 *rgbData, PRUint32 rgbStride,
                                PRUint32 rgbLen, PRUint8 *alphaData,
-                               PRUint32 alphaStride, PRUint32 alphaBits)
+                               PRUint32 alphaStride, PRUint32 alphaBits,
+                               PRBool reversed)
 {
   ICONINFO ii;
   NOTIFYICONDATA nid;
@@ -150,14 +151,18 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
   if (alphaBits == 8) {
     if (!alphaData) {
       colorBits += (ICON_WIDTH*dsy + dsx)*4;
+      if (reversed)
+        rgbPixel += rgbStride*(dey-dsy);
       for (y = dsy; y < dey; ++y) {
         memcpy(colorBits, rgbPixel, (dex-dsx)*4);
-        rgbPixel += rgbStride;
+        rgbPixel += reversed ? -rgbStride : rgbStride;
         colorBits += ICON_WIDTH*4;
       }
     } else{
       colorBits += (ICON_WIDTH*dsy + dsx)*4;
       alphaPixel = alphaData + alphaStride*ssy + ssx;
+      if (reversed)
+        rgbPixel += rgbStride*(dey-dsy);
       for (y = dsy; y < dey; ++y) {
         for (x = dsx; x < dex; ++x) {
           colorBits[0] = rgbPixel[0];
@@ -168,17 +173,19 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
           alphaPixel++;
           colorBits+=4;
         }
-        rgbPixel += rgbStride - w*3;
+        rgbPixel += (reversed ? -rgbStride : rgbStride) - w*3;
         alphaPixel += alphaStride - w;
         colorBits += ICON_WIDTH*4 - w*4;
       }
     }
   } else {
     colorBits += (ICON_WIDTH*dsy + dsx)*3;
+    if (reversed)
+      rgbPixel += rgbStride*(dey-dsy);
     for (y = dsy; y < dey; ++y) {
       memcpy(colorBits, rgbPixel, w*3);
       colorBits += ICON_WIDTH*3;
-      rgbPixel += rgbStride;
+      rgbPixel += reversed ? -rgbStride : rgbStrides;
     }
     if (alphaBits == 1) {
       memset(maskBits, 0xff, ICON_WIDTH*ICON_HEIGHT/8*2);

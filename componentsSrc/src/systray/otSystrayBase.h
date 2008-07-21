@@ -48,7 +48,8 @@ public:
   virtual nsresult ProcessImageData(PRInt32 width, PRInt32 height,
                                     PRUint8 *rgbData, PRUint32 rgbStride,
                                     PRUint32 rgbLen, PRUint8 *alphaData,
-                                    PRUint32 alphaStride, PRUint32 alphaBits) = 0;
+                                    PRUint32 alphaStride, PRUint32 alphaBits,
+                                    PRBool reversed) = 0;
 };
 
 #endif
