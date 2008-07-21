@@ -50,12 +50,13 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
     {
         var watched = this._views["messages"];
 
-        MessagesThread.prototype.registerView.apply(this, arguments);
+        var token = MessagesThread.prototype.registerView.apply(this, arguments);
 
         if (!watched && this._views["messages"]) {
             this.watched = true;
             this.getNewMessages();
         }
+        return token;
     },
 
     unregisterView: function(token)
