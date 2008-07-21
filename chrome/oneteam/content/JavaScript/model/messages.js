@@ -448,9 +448,8 @@ _DECL_(MessagesThread, Model).prototype =
             msg.queues.push(this);
             this.messages.push(msg);
             this.modelUpdated("messages", {added: [msg]});
+            account.historyMgr.addMessage(msg);
         }
-
-        account.historyMgr.addMessage(msg);
 
         this.contact.sendMessage(msg);
     },
