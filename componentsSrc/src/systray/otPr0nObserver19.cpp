@@ -82,9 +82,9 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
 {
   DEBUG_DUMP("otPr0nObserver19::FrameChanged (entered)");
   nsresult rv;
-  PRUint8 *alphaData, *rgbData;
-  PRUint32 alphaLen, rgbLen, alphaBits;
-  PRUint32 alphaStride, rgbStride;
+  PRUint8 *rgbData;
+  PRUint32 rgbLen, alphaBits;
+  PRUint32 rgbStride;
   PRInt32 width, height;
   gfx_format format;
 
@@ -92,8 +92,6 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
     return NS_OK;
 
   DEBUG_DUMP("otPr0nObserver19::FrameChanged (1)");
-
-  alphaData = rgbData = 0;
 
   imageFrame->GetWidth(&width);
   imageFrame->GetHeight(&height);
@@ -112,7 +110,7 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
   if (NS_SUCCEEDED(rv)) {
     DEBUG_DUMP("otPr0nObserver19::FrameChanged (6)");
     rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
-                                     alphaData, alphaStride, alphaBits, PR_TRUE);
+                                     NULL, 0, alphaBits, PR_TRUE);
   }
 
   imageFrame->UnlockImageData();
