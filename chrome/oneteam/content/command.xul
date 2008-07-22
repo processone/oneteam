@@ -57,11 +57,12 @@
   }
 
   function handleKeyPress(event) {
-      if (!event.charCode || event.ctrlKey || event.altKey || event.target.localName == "textbox")
-        return;
+    if (!event.charCode || event.ctrlKey || event.altKey || event.metaKey ||
+        event.target.localName == "textbox")
+      return;
 
-      input.value += String.fromCharCode(event.charCode);
-      input.focus();
+    input.value += String.fromCharCode(event.charCode);
+    input.focus();
   }
 
   function flushChrome() {
