@@ -10,9 +10,7 @@
     </resources>
 
     <content>
-      <html:iframe src="../content/blank.html" id="output" flex="1"
-                   onload="this._loaded = true; var p = this.parentNode;
-                           try { if (!p._initialized &amp;&amp; p._output) p._init() } catch(e) {}"/>
+      <html:iframe src="../content/blank.html" id="output" flex="1"/>
       <xul:stack id="markersContainer">
         <xul:vbox class="marker-arrow"/>
       </xul:stack>
@@ -61,6 +59,10 @@
       </property>
 
       <constructor><![CDATA[
+        var me = this;
+        this._output = document.getAnonymousElementByAttribute(this, "id", "output");
+        this._output.addEventListener("load", function(){me._init()}, true)
+
         var p = this.__proto__;
         this.__proto__ = {};
 
@@ -79,19 +81,11 @@
         if (this._visible == null)
           this._visible = true;
 
-        this._output = document.getAnonymousElementByAttribute(this, "id", "output");
         this._markersContainer = document.getAnonymousElementByAttribute(this, "id", "markersContainer");
         this._markers = [];
         this.colorMap = {0: 0};
         this.colorIndex = 1;
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
-
-        //#ifdef XULAPP
-        setTimeout(function(a){a._init()}, 200, this);
-        /*#else
-        if (this._output._loaded && !this._initialized)
-          this._init();
-        //#endif*/
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -593,9 +587,7 @@
 
     <content>
       <xul:vbox flex="1" class="inputBox">
-        <html:iframe id="_input" style="height: 1em"
-                     onload="this._loaded = true; var p = this.parentNode.parentNode;
-                             try { if (!p._initialized &amp;&amp; p._input) p._init() } catch(ex) {}"/>
+        <html:iframe id="_input" style="height: 1em"/>
       </xul:vbox>
     </content>
 
@@ -623,7 +615,9 @@
       </property>
 
       <constructor><![CDATA[
+        var me = this;
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
+        this._input.addEventListener("load", function(){me._init()}, true)
 
         var el = this.previousSibling;
         if (!el)
@@ -637,12 +631,6 @@
 
         this._history = [];
         this._historyPosition = 0;
-        //#ifdef XULAPP
-        setTimeout(function(a){a._init()}, 200, this);
-        /*#else
-        if (this._input._loaded && !this._initialized)
-          this._init();
-        //#endif*/
       ]]></constructor>
 
       <method name="_init">
