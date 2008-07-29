@@ -45,6 +45,7 @@ _DECL_(XMPPSocket).prototype =
         this.bos = Components.classes["@mozilla.org/binaryoutputstream;1"].
           createInstance(Components.interfaces.nsIBinaryOutputStream);
         this.bos.setOutputStream(this.os);
+        this._pingInterval = window.setInterval(function(t){t.send(" ")}, 50000, this);
     },
 
     send: function(data) {
@@ -78,6 +79,8 @@ _DECL_(XMPPSocket).prototype =
             this.is.close();
         if (this.os)
             this.os.close();
+        if (this._pingInterval)
+            window.clearInterval(this._pingInterval);
 
         this.is = this.os = this.bos = this.transport = null;
     },
