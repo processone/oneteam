@@ -271,8 +271,8 @@
         expr: expr
       };
 
-      val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
-        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", win);
+      val = win.eval("with(__CONSOLE_ARGS__.scope){(function(){"+
+        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}");
       return {result: val};
     } catch (ex) {
       return {exception: ex}
