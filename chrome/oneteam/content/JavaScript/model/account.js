@@ -23,10 +23,17 @@ function Account()
     this.notificationScheme = new NotificationScheme();
     this.myResource = new MyResource();
 
+    this.autoAway = {
+        away: {enabled: false},
+        xa: {enabled: false}
+    };
+
     prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
                                        "chat.connection", true);
     prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
                                        "chat.general", true);
+    prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
+                                       "chat.status", true);
 }
 
 _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
@@ -335,6 +342,22 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.style.setDefaultSmilesSet(value);
         } else if (name == "chat.general.usegatewayicons") {
             this.style.setUseGatewayIcons(value);
+        } else if (name == "chat.status.autoaway") {
+            this.autoAway.away.enabled = value;
+            this._setupAutoAway("away");
+        } else if (name == "chat.status.autoaway.time") {
+            this.autoAway.away.time = value*60;
+            this._setupAutoAway("away");
+        } else if (name == "chat.status.autoaway.status") {
+            this.autoAway.away.status = value;
+        } else if (name == "chat.status.autoxa") {
+            this.autoAway.xa.enabled = value;
+            this._setupAutoAway("xa");
+        } else if (name == "chat.status.autoxa.time") {
+            this.autoAway.xa.time = value*60;
+            this._setupAutoAway("xa");
+        } else if (name == "chat.status.autoxa.status") {
+            this.autoAway.xa.status = value;
         }
     },
 
@@ -743,6 +766,45 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             openDialogUniq("ot:bumpPriority",
                            "chrome://oneteam/content/bumpPriority.xul",
                            "chrome,centerscreen", +packet.getPriority()+1);
+    },
+
+    _setupAutoAway: function(type) {
+        try {
+            var srv = Components.classes["@mozilla.org/widget/idleservice;1"].
+                getService(Components.interfaces.nsIIdleService);
+            if (this.autoAway[type].observed) {
+                srv.removeIdleObserver(this, this.autoAway[type].lastTime);
+                this.autoAway[type].observed = false;
+            }
+            if (this.autoAway[type].enabled) {
+                this.autoAway[type].observed = true;
+                this.autoAway[type].lastTime = this.autoAway[type].time;
+                srv.addIdleObserver(this, this.autoAway[type].time);
+            }
+        } catch (ex) {}
+    },
+
+    observe: function(subject, topic, data) {
+        if (topic == "idle") {
+            var type;
+
+            if (!this.connected)
+                return;
+
+            if (this.autoAway.xa.enabled &&
+                this.autoAway.xa.lastTime <= data/1000)
+                type = "xa";
+            else if (this.autoAway.away.enabled &&
+                     this.autoAway.away.lastTime <= data/1000)
+                type = "away";
+
+            if (type)
+                this.setPresence(type, this.autoAway[type].status);
+        } else if (topic == "back") {
+            if (!this.connected)
+                return;
+            this.setPresence(this.userPresence);
+        }
     },
 
     onIQ: function(packet)
