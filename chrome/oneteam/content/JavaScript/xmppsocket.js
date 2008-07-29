@@ -46,6 +46,7 @@ _DECL_(XMPPSocket).prototype =
           createInstance(Components.interfaces.nsIBinaryOutputStream);
         this.bos.setOutputStream(this.os);
         this._pingInterval = window.setInterval(function(t){t.send(" ")}, 50000, this);
+        this.reconnect = false;
     },
 
     send: function(data) {
@@ -77,8 +78,10 @@ _DECL_(XMPPSocket).prototype =
     disconnect: function() {
         if (this.is)
             this.is.close();
-        if (this.os)
-            this.os.close();
+        if (this.bos)
+            this.bos.close();
+        if (this.transport)
+            this.transport.close(0);
         if (this._pingInterval)
             window.clearInterval(this._pingInterval);
 
@@ -172,6 +175,13 @@ _DECL_(XMPPSocket).prototype =
 
     onStopRequest: function(request, context, status)
     {
+        if (this.reconnect) {
+            this.disconnect();
+            this.connect();
+            this.listener._handleReconnect();
+            return;
+        }
+
         this.listener._handleDisconnect();
         try {
             this.saxParser.onStopRequest.apply(this.saxParser, arguments);
@@ -190,8 +200,40 @@ _DECL_(XMPPSocket).prototype =
                 QueryInterface(Components.interfaces.nsISSLSocketControl);
             if (si)
                 si.notificationCallbacks = {
+                    socket: this,
                     notifyCertProblem: function(info, status, host) {
-                        return false;
+                        var srv = Components.classes["@mozilla.org/security/certoverride;1"].
+                            getService(Components.interfaces.nsICertOverrideService);
+                        var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
+                            getService(Components.interfaces.nsIPromptService);
+                        var flags = 0, msg = "", check = {value: false};
+
+                        status = status.QueryInterface(Components.interfaces.nsISSLStatus);
+
+                        if (status.isUntrusted) {
+                            flags |= srv.ERROR_UNTRUSTED;
+                            msg += "\n  "+_("Hasn't been verified by recognized authority");
+                        }
+                        if (status.isDomainMismatch) {
+                            flags |= srv.ERROR_MISMATCH;
+                            msg += "\n  "+_("Belongs to different domain");
+                        }
+                        if (status.isNotValidAtThisTime) {
+                            flags |= srv.ERROR_TIME;
+                            msg += "\n  "+_("Has been expired");
+                        }
+
+                        if (promptSrv.confirmEx(null, _("Invalid certificate"),
+                                                _("Certificate used by server is invalid because:")+msg,
+                                                127+256*2, _("Continue"), "", "",
+                                                _("Always skip this dialog"), check))
+                            return false;
+
+                        srv.rememberValidityOverride(this.socket.host, this.socket.port,
+                                                     status.serverCert, flags, !check.value);
+                        this.socket.reconnect = true;
+
+                        return true;
                     },
 
                     getInterface: function(iid) {
@@ -201,7 +243,7 @@ _DECL_(XMPPSocket).prototype =
                     QueryInterface: function(iid) {
                         if (!iid.equals(Components.interfaces.nsISupports) &&
                             !iid.equals(Components.interfaces.nsIInterfaceRequestor) &&
-                            !iid.equals(Components.interfaces.nsBadCertListener2))
+                            !iid.equals(Components.interfaces.nsIBadCertListener2))
                             throw Components.results.NS_ERROR_NO_INTERFACE;
                         return this;
                     }

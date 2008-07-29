@@ -83,6 +83,10 @@ JSJaCMozillaConnection.prototype = {
     this._onDisconnect();
   },
 
+  _handleReconnect: function() {
+    this._reInitStream();
+  },
+
   _handleElement: function(node) {
     var packet = JSJaCPacket.wrapNode(node);
 
@@ -106,7 +110,7 @@ JSJaCMozillaConnection.prototype = {
           this._onDisconnect();
           return;
         case "features":
-          if (node.getElementsByTagNameNS("urn:ietf:params:xml:ns:xmpp-tls", "starttls").length && 0) {
+          if (node.getElementsByTagNameNS("urn:ietf:params:xml:ns:xmpp-tls", "starttls").length) {
             this._sendRaw("<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>")
             return;
           }
