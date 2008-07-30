@@ -43,7 +43,8 @@
     }
 
     function joinRoom() {
-      conf = conference || window.opener.account.getOrCreateConference(room.value+"@"+server.value);
+      conf = conference || window.opener.account.getOrCreateConference(
+        new window.open.JID(room.value, server.value));
 
       if (bookmark.checked)
         conf.bookmark(bookmarkName.value, autoJoin.checked, nick.value, password.value);

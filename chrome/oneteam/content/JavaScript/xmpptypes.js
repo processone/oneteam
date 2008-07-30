@@ -21,11 +21,15 @@ function JID(node, domain, resource)
         if (this._cache[node])
             return this._cache[node];
 
-        var atIdx = node.indexOf("@");
+        var atIdx = node.lastIndexOf("@");
         var slashIdx = ~(~node.indexOf("/", atIdx) || ~node.length);
 
-        [node, domain, resource] = [node.substring(0, atIdx),
-            node.substring(atIdx+1, slashIdx), node.substring(slashIdx+1)];
+        [node, domain, resource] = [
+            this._maybeEscape(node.substring(0, atIdx)),
+            node.substring(atIdx+1, slashIdx),
+            node.substring(slashIdx+1)];
+    } else {
+        node = this._escape(node);
     }
 
     this.shortJID = (node ? node+"@" : "") + domain;
@@ -118,6 +122,33 @@ JID.prototype =
         "3e": ">",
         "40": "@",
         "5c": "\\"
+    },
+
+    _maybeEscape: function(str) {
+        if (str && /[ "&'\/:<>@]/.exec(str))
+            return this._escape(str);
+        return str;
+    },
+
+    _escape: function(str) {
+        if (!str)
+            return str;
+
+        return str.replace(/[ "&'\/:<>@\\]/g, function(a) {
+            return "\\"+this._escapeSeqHash[a];
+        });
+    },
+    _escapeSeqHash: {
+        " ": "20",
+        "\"": "22",
+        "&": "26",
+        "'": "27",
+        "/": "2f",
+        ":": "3a",
+        "<": "3c",
+        ">": "3e",
+        "@": "40",
+        "\\": "5c"
     },
 
     /**
