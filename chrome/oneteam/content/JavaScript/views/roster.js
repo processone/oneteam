@@ -153,7 +153,6 @@ function ContactView(model, parentView)
     if (model instanceof MyResourcesContact) {
         this.tooltip = new ResourceTooltip(model, this.parentNode);
         this.node.setAttribute("context", "resource-contextmenu");
-    window.tt = this;
     } else {
         this.tooltip = new ContactTooltip(model, this.parentNode);
         this.node.setAttribute("context", "contact-contextmenu");
