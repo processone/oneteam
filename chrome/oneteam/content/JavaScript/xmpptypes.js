@@ -104,9 +104,11 @@ JID.prototype =
     },
 
     _unescape: function(str) {
-        return str.replace(/\\([a-fA-F0-9]{2})/, function(f,p) {
-            if (p in this._escapeSeqHash)
-                return this._escapeSeqHash[p];
+        var me = this;
+        return str.replace(/\\([a-f0-9]{2})/g, function(f,p) {
+            alert(p);
+            if (p in me._unescapeSeqHash)
+                return me._unescapeSeqHash[p];
             return f;
         });
 
@@ -131,11 +133,12 @@ JID.prototype =
     },
 
     _escape: function(str) {
+        var me = this;
         if (!str)
             return str;
 
         return str.replace(/[ "&'\/:<>@\\]/g, function(a) {
-            return "\\"+this._escapeSeqHash[a];
+            return "\\"+me._escapeSeqHash[a];
         });
     },
     _escapeSeqHash: {
