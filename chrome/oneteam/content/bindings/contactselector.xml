@@ -221,4 +221,32 @@
 
   </binding>
 
+  <binding id="listitem-checkbox"
+           extends="chrome://global/content/bindings/listbox.xml#listitem-checkbox">
+    <content>
+      <children>
+        <xul:listcell type="checkbox" xbl:inherits="label,crop,checked,disabled,flexlabel"/>
+      </children>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        var p = this.__proto__;
+        this.__proto__ = {};
+
+        var state = {};
+        for each (var i in "checked".split(/ /))
+          if (this[i] != null) {
+            state[i] = this[i];
+            delete this[i];
+          }
+
+        this.__proto__ = p;
+
+        for (i in state)
+          this[i] = state[i];
+      ]]></constructor>
+    </implementation>
+  </binding>
+
 </bindings>

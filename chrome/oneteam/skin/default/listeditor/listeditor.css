@@ -27,3 +27,6 @@
     list-style-image: url(imgs/commit-dis.png);
 }
 
+listitem[type="checkbox"] {
+  -moz-binding: url("chrome://oneteam/content/bindings/contactselector.xml#listitem-checkbox");
+}

@@ -9,13 +9,14 @@
 
     <resources>
       <stylesheet src="chrome://global/skin"/>
+      <stylesheet src="chrome://oneteam/skin/listeditor/listeditor.css"/>
     </resources>
 
     <content>
       <xul:vbox flex="1">
         <xul:hbox flex="1">
           <xul:textbox id="name-textbox" flex="1" xbl:inherits="disabled"/>
-          <xul:button id="add-button" label="Add" xbl:inherits="disabled"
+          <xul:button class="add-button" id="add-button" xbl:inherits="disabled"
             oncommand="this.parentNode.parentNode.parentNode.onAddGroup()"/>
         </xul:hbox>
         <xul:listbox id="groups-listbox" xbl:inherits="disabled,rows">
