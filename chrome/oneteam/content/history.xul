@@ -83,7 +83,7 @@
           if (contact.name)
             return contact.name;
 
-          return value.jid;
+          return value.jid.toUserString();
         }
 
         return readableTimestamp(value.time);

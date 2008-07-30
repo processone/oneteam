@@ -33,7 +33,7 @@
       var el = document.getElementById("jid");
       if (el.firstChild)
         el.removeChild(el.firstChild);
-      el.appendChild(document.createTextNode(conference.jid));
+      el.appendChild(document.createTextNode(conference.jid.toUserString()));
 
       el = document.getElementById("errorMsg");
       if (el.firstChild)

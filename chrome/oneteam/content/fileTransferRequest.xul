@@ -24,7 +24,7 @@
     function onLoad()
     {
       document.getElementById("msg").innerHTML =
-        _("<b>{0}</b> wants to send you file", window.opener.xmlEscape(fileTransfer.jid));
+        _("<b>{0}</b> wants to send you file", window.opener.xmlEscape(fileTransfer.jid.toUserString()));
 
       document.getElementById("name").value = fileName;
 

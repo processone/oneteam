@@ -91,7 +91,7 @@ function FileTransferView(model, parentView)
     var c3 = document.createElement("hbox");
     c3.setAttribute("class", "filenamebox");
     var c4 = document.createElement("label");
-    c4.setAttribute("value", this.model.jid+" —");
+    c4.setAttribute("value", this.model.jid.toUserString()+" —");
     c3.appendChild(c4);
 
     this.fileName = document.createElement("label");

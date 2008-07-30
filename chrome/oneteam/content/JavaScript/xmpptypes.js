@@ -68,8 +68,8 @@ JID.prototype =
     /**
      * Convert JID to string.
      * @tparam String type If equals to \c "short" string format string
-     *   is returned i.e without resource part.
-     * @treturn String JID in string format. <em>(optional)</em>
+     *   is returned i.e without resource part. <em>(optional)</em>
+     * @treturn String JID in string format.
      * @public
      */
     toString: function(type)
@@ -77,6 +77,47 @@ JID.prototype =
         if (type == "short")
             return this.shortJID;
         return this.longJID;
+    },
+
+    /**
+     * Convert JID to string for user consumption, with resolved all escape
+     * sequences per XEP-106.
+     * @tparam String type If equals to \c "short" string format string
+     *   is returned i.e without resource part. <em>(optional)</em>
+     * @treturn String JID in string format.
+     * @public
+     */
+    toUserString: function(type) {
+        if (!this.userShortJID) {
+            this.userShortJID = (this.node ? this._unescape(this.node) + "@" : "")+
+                this.domain;
+            this.userLongJID = this.userShortJID+(this.resource ? "/"+this.resource : "");
+        }
+
+        if (type == "short")
+            return this.userShortJID;
+        return this.userLongJID;
+    },
+
+    _unescape: function(str) {
+        return str.replace(/\\([a-fA-F0-9]{2})/, function(f,p) {
+            if (p in this._escapeSeqHash)
+                return this._escapeSeqHash[p];
+            return f;
+        });
+
+    },
+    _unescapeSeqHash: {
+        "20": " ",
+        "22": "\"",
+        "26": "&",
+        "27": "'",
+        "2f": "/",
+        "3a": ":",
+        "3c": "<",
+        "3e": ">",
+        "40": "@",
+        "5c": "\\"
     },
 
     /**

@@ -27,7 +27,7 @@
 
       var conferences = window.opener.account.conferences;
       for (var i = 0; i < conferences.length; i++)
-        rooms.appendItem(conferences[i].jid, conferences[i].jid);
+        rooms.appendItem(conferences[i].jid.toUserString(), conferences[i].jid);
     }
 
     function invite() {

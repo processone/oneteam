@@ -45,7 +45,7 @@ _DECL_(NotificationScheme).prototype =
                 return this._showAlert(signed ?
                     _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
                     _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
-                    xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
+                    xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
                     model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
             }
         } else if (kind == "subscription") {
@@ -54,7 +54,7 @@ _DECL_(NotificationScheme).prototype =
                 _("<b>{0}</b> authorised you to see his/her status", xmlEscape(model.visibleName)) :
                 _("<b>{0}</b> doesn't authorised you to see his/her status", xmlEscape(model.visibleName));
 
-            this._showAlert(msg, xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid),
+            this._showAlert(msg, xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
                             model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
         } else if (kind == "muc") {
             if (type == "nickChange")

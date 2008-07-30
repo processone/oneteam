@@ -126,7 +126,7 @@
           this._name.insertBefore(document.createTextNode(this.model.visibleName), this._jid);
 
           if (this.model.visibleName.indexOf(this.model.jid.shortJID) != 0) {
-            var jid = this.model.jid.toString();
+            var jid = this.model.jid.toUserString();
             if (this.model.gateway || this.model.contact && this.model.contact.gateway)
               jid = jid.replace(/%(.*?)@.*/, "@$1");
             this._jid.textContent = " ("+jid+")";

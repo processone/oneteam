@@ -21,7 +21,7 @@
     function onLoad()
     {
       document.getElementById("msg").innerHTML = "You have been invited to room <b>"+
-        conference.jid+"</b> by <b>"+by.shortJID+"</b>";
+        conference.jid.toUserString()+"</b> by <b>"+by.toUserString("short")+"</b>";
       if (reason)
         document.getElementById("reason").value = reason;
       else

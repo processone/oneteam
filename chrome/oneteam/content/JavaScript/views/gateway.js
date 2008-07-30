@@ -124,9 +124,9 @@ _DECL_(GatewayToolbarButton).prototype =
         this.node.setAttribute("checked", !!this.model.activeResource);
         this.node.setAttribute("tooltiptext", this.model.activeResource ?
                                _("Click to disconnect from {0} ({1})",
-                                 this.model.gatewayName, this.model.jid) :
+                                 this.model.gatewayName, this.model.jid.toUserString()) :
                                _("Click to connect to {0} ({1})",
-                                 this.model.gatewayName, this.model.jid));
+                                 this.model.gatewayName, this.model.jid.toUserString()));
 
         this.node.checked = !!this.model.activeResource;
     },

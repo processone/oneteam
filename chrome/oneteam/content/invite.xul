@@ -28,7 +28,7 @@
       }, false);
 
       document.getElementById("header").setAttribute("title",
-        _("Invite contacts to room {0}", conference.jid));
+        _("Invite contacts to room {0}", conference.jid.toUserString()));
     }
 
     function invite() {

@@ -111,7 +111,7 @@
           list.removeChild(list.firstChild);
         for (var i = 0; i < account.conferences.length; i++) {
           var item = document.createElement("menuitem");
-          item.setAttribute("label", account.conferences[i].jid);
+          item.setAttribute("label", account.conferences[i].jid.toUserString());
           item.setAttribute("oncommand", "this.model.invite(this.contact)");
           item.model = account.conferences[i];
           item.contact = menu.model.jid;
@@ -167,7 +167,7 @@
           list.removeChild(list.firstChild);
         for (var i = 0; i < account.conferences.length; i++) {
           var item = document.createElement("menuitem");
-          item.setAttribute("label", account.conferences[i].jid);
+          item.setAttribute("label", account.conferences[i].jid.toUserString());
           item.setAttribute("oncommand", "this.model.invite(this.contact)");
           item.model = account.conferences[i];
           item.contact = menu.model.jid;

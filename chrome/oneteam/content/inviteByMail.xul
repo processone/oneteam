@@ -24,7 +24,7 @@
       var emails = document.getElementById("emails");
 
       document.getElementById("header").setAttribute("title",
-        _("Invite users to room {0}", conference.jid));
+        _("Invite users to room {0}", conference.jid.toUserString()));
 
       emails.addEventListener("listEmptyStateChanged", function(ev) {
         document.documentElement.getButton("accept").disabled = ev.target.values.length == 0

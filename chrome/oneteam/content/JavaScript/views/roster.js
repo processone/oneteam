@@ -163,7 +163,7 @@ function ContactView(model, parentView)
     this.node.setAttribute("class", "contact-view");
     this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
-    this.label.setAttribute("value", model.name || model.jid);
+    this.label.setAttribute("value", model.name || model.jid.toUserString());
     this.label.setAttribute("flex", "1");
     this.label.setAttribute("crop", "end");
 
@@ -301,7 +301,7 @@ function ContactTooltip(model, parentView)
     label.setAttribute("value", "Jabber ID:");
     row.appendChild(label);
     label = document.createElement("label");
-    label.setAttribute("value", this.model.jid);
+    label.setAttribute("value", this.model.jid.toUserString());
     row.appendChild(label);
 
     row = document.createElement("row");
@@ -326,7 +326,7 @@ _DECL_(ContactTooltip).prototype =
     onTooltipShowing: function()
     {
         this.avatar.setAttribute("src", this.model.avatar);
-        this.name.setAttribute("value", this.model.name || this.model.jid);
+        this.name.setAttribute("value", this.model.name || this.model.jid.toUserString());
         this.subscription.setAttribute("value", this.model.subscription);
 
         while (this.resourcesContainer.firstChild)

@@ -34,7 +34,7 @@
 
     function onLoad() {
       document.getElementById("contactJid").
-        appendChild(document.createTextNode(contact.jid));
+        appendChild(document.createTextNode(contact.jid.toUserString()));
       document.getElementById("reason").value = reason;
     }
   ]]></script>

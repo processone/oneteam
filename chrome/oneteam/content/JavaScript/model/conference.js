@@ -4,7 +4,7 @@ function Conference(jid)
     MessagesRouter.call(this);
 
     this.jid = new JID(jid);
-    this.name = this.jid.shortJID;
+    this.name = this.jid.toUserString("short");
     this.visibleName = this.jid.node;
     this.resources = [];
     this.groups = [];
@@ -103,7 +103,7 @@ _DECL_(Conference, Contact).prototype =
         if (!errorTag)
             return;
 
-        account.addEvent("Joining to room <b>"+this.jid+"</b> failed.<br/>Error message: <em>"+errorMsg+"</em>",
+        account.addEvent("Joining to room <b>"+this.jid.toUserString()+"</b> failed.<br/>Error message: <em>"+errorMsg+"</em>",
                          new Callback(openDialogUniq).
                             addArgs(null, "chrome://oneteam/content/joinRoomError.xul",
                                     "chrome,centerscreen", this, +errorTag.getAttribute("code"),
@@ -193,11 +193,11 @@ _DECL_(Conference, Contact).prototype =
             con.send(iq);
         } else {
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
-                     encodeURIComponent(_("Invitation into {0} conference", this.jid))+
+                     encodeURIComponent(_("Invitation into {0} conference", this.jid.toUserString()))+
                      "&body="+
                      encodeURIComponent(_("User *{0}* invited you to conference *{1}*.\n\nTo join this conference please click on this link:\n{2}\n",
                                           this.myResourceJID.resource,
-                                          this.myResourceJID.shortJID,
+                                          this.jid.toUserString(),
                                           url)));
         }
     },
