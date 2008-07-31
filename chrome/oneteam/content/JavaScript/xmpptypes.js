@@ -106,7 +106,6 @@ JID.prototype =
     _unescape: function(str) {
         var me = this;
         return str.replace(/\\([a-f0-9]{2})/g, function(f,p) {
-            alert(p);
             if (p in me._unescapeSeqHash)
                 return me._unescapeSeqHash[p];
             return f;
