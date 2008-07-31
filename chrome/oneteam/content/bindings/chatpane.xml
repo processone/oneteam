@@ -308,8 +308,10 @@
           var doc = this._output.contentDocument;
 
           if (!this._firstNotSeenMsg) {
-            if (!this.visible)
+            if (!this.visible) {
               this._markMessagesAsSeen();
+            } else if (this._model)
+              this._model.visible = true;
             return;
           }
 
@@ -327,6 +329,8 @@
               Animator.animateCssRule(null, rule, "opacity", 20, 20, function(rule){
                 rule.style.outline = "";
                 el._markMessagesAsSeen();
+                if (el._model)
+                  el._model.visible = true;
               }, 0.3, 1);
             });
         ]]></body>
@@ -338,9 +342,6 @@
 
           for (var i = els.length-1; i >= 0; i--)
             els[i].removeAttribute("not-seen");
-
-          if (this._model)
-            this._model.visible = true;
         ]]></body>
       </method>
 
