@@ -433,7 +433,7 @@
 
       <method name="focus">
         <body><![CDATA[
-          if (this.closed || this._inFocus || !this._tabbox._windowHasFocus)
+          if (this.closed || this._inFocus)
             return;
 
           this.focused();
