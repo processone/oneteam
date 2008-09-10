@@ -815,23 +815,20 @@
         <body><![CDATA[
           me._preMaybeResize();
 
-          var h = me._input.contentDocument.body.parentNode.offsetHeight;
+          var body = me._input.contentDocument.body;
 
-          if (me._sizeDiff == null) {
-            me._sizeDiff = me._input.parentNode.boxObject.height - me._input.clientHeight;
-          }
+          var h = me._input.clientHeight + body.offsetHeight - body.clientHeight;
 
           if (h < 10)
             h = 10;
 
           if (h > 0.3*window.innerHeight) {
-            me._input.contentDocument.body.style.overflow = "auto"
+            body.style.overflowY = "auto"
             h = 0.3*window.innerHeight;
           } else
-            me._input.contentDocument.body.style.overflow = "hidden";
+            body.style.overflowY = "hidden";
 
           me._input.style.height = (h) + "px";
-          //me._input.parentNode.style.height = (h+me._sizeDiff) + "px";
 
           me._postMaybeResize();
         ]]></body>
