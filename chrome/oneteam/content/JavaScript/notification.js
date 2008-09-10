@@ -46,7 +46,8 @@ _DECL_(NotificationScheme).prototype =
                     _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
                     _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
                     xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
-                    model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+                    model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                    null, signed ? "fadein" : "fadeout");
             }
         } else if (kind == "subscription") {
             model = model.contact || model;
@@ -113,7 +114,7 @@ _DECL_(NotificationScheme).prototype =
     },
 
 // #ifdef XULAPP
-    _showAlert: function(title, msg, icon, clickHandler)
+    _showAlert: function(title, msg, icon, clickHandler, animation)
     {
         if (this._top < 150 || this._wins.length > 8)
             return this._nopCanceler;
@@ -127,7 +128,7 @@ _DECL_(NotificationScheme).prototype =
                                    "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                                    ",screenX="+window.screen.availWidth+
                                    ",screenY="+window.screen.availHeight,
-                                   this, title, msg, icon, clickHandler, p.__parent__),
+                                   this, title, msg, icon, clickHandler, p.__parent__, animation),
             cancel: function() {
                 try {
                     this.win.close();

@@ -11,7 +11,8 @@
 
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
-    var [service, _title, msg, icon, clickAction, win] = window.arguments;
+    var [service, _title, msg, icon, clickAction, win, animation] = window.arguments;
+    var img, canvas, tmpCanvas;
 
     function xmlEscape(str)
     {
@@ -92,24 +93,69 @@
       document.getElementById("titleContent").innerHTML = sanitizeHtml(_title);
       document.getElementById("messageContent").innerHTML = sanitizeHtml(msg);
 
-      if (icon && /^(?:(?:(?:jar:)?http[s]?:\/\/)|data:|chrome:|file:)/.test(icon))
-        document.getElementById("messageImg").src = icon;
-      else
+      if (icon && /^(?:(?:(?:jar:)?http[s]?:\/\/)|data:|chrome:|file:)/.test(icon)) {
+        img = document.getElementById("messageImg");
+        img.src = icon;
+        if (animation == "fadein" || animation == "fadeout") {
+          canvas = document.getElementById("messageCanvas").getContext("2d");
+          tmpCanvas = document.getElementById("tmpCanvas").getContext("2d");
+        } else
+          img.style.display = "";
+      } else
         updatePosition();
     }
 
     function updateSize() {
-      var img = document.getElementById("messageImg");
-      var ratioW = 120/img.boxObject.width;
-      var ratioH = 90/img.boxObject.height;
+      var ratioW = 120/img.naturalWidth;
+      var ratioH = 90/img.naturalHeight;
 
       if (ratioW < 1 || ratioH < 1) {
         var ratio = ratioW > ratioH ? ratioH : ratioW;
-        img.style.width = parseInt(img.boxObject.width * ratio)+"px";
-        img.style.height = parseInt(img.boxObject.height * ratio)+"px";
+        img.style.width = parseInt(img.naturalWidth * ratio)+"px";
+        img.style.height = parseInt(img.naturalHeight * ratio)+"px";
       }
+
+      if (tmpCanvas) {
+        canvas.canvas.style.display = "";
+        canvas.canvas.width = tmpCanvas.canvas.width = img.width;
+        canvas.canvas.height = tmpCanvas.canvas.height = img.height;
+
+        tmpCanvas.drawImage(img, 0, 0);
+
+        var imgData = tmpCanvas.getImageData(0, 0, img.width, img.height)
+        var data = imgData.data, idx = 0;
+        for (var i = 0; i < img.width*img.height; i++) {
+          data[idx] = data[idx+1] = data[idx+2] =
+            data[idx]*0.3+data[idx+1]*0.59+data[idx+2]*0.11;
+          idx += 4;
+        }
+        tmpCanvas.putImageData(imgData, 0, 0);
+
+        var [src, dst] = animation == "fadein" ?
+          [tmpCanvas.canvas, img] :
+          [img, tmpCanvas.canvas];
+
+        var d = { steps: 50, step: 0, src: src, dst: dst};
+        fade(d);
+        d.timeout = setInterval(fade, 20, d);
+      }
+
       window.sizeToContent();
       updatePosition();
+    }
+
+    function fade(d) {
+      canvas.globalCompositeOperation = "copy";
+      canvas.globalAlpha = 1;
+      canvas.drawImage(d.src, 0, 0);
+      canvas.globalCompositeOperation = "over";
+      canvas.globalAlpha = d.step/d.steps;
+      canvas.drawImage(d.dst, 0, 0);
+
+      d.step++;
+
+      if (d.step == d.steps)
+        clearInterval(d.timeout);
     }
 
     function updatePosition() {
@@ -139,7 +185,11 @@
       <span xmlns="http://www.w3.org/1999/xhtml" id="titleContent"/>
     </description>
     <hbox id="messageInfo" align="center">
-      <image id="messageImg" onload="updateSize()" onerror="updatePosition()"/>
+      <html:div>
+        <html:img id="messageImg" style="display: none" onload="updateSize()" onerror="updatePosition()"/>
+        <html:canvas id="messageCanvas" style="display: none" />
+        <html:canvas id="tmpCanvas" style="display: none" />
+      </html:div>
       <description id="message">
         <span xmlns="http://www.w3.org/1999/xhtml" id="messageContent"/>
       </description>
