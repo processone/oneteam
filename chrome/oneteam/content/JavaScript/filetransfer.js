@@ -14,7 +14,7 @@ _DECL_(FileTransferService, null, Model).prototype =
                 return null;
         }
 
-        var fileTransfer = new FileTransfer(null, to, null, file && file.size, file);
+        var fileTransfer = new FileTransfer(null, new JID(to), null, file && file.size, file);
         this.fileTransfers.push(fileTransfer);
         this.modelUpdated("fileTransfers", {added: [fileTransfer]});
 
@@ -68,7 +68,7 @@ _DECL_(FileTransferService, null, Model).prototype =
                      </error>
             }
 
-        var fileTransfer = new FileTransfer(pkt.getID(), pkt.getFrom(),
+        var fileTransfer = new FileTransfer(pkt.getID(), new JID(pkt.getFrom()),
                                             query.@id.toString(),
                                             file.@size.length() ? +file.@size : null);
 
@@ -234,7 +234,7 @@ _DECL_(FileTransfer, null, Model).prototype =
         var method = xml..xdataNS::field.(@var == "stream-method")..xdataNS::value.toString();
         var range = xml..ftNS::range;
 
-        this.jid = pkt.getFrom();
+        this.jid = new JID(pkt.getFrom());
 
         if (method == "http://jabber.org/protocol/bytestreams")
             this.socksToken = socks5Service.sendFile(this, range.@offset, range.@length);
