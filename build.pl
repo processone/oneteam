@@ -34,13 +34,17 @@ $defs{PREFS} = sub { extract_prefs(sub { $_[0] =~ /^chat\./ and $_[0] !~ /^chat\
     File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"));
 };
 
+sub get_version {
+    "1.0.0.".get_revision($topdir);
+}
+
 my $saver = exists $defs{XULAPP} ?
     exists $defs{NOJAR} ?
-        new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir) :
-        new OneTeam::Builder::Filter::Saver::XulApp($topdir) :
+        new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir, \&get_version, $defs{MAR}) :
+        new OneTeam::Builder::Filter::Saver::XulApp($topdir, \&get_version, $defs{MAR}) :
     exists $defs{NOJAR} ?
-        new OneTeam::Builder::Filter::Saver::WebDir($topdir) :
-        new OneTeam::Builder::Filter::Saver::WebJar($topdir);
+        new OneTeam::Builder::Filter::Saver::WebDir($topdir, \&get_version) :
+        new OneTeam::Builder::Filter::Saver::WebJar($topdir, \&get_version);
 
 
 my $locale_processor = exists $defs{XULAPP} ?
