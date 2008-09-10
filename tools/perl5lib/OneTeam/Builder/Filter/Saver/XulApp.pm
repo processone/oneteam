@@ -7,7 +7,6 @@ use File::Path;
 use File::Find;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy;
-use File::Copy::Recursive qw(rcopy);
 use Cwd;
 
 sub new {
@@ -48,9 +47,9 @@ sub finalize {
 
     system("cd '$self->{outputdir}'; zip -q -0 -r '".catfile($chromedir, 'oneteam.jar')."' .");
     copy('application.ini', $tmpdir);
-    rcopy('defaults', catdir($tmpdir, 'defaults'));
-    rcopy('components', catdir($tmpdir, 'components'));
-    rcopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
+    _dircopy('defaults', catdir($tmpdir, 'defaults'));
+    _dircopy('components', catdir($tmpdir, 'components'));
+    _dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
 
     open(my $fh, ">", catfile($chromedir, 'chrome.manifest')) or
         die "Unable to create file: $!";
@@ -73,6 +72,22 @@ sub finalize {
     }
 
     system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, "oneteam.xulapp")."' .");
+}
+
+sub _dircopy {
+    my ($src, $dest) = @_;
+    my $srclen = length($src) + ($src =~ m!(?:[/\\]$)! ? 0 : 1);
+
+    find({ wanted => sub {
+        return if not -f $_ or $File::Find::dir =~ /\.svn/;
+
+        mkpath(length($File::Find::dir) > $srclen ?
+            catdir($dest, substr($File::Find::dir, $srclen)) :
+            $dest
+        );
+
+        copy($_, catdir($dest, substr($File::Find::name, $srclen)));
+    }, no_chdir => 1}, $src);
 }
 
 sub _create_mar {
@@ -137,7 +152,6 @@ ENDSTR
 package OneTeam::Builder::Filter::Saver::XulApp::Flat;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy;
-use File::Copy::Recursive qw(rcopy);
 
 our @ISA;
 push @ISA, 'OneTeam::Builder::Filter::Saver::XulApp';
@@ -156,9 +170,9 @@ sub finalize {
     my $self = shift;
 
     copy('application.ini', $self->{appdir});
-    rcopy('defaults', catdir($self->{appdir}, 'defaults'));
-    rcopy('components', catdir($self->{appdir}, 'components'));
-    rcopy(catdir(qw(chrome icons)), catdir($self->{appdir}, 'chrome', 'icons'));
+    _dircopy('defaults', catdir($self->{appdir}, 'defaults'));
+    _dircopy('components', catdir($self->{appdir}, 'components'));
+    _dircopy(catdir(qw(chrome icons)), catdir($self->{appdir}, 'chrome', 'icons'));
 
     open(my $fh, ">", catfile($self->{appdir}, 'chrome', 'chrome.manifest')) or
         die "Unable to create file: $!";
