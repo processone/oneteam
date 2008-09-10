@@ -24,7 +24,7 @@ sub get_revision {
     }
 
     if (-d catdir($topdir, '.git')) {
-        $revision = `cd "$topdir"; git-svn log --limit 1 --oneline`;
+        $revision = `cd "$topdir"; git svn log --limit 1 --oneline`;
         $revision =~ s/.*?(\d+).*/$1/s;
         return $revision;
     }
@@ -52,7 +52,7 @@ sub get_branch {
         $branch =~ s/.*?(?:(?:\/branches\/([^\/]+))|\/(trunk))(?:\/.*|$)/$1||$2/es;
         chomp $branch;
     } elsif (-d catdir($topdir, '.git')) {
-        $branch = `cd "$topdir"; git-name-rev HEAD`;
+        $branch = `cd "$topdir"; git name-rev HEAD`;
         $branch =~ s/HEAD\s+(.*?)\s*$/$1/;
     } else {
         $branch = "UNKNOWN";
