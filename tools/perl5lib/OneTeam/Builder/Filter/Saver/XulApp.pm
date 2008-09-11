@@ -122,9 +122,8 @@ sub _create_mar {
     my $mar_update_url = $self->_expand_str($self->{mar_options}->{MAR_UPDATE_URL}) || "$mar_base_url/$mar_update_file";
     my $mar_details_url = $self->_expand_str($self->{mar_options}->{MAR_DETAILS_URL}) || "$mar_base_url/whatsnew.html";
 
-    print "$self->{mar_options}->{MAR_UPDATE_FILE} -- $mar_update_file\n";
-
     my $mar_file_path = catfile($self->{topdir}, $mar_file);
+    my $version = $self->{version}->();
 
     open my $fh, ">>", $files{catfile(qw(defaults preferences pref.js))};
     print $fh "pref(\"app.update.mode\", 1);\n";
