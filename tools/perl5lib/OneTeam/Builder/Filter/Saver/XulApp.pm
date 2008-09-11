@@ -111,10 +111,6 @@ sub _expand_str {
 sub _create_mar {
     my ($self, %files) = @_;
 
-    require Digest::SHA1;
-
-    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
-
     my $mar_base_url = $self->_expand_str($self->{mar_options}->{MAR_BASE_URL});
     my $mar_file = $self->_expand_str($self->{mar_options}->{MAR_FILE} || "oneteam.mar");
     my $mar_url = $self->_expand_str($self->{mar_options}->{MAR_URL}) || "$mar_base_url/$mar_file";
@@ -131,6 +127,12 @@ sub _create_mar {
     print $fh "pref(\"app.update.auto\", true);\n";
     print $fh "pref(\"app.update.url\", \"$mar_update_url\");\n";
     close($fh);
+
+    return if $self->{mar_options}->{MAR_SKIP};
+
+    require Digest::SHA1;
+
+    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
 
     my $manifest_tmp = catfile($tmpdir, "update.manifest.tmp");
     open $fh, ">", $manifest_tmp;
