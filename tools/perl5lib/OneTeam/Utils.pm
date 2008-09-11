@@ -3,7 +3,7 @@ package OneTeam::Utils;
 use Exporter;
 
 @ISA = qw(Exporter);
-@EXPORT = qw(slurp unescape_js escape_js_str escape_xml);
+@EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml);
 
 sub slurp {
     my $file = shift;
@@ -12,6 +12,13 @@ sub slurp {
     my $res = <$fh>;
     close $fh;
     return defined $res ? $res : "";
+}
+
+sub print_to_file {
+    my ($file, $content) = @_;
+    open(my $fh, ">", $file) or die "Can't save file '$file' : $!";
+    print $fh $content;
+    close $fh;
 }
 
 sub unescape_js {
