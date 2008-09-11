@@ -34,18 +34,18 @@ $defs{PREFS} = sub { extract_prefs(sub { $_[0] =~ /^chat\./ and $_[0] !~ /^chat\
     File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"));
 };
 
-my $version_str = $defs{VERSION_STRING} || '1.0.0.%REVISION%';
-my $buildid_str = $defs{BUILDID_STRING} || '%REVISION%';
+my $version_str = $defs{VERSION_STRING} || '1.0.0.@REVISION@';
+my $buildid_str = $defs{BUILDID_STRING} || '@REVISION@';
 
 sub get_version {
-    $version_str =~ s/%REVISION%/get_revision($topdir)/e;
-    $version_str =~ s/%BRANCH%/get_branch($topdir)/e;
+    $version_str =~ s/\@REVISION\@/get_revision($topdir)/e;
+    $version_str =~ s/\@BRANCH\@/get_branch($topdir)/e;
     return $version_str;
 }
 
 sub get_buildid {
-    $buildid_str =~ s/%REVISION%/get_revision($topdir)/e;
-    $buildid_str =~ s/%BRANCH%/get_branch($topdir)/e;
+    $buildid_str =~ s/\@REVISION\@/get_revision($topdir)/e;
+    $buildid_str =~ s/\@BRANCH\@/get_branch($topdir)/e;
     return $buildid_str;
 }
 

@@ -102,8 +102,8 @@ sub _expand_str {
 
     return undef if not $str;
 
-    $str =~ s/%VERSION%/$self->{version}->()/e;
-    $str =~ s/%BUILDID%/$self->{buildid}->()/e;
+    $str =~ s/\@VERSION\@/$self->{version}->()/e;
+    $str =~ s/\@BUILDID\@/$self->{buildid}->()/e;
 
     return $str;
 }
