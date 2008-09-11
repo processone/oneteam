@@ -11,7 +11,7 @@
   font-size: 1.2em;
 }
 
-#messageImg {
+#messageImg, #messageCanvas {
   min-width: 8px;
   margin: 0 8px;
 }
