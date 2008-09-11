@@ -592,6 +592,18 @@
         account.removeEvent(account.events[0]);
       }
     }
+
+    function checkForUpdates() {
+      var um = Components.classes["@mozilla.org/updates/update-manager;1"].
+        getService(Components.interfaces.nsIUpdateManager);
+      var prompter = Components.classes["@mozilla.org/updates/update-prompt;1"].
+        createInstance(Components.interfaces.nsIUpdatePrompt);
+
+      if (um.activeUpdate && um.activeUpdate.state == "pending")
+        prompter.showUpdateDownloaded(um.activeUpdate);
+      else
+        prompter.checkForUpdates();
+    }
   ]]></script>
 
   <comandset>
@@ -625,6 +637,7 @@
     <command id="cmd_cmdVenkman" oncommand='window.openDialogUniq("mozapp:venkman", "chrome://venkman/content/venkman.xul", "chrome,dialog=no,all", "")'/>
     <command id="cmd_cmdDOMInspector" oncommand='window.openDialogUniq("mozapp:dominspector", "chrome://inspector/content/", "chrome,dialog=no,all", "")'/>
 <!-- #endif -->
+    <command id="cmd_chkUpdates" oncommand='checkForUpdates()'/>
     <command id="cmd_about" oncommand="account.showAbout()"/>
 
     <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
@@ -761,9 +774,13 @@
               <menuitem label="_('XML _Console...')" command="cmd_xmlConsole"/>
 <!-- #ifdef DEBUG -->
 <!-- #ifdef XULAPP -->
-              <menuitem label="JavaScript Console..." command="cmd_jsConsole"/>
+              <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole"/>
 <!-- #endif -->
-              <menuitem label="Command Console..." command="cmd_cmdConsole"/>
+              <menuitem label="_('Command Console...')" command="cmd_cmdConsole"/>
+<!-- #endif -->
+<!-- #ifdef XULAPP -->
+              <menuseparator/>
+              <menuitem label="_('Check for Updates...')" command="cmd_chkUpdates"/>
 <!-- #endif -->
               <menuseparator/>
               <menuitem label="_('About...')" command="cmd_about"/>
