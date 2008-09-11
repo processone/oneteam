@@ -146,11 +146,11 @@ sub _create_mar {
         system("bzip2 -cz9 '$files{$_}' > '$path'");
     }
     close($fh);
-    system("bzip2 -cz9 '".$manifest_tmp."' >'".catfile($tmpdir, "update.manifest")."'");
+    system("bzip2 -cz9 '".$manifest_tmp."' > '".catfile($tmpdir, "update.manifest")."'");
     unlink($manifest_tmp);
 
     system(catfile($self->{topdir}, qw(tools mar)), '-C', $tmpdir,
-        '-c', $mar_file_path, sort keys %files);
+        '-c', $mar_file_path, sort keys %files, "update.manifest");
 
     open $fh, "<", $mar_file_path;
 
