@@ -418,9 +418,9 @@ _DECL_(MessagesThread, Model).prototype =
         for (var i = msgs.length-1; i >= 0; i--) {
             if (msgs[i]._eventKey)
                 account.removeEventsByKey(msgs[i]._eventKey);
-            if (msgsToArchive.length < 10) {
-                if (msgs[i].isSystemMessage)
-                    continue;
+            if (!(this.contact instanceof Conference) && msgsToArchive.length < 10 &&
+                !msgs[i].isSystemMessage)
+            {
                 msgs[i].offline = true;
                 msgsToArchive.unshift(msgs[i]);
             }
