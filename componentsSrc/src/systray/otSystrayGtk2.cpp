@@ -38,6 +38,10 @@ otSystrayGtk2::Init(otISystrayListener *listener)
                            (gpointer)this);
   g_signal_connect_swapped(G_OBJECT(mPlug), "unrealize", G_CALLBACK(OnUnrealize),
                            (gpointer)this);
+  g_signal_connect(G_OBJECT(mPlug), "expose_event", G_CALLBACK(OnExpose), 0);
+
+  gtk_widget_set_app_paintable(mPlug, TRUE);
+  gtk_widget_set_double_buffered(mPlug, FALSE);
 
   g_object_ref(G_OBJECT(mTooltips));
   gtk_object_unref(GTK_OBJECT(mTooltips));
@@ -153,7 +157,10 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
   gtk_image_set_from_pixbuf(GTK_IMAGE(mIcon), pixbuf);
   g_object_unref(G_OBJECT(pixbuf));
 
+  gtk_widget_realize(mPlug);
+  gdk_window_set_back_pixmap(mPlug->window, NULL, TRUE);
   gtk_widget_show_all(mPlug);
+
   return NS_OK;
 }
 
@@ -202,6 +209,15 @@ otSystrayGtk2::OnUnrealize(otSystrayGtk2 *obj)
   if (obj->mManagerWindow) {
     gdk_window_remove_filter(obj->mManagerWindow, (GdkFilterFunc)EventFilter, obj);
   }
+}
+gboolean
+otSystrayGtk2::OnExpose(GtkWidget *widget, GdkEventExpose *event, void*)
+{
+  DEBUG_DUMP("EXPOSE");
+  gdk_window_clear_area(widget->window, event->area.x, event->area.y,
+                        event->area.width, event->area.height);
+
+  return FALSE;
 }
 
 GdkFilterReturn

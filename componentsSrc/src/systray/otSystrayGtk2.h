@@ -20,6 +20,7 @@ protected:
   static PRBool OnClick(otSystrayGtk2 *obj, GdkEventButton *ev);
   static void OnRealize(otSystrayGtk2 *obj);
   static void OnUnrealize(otSystrayGtk2 *obj);
+  static gboolean OnExpose(GtkWidget *widget, GdkEventExpose *event, void*);
   static GdkFilterReturn EventFilter(GdkXEvent *xevent, GdkEvent *event,
                                      otSystrayGtk2 *obj);
 
