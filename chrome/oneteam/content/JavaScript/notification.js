@@ -106,11 +106,11 @@ _DECL_(NotificationScheme).prototype =
                     contact.contact.myResource != contact) ?
                     contact.contact : null;
             if (c)
-                c.showSystemMessage(msgObj = new Message(msg, null, null, 4));
+                c.showSystemMessage(msgObj = new Message(msg, null, c, 4));
         }
 
         if (showInPersonal && !(contact instanceof Conference))
-            contact.showSystemMessage(msgObj || new Message(msg, null, null, 4));
+            contact.showSystemMessage(msgObj || new Message(msg, null, contact, 4));
     },
 
 // #ifdef XULAPP

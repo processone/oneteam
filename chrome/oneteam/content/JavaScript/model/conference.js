@@ -462,7 +462,7 @@ _DECL_(Conference, Contact).prototype =
             return;
 
         if (this._checkForSubject(packet, this.jid) && packet.getBody()) {
-            var message = new Message(packet, null, null, 4);
+            var message = new Message(packet, null, this, 4);
             account.notificationScheme.show("message", "next", message, this);
             this.routeMessage(message);
         }
@@ -495,7 +495,7 @@ _DECL_(Conference, Contact).prototype =
         if (!pkt.getBody() || (new JID(pkt.getFrom())).resource)
             account.notificationScheme.show("muc", "subjectChange", this, jid);
         else if (this.chatPane && !this.chatPane.closed)
-            this.chatPane.addMessage(new Message(pkt.getBody(), null, null, 4));
+            this.chatPane.addMessage(new Message(pkt.getBody(), null, this, 4));
 
         this.modelUpdated("subject");
         return false;
