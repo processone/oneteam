@@ -143,9 +143,8 @@ _DECL_(Conference, Contact).prototype =
         if (this.myResource)
             this.myResource._remove();
 
-        for (var resource in this.resourcesIterator())
-            if (resource != this.myResource)
-                resource._remove();
+        for (var resource in this.resourcesIterator(function(r,t){return r != t}, this.myResource))
+            resource._remove();
 
         delete this.myResource;
     },
