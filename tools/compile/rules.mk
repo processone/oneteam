@@ -1,7 +1,7 @@
 _MOZ_VERSION=$(subst b, ,$(subst a, ,$(subst ., ,$(MOZILLA_VERSION))))
 _MOZILLA_VERSION:=$(word 1,$(_MOZ_VERSION)).$(word 2,$(_MOZ_VERSION))
 
-OS_CXXFLAGS += $(foreach ver,$(MOZILLA_VERSIONS),\
+OS_CXXFLAGS += -m32 $(foreach ver,$(MOZILLA_VERSIONS),\
 	-DOT_VERSION_AVAILABLE_$(subst .,_,$(ver)))
 
 ABI=$(OS_TARGET)_$(TARGET_XPCOM_ABI)
