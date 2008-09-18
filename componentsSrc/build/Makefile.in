@@ -47,7 +47,7 @@ OS_LIBS += $(OT_EXTRA_SHARED_OS_LIBS)
 
 ifdef GNU_LD
 	EXTRA_DSO_LDOPTS += \
-	    -x --gc-sections --no-undefined -Wl,--as-needed -Wl,-Os \
+	    -x --gc-sections --no-undefined -Wl,--as-needed \
 	    $(NULL)
 endif
 
