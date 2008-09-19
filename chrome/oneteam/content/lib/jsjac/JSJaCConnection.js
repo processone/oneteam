@@ -966,7 +966,11 @@ JSJaCConnection.prototype._handleEvent = function(event,arg) {
         else
           if (aEvent.handler.call(this)) // handled!
             break;
-      } catch (e) { this.oDbg.log(aEvent.handler+"\n>>>"+e.name+": "+ e.message,1); }
+      } catch (e) {
+        this.oDbg.log(aEvent.handler+"\n>>>"+e.name+": "+ e.message,1);
+        if (aEvent.handler != "onexception")
+          this._handleEvent("onexception", e);
+      }
     }
   }
 };
@@ -994,6 +998,11 @@ JSJaCConnection.prototype._handlePID = function(aJSJaCPacket) {
         // broken handler?
         this.oDbg.log(e.name+": "+ e.message);
         this._unregisterPID(pID);
+
+        try {
+          this._handleEvent("onexception", e);
+        } catch (ex) {}
+
         return true;
       }
     }
