@@ -115,11 +115,13 @@ _DECL_(MessagesRouter).prototype =
         var activePane = chatTabsController._selectedTab &&
             chatTabsController._selectedTab.controller;
 
-        if (!activePane || activePane.thread.contact != (contact || this.activeResource || this))
+        if (!activePane || !activePane.thread ||
+            activePane.thread.contact != (contact || this.activeResource || this))
             return false;
 
         for (var i = 0; i < this.chatPanes.length; i++) {
-            if (contact && contact != this.chatPanes[i].thread.contact)
+            if (contact && !this.chatPanes[i].thread ||
+                contact != this.chatPanes[i].thread.contact)
                 continue;
             if (!activePane || !paneToActivate)
                 paneToActivate = this.chatPanes[i];
@@ -194,10 +196,11 @@ _DECL_(MessagesRouter).prototype =
             contact = this;
 
         for (var i = 0; i < this.chatPanes.length; i++) {
-            if (this.chatPanes[i].thread.contact == contact ||
-                this.chatPanes[i].thread.contact == contact.contact ||
-                this.chatPanes[i].thread.contact == contact.activeResource)
-            this.chatPanes[i].thread.addMessage(msg);
+            if (this.chatPanes[i].thread &&
+                (this.chatPanes[i].thread.contact == contact ||
+                 this.chatPanes[i].thread.contact == contact.contact ||
+                 this.chatPanes[i].thread.contact == contact.activeResource))
+                this.chatPanes[i].thread.addMessage(msg);
         }
     },
 

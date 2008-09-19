@@ -410,6 +410,7 @@
       <method name="detach">
         <body><![CDATA[
           this._tabbox._deremoveTab(this);
+          this.thread.chatPane = null;
           this.thread = null;
           this._updateChatState("gone");
         ]]></body>
