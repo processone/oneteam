@@ -5,16 +5,20 @@ function Presence(show, status, priority, profile)
         if (type == "invisible" || type == "unavailable")
             this.show = type;
         else
-            this.show = pkt.getShow() || "available";
+            this.show = pkt.getShow();
 
         this.status = pkt.getStatus()
         this.priority = pkt.getPriority();
     } else {
-        this.show = show == null ? "available" : show;
+        this.show = show;
         this.status = status;
         this.priority = priority == null || isNaN(+priority) ?
             this._priorityMap[this.show] : +priority;
     }
+
+    if (!this.show || !(this.show in this.statusToString))
+      this.show = "available";
+
     this.profile = profile;
 }
 
@@ -75,18 +79,19 @@ _DECL_(Presence, null, Comparator).prototype =
         return show2num[this.show||"available"] - show2num[p.show||"available"];
     },
 
+    statusToString: {
+        available: _("Available"),
+        chat: _("Avaialble for chat"),
+        dnd: _("Busy"),
+        away: _("Away"),
+        xa: _("Not available"),
+        unavailable: _("Offline"),
+        invisible: _("Invisible")
+    },
+
     toString: function(showStatus, lowerCase)
     {
-        var showStrs = {
-            available: _("Available"),
-            chat: _("Avaialble for chat"),
-            dnd: _("Busy"),
-            away: _("Away"),
-            xa: _("Not available"),
-            unavailable: _("Offline")
-        };
-
-        var showStr = showStrs[this.show];
+        var showStr = this.statusToString[this.show];
         if (lowerCase)
             showStr = showStr.toLowerCase();
 
