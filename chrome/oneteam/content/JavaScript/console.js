@@ -6,26 +6,30 @@ var handlers =
 {
     onPacketRecv: function(p)
     {
-        var msg = prettyPrintDOM(p.getNode());
-        var div = console.contentDocument.createElement("div");
-        div.setAttribute("class", "message recv");
+        try {
+            var msg = prettyPrintDOM(p.getNode());
+            var div = console.contentDocument.createElement("div");
+            div.setAttribute("class", "message recv");
 
-        msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
-        div.innerHTML = msg;
-        console.contentDocument.body.appendChild(div);
-        console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
+            msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
+            div.innerHTML = msg;
+            console.contentDocument.body.appendChild(div);
+            console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
+        } catch (ex) {}
     },
 
     onPacketSend: function(p)
     {
-        var msg = prettyPrintDOM(p.getNode());
-        var div = console.contentDocument.createElement("div");
-        div.setAttribute("class", "message send");
+        try {
+            var msg = prettyPrintDOM(p.getNode());
+            var div = console.contentDocument.createElement("div");
+            div.setAttribute("class", "message send");
 
-        msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
-        div.innerHTML = msg;
-        console.contentDocument.body.appendChild(div);
-        console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
+            msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
+            div.innerHTML = msg;
+            console.contentDocument.body.appendChild(div);
+            console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
+        } catch (ex) {}
     },
 
     onModelUpdated: function()
