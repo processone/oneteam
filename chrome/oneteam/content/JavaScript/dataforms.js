@@ -77,8 +77,46 @@ function generateXULFromDataForm(data, doc)
                 rows.appendChild(el);
                 break;
             case "jid-multi":
+                row = doc.createElementNS(XULNS, "row");
+                el = doc.createElementNS(XULNS, "label");
+                el.setAttribute("class", "data-form-field-label");
+                el.setAttribute("value", field.@label);
+                row.appendChild(el);
+
+                el = doc.createElementNS(XULNS, "listeditor");
+                el.setAttribute("class", "data-form-field-jid-multi");
+                el.setAttribute("regex", "[^@]+@(?:\\w(?:[\\w-]*\\w)?\\.)*[^\\W\\d](?:[\\w-]*\\w)?$");
+                el.setAttribute("errortext", "This is not valid jid value");
+                el.setAttribute("type", "verifiable");
+                el.values = [v.text().toString() for each (v in field.ns::value)];
+                el._var = field.@var.toString();
+                el._type = "jid-multi";
+                el._value = "values";
+                el._transform = "flatten";
+                el._required = field.ns::required.length() > 0;
+                row.appendChild(el);
+                rows.appendChild(row);
                 break;
             case "jid-single":
+                row = doc.createElementNS(XULNS, "row");
+                el = doc.createElementNS(XULNS, "label");
+                el.setAttribute("class", "data-form-field-label");
+                el.setAttribute("value", field.@label);
+                row.appendChild(el);
+
+                el = doc.createElementNS(XULNS, "textbox");
+                el.setAttribute("class", "data-form-field-jid-single");
+                el.setAttribute("regex", "[^@]+@(?:\\w(?:[\\w-]*\\w)?\\.)*[^\\W\\d](?:[\\w-]*\\w)?$");
+                el.setAttribute("errortext", "This is not valid jid value");
+                el.setAttribute("type", "verifiable");
+                if (field.ns::value[0])
+                    el.setAttribute("value", field.ns::value[0].text().toString());
+                el._var = field.@var.toString();
+                el._type = "jid-single";
+                el._value = "value";
+                el._required = field.ns::required.length() > 0;
+                row.appendChild(el);
+                rows.appendChild(row);
                 break;
             case "list-multi":
                 row = doc.createElementNS(XULNS, "row");
