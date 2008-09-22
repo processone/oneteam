@@ -289,11 +289,6 @@ _DECL_(DiscoItem).prototype =
         return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate, callback, this);
     },
 
-    hasDiscoIdentity: function(name, type, category, forceUpdate, callback)
-    {
-        return this._discoCacheEntry.requestDiscoInfo(name, forceUpdate, callback, this);
-    },
-
     getDiscoIdentities: function(forceUpdate, callback)
     {
         return this._discoCacheEntry.requestDiscoInfo("", forceUpdate, callback, this);
