@@ -265,6 +265,22 @@
         ]]></body>
       </method>
 
+      <method name="unregisterVerifiables">
+        <parameter name="tree"/>
+        <body><![CDATA[
+          var idx = this._verifiables.indexOf(tree)
+
+          if (idx >= 0) {
+            this.unregisterVerifiable(tree);
+            return;
+          }
+
+          for (var i = 0; i < tree.childNodes.length; i++)
+            if (tree.childNodes[i].nodeType == tree.ELEMENT_NODE)
+              this.unregisterVerifiables(tree.childNodes[i]);
+        ]]></body>
+      </method>
+
       <method name="verificationSucceeded">
         <parameter name="verifiable"/>
         <body><![CDATA[
@@ -466,6 +482,13 @@
         ]]></body>
       </method>
 
+      <method name="unregisterVerifiables">
+        <parameter name="tree"/>
+        <body><![CDATA[
+          this._verifier.unregisterVerifiables(tree);
+        ]]></body>
+      </method>
+
       <method name="verificationSucceeded">
         <parameter name="verifiable"/>
         <body><![CDATA[
@@ -537,6 +560,13 @@
         <parameter name="verifiable"/>
         <body><![CDATA[
           this._verifier.unregisterVerifiable(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="unregisterVerifiables">
+        <parameter name="tree"/>
+        <body><![CDATA[
+          this._verifier.unregisterVerifiables(tree);
         ]]></body>
       </method>
 
