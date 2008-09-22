@@ -71,7 +71,7 @@
       <method name="_checkCondition">
         <body><![CDATA[
           if (!this._verifier)
-            return
+            return;
           if (this._timer != null) {
             clearTimeout(this._timer);
             this._timer = null;
@@ -447,6 +447,80 @@
           } catch(ex){}
         }
 
+        this._errorBox = document.getAnonymousNodes(this)[0];
+        this._verifier = this._errorBox.firstChild;
+        this._verifier._childContainer = this;
+      ]]></constructor>
+
+      <method name="registerVerifiable">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.registerVerifiable(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="unregisterVerifiable">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.unregisterVerifiable(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="verificationSucceeded">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.verificationSucceeded(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="verificationFailed">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.verificationFailed(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="focusInvalidWidget">
+        <body><![CDATA[
+          this._verifier.focusInvalidWidget();
+        ]]></body>
+      </method>
+
+      <method name="_updateErrorBox">
+        <parameter name="textbox"/>
+        <parameter name="focus"/>
+        <body><![CDATA[
+          this._errorBox._updateErrorBox(textbox, focus);
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="wizard" extends="chrome://global/content/bindings/wizard.xml#wizard">
+    <content>
+      <xul:verifier-error-box flex="1">
+        <xul:verifier flex="1" orient="vertical"
+            oninvalid="this.parentNode.parentNode.canAdvance = this.parentNode.parentNode.canAdvance"
+            onvalid="this.parentNode.parentNode.canAdvance = this.parentNode.parentNode.canAdvance">
+          <xul:hbox class="wizard-header" anonid="Header"/>
+
+          <xul:deck class="wizard-page-box" flex="1" anonid="Deck">
+            <children includes="wizardpage"/>
+          </xul:deck>
+          <children/>
+
+          <xul:hbox class="wizard-buttons" anonid="Buttons" xbl:inherits="pagestep,firstpage,lastpage"/>
+        </xul:verifier>
+      </xul:verifier-error-box>
+    </content>
+
+    <implementation>
+      <property name="canAdvance" onget="return this._canAdvance;"
+                onset="this._nextButton.disabled = !this.isValid || !val; return this._canAdvance = val;"/>
+
+      <property name="isValid" onget="return this._verifier ? this._verifier.isValid : true" readonly="true"/>
+
+      <constructor><![CDATA[
         this._errorBox = document.getAnonymousNodes(this)[0];
         this._verifier = this._errorBox.firstChild;
         this._verifier._childContainer = this;

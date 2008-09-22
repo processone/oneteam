@@ -104,6 +104,10 @@ window {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#window") !important;
 }
 
+wizard {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#wizard") !important;
+}
+
 listeditor {
   -moz-binding: url("chrome://oneteam/content/bindings/listeditor.xml#list-editor");
 }
