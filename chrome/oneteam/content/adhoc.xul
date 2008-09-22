@@ -26,6 +26,7 @@
     {
       if (sessionid)
         sendFormResults("cancel", sessionid, null);
+
       return true;
     }
 
@@ -78,12 +79,27 @@
 
     function onWizardBack()
     {
+      var wizard = document.documentElement;
+
       if (!canGoBack) {
+        var page = wizard.pageIndex;
+
         onWizardCancel();
-        document.documentElement.goTo("first");
+        wizard.goTo("first");
+
+        for (; page > 0; page--) {
+          var deck = wizard.wizardPages[page].firstChild;
+          deck.selectedIndex = 0;
+          wizard.unregisterVerifiables(deck);
+
+          var p = deck.childNodes[1];
+          while (p.firstChild)
+            p.removeChild(p.firstChild);
+        }
         return false;
       }
-      var deck = wizard.wizardPages[wizard.pageIndex-1].firstChild;
+      var deck = wizard.wizardPages[wizard.pageIndex].firstChild;
+      wizard.unregisterVerifiables(deck);
       deck.selectedIndex = 0;
 
       var p = deck.childNodes[1];
@@ -146,8 +162,11 @@
       }
 
       var cmd = window.opener.DOMtoE4X(pkt.getNode().getElementsByTagName("command")[0]);
-      sessionid = cmd.@sessionid.toString();
-      id = pkt.getID();
+      if (cmd.@status == "executing") {
+        sessionid = cmd.@sessionid.toString();
+        id = pkt.getID();
+      } else
+        sessionid = id = null;
 
       const xns = new Namespace("jabber:x:data");
       const cns = new Namespace("http://jabber.org/protocol/commands");
@@ -159,10 +178,21 @@
 
       wizard.canAdvance = true;
       if (cmd.@status == "completed")
-        wizard.canRewind = false;
+        wizard.canRewind = true;
 
       canGoBack = cmd.cns::actions.cns::prev.length();
-      canGoForward = cmd.cns::actions.cns::next.length();
+      canGoForward = cmd.cns::actions.cns::execute.length() ||
+        cmd.cns::actions.cns::next.length() ||
+        cmd.@status != "completed";
+
+      if (!canGoForward) {
+        var currentPage = wizard.wizardPages[wizard.pageIndex];
+        while (currentPage.nextSibling) {
+          currentPage.parentNode.removeChild(currentPage.nextSibling);
+          wizard.pageCount--;
+        }
+        wizard.pageIndex = wizard.pageIndex;
+      }
 
       cp.firstChild.selectedIndex = 1;
     }
