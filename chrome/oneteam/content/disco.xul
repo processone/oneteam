@@ -278,8 +278,12 @@
             row = document.createElement("row");
             item.buttons.appendChild(row);
           }
+          c1 = document.createElement("hbox")
+          row.appendChild(c1);
+          c1.setAttribute("pack", "center");
+
           var button = document.createElement("button");
-          row.appendChild(button);
+          c1.appendChild(button);
           button.setAttribute("oncommand", "this.callback(this.discoItem)")
           button.setAttribute("label", f[1]);
           button.setAttribute("image", f[2]);
