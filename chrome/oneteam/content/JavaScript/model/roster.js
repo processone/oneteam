@@ -433,6 +433,34 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         fileTransferService.sendFile(this.activeResource.jid, path);
     },
 
+    onRegister: function()
+    {
+        openDialogUniq("ot:registerService", "chrome://oneteam/content/registerService.xul",
+                       "chrome,centerscreen", this);
+    },
+
+    requestRegistrationForm: function(callback)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, "get");
+        iq.setQuery('jabber:iq:register');
+        con.send(iq, callback);
+    },
+
+    register: function(payload, callback)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, "set");
+        iq.setQuery("jabber:iq:register").
+            appendChild(E4XtoDOM(payload, iq.getDoc()));
+        con.send(iq, callback);
+    },
+
+    unregister: function(callback)
+    {
+        this.register(<remove xmlns='jabber:iq:register'/>, callback);
+    },
+
     _onResourceUpdated: function(resource, dontNotifyViews)
     {
         if (!this.resources.length)

@@ -6,16 +6,16 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
-<dialog id="registerGateway" windowtype="ot:registerGateway" title="Gateway Registration"
+<dialog id="registerService" windowtype="ot:registerService" title="Service Registration"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
-  buttonlabelaccept="Register" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('Register')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onload="onLoad()"  ondialogaccept="return onAccept();">
 
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
-    var gateway = window.arguments[0];
+    var service = window.arguments[0];
     var generateXULFromDataForm = window.opener.generateXULFromDataForm;
     var buildResponseDataFormFromXUL = window.opener.buildResponseDataFormFromXUL;
 
@@ -26,7 +26,7 @@
       progressmeter = document.getElementById("progressmeter");
 
       progressmeter.style.visibility = "visible";
-      gateway.requestRegistrationForm(onFormRecv);
+      service.requestRegistrationForm(onFormRecv);
     }
 
     function onFormRecv(pkt) {
@@ -41,7 +41,7 @@
     }
 
     function onAccept() {
-      gateway.register(form.result, onRegisterResponse);
+      service.register(form.result, onRegisterResponse);
       progressmeter.style.visibility = "visible";
       return false;
     }
@@ -50,8 +50,8 @@
     {
       progressmeter.style.visibility = "hidden";
       if (pkt.getType() != "error") {
-        if (gateway.newItem)
-          gateway.subscribe("", true);
+        if (service.newItem)
+          service.subscribe("", true);
         window.close();
         return;
       }
@@ -59,7 +59,7 @@
     }
   ]]></script>
 
-  <dialogheader title="Gateway Registration"/>
+  <dialogheader title="_('Registering in Service')"/>
 
   <spacer/>
 
