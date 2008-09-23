@@ -79,8 +79,7 @@
         }
       }, false, false);
       syncPrevNextButtons();
-      jidTextbox.value = discoHistory[0].discoJID;
-      go(false);
+      navigate(discoHistory[0], false)
     }
 
     function syncPrevNextButtons() {
@@ -90,7 +89,8 @@
 
     function go(ua) {
       if (discoHistory[discoHistoryIdx].discoJID != jidTextbox.value) {
-        discoHistory.push(new window.opener.DiscoItem(jidTextbox.value));
+        discoHistory.splice(discoHistoryIdx+1, 10000,
+                            new window.opener.DiscoItem(jidTextbox.value));
         discoHistoryIdx = discoHistory.length-1;
       }
 
@@ -106,14 +106,21 @@
       syncPrevNextButtons();
     }
 
+    function navigate(discoItem, userAction) {
+      if (discoItem.discoJID)
+        jidTextbox.value = discoItem.discoJID;
+      else
+        jidTextbox.value = discoItem;
+
+      go(userAction);
+    }
+
     function prevItem() {
-      jidTextbox.value = discoHistory[--discoHistoryIdx].discoJID;
-      go(false);
+      navigate(discoHistory[--discoHistoryIdx].discoJID, false);
     }
 
     function nextItem() {
-      jidTextbox.value = discoHistory[++discoHistoryIdx].discoJID;
-      go(false);
+      navigate(discoHistory[++discoHistoryIdx].discoJID, false);
     }
 
     function displayDiscoItem(discoItemV) {
@@ -126,6 +133,8 @@
         item = document.createElement("richlistitem");
         item.setAttribute("nested", discoItemV != discoItem);
         item.setAttribute("orient", "vertical")
+        item.setAttribute("ondblclick", "navigate(this.discoItem, false)")
+        item.discoItem = discoItemV;
         items[discoItemV.discoJID] = item;
 
         var c1 = document.createElement("hbox");
