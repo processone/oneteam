@@ -19,6 +19,11 @@ richlistitem[selected="true"] .extra-content {
   width: 32px;
 }
 
+.service-description {
+  font-weight: bold;
+  font-size: 110%;
+}
+
 #go, #nextButton, #prevButton {
   -moz-binding: url(chrome://global/content/bindings/button.xml#button-image);
   min-width: 0;

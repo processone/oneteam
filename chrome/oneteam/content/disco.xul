@@ -144,12 +144,14 @@
         var c2 = document.createElement("vbox");
         c1.appendChild(c2);
 
+        item.description = document.createElement("label");
+        c2.appendChild(item.description);
+        item.description.setAttribute("class", "service-description")
+
         var l = document.createElement("label");
         c2.appendChild(l);
         l.setAttribute("value", discoItemV.discoJID);
-
-        item.description = document.createElement("label");
-        c2.appendChild(item.description);
+        l.setAttribute("class", "service-jid")
 
         c1 = document.createElement("vbox")
         item.appendChild(c1);
