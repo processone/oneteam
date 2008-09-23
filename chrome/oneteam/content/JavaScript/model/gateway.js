@@ -3,7 +3,8 @@ function checkIfGateway(contact)
     if (!(contact instanceof Contact))
         contact = new Contact(contact, null, null, null, null, true);
 
-    contact.getDiscoIdentity(false, new Callback(Gateway.prototype._onGatewayIdentity, contact));
+    contact.hasDiscoIdentity(null, null, "gateway", false,
+        new Callback(Gateway.prototype._onGatewayIdentities, contact));
 }
 
 function Gateway(contact)
@@ -12,9 +13,9 @@ function Gateway(contact)
 
 _DECL_(Gateway, Contact).prototype =
 {
-    _onGatewayIdentity: function(contact, identity)
+    _onGatewayIdentities: function(contact, hasIdentity, identities)
     {
-        if (this instanceof Gateway || !identity || identity.category != "gateway")
+        if (!hasIdentity)
             return;
 
         // Wrap into Gateway object
@@ -27,8 +28,8 @@ _DECL_(Gateway, Contact).prototype =
         }
         this._notVisibleInRoster = true;
 
-        this.gatewayType = identity.type;
-        this.gatewayName = identity.name;
+        this.gatewayType = identities[0].type;
+        this.gatewayName = identities[0].name;
         account._onGatewayAdded(this);
 
         for (var i in account.allContacts)

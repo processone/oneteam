@@ -473,10 +473,10 @@ _DECL_(Conference, Contact).prototype =
 
     _getRoomName: function()
     {
-        this.getDiscoIdentity(true, function(conference, info) {
-            if (!info || !info.name)
+        this.getDiscoIdentities(true, function(conference, idents) {
+            if (idents.length == 0 || !idents[0].name)
                 return;
-            conference.visibleName = info.name;
+            conference.visibleName = idents[0].name;
             conference.modelUpdated("visibleName")
         });
     },
