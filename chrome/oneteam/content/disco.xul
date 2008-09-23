@@ -63,7 +63,7 @@
     var jid = (window.arguments && window.arguments[0]) || window.opener.account.jid;
     var discoHistory = [new window.opener.DiscoItem(jid)], discoHistoryIdx = 0;
     var prevButton, nextButton, jidTextbox, itemsList;
-    var discoItem, userAction;
+    var discoItem, userAction, expanded;
     var items = {};
 
     function onLoad() {
@@ -179,6 +179,7 @@
         var expander = document.createElement("expander");
         c1.appendChild(expander);
         expander.setAttribute("label", _("More"));
+        expander.setAttribute("open", !!expanded);
         expander.setAttribute("onexpand", "onExpand(val)")
 
         l = document.createElement("label");
@@ -340,6 +341,7 @@
       if (nested)
         return;
 
+      expanded = val;
       nested = true;
       var els = document.getElementsByTagName("expander");
       for (var i = 0; i < els.length; i++)
