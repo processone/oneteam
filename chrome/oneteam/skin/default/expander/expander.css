@@ -1,0 +1,6 @@
+.expanderButton {
+    cursor: pointer !important;
+}
+.expanderButton[disabled=true] {
+    cursor: auto !important;
+}

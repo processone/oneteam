@@ -123,3 +123,7 @@ soundsplayer {
 commandconsole {
   -moz-binding: url("chrome://oneteam/content/bindings/commandconsole.xml#console");
 }
+
+expander {
+  -moz-binding: url("chrome://oneteam/content/bindings/expander.xml#expander");
+}

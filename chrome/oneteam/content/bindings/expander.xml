@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<bindings id="expanderBindings"
+          xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="expander" display="xul:vbox">
+    <resources>
+      <stylesheet src="chrome://oneteam/skin/expander/expander.css"/>
+      <stylesheet src="chrome://global/skin/expander.css"/>
+    </resources>
+    <content>
+      <xul:hbox align="center">
+        <xul:button type="disclosure" class="expanderButton" anonid="disclosure"
+          xbl:inherits="disabled" mousethrough="always"/>
+        <xul:label class="header expanderButton" anonid="label"
+          xbl:inherits="value=label,disabled" mousethrough="always" flex="1"/>
+      </xul:hbox>
+      <xul:vbox flex="1" anonid="container" class="settingsContainer"
+        xbl:inherits="align">
+        <children/>
+      </xul:vbox>
+    </content>
+    <implementation>
+      <constructor>
+        <![CDATA[
+          this._container = document.getAnonymousElementByAttribute(this, "anonid", "container");
+          this._expander = document.getAnonymousElementByAttribute(this, "anonid", "disclosure");
+          this._label = document.getAnonymousElementByAttribute(this, "anonid", "label");
+          var open = this.open;
+
+          this._expander.open = open;
+          this._container.hidden = !open;
+        ]]>
+      </constructor>
+
+      <property name="open">
+        <getter>
+          return this.getAttribute("open") == "true";
+        </getter>
+        <setter>
+          <![CDATA[
+            if (!val == this.open && this.getAttribute("disabled") != "true")
+              this.onCommand();
+
+            return val;
+          ]]>
+        </setter>
+      </property>
+
+      <method name="onCommand">
+        <body>
+          <![CDATA[
+            var event = document.createEvent("Events");
+            event.initEvent(this.open ? "ExpanderClose" : "ExpanderOpen", true, true);
+            if(this.dispatchEvent(event)) {
+              this._container.hidden = this.open
+              this._expander.open = !this.open;
+              this.setAttribute("open", !this.open);
+              if (this.getAttribute("onexpand"))
+                eval("(function(val){"+this.getAttribute("onexpand")+"}).call(this, this.open)", this);
+            }
+          ]]>
+        </body>
+      </method>
+    </implementation>
+    <handlers>
+      <handler event="command">
+        <![CDATA[
+          if (event.originalTarget == this._expander &&
+              this.getAttribute("disabled") != "true")
+            this.onCommand(event);
+        ]]>
+      </handler>
+      <handler event="click">
+        <![CDATA[
+          if (event.originalTarget == this._label &&
+              this.getAttribute("disabled") != "true")
+            this.onCommand(event);
+        ]]>
+      </handler>
+    </handlers>
+  </binding>
+
+</bindings>
