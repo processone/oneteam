@@ -18,6 +18,9 @@
     var _ = window.opener._
 
     const identMapping = [
+      [{category: "server"},
+      _("Server"),
+       "chrome://oneteam/skin/disco/imgs/server.png"],
       [{category: "conference"},
       _("Conference server"),
        "chrome://oneteam/skin/disco/imgs/conference.png"],
