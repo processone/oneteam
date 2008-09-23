@@ -20,7 +20,7 @@
     const identMapping = [
       [{category: "conference"},
       _("Conference server"),
-       "chrome://oneteam/skin/main/imgs/gatewayicons/generic-connected.png"],
+       "chrome://oneteam/skin/disco/imgs/conference.png"],
       [{category: "gateway", type: "msn"},
        _("MSN Gateway"),
        "chrome://oneteam/skin/main/imgs/gatewayicons/msn-connected.png"],
