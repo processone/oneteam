@@ -222,9 +222,9 @@
           var idm = identMapping[i];
           var idp = idm[0];
           for (var j = 0; j < ids.length; j++)
-            if ((idp.name == null || idp.name == ids[j].name) &&
-                (idp.type == null || idp.type == ids[j].type) &&
-                (idp.category == null || idp.category == ids[j].category))
+            if ((idp.name == null || idp.name == (ids[j].name||"").toLowerCase()) &&
+                (idp.type == null || idp.type == (ids[j].type||"").toLowerCase()) &&
+                (idp.category == null || idp.category == (ids[j].category||"").toLowerCase()))
             {
               item.description.value = window.opener.l10nFormatService.formatString(idm[1],
                 ids[j].name || "(empty)", ids[j].type, ids[j].category);
