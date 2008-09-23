@@ -1,0 +1,48 @@
+richlistitem[nested="true"] {
+  padding-left: 12px;
+}
+
+.extra-content {
+  padding-left: 16px;
+  visibility: collapse;
+}
+
+richlistitem[selected="true"] .extra-content {
+  visibility: visible;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.image-container {
+  width: 32px;
+}
+
+#go, #nextButton, #prevButton {
+  -moz-binding: url(chrome://global/content/bindings/button.xml#button-image);
+  min-width: 0;
+  width: 32px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+#go {
+  list-style-image: url(../chatpane/imgs/send.png);
+}
+
+#nextButton {
+  list-style-image: url(../chattabbox/imgs/scroll-right.png);
+}
+
+#nextButton[disabled="true"] {
+  list-style-image: url(../chattabbox/imgs/scroll-right-disabled.png);
+}
+
+#prevButton {
+  list-style-image: url(../chattabbox/imgs/scroll-left.png);
+}
+
+#prevButton[disabled="true"] {
+  list-style-image: url(../chattabbox/imgs/scroll-left-disabled.png);
+}

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/disco/disco.css" type="text/css"?>
+<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
+
+<dialog id="disco" windowtype="ot:disco" title="_('Service Discovery')"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  onload="onLoad()"
+  width="600" height="520"
+  buttonlabelaccept="_('Close')"
+  buttons="accept">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    function viewVCard(discoItem) {
+      var contact = window.opener.account.getOrCreateContact(discoItem.discoJID);
+      contact.showVCard();
+    }
+
+    const identMapping = [
+      [{category: "conference"},
+      _("Conference server"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/generic-connected.png"],
+      [{category: "gateway", type: "msn"},
+       _("MSN Gateway"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/msn-connected.png"],
+      [{category: "gateway", type: "aim"},
+       _("AIM Gateway"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/aim-connected.png"],
+      [{category: "gateway", type: "yahoo"},
+       _("Yahoo! Gateway"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/yahoo-connected.png"],
+      [{category: "gateway", type: "icq"},
+       _("ICQ Gateway"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/icq-connected.png"],
+      [{category: "gateway", type: "gadu-gadu"},
+       _("GaduGadu Gateway"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/gadu-gadu-connected.png"],
+      [{category: "gateway", type: "xmpp"},
+       _("XMPP Gateway"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/xmpp-connected.png"],
+      [{category: "gateway"},
+       _("{2} Gateway"),
+       "chrome://oneteam/skin/main/imgs/gatewayicons/generic-connected.png"],
+      [{},
+       _("Generic Service"),
+       "chrome://oneteam/skin/disco/imgs/generic-service.png"]
+    ];
+
+    const featuresMapping = [
+      ["vcard-temp",
+       _("View VCard"),
+       "chrome://oneteam/skin/chatpane/images/vcard.png", viewVCard],
+    ];
+
+    var jid = (window.arguments && window.arguments[0]) || window.opener.account.jid;
+    var discoHistory = [new window.opener.DiscoItem(jid)], discoHistoryIdx = 0;
+    var prevButton, nextButton, jidTextbox, itemsList;
+    var discoItem, userAction;
+    var items = {};
+
+    function onLoad() {
+      prevButton = document.getElementById("prevButton");
+      nextButton = document.getElementById("nextButton");
+      jidTextbox = document.getElementById("jid");
+      itemsList = document.getElementById("items");
+      jidTextbox.addEventListener("keypress", function(event) {
+        event.stopPropagation();
+        if (event.keyCode == event.DOM_VK_RETURN) {
+          event.preventDefault();
+          go(true);
+        }
+      }, false, false);
+      syncPrevNextButtons();
+      jidTextbox.value = discoHistory[0].discoJID;
+      go(false);
+    }
+
+    function syncPrevNextButtons() {
+      prevButton.disabled = discoHistoryIdx == 0;
+      nextButton.disabled = discoHistoryIdx == discoHistory.length-1;
+    }
+
+    function go(ua) {
+      if (discoHistory[discoHistoryIdx].discoJID != jidTextbox.value) {
+        discoHistory.push(new window.opener.DiscoItem(jidTextbox.value));
+        discoHistoryIdx = discoHistory.length-1;
+      }
+
+      items = {};
+      while (itemsList.firstChild)
+        itemsList.removeChild(itemsList.firstChild);
+
+      discoItem = discoHistory[discoHistoryIdx];
+      userAction = ua;
+      displayDiscoItem(discoItem);
+      discoItem.getDiscoInfo(userAction, onDiscoInfoReady);
+      discoItem.getDiscoItems(userAction, onDiscoItemsReady);
+      syncPrevNextButtons();
+    }
+
+    function prevItem() {
+      jidTextbox.value = discoHistory[--discoHistoryIdx].discoJID;
+      go(false);
+    }
+
+    function nextItem() {
+      jidTextbox.value = discoHistory[++discoHistoryIdx].discoJID;
+      go(false);
+    }
+
+    function displayDiscoItem(discoItemV) {
+      if (discoItemV.discoNode)
+        return;
+
+      var item = items[discoItemV.discoJID];
+
+      if (!item) {
+        item = document.createElement("richlistitem");
+        item.setAttribute("nested", discoItemV != discoItem);
+        item.setAttribute("orient", "vertical")
+        items[discoItemV.discoJID] = item;
+
+        var c1 = document.createElement("hbox");
+        item.appendChild(c1);
+        c1.setAttribute("align", "center")
+
+        var c2 = document.createElement("vbox")
+        c1.appendChild(c2);
+        c2.setAttribute("align", "center")
+        c2.setAttribute("pack", "center")
+        c2.setAttribute("class", "image-container")
+
+        item.icon = document.createElement("image");
+        c2.appendChild(item.icon);
+
+        var c2 = document.createElement("vbox");
+        c1.appendChild(c2);
+
+        var l = document.createElement("label");
+        c2.appendChild(l);
+        l.setAttribute("value", discoItemV.discoJID);
+
+        item.description = document.createElement("label");
+        c2.appendChild(item.description);
+
+        c1 = document.createElement("vbox")
+        item.appendChild(c1);
+        c1.setAttribute("class", "extra-content");
+
+        var grid = document.createElement("grid");
+        c1.appendChild(grid);
+        var cols = document.createElement("columns");
+        grid.appendChild(cols);
+        cols.appendChild(document.createElement("column")).setAttribute("flex", "1");
+        cols.appendChild(document.createElement("column")).setAttribute("flex", "1");
+        cols.appendChild(document.createElement("column")).setAttribute("flex", "1");
+        item.buttons = document.createElement("rows");
+        grid.appendChild(item.buttons);
+
+        var expander = document.createElement("expander");
+        c1.appendChild(expander);
+        expander.setAttribute("label", _("More"));
+        expander.setAttribute("onexpand", "onExpand(val)")
+
+        l = document.createElement("label");
+        expander.appendChild(l);
+        l.setAttribute("value", _("Identities:"))
+        l.setAttribute("class", "label");
+
+        grid = document.createElement("grid");
+        expander.appendChild(grid);
+        grid.setAttribute("class", "indent");
+        cols = document.createElement("columns");
+        grid.appendChild(cols);
+        cols.appendChild(document.createElement("column"));
+        cols.appendChild(document.createElement("column"));
+        cols.appendChild(document.createElement("column"));
+        item.identities = document.createElement("rows");
+        grid.appendChild(item.identities);
+
+        l = document.createElement("label");
+        expander.appendChild(l);
+        l.setAttribute("value", _("Features:"))
+        l.setAttribute("class", "label");
+
+        item.features = document.createElement("vbox");
+        expander.appendChild(item.features);
+        item.features.setAttribute("class", "indent");
+
+        itemsList.appendChild(item);
+      }
+
+      var ids = discoItemV.getDiscoIdentities();
+      if (item.identitiesObj != ids) {
+        item.identitiesObj = ids;
+
+        var found = false;
+        outer:
+        for (var i = 0; i < identMapping.length; i++) {
+          var idm = identMapping[i];
+          var idp = idm[0];
+          for (var j = 0; j < ids.length; j++)
+            if ((idp.name == null || idp.name == ids[j].name) &&
+                (idp.type == null || idp.type == ids[j].type) &&
+                (idp.category == null || idp.category == ids[j].category))
+            {
+              item.description.value = idm[1];
+              item.icon.src = idm[2];
+              found = true;
+              break outer;
+            }
+        }
+        if (!found) {
+          item.description.value = idm[1];
+          item.icon.src = idm[2];
+        }
+
+        while (item.identities.firstChild)
+          item.identities.removeChild(item.identities.firstChild);
+
+        for (i = 0; i < ids.length; i++) {
+          var row = document.createElement("row");
+          c1 = document.createElement("hbox");
+          row.appendChild(c1);
+          l = document.createElement("label")
+          c1.appendChild(l);
+          l.setAttribute("value", "Name:");
+          l.setAttribute("class", "label");
+          l = document.createElement("label")
+          c1.appendChild(l);
+          l.setAttribute("value", ids[i].name || "(empty)");
+
+          c1 = document.createElement("hbox");
+          row.appendChild(c1);
+          l = document.createElement("label")
+          c1.appendChild(l);
+          l.setAttribute("value", "Type:");
+          l.setAttribute("class", "label");
+          l = document.createElement("label")
+          c1.appendChild(l);
+          l.setAttribute("value", ids[i].type);
+
+          c1 = document.createElement("hbox");
+          row.appendChild(c1);
+          l = document.createElement("label")
+          c1.appendChild(l);
+          l.setAttribute("value", "Category:");
+          l.setAttribute("class", "label");
+          l = document.createElement("label")
+          c1.appendChild(l);
+          l.setAttribute("value", ids[i].category);
+
+          item.identities.appendChild(row);
+        }
+      }
+
+      var features = discoItemV.getDiscoFeatures();
+      if (features != item.featuresObj) {
+        item.featuresObj = features;
+
+        while (item.buttons.firstChild)
+          item.buttons.removeChild(item.buttons.firstChild);
+
+        row = null;
+        for (i = 0; i < featuresMapping.length; i++) {
+          var f = featuresMapping[i];
+          if (!(f[0] in features))
+            continue;
+
+          if (!row || row.childNodes.length == item.buttons.previousSibling.childNodes.length) {
+            row = document.createElement("row");
+            item.buttons.appendChild(row);
+          }
+          var button = document.createElement("button");
+          row.appendChild(button);
+          button.setAttribute("oncommand", "this.callback(this.discoItem)")
+          button.setAttribute("label", f[1]);
+          button.setAttribute("image", f[2]);
+          button.discoItem = discoItemV;
+          button.callback = f[3];
+        }
+        while (row && row.childNodes.length != item.buttons.previousSibling.childNodes.length)
+          row.appendChild(document.createElement("button")).style.visibility = "hidden";
+
+        while (item.features.firstChild)
+          item.features.removeChild(item.features.firstChild);
+
+        var fa = [i for (i in features)].sort();
+        for (i = 0; i < fa.length; i++)
+          item.features.appendChild(document.createElement("label")).
+            setAttribute("value", fa[i]);
+      }
+    }
+
+    function onDiscoInfoReady(di, info) {
+      if (!displayDiscoItem || (di != discoItem && !items[di.discoJID]))
+        return;
+
+      displayDiscoItem(di);
+    }
+
+    function onDiscoItemsReady(di, items) {
+      if (!displayDiscoItem || di != discoItem)
+        return;
+
+      for (var i = 0; i < items.length; i++) {
+        displayDiscoItem(items[i]);
+        items[i].getDiscoInfo(userAction, onDiscoInfoReady);
+      }
+    }
+
+    var nested;
+    function onExpand(val) {
+      if (nested)
+        return;
+
+      nested = true;
+      var els = document.getElementsByTagName("expander");
+      for (var i = 0; i < els.length; i++)
+        els[i].open = val;
+      nested = false;
+    }
+  ]]></script>
+
+  <dialogheader title="_('Service Discovery')"/>
+  <hbox>
+    <button id="prevButton" oncommand="prevItem()"/>
+    <button id="nextButton" oncommand="nextItem()"/>
+    <textbox id="jid" flex="1"/>
+    <button id="go" oncommand="go(true)"/>
+  </hbox>
+  <richlistbox id="items" flex="1"/>
+</dialog>
