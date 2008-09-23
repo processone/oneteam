@@ -14,12 +14,13 @@
   buttonlabelaccept="_('Close')"
   buttons="accept">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     function viewVCard(discoItem) {
       var contact = window.opener.account.getOrCreateContact(discoItem.discoJID);
       contact.showVCard();
     }
+
+    var _ = window.opener._
 
     const identMapping = [
       [{category: "conference"},
@@ -44,7 +45,7 @@
        _("XMPP Gateway"),
        "chrome://oneteam/skin/main/imgs/gatewayicons/xmpp-connected.png"],
       [{category: "gateway"},
-       _("{2} Gateway"),
+       _("{1,capitalize} Gateway"),
        "chrome://oneteam/skin/main/imgs/gatewayicons/generic-connected.png"],
       [{},
        _("Generic Service"),
@@ -209,7 +210,8 @@
                 (idp.type == null || idp.type == ids[j].type) &&
                 (idp.category == null || idp.category == ids[j].category))
             {
-              item.description.value = idm[1];
+              item.description.value = window.opener.l10nFormatService.formatString(idm[1],
+                ids[j].name || "(empty)", ids[j].type, ids[j].category);
               item.icon.src = idm[2];
               found = true;
               break outer;
