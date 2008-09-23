@@ -100,8 +100,18 @@ _DECL_(DiscoCacheEntry).prototype =
 
     _parseReturnType: function(returnType)
     {
-        if (!this.discoInfo)
-            return returnType && returnType.identity ? [] : null;
+        if (!this.discoInfo) {
+            if (!returnType)
+                return null;
+            if (returnType.identity)
+                return [];
+            if (returnType.features)
+                return {};
+            if (returnType.feature)
+                return false;
+            return null;
+        }
+
         if (!returnType)
             return this.discoInfo;
         if (returnType.identity)
@@ -122,6 +132,8 @@ _DECL_(DiscoCacheEntry).prototype =
                 }
                 return ret;
             }
+        if (returnType.features)
+            return this.discoInfo.features;
         return returnType.feature in this.discoInfo.features;
     },
 
@@ -325,6 +337,11 @@ _DECL_(DiscoItem).prototype =
     getDiscoIdentities: function(forceUpdate, callback)
     {
         return this._discoCacheEntry.requestDiscoInfo({identity:{}}, forceUpdate, callback, this);
+    },
+
+    getDiscoFeatures: function(forceUpdate, callback)
+    {
+        return this._discoCacheEntry.requestDiscoInfo({features:1}, forceUpdate, callback, this);
     },
 
     getDiscoInfo: function(forceUpdate, callback)
