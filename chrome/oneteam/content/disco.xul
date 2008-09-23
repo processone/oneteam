@@ -207,6 +207,8 @@
         item.features.setAttribute("class", "indent");
 
         itemsList.appendChild(item);
+        if (itemsList.childNodes.length == 1)
+          itemsList.selectedIndex = 0;
       }
 
       var ids = discoItemV.getDiscoIdentities();
