@@ -15,11 +15,6 @@
   buttons="accept">
 
   <script type="text/javascript;version=1.7"><![CDATA[
-    function viewVCard(discoItem) {
-      var contact = window.opener.account.getOrCreateContact(discoItem.discoJID);
-      contact.showVCard();
-    }
-
     var _ = window.opener._
 
     const identMapping = [
@@ -53,9 +48,16 @@
     ];
 
     const featuresMapping = [
+      ["jabber:iq:register",
+       _("Register"),
+       "chrome://oneteam/skin/disco/imgs/register.png", function(di) {
+          window.opener.account.getOrCreateContact(di.discoJID).onRegister();
+       }],
       ["vcard-temp",
        _("View VCard"),
-       "chrome://oneteam/skin/chatpane/images/vcard.png", viewVCard],
+       "chrome://oneteam/skin/chatpane/imgs/vcard.png", function(di) {
+          window.opener.account.getOrCreateContact(di.discoJID).showVCard();
+       }],
     ];
 
     var jid = (window.arguments && window.arguments[0]) || window.opener.account.jid;
