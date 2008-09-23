@@ -78,6 +78,23 @@ var l10nFormatService = {
                 this._pluralsExpr = new Function("n",
                     "return arguments[1+("+_("$$plural_forms$$: n==1 ? 0 : 1")+")]");
             return this._pluralsExpr.apply(null, arguments);
+        },
+
+        upperCase: function(value)
+        {
+            return (""+value).toUpperCase();
+        },
+
+        lowerCase: function(value)
+        {
+            return (""+value).toLowerCase();
+        },
+
+        capitalize: function(value)
+        {
+            return (""+value).replace(/(^|\s+)(\S)(\S+)/g, function(a,s,w,r) {
+                return s+w.toUpperCase()+r.toLowerCase()
+            });
         }
     }
 }
