@@ -239,7 +239,7 @@
       onConnect: function()
       {
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
-        document.getElementById("setPresence-nick").value = account.connectionInfo.user;
+        document.getElementById("setPresence-nick").value = account.myResource.visibleName;
         document.getElementById("login-signin").disabled = false;
         document.getElementById("roster").selectedIndex = 0;
 
@@ -362,10 +362,16 @@
         this.updatePresenceIcon();
       },
 
+      onNickChange: function()
+      {
+        document.getElementById("setPresence-nick").value = account.myResource.visibleName;
+      },
+
       init: function()
       {
         account.registerView(this.onConnect, this, "connected");
         account.registerView(this.onPresenceChange, this, "currentPresence");
+        account.myResource.registerView(this.onNickChange, this, "visibleName");
         account.style.registerView(this.onIconSetChange, this, "defaultSet");
 
         this.chooser = document.getElementById("setPresence-type-chooser");

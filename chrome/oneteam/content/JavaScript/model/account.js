@@ -169,6 +169,16 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
 
+        var nickname = account.getVCard() &&
+            account.getVCard().getNode().getElementsByTagName("NICKNAME")[0];
+        nickname = (nickname && nickname.textContent) || account.myJID.node;
+
+        if (nickname != this.myResource.nickname) {
+            this.myResource._updateNick(nickname)
+            for each (var res in this.myResources)
+                res._updateNick(nickname);
+        }
+
         if (!oldAvatarRetrieved || this.avatarHash != oldHash)
             this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
     },

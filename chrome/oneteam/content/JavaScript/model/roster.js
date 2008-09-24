@@ -721,14 +721,14 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 function MyResourcesContact(jid)
 {
     this.jid = new JID(jid);
-    this.name = _("{0}/{1}", this.jid.node, this.jid.resource);
-    this.visibleName = _("{0} ({1})", this.jid.node, this.jid.resource);
     this.groups = [account.otherResourcesGroup];
     this.resources = []
 
     account.myResources[this.jid.normalizedJID] = this;
 
     this.init();
+
+    this._updateNick(account.myResource.visibleName);
     MessagesRouter.call(this);
 
     account.otherResourcesGroup._onContactAdded(this);
@@ -761,14 +761,23 @@ _DECL_(MyResourcesContact, Contact).prototype =
     {
         this.groups[0]._onContactRemoved(this);
         delete account.myResources[this.jid.normalizedJID];
+    },
+
+    _updateNick: function(nickname)
+    {
+        this.name = _("{0}/{1}", nickname, this.jid.resource);
+        this.visibleName = _("{0} ({1})", nickname, this.jid.resource);
+
+        this.modelUpdated("visibleName", null, "name");
     }
 }
 
 function MyResource()
 {
+    this.init();
 }
 
-_DECL_(MyResource).prototype =
+_DECL_(MyResource, null, Model).prototype =
 {
     representsMe: true,
 
@@ -780,7 +789,15 @@ _DECL_(MyResource).prototype =
         return account.myJID;
     },
 
+
     get visibleName() {
-        return account.myJID.node;
+        return this.nickname || (account.myJID && account.myJID.node) ||
+            (account.connectionInfo && account.connectionInfo.user) ||
+            _("(Anonymous)");
+    },
+
+    _updateNick: function(nick) {
+        this.nickname = nick;
+        this.modelUpdated("visibleName");
     }
 }
