@@ -153,7 +153,7 @@ _DECL_(DiscoCacheEntry).prototype =
             } else {
                 if (!capsCallback)
                     capsCallback = new Callback(this._gotCapsInfo, this).
-                        addArgs(capsCallbackData = {}, featureName, callback, discoItem);
+                        addArgs(capsCallbackData = {}, returnType, callback, discoItem);
                 capsCallbackData[this.capsNode+"#"+nodes[i]] = 1;
                 ce.requestDiscoInfo(null, false, capsCallback);
             }
