@@ -85,8 +85,9 @@ _DECL_(FileTransferService, null, Model).prototype =
         canceler.add = account.addEvent(_("<b>{0}</b> want to send you file",
                                           xmlEscape(pkt.getFrom())),
                                         callback);
-        canceler.add = account.notificationScheme.show("filetransfer", callback,
-                                                       pkt.getFrom(), file.@name);
+        canceler.add = account.notificationScheme.show("filetransfer", "request",
+                                                       pkt.getFrom(), file.@name,
+                                                       callback);
 
         return null;
    }
@@ -301,6 +302,12 @@ _DECL_(FileTransfer, null, Model).prototype =
     {
         this.state = "rejected";
         this.modelUpdated("state");
+
+        var file = this.file.path.match(/[^\/\\]+$/)[0];
+        var contact = this.jid.resource ? account.getOrCreateResource(this.jid) :
+            account.getOrCreateContact(this.jid);
+
+        account.notificationScheme.show("filetransfer", "rejected", contact, file);
     },
 
     onTransferFailure: function()
@@ -314,6 +321,12 @@ _DECL_(FileTransfer, null, Model).prototype =
         this._startTime = Date.now();
         this.state = "started";
         this.modelUpdated("state");
+
+        var file = this.file.path.match(/[^\/\\]+$/)[0];
+        var contact = this.jid.resource ? account.getOrCreateResource(this.jid) :
+            account.getOrCreateContact(this.jid);
+
+        account.notificationScheme.show("filetransfer", "accepted", contact, file);
     },
 
     onTransferCompleted: function()

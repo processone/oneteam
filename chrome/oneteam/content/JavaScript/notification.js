@@ -10,7 +10,7 @@ _DECL_(NotificationScheme).prototype =
         cancel: function() {}
     },
 
-    show: function(kind, type, model, extra)
+    show: function(kind, type, model, extra, extra2)
     {
         if (kind == "resource") {
             var signed;
@@ -83,10 +83,19 @@ _DECL_(NotificationScheme).prototype =
             return this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
                                    text, "chrome://oneteam/skin/main/imgs/msgicon.png");
         } else if (kind == "filetransfer") {
-            return this._showAlert(_("File transfer request"),
-                                   _("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
-                                     xmlEscape(model), xmlEscape(extra)),
-                                   "chrome://oneteam/skin/main/imgs/fticon.png", type);
+            if (type == "request")
+                return this._showAlert(_("File transfer request"),
+                                       _("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
+                                         xmlEscape(model), xmlEscape(extra)),
+                                       "chrome://oneteam/skin/main/imgs/fticon.png", extra2);
+            else if (type == "rejected")
+                this._showInChatPane(_("{0} don't want to receive your file '{1}'",
+                                       xmlEscape(model.visibleName), xmlEscape(extra)),
+                                     model, false, true);
+            else if (type == "accepted")
+                this._showInChatPane(_("{0} accepted your file '{1}'",
+                                       xmlEscape(model.visibleName), xmlEscape(extra)),
+                                     model, false, true);
         }
         return this._nopCanceler;
     },
