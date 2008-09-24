@@ -51,19 +51,19 @@
     ];
 
     const featuresMapping = [
-      ["jabber:iq:register",
+      ["jabber:iq:register", null,
        _("Register"),
        "chrome://oneteam/skin/disco/imgs/register.png", function(di) {
           window.opener.account.getOrCreateContact(di.discoJID).onRegister();
        }],
-      ["http://jabber.org/protocol/muc",
+      ["http://jabber.org/protocol/muc", {category: "conference"},
        _("Join chatroom"),
        "chrome://oneteam/skin/disco/imgs/join-conference.png", function(di) {
           var conf = di.discoJID.node ?
             window.opener.account.getOrCreateConference(di.discoJID) : di.discoJID;
           window.opener.account.onJoinRoom(conf);
        }],
-      ["vcard-temp",
+      ["vcard-temp", null,
        _("View VCard"),
        "chrome://oneteam/skin/chatpane/imgs/vcard.png", function(di) {
           window.opener.account.getOrCreateContact(di.discoJID).showVCard();
@@ -223,110 +223,122 @@
       }
 
       var ids = discoItemV.getDiscoIdentities();
-      if (item.identitiesObj != ids) {
-        item.identitiesObj = ids;
-
-        var found = false;
-        outer:
-        for (var i = 0; i < identMapping.length; i++) {
-          var idm = identMapping[i];
-          var idp = idm[0];
-          for (var j = 0; j < ids.length; j++)
-            if ((idp.name == null || idp.name == (ids[j].name||"").toLowerCase()) &&
-                (idp.type == null || idp.type == (ids[j].type||"").toLowerCase()) &&
-                (idp.category == null || idp.category == (ids[j].category||"").toLowerCase()))
-            {
-              item.description.value = window.opener.l10nFormatService.formatString(idm[1],
-                ids[j].name || "(empty)", ids[j].type, ids[j].category);
-              item.icon.src = idm[2];
-              found = true;
-              break outer;
-            }
-        }
-        if (!found) {
-          item.description.value = idm[1];
-          item.icon.src = idm[2];
-        }
-
-        while (item.identities.firstChild)
-          item.identities.removeChild(item.identities.firstChild);
-
-        for (i = 0; i < ids.length; i++) {
-          var row = document.createElement("row");
-          c1 = document.createElement("hbox");
-          row.appendChild(c1);
-          l = document.createElement("label")
-          c1.appendChild(l);
-          l.setAttribute("value", "Name:");
-          l.setAttribute("class", "label");
-          l = document.createElement("label")
-          c1.appendChild(l);
-          l.setAttribute("value", ids[i].name || "(empty)");
-
-          c1 = document.createElement("hbox");
-          row.appendChild(c1);
-          l = document.createElement("label")
-          c1.appendChild(l);
-          l.setAttribute("value", "Type:");
-          l.setAttribute("class", "label");
-          l = document.createElement("label")
-          c1.appendChild(l);
-          l.setAttribute("value", ids[i].type);
-
-          c1 = document.createElement("hbox");
-          row.appendChild(c1);
-          l = document.createElement("label")
-          c1.appendChild(l);
-          l.setAttribute("value", "Category:");
-          l.setAttribute("class", "label");
-          l = document.createElement("label")
-          c1.appendChild(l);
-          l.setAttribute("value", ids[i].category);
-
-          item.identities.appendChild(row);
-        }
-      }
-
       var features = discoItemV.getDiscoFeatures();
-      if (features != item.featuresObj) {
-        item.featuresObj = features;
 
-        while (item.buttons.firstChild)
-          item.buttons.removeChild(item.buttons.firstChild);
+      if (ids == item.identitiesObj && features == item.featuresObj)
+        return;
 
-        row = null;
-        for (i = 0; i < featuresMapping.length; i++) {
-          var f = featuresMapping[i];
-          if (!(f[0] in features))
+      item.identitiesObj = ids;
+      item.featuresObj = features;
+
+      var found = false;
+      outer:
+      for (var i = 0; i < identMapping.length; i++) {
+        var idm = identMapping[i];
+        var idp = idm[0];
+        for (var j = 0; j < ids.length; j++) {
+          if ((idp.name && idp.name != (ids[j].name||"").toLowerCase()) ||
+              (idp.type && idp.type != (ids[j].type||"").toLowerCase()) ||
+              (idp.category && idp.category != (ids[j].category||"").toLowerCase()))
             continue;
 
-          if (!row || row.childNodes.length == item.buttons.previousSibling.childNodes.length) {
-            row = document.createElement("row");
-            item.buttons.appendChild(row);
-          }
-          c1 = document.createElement("hbox")
-          row.appendChild(c1);
-          c1.setAttribute("pack", "center");
+          for (var k in idp.features)
+            if (!(k in ids[j].features))
+              continue;
 
-          var button = document.createElement("button");
-          c1.appendChild(button);
-          button.setAttribute("oncommand", "this.callback(this.discoItem)")
-          button.setAttribute("label", f[1]);
-          button.setAttribute("image", f[2]);
-          button.discoItem = discoItemV;
-          button.callback = f[3];
+          item.description.value = window.opener.l10nFormatService.formatString(idm[1],
+            ids[j].name || "(empty)", ids[j].type, ids[j].category);
+          item.icon.src = idm[2];
+          found = true;
+          break outer;
         }
-        while (row && row.childNodes.length != item.buttons.previousSibling.childNodes.length)
-          row.appendChild(document.createElement("button")).style.visibility = "hidden";
-
-        while (item.features.firstChild)
-          item.features.removeChild(item.features.firstChild);
-
-        var fa = [i for (i in features)].sort();
-        for (i = 0; i < fa.length; i++)
-          item.features.appendChild(document.createElement("label")).
-            setAttribute("value", fa[i]);
       }
+      if (!found) {
+        item.description.value = idm[1];
+        item.icon.src = idm[2];
+      }
+
+      while (item.identities.firstChild)
+        item.identities.removeChild(item.identities.firstChild);
+
+      for (i = 0; i < ids.length; i++) {
+        var row = document.createElement("row");
+        c1 = document.createElement("hbox");
+        row.appendChild(c1);
+        l = document.createElement("label")
+        c1.appendChild(l);
+        l.setAttribute("value", "Name:");
+        l.setAttribute("class", "label");
+        l = document.createElement("label")
+        c1.appendChild(l);
+        l.setAttribute("value", ids[i].name || "(empty)");
+
+        c1 = document.createElement("hbox");
+        row.appendChild(c1);
+        l = document.createElement("label")
+        c1.appendChild(l);
+        l.setAttribute("value", "Type:");
+        l.setAttribute("class", "label");
+        l = document.createElement("label")
+        c1.appendChild(l);
+        l.setAttribute("value", ids[i].type);
+
+        c1 = document.createElement("hbox");
+        row.appendChild(c1);
+        l = document.createElement("label")
+        c1.appendChild(l);
+        l.setAttribute("value", "Category:");
+        l.setAttribute("class", "label");
+        l = document.createElement("label")
+        c1.appendChild(l);
+        l.setAttribute("value", ids[i].category);
+
+        item.identities.appendChild(row);
+      }
+
+      while (item.buttons.firstChild)
+        item.buttons.removeChild(item.buttons.firstChild);
+
+      outer2:
+      for (i = 0, row = null; i < featuresMapping.length; i++) {
+        var f = featuresMapping[i];
+        if (!(f[0] in features))
+          continue;
+
+        if (f[1])
+          for (j = 0; j < ids.length; j++)
+            if ((f[1].name && f[1].name != (ids[j].name||"").toLowerCase()) ||
+                (f[1].type && f[1].type != (ids[j].type||"").toLowerCase()) ||
+                (f[1].category && f[1].category != (ids[j].category||"").toLowerCase()))
+              continue outer2;
+
+        if (!row || row.childNodes.length == item.buttons.previousSibling.childNodes.length) {
+          row = document.createElement("row");
+          item.buttons.appendChild(row);
+        }
+
+        c1 = document.createElement("hbox")
+        row.appendChild(c1);
+        c1.setAttribute("pack", "center");
+
+        var button = document.createElement("button");
+        c1.appendChild(button);
+        button.setAttribute("oncommand", "this.callback(this.discoItem)")
+        button.setAttribute("label", f[2]);
+        button.setAttribute("image", f[3]);
+        button.discoItem = discoItemV;
+        button.callback = f[4];
+      }
+      while (row && row.childNodes.length != item.buttons.previousSibling.childNodes.length)
+        row.appendChild(document.createElement("button")).style.visibility = "hidden";
+
+      while (item.features.firstChild)
+        item.features.removeChild(item.features.firstChild);
+
+      var fa = [i for (i in features)].sort();
+      for (i = 0; i < fa.length; i++)
+        item.features.appendChild(document.createElement("label")).
+          setAttribute("value", fa[i]);
     }
 
     function onDiscoInfoReady(di, info) {
