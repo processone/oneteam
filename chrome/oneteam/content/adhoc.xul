@@ -150,6 +150,8 @@
 
     function onForm(pkt)
     {
+      if (!document)
+        return;
       var wizard = document.documentElement;
       var cp = wizard.currentPage;
       var c = cp.firstChild.childNodes[1];
