@@ -56,6 +56,13 @@
        "chrome://oneteam/skin/disco/imgs/register.png", function(di) {
           window.opener.account.getOrCreateContact(di.discoJID).onRegister();
        }],
+      ["http://jabber.org/protocol/muc",
+       _("Join chatroom"),
+       "chrome://oneteam/skin/disco/imgs/join-conference.png", function(di) {
+          var conf = di.discoJID.node ?
+            window.opener.account.getOrCreateConference(di.discoJID) : di.discoJID;
+          window.opener.account.onJoinRoom(conf);
+       }],
       ["vcard-temp",
        _("View VCard"),
        "chrome://oneteam/skin/chatpane/imgs/vcard.png", function(di) {

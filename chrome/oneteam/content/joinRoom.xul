@@ -24,10 +24,12 @@
       for each (i in "room server nick password bookmark bookmarkName progressmeter autoJoin".split(" "))
         eval(i+" = document.getElementById("+uneval(i)+")");
 
-      if (conference) {
+      if (conference instanceof window.opener.Conference) {
         room.value = conference.jid.node;
         server.value = conference.jid.domain;
-        nick.value = conference.bookmarkNick || "";
+        nick.value = conference.bookmarkNick ||
+          window.opener.prefManager.getPref('chat.muc.nickname') ||
+          window.opener.account.myJID.node;
         password.value = conference.bookmarkPassword || "";
 
         bookmarkName.value = conference.bookmarkName || "";
@@ -36,9 +38,10 @@
         room.disabled = room.previousSibling.disabled =
             server.disabled = server.previousSibling.disabled = true;
       } else {
-        server.value = window.opener.account.defaultConferenceServer || "";
+        server.value = conference || window.opener.account.defaultConferenceServer || "";
         nick.value = window.opener.prefManager.getPref('chat.muc.nickname') ||
             window.opener.account.myJID.node;
+        conference = null;
       }
     }
 
