@@ -275,7 +275,7 @@ _DECL_(DiscoCacheEntry).prototype =
 
 function DiscoItem(jid, name, node)
 {
-    this.discoJID = jid;
+    this.discoJID = new JID(jid);
     this.discoName = name;
     this.discoNode = node;
 }
