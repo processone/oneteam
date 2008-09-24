@@ -484,7 +484,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         con.registerHandler("onerror", function(p){account.onError(p)});
         con.registerHandler("status_changed", function(p){account.onStatusChanged(p)});
 // #ifdef DEBUG
-        con.registerHandler("onexception", function(e){alert(e)});
+        con.registerHandler("onexception", function(e){alert(exceptionToString(e))});
 // #endif
 
         if (this.connectionInfo.user)
