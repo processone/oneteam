@@ -1,0 +1,7 @@
+#showVCard {
+  list-style-image: url(../chatpane/imgs/vcard.png);
+}
+
+#addContact {
+  list-style-image: url(imgs/add-contact.png);
+}

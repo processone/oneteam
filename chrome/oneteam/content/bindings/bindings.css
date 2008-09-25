@@ -116,6 +116,10 @@ registrationform {
   -moz-binding: url("chrome://oneteam/content/bindings/forms.xml#registration-form");
 }
 
+searchform {
+  -moz-binding: url("chrome://oneteam/content/bindings/forms.xml#search-form");
+}
+
 soundsplayer {
   -moz-binding: url("chrome://oneteam/content/bindings/soundsplayer.xml#player");
 }

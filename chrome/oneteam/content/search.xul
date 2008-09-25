@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/search/search.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dataforms/dataforms.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
+
+<wizard id="search" windowtype="ot:search" title="_('Search')"
+    onwizardfinish="return true"
+    onwizardnext="return onWizardNext()"
+    persist="width height" width="600" height="500"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var contact = window.arguments[0];
+    var generateXULFromDataForm = window.opener.generateXULFromDataForm;
+    var buildResponseDataFormFromXUL = window.opener.buildResponseDataFormFromXUL;
+    var TreeView = window.opener.TreeView;
+
+    var initialized = false;
+    var form;
+
+    function onWizardNext() {
+      var wizard = document.documentElement;
+
+      if (!initialized) {
+        contact.requestSearchForm(onSearchForm);
+        form = document.getElementById("form");
+        initialized = true;
+
+        return true;
+      }
+
+      contact.search(form.result, onSearchResults);
+
+      return true;
+    }
+
+    function onSearchForm(pkt) {
+      if (pkt.getType() == "error") {
+        alert("Can't fetch registration form.")
+        window.close();
+      }
+      document.getElementById("formDeck").selectedIndex = 1;
+
+      form.form = window.opener.DOMtoE4X(pkt.getNode().getElementsByTagName("query")[0]);
+    }
+
+    function onSearchResults(pkt) {
+      var resultsDeck = document.getElementById("resultsDeck");
+
+      if (pkt.getType() == "error") {
+        resultsDeck.selectedIndex = 3;
+        return;
+      }
+
+      var items = pkt.getNode().getElementsByTagNameNS("jabber:iq:search", "item");
+      var xdataItems = pkt.getNode().getElementsByTagNameNS("jabber:x:data", "item");
+      var tree = document.getElementById("results");
+
+      var dataModel = {
+        cellText: function(id, value) {
+          return value[id];
+        },
+
+        sortKeys: function(columns, value) {
+          var res = [];
+
+          for (var i = 0; i < columns.count; i++)
+            res.push(value[columns.getColumnAt(i).id]);
+          return res;
+        }
+      };
+
+      if (items.length) {
+        for (var i = 0; i < items[0].childNodes.length; i++) {
+          var label = null;
+
+          switch(items[0].childNodes[i].localName) {
+            case "first":
+              label = _("First Name");
+              break;
+            case "last":
+              label = _("Last Name");
+              break;
+            case "nick":
+              label = _("Nickname");
+              break;
+            case "email":
+              label = _("Email");
+              break;
+          }
+          if (!label)
+            continue;
+
+          var treecol = document.createElement("treecol");
+          treecol.setAttribute("label", label);
+          treecol.setAttribute("id", items[0].childNodes[i].localName);
+          tree.firstChild.appendChild(treecol);
+          tree.firstChild.appendChild(document.createElement("splitter")).
+            setAttribute("class", "tree-splitter");
+        }
+        var treecol = document.createElement("treecol");
+        treecol.setAttribute("label", _("JID"));
+        treecol.setAttribute("id", "jid");
+        tree.firstChild.appendChild(treecol);
+
+        var treeView = new TreeView(tree, dataModel);
+
+        var validElems = {first:1, last:1, nick:1, email:1}
+        for (var i = 0; i < items.length; i++) {
+          var value = {};
+          for (var j = 0; j < items[i].childNodes.length; j++)
+            if (items[i].childNodes[j].localName in validElems)
+              value[items[i].childNodes[j].localName] = items[i].childNodes[j].textContent;
+
+          value.jid = items[i].getAttribute("jid");
+
+          treeView.addValue(value);
+        }
+
+      } else if (xdataItems.length) {
+        var labelFields = pkt.getNode().getElementsByTagNameNS("jabber:x:data", "reported")[0].
+          getElementsByTagNameNS("jabber:x:data", "field");
+
+        for (var i = 0; i < labelFields.length; i++) {
+          if (tree.firstChild.firstChild)
+            tree.firstChild.appendChild(document.createElement("splitter")).
+              setAttribute("class", "tree-splitter");
+
+          var treecol = document.createElement("treecol");
+          treecol.setAttribute("label", labelFields[i].getAttribute("label"));
+          treecol.setAttribute("id", labelFields[i].getAttribute("var"));
+          //treecol.setAttribute("style", "min-width: 130px");
+          tree.firstChild.appendChild(treecol);
+        }
+
+        var treeView = new TreeView(tree, dataModel);
+        for (var i = 0; i < xdataItems.length; i++) {
+          var value = {};
+          var fields = xdataItems[i].getElementsByTagNameNS("jabber:x:data", "field");
+          for (var j = 0; j < fields.length; j++)
+            value[fields[j].getAttribute("var")] = fields[j].textContent;
+
+          treeView.addValue(value);
+        }
+      } else {
+        resultsDeck.selectedIndex = 2;
+        return;
+      }
+      resultsDeck.selectedIndex = 1;
+    }
+
+    function selectionUpdated(tree) {
+      var buttons = document.getElementById("itemButtons").getElementsByTagName("button");
+      var hasItem = tree.myView.currentValue;
+
+      for (var i = 0; i < buttons.length; i++)
+        buttons[i].disabled = !hasItem;
+
+    }
+
+    function showVCard() {
+      var jid = document.getElementById("results").myView.currentValue.jid;
+      var contact = window.opener.account.getOrCreateContact(jid);
+
+      contact.showVCard();
+    }
+
+    function addContact() {
+      var jid = document.getElementById("results").myView.currentValue.jid;
+      var contact = window.opener.account.getOrCreateContact(jid);
+
+      window.opener.account.onAddContact(contact);
+    }
+  ]]></script>
+
+  <wizardpage pageid="form">
+    <deck id="formDeck">
+      <vbox>
+        <label value="_('Requesting search form')"/>
+        <spacer/>
+        <progressmeter mode="undetermined"/>
+      </vbox>
+      <vbox>
+        <searchform id="form"/>
+      </vbox>
+    </deck>
+  </wizardpage>
+
+  <wizardpage pageid="results" onpageshow="this.firstChild.selectedIndex = 0">
+    <deck id="resultsDeck" flex="1">
+      <vbox>
+        <label value="_('Requesting search results')"/>
+        <spacer/>
+        <progressmeter mode="undetermined"/>
+      </vbox>
+      <vbox flex="1">
+        <tree flex="1" id="results" hidecolumnpicker="true"
+              seltype="single" onselect="selectionUpdated(this)">
+          <treecols/>
+          <treechildren/>
+        </tree>
+          <spacer/>
+        <hbox id="itemButtons">
+          <spacer flex="1"/>
+          <button id="showVCard" label="Show VCard" oncommand="showVCard()" disabled="true"/>
+          <button id="addContact" label="Add Contact" oncommand="addContact()" disabled="true"/>
+        </hbox>
+      </vbox>
+      <vbox>
+        <spacer/>
+        <description>_('Searching returned no results.')</description>
+      </vbox>
+      <vbox>
+        <spacer/>
+        <description>_('Searching returned errors.')</description>
+      </vbox>
+    </deck>
+  </wizardpage>
+</wizard>

@@ -461,6 +461,29 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         this.register(<remove xmlns='jabber:iq:register'/>, callback);
     },
 
+    onSearch: function()
+    {
+        openDialogUniq("ot:search", "chrome://oneteam/content/search.xul",
+                       "chrome,centerscreen", this);
+    },
+
+    requestSearchForm: function(callback)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, "get");
+        iq.setQuery("jabber:iq:search");
+        con.send(iq, callback);
+    },
+
+    search: function(payload, callback)
+    {
+        var iq = new JSJaCIQ();
+        iq.setIQ(this.jid, "set");
+        iq.setQuery("jabber:iq:search").
+            appendChild(E4XtoDOM(payload, iq.getDoc()));
+        con.send(iq, callback);
+    },
+
     _onResourceUpdated: function(resource, dontNotifyViews)
     {
         if (!this.resources.length)

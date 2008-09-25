@@ -15,67 +15,67 @@
         <xul:rows>
           <xul:description anonid="instructions" hidden="true"/>
           <xul:row anonid="username" hidden="true">
-            <xul:label value="Username:"/>
+            <xul:label value="_('Username:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="nick" hidden="true">
-            <xul:label value="Nick:"/>
+            <xul:label value="_('Nick:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="password" hidden="true">
-            <xul:label value="Password:"/>
+            <xul:label value="_('Password:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="name" hidden="true">
-            <xul:label value="Name:"/>
+            <xul:label value="_('Name:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="first" hidden="true">
-            <xul:label value="First Name:"/>
+            <xul:label value="_('First Name:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="last" hidden="true">
-            <xul:label value="Last Name:"/>
+            <xul:label value="_('Last Name:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="email" hidden="true">
-            <xul:label value="Email:"/>
+            <xul:label value="_('Email:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="address" hidden="true">
-            <xul:label value="Address:"/>
+            <xul:label value="_('Address:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="city" hidden="true">
-            <xul:label value="City:"/>
+            <xul:label value="_('City:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="state" hidden="true">
-            <xul:label value="State:"/>
+            <xul:label value="_('State:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="zip" hidden="true">
-            <xul:label value="ZIP:"/>
+            <xul:label value="_('ZIP:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="phone" hidden="true">
-            <xul:label value="Phone:"/>
+            <xul:label value="_('Phone:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="url" hidden="true">
-            <xul:label value="URL:"/>
+            <xul:label value="_('URL:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="date" hidden="true">
-            <xul:label value="Date:"/>
+            <xul:label value="_('Date:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="misc" hidden="true">
-            <xul:label value="Misc:"/>
+            <xul:label value="_('Misc:')"/>
             <xul:textbox/>
           </xul:row>
           <xul:row anonid="text" hidden="true">
-            <xul:label value="Text:"/>
+            <xul:label value="_('Text:')"/>
             <xul:textbox/>
           </xul:row>
         </xul:rows>
@@ -141,7 +141,7 @@
             lastChild.childNodes;
           var res = <></>;
 
-          default xml namespace = new Namespace("jabber:x:data");
+          default xml namespace = new Namespace("jabber:x:register");
           var xulNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
           for (var i = 0; i < rows.length; i++) {
@@ -149,6 +149,113 @@
               continue;
             var name = rows[i].getAttribute("anonid");
             res += <{name}>{rows[i].getElementsByTagNameNS(xulNS, "textbox")[0].value}</{name}>;
+          }
+          return res;
+        ]]></getter>
+      </property>
+
+    </implementation>
+  </binding>
+
+  <binding id="search-form">
+    <content>
+      <xul:grid anonid="form" hidden="true" flex="1">
+        <xul:columns>
+          <xul:column/>
+          <xul:column flex="1"/>
+        </xul:columns>
+        <xul:rows>
+          <xul:description anonid="instructions" hidden="true"/>
+          <xul:row anonid="first" hidden="true">
+            <xul:label value="_('First Name:')"/>
+            <xul:textbox/>
+          </xul:row>
+          <xul:row anonid="last" hidden="true">
+            <xul:label value="_('Last Name:')"/>
+            <xul:textbox/>
+          </xul:row>
+          <xul:row anonid="nick" hidden="true">
+            <xul:label value="_('Nick:')"/>
+            <xul:textbox/>
+          </xul:row>
+          <xul:row anonid="email" hidden="true">
+            <xul:label value="_('Email:')"/>
+            <xul:textbox/>
+          </xul:row>
+        </xul:rows>
+      </xul:grid>
+    </content>
+
+    <implementation>
+
+      <property name="form">
+        <getter><![CDATA[
+          return this._form;
+        ]]></getter>
+
+        <setter><![CDATA[
+          this._form = val;
+
+          if (this._xdata) {
+            this._xdata.parentNode.removeChild(this._xdata);
+            this._xdata = null;
+          }
+
+          var grid = document.getAnonymousElementByAttribute(this, "anonid", "form");
+          if (!val) {
+            grid.hidden = true;
+            return;
+          }
+
+          var xdataNS = new Namespace("jabber:x:data");
+          var searchNS = new Namespace("jabber:iq:search");
+          var xulNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+          if (val.xdataNS::x.length()) {
+            this._xdata = generateXULFromDataForm(val.xdataNS::x[0], document);
+            grid.hidden = true;
+            grid.parentNode.appendChild(this._xdata);
+            return;
+          }
+
+          var rows = grid.lastChild.childNodes;
+          for (var i = 0; i < rows.length; i++) {
+            var el = val[new QName(registerNS, rows[i].getAttribute("anonid"))];
+            if (el.length()) {
+              if (rows[i].localName == "instructions") {
+                if (rows[i].firstChild)
+                  rows[i].removeChild(rows[i].firstChild);
+                rows[i].appendChild(document.createTextNode(el.text()));
+              } else
+                rows[i].getElementsByTagNameNS(xulNS, "textbox")[0].value = el.text();
+              rows[i].hidden = false;
+            } else
+              rows[i].hidden = true;
+          }
+          grid.hidden = false;
+        ]]></setter>
+      </property>
+
+      <property name="result" readonly="true">
+        <getter><![CDATA[
+          if (this._xdata)
+            return buildResponseDataFormFromXUL(this._xdata);
+
+          var rows = document.getAnonymousElementByAttribute(this, "anonid", "form").
+            lastChild.childNodes;
+          var res = <></>;
+
+          default xml namespace = new Namespace("jabber:x:search");
+          var xulNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
+          for (var i = 0; i < rows.length; i++) {
+            if (rows[i].hidden || rows[i].localName == "instructions")
+              continue;
+            var name = rows[i].getAttribute("anonid");
+            var value = rows[i].getElementsByTagNameNS(xulNS, "textbox")[0].value;
+
+            if (value)
+              res += <{name}>{value}</{name}>;
           }
           return res;
         ]]></getter>
