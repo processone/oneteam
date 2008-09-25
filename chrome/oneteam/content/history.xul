@@ -4,7 +4,7 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
-<window id="ot:history" title="History Manager" width="640" height="550"
+<window id="ot:history" title="_('History Manager')" width="640" height="550"
     onload="onLoad()" onunload="onUnload()" persist="width height" windowtype="ot:history"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -153,26 +153,26 @@
   <tabbox flex="1">
     <tabs id="tabs">
 <!-- #ifdef XULAPP -->
-      <tab value="search" label="Search"/>
+      <tab value="search" label="_('Search')"/>
 <!-- #endif -->
-      <tab value="chats" label="Chats"/>
-      <tab value="conferences" label="Conferences"/>
+      <tab value="chats" label="_('Chats')"/>
+      <tab value="conferences" label="_('Conferences')"/>
     </tabs>
     <tabpanels flex="1">
 <!-- #ifdef XULAPP -->
       <tabpanel>
         <vbox flex="1">
           <hbox align="center">
-            <label value="Search:"/>
+            <label value="_('Search:')"/>
             <textbox id="search" flex="1" onkeypress="updateSearch(event, this.value)"/>
           </hbox>
           <tree id="search-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, searchMessages)">
             <treecols>
               <treecol sortDirection="ascending" sortActive="true"
-                       primary="true" flex="5" label="Contact" id="jid"/>
+                       primary="true" flex="5" label="_('Contact')" id="jid"/>
               <splitter class="tree-splitter"/>
-              <treecol flex="1" label="Date" id="date"/>
+              <treecol flex="1" label="_('Date')" id="date"/>
             </treecols>
             <treechildren/>
           </tree>
@@ -197,9 +197,9 @@
               seltype="single" onselect="updateMessages(this, contactsMessages)">
               <treecols>
                 <treecol sortDirection="ascending" sortActive="true"
-                         primary="true" ordinal="1" flex="5" label="Contact" id="jid"/>
+                         primary="true" ordinal="1" flex="5" label="_('Contact')" id="jid"/>
                 <splitter class="tree-splitter"/>
-                <treecol flex="1" label="Date" id="date"/>
+                <treecol flex="1" label="_('Date')" id="date"/>
               </treecols>
               <treechildren/>
             </tree>
@@ -224,9 +224,9 @@
               seltype="single" onselect="updateMessages(this, conferencesMessages)">
               <treecols>
                 <treecol sortDirection="ascending" sortActive="true"
-                         primary="true" flex="5" label="Conference" id="jid"/>
+                         primary="true" flex="5" label="_('Conference')" id="jid"/>
                 <splitter class="tree-splitter"/>
-                <treecol flex="1" label="Date" id="date"/>
+                <treecol flex="1" label="_('Date')" id="date"/>
               </treecols>
               <treechildren/>
             </tree>
