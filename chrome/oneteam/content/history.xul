@@ -14,7 +14,9 @@
   <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/colorutils.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/treeview.js"/>
   <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
     JID = window.opener.JID;
@@ -24,56 +26,8 @@
     prefManager = window.opener.prefManager;
     contact = window.arguments && window.arguments[0];
 
-    function TreeView(tree, reversed) {
-      this.wrappedJSObject = this;
-      this._reversed = reversed;
-      tree.myView = this;
-// #ifdef XULAPP
-      tree.view = this;
-/* #else
-      this._treeEl = tree;
-// #endif */
-    }
-
-    TreeView.prototype =
-    {
-      selection: null,
-      isContainer: function(row) { return false; },
-      isSeparator: function(row) { return false; },
-      isSorted: function() { return true; },
-      getLevel: function(row) { return 0; },
-      getImageSrc: function(row,col) { return null; },
-      getRowProperties: function(row,props) {},
-      getCellProperties: function(row,col,props) {},
-      getColumnProperties: function(colid,col,props) {},
-      selectionChanged: function() {},
-      cycleHeader: function(){},
-
-      _rowIdx: function(row) {
-        if (this._reversed) {
-          var len = this._treeEl ? this._treeEl.body.childNodes.length :
-            this._results ? this._results.length : 0;
-          return len - 1 - row;
-        }
-        return row;
-      },
-
-      get rowCount() {
-        return this._results ? this._results.length : 0
-      },
-
-      get currentObject()
-      {
-        if (this._inClear || !this._results)
-          return null;
-
-        if (this._treeEl)
-          return this._treeEl.body.childNodes[this._treeEl.currentIndex].model;
-
-        return this._results[this._rowIdx(this.selection.currentIndex)];
-      },
-
-      _cellText: function(id, value) {
+    var dataModel = {
+      cellText: function(id, value) {
         if (id == "jid") {
           var contact = value.contact ? value.contact : value;
 
@@ -89,84 +43,30 @@
         return readableTimestamp(value.time);
       },
 
-      getCellText : function(row, column)
-      {
-        if (row > this._results.length)
-          return "ERROR";
+      sortKeys: function(columns, value) {
+        if (columns.count > 1)
+          return [this.cellText("jid", value), ""+value.time.getTime()];
 
-        return this._cellText(column.id, this._results[this._rowIdx(row)]);
-      },
-
-      setTree: function(tree) {
-        this._tree = tree;
-      },
-
-      _updateTree: function(newValue)
-      {
-        var len1 = this._results ? this._results.length : 0;
-        this._results = newValue;
-        if (this._tree) {
-          var len2 = newValue ? this._results.length : 0;
-          this._tree.rowCountChanged(this._reversed ? 0 : len1, len2 - len1);
-        }
-      },
-
-      _clear: function()
-      {
-        if (this.selection)
-          this.selection.clearSelection();
-        this._inClear = true;
-        if (this._treeEl) {
-          while (this._treeEl.body.firstChild)
-            this._treeEl.body.removeChild(this._treeEl.body.firstChild);
-        } else
-          this._updateTree(null);
-        this._inClear = false;
-      },
-
-      _inBatch: 0,
-
-      _startBatchUpdate: function() { this._inBatch++ },
-
-      _endBatchUpdate: function()
-      {
-        if (--this._inBatch == 0 && !this._treeEl)
-          this._updateTree(this._newResults || []);
-        this._newResults = null;
-      },
-
-      _addRecord: function(value)
-      {
-        if (this._treeEl) {
-          var item = document.createElement("treeitem");
-          var row = document.createElement("treerow");
-
-          item.appendChild(row);
-          item.model = value;
-
-          row.appendChild(document.createElement("treecell")).
-                      setAttribute("label", this._cellText("jid", value));
-          if (value.date)
-            row.appendChild(document.createElement("treecell")).
-                        setAttribute("label", readableTimestamp(value.date));
-
-          if (this._reversed)
-            this._treeEl.body.insertBefore(item, this._treeEl.body.firstChild);
-          else
-            this._treeEl.body.appendChild(item);
-
-          return;
-        }
-
-        if (this._inBatch) {
-          if (!this._newResults)
-            this._newResults = []
-          this._newResults.push(value);
-        } else {
-          var val = this._results || [];
-          this._updateTree(val.concat([value]));
-        }
+        return [this.cellText("jid", value)]
       }
+    };
+
+    function HistoryTreeView(tree) {
+      TreeView.call(this, tree, dataModel, true);
+    }
+    _DECL_(HistoryTreeView, TreeView).prototype = {
+      get currentObject() { return this.currentValue },
+
+      _addRecord: function(val) {
+        this.addValue(val);
+      },
+
+      _clear: function() {
+        this.clear();
+      },
+
+      _startBatchUpdate: function() { },
+      _endBatchUpdate: function() { },
     };
 
     var searchThreads, searchMessages;
@@ -176,13 +76,13 @@
 
     function onLoad() {
 // #ifdef XULAPP
-      searchThreads = new TreeView(document.getElementById("search-threads"), true);
+      searchThreads = new HistoryTreeView(document.getElementById("search-threads"), true);
       searchMessages = document.getElementById("search-view");
       searchMessages.scrollToBottom = false;
 // #endif
 
-      contactsList = new TreeView(document.getElementById("contacts-list"));
-      contactsThreads = new TreeView(document.getElementById("contacts-threads"), true);
+      contactsList = new HistoryTreeView(document.getElementById("contacts-list"));
+      contactsThreads = new HistoryTreeView(document.getElementById("contacts-threads"), true);
       contactsMessages = document.getElementById("contacts-view");
       contactsMessages.scrollToBottom = false;
 
@@ -199,8 +99,8 @@
         return;
       }
 
-      conferencesList = new TreeView(document.getElementById("conferences-list"));
-      conferencesThreads = new TreeView(document.getElementById("conferences-threads"), true);
+      conferencesList = new HistoryTreeView(document.getElementById("conferences-list"));
+      conferencesThreads = new HistoryTreeView(document.getElementById("conferences-threads"), true);
       conferencesMessages = document.getElementById("conferences-view");
       conferencesMessages.scrollToBottom = false;
 
@@ -269,7 +169,8 @@
           <tree id="search-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, searchMessages)">
             <treecols>
-              <treecol primary="true" flex="5" label="Contact" id="jid"/>
+              <treecol sortDirection="ascending" sortActive="true"
+                       primary="true" flex="5" label="Contact" id="jid"/>
               <splitter class="tree-splitter"/>
               <treecol flex="1" label="Date" id="date"/>
             </treecols>
@@ -285,7 +186,8 @@
           <tree id="contacts-list" width="250" persist="width" hidecolumnpicker="true"
               seltype="single" onselect="updateThreads(this, contactsThreads)">
             <treecols>
-              <treecol primary="true" flex="1" id="jid" hideheader="true"/>
+              <treecol sortDirection="ascending" sortActive="true"
+                       primary="true" flex="1" id="jid" hideheader="true"/>
             </treecols>
             <treechildren/>
           </tree>
@@ -294,7 +196,8 @@
             <tree id="contacts-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, contactsMessages)">
               <treecols>
-                <treecol primary="true" flex="5" label="Contact" id="jid"/>
+                <treecol sortDirection="ascending" sortActive="true"
+                         primary="true" ordinal="1" flex="5" label="Contact" id="jid"/>
                 <splitter class="tree-splitter"/>
                 <treecol flex="1" label="Date" id="date"/>
               </treecols>
@@ -310,7 +213,8 @@
           <tree id="conferences-list" width="250" persist="width" hidecolumnpicker="true"
               seltype="single" onselect="updateThreads(this, conferencesThreads)">
             <treecols>
-              <treecol primary="true" flex="1" id="jid" hideheader="true"/>
+              <treecol sortDirection="ascending" sortActive="true"
+                       primary="true" flex="1" id="jid" hideheader="true"/>
             </treecols>
             <treechildren/>
           </tree>
@@ -319,7 +223,8 @@
             <tree id="conferences-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, conferencesMessages)">
               <treecols>
-                <treecol primary="true" flex="5" label="Conference" id="jid"/>
+                <treecol sortDirection="ascending" sortActive="true"
+                         primary="true" flex="5" label="Conference" id="jid"/>
                 <splitter class="tree-splitter"/>
                 <treecol flex="1" label="Date" id="date"/>
               </treecols>
