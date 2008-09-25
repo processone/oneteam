@@ -180,14 +180,14 @@
   ]]></script>
 
   <wizardpage pageid="form">
-    <deck id="formDeck">
+    <deck id="formDeck" flex="1">
       <vbox>
         <label value="_('Requesting search form')"/>
         <spacer/>
         <progressmeter mode="undetermined"/>
       </vbox>
-      <vbox>
-        <searchform id="form"/>
+      <vbox flex="1">
+        <searchform id="form" flex="1"/>
       </vbox>
     </deck>
   </wizardpage>
