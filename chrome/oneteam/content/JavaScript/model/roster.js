@@ -186,7 +186,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         [,this.name, this.subscription, this.subscriptionAsk, groups, groupsHash] =
             this._parseNode(node, true);
 
-        this.visibleName = this.name || this.jid.toString("short");
+        this.name = this.name || this.jid.toString("short");
+        this.visibleName = this.name;
         delete this._inRoster;
 
         for (var i = 0; i < this.groups.length; i++) {
