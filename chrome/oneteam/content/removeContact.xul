@@ -7,7 +7,7 @@
 
 <dialog id="removeContact" windowtype="ot:removeContact" title="Contact removal"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  width="400" height="150"
+  width="400" height="200"
   buttonlabelaccept="Remove" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel" defaultButton="cancel"
   onload="onLoad()" ondialogaccept="onAccept()">
