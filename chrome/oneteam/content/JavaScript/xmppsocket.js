@@ -239,7 +239,7 @@ _DECL_(XMPPSocket).prototype =
                             flags |= srv.ERROR_UNTRUSTED;
                             msg += "\n  "+_("Hasn't been verified by recognized authority");
                         }
-                        if (status.isDomainMismatch) {
+                        if (status.isDomainMismatch && status.serverCert.commonName != this.socket.domain) {
                             flags |= srv.ERROR_MISMATCH;
                             msg += "\n  "+_("Belongs to different domain");
                         }
@@ -248,11 +248,13 @@ _DECL_(XMPPSocket).prototype =
                             msg += "\n  "+_("Has been expired");
                         }
 
-                        if (promptSrv.confirmEx(null, _("Invalid certificate"),
-                                                _("Certificate used by server is invalid because:")+msg,
-                                                127+256*2, _("Continue"), "", "",
-                                                _("Always skip this dialog"), check))
-                            return false;
+                        if (flags == 0)
+                            check.value = true;
+                        else if (promptSrv.confirmEx(null, _("Invalid certificate"),
+                                                     _("Certificate used by server is invalid because:")+msg,
+                                                     127+256*2, _("Continue"), "", "",
+                                                     _("Always skip this dialog"), check))
+                            return true;
 
                         srv.rememberValidityOverride(this.socket.host, this.socket.port,
                                                      status.serverCert, flags, !check.value);
