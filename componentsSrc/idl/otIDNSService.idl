@@ -1,0 +1,22 @@
+#include "nsIDNSListener.idl"
+#include "nsIEventTarget.idl"
+
+[scriptable, uuid(f1dc7ce3-8a8f-4df5-a610-478717f80ad5)]
+interface otIDNSService : nsISupports
+{
+  void asyncResolveSRV(in ACString hostName, in nsIDNSListener listener, in nsIEventTarget target);
+};
+
+%{C++
+
+#define OT_DNS_CONTRACTID "@process-one.net/dns;1"
+
+#define OT_DNS_CID \
+{ /* cd2eaf42-0cf3-4d81-890a-2fde04467037 */ \
+  0xcd2eaf42, \
+  0x0cf3, \
+  0x4d81, \
+  {0x89, 0x0a, 0x2f, 0xde, 0x04, 0x46, 0x70, 0x37 } \
+}
+
+%}

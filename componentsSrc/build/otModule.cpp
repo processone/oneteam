@@ -4,9 +4,11 @@
 
 #include "otIdle.h"
 #include "otSystray.h"
+#include "otDNS.h"
 
 OT_IDLE_DEFINE_FACTORY
 OT_SYSTRAY_DEFINE_FACTORY
+OT_DNS_DEFINE_FACTORY
 
 static const nsModuleComponentInfo components[] =
 {
@@ -17,7 +19,11 @@ static const nsModuleComponentInfo components[] =
   { "User idle detection service",
     OT_IDLE_CID,
     OT_IDLE_CONTRACTID,
-    OT_IDLE_FACTORY }
+    OT_IDLE_FACTORY },
+  { "Extra DNS services",
+    OT_DNS_CID,
+    OT_DNS_CONTRACTID,
+    OT_DNS_FACTORY }
 };
 
 NS_IMPL_NSGETMODULE(otModule, components)

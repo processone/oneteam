@@ -1,0 +1,37 @@
+DEPTH=../../../../..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+ottdir=@ottdir@
+
+include $(ottdir)/config.mk
+
+ifdef OT_HAS_DNS_UNIX
+	OT_EXTRA_SRCS += \
+	    otDNSUnix.cpp \
+	    $(NULL)
+endif
+
+NO_DIST_INSTALL=1
+MODULE=oneteam
+LIBRARY_NAME=ot_dns_s
+REQUIRES= \
+	xpcom \
+	necko \
+	$(OT_EXTRA_REQS) \
+	$(NULL)
+
+CPPSRCS= \
+	otDNSBase.cpp \
+	$(OT_EXTRA_SRCS) \
+	$(NULL)
+
+FORCE_STATIC_LIB = 1
+
+include $(ottdir)/rules.mk
+
+INCLUDES+= \
+	-I$(otdir)/src/dns \
+	$(NULL)
