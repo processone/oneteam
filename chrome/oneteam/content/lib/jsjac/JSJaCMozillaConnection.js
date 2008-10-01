@@ -39,6 +39,7 @@ JSJaCMozillaConnection.prototype = {
 
     this.host = oArg.host || this.domain;
     this.port = oArg.port || 5222;
+
     if (oArg.secure)
       this.secure = 'true';
     else
@@ -49,8 +50,11 @@ JSJaCMozillaConnection.prototype = {
 
     this.jid = this.username + '@' + this.domain;
     this.fulljid = this.jid + '/' + this.resource;
-    this.socket = new XMPPSocket(this, this.host, this.port, false);
+    this.socket = new XMPPSocket(this, this.host, this.port, false, this.domain, this.authhost);
     this.socket.connect();
+  },
+
+  _handleConnectionEstabilished: function() {
     this._reInitStream();
   },
 

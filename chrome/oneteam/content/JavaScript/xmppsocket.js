@@ -1,24 +1,49 @@
-function XMPPSocket(listener, host, port, ssl, authhost)
+function XMPPSocket(listener, host, port, ssl, domain, authhost)
 {
     this.listener = listener;
     this.host = host;
     this.port = port;
-    this.authhost = authhost;
     this.ssl = ssl;
+    this.domain = domain;
+    this.authhost = authhost;
     this.converter = new CharsetConverter("UTF-8");
 }
 
 _DECL_(XMPPSocket).prototype =
 {
     connect: function() {
+        if (this.host == this.domain) {
+            try {
+                var dnsSrv = Components.classes["@process-one.net/dns;1"].
+                    getService(Components.interfaces.otIDNSService);
+                var mainThread = Components.classes["@mozilla.org/thread-manager;1"].
+                    getService(Components.interfaces.nsIThreadManager).mainThread;
+                var _this = this;
+
+                dnsSrv.asyncResolveSRV("_xmpp-client._tcp."+this.domain, this,
+                                       mainThread);
+                return;
+            } catch (ex) {}
+        }
+        this.onLookupComplete();
+    },
+
+    onLookupComplete: function(request, response) {
+        if (response && response.hasMore())
+            [this.host, this.port] = response.getNextAddrAsString().split(":");
+
+        this.doConnect();
+        this.listener._handleConnectionEstabilished();
+    },
+
+    doConnect: function() {
         var ioSrv = Components.classes["@mozilla.org/network/io-service;1"].
             getService(Components.interfaces.nsIIOService);
-
-        var proxyInfo = Components.classes["@mozilla.org/network/protocol-proxy-service;1"].
-            getService(Components.interfaces.nsIProtocolProxyService).
-            resolve(ioSrv.newURI((this.ssl == "ssl" ? "https://" : "http://")+this.host,
-                                 null, null),
-                    Components.interfaces.nsIProtocolProxyService.RESOLVE_NON_BLOCKING);
+        var pps = Components.classes["@mozilla.org/network/protocol-proxy-service;1"].
+            getService(Components.interfaces.nsIProtocolProxyService);
+        var proxyUri = ioSrv.newURI((this.ssl == "ssl" ? "https://" : "http://")+this.host,
+                                    null, null);
+        var proxyInfo = pps.resolve(proxyUri, pps.RESOLVE_NON_BLOCKING);
 
         var mainThread = Components.classes["@mozilla.org/event-queue-service;1"] ?
             Components.classes["@mozilla.org/event-queue-service;1"].
@@ -177,7 +202,7 @@ _DECL_(XMPPSocket).prototype =
     {
         if (this.reconnect) {
             this.disconnect();
-            this.connect();
+            this.doConnect();
             this.listener._handleReconnect();
             return;
         }
