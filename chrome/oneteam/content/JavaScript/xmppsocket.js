@@ -11,6 +11,8 @@ function XMPPSocket(listener, host, port, ssl, domain, authhost)
 
 _DECL_(XMPPSocket).prototype =
 {
+    tlsProblemHandled: {},
+
     connect: function() {
         if (this.host == this.domain) {
             try {
@@ -85,6 +87,17 @@ _DECL_(XMPPSocket).prototype =
         this.transport.securityInfo.
             QueryInterface(Components.interfaces.nsISSLSocketControl).
             StartTLS();
+
+        // some servers (like gmail.com) have problems with handling TLS1.0
+        // (they just stuck on initial hello), to failback to SSL3.0 we needs
+        // to reconnect after some time
+        if (!(this.domain in this.tlsProblemHandled)) {
+            this._sslDowngradeTimeout = setTimeout(function(_this) {
+                _this.tlsProblemHandled[_this.domain] = true;
+                _this.reconnect = true;
+                _this.disconnect();
+            }, 1000, this);
+        }
     },
 
     reset: function() {
@@ -192,6 +205,12 @@ _DECL_(XMPPSocket).prototype =
 
     onDataAvailable: function(request, context, is, offset, count)
     {
+        if (this._sslDowngradeTimeout) {
+            clearTimeout(this._sslDowngradeTimeout)
+            delete this._sslDowngradeTimeout;
+            this.tlsProblemHandled[this.domain] = false;
+        }
+
         if (this._afterReset)
             this.saxParser.onStartRequest(request, context);
         this.saxParser.onDataAvailable.apply(this.saxParser, arguments);
