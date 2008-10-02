@@ -21,7 +21,7 @@ function JID(node, domain, resource)
         if (this._cache[node])
             return this._cache[node];
 
-        var atIdx = node.lastIndexOf("@");
+        var atIdx = node.indexOf("@");
         var slashIdx = ~(~node.indexOf("/", atIdx) || ~node.length);
 
         [node, domain, resource] = [
