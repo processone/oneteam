@@ -135,6 +135,7 @@ sub _create_mar {
     my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
 
     my $manifest_tmp = catfile($tmpdir, "update.manifest.tmp");
+    my $prefix = "";
     open $fh, ">", $manifest_tmp;
 
     for (sort keys %files) {
@@ -142,10 +143,13 @@ sub _create_mar {
         my ($vol, $dir, undef) = splitpath($path);
         mkpath(catpath($vol, $dir));
 
-        print $fh "add \"$_\"\n";
+        print $fh "add \"$prefix$_\"\n";
         system("bzip2 -cz9 '$files{$_}' > '$path'");
     }
+    print $fh "remove \"${prefix}components/oneteam.dll\"\n";
+    print $fh "remove \"${prefix}components/liboneteam.so\"\n";
     close($fh);
+
     system("bzip2 -cz9 '".$manifest_tmp."' > '".catfile($tmpdir, "update.manifest")."'");
     unlink($manifest_tmp);
 
