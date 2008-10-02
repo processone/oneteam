@@ -25,6 +25,8 @@ otDNSBase::AsyncResolveSRV(const nsACString &hostName,
   nsCOMPtr<nsIDNSListener> proxy;
   otDNSRecord *record;
 
+  NS_ENSURE_ARG_POINTER(listener);
+
   if (target) {
     nsCOMPtr<nsIProxyObjectManager> pm =
       do_GetService("@mozilla.org/xpcomproxy;1", &rv);
