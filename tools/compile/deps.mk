@@ -22,8 +22,9 @@ ifeq "$(MOZ_WIDGET_TOOLKIT)" "windows"
 		$(otdir)/src/idle/$(LIB_PREFIX)ot_idle_s.$(LIB_SUFFIX) \
 		$(otdir)/src/systray/$(LIB_PREFIX)ot_systray_s.$(LIB_SUFFIX) \
 		$(otdir)/src/multiversion/$(LIB_PREFIX)ot_multiversion_s.$(LIB_SUFFIX) \
+		$(otdir)/src/dns/$(LIB_PREFIX)ot_dns_s.$(LIB_SUFFIX) \
 		$(NULL)
-	OT_EXTRA_SHARED_OS_LIBS += shell32.lib
+	OT_EXTRA_SHARED_OS_LIBS += shell32.lib dnsapi.lib
 endif
 
 ifdef MOZ_DEBUG                                                                                     

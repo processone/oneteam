@@ -9,5 +9,13 @@
 
 #endif
 
+#ifdef OT_HAS_DNS_WIN
+#include "otDNSWin.h"
+
+#define OT_DNS_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otDNSWin)
+#define OT_DNS_FACTORY otDNSWinConstructor
+
+#endif
+
 #endif
 

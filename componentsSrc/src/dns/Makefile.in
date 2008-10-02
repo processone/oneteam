@@ -14,6 +14,12 @@ ifdef OT_HAS_DNS_UNIX
 	    $(NULL)
 endif
 
+ifdef OT_HAS_DNS_WIN
+	OT_EXTRA_SRCS += \
+	    otDNSWin.cpp \
+	    $(NULL)
+endif
+
 NO_DIST_INSTALL=1
 MODULE=oneteam
 LIBRARY_NAME=ot_dns_s
