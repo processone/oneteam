@@ -201,7 +201,7 @@ otSystrayWin::ProcessImageData(PRInt32 width, PRInt32 height,
       for (y = dsy; y < dey; ++y) {
         memcpy(colorBits, rgbPixel, w*3);
         colorBits += ICON_WIDTH*3;
-        rgbPixel += reversed ? -rgbStride : rgbStrides;
+        rgbPixel += reversed ? -rgbStride : rgbStride;
       }
     }
     if (alphaBits == 1) {
