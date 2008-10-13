@@ -2,28 +2,44 @@ function Presence(show, status, priority, profile)
 {
     if (show instanceof JSJaCPresence) {
         var pkt = show, type = show.getType();
-        if (type == "invisible" || type == "unavailable")
+        if (this._showValues[type] === 0)
             this.show = type;
         else
             this.show = pkt.getShow();
 
+        if (!this.show || !(this.show in this._showValues))
+            this.show = "available";
         this.status = pkt.getStatus()
         this.priority = pkt.getPriority();
     } else {
         this.show = show;
+        if (!this.show || !(this.show in this._showValues))
+            this.show = "available";
+
         this.status = status;
         this.priority = priority == null || isNaN(+priority) ?
             this._priorityMap[this.show] : +priority;
     }
-
-    if (!this.show || !(this.show in this.statusToString))
-      this.show = "available";
 
     this.profile = profile;
 }
 
 _DECL_(Presence, null, Comparator).prototype =
 {
+    _showValues: {
+        available: 1,
+        chat: 1,
+        dnd: 1,
+        away: 1,
+        xa: 1,
+        unavailable: 0,
+        invisible: 0,
+        subscribe: 0,
+        subscribed: 0,
+        unsubscribe: 0,
+        unsubscribed: 0
+    },
+
     generatePacket: function(contact)
     {
         var pkt = new JSJaCPresence();
@@ -33,8 +49,7 @@ _DECL_(Presence, null, Comparator).prototype =
         var presence = (this.profile && contact &&
                         this.profile.getPresenceFor(contact)) || this;
 
-        if (presence.show in {invisible: 1,  unavailable: 1, subscribe: 1,
-                              subscribed: 1, unsubscribe: 1, unsubscribed: 1})
+        if (this._showValues[presence.show] === 0)
             pkt.setType(presence.show);
         else {
             if (presence.show && presence.show != "available")
