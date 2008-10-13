@@ -65,7 +65,7 @@ _DECL_(SOCKS5Service).prototype =
                     var record = ds.resolve(name, 0);
                     while (record && record.hasMore()) {
                         var ip = record.getNextAddrAsString();
-                        if (ip in IPs)
+                        if (ip in IPs || ip.indexOf("127.") == 0)
                             continue;
                         IPs[ip] = 1;
                         this.ipAddresses.push(ip);
