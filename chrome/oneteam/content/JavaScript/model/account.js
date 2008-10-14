@@ -38,7 +38,6 @@ function Account()
 
 _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 {
-    bumpPriority: true,
     jsjacDebug: false,
 
     setPresence: function(show, status, priority, profile, userSet)
@@ -352,6 +351,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.style.setDefaultSmilesSet(value);
         } else if (name == "chat.general.usegatewayicons") {
             this.style.setUseGatewayIcons(value);
+        } else if (name == "chat.general.bumppriority") {
+            this.bumpPriority = value;
         } else if (name == "chat.status.autoaway") {
             this.autoAway.away.enabled = value;
             this._setupAutoAway("away");

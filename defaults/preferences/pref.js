@@ -58,7 +58,8 @@ pref("chat.sounds",true);
 
 pref("chat.muc.nickname", "");
 
-pref("chat.general.showavatars", false);
+pref("chat.general.showavatars", true);
+pref("chat.general.bumppriority", true);
 pref("chat.general.showseparatedwindows",false);
 pref("chat.general.keepproperties", false);
 pref("chat.general.iconset", "oneteam");
