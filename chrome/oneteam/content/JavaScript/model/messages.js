@@ -733,8 +733,11 @@ _DECL_(Message).prototype =
                     textContent += t;
                     sanitizedContent += s;
                 }
-            } else if (nodeName == "img" && dom.getAttribute("alt"))
-                textContent += " ["+dom.getAttribute("alt")+"] ";
+            } else if (nodeName == "img")
+                if (!/^(?:https?|ftp):/.exec(attrs.src||""))
+                    nodeName = null;
+                else if (dom.getAttribute("alt"))
+                    textContent += " ["+dom.getAttribute("alt")+"] ";
 
             if (nodeName) {
                 if (nodeName == "br") {
