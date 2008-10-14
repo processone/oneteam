@@ -472,6 +472,9 @@ _DECL_(MessagesThread, Model).prototype =
 
 function Message(body, body_html, contact, type, time, thread, chatState)
 {
+    this.contact = contact;
+    this.type = type;
+
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
         var stamp = body.getNode().getElementsByTagNameNS("jabber:x:delay", "x")[0];
@@ -503,8 +506,6 @@ function Message(body, body_html, contact, type, time, thread, chatState)
         this.time = time || new Date();
         this.chatState = chatState;
     }
-    this.contact = contact;
-    this.type = type;
 
     if (thread instanceof MessagesThread)
         this.thread = thread;
@@ -567,7 +568,21 @@ _DECL_(Message).prototype =
 
     get formatedHtml() {
         if (!this._html) {
-            this._html = this.html ? this.html : this._processUrls(this.text);
+            if (!this.html)
+                this._html = this._processUrls(this.text);
+            else {
+                this._html = this.html;
+                if (!this.contact.representsMe &&
+                    !account.cache.getValue("loadimage-"+this.contact.jid.normalizedJID.shortJID))
+                    this._html = this.html.replace(/<img((?:\s+[^\/]+=(?:"[^"]*"|'[^']*'))+\s*)\/>/g,
+                        "<div class='image-replacement' onclick=\"var ev = document.createEvent('Events');"+
+                            "ev.initEvent('replacewithimage', true, false);"+
+                            "this.dispatchEvent(ev)\" $1>" +
+                                "<div><div>"+xmlEscape(_("Click to load image"))+"</div></div>"+
+                                "<label onclick='event.stopPropagation()'><input type='checkbox'/>"+
+                                xmlEscape(_("Always load images from that contact"))+"</label>"+
+                            "</div>");
+            }
 
             if (this.text.indexOf("/me ") == 0)
                 this._html = this._html.replace(/\/me\s/, "<b>* "+xmlEscape(this.nick)+"</b> ");
@@ -672,7 +687,7 @@ _DECL_(Message).prototype =
         var content = "", textContent = "", sanitizedContent = "", isBlock = false;
 
         if (dom.nodeType == dom.ELEMENT_NODE) {
-            nodeName = dom.nodeName.toLowerCase();
+            var attrs, nodeName = dom.nodeName.toLowerCase();
             if ((conv = this._elementsConversions[nodeName]))
                 [nodeName, attrs] = conv(dom);
 
@@ -718,25 +733,28 @@ _DECL_(Message).prototype =
                     textContent += t;
                     sanitizedContent += s;
                 }
+            } else if (nodeName == "img" && dom.getAttribute("alt"))
+                textContent += " ["+dom.getAttribute("alt")+"] ";
+
+            if (nodeName) {
+                if (nodeName == "br") {
+                    sanitizedContent = content = "<br/>";
+                    textContent = "\n";
+                } else {
+                    var pfx = "<"+nodeName+" ";
+                    for (var i in attrs)
+                        if (i == "style") {
+                            pfx += "style=\"";
+                            for (var j in attrs[i])
+                                pfx += xmlEscape(j)+":"+xmlEscape(attrs[i][j])+";";
+                            pfx += "\" ";
+                        } else
+                            pfx += i+"=\""+xmlEscape(attrs[i])+"\"";
+                    content = pfx + (content ? ">" + content + "</"+nodeName+">" : "/>");
+                    sanitizedContent = pfx + ">" + sanitizedContent + "</"+nodeName+">"
+                }
             }
 
-            if (nodeName && nodeName != "br") {
-                var pfx = "<"+nodeName+" ";
-                for (var i in attrs)
-                    if (i == "style") {
-                        pfx += "style=\"";
-                        for (var j in attrs[i])
-                            pfx += xmlEscape(j)+":"+xmlEscape(attrs[i][j])+";";
-                        pfx += "\" ";
-                    } else
-                        pfx += i+"=\""+xmlEscape(attrs[i])+"\"";
-                content = pfx + ">" + content + "</"+nodeName+">";
-                sanitizedContent = pfx + ">" + sanitizedContent + "</"+nodeName+">"
-            }
-            if (nodeName == "br") {
-                sanitizedContent = content = "<br/>";
-                textContent = "\n";
-            }
         } else if (dom.nodeType == dom.TEXT_NODE) {
             textContent = dom.nodeValue.replace(/\s/g, " ");
             sanitizedContent = insideLink ?

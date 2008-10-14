@@ -74,3 +74,32 @@ body {
     content: " ";
     clear: both;
 }
+
+.image-replacement {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    width: 300px;
+    height: 180px;
+    background: url(imgs/img-replacement-background.png);
+    vertical-align: -50%;
+}
+
+.image-replacement > div {
+    display: table;
+    width: 300px;
+    height: 180px;
+}
+
+.image-replacement > div > div {
+    display: table-cell;
+    vertical-align: middle;
+    font-size: 2em;
+    text-align: center;
+}
+
+.image-replacement label {
+    position: absolute;
+    margin: 15px 10px;
+    bottom: 0px;
+}
