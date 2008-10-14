@@ -620,9 +620,15 @@
     </resources>
 
     <content>
-      <xul:vbox flex="1" class="inputBox">
-        <html:iframe id="_input" style="height: 1em"/>
-      </xul:vbox>
+      <xul:stack class="inputBoxStack" flex="1">
+        <xul:hbox>
+          <xul:spacer flex="1"/>
+          <xul:label id="_counter" value="0"/>
+        </xul:hbox>
+        <xul:vbox flex="1" class="inputBox">
+          <html:iframe id="_input" style="height: 1em"/>
+        </xul:vbox>
+      </xul:stack>
     </content>
 
     <implementation>
@@ -650,6 +656,7 @@
 
       <constructor><![CDATA[
         var me = this;
+        this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
         this._input.addEventListener("load", function(){me._init()}, true)
 
@@ -687,7 +694,7 @@
 
           doc.designMode = "on";
           doc.body.style.margin = "0"
-          doc.body.bgColor = "#ffffff";
+          doc.body.style.backgroundColor = "transparent";
 
           window.addEventListener("resize", function(){ try{me.maybeResize()}catch(ex){} }, false);
 
@@ -745,10 +752,14 @@
             return true;
           }, true);
 
-          for each (var event in "keypress keyup keydown click mousedown mouseup dragdrop".split(" ")) {
+          for each (var event in "DOMSubtreeModified keyup keydown click mousedown mouseup dragdrop".split(" ")) {
             doc.addEventListener(event, function(event){
               if (me._toolbar)
                 me._toolbar._updateState(event);
+
+              me._counter.value = me._domToStr(me._input.contentDocument.body).
+                replace(/\n$/,"").length;
+
               me.maybeResize()
             }, false);
           }
@@ -794,22 +805,26 @@
         ]]></body>
       </method>
 
+      <method name="_domToStr">
+        <parameter name="node"/>
+        <body><![CDATA[
+          if (node.nodeType == node.TEXT_NODE)
+            return node.nodeValue;
+          if (node.nodeName == "BR")
+            return "\n";
+
+          var res = "";
+          for (var i = 0; i < node.childNodes.length; i++)
+            res += arguments.callee(node.childNodes[i]);
+
+          return res;
+        ]]></body>
+      </method>
+
       <method name="_rangeContent">
         <parameter name="range"/>
         <body><![CDATA[
-          function toStr(node) {
-            if (node.nodeType == node.TEXT_NODE)
-              return node.nodeValue;
-            if (node.nodeName == "BR")
-              return "\n";
-
-            var res = "";
-            for (var i = 0; i < node.childNodes.length; i++)
-              res += arguments.callee(node.childNodes[i]);
-            return res;
-          }
-
-          return toStr(range.cloneContents());
+          return this._domToStr(range.cloneContents());
         ]]></body>
       </method>
 
@@ -862,6 +877,7 @@
             body.style.overflowY = "hidden";
 
           me._input.style.height = (h) + "px";
+          me._counter.style.fontSize = h+"px";
 
           me._postMaybeResize();
         ]]></body>
@@ -957,6 +973,9 @@
           <xul:menuitem label="_('Invite user by mail')"
                         onmenushowing="this.hidden = !(contact instanceof Conference)"
                         oncommand="this.parentNode.parentNode.parentNode._model.onInviteByMail()"/>
+          <xul:menuseparator/>
+          <xul:menuitem id="charCounter" label="_('Show characters counter')" type="checkbox"
+                        oncommand="this.parentNode.parentNode.parentNode.showCounter = !this.checked"/>
         </xul:menupopup>
       </xul:toolbarbutton>
       <xul:toolbarseparator/>
@@ -975,9 +994,33 @@
         <setter><![CDATA[
           this._model = val;
 
+          if (val)
+            this.showCounter = account.cache.getValue("showCounter-"+val.jid.normalizedJID.shortJID);
+          else
+            this.showCounter = false;
+
           this._sendFile.hidden = !val || typeof(socks5Service) == "undefined" ||
             !socks5Service.canSendTo(val.contact ? val : val.activeResource);
           this._syncMenu();
+        ]]></setter>
+      </property>
+
+      <property name="showCounter" onget="return this._showCounter">
+        <setter><![CDATA[
+          this._showCounter = val;
+
+          var counter = document.getAnonymousElementByAttribute(this, "id", "charCounter");
+          counter.setAttribute("checked", !!val);
+          counter.checked = !!val;
+
+          if (this._textbox)
+            this._textbox._counter.hidden = !val;
+
+          if (this._model)
+            if (val)
+              account.cache.setValue("showCounter-"+this.model.jid.normalizedJID.shortJID, true);
+            else
+              account.cache.removeValue("showCounter-"+this.model.jid.normalizedJID.shortJID);
         ]]></setter>
       </property>
 

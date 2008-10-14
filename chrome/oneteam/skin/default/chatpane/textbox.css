@@ -3,12 +3,17 @@
 }
 
 #_input, #_inputClone {
+  background: transparent;
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
   min-height: 1em !important;
   -moz-appearance: none !important;
   /*height: 1.5em;*/
+}
+
+#_counter {
+  color: #FFA4A2;
 }
 
 #boldButton {
@@ -54,4 +59,3 @@
 #extraCmds {
     list-style-image: url(imgs/extra-cmds.png);
 }
-

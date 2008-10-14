@@ -2,6 +2,7 @@
   margin: 0;
   -moz-appearance: none !important;
   border: none !important;
+  background: white;
 }
 
 #input {

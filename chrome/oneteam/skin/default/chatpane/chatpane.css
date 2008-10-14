@@ -1,7 +1,3 @@
-vbox {
-  background: white;
-}
-
 #output, #input {
   margin: 3px;
   -moz-border-top-colors: none;
