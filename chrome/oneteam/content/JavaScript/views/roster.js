@@ -161,15 +161,14 @@ function ContactView(model, parentView)
     this.node.setAttribute("tooltip", this.tooltip.id);
 
     this.node.setAttribute("class", "contact-view");
-    this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
     this.label.setAttribute("value", model.name || model.jid.toUserString());
     this.label.setAttribute("flex", "1");
     this.label.setAttribute("crop", "end");
 
     this.node.model = this.model;
+    this.node.menuModel = model;
     this.node.view = this;
-    this.node._contextMenu = document.getElementById(this.node.getAttribute("context"));
 
     var box = document.createElement("vbox");
     box.setAttribute("pack", "center");
