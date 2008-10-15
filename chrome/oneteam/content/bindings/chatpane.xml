@@ -696,8 +696,6 @@
           doc.body.style.margin = "0"
           doc.body.style.backgroundColor = "transparent";
 
-          window.addEventListener("resize", function(){ try{me.maybeResize()}catch(ex){} }, false);
-
           doc.addEventListener("keypress", function (event) {
             event.stopPropagation();
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
@@ -752,15 +750,20 @@
             return true;
           }, true);
 
-          for each (var event in "DOMSubtreeModified keyup keydown click mousedown mouseup dragdrop".split(" ")) {
+          window.addEventListener("resize", function(){ try{me.maybeResize()}catch(ex){} }, false);
+
+          doc.addEventListener("DOMSubtreeModified", function(){
+            me._counter.value = me._domToStr(me._input.contentDocument.body).
+              replace(/\n$/,"").length;
+            if (me._toolbar)
+              me._toolbar._updateState(event);
+            me.maybeResize();
+          }, false);
+
+          for each (var event in "keydown keyup mousedown mouseup dragdrop".split(" ")) {
             doc.addEventListener(event, function(event){
               if (me._toolbar)
                 me._toolbar._updateState(event);
-
-              me._counter.value = me._domToStr(me._input.contentDocument.body).
-                replace(/\n$/,"").length;
-
-              me.maybeResize()
             }, false);
           }
 
