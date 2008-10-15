@@ -10,10 +10,16 @@
     </resources>
 
     <content>
-      <html:iframe src="../content/blank.html" id="output" flex="1"/>
-      <xul:stack id="markersContainer">
-        <xul:vbox class="marker-arrow"/>
-      </xul:stack>
+      <xul:hbox flex="1">
+        <xul:hbox flex="1">
+          <html:iframe src="../content/blank.html" id="output" flex="1"/>
+          <xul:stack id="markersContainer">
+            <xul:vbox class="marker-arrow"/>
+          </xul:stack>
+        </xul:hbox>
+        <xul:splitter hidden="true"/>
+        <xul:richlistbox id="roster" hidden="true" width="200"/>
+      </xul:hbox>
     </content>
 
     <implementation>
@@ -32,13 +38,25 @@
           if (this._model)
             this._model.unregisterView(this._regToken);
 
-          if (val) {
-            this._model = val;
-            this._regToken = val.registerView(this._onMessageQueueChanged, this, "messages");
-            this._onMessageQueueChanged();
+          if (this._conferenceView) {
+            this._conferenceView.destroy();
+            this._conferenceView = null;
           }
 
-          return this._model = val;
+          this._model = val;
+
+          if (val) {
+            this._regToken = val.registerView(this._onMessageQueueChanged, this, "messages");
+            this._onMessageQueueChanged();
+
+            if (val.contact instanceof Conference)
+              this._conferenceView = new ConferenceView(val.contact, null, this._roster, true);
+          }
+
+          this._roster.hidden = this._roster.previousSibling.hidden =
+            !(val && val.contact instanceof Conference);
+
+          return val;
         ]]></setter>
       </property>
 
@@ -60,6 +78,7 @@
 
       <constructor><![CDATA[
         var me = this;
+        this._roster = document.getAnonymousElementByAttribute(this, "id", "roster");
         this._output = document.getAnonymousElementByAttribute(this, "id", "output");
         this._output.addEventListener("load", function(){me._init()}, true)
 

@@ -107,14 +107,13 @@ _DECL_(ConferencesView, null, ContainerView).prototype =
     }
 }
 
-function ConferenceView(model, parentView)
+function ConferenceView(model, parentView, containerNode, hideTitle)
 {
     this.model = model;
     this.parentView = parentView;
     this.contacts = [];
 
     this.node = document.createElement("richlistitem");
-    this.label = document.createElement("label");
 
     this.node.setAttribute("class", "conference-view");
     this.node.setAttribute("context", "conference-contextmenu");
@@ -123,11 +122,13 @@ function ConferenceView(model, parentView)
     this.node.view = this;
     this.node._contextMenu = document.getElementById("conference-contextmenu");
 
-    this.label.setAttribute("value", this.model.name);
-    this.label.setAttribute("flex", "1");
-    this.label.setAttribute("crop", "end");
-
-    this.node.appendChild(this.label);
+    if (!hideTitle) {
+        this.label = document.createElement("label");
+        this.label.setAttribute("value", this.model.name);
+        this.label.setAttribute("flex", "1");
+        this.label.setAttribute("crop", "end");
+        this.node.appendChild(this.label);
+    }
 
     this.roleNodes = {};
     for each (role in ["moderator", "participant", "visitor", "none"]) {
@@ -144,6 +145,9 @@ function ConferenceView(model, parentView)
     }
 
     this._token = this.model.registerView(this.onModelUpdated, this, "resources");
+
+    if (containerNode)
+        this.show(containerNode, this.afterlastItemNode);
 }
 
 _DECL_(ConferenceView, null, ContainerView).prototype =
@@ -152,7 +156,10 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
 
     get afterlastItemNode()
     {
-        return this.parentView.getNextItemNode(this);
+        if (this.parentView)
+            return this.parentView.getNextItemNode(this);
+
+        return null;
     },
 
     itemComparator: function(a, b, m, s, e)

@@ -242,7 +242,6 @@
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
         document.getElementById("setPresence-nick").value = account.myResource.visibleName;
         document.getElementById("login-signin").disabled = false;
-        document.getElementById("roster").selectedIndex = 0;
 
         // Workaround for mozilla bug 432028
         var progress = document.getElementById("login-progress");
@@ -253,7 +252,6 @@
 
         if (!this.rosterView) {
           this.rosterView = new RosterView(document.getElementById("contacts-list"));
-          this.conferencesView = new ConferencesView(document.getElementById("conferences-list"));
           this.bookmarksMenuView =
             new BookmarksMenuView(document.getElementById("conference-menu-separator"));
           this.gatewaysMenuView =
@@ -264,8 +262,6 @@
           this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
           document.getElementById("cmd_toggleShowOffline").
             setAttribute("checked", this.rosterView.hideOffline);
-          document.getElementById("conference-contextmenu").view = this.conferencesView;
-          document.getElementById("conferencemember-contextmenu").view = this.conferencesView;
         }
         if (!account.connected) {
           if (!quitSequence)
@@ -865,20 +861,7 @@
               <button id="eventBoxNext" oncommand="eventBoxHandler.nextMsg()"/>
             </hbox>
           </vbox>
-          <tabbox id="roster" flex="1">
-            <tabs>
-              <tab label="Contacts"/>
-              <tab label="Conferences"/>
-            </tabs>
-            <tabpanels flex="1">
-              <tabpanel>
-                <richlistbox id="contacts-list" flex="1" persist="hideOffline"/>
-              </tabpanel>
-              <tabpanel>
-                <richlistbox id="conferences-list" flex="1"/>
-              </tabpanel>
-            </tabpanels>
-          </tabbox>
+          <richlistbox id="contacts-list" flex="1" persist="hideOffline"/>
         </vbox>
         <!-- #ifdef XULAPP -->
         <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
