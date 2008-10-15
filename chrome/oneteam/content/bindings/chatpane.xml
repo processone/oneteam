@@ -876,8 +876,8 @@
           } else
             body.style.overflowY = "hidden";
 
+          me._counter.style.fontSize = body.offsetHeight+"px";
           me._input.style.height = (h) + "px";
-          me._counter.style.fontSize = h+"px";
 
           me._postMaybeResize();
         ]]></body>
