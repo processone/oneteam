@@ -1142,6 +1142,12 @@
           this._chatpaneCommands.model = val && val.contact;
           this.completionEngine = val && val.contact.createCompletionEngine();
 
+          if (val && val.contact) {
+            this._contactInfo.parentNode.menuModel = val.contact;
+            this._contactInfo.parentNode.setAttribute("context",
+              (val.contact instanceof Conference ? "conference" : "contact")+"-contextmenu");
+          }
+
           return val;
         ]]></setter>
       </property>
