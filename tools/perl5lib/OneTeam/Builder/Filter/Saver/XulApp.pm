@@ -168,7 +168,8 @@ sub _create_mar_part {
 
     open $fh, ">", $manifest_tmp;
     for (sort keys %files) {
-        print $fh "add \"$prefix$_\"\n";
+        my $path = join "/", splitdir($_);
+        print $fh "add \"$prefix$path\"\n";
     }
     print $fh "remove \"${prefix}components/oneteam.dll\"\n";
     print $fh "remove \"${prefix}components/liboneteam.so\"\n";
