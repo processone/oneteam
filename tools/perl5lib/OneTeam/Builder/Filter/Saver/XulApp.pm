@@ -129,7 +129,7 @@ sub _create_mar {
 
     return if $self->{mar_options}->{MAR_SKIP};
 
-    my $tmpdirbase = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP2 => 1);
+    my $tmpdirbase = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
     my $tmpdir = catdir($tmpdirbase, "Contents", "Resources");
     mkpath($tmpdir);
 
