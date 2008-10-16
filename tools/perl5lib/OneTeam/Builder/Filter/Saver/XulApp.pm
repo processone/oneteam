@@ -98,12 +98,13 @@ sub _dircopy {
 }
 
 sub _expand_str {
-    my ($self, $str) = @_;
+    my ($self, $mac, $str) = @_;
 
     return undef if not $str;
 
     $str =~ s/\@VERSION\@/$self->{version}->()/e;
     $str =~ s/\@BUILDID\@/$self->{buildid}->()/e;
+    $str =~ s/\@MAC_SUFFIX\@/$mac ? "-mac" : ""/e;
 
     return $str;
 }
@@ -111,14 +112,12 @@ sub _expand_str {
 sub _create_mar {
     my ($self, %files) = @_;
 
-    my $mar_base_url = $self->_expand_str($self->{mar_options}->{MAR_BASE_URL});
-    my $mar_file = $self->_expand_str($self->{mar_options}->{MAR_FILE} || "oneteam.mar");
-    my $mar_url = $self->_expand_str($self->{mar_options}->{MAR_URL}) || "$mar_base_url/$mar_file";
-    my $mar_update_file = $self->_expand_str($self->{mar_options}->{MAR_UPDATE_FILE}) || "update.xml";
-    my $mar_update_url = $self->_expand_str($self->{mar_options}->{MAR_UPDATE_URL}) || "$mar_base_url/$mar_update_file";
-    my $mar_details_url = $self->_expand_str($self->{mar_options}->{MAR_DETAILS_URL}) || "$mar_base_url/whatsnew.html";
+    my $mar_base_url = $self->_expand_str(0, $self->{mar_options}->{MAR_BASE_URL});
+    my $mar_details_url = $self->_expand_str(0, $self->{mar_options}->{MAR_DETAILS_URL}) || "$mar_base_url/whatsnew.html";
+    my $mar_update_url = $self->_expand_str(0, $self->{mar_options}->{MAR_UPDATE_URL}) ||
+        "$mar_base_url/cgi-bin/update.cgi?q=%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%OS_VERSION%/".
+        "%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xmlupdate.xml";
 
-    my $mar_file_path = catfile($self->{topdir}, $mar_file);
     my $version = $self->{version}->();
 
     open my $fh, ">>", $files{catfile(qw(defaults preferences pref.js))};
@@ -130,21 +129,46 @@ sub _create_mar {
 
     return if $self->{mar_options}->{MAR_SKIP};
 
-    require Digest::SHA1;
-
-    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
-
-    my $manifest_tmp = catfile($tmpdir, "update.manifest.tmp");
-    my $prefix = "";
-    open $fh, ">", $manifest_tmp;
+    my $tmpdirbase = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP2 => 1);
+    my $tmpdir = catdir($tmpdirbase, "Contents", "Resources");
+    mkpath($tmpdir);
 
     for (sort keys %files) {
         my $path = catfile($tmpdir, $_);
         my ($vol, $dir, undef) = splitpath($path);
         mkpath(catpath($vol, $dir));
 
-        print $fh "add \"$prefix$_\"\n";
         system("bzip2 -cz9 '$files{$_}' > '$path'");
+    }
+
+    open $fh, ">", catfile($self->{topdir}, "mars-info.txt");
+    print $fh "$version\n";
+    print $fh "$mar_details_url\n";
+    for my $mac (0, 1) {
+        my ($sha1, $size, $url) = $self->_create_mar_part($mac, $mac ? $tmpdirbase : $tmpdir, %files);
+        print $fh "\t".($mac ? "^Darwin_" : "^(?!Darwin_)")."\tcomplete\t$sha1\t$size\t$url\n";
+    }
+    close($fh);
+}
+
+sub _create_mar_part {
+    my ($self, $mac, $tmpdir, %files) = @_;
+
+    my $mar_base_url = $self->_expand_str(0, $self->{mar_options}->{MAR_BASE_URL});
+    my $mar_file = $self->_expand_str($mac, $self->{mar_options}->{MAR_FILE} || 'oneteam@MAC_SUFFIX@.mar');
+    my $mar_url = $self->_expand_str($mac, $self->{mar_options}->{MAR_URL}) || "$mar_base_url/$mar_file";
+
+    my $mar_file_path = catfile($self->{topdir}, $mar_file);
+    my $version = $self->{version}->();
+
+    require Digest::SHA1;
+
+    my $prefix = $mac ? "Contents/Resources/" : "";
+    my $manifest_tmp = catfile($tmpdir, "update.manifest.tmp");
+
+    open $fh, ">", $manifest_tmp;
+    for (sort keys %files) {
+        print $fh "add \"$prefix$_\"\n";
     }
     print $fh "remove \"${prefix}components/oneteam.dll\"\n";
     print $fh "remove \"${prefix}components/liboneteam.so\"\n";
@@ -153,31 +177,19 @@ sub _create_mar {
     system("bzip2 -cz9 '".$manifest_tmp."' > '".catfile($tmpdir, "update.manifest")."'");
     unlink($manifest_tmp);
 
-    system(catfile($self->{topdir}, qw(tools mar)), '-C', $tmpdir,
-        '-c', $mar_file_path, sort keys %files, "update.manifest");
+    my @files = map {"$prefix$_"} sort keys %files;
 
-    open $fh, "<", $mar_file_path;
+    print "EX: $tmpdir, ",$files[0],"\n";
+
+    system(catfile($self->{topdir}, qw(tools mar)), '-C', $tmpdir,
+        '-c', $mar_file_path, @files, "update.manifest");
 
     my $sha_obj = Digest::SHA1->new;
+    open $fh, "<", $mar_file_path;
     $sha_obj->addfile($fh);
     close($fh);
 
-    my $sha1 = $sha_obj->hexdigest;
-    my $size = -s $mar_file_path;
-
-    open $fh, ">", catfile($self->{topdir}, $mar_update_file);
-    print $fh <<ENDSTR;
-<?xml version="1.0"?>
-
-<updates>
-  <update type="minor" version="$version" extensionVersion="1.0"
-          detailsURL="$mar_details_url">
-    <patch type="complete" URL="$mar_url"
-           hashFunction="sha1" hashValue="$sha1" size="$size"/>
-  </update>
-</updates>
-ENDSTR
-    close($fh);
+    return ($sha_obj->hexdigest, -s $mar_file_path, $mar_url);
 }
 
 package OneTeam::Builder::Filter::Saver::XulApp::Flat;
