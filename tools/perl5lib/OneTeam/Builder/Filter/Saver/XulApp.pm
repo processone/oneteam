@@ -179,8 +179,6 @@ sub _create_mar_part {
 
     my @files = map {"$prefix$_"} sort keys %files;
 
-    print "EX: $tmpdir, ",$files[0],"\n";
-
     system(catfile($self->{topdir}, qw(tools mar)), '-C', $tmpdir,
         '-c', $mar_file_path, @files, "update.manifest");
 
