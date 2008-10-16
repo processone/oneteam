@@ -43,8 +43,6 @@ for (sort keys %new_manifest) {
     my $patch_path = catfile($tmp_patch, $path);
     my $patch_file_path = "$patch_path.patch";
 
-    push @files, $path;
-
     my ($vol, $dir, undef) = splitpath($patch_path);
     mkpath([catpath($vol, $dir)], 0);
 
@@ -52,11 +50,13 @@ for (sort keys %new_manifest) {
     pack_file($patch_file_path);
 
     if (-s "$patch_file_path.bz2" lt $size) {
-        rename("$patch_file_path.bz2", $patch_path);
-        print $manifest_fh "patch \"$_\"\n";
+        rename("$patch_file_path.bz2", "$patch_path.patch");
+        print $manifest_fh "patch \"$_.patch\" \"$_\"\n";
+        push @files, "$path.patch";
     } else {
-        rename(catfile($tmp_old, $path), $patch_path);
+        rename(catfile($tmp_new, $path), $patch_path);
         print $manifest_fh "add \"$_\"\n";
+        push @files, $path;
     }
 }
 for (keys %old_manifest) {
