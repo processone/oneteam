@@ -103,12 +103,11 @@ function GatewayToolbarButton(model, parentView)
     this.node.setAttribute("autoCheck", "false");
     this.node.setAttribute("oncommand", "this.checked ? this.model.logout() : this.model.login()")
     this.node.setAttribute("context", "gateway-contextmenu");
-    this.node.setAttribute("onmousedown", "this._contextMenu.model = this.model");
     this.node.setAttribute("gateway-type", model.gatewayType);
 
     this.node.model = this.model;
+    this.node.menuModel = this.model;
     this.node.view = this;
-    this.node._contextMenu = document.getElementById('gateway-contextmenu');
 
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onPresenceUpdated, "presence");
