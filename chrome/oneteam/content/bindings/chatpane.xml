@@ -237,10 +237,15 @@
 
             var colorScheme = ".message { opacity: 1 }\n.message[not-seen=\"true\"] { opacity: 1 }\n";
             var white = new RGBColor(1, 1, 1);
+            var green = new RGBColor(0.9, 0.9, 1);
             for (var i = 0; i < this.colorTable.length; i++) {
               var base = new RGBColor(this.colorTable[i]);
               var bg = base.composite(white, 0.06);
               var border = base.composite(white, 0.3);
+
+              var baseOffline = base.composite(green, 0.2);
+              var bgOffline = baseOffline.composite(white, 0.06);
+              var borderOffline = baseOffline.composite(white, 0.3);
 
               colorScheme +=
                 <style>
@@ -258,6 +263,22 @@
 
                   .meMessage.message[color-id="{i}"] {"{"}
                       color: {base}
+                  }
+
+                  .offline.message[color-id="{i}"] {"{"}
+                      background: {bgOffline};
+                  }
+
+                  .offline.message[color-id="{i}"] {"{"}
+                      border-color: {borderOffline};
+                  }
+
+                  .offline.message[color-id="{i}"] > .header {"{"}
+                      background-color: {baseOffline}
+                  }
+
+                  .offline.meMessage.message[color-id="{i}"] {"{"}
+                      color: {baseOffline}
                   }
                 </style>;
             }
@@ -443,11 +464,13 @@
               msgEl.setAttribute("author-id", msg.contactId);
               msgEl.setAttribute("color-id", this.colorMap[msg.contactId]);
 
-              if (this._lastContactId != msg.contactId || msg.time - this._lastMessageTime > 5*60*1000)
+              if (this._lastContactId != msg.contactId || msg.time - this._lastMessageTime > 5*60*1000 ||
+                  !msg.offline != !this._lastMessageOffline)
                 msgEl.setAttribute("starts-chunk", "true");
 
               this._lastContactId = msg.contactId;
               this._lastMessageTime = msg.time;
+              this._lastMessageOffline = msg.offline
             }
 
             if (!this._visible && !this._firstNotSeenMsg)
@@ -511,6 +534,7 @@
 
             this._content = this._msgsContainer =
               this._lastMessageTime = this._lastContactId = null;
+            this._lastMessageOffline = false;
             this._msgs = null;
           ]]>
         </body>
