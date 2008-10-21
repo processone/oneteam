@@ -487,6 +487,7 @@ function Message(body, body_html, contact, type, time, thread, chatState)
             stamp = stampNode && stampNode.getAttribute("stamp");
             this.time = stamp ? iso8601TimestampToDate(stamp) : new Date();
         }
+        this.offline = stampNode != null;
 
         this.type = (type&~3) | ({normal: 0, groupchat: 1, headline: 2, chat: 3}
                                  [body.getType()] || 0);
