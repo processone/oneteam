@@ -477,11 +477,19 @@ function Message(body, body_html, contact, type, time, thread, chatState)
 
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
+
+        var stampNode = body.getNode().getElementsByTagNameNS("jabber:x:delay", "x")[0];
+        var stamp = stampNode && stampNode.getAttribute("stamp");
+        if (stamp)
+            this.time = utcStringToDate(stamp);
+        else {
+            stampNode = body.getNode().getElementsByTagNameNS("urn:xmpp:delay", "delay")[0];
+            stamp = stampNode && stampNode.getAttribute("stamp");
+            this.time = stamp ? iso8601TimestampToDate(stamp) : new Date();
+        }
+
         this.type = (type&~3) | ({normal: 0, groupchat: 1, headline: 2, chat: 3}
                                  [body.getType()] || 0);
-        var stamp = body.getNode().getElementsByTagNameNS("jabber:x:delay", "x")[0];
-        stamp = stamp && stamp.getAttribute("stamp");
-        this.time = stamp ? utcStringToDate(stamp) : new Date();
 
         var cs = body.getNode().getElementsByTagNameNS(
             "http://jabber.org/protocol/chatstates", "*")[0];
