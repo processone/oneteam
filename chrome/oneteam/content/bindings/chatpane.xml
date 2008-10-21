@@ -772,16 +772,8 @@
 
             var inputValue;
             if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
-              if ((inputValue = me._send(!event.shiftKey)) != null) {
-                if (inputValue) {
-                  if (!me._history.length || me._history[me._history.length-1] != inputValue)
-                    me._history.push(inputValue);
-                  me._historyPosition = me._history.length;
-                }
-
+              if (me._doSend(!event.shiftKey)) {
                 event.preventDefault();
-
-                me.clear();
                 return true;
               } else {
                 me._onUserType();
@@ -876,6 +868,28 @@
 
       <method name="_tryCompletion">
         <body><![CDATA[
+        ]]></body>
+      </method>
+
+
+      <method name="_doSend">
+        <parameter name="withEnter"/>
+        <body><![CDATA[
+          var value = this._send(withEnter);
+
+          if (value == null)
+            return false;
+
+          if (value) {
+            if (!this._history.length || this._history[this._history.length-1] != value)
+              this._history.push(value);
+            this._historyPosition = this._history.length;
+          }
+
+          this.clear();
+          this.focus();
+
+          return true;
         ]]></body>
       </method>
 
@@ -1137,7 +1151,7 @@
 
         <xul:hbox align="center">
           <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true"/>
-          <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._send()"/>
+          <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._doSend(true)"/>
         </xul:hbox>
       </xul:vbox>
     </content>
@@ -1321,6 +1335,13 @@
         <body><![CDATA[
           var outputBody = this._output._output.contentDocument.body;
           outputBody.scrollTop = this._outputScrollPos - outputBody.clientHeight;
+        ]]></body>
+      </method>
+
+      <method name="_doSend">
+        <parameter name="withEnter"/>
+        <body><![CDATA[
+          this._input._doSend(withEnter);
         ]]></body>
       </method>
 
