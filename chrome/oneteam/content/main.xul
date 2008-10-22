@@ -165,11 +165,11 @@
         }
       }
 
-      document.getElementById("contact-authorisation-ask").
+      document.getElementById("contact-authorization-ask").
         setAttribute("disabled", menuModel.canSeeHim);
-      document.getElementById("contact-authorisation-allow").
+      document.getElementById("contact-authorization-allow").
         setAttribute("disabled", menuModel.canSeeMe);
-      document.getElementById("contact-authorisation-disallow").
+      document.getElementById("contact-authorization-disallow").
         setAttribute("disabled", !menuModel.canSeeMe);
     }
 
@@ -914,13 +914,13 @@
 
       <menuseparator/>
 
-      <menu label="_('Authorisation')">
+      <menu label="_('Authorization')">
         <menupopup>
-          <menuitem id="contact-authorisation-ask" label="_('Ask to see him')"
+          <menuitem id="contact-authorization-ask" label="_('Ask To See Him')"
               oncommand="menuModel.askForSubscription()"/>
-          <menuitem id="contact-authorisation-allow" label="_('Authorize to see me')"
+          <menuitem id="contact-authorization-allow" label="_('Authorize To See Me')"
               oncommand="menuModel.allowToSeeMe()"/>
-          <menuitem id="contact-authorisation-disallow" label="_('Cancel authorisation')"
+          <menuitem id="contact-authorization-disallow" label="_('Cancel Authorization')"
               oncommand="menuModel.disallowToSeeMe()"/>
         </menupopup>
       </menu>

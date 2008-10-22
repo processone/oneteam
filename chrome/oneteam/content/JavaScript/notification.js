@@ -52,8 +52,8 @@ _DECL_(NotificationScheme).prototype =
         } else if (kind == "subscription") {
             model = model.contact || model;
             var msg = type == "subscribed" ?
-                _("<b>{0}</b> authorised you to see his/her status", xmlEscape(model.visibleName)) :
-                _("<b>{0}</b> doesn't authorised you to see his/her status", xmlEscape(model.visibleName));
+                _("<b>{0}</b> authorized you to see his/her status", xmlEscape(model.visibleName)) :
+                _("<b>{0}</b> doesn't authorized you to see his/her status", xmlEscape(model.visibleName));
 
             this._showAlert(msg, xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
                             model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
