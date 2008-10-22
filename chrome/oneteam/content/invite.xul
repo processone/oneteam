@@ -5,7 +5,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
-<dialog id="invite" windowtype="ot:invite" title="_('Invite users')"
+<dialog id="invite" windowtype="ot:invite" title="_('Invite Users')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="400" height="450"
@@ -28,7 +28,7 @@
       }, false);
 
       document.getElementById("header").setAttribute("title",
-        _("Invite contacts to room {0}", conference.jid.toUserString()));
+        _("Invite users to room {0}", conference.jid.toUserString()));
     }
 
     function invite() {
@@ -41,9 +41,9 @@
     }
   ]]></script>
 
-  <dialogheader id="header" title="Invite contacts"/>
+  <dialogheader id="header" title="_('Invite Users')"/>
 
-  <label value="_('Contacts:')" control="contacts"/>
+  <label value="_('Users:')" control="contacts"/>
   <contactselector id="contacts" rows="6"/>
 
   <spacer/>
