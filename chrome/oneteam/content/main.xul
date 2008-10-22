@@ -902,15 +902,15 @@
       <menu id="contact-chat-multi" label="_('Send Message...')" hidden="true">
         <menupopup/>
       </menu>
-      <menu id="contact-invite" label="Invite to" hidden="true">
+      <menu id="contact-invite" label="_('Invite To')" hidden="true">
         <menupopup/>
       </menu>
 
       <menuseparator/>
 
       <menuitem label="_('Remove Contact...')" oncommand="menuModel.onRemove()"/>
-      <menuitem label="_('Rename...')" oncommand="menuModel.onRename()"/>
-      <menuitem label="Edit contact..." oncommand="menuModel.onEditContact()"/>
+      <menuitem label="_('Change Nickname...')" oncommand="menuModel.onRename()"/>
+      <menuitem label="_('Edit Contact...')" oncommand="menuModel.onEditContact()"/>
 
       <menuseparator/>
 
@@ -934,13 +934,13 @@
       </menu>
       <menuitem label="_('Show History...')"
         oncommand="menuModel.onShowHistory()"/>
-      <menuitem id="contact-send-file" label="_('Send file...')"
+      <menuitem id="contact-send-file" label="_('Send File...')"
         oncommand="menuModel.onSendFile()"/>
     </popup>
 
     <popup id="resource-contextmenu" onpopupshowing="updateResourceContextMenu(this, event)">
       <menuitem label="_('Send Message...')" oncommand="menuModel.onOpenChat()"/>
-      <menu id="resource-invite" label="Invite to" hidden="true">
+      <menu id="resource-invite" label="_('Invite To')" hidden="true">
         <menupopup/>
       </menu>
 
@@ -950,25 +950,25 @@
       <menuitem id="resource-adhoc" label="_('Execute Command...')" oncommand="menuModel.onAdHocCommand()"/>
       <menuitem label="_('Show History...')"
         oncommand="menuModel.onShowHistory()"/>
-      <menuitem id="resource-send-file" label="_('Send file...')"
+      <menuitem id="resource-send-file" label="_('Send File...')"
         oncommand="menuModel.onSendFile()"/>
     </popup>
 
     <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
-      <menuitem id="conference-invite" label="Invite contacts to this room..."
+      <menuitem id="conference-invite" label="_('Invite Users To This Room...')"
           oncommand="menuModel.onInvite()"/>
-      <menuitem id="conference-changeNick" label="Change nick..."
+      <menuitem id="conference-changeNick" label="_('Change Nick...')"
           oncommand="menuModel.onChangeNick()"/>
-      <menuitem id="conference-changeSubject" label="Change subject..."
+      <menuitem id="conference-changeSubject" label="_('Change Subject...')"
           oncommand="menuModel.onChangeSubject()"/>
-      <menuitem id="conference-bookmark" label="Bookmark..."
+      <menuitem id="conference-bookmark" label="_('Bookmark...')"
           oncommand="menuModel.onBookmark()"/>
 
       <menuseparator/>
 
-      <menuitem id="conference-configuration" label="Configure..."
+      <menuitem id="conference-configuration" label="_('Configure...')"
           oncommand="menuModel.onRoomConfiguration()"/>
-      <menuitem id="conference-edit-permissions" label="Edit Permissions..."
+      <menuitem id="conference-edit-permissions" label="_('Edit Permissions...')"
           oncommand="menuModel.onEditPermissions()"/>
 
       <menuseparator/>
@@ -980,7 +980,7 @@
 
       <menuseparator/>
 
-      <menuitem id="conference-leave" label="_('Leave conference')"
+      <menuitem id="conference-leave" label="_('Leave Conference')"
           oncommand="menuModel.exitRoom()"/>
     </popup>
 
@@ -1034,7 +1034,7 @@
         oncommand="menuModel.showVCard()"/>
       <menuitem label="_('Show History...')"
         oncommand="menuModel.onShowHistory()"/>
-      <menuitem id="conferencemember-send-file" label="_('Send file...')"
+      <menuitem id="conferencemember-send-file" label="_('Send File...')"
         oncommand="menuModel.onSendFile()"/>
     </popup>
 
