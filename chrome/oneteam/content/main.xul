@@ -801,7 +801,7 @@
 <!-- #ifdef XULAPP -->
               <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole"/>
 <!-- #endif -->
-              <menuitem label="_('Command Console...')" command="cmd_cmdConsole"/>
+              <menuitem label="_('Commands Console...')" command="cmd_cmdConsole"/>
 <!-- #endif -->
 <!-- #ifdef XULAPP -->
               <menuseparator/>
