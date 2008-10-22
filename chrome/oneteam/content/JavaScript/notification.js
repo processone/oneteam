@@ -89,7 +89,7 @@ _DECL_(NotificationScheme).prototype =
                                          xmlEscape(model), xmlEscape(extra)),
                                        "chrome://oneteam/skin/main/imgs/fticon.png", extra2);
             else if (type == "rejected")
-                this._showInChatPane(_("{0} don't want to receive your file '{1}'",
+                this._showInChatPane(_("{0} doesn't want to receive your file '{1}'",
                                        xmlEscape(model.visibleName), xmlEscape(extra)),
                                      model, false, true);
             else if (type == "accepted")
