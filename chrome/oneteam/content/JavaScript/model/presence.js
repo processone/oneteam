@@ -96,7 +96,7 @@ _DECL_(Presence, null, Comparator).prototype =
 
     statusToString: {
         available: _("Available"),
-        chat: _("Avaialble for chat"),
+        chat: _("Available for chat"),
         dnd: _("Busy"),
         away: _("Away"),
         xa: _("Not available"),
