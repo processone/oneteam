@@ -9,7 +9,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   onload="onLoad()" onunload="onUnload()"
-  width="470" height="570"
+  width="500" height="600"
   buttonlabelaccept="_('Add')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   ondialogaccept="return addContact()">
@@ -55,7 +55,7 @@
         protoList.appendChild(el);
       }
 
-      if (protoList.childNodes.length > 1);
+      if (protoList.childNodes.length > 1)
         protoList.parentNode.parentNode.parentNode.hidden = false;
     }
 
@@ -205,13 +205,9 @@
     </vbox>
     <vbox>
       <description>
-        _('Before adding contacts from this network you need to register to this network gateway.')
+        _("Before adding contacts from this network, you need to register in this network's gateway.")
       </description>
-      <hbox align="center">
-        <label value="_('You can start gateway registration by clicking')"/>
-        <button label="_('Gateway Registration')" oncommand="currentGateway.onRegister()"/>
-        <label value="_('button')"/>
-      </hbox>
+      <button label="_('Registration Gateway')" oncommand="currentGateway.onRegister()"/>
     </vbox>
   </deck>
 
