@@ -820,7 +820,7 @@
           <toolbarseparator/>
           <toolbarbutton id="toggleshowoffline-button" tooltiptext="_('Toggle offline contacts visibility')"
               command="cmd_toggleShowOffline"/>
-          <toolbarbutton id="disco-button" tooltiptext="_('Show service discovery informations')"
+          <toolbarbutton id="disco-button" tooltiptext="_('Show service discovery')"
               command="cmd_disco"/>
           <toolbarbutton id="editgroups-button" tooltiptext="_('Preferences')"
               command="cmd_prefs"/>
