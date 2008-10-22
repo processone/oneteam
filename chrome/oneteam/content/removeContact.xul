@@ -5,7 +5,7 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
-<dialog id="removeContact" windowtype="ot:removeContact" title="Contact removal"
+<dialog id="removeContact" windowtype="ot:removeContact" title="_('Remove Contact')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="400" height="200"
   buttonlabelaccept="Remove" buttonlabelcancel="_('Cancel')"
@@ -24,7 +24,7 @@
     }
   ]]></script>
 
-  <description>Do you want to remove this contact from your roster?</description>
+  <description>_('Do you want to remove this contact from your roster?')</description>
   <contactinfo id="contact-info"/>
 
 </dialog>
