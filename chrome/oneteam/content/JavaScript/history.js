@@ -304,12 +304,18 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
                 observer._addRecord(archivedThread);
 
             if (msg.isMucMessage) {
-                if (this._conferences.indexOf(threadContact) < 0)
+                if (this._conferences.indexOf(threadContact) < 0) {
+                    this._conferences.push(threadContact);
+
                     for (observer in this._iterateCallbacks("conferences"))
                         observer._addRecord(threadContact);
-            } else if (this._contacts.indexOf(threadContact) < 0)
+                }
+            } else if (this._contacts.indexOf(threadContact) < 0) {
+                this._contacts.push(threadContact);
+
                 for (observer in this._iterateCallbacks("contacts"))
                     observer._addRecord(threadContact);
+            }
         } else
             archivedThread = this._sessionArchivedThreads[idx];
 
