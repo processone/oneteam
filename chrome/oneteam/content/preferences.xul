@@ -219,7 +219,7 @@
               <textbox pref="chat.connection.priority=value:int"/>
             </row>
             <row>
-              <label value="_('Protocol:')"/>
+              <label value="_('Connection Method:')"/>
               <menulist id="protocol" pref="chat.connection.type=value"
                         oncommand="switchHTTPOptions(this)">
                 <menupopup>
@@ -248,22 +248,22 @@
           </columns>
           <rows>
             <row>
-              <checkbox label="_('Automaticaly set status to \'away\' after')"
+              <checkbox label="_('Automatically set status to \'away\' after')"
                         id="autoAwayCheckbox" checked="true"
                         pref="chat.status.autoaway=checked:bool"/>
               <textbox pref="chat.status.autoaway.time=value:int" size="3"/>
-              <label value="_('minutes')"/>
+              <label value="_('minutes idle')"/>
             </row>
             <hbox class="entry">
               <label value="_('And set status to:')"/>
               <textbox pref="chat.status.autoaway.status=value" flex="1"/>
             </hbox>
             <row>
-              <checkbox label="_('Automaticaly set status to \'not available\' after')"
+              <checkbox label="_('Automatically set status to \'not available\' after')"
                         id="autoXACheckbox" checked="true"
                         pref="chat.status.autoxa=checked:bool"/>
               <textbox pref="chat.status.autoxa.time=value:int" size="3"/>
-              <label value="_('minutes')"/>
+              <label value="_('minutes idle')"/>
             </row>
             <hbox class="entry">
               <label value="_('And set status to:')"/>
