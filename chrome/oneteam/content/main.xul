@@ -927,7 +927,7 @@
 
       <menuseparator/>
 
-      <menuitem label="_('Information...')" oncommand="menuModel.showVCard()"/>
+      <menuitem label="_('Show vCard...')" oncommand="menuModel.showVCard()"/>
       <menuitem id="contact-adhoc" label="_('Execute Command...')" oncommand="menuModel.onAdHocCommand()"/>
       <menu id="contact-adhoc-multi" label="_('Execute Command...')" hidden="true">
         <menupopup/>
@@ -946,7 +946,7 @@
 
       <menuseparator/>
 
-      <menuitem label="_('Information...')" oncommand="menuModel.showVCard()"/>
+      <menuitem label="_('Show vCard...')" oncommand="menuModel.showVCard()"/>
       <menuitem id="resource-adhoc" label="_('Execute Command...')" oncommand="menuModel.onAdHocCommand()"/>
       <menuitem label="_('Show History...')"
         oncommand="menuModel.onShowHistory()"/>
@@ -973,7 +973,7 @@
 
       <menuseparator/>
 
-      <menuitem label="_('Information...')"
+      <menuitem label="_('Show vCard...')"
         oncommand="menuModel.showVCard()"/>
       <menuitem label="_('Show History...')"
         oncommand="menuModel.onShowHistory()"/>
@@ -1030,7 +1030,7 @@
 
       <menuseparator/>
 
-      <menuitem label="_('Information...')"
+      <menuitem label="_('Show vCard...')"
         oncommand="menuModel.showVCard()"/>
       <menuitem label="_('Show History...')"
         oncommand="menuModel.onShowHistory()"/>
@@ -1051,7 +1051,7 @@
 
       <menuseparator/>
 
-      <menuitem label="_('Information...')"
+      <menuitem label="_('Show vCard...')"
         oncommand="menuModel.showVCard()"/>
       <menuitem label="_('Show History...')"
         oncommand="menuModel.onShowHistory()"/>

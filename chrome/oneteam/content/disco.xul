@@ -69,7 +69,7 @@
           window.opener.account.onJoinRoom(conf);
        }],
       ["vcard-temp", null,
-       _("View VCard"),
+       _("View vCard"),
        "chrome://oneteam/skin/chatpane/imgs/vcard.png", function(di) {
           window.opener.account.getOrCreateContact(di.discoJID).showVCard();
        }],
