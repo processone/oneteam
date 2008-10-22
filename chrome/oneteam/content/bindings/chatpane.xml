@@ -511,6 +511,8 @@
             e.setAttribute("class", "body");
             e.innerHTML = msg.formatedHtml;
 
+            msg.markAsSeen();
+
             msgEl.appendChild(e);
           }
 

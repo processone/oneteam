@@ -423,10 +423,7 @@ _DECL_(MessagesThread, Model).prototype =
                 account.removeEventsByKey(msgs[i]._eventKey);
             if (!(this.contact instanceof Conference) && msgsToArchive.length < 10 &&
                 !msgs[i].isSystemMessage)
-            {
-                msgs[i].offline = true;
                 msgsToArchive.unshift(msgs[i]);
-            }
         }
 
         this.archivedMessages.push.apply(this.archivedMessages, msgsToArchive);
@@ -609,6 +606,7 @@ _DECL_(Message).prototype =
 
     markAsSeen: function()
     {
+        this.offline = true;
     },
 
     fillPacket: function(pkt)
