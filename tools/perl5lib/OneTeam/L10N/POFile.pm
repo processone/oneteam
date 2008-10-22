@@ -32,7 +32,7 @@ has 'headers' => (
     default => sub {
         return [
             ['Project-Id-Version' => 'OneTeam 1.0'],
-            ['POT-Creation-Date' => POSIX::strftime("%Y-%m-%d %H:%M+%Z", localtime)],
+            ['POT-Creation-Date' => POSIX::strftime("%Y-%m-%d %H:%M%z", localtime)],
             ['PO-Revision-Date' => 'YEAR-MO-DA HO:MI+ZONE'],
             ['Last-Translator' => 'FULL NAME <EMAIL@ADDRESS>'],
             ['Language-Team' => 'LANGUAGE <LL@li.org>'],
@@ -172,7 +172,7 @@ sub sync_strings {
 }
 
 sub write {
-    my ($self, $path) = @_;
+    my ($self, $path, $potFile) = @_;
     my $strings = $self->strings;
 
     $path = $self->path if not defined $path;
@@ -195,6 +195,16 @@ sub write {
 
     for (@{$self->headers}) {
         my $str = $_->[1];
+
+        if ($potFile) {
+            $str = POSIX::strftime("%Y-%m-%d %H:%M%z", localtime)
+                if $_->[0] eq "POT-Creation-Date";
+            $str = 'YEAR-MO-DA HO:MI+ZONE' if $_->[0] eq "PO-Revision-Date";
+        } else {
+            $str = POSIX::strftime("%Y-%m-%d %H:%M%z", localtime)
+                if $_->[0] eq "PO-Revision-Date";
+        }
+
         $str =~ s/(["\\])/\\$1/g;
 
         print $fh "\"$_->[0]: $str\\n\"\n";
@@ -236,6 +246,6 @@ extends 'OneTeam::L10N::FormattedString';
 
 has 'comments' => (is => 'rw', isa => 'ArrayRef', default => sub { [] });
 has 'flags' => (is => 'rw', isa => 'HashRef', default => sub { {} });
-has 'translation' => (is => 'rw', isa => 'OneTeam::L10N::FormattedString');
+has 'translation' => (is => 'rw', isa => 'Maybe[OneTeam::L10N::FormattedString]');
 
 1;

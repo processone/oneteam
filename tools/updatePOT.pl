@@ -28,5 +28,5 @@ find({no_chdir => 1, wanted => sub {
         $po->sync_strings(@{$if->translatable_strings});
     }}, "$FindBin::RealBin/../chrome/oneteam/content");
 
-$po->write();
-$branding_po->write();
+$po->write(undef, 1);
+$branding_po->write(undef, 1);
