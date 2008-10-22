@@ -733,7 +733,7 @@
           onclick='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
 <!-- #ifdef DEBUG -->
         <label value="|"/>
-        <label flex="1" crop="end" class="text-link" value="_('Command Console')"
+        <label flex="1" crop="end" class="text-link" value="_('Commands Console')"
           onclick="document.getElementById('cmd_cmdConsole').doCommand()"/>
 <!-- #endif -->
       </hbox>
