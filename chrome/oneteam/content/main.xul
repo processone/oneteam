@@ -866,10 +866,10 @@
                 <menulist id="setPresence-profile-chooser" flex="1"
                   oncommand="setPresenceUpdater.onProfileCommand()">
                   <menupopup>
-                    <menuitem id="setPresence-profile-dummy" label="No profiles configured"
+                    <menuitem id="setPresence-profile-dummy" label="_('No profiles configured')"
                       disabled="true" value="dummy-profile"/>
                     <menuseparator/>
-                    <menuitem id="setPresence-profile-create" label="Edit profiles..."/>
+                    <menuitem id="setPresence-profile-create" label="_('Edit profiles...')"/>
                   </menupopup>
                 </menulist>
               </hbox>
