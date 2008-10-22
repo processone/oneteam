@@ -268,7 +268,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     showVCard: function()
     {
-        openDialogUniq("ot:myInfo", "myInfo.xul", "chrome,centerscreen,dialog=no");
+        openDialogUniq("ot:vcardEdit", "vcardEdit.xul", "chrome,centerscreen,dialog=no");
     },
 
     showConsole: function()

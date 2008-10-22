@@ -4,46 +4,33 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
-<dialog id="myInfo" windowtype="ot:myInfo" title="_('My vCard')"
-  width="800" height="640"
+<dialog id="vcard" windowtype="ot:vcard" title="_('Contact vCard')"
+  width="800" height="600"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="_('Ok')" buttonlabelcancel="_('Cancel')"
-  buttons="accept,cancel"
-  onload="onLoad()" ondialogaccept="return saveVCard()" ondialogextra1="fetchVCard(true)">
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Close')"
+  buttons="accept"
+  onload="onLoad()">
 
   <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
-    var avatarList;
-
     function onLoad() {
-//      if (window.arguments[0] == 1)
-//        document.getElementById("tabs").selectedIndex = 2;
-      avatarList = document.getElementById("avatarList");
+      if (!window.arguments)
+        return;
+
+      document.getElementById("info-box").model = window.arguments[0];
+
       fetchVCard(true);
-/* #ifndef XULAPP
-      document.getElementById("avatarUploadForm").action = document.location.href.
-// #ifdef NOJAR
-        replace(/\/content\/.*$/, "/service/b64encode");
-// #else
-        replace(/jar:/, "").replace(/\/[^\/]*!.*$/, "/service/b64encode");
-// #endif
-// #endif */
     }
+
+    var photo;
 
     function handlePhoto(generateResult, tree)
     {
-      if (generateResult) {
-        var ns = new Namespace("vcard-temp");
-        var avatarData = window.opener.account.cache.
-          getValue("avatar-"+avatarList.selectedAvatarHash);
-
-        default xml namespace = ns;
-        return <><BINVAL>{btoa(avatarData)}</BINVAL></>;
-      } else {
-        avatarList.selectAvatar(window.opener.account.avatarHash,
-                                window.opener.account.avatar);
-      }
+      if (generateResult)
+        return photo;
+      else
+        photo = tree.elements();
     }
 
     const map = {
@@ -138,114 +125,21 @@
           parse(tree.ns::[i], map[i]);
     }
 
-    function generate(map, ns) {
-      default xml namespace = ns;
-      var result = new XMLList(), val;
-
-      for (var i in map) {
-        if (typeof(map[i]) == "string") {
-          if (val = document.getElementById(map[i]).value)
-            result += <{i}>{val}</{i}>;
-        } else if (typeof(map[i]) == "function") {
-          var subresult = map[i](1);
-
-          if (subresult != null && subresult.length())
-            result += <{i}/>.appendChild(subresult);
-        } else if (map[i] instanceof Array) {
-          for (var j = 0; j < map[i].length; j += 2) {
-            var subresult = generate(map[i][j+1], ns);
-            if (subresult.length()) {
-              for (var k in map[i][j])
-                subresult += <{k}/>;
-              result += <{i}/>.appendChild(subresult);
-            }
-          }
-        } else {
-          var subresult = generate(map[i], ns);
-
-          if (subresult.length())
-            result += <{i}/>.appendChild(subresult);
-        }
-      }
-      return result;
-    }
-
-    function saveVCard() {
-      var ns = new Namespace("vcard-temp")
-      default xml namespace = ns;
-
-      var vcard = <vCard/>
-      vcard.appendChild(generate(map, ns));
-
-      window.opener.account.setVCard(vcard);
-
-      return true;
-    }
-
     function fetchVCard(force) {
       document.getElementById("updateProgress").style.visibility = "visible";
-      window.opener.account.getVCard(force, fetchDone);
+      window.arguments[0].getVCard(force, fetchDone);
     }
 
     function fetchDone(pkt) {
       document.getElementById("updateProgress").style.visibility = "hidden";
       parse(window.opener.DOMtoE4X(pkt.getNode()).elements(), map);
     }
-
-    var avatarFetchState = false;
-
-    function submitAvatar(tag) {
-      tag.parentNode.collapsed = true; // form box
-      tag.parentNode.nextSibling.hidden = false;
-      avatarFetchState = true;
-      return true;
-    }
-
-    function addImage() {
-      var path = window.opener.pickFile(_("Select avatar image"), false, "images",
-                                        false, window);
-      if (!path)
-        return;
-
-      var data = window.opener.slurpFile(path);
-      var hash = window.opener.hex_sha1(data);
-
-      window.opener.account.cache.setValue("avatar-"+hash, data,
-                                           new Date(Date.now()+30*24*60*60*1000),
-                                           true);
-      data = window.opener.account.cache.getValue("avatar-"+hash, true);
-      avatarList.addAvatar(data, hash);
-    }
-
-    function avatarSubmited(tag) {
-      tag.parentNode.collapsed = false; // form box
-      tag.parentNode.nextSibling.hidden = true;
-
-      if (!avatarFetchState)
-        return;
-
-      avatarFetchState = false;
-
-      var data;
-      try {
-        data = tag.contentDocument.documentElement.textContent;
-      } catch(ex) {window.opener.report("developer", "error", ex)}
-
-      try {
-        if (data)
-          data = atob(data.replace(/\s/g, ""));
-      } catch (ex) {
-        data = null;
-      }
-
-      if (data)
-        avatarList.addAvatar(data);
-      else
-        alert(_("Can't read your avatar image data"));
-    }
   ]]></script>
 
-  <dialogheader title="_('My vCard')"/>
+  <dialogheader title="_('Contact vCard')"/>
+  <spacer style="height: 0.3em"/>
+
+  <contactinfo id="info-box"/>
   <spacer style="height: 0.6em"/>
 
   <vbox flex="1">
@@ -253,13 +147,12 @@
       <tabs>
         <tab label="_('Personal')"/>
         <tab label="_('Work')"/>
-        <tab label="_('Appearance')"/>
       </tabs>
       <tabpanels flex="1">
         <tabpanel orient="vertical">
           <hbox>
             <label value="_('Name')" control="name" style="width: 10em"/>
-            <textbox id="name" flex="1"/>
+            <textbox readonly="true" class="plain" id="name" flex="1"/>
           </hbox>
           <groupbox>
             <caption label="_('Name Details')"/>
@@ -273,21 +166,21 @@
               <rows>
                 <row>
                   <label value="_('First Name')" control="firstName"/>
-                  <textbox id="firstName"/>
+                  <textbox readonly="true" class="plain" id="firstName"/>
                   <label value="_('Last Name')" control="lastName"/>
-                  <textbox id="lastName"/>
+                  <textbox readonly="true" class="plain" id="lastName"/>
                 </row>
                 <row>
                   <label value="_('Second Name')" control="secondName"/>
-                  <textbox id="secondName"/>
+                  <textbox readonly="true" class="plain" id="secondName"/>
                   <label value="_('Nick Name')" control="nickName"/>
-                  <textbox id="nickName"/>
+                  <textbox readonly="true" class="plain" id="nickName"/>
                 </row>
                 <row>
                   <label value="_('Prefix')" control="prefix"/>
-                  <textbox id="prefix"/>
+                  <textbox readonly="true" class="plain" id="prefix"/>
                   <label value="_('Suffix')" control="suffix"/>
-                  <textbox id="suffix"/>
+                  <textbox readonly="true" class="plain" id="suffix"/>
                 </row>
               </rows>
             </grid>
@@ -302,15 +195,15 @@
             <rows>
               <row>
                 <label value="_('Homepage')" control="homepage"/>
-                <textbox id="homepage"/>
+                <textbox readonly="true" class="plain" id="homepage"/>
                 <label value="_('E-Mail')" control="email"/>
-                <textbox id="email"/>
+                <textbox readonly="true" class="plain" id="email"/>
               </row>
               <row>
                 <label value="_('Birthday')" control="birthday"/>
-                <textbox id="birthday"/>
+                <textbox readonly="true" class="plain" id="birthday"/>
                 <label value="_('Phone')" control="phone"/>
-                <textbox id="phone"/>
+                <textbox readonly="true" class="plain" id="phone"/>
               </row>
             </rows>
           </grid>
@@ -326,21 +219,21 @@
               <rows>
                 <row>
                   <label value="_('Street')" control="street"/>
-                  <textbox id="street"/>
+                  <textbox readonly="true" class="plain" id="street"/>
                   <label value="_('ExtAdd')" control="extadd"/>
-                  <textbox id="extadd"/>
+                  <textbox readonly="true" class="plain" id="extadd"/>
                 </row>
                 <row>
                   <label value="_('City')" control="city"/>
-                  <textbox id="city"/>
+                  <textbox readonly="true" class="plain" id="city"/>
                   <label value="_('Postal code')" control="postalCode"/>
-                  <textbox id="postalCode"/>
+                  <textbox readonly="true" class="plain" id="postalCode"/>
                 </row>
                 <row>
                   <label value="_('Region')" control="region"/>
-                  <textbox id="region"/>
+                  <textbox readonly="true" class="plain" id="region"/>
                   <label value="_('Country')" control="country"/>
-                  <textbox id="country"/>
+                  <textbox readonly="true" class="plain" id="country"/>
                 </row>
               </rows>
             </grid>
@@ -357,21 +250,21 @@
             <rows>
               <row>
                 <label value="_('Company')" control="company"/>
-                <textbox id="company"/>
+                <textbox readonly="true" class="plain" id="company"/>
                 <label value="_('Department')" control="department"/>
-                <textbox id="department"/>
+                <textbox readonly="true" class="plain" id="department"/>
               </row>
               <row>
                 <label value="_('Position')" control="position"/>
-                <textbox id="position"/>
+                <textbox readonly="true" class="plain" id="position"/>
                 <label value="_('Role')" control="role"/>
-                <textbox id="role"/>
+                <textbox readonly="true" class="plain" id="role"/>
               </row>
               <row>
                 <label value="_('E-Mail')" control="workEmail"/>
-                <textbox id="workEmail"/>
+                <textbox readonly="true" class="plain" id="workEmail"/>
                 <label value="_('Phone')" control="workPhone"/>
-                <textbox id="workPhone"/>
+                <textbox readonly="true" class="plain" id="workPhone"/>
               </row>
             </rows>
           </grid>
@@ -387,55 +280,30 @@
               <rows>
                 <row>
                   <label value="_('Street')" control="street"/>
-                  <textbox id="workStreet"/>
+                  <textbox readonly="true" class="plain" id="workStreet"/>
                   <label value="_('ExtAdd')" control="extadd"/>
-                  <textbox id="workExtadd"/>
+                  <textbox readonly="true" class="plain" id="workExtadd"/>
                 </row>
                 <row>
                   <label value="_('City')" control="city"/>
-                  <textbox id="workCity"/>
+                  <textbox readonly="true" class="plain" id="workCity"/>
                   <label value="_('Postal code')" control="postalCode"/>
-                  <textbox id="workPostalCode"/>
+                  <textbox readonly="true" class="plain" id="workPostalCode"/>
                 </row>
                 <row>
                   <label value="_('Region')" control="region"/>
-                  <textbox id="workRegion"/>
+                  <textbox readonly="true" class="plain" id="workRegion"/>
                   <label value="_('Country')" control="country"/>
-                  <textbox id="workCountry"/>
+                  <textbox readonly="true" class="plain" id="workCountry"/>
                 </row>
               </rows>
             </grid>
           </groupbox>
         </tabpanel>
-        <tabpanel orient="vertical">
-          <groupbox flex="1">
-            <caption label="_('Avatar')"/>
-            <avatarlist id="avatarList" flex="1"/>
-          </groupbox>
-<!-- #ifdef XULAPP -->
-          <hbox>
-            <spacer flex="1"/>
-            <button label="_('Add image...')" oncommand="addImage()"/>
-          </hbox>
-<!-- #else
-          <hbox>
-            <spacer flex="1"/>
-            <html:form id="avatarUploadForm" method="post"
-                       enctype="multipart/form-data" onsubmit="submitAvatar(this)"
-                       target="avatarIframe">
-              <html:input type="file" name="avatar" flex="1"/>
-              <html:input type="submit" value="_('Add image...')"/>
-            </html:form>
-            <html:iframe id="avatarIframe" style="visibility: collapse"
-                         onload="avatarSubmited(this)"/>
-          </hbox>
-          <progressmeter mode="undetermined" hidden="true"/>
-// #endif -->
-        </tabpanel>
       </tabpanels>
     </tabbox>
     <hbox>
-      <progressmeter id="updateProgress" mode="undetermined" hidden="true" flex="1"/>
+      <progressmeter id="updateProgress" mode="undetermined" style="visibility: hidden" flex="1"/>
     </hbox>
   </vbox>
 </dialog>

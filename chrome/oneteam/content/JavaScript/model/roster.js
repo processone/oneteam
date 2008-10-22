@@ -403,7 +403,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     showVCard: function()
     {
-        openDialogUniq("ot:info", "chrome://oneteam/content/info.xul",
+        openDialogUniq("ot:vcard", "chrome://oneteam/content/vcard.xul",
                        "resizable=no,chrome,dialog", this);
     },
 
