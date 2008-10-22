@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
-<dialog id="subscribe" windowtype="ot:subscribe" title="_('Subscribtion request')"
+<dialog id="subscribe" windowtype="ot:subscribe" title="_('Subscription Request')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="600" height="250"
@@ -42,22 +42,26 @@
   <dialogheader title="Subscription Request"/>
 
   <vbox flex="1">
-    <description id="contactInfo">You received subscription request from:
+    <description id="contactInfo">_('You got subscription request from:')
       <html:span id="contactJid" style="font-weight: bold"></html:span></description>
+
+    <spacer/>
+
+    <label value="_('The user provided this reason for the request:')"/>
     <textbox id="reason" multiline="true" rows="4" flex="1" disabled="true"/>
 
     <spacer style="height: 1.5em"/>
 
     <hbox align="end" pack="end">
-      <button dlgtype="extra1" label="Extra Actions" type="menu">
+      <button dlgtype="extra1" label="_('Extra Actions')" type="menu">
         <menupopup>
-          <menuitem label="Show VCard" oncommand="contact.showVCard()"/>
-          <menuitem label="Open Chat" oncommand="contact.onOpenChat()"/>
+          <menuitem label="_('Show vCard')" oncommand="contact.showVCard()"/>
+          <menuitem label="_('Open Chat')" oncommand="contact.onOpenChat()"/>
         </menupopup>
       </button>
-      <button dlgtype="extra2" label="Deny Subscription"/>
-      <button dlgtype="cancel" label="Cancel"/>
-      <button dlgtype="accept" label="Subscribe"/>
+      <button dlgtype="extra2" label="_('Deny Subscription')"/>
+      <button dlgtype="cancel" label="_('Cancel')"/>
+      <button dlgtype="accept" label="_('Subscribe')"/>
     </hbox>
   </vbox>
 </dialog>
