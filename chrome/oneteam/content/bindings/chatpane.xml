@@ -1022,7 +1022,7 @@
                          tooltiptext="_('Show vCard')"/>
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
                          tooltiptext="_('Send file')"/>
-      <xul:toolbarbutton id="extraCmds" tooltiptext="_('Extra Commands')" type="menu">
+      <xul:toolbarbutton id="extraCmds" tooltiptext="_('Additional commands')" type="menu">
         <xul:menupopup onpopupshowing="this.parentNode.parentNode._syncMenu()">
           <xul:menuitem label="_('Invite to group chat room')"
                         onmenushowing="this.hidden = contact instanceof ConferenceMember ||
