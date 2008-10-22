@@ -35,29 +35,32 @@ for (sort keys %new_manifest) {
     next if $_ eq "update.manifest";
 
     my $path = catfile(split "/", $_);
-    next unless compare(catfile($tmp_old, $path), catfile($tmp_new, $path));
-
-    my $old_path = unpack_file($tmp_old, $path);
-    my ($new_path, $size) = unpack_file($tmp_new, $path);
-
     my $patch_path = catfile($tmp_patch, $path);
-    my $patch_file_path = "$patch_path.patch";
 
-    my ($vol, $dir, undef) = splitpath($patch_path);
-    mkpath([catpath($vol, $dir)], 0);
+    if (-f $tmp_old) {
+        next unless compare(catfile($tmp_old, $path), catfile($tmp_new, $path));
 
-    system($MBSDIFF, $old_path, $new_path, $patch_file_path);
-    pack_file($patch_file_path);
+        my $old_path = unpack_file($tmp_old, $path);
+        my ($new_path, $size) = unpack_file($tmp_new, $path);
 
-    if (-s "$patch_file_path.bz2" lt $size) {
-        rename("$patch_file_path.bz2", "$patch_path.patch");
-        print $manifest_fh "patch \"$_.patch\" \"$_\"\n";
-        push @files, "$path.patch";
-    } else {
-        rename(catfile($tmp_new, $path), $patch_path);
-        print $manifest_fh "add \"$_\"\n";
-        push @files, $path;
+        my $patch_file_path = "$patch_path.patch";
+
+        my ($vol, $dir, undef) = splitpath($patch_path);
+        mkpath([catpath($vol, $dir)], 0);
+
+        system($MBSDIFF, $old_path, $new_path, $patch_file_path);
+        pack_file($patch_file_path);
+
+        if (-s "$patch_file_path.bz2" lt $size) {
+            rename("$patch_file_path.bz2", "$patch_path.patch");
+            print $manifest_fh "patch \"$_.patch\" \"$_\"\n";
+            push @files, "$path.patch";
+            next;
+        }
     }
+    rename(catfile($tmp_new, $path), $patch_path);
+    print $manifest_fh "add \"$_\"\n";
+    push @files, $path;
 }
 for (keys %old_manifest) {
     $remove_lines{$1} = 1 unless exists $new_manifest{$_};
