@@ -6,7 +6,7 @@ OS_CXXFLAGS += $(foreach ver,$(MOZILLA_VERSIONS),\
 
 ABI=$(OS_TARGET)_$(TARGET_XPCOM_ABI)
 PC_DIR=$(otdir)/..
-ABI_PC_DIR=$(PC_DIR)/components/platform/$(ABI)
+ABI_PC_DIR=$(PC_DIR)/platform/$(ABI)/components
 #ABI_PC_DIR=$(PC_DIR)
 
 ifdef MODULE

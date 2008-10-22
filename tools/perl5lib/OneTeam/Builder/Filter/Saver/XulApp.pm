@@ -56,6 +56,7 @@ sub finalize {
 
     _dircopy('defaults', catdir($tmpdir, 'defaults'));
     _dircopy('components', catdir($tmpdir, 'components'));
+    _dircopy('platform', catdir($tmpdir, 'platform'));
     _dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
 
     open($fh, ">", catfile($chromedir, 'chrome.manifest')) or
@@ -173,6 +174,9 @@ sub _create_mar_part {
     }
     print $fh "remove \"${prefix}components/oneteam.dll\"\n";
     print $fh "remove \"${prefix}components/liboneteam.so\"\n";
+    print $fh "remove \"${prefix}components/platform/WINNT_x86-msvc/oneteam.dll\"\n";
+    print $fh "remove \"${prefix}components/platform/Linux_x86-gcc3/liboneteam.so\"\n";
+    print $fh "remove \"${prefix}components/platform/Linux_x86_64-gcc3/liboneteam.so\"\n";
     close($fh);
 
     system("bzip2 -cz9 '".$manifest_tmp."' > '".catfile($tmpdir, "update.manifest")."'");
