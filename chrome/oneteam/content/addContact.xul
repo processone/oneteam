@@ -127,7 +127,8 @@
           return false;
         }
         contact = account.getOrCreateContact(jid, false, nick, groups);
-      }
+      } else
+        contact.editContact(nick, groups);
 
       contact.subscribe(reason);
       return true;
