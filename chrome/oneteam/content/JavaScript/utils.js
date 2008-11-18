@@ -497,11 +497,14 @@ function NotificationsCanceler()
 _DECL_(NotificationsCanceler).prototype =
 {
     set add(val) {
-        this.notifications.push(val)
+        if (!this.notifications)
+            this.notifications = [val];
+        else
+            this.notifications.push(val)
     },
 
     cancel: function() {
-        if (!this.notifications.length)
+        if (!this.notifications)
             return false;
 
         for (var i = 0; i < this.notifications.length; i++)
@@ -509,7 +512,7 @@ _DECL_(NotificationsCanceler).prototype =
                 this.notifications[i].cancel()
             else
                 account.removeEventsByKey(this.notifications[i]);
-        this.notifications = [];
+        this.notifications = null;
 
         return true;
     }
