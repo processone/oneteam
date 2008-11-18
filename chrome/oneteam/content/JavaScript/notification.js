@@ -129,7 +129,7 @@ _DECL_(NotificationScheme).prototype =
             return this._nopCanceler;
 
         var p = arguments.callee;
-        while (p.caller)
+        while (p.caller && p != p.caller)
             p = p.caller;
 
         return {
