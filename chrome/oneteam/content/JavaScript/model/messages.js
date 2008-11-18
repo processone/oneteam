@@ -364,6 +364,8 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     addMessage: function(msg) {
+        var firstMessage  = !this._afterFirstMessage;
+
         if (msg.contact && !msg.contact.representsMe) {
             this._afterFirstMessage = true;
             if (this._handleChatState == null)
@@ -395,8 +397,15 @@ _DECL_(MessagesThread, Model).prototype =
         this.modelUpdated("messages", {added: [msg]});
         account.historyMgr.addMessage(msg);
 
-        account.notificationScheme.show("message", this._afterFirstMessage ? "next" : "first" ,
-                                        msg, msg.contact);
+        msg._canceler = new NotificationsCanceler();
+        var callback = new Callback(function() {
+            if (!this._canceler.cancel())
+                return;
+            this.thread.openChatTab();
+        }, msg);
+
+        msg._canceler.add = account.notificationScheme.show("message", firstMessage ? "first" : "next",
+                                                            msg, msg.contact, callback);
 
         if (!this._visible && !msg.isSystemMessage) {
             this.unseenCount++;
@@ -404,9 +413,9 @@ _DECL_(MessagesThread, Model).prototype =
         }
 
         if (this.messages.length > len && !msg.isSystemMessage)
-            msg._eventKey = account.addEvent(_("You have new message from <b>{0}</b>",
-                                               xmlEscape(msg.contact.visibleName)),
-                                             new Callback(this.openChatTab, this));
+            msg._canceler.add = account.addEvent(_("You have new message from <b>{0}</b>",
+                                                   xmlEscape(msg.contact.visibleName)),
+                                                 new Callback(this.openChatTab, this));
     },
 
     removeMessages: function()
@@ -419,8 +428,8 @@ _DECL_(MessagesThread, Model).prototype =
         this.messages = [];
 
         for (var i = msgs.length-1; i >= 0; i--) {
-            if (msgs[i]._eventKey)
-                account.removeEventsByKey(msgs[i]._eventKey);
+            if (msgs[i]._canceler)
+                msgs[i]._canceler.cancel();
             if (!(this.contact instanceof Conference) && msgsToArchive.length < 10 &&
                 !msgs[i].isSystemMessage)
                 msgsToArchive.unshift(msgs[i]);

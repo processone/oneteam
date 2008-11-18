@@ -81,7 +81,7 @@ _DECL_(NotificationScheme).prototype =
                 map(xmlEscape).join("<br/>");
 
             return this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
-                                   text, "chrome://oneteam/skin/main/imgs/msgicon.png");
+                                   text, "chrome://oneteam/skin/main/imgs/msgicon.png", extra2);
         } else if (kind == "filetransfer") {
             if (type == "request")
                 return this._showAlert(_("File transfer request"),
