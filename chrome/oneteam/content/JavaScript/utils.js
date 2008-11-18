@@ -561,11 +561,13 @@ function report(to, level, info, context)
 {
     function inspect(object) {
         var s = "";
-        for(var propertyName in object) {
-            var propertyValue = object[propertyName];
-            if(typeof(propertyValue) != "function")
-                s += "E    " + propertyName + ": " + propertyValue + "\n";
-        }
+        try {
+            for(var propertyName in object) {
+                var propertyValue = object[propertyName];
+                if(typeof(propertyValue) != "function")
+                    s += "E    " + propertyName + ": " + propertyValue + "\n";
+            }
+        } catch (ex) {}
         return s;
     }
 
