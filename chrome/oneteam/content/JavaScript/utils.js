@@ -49,11 +49,10 @@ function ppTimeInterval(time)
         if (coeffs[i] <= time)
             break;
 
-    var t1 = parseInt(time/coeffs[i]);
-    if (i == 3)
-        return _("{0} {0, plurals, second, seconds}", t1);
+    var t1, t2 = parseInt(time/coeffs[i]);
+    if (i != 3)
+        t2 = parseInt((time-t1*coeffs[i])/coeffs[i+1]);
 
-    var t2 = parseInt((time-t1*coeffs[i])/coeffs[i+1])
     switch (i) {
         case 0:
             return _("{0} {0, plurals, day, days}, {1} {1, plurals, hour, hours}", t1, t2);
@@ -61,6 +60,8 @@ function ppTimeInterval(time)
             return _("{0} {0, plurals, hour, hours}, {1} {1, plurals, minute, minutes}", t1, t2);
         case 2:
             return _("{0} {0, plurals, minute, minutes}, {1} {1, plurals, second, seconds}", t1, t2);
+        default:
+            return _("{0} {0, plurals, second, seconds}", t1);
     }
 }
 
