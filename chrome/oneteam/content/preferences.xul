@@ -192,7 +192,8 @@
         <checkbox label="_('Display avatars in roster')" pref="chat.general.showavatars=checked"/>
         <checkbox label="_('Sort contacts by status')" pref="chat.roster.sortbystatus=checked"/>
         <checkbox label="_('Play sounds')" pref="chat.sounds=checked"/>
-        <checkbox label="_('Notify about other clients with higher priority')" pref="chat.general.bumppriority=checked"/>
+        <checkbox label="_('Notify about other clients with higher priority')"
+                  pref="chat.general.bumppriority=checked"/>
       </tabpanel>
 
       <tabpanel>
@@ -255,7 +256,7 @@
               <label value="_('minutes idle')"/>
             </row>
             <hbox class="entry">
-              <label value="_('And set status to:')"/>
+              <label value="_('And set status message to:')"/>
               <textbox pref="chat.status.autoaway.status=value" flex="1"/>
             </hbox>
             <row>
@@ -266,7 +267,7 @@
               <label value="_('minutes idle')"/>
             </row>
             <hbox class="entry">
-              <label value="_('And set status to:')"/>
+              <label value="_('And set status message to:')"/>
               <textbox pref="chat.status.autoxa.status=value" flex="1"/>
             </hbox>
           </rows>
