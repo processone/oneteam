@@ -62,7 +62,7 @@
           window.opener.account.getOrCreateContact(di.discoJID).onSearch();
        }],
       ["http://jabber.org/protocol/muc", {category: "conference"},
-       _("Join chatroom"),
+       _("Join room"),
        "chrome://oneteam/skin/disco/imgs/join-conference.png", function(di) {
           var conf = di.discoJID.node ?
             window.opener.account.getOrCreateConference(di.discoJID) : di.discoJID;
