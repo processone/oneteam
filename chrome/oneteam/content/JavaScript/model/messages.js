@@ -619,7 +619,9 @@ _DECL_(Message).prototype =
 
     markAsSeen: function()
     {
-        this.archived = true;
+        if (typeof(ArchivedMessagesThreadBase) == "undefined" ||
+                !(this.thread instanceof ArchivedMessagesThreadBase))
+            this.archived = true;
     },
 
     fillPacket: function(pkt)
