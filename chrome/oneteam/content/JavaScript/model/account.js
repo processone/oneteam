@@ -904,6 +904,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     onError: function(error)
     {
+        if (!this.connected) {
+            report('user', 'error', 'Invalid response from server (server down or misconfigured)');
+
+            // Hack to preven error message in onDisconnect
+            this.connected = true;
+            this.onDisconnect();
+        }
         report("developer", "error", error, this);
     }
 }
