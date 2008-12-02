@@ -43,9 +43,12 @@ body {
     display: none !important;
 }
 
-.offline {
+.offline, .archived {
     font-size: 0.85em;
-    color: #9a9;
+}
+
+.archived {
+    color: #565;
 }
 
 .to-copy-paste {

@@ -243,9 +243,9 @@
               var bg = base.composite(white, 0.06);
               var border = base.composite(white, 0.3);
 
-              var baseOffline = base.composite(green, 0.2);
-              var bgOffline = baseOffline.composite(white, 0.06);
-              var borderOffline = baseOffline.composite(white, 0.3);
+              var baseArchived = base.composite(green, 0.4);
+              var bgArchived = baseArchived.composite(white, 0.06);
+              var borderArchived = baseArchived.composite(white, 0.3);
 
               colorScheme +=
                 <style>
@@ -265,20 +265,20 @@
                       color: {base}
                   }
 
-                  .offline.message[color-id="{i}"] {"{"}
-                      background: {bgOffline};
+                  .archived.message[color-id="{i}"] {"{"}
+                      background: {bgArchived};
                   }
 
-                  .offline.message[color-id="{i}"] {"{"}
-                      border-color: {borderOffline};
+                  .archived.message[color-id="{i}"] {"{"}
+                      border-color: {borderArchived};
                   }
 
-                  .offline.message[color-id="{i}"] > .header {"{"}
-                      background-color: {baseOffline}
+                  .archived.message[color-id="{i}"] > .header {"{"}
+                      background-color: {baseArchived}
                   }
 
-                  .offline.meMessage.message[color-id="{i}"] {"{"}
-                      color: {baseOffline}
+                  .archived.meMessage.message[color-id="{i}"] {"{"}
+                      color: {baseArchived}
                   }
                 </style>;
             }

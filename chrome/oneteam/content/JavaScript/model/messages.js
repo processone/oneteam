@@ -579,6 +579,8 @@ _DECL_(Message).prototype =
             res.push("meMessage");
         if (this.offline)
             res.push("offline");
+        if (this.archived)
+            res.push("archived");
 
         return res.join(" ");
     },
@@ -617,7 +619,7 @@ _DECL_(Message).prototype =
 
     markAsSeen: function()
     {
-        this.offline = true;
+        this.archived = true;
     },
 
     fillPacket: function(pkt)
