@@ -6,7 +6,7 @@ function FileTransferService()
 
 _DECL_(FileTransferService, null, Model).prototype =
 {
-    sendFile: function(to, file)
+    sendFile: function(to, file, description)
     {
         if (file) {
             file = new File(file);
@@ -14,7 +14,8 @@ _DECL_(FileTransferService, null, Model).prototype =
                 return null;
         }
 
-        var fileTransfer = new FileTransfer(null, new JID(to), null, file && file.size, file);
+        var fileTransfer = new FileTransfer(null, new JID(to), null, file && file.size,
+                                            file, description);
         this.fileTransfers.push(fileTransfer);
         this.modelUpdated("fileTransfers", {added: [fileTransfer]});
 
@@ -70,7 +71,8 @@ _DECL_(FileTransferService, null, Model).prototype =
 
         var fileTransfer = new FileTransfer(pkt.getID(), new JID(pkt.getFrom()),
                                             query.@id.toString(),
-                                            file.@size.length() ? +file.@size : null);
+                                            file.@size.length() ? +file.@size : null,
+                                            null, file.ftNS::desc.text().toString());
 
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
 
@@ -93,13 +95,14 @@ _DECL_(FileTransferService, null, Model).prototype =
    }
 }
 
-function FileTransfer(offerID, jid, streamID, size, file)
+function FileTransfer(offerID, jid, streamID, size, file, description)
 {
     this.jid = jid;
     this.offerID = offerID;
     this.state = "waiting";
     this.sent = 0;
     this.size = size;
+    this.description = description;
     this._rates = [];
     this.accepted = false;
     this.init();
@@ -198,6 +201,7 @@ _DECL_(FileTransfer, null, Model).prototype =
     _sendOffer: function()
     {
         var fileName = this.file.path.match(/[^\/\\]+$/)[0];
+        var ftNS = new Namespace("http://jabber.org/protocol/si/profile/file-transfer");
 
         var node = <si xmlns='http://jabber.org/protocol/si' id={this.streamID}
                         profile='http://jabber.org/protocol/si/profile/file-transfer'>
@@ -213,6 +217,8 @@ _DECL_(FileTransfer, null, Model).prototype =
                     </si>
         if (this.size != null)
             node.child(0).@size = this.size;
+        if (this.description)
+            node.child(0).ftNS::desc = this.description;
 
         var pkt = new JSJaCIQ();
         pkt.setIQ(this.jid, "set");

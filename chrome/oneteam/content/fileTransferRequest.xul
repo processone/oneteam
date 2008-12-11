@@ -32,6 +32,11 @@
         document.getElementById("size").parentNode.hidden = true;
       else
         document.getElementById("size").value = fileTransfer.ppSize;
+
+      if (fileTransfer.description)
+        document.getElementById("description").textContent = fileTransfer.description;
+      else
+        document.getElementById("description").parentNode.hidden = true;
     }
 
     function acceptFileTransfer()
@@ -74,6 +79,10 @@
       <row>
         <label value="_('Size:')"/>
         <label id="size"/>
+      </row>
+      <row>
+        <label value="_('Description:')"/>
+        <description id="description"/>
       </row>
     </rows>
   </grid>
