@@ -6,40 +6,26 @@ use strict;
 require Exporter;
 
 our @ISA = qw(Exporter);
-our @EXPORT = qw(get_revision get_branch extract_prefs);
+our @EXPORT = qw(get_version get_branch extract_prefs);
 
-my $revision;
+my $version;
 my $branch;
 my %prefs;
 
-sub get_revision {
+sub get_version {
     my $topdir = shift;
 
-    return $revision if defined $revision;
+    return $version if defined $version;
 
-    if (-d catdir($topdir, '.svn')) {
-        $revision = `svnversion "$topdir"`;
-        chomp $revision;
-        return $revision;
-    }
+    my $gitdir = catdir($topdir, '.git');
+    $gitdir = $topdir if not -d $gitdir;
 
-    if (-d catdir($topdir, '.git')) {
-        $revision = `cd "$topdir"; git svn log --limit 1 --oneline`;
-        $revision =~ s/.*?(\d+).*/$1/s;
-        return $revision;
-    }
+    my $verstr = `git --git-dir="$gitdir" describe HEAD`;
 
-    my @mirrors = `svk mi -l`;
-    @mirrors = map { (split " ", $_, 2)[0] } @mirrors[2..$#mirrors];
+    $verstr =~ /^v([^-]+)(?:-(\d+))?/;
+    $version = $2 ? "$1.$2" : $1;
 
-    my $info = `svk info "$topdir"`;
-    my ($depot) = $info =~ /Depot Path: (\/.*?)\//;
-
-    while ($info =~ /Copied From: (\S+),/g) {
-        my ($mirror) = grep { index("$depot$1", $_) == 0 } @mirrors;
-        return $revision = $1 if $mirror and `svk info "$mirror"` =~ /Mirrored From:.*? Rev\.\s+(\d+)/;
-    }
-    return 0;
+    return $version
 }
 
 sub get_branch {
@@ -47,16 +33,12 @@ sub get_branch {
 
     return $branch if defined $branch;
 
-    if (-d catdir($topdir, '.svn')) {
-        ($branch) = grep { /^URL:/ } `svn info "$topdir"`;
-        $branch =~ s/.*?(?:(?:\/branches\/([^\/]+))|\/(trunk))(?:\/.*|$)/$1||$2/es;
-        chomp $branch;
-    } elsif (-d catdir($topdir, '.git')) {
-        $branch = `cd "$topdir"; git name-rev HEAD`;
-        $branch =~ s/HEAD\s+(.*?)\s*$/$1/;
-    } else {
-        $branch = "UNKNOWN";
-    }
+    my $gitdir = catdir($topdir, '.git');
+    $gitdir = $topdir if not -d $gitdir;
+
+    $branch = `git name-rev HEAD`;
+    $branch = "UNKNOWN" if not $branch =~ s/HEAD\s+(.*?)\s*$/$1/;
+
     return $branch
 }
 

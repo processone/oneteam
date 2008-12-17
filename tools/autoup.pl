@@ -23,7 +23,7 @@ $i->blocking(0);
 my $topdir = realpath(File::Spec->catdir($Bin, ".."));
 my $dir = realpath(File::Spec->catdir($topdir, qw(chrome oneteam)));
 
-my %defs = ( REVISION => sub { get_revision($topdir) },
+my %defs = ( VERSION => sub { get_version($topdir) },
              BRANCH => sub { get_branch($topdir) },
              PREFS => sub { extract_prefs(sub { $_[0] =~ /^chat\./ and $_[0] !~ /^chat\.connection\.(base|host|port|ssl|overridehost|polling|user|pass)/ },
                 File::Spec->catfile($topdir, "defaults", "preferences", "pref.js"),

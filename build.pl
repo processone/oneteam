@@ -27,24 +27,24 @@ find(sub {
             if -f and not $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
     }, $dir);
 
-$defs{REVISION} = sub { get_revision($topdir) };
+$defs{VERSION} = sub { get_version($topdir) };
 $defs{BRANCH} = sub { get_branch($topdir) };
 $defs{PREFS} = sub { extract_prefs(sub { $_[0] =~ /^chat\./ and $_[0] !~ /^chat\.connection\.(base|host|port|ssl|overridehost|polling|user|pass)/ },
     File::Spec->catfile($topdir, "defaults", "preferences", "pref.js"),
     File::Spec->catfile($topdir, "defaults", "preferences", "branding.js"));
 };
 
-my $version_str = $defs{VERSION_STRING} || '1.0.0.@REVISION@';
-my $buildid_str = $defs{BUILDID_STRING} || '@REVISION@';
+my $version_str = $defs{VERSION_STRING} || '@VERSION@';
+my $buildid_str = $defs{BUILDID_STRING} || '@VERSION@';
 
-sub get_version {
-    $version_str =~ s/\@REVISION\@/get_revision($topdir)/e;
+sub get_version_str {
+    $version_str =~ s/\@VERSION\@/get_version($topdir)/e;
     $version_str =~ s/\@BRANCH\@/get_branch($topdir)/e;
     return $version_str;
 }
 
 sub get_buildid {
-    $buildid_str =~ s/\@REVISION\@/get_revision($topdir)/e;
+    $buildid_str =~ s/\@VERSION\@/get_version($topdir)/e;
     $buildid_str =~ s/\@BRANCH\@/get_branch($topdir)/e;
     return $buildid_str;
 }
@@ -53,11 +53,11 @@ my %mar_options = map{($_, $defs{$_})} grep { /^MAR_/} keys %defs;
 
 my $saver = exists $defs{XULAPP} ?
     exists $defs{NOJAR} ?
-        new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir, \&get_version, \&get_buildid, \%mar_options) :
-        new OneTeam::Builder::Filter::Saver::XulApp($topdir, \&get_version, \&get_buildid, \%mar_options) :
+        new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
+        new OneTeam::Builder::Filter::Saver::XulApp($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
     exists $defs{NOJAR} ?
-        new OneTeam::Builder::Filter::Saver::WebDir($topdir, \&get_version, \&get_buildid) :
-        new OneTeam::Builder::Filter::Saver::WebJar($topdir, \&get_version, \&get_buildid);
+        new OneTeam::Builder::Filter::Saver::WebDir($topdir, \&get_version_str, \&get_buildid) :
+        new OneTeam::Builder::Filter::Saver::WebJar($topdir, \&get_version_str, \&get_buildid);
 
 
 my $locale_processor = exists $defs{XULAPP} ?
