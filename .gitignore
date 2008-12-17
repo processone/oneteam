@@ -1,0 +1,8 @@
+/tools/mar
+/tools/mbsdiff
+/extensions
+/updates
+/*.xulapp
+/*.mar
+*~
+*.swp

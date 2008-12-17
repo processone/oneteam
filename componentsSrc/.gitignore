@@ -1,0 +1,9 @@
+*/Makefile
+*/*/Makefile
+*.o
+*.so
+*.xpt
+*.dll
+.deps
+*.a
+_xpidlgen
