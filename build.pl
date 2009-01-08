@@ -24,7 +24,7 @@ my %defs = @ARGV;
 
 find(sub {
         push @files, $File::Find::name
-            if -f and not $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
+            if -f and not ignored_file($File::Find::name);
     }, $dir);
 
 $defs{VERSION} = sub { get_version($topdir) };

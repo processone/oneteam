@@ -20,8 +20,7 @@ my $po = OneTeam::L10N::POFile->new(path => "$FindBin::RealBin/../po/oneteam.pot
                                     branding_po_file => $branding_po);
 
 find({no_chdir => 1, wanted => sub {
-        return if not -f or $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)! or
-                $File::Find::name =~ /(?:~|\.swp)$/;
+        return if not -f or ignored_file($File::Find::name);
 
         my $path = realpath($File::Find::name);
         my $if = OneTeam::L10N::InputFile->new(path => File::Spec->abs2rel($path, $FindBin::RealBin));

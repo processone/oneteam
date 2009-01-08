@@ -3,7 +3,7 @@ package OneTeam::Utils;
 use Exporter;
 
 @ISA = qw(Exporter);
-@EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml);
+@EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml ignored_file);
 
 sub slurp {
     my $file = shift;
@@ -64,6 +64,13 @@ sub escape_xml {
     $str =~ s/>/&gt;/g;
 
     return $str;
+}
+
+sub ignored_file {
+    my $file = shift;
+
+    return $file =~ /(?:\.swp|~|\.gitignore)$/ or
+        $file =~ m![\\/]\.(?:\#|svn[\\/]|git[\\/])/!;
 }
 
 1;

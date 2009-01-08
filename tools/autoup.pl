@@ -55,8 +55,7 @@ my @all_files;
 my $locale = ($filters[1]->locales)[0];
 
 find(sub {
-        return if $File::Find::name =~ /(\.swp|~)$/ or $File::Find::name =~ /\/\.#/ or
-            $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
+        return if ignored_file($File::Find::name);
 
         watch_path($File::Find::name);
 
@@ -116,15 +115,14 @@ while (1) {
 sub watch_path {
     my ($path, $recursive) = @_;
 
-    return if $path =~ /(\.swp|~)$/ or $path =~ /\/\.#/ or $path =~ m!(^|[/\\]).svn([/\\]|$)!;
+    return if ignored_file($path);
 
     $i->watch($path, -d $path ?
               IN_MOVED_TO|IN_CREATE :
               IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF);
 
     find(sub {
-            return if $File::Find::name =~ /(\.swp|~)$/ or $File::Find::name =~ /\/\.#/ or
-                $File::Find::dir =~ m!(^|[/\\]).svn([/\\]|$)!;
+            return if ignored_file($File::Find::name);
 
             watch_path($File::Find::name, 0);
 

@@ -87,7 +87,7 @@ sub _dircopy {
     my $srclen = length($src) + ($src =~ m!(?:[/\\]$)! ? 0 : 1);
 
     find({ wanted => sub {
-        return if not -f $_ or $File::Find::dir =~ /\.svn/;
+        return if not -f $_ or ignored_file($File::Find::name);
 
         mkpath(length($File::Find::dir) > $srclen ?
             catdir($dest, substr($File::Find::dir, $srclen)) :
