@@ -516,15 +516,26 @@
       closeAllWindows();
     //#endif */
     }
-
+    //#ifndef XULAPP
     function onBeforeUnload() {
       if (account.connected)
         return "Are you sure you want to leave OneTeam?";
     }
     window.onbeforeunload = onBeforeUnload;
+    //#endif
 
     var quitSequence = false;
     function quit() {
+    //#ifdef XULAPP
+      var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
+        getService(Components.interfaces.nsIPromptService);
+
+      if (window.con && promptSrv.confirmEx(window, _("Quit prompt"),
+                                            _("You are connected, do you really want to quit?"),
+                                            3+256*4+(1 << 24), "", "", "", "", {}))
+        return
+    //#endif
+
       quitSequence = true;
 
       if (window.con)
