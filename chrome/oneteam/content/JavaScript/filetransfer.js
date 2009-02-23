@@ -100,7 +100,7 @@ function FileTransfer(offerID, jid, streamID, size, file, description)
     this.jid = jid;
     this.offerID = offerID;
     this.state = "waiting";
-    this.sent = 0;
+    this.sent = size == null ? null : 0;
     this.size = size;
     this.description = description;
     this._rates = [];
@@ -138,38 +138,39 @@ _DECL_(FileTransfer, null, Model).prototype =
 
     get ppSent()
     {
-        return ppFileSize(this.sent);
+        return ppFileSize(this.sent||0);
     },
 
     get rateAndTime() {
         var now = Date.now();
+        var sent = this.sent || 0;
 
         if (!this._lastMetering) {
-            this._lastMetering = { sent: this.sent, date: now, rate: -1, time: -1 };
-            this._rates.push([this.sent, now]);
+            this._lastMetering = { sent: sent, date: now, rate: -1, time: -1 };
+            this._rates.push([sent, now]);
             return [-1, -1];
         }
 
         if (now - this._lastMetering.date < 1000)
             return [this._lastMetering.rate, this._lastMetering.time];
 
-        var rate = this.sent/(now - this._startTime)*1000;
+        var rate = sent/(now - this._startTime)*1000;
         for (var i = 0; i < this._rates.length; i++) {
-            var cRate = (this.sent - this._rates[i][0])/(now - this._rates[i][1])*1000;
+            var cRate = (sent - this._rates[i][0])/(now - this._rates[i][1])*1000;
             rate = 0.8*rate + 0.2*cRate;
         }
-        this._rates.push([this.sent, now]);
+        this._rates.push([sent, now]);
         if (this._rates.length > 5)
             this._rates.shift();
 
-        var time = (this.size - this.sent)/rate, lastTime = this._lastMetering.time;
+        var time = (this.size - sent)/rate, lastTime = this._lastMetering.time;
 
         if (time/lastTime > 2 || lastTime/time > 2) {
             var diff = time - lastTime;
             time = lastTime + (diff < 0 ? 0.3 : 0.1)*diff;
         }
 
-        this._lastMetering = { sent: this.sent, date: now, rate: rate, time: time };
+        this._lastMetering = { sent: sent, date: now, rate: rate, time: time };
 
         return [rate, time];
     },
@@ -189,8 +190,10 @@ _DECL_(FileTransfer, null, Model).prototype =
         return this.state != "selecting" && this.state != "waiting" && this.state != "started";
     },
 
-    onFileChoosen: function(path, form)
+    onFileChoosen: function(path, form, size)
     {
+        if (size)
+            this.size = size;
         this.file = {path: path};
         this.form = form;
         this.state = "waiting";
@@ -343,7 +346,7 @@ _DECL_(FileTransfer, null, Model).prototype =
 
     onTransferProgress: function(bytes)
     {
-        this.sent += bytes;
+        this.sent = (this.sent||0) +bytes;
         if (!this._timeout)
             this._timeout = setTimeout(this._progressNotificationCallback, 500, this);
     },

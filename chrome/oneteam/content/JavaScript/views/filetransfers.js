@@ -74,7 +74,7 @@ function FileTransferView(model, parentView)
         e = document.createElementNS(ns, "input")
         e.setAttribute("type", "file")
         e.setAttribute("name", "FILE");
-        e.setAttribute("onchange", "this.view.onFileChoosen(this.value)");
+        e.setAttribute("onchange", "this.view.onFileChoosen(this)");
         e.view = this;
         this.form.appendChild(e);
 
@@ -145,10 +145,10 @@ _DECL_(FileTransferView).prototype =
         rejected:  [_("Canceled by peer"), 0]
     },
 
-    onFileChoosen: function(path)
+    onFileChoosen: function(field)
     {
-        this.fileName.setAttribute("value", path.match(/[^\/\\]+$/)[0]);
-        this.model.onFileChoosen(path, this.form);
+        this.fileName.setAttribute("value", field.value.match(/[^\/\\]+$/)[0]);
+        this.model.onFileChoosen(field.value, this.form, field.files && field.files[0].fileSize);
     },
 
     onStateChange: function()
@@ -178,7 +178,7 @@ _DECL_(FileTransferView).prototype =
         if (this.model.state != "started")
             return;
 
-        if (this.model.size == null) {
+        if (this.model.size == null || this.model.sent == null) {
             this.progressmeter.mode = "undetermined";
             this.stateLabel.value = _("Transfering...");
             return;
