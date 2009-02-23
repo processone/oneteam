@@ -22,6 +22,8 @@
       avatarList = document.getElementById("avatarList");
       fetchVCard(true);
 /* #ifndef XULAPP
+      if (document.getElementById("avatarFile").files)
+        document.getElementById("avatarSubmit").style.display = "none";
       document.getElementById("avatarUploadForm").action = document.location.href.
 // #ifdef NOJAR
         replace(/\/content\/.*$/, "/service/b64encode");
@@ -201,20 +203,27 @@
       return true;
     }
 
-    function addImage() {
-      var path = window.opener.pickFile(_("Select avatar image"), false, "images",
-                                        false, window);
-      if (!path)
-        return;
-
-      var data = window.opener.slurpFile(path);
+    function _addImage(data) {
       var hash = window.opener.hex_sha1(data);
 
       window.opener.account.cache.setValue("avatar-"+hash, data,
                                            new Date(Date.now()+30*24*60*60*1000),
                                            true);
       data = window.opener.account.cache.getValue("avatar-"+hash, true);
+
       avatarList.addAvatar(data, hash);
+    }
+
+    function addImage() {
+      var path = window.opener.pickFile(_("Select avatar image"), false, "images",
+                                        false, window);
+      if (path)
+        _addImage(window.opener.slurpFile(path));
+    }
+
+    function avatarSelected(field) {
+      if (field.files && field.files[0])
+        _addImage(field.files[0].getAsBinary())
     }
 
     function avatarSubmited(tag) {
@@ -229,7 +238,9 @@
       var data;
       try {
         data = tag.contentDocument.documentElement.textContent;
-      } catch(ex) {window.opener.report("developer", "error", ex)}
+      } catch(ex) {
+        window.opener.report("developer", "error", ex)
+      }
 
       try {
         if (data)
@@ -238,8 +249,9 @@
         data = null;
       }
 
+
       if (data)
-        avatarList.addAvatar(data);
+        _addImage(data);
       else
         alert(_("Can't read your avatar image data"));
     }
@@ -423,8 +435,8 @@
             <html:form id="avatarUploadForm" method="post"
                        enctype="multipart/form-data" onsubmit="submitAvatar(this)"
                        target="avatarIframe">
-              <html:input type="file" name="avatar" flex="1"/>
-              <html:input type="submit" value="_('Add image...')"/>
+              <html:input id="avatarFile" type="file" name="avatar" flex="1" onchange="avatarSelected(this)"/>
+              <html:input id="avatarSubmit" type="submit" value="_('Add image...')"/>
             </html:form>
             <html:iframe id="avatarIframe" style="visibility: collapse"
                          onload="avatarSubmited(this)"/>
