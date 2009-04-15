@@ -1,4 +1,4 @@
-ottdir=../tools/compile
+ottdir=config
 conf_mk=$(ottdir)/conf.mk
 ifeq "$(RECURSIVE_CONFIGURE)$(filter $(conf_mk),$(wildcard  $(conf_mk)*))" "$(conf_mk)"
 -include "$(conf_mk)"

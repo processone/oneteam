@@ -5,7 +5,7 @@ OS_CXXFLAGS += $(foreach ver,$(MOZILLA_VERSIONS),\
 	-DOT_VERSION_AVAILABLE_$(subst .,_,$(ver)))
 
 ABI=$(OS_TARGET)_$(TARGET_XPCOM_ABI)
-PC_DIR=$(otdir)/..
+PC_DIR=$(otdir)/../..
 ABI_PC_DIR=$(PC_DIR)/platform/$(ABI)/components
 #ABI_PC_DIR=$(PC_DIR)
 
