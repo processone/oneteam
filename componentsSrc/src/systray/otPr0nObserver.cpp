@@ -10,29 +10,14 @@ class nsIFrame;
 #include "nsIDOMHTMLImageElement.h"
 #include "nsIDOMHTMLCanvasElement.h"
 #include "nsICanvasElement.h"
+#include "otPr0nObserver.h"
 
-class otPr0nObserver19 : public otPr0nObserver,
-                         public imgIDecoderObserver
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_IMGICONTAINEROBSERVER
-  NS_DECL_IMGIDECODEROBSERVER
-
-  nsresult Load(nsISupports *image, otSystrayBase *listener);
-  nsresult AbortLoad();
-
-private:
-  otSystrayBase *mListener;
-  nsCOMPtr<imgIRequest> mImgRequest;
-};
-
-NS_IMPL_ISUPPORTS2(otPr0nObserver19, imgIDecoderObserver, imgIContainerObserver)
+NS_IMPL_ISUPPORTS2(otPr0nObserver, imgIDecoderObserver, imgIContainerObserver)
 
 nsresult
-otPr0nObserver19::Load(nsISupports *image, otSystrayBase *listener)
+otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
 {
-  DEBUG_DUMP("otPr0nObserver19::Load (entered)");
+  DEBUG_DUMP("otPr0nObserver::Load (entered)");
   nsresult rv;
 
   mListener = listener;
@@ -68,7 +53,7 @@ otPr0nObserver19::Load(nsISupports *image, otSystrayBase *listener)
 }
 
 nsresult
-otPr0nObserver19::AbortLoad()
+otPr0nObserver::AbortLoad()
 {
   mImgRequest = nsnull;
 
@@ -76,11 +61,11 @@ otPr0nObserver19::AbortLoad()
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
+otPr0nObserver::FrameChanged(imgIContainer *aContainer,
                                gfxIImageFrame *imageFrame,
                                nsIntRect * aDirtyRect)
 {
-  DEBUG_DUMP("otPr0nObserver19::FrameChanged (entered)");
+  DEBUG_DUMP("otPr0nObserver::FrameChanged (entered)");
   nsresult rv;
   PRUint8 *rgbData;
   PRUint32 rgbLen, alphaBits;
@@ -91,7 +76,7 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
   if (!mImgRequest)
     return NS_OK;
 
-  DEBUG_DUMP("otPr0nObserver19::FrameChanged (1)");
+  DEBUG_DUMP("otPr0nObserver::FrameChanged (1)");
 
   imageFrame->GetWidth(&width);
   imageFrame->GetHeight(&height);
@@ -99,7 +84,7 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
 
   alphaBits = format > 3 ? 8 : format > 1 ? 1 : 0;
 
-  DEBUG_DUMP_N(("otPr0nObserver19::FrameChanged width=%x, height=%x, format=%x",
+  DEBUG_DUMP_N(("otPr0nObserver::FrameChanged width=%x, height=%x, format=%x",
                width,height,format));
   rv = imageFrame->LockImageData();
   if (NS_FAILED(rv))
@@ -108,7 +93,7 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
   rv = imageFrame->GetImageBytesPerRow(&rgbStride);
   rv |= imageFrame->GetImageData(&rgbData, &rgbLen);
   if (NS_SUCCEEDED(rv)) {
-    DEBUG_DUMP("otPr0nObserver19::FrameChanged (6)");
+    DEBUG_DUMP("otPr0nObserver::FrameChanged (6)");
     rv = mListener->ProcessImageData(width, height, rgbData, rgbStride, rgbLen,
                                      NULL, 0, alphaBits,
 #ifdef OT_HAS_SYSTRAY_WIN
@@ -125,68 +110,62 @@ otPr0nObserver19::FrameChanged(imgIContainer *aContainer,
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+otPr0nObserver::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
 {
-  DEBUG_DUMP("otPr0nObserver19::OnStopFrame (entered)");
+  DEBUG_DUMP("otPr0nObserver::OnStopFrame (entered)");
   return FrameChanged(nsnull, aFrame, nsnull);
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnStartDecode(imgIRequest *aRequest)
+otPr0nObserver::OnStartDecode(imgIRequest *aRequest)
 {
-  DEBUG_DUMP("otPr0nObserver19::OnStartDecode (entered)");
+  DEBUG_DUMP("otPr0nObserver::OnStartDecode (entered)");
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnStartContainer(imgIRequest *aRequest, imgIContainer *aContainer)
-{
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-otPr0nObserver19::OnStartFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+otPr0nObserver::OnStartContainer(imgIRequest *aRequest, imgIContainer *aContainer)
 {
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnDataAvailable(imgIRequest *aRequest, gfxIImageFrame *aFrame,
+otPr0nObserver::OnStartFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+{
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otPr0nObserver::OnDataAvailable(imgIRequest *aRequest, gfxIImageFrame *aFrame,
                                   const nsIntRect * aRect)
 {
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnStopContainer(imgIRequest *aRequest, imgIContainer *aContainer)
+otPr0nObserver::OnStopContainer(imgIRequest *aRequest, imgIContainer *aContainer)
 {
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnStopDecode(imgIRequest *aRequest, nsresult status,
+otPr0nObserver::OnStopDecode(imgIRequest *aRequest, nsresult status,
                                const PRUnichar *statusArg)
 {
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnStartRequest(imgIRequest* aRequest)
+otPr0nObserver::OnStartRequest(imgIRequest* aRequest)
 {
-  DEBUG_DUMP("otPr0nObserver19::OnStartRequest (entered)");
+  DEBUG_DUMP("otPr0nObserver::OnStartRequest (entered)");
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver19::OnStopRequest(imgIRequest* aRequest, PRBool finish)
+otPr0nObserver::OnStopRequest(imgIRequest* aRequest, PRBool finish)
 {
-  DEBUG_DUMP("otPr0nObserver19::OnStopRequest (entered)");
+  DEBUG_DUMP("otPr0nObserver::OnStopRequest (entered)");
   return NS_OK;
-}
-
-otPr0nObserver*
-OT_NewPr0nObserver19()
-{
-  return new otPr0nObserver19();
 }
 

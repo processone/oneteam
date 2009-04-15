@@ -1,6 +1,6 @@
 #include "otSystrayBase.h"
-#include "otMultiVersion.h"
 #include "otDebug.h"
+#include "otPr0nObserver.h"
 
 otSystrayBase::otSystrayBase() : mShown(PR_FALSE)
 {
@@ -9,11 +9,6 @@ otSystrayBase::otSystrayBase() : mShown(PR_FALSE)
 otSystrayBase::~otSystrayBase()
 {
 }
-
-OT_VERSIONED_OBJECT_DEF_BEGIN(otPr0nObserver*, nsnull, OT_NewPr0nObserver)
-  OT_VERSIONED_OBJECT_CONS(1_8, OT_NewPr0nObserver18)
-  OT_VERSIONED_OBJECT_CONS(1_9, OT_NewPr0nObserver19)
-OT_VERSIONED_OBJECT_DEF_END
 
 NS_IMETHODIMP
 otSystrayBase::Init(otISystrayListener *listener)
@@ -24,7 +19,7 @@ otSystrayBase::Init(otISystrayListener *listener)
   if (mListener)
     return NS_ERROR_ALREADY_INITIALIZED;
 
-  mObserver = OT_NewPr0nObserver();
+  mObserver = new otPr0nObserver();
   if (!mObserver)
     return NS_ERROR_FAILURE;
 

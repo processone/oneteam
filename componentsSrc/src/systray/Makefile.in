@@ -35,15 +35,8 @@ REQUIRES= \
 
 CPPSRCS= \
 	otSystrayBase.cpp \
+	otPr0nObserver.cpp \
 	$(OT_EXTRA_SRCS) \
-	$(NULL)
-
-CPPSRCS_1.8= \
-	otPr0nObserver18.cpp \
-	$(NULL)
-
-CPPSRCS_1.9= \
-	otPr0nObserver19.cpp \
 	$(NULL)
 
 FORCE_STATIC_LIB = 1
@@ -51,6 +44,5 @@ FORCE_STATIC_LIB = 1
 include $(ottdir)/rules.mk
 
 INCLUDES+= \
-	-I$(otdir)/src/multiversion \
 	-I$(otdir)/src/systray \
 	$(NULL)

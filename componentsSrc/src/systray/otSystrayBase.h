@@ -9,16 +9,6 @@
 class otPr0nObserver;
 class otSystrayBase;
 
-class otPr0nObserver : public nsISupports
-{
-public:
-  virtual ~otPr0nObserver() {};
-
-  virtual nsresult Load(nsISupports *image, otSystrayBase *listener) = 0;
-  virtual nsresult AbortLoad() = 0;
-};
-
-
 class otSystrayBase : public otISystray
 {
 public:

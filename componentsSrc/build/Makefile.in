@@ -36,7 +36,6 @@ CPPSRCS = \
 LOCAL_INCLUDES = \
 	-I$(otdir)/src/idle \
 	-I$(otdir)/src/systray \
-	-I$(otdir)/src/multiversion \
 	-I$(otdir)/src/dns \
 	$(NULL)
 
