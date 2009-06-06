@@ -1,7 +1,7 @@
 (function(){
     var contacts = eval(otDispatcher.invoke("getContacts", ""));
 
-    document.styleSheets[0].insertRule(".-ot-tooltip {display:none;z-index:1000;width:300px}",0)
+    document.styleSheets[0].insertRule(".-ot-tooltip {display:none;z-index:1000}",0)
     document.styleSheets[0].insertRule(".-ot-icon:hover + .-ot-tooltip {display:block}",0)
 
     var update = function(contact, icon, name, show, status) {
@@ -23,7 +23,7 @@
                 return;
 
         var el = document.createElement("span");
-        el.setAttribute("style", "position: relative");
+        el.setAttribute("style", "position: relative; display: inline; white-space: nowrap");
         el.setAttribute("class", "-ot-container");
 
         var icon = document.createElement("img");
@@ -78,7 +78,8 @@
     var interestingLinks = {};
 
     for (var i = 0; i < document.links.length; i++) {
-        if (!(res = document.links[i].href.match(/display\/(?:~|%7E)([^&]+)&?/)))
+        if (!(res = document.links[i].href.match(/display\/(?:~|%7E)([^&]+)&?/)) ||
+            document.links[i].firstChild.nodeType != 3)
             continue;
 
         var contact = res[1]+"@"
@@ -110,7 +111,7 @@
                 continue;
 
             for (var j = 0; j < links.links.length; j++)
-                links[j][1] = generateIcon(contacts[i], links.links[j], links);
+                generateIcon(contacts[i], links.links[j], links);
         }
 
         contacts = data.removed || [];
