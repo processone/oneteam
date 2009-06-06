@@ -8,7 +8,7 @@
   </menupopup>
 
   <keyset id="mainKeyset">
-    <key id="key_showOneteam" command="showOneteam2"/>
+    <key id="key_showOneteam" command="showOneteam" key="O" modifiers="shift accel"/>
   </keyset>
 
   <broadcasterset id="mainBroadcasterSet">
