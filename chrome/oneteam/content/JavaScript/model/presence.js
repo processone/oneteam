@@ -1,3 +1,10 @@
+var EXPORTED_SYMBOLS = ["Presence", "PresenceProfiles", "PresenceProfile"];
+
+ML.importMod("roles.js");
+ML.importMod("utils.js");
+ML.importMod("modeltypes.js");
+//ML.importMod("l10n.js");
+
 function Presence(show, status, priority, profile)
 {
     if (show instanceof JSJaCPresence) {
@@ -123,6 +130,17 @@ _DECL_(Presence, null, Comparator).prototype =
         return account.style.getStatusIcon(this.show);
     },
 
+    get serialized() {
+        return {
+            show: this.show,
+            status: this.status || "",
+            priority: this.priority,
+            showString: this.toString(),
+            color: this.getColor(),
+            icon: makeDataUrlFromFile(this.getIcon())
+        };
+    },
+
     _priorityMap: {
         available: 50,
         chat: 50,
@@ -172,7 +190,7 @@ _DECL_(PresenceProfiles, null, Model).prototype =
         var query = iq.setQuery("jabber:iq:private");
         query.appendChild(iq.getDoc().createElementNS(ns, "profiles"));
 
-        con.send(iq, new Callback(this._onPresenceProfiles, this).
+        account.connection.send(iq, new Callback(this._onPresenceProfiles, this).
                         addArgs(callback).fromCall());
     },
 
@@ -212,7 +230,7 @@ _DECL_(PresenceProfiles, null, Model).prototype =
             }
         }
 
-        con.send(iq);
+        account.connection.send(iq);
     },
 
     update: function(addedProfiles, removedProfiles)
@@ -353,7 +371,7 @@ _DECL_(PresenceProfile, null, Model).prototype =
         for (i = 0; i < this._privacyRules.length; i++)
             if (i != this._inheritedPresence) {
                 privacyService.activateList(this._privacyRules[i].@name);
-                con.send(this.presences[i].presence.generatePacket());
+                account.connection.send(this.presences[i].presence.generatePacket());
             }
 
         privacyService.activateList(this._privacyRules[this._inheritedPresence].@name);

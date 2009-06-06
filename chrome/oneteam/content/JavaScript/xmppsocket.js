@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["XMPPSocket"];
+
 function XMPPSocket(listener, host, port, ssl, domain, authhost)
 {
     this.listener = listener;

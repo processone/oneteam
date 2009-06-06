@@ -211,7 +211,7 @@ JSJaCConnection.prototype.getPollInterval = function() {
  * callback associated with the id.<br>
 
  * <p>Example:<br/>
- * <code>con.registerHandler('iq', 'query', 'jabber:iq:version', handleIqVersion);</code>
+ * <code>account.connection.registerHandler('iq', 'query', 'jabber:iq:version', handleIqVersion);</code>
 
 
  * @param {String} event One of

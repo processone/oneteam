@@ -1,3 +1,8 @@
+var EXPORTED_SYMBOLS = ["JID", "XMPPDataAccessorBase", "XMPPDataAccessor",
+                        "vCardDataAccessor"];
+
+ML.importMod("roles.js");
+
 /**
  * Class which encapsulate Jabber ID.
  *
@@ -213,7 +218,7 @@ _DECL_(XMPPDataAccessorBase).prototype =
         if (stateObj.value == null || forceUpdate) {
             stateObj.callbacks.push(clientCallback);
             if (stateObj.callbacks.length == 1)
-                con.send(pktGeneratorFun.call(this), stateObj.callback);
+                account.connection.send(pktGeneratorFun.call(this), stateObj.callback);
         } else
             clientCallback(stateObj.value);
 

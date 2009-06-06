@@ -1,3 +1,9 @@
+var EXPORTED_SYMBOLS = ["HistoryManager"];
+
+ML.importMod("roles.js");
+ML.importMod("model/messages.js");
+ML.importMod("utils.js");
+
 function ArchivedMessagesThreadBase(contact, threadID, time)
 {
     if (typeof(contact) == "string")
@@ -430,7 +436,7 @@ _DECL_(XEPArchiveThreadsRetriever).prototype =
             query.@start = dateToISO8601Timestamp(this.lastCheck);
 
         pkt.getNode().appendChild(E4XtoDOM(query, pkt.getDoc()));
-        con.send(pkt, new Callback(this.processChunk, this));
+        account.connection.send(pkt, new Callback(this.processChunk, this));
     },
 
     processChunk: function(pkt)
@@ -512,7 +518,7 @@ _DECL_(XEPArchiveMessagesRetriever, ArchivedMessagesThreadBase).prototype =
             query.@start = dateToISO8601Timestamp(this.lastCheck);
 
         pkt.getNode().appendChild(E4XtoDOM(query, pkt.getDoc()));
-        con.send(pkt, new Callback(this.processChunk, this));
+        account.connection.send(pkt, new Callback(this.processChunk, this));
     },
 
     processChunk: function(pkt)

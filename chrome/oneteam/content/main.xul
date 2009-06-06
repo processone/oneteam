@@ -11,69 +11,15 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="text/javascript" src="lib/jsjac/xmlextras.js"/>
-  <script type="text/javascript" src="lib/jsjac/jsextras.js"/>
-  <script type="text/javascript" src="lib/jsjac/crypt.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCConstants.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCConfig.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCCookie.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCJID.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCBuilder.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCPacket.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCError.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCKeys.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCConnection.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCHttpPollingConnection.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCHttpBindingConnection.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCMozillaConnection.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaCConsoleLogger.js"/>
-  <script type="text/javascript" src="lib/jsjac/JSJaC.js"/>
-
-  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
-  <!-- #ifdef XULAPP -->
-  <script type="text/javascript;version=1.7" src="JavaScript/file.js"/>
-  <!-- #endif -->
-  <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/colorutils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/prefs.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/cache.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/xmpptypes.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/disco.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/notification.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/styles.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/tabcompletion.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/dataforms.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/services/manager.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/services/rosterx.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/services/adhoc.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/services/privacy.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/xmppsocket.js"/>
-<!-- #ifdef XULAPP -->
-  <script type="text/javascript;version=1.7" src="JavaScript/socks5.js"/>
-<!-- #else
-  <script type="text/javascript;version=1.7" src="JavaScript/otbs.js"/>
-// #endif -->
-  <script type="text/javascript;version=1.7" src="JavaScript/filetransfer.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/treeview.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/presence.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/history.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/roster.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/gateway.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/conference.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/account.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/views/roster.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/views/conference.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/views/gateway.js"/>
-
-  <script type="text/javascript" src="chrome://global/content/nsDragAndDrop.js"/>
-  <script type="text/javascript" src="chrome://global/content/nsTransferable.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+    ML.importMod("views/roster.js");
+    ML.importMod("views/gateway.js");
+    ML.importMod("views/conference.js");
+    ML.importMod("views/chattabs.js");
+
     var menuModel;
 
     function findMenuModel(menu, event) {
@@ -401,17 +347,17 @@
         this.systray.icon = account.style.getStatusIcon(account.currentPresence.show);
 // #endif
         this.presence = this.chooser.value;
+        if (account.connected)
+          this.onConnect();
       }
     };
 
-    var chatTabsController;
     var soundsPlayer;
 
     function onLoad() {
       setPresenceUpdater.init();
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
-      chatTabsController = document.getElementById("chats");
       soundsPlayer = document.getElementById("soundsplayer");
       document.getElementById("login-signin").disabled = false;
 
@@ -419,7 +365,7 @@
       for each (var part in document.location.toString().replace(/.*?\?/, "").split("&")) {
         if (!part)
           continue;
-        part = part.split("=", 2);
+        part = perlSplit(part, "=", 2);
         args[decodeURIComponent(part[0])] = part.length == 1 ? null : decodeURIComponent(part[1]);
       }
 
@@ -454,6 +400,7 @@
       }
 
 // #ifdef XULAPP
+/*
       chatTabsController.addEventListener("tab-added", function(event) {
         if (event.target.tabCount != 1)
           return;
@@ -482,6 +429,7 @@
 
         self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
       }, false);
+*/
 // #endif
     }
 
@@ -495,6 +443,7 @@
     }
 
     function onUnload() {
+      return;
     //#ifdef XULAPP
       var width = self.outerWidth;
 
@@ -511,13 +460,14 @@
       document.persist(document.documentElement.getAttribute("id"), "height");
     /*#else
       document.getElementById("login-signin").disabled = true;
-      if (window.con)
+      if (window.account.connection)
         account.disconnect();
       closeAllWindows();
     //#endif */
     }
     //#ifndef XULAPP
     function onBeforeUnload() {
+      return;
       if (account.connected)
         return "Are you sure you want to leave OneTeam?";
     }
@@ -530,7 +480,7 @@
       var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
         getService(Components.interfaces.nsIPromptService);
 
-      if (window.con && promptSrv.confirmEx(window, _("Quit prompt"),
+      if (window.account.connection && promptSrv.confirmEx(window, _("Quit prompt"),
                                             _("You are connected, do you really want to quit?"),
                                             3+256*4+(1 << 24), "", "", "", "", {}))
         return
@@ -538,7 +488,7 @@
 
       quitSequence = true;
 
-      if (window.con)
+      if (window.account.connection)
         account.disconnect();
 
     //#ifdef XULAPP
@@ -685,30 +635,10 @@
   </comandset>
 
   <keyset>
-    <key id="key_addContact" modifiers="control" key="A" command="cmd_addContact"/>
-    <key id="key_joinRoom" modifiers="control" key="J" command="cmd_joinRoom"/>
-    <key id="key_disco" modifiers="control" key="S" command="cmd_disco"/>
-    <key id="key_ourVCard" modifiers="control" key="E" command="cmd_ourVCard"/>
-<!-- #ifdef XULAPP -->
-    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
-    <key id="key_themes" modifiers="control" key="T" command="cmd_themes"/>
-<!-- #endif -->
-    <key id="key_prefs" modifiers="control" key="P" command="cmd_prefs"/>
-    <key id="key_help" key="F1" command="cmd_help"/>
-<!-- #ifdef DEBUG -->
     <key id="key_xmlConsole" modifiers="control" key="1" command="cmd_xmlConsole"/>
-<!-- #ifdef XULAPP -->
-    <key id="key_jsConsole" modifiers="control" key="M" command="cmd_jsConsole"/>
-<!-- #endif -->
     <key id="key_cmdConsole" modifiers="control" key="2" command="cmd_cmdConsole"/>
     <key id="key_cmdVenkman" modifiers="control" key="3" command="cmd_cmdVenkman"/>
     <key id="key_cmdDOMInspector" modifiers="control" key="4" command="cmd_cmdDOMInspector"/>
-<!-- #endif -->
-    <key id="key_toggleShowOffline" modifiers="control" key="O" command="cmd_toggleShowOffline"/>
-    <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
-<!-- #ifdef XULAPP -->
-    <key id="key_transfers" modifiers="control" key="T" command="cmd_transfers"/>
-<!-- #endif -->
   </keyset>
 
   <deck id="main-deck" flex="1" selectedIndex="0">
@@ -897,8 +827,8 @@
           <richlistbox id="contacts-list" flex="1" persist="hideOffline"/>
         </vbox>
         <!-- #ifdef XULAPP -->
-        <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
-        <chattabbox id="chats" collapsed="true" flex="1"/>
+<!--        <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
+        <chattabbox id="chats" collapsed="true" flex="1"/>-->
         <!-- #else
         <splitter id="chats-splitter"/>
         <chattabbox id="chats" flex="1"/>

@@ -1,8 +1,10 @@
+var EXPORTED_SYMBOLS = ["FileTransfersView", "FileTransferView"];
+
 function FileTransfersView(node)
 {
     this.containerNode = node;
     this.items = [];
-    this.model = window.opener.fileTransferService;
+    this.model = fileTransferService;
 
     this.onModelUpdated(null, "fileTransfers", {added: this.model.fileTransfers});
     this._token = this.model.registerView(this.onModelUpdated, this, "fileTransfers");

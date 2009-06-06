@@ -1,3 +1,6 @@
+var EXPORTED_SYMBOLS = ["formatData", "dateToUTCString", "utcStringToDate",
+                        "dateToISO8601Timestamp","iso8601TimestampToDate",
+                        "readableTimestamp"];
 // #ifdef XULAPP
 function formatDate(date, locale, dateFormat, timeFormat)
 {

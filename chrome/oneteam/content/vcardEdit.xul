@@ -12,8 +12,10 @@
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return saveVCard()" ondialogextra1="fetchVCard(true)">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var avatarList;
 
     function onLoad() {
@@ -37,14 +39,13 @@
     {
       if (generateResult) {
         var ns = new Namespace("vcard-temp");
-        var avatarData = window.opener.account.cache.
+        var avatarData = account.cache.
           getValue("avatar-"+avatarList.selectedAvatarHash);
 
         default xml namespace = ns;
         return <><BINVAL>{btoa(avatarData)}</BINVAL></>;
       } else {
-        avatarList.selectAvatar(window.opener.account.avatarHash,
-                                window.opener.account.avatar);
+        avatarList.selectAvatar(account.avatarHash, account.avatar);
       }
     }
 
@@ -179,19 +180,19 @@
       var vcard = <vCard/>
       vcard.appendChild(generate(map, ns));
 
-      window.opener.account.setVCard(vcard);
+      account.setVCard(vcard);
 
       return true;
     }
 
     function fetchVCard(force) {
       document.getElementById("updateProgress").style.visibility = "visible";
-      window.opener.account.getVCard(force, fetchDone);
+      account.getVCard(force, fetchDone);
     }
 
     function fetchDone(pkt) {
       document.getElementById("updateProgress").style.visibility = "hidden";
-      parse(window.opener.DOMtoE4X(pkt.getNode()).elements(), map);
+      parse(DOMtoE4X(pkt.getNode()).elements(), map);
     }
 
     var avatarFetchState = false;
@@ -204,21 +205,20 @@
     }
 
     function _addImage(data) {
-      var hash = window.opener.hex_sha1(data);
+      var hash = hex_sha1(data);
 
-      window.opener.account.cache.setValue("avatar-"+hash, data,
-                                           new Date(Date.now()+30*24*60*60*1000),
-                                           true);
-      data = window.opener.account.cache.getValue("avatar-"+hash, true);
+      account.cache.setValue("avatar-"+hash, data,
+                             new Date(Date.now()+30*24*60*60*1000),
+                             true);
+      data = account.cache.getValue("avatar-"+hash, true);
 
       avatarList.addAvatar(data, hash);
     }
 
     function addImage() {
-      var path = window.opener.pickFile(_("Select avatar image"), false, "images",
-                                        false, window);
+      var path = pickFile(_("Select avatar image"), false, "images", false, window);
       if (path)
-        _addImage(window.opener.slurpFile(path));
+        _addImage(slurpFile(path));
     }
 
     function avatarSelected(field) {
@@ -239,7 +239,7 @@
       try {
         data = tag.contentDocument.documentElement.textContent;
       } catch(ex) {
-        window.opener.report("developer", "error", ex)
+        report("developer", "error", ex)
       }
 
       try {

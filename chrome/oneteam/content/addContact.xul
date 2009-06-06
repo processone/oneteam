@@ -14,11 +14,12 @@
   buttons="accept,cancel"
   ondialogaccept="return addContact()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var contact = window.arguments && window.arguments[0];
     var currentGateway, progressmeter;
-    var account = window.opener.account;
     var gatewaysRegToken, regToken;
 
     function onLoad() {

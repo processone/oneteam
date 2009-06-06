@@ -4,6 +4,8 @@
  * @version $Revision$
  */
 
+ML.importMod("xmppsocket.js");
+
 /**
  * Instantiates an HTTP Polling session
  * @class Implementation of {@link

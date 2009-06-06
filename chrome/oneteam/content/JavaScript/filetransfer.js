@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["FileTransfer", "fileTransferService"];
+
 function FileTransferService()
 {
     this.init();
@@ -227,7 +229,7 @@ _DECL_(FileTransfer, null, Model).prototype =
         pkt.setIQ(this.jid, "set");
         pkt.getNode().appendChild(E4XtoDOM(node, pkt.getDoc()));
 
-        con.send(pkt, new Callback(this._sendOfferStep, this));
+        account.connection.send(pkt, new Callback(this._sendOfferStep, this));
     },
 
     _sendOfferStep: function(pkt)
@@ -264,7 +266,7 @@ _DECL_(FileTransfer, null, Model).prototype =
                     </x>
                 </feature>
             </si>, pkt.getDoc()));
-        con.send(pkt);
+        account.connection.send(pkt);
 
         if (path)
             this.file = new File(path)
@@ -286,7 +288,7 @@ _DECL_(FileTransfer, null, Model).prototype =
                 <forbidden xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
                 <text xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'>Offer Declined</text>
             </error>, pkt.getDoc()));
-        con.send(pkt);
+        account.connection.send(pkt);
     },
 
     cancel: function()

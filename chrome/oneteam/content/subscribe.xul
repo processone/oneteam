@@ -12,15 +12,17 @@
   onload="onLoad()" ondialogaccept="return subscribeContact()"
   ondialogextra2="return denySubscription()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var contact = window.arguments[0]
     var reason = window.arguments[1];
 
     function subscribeContact() {
       contact.allowToSeeMe();
       if (contact.newItem) {
-        window.opener.account.onAddContact(contact);
+        account.onAddContact(contact);
       } else if (!contact.canSeeHim) {
         contact.askForSubscription();
       }

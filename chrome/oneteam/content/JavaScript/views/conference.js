@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["BookmarksMenuView", "ConferencesView", "ConferenceView"];
+
 function BookmarksMenuView(node)
 {
     this.containerNode = node.parentNode;

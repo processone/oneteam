@@ -9,19 +9,17 @@
   width="700" height="400"
   onload="onLoad()" onunload="onUnload()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/views/filetransfers.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
 
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+    ML.importMod("views/filetransfers.js");
+
     var view;
 
 /* #ifndef XULAPP
     function onBeforeUnload() {
-      var fts = window.opener.fileTransferService.fileTransfers;
+      var fts = fileTransferService.fileTransfers;
       for (var i = 0; i < fts.length; i++)
         if (fts[i].type == "send" && (fts[i].state == "waiting" || fts[i].state == "started"))
           return _("If you close this window all file transfers will be aborted.");
@@ -41,7 +39,7 @@
 
     function cleanUp()
     {
-      var transfers = window.opener.fileTransferService.fileTransfers;
+      var transfers = fileTransferService.fileTransfers;
       for (var i = transfers.length-1; i >= 0; i--)
         if (transfers[i].finished)
           transfers[i].remove();

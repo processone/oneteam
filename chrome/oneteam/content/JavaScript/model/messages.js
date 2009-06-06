@@ -1,3 +1,9 @@
+var EXPORTED_SYMBOLS = ["ContactInfo", "MessagesRouter", "MessagesThread",
+                        "Message"];
+
+ML.importMod("roles.js");
+ML.importMod("modeltypes.js");
+
 function ContactInfo(jid, visibleName, representsMe)
 {
     this.jid = jid;
@@ -111,6 +117,7 @@ _DECL_(MessagesRouter).prototype =
 
     _cycleNextTab: function(contact)
     {
+        return false;
         var paneToActivate;
         var activePane = chatTabsController._selectedTab &&
             chatTabsController._selectedTab.controller;

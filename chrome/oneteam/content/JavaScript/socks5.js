@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["socks5Service"];
+
 function SOCKS5Service()
 {
 }
@@ -13,7 +15,7 @@ _DECL_(SOCKS5Service).prototype =
         var bsp = new JSJaCIQ();
         bsp.setIQ(jid, "get");
         bsp.setQuery("http://jabber.org/protocol/bytestreams");
-        con.send(bsp, new Callback(this._onProxyAddress, this));
+        account.connection.send(bsp, new Callback(this._onProxyAddress, this));
     },
 
     _onProxyAddress: function(pkt)
@@ -85,7 +87,7 @@ _DECL_(SOCKS5Service).prototype =
         pkt.setIQ(fileTransfer.jid, "set");
         pkt.getNode().appendChild(E4XtoDOM(xml, pkt.getDoc()));
 
-        con.send(pkt, new Callback(this._sendFileStep, this), token);
+        account.connection.send(pkt, new Callback(this._sendFileStep, this), token);
 
         return token;
     },
@@ -204,7 +206,7 @@ _DECL_(SOCKS5Service).prototype =
                     <streamhost-used jid={initiator._jid}/>
                 </query>, pkt.getDoc()));
 
-            con.send(pkt);
+            account.connection.send(pkt);
 
             token.fileTransfer.file.open(null, 0x2|0x8|0x20);
             token.bytestream.recvFile(token.fileTransfer.file);
@@ -222,7 +224,7 @@ _DECL_(SOCKS5Service).prototype =
                     <activate>{token.fileTransfer.jid}</activate>
                 </query>, pkt.getDoc()));
 
-            con.send(pkt, new Callback(this._sendFileStep2, this), token);
+            account.connection.send(pkt, new Callback(this._sendFileStep2, this), token);
             return;
         }
 

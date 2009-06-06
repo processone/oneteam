@@ -9,8 +9,10 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var [service, _title, msg, icon, clickAction, win, animation] = window.arguments;
     var img, canvas, tmpCanvas;
 
@@ -67,7 +69,7 @@
               if (match2[1] == "style") {
                 var styles = xmlUnescape(match2[2]||match2[3]).split(/\s*;\s*/), stylesRes = "";
                 for (var i = 0; i < styles.length; i+=2) {
-                  var pair = styles[i].split(/\s*:\s*/, 2);
+                  var pair = perlSplit(styles[i], /\s*:\s*/, 2);
                   if (/^(?:font-size|color|font-family|font-style|font-weight|text-decoration)$/.test(pair[0]))
                     stylesRes += pair[0]+":"+pair[1]+";";
                 }

@@ -12,6 +12,12 @@ xulappdbg:
 xulappflat:
 	perl build.pl XULAPP 1 NOJAR 1 DEBUG 1
 
+xpi:
+	perl build.pl XPI 1
+
+xpidbg:
+	perl build.pl XPI 1 DEBUG 1
+
 webjar:
 	perl build.pl
 

@@ -1,3 +1,29 @@
+var EXPORTED_SYMBOLS = ["account"];
+
+ML.importMod("roles.js");
+ML.importMod("3rdparty/jsjac/JSJaC.js");
+ML.importMod("exceptions.js");
+ML.importMod("l10n.js");
+ML.importMod("modeltypes.js");
+ML.importMod("disco.js");
+ML.importMod("xmpptypes.js");
+ML.importMod("cache.js");
+ML.importMod("history.js");
+ML.importMod("model/presence.js");
+ML.importMod("model/roster.js");
+ML.importMod("model/conference.js");
+ML.importMod("model/gateway.js");
+ML.importMod("model/messages.js");
+ML.importMod("history.js");
+ML.importMod("styles.js");
+ML.importMod("notification.js");
+ML.importMod("prefs.js");
+ML.importMod("services/manager.js");
+ML.importMod("services/adhoc.js");
+ML.importMod("services/privacy.js");
+ML.importMod("services/rosterx.js");
+ML.importMod("socks5.js");
+
 function Account()
 {
     this._initialize();
@@ -12,8 +38,6 @@ function Account()
     this.connected = false;
 
     this.init();
-
-    self.account = this;
 
     this.defaultGroup = new Group(null, _("Contacts"), true, -1);
     this.notInRosterGroup = new Group(null, _("Not in roster"), true, 1);
@@ -62,7 +86,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         } else if (presence.profile != this.currentPresence.profile)
             presence.profile.activate();
 
-        con.send(presence.generatePacket());
+        account.connection.send(presence.generatePacket());
 
         for (var i = 0; i < this._presenceObservers.length; i++)
             this._presenceObservers[i]._sendPresence(presence);
@@ -98,6 +122,18 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         this.groups.splice(this.groups.indexOf(group), 1);
         this.modelUpdated("groups", {removed: [group]});
+    },
+
+    _onContactAdded: function(contact)
+    {
+        this.contacts[contact.jid.normalizedJID] = contact;
+        this.modelUpdated("contacts", {added: [contact]});
+    },
+
+    _onContactRemoved: function(contact)
+    {
+        delete this.contacts[contact.jid.normalizedJID];
+        this.modelUpdated("contacts", {removed: [contact]});
     },
 
     _onGatewayAdded: function(gateway)
@@ -222,7 +258,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         iq.setIQ(null, 'set');
         iq.getNode().appendChild(E4XtoDOM(vcardE4X, iq.getDoc()));
 
-        con.send(iq);
+        account.connection.send(iq);
         this._storeXMPPData("_vCardAccessorState", null, this._handleVCard, iq);
     },
 
@@ -316,7 +352,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             callback = new Callback(this._changePasswordResult, this).
                 addArgs(callback, password).fromCall();
 
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     _changePasswordResult: function(callback, password, pkt)
@@ -457,35 +493,35 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var args = {
             httpbase: httpbase,
             oDbg: {log: function(a) {
+                //dump(a+"\n");
                 if (!account.jsjacDebug)
                     return
                 window.console ? console.info(a) : dump(a+"\n")
             }},
             timerval: 2000};
 
-        var con;
         switch (this.connectionInfo.type) {
 // #ifdef XULAPP
             case "native":
-                con = new JSJaCMozillaConnection(args);
+                account.connection = new JSJaCMozillaConnection(args);
                 break;
 // #endif
             case "http-bind":
-                con = new JSJaCHttpBindingConnection(args);
+                account.connection = new JSJaCHttpBindingConnection(args);
                 break;
             default:
-                con = new JSJaCHttpPollingConnection(args);
+                account.connection = new JSJaCHttpPollingConnection(args);
         }
 
-        con.registerHandler("message", function(p){account.onMessage(p)});
-        con.registerHandler("presence", function(p){account.onPresence(p)});
-        con.registerHandler("iq", function(p){account.onIQ(p)});
-        con.registerHandler("onconnect", function(p){account.onConnect(p)});
-        con.registerHandler("ondisconnect", function(p){account.onDisconnect(p)});
-        con.registerHandler("onerror", function(p){account.onError(p)});
-        con.registerHandler("status_changed", function(p){account.onStatusChanged(p)});
+        account.connection.registerHandler("message", function(p){account.onMessage(p)});
+        account.connection.registerHandler("presence", function(p){account.onPresence(p)});
+        account.connection.registerHandler("iq", function(p){account.onIQ(p)});
+        account.connection.registerHandler("onconnect", function(p){account.onConnect(p)});
+        account.connection.registerHandler("ondisconnect", function(p){account.onDisconnect(p)});
+        account.connection.registerHandler("onerror", function(p){account.onError(p)});
+        account.connection.registerHandler("status_changed", function(p){account.onStatusChanged(p)});
 // #ifdef DEBUG
-        con.registerHandler("onexception", function(e){alert(exceptionToString(e))});
+        account.connection.registerHandler("onexception", function(e){alert(exceptionToString(e))});
 // #endif
 
         if (this.connectionInfo.user)
@@ -502,9 +538,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 resource: prefManager.getPref("chat.connection.resource") +
                     this.mucMode ? "MUC":"" };
 
-        self.con = con;
-        this.modelUpdated("con");
-        con.connect(args);
+        this.modelUpdated("account.connection");
+        account.connection.connect(args);
     },
 
     disconnect: function()
@@ -533,10 +568,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 node2.setAttribute("profile", presence.profile.name);
 
             node.appendChild(node2);
-            con.send(iq);
+            account.connection.send(iq);
         }
 
-        window.con.disconnect();
+        window.account.connection.disconnect();
     },
 
     onConnect: function()
@@ -545,13 +580,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             var pkt = new JSJaCIQ();
             pkt.setIQ(null, 'get');
             pkt.setQuery('jabber:iq:roster');
-            con.send(pkt, this._initialRosterFetch, this);
+            account.connection.send(pkt, this._initialRosterFetch, this);
         }
 
         this.connected = true;
         this.connectedAt = new Date();
 
-        this.myJID = new JID(con.fulljid);
+        this.myJID = new JID(account.connection.fulljid);
         this.jid = new JID(this.myJID.domain);
 
         if (this.mucMode) {
@@ -597,7 +632,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                                     "auto");
                                 auto.setAttribute("save", "true");
                                 pkt.getNode().appendChild(auto);
-                                con.send(pkt);
+                                account.connection.send(pkt);
                             });
         this.hasDiscoFeature("http://oneteam.im/invitations", false,
                              function(account, val) {
@@ -614,7 +649,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var query = iq.setQuery("jabber:iq:private");
         var node = query.appendChild(iq.getDoc().createElementNS("oneteam:presence", "presence"));
 
-        con.send(iq, new Callback(this._gotSavedPresence, this));
+        account.connection.send(iq, new Callback(this._gotSavedPresence, this));
     },
 
     _gotSavedPresence: function(pkt)
@@ -706,9 +741,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.connected = false;
         this.connectionInitialized = false;
-        self.con = null;
+        account.connection = null;
 
-        this.modelUpdated("con", null, "connected", null, "connectionInitialized");
+        this.modelUpdated("account.connection", null, "connected", null, "connectionInitialized");
 
         var groups = this.groups;
         var conferences = this.conferences;
@@ -915,5 +950,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     }
 }
 
-account = new Account();
+var account = new Account();
+
 //account.showConsole();

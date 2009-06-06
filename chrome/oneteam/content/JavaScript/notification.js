@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["NotificationScheme"];
+
 function NotificationScheme()
 {
     this._top = Infinity;
@@ -127,17 +129,12 @@ _DECL_(NotificationScheme).prototype =
     {
         if (this._top < 150 || this._wins.length > 8)
             return this._nopCanceler;
-
-        var p = arguments.callee;
-        while (p.caller && p != p.caller)
-            p = p.caller;
-
         return {
-            win: window.openDialog("../content/notifications.xul",
+            win: window.openDialog("chrome://oneteam/content/notifications.xul",
                                    "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
                                    ",screenX="+window.screen.availWidth+
                                    ",screenY="+window.screen.availHeight,
-                                   this, title, msg, icon, clickHandler, p.__parent__, animation),
+                                   this, title, msg, icon, clickHandler, findCallerWindow(), animation),
             cancel: function() {
                 try {
                     this.win.close();

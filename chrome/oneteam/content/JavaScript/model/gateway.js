@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["checkIfGateway", "Gateway"];
+
 function checkIfGateway(contact)
 {
     if (!(contact instanceof Contact))
@@ -62,7 +64,7 @@ _DECL_(Gateway, Contact).prototype =
             var iq = new JSJaCIQ();
             iq.setIQ(this.jid, "get");
             iq.setQuery('jabber:iq:gateway');
-            con.send(iq, new Callback(this._mapNameFormRecv, this).
+            account.connection.send(iq, new Callback(this._mapNameFormRecv, this).
                      addArgs(callback).fromCall());
             return;
         }
@@ -100,7 +102,7 @@ _DECL_(Gateway, Contact).prototype =
         iq.setIQ(this.jid, "set");
         iq.setQuery('jabber:iq:gateway').
             appendChild(E4XtoDOM(payload, iq.getDoc()));
-        con.send(iq, new Callback(this._mapNameRecv, this).
+        account.connection.send(iq, new Callback(this._mapNameRecv, this).
                      addArgs(callback).fromCall());
     },
 

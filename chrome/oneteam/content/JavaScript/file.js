@@ -1,3 +1,11 @@
+var EXPORTED_SYMBOLS = ["CharsetConverter", "detectXMLCharset",
+						"convertCharsetOfXMLData", "CharsetConvertError",
+						"Reader", "IOError", "File", "slurpFile",
+						"makeDataUrlFromFile"];
+
+ML.importMod("roles.js");
+ML.importMod("exceptions.js");
+
 /**
  * Converts strings between unicode and other encoding schemes.
  *
@@ -75,7 +83,7 @@ _DECL_(CharsetConverter).prototype =
             }
         }
         return data;
-    },
+    }
 }
 
 /**
@@ -705,14 +713,20 @@ _DECL_(File, Reader).prototype =
         } catch (ex) {
             throw new IOError("File.remove: Unable to create directory", ex);
         }
-    },
+    }
 }
 
 function slurpFile()
 {
-    var file = eval("new File("+Array.join(Array.map(arguments,function(a,i){
+    var file = eval("new Reader("+Array.join(Array.map(arguments,function(a,i){
         return "arguments["+i+"]"}), ",")+")");
 
     file.open(null, 1);
     return file.read();
+}
+
+function makeDataUrlFromFile()
+{
+	var data = slurpFile.apply(null, arguments);
+	return "data:image/png;base64,"+btoa(data)
 }

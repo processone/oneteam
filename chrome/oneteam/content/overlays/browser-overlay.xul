@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<overlay id="oneteamBrowserOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <menupopup id="viewSidebarMenu">
+    <menuitem key="key_showOneteam" observes="showOneteam" />
+  </menupopup>
+
+  <keyset id="mainKeyset">
+    <key id="key_showOneteam" command="showOneteam2"/>
+  </keyset>
+
+  <broadcasterset id="mainBroadcasterSet">
+    <broadcaster id="showOneteam"
+                 label="_('OneTeam')"
+                 autoCheck="false"
+                 type="checkbox"
+                 group="sidebar"
+                 sidebarurl="chrome://oneteam/content/main.xul"
+                 sidebartitle="_('OneTeam')"
+                 oncommand="toggleSidebar('showOneteam');" />
+  </broadcasterset>
+</overlay>

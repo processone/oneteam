@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["TreeView"];
+
 function TreeView(tree, dataModel, noNaturalOrder) {
     this.wrappedJSObject = this;
     this._tree = tree;

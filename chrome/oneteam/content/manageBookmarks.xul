@@ -13,8 +13,10 @@
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return saveBookmarks()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var selectedItem;
     var textBoxes = {};
     var removedItems = [];
@@ -26,7 +28,7 @@
       for each (var id in "name room server nick pass autoJoin".split(/ /)) {
         textBoxes[id] = document.getElementById(id);
       }
-      var bookmarks = window.opener.account.bookmarks.bookmarks;
+      var bookmarks = account.bookmarks.bookmarks;
       for (var i = 0; i < bookmarks.length; i++) {
         var item = list.appendItem(bookmarks[i].bookmarkName);
         item.model = bookmarks[i];
@@ -78,19 +80,19 @@
     {
       roomChange(list);
 
-      window.opener.account.bookmarks.startBatchUpdate();
+      account.bookmarks.startBatchUpdate();
 
       for (var i = 0; i < removedItems.length; i++)
         removedItems[i].bookmark();
       for (i = 0; i < list.childNodes.length; i++) {
         var item = list.childNodes[i];
-        var conference = window.opener.account.
+        var conference = account.
           getOrCreateConference(item["val-room"]+"@"+item["val-server"]);
 
         conference.bookmark(item["label"], item["val-autoJoin"],
                             item["val-nick"] || null, item["val-pass"] || null);
       }
-      window.opener.account.bookmarks.stopBatchUpdate();
+      account.bookmarks.stopBatchUpdate();
 
       return true;
     }
@@ -167,7 +169,7 @@
               this.value == '' ?
                 (this.errortext=_('Bookmark name can\'t be empty'), false) :
               (!selectedItem || !selectedItem.model || selectedItem.model.bookmarkName != this.value) &amp;&amp;
-                  window.opener.account.bookmarks.getBookmarkByName(this.value) ?
+                  account.bookmarks.getBookmarkByName(this.value) ?
                 (this.errortext=_('Bookmark with that name already exists'), false) : true"/>
           </row>
 

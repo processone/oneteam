@@ -14,11 +14,14 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+    ML.importMod("dataforms.js");
+
     var contact = window.arguments[0];
-    var generateXULFromDataForm = window.opener.generateXULFromDataForm;
-    var buildResponseDataFormFromXUL = window.opener.buildResponseDataFormFromXUL;
+    var generateXULFromDataForm = generateXULFromDataForm;
+    var buildResponseDataFormFromXUL = buildResponseDataFormFromXUL;
 
     var initialized = false;
     var sessionid, id, form, canGoBack, canGoForward;
@@ -36,7 +39,7 @@
       wizard.canAdvance = false;
 
       if (!initialized) {
-        var di = new window.opener.DiscoItem(contact.jid, null, "http://jabber.org/protocol/commands");
+        var di = new DiscoItem(contact.jid, null, "http://jabber.org/protocol/commands");
         di.getDiscoItems(true, onDiscoItems);
         initialized = true;
 
@@ -122,10 +125,10 @@
       if (form)
         response.* += buildResponseDataFormFromXUL(form);
 
-      var iq = new window.opener.JSJaCIQ();
+      var iq = new JSJaCIQ();
       iq.setIQ(contact.jid, "set", id);
-      iq.getNode().appendChild(window.opener.E4XtoDOM(response, iq.getDoc()))
-      window.opener.con.send(iq, onForm);
+      iq.getNode().appendChild(E4XtoDOM(response, iq.getDoc()))
+      account.connection.send(iq, onForm);
     }
 
     function onDiscoItems(di, items) {
@@ -164,7 +167,7 @@
         return;
       }
 
-      var cmd = window.opener.DOMtoE4X(pkt.getNode().getElementsByTagName("command")[0]);
+      var cmd = DOMtoE4X(pkt.getNode().getElementsByTagName("command")[0]);
       if (cmd.@status == "executing") {
         sessionid = cmd.@sessionid.toString();
         id = pkt.getID();

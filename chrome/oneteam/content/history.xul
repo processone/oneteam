@@ -8,22 +8,13 @@
     onload="onLoad()" onunload="onUnload()" persist="width height" windowtype="ot:history"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/dateutils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/colorutils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/modeltypes.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/treeview.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/model/messages.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/exceptions.js"/>
-
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
-    JID = window.opener.JID;
-    MessagesThread = window.opener.MessagesThread;
-    Message = window.opener.Message;
-    account = window.opener.account;
-    prefManager = window.opener.prefManager;
+    ML.importMod("model/account.js");
+    ML.importMod("treeview.js");
+    ML.importMod("colorutils.js");
+    ML.importMod("dateutils.js");
+
     contact = window.arguments && window.arguments[0];
 
     var dataModel = {
@@ -72,7 +63,7 @@
     var searchThreads, searchMessages;
     var contactsList, contactsThreads, contactsMessages;
     var conferencesList, conferencesThreads, conferencesMessages;
-    var regToken = new window.opener.RegistrationToken();
+    var regToken = new RegistrationToken();
 
     function onLoad() {
 // #ifdef XULAPP

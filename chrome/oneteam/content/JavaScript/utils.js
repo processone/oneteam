@@ -1,13 +1,23 @@
+var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
+                        "linkEventsRedirector", "openDialogUniq", "openLink",
+                        "pickFile", "closeAllWindows", "StorageWrapper",
+                        "Callback", "CallbacksList", "RegistrationToken",
+                        "Comparator", "NotificationsCanceler", "xmlEscape",
+                        "unescapeJS", "generateRandomName", "generateUniqueId",
+                        "perlSplit", "report", "Animator"];
+
+ML.importMod("roles.js");
+
 function E4XtoDOM(xml, targetDoc)
 {
-    var dp = new DOMParser();
+    var dp = new DOMParser(null, null, null);
     var el = dp.parseFromString("<x>"+xml.toXMLString()+"</x>", "text/xml").documentElement;
     var els = el.childNodes;
 
     // adoptNode throws exception on gecko 1.8
     if (els.length == 1)
         try {
-            return targetDoc ? targetDoc.adoptNode(els[0]) : els[0];
+            return targetDoc ? targetDoc.importNode(els[0],true) : els[0];
         } catch (ex) {
             return els[0];
         }
@@ -91,6 +101,7 @@ function openDialogUniq(type, url, flags)
 
     if (!win) {
         var args = [url, "_blank"].concat(Array.slice(arguments, 2));
+        args[2] = "resizable=yes"+(flags ? ","+flags : "");
         return window.openDialog.apply(window, args);
     }
 
@@ -100,12 +111,26 @@ function openDialogUniq(type, url, flags)
 
 function openLink(uri)
 {
+//#ifdef XPI
+    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+        getService(Components.interfaces.nsIWindowMediator);
+    browser = wm.getMostRecentWindow("navigator:browser");
+
+    if (browser) {
+        browser.getBrowser().addTab(uri, null, null);
+        return false;
+    }
+
+    open(uri, "_blank");
+
+/*#else
     var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
                     .getService(Components.interfaces.nsIIOService);
     var uriToOpen = ioservice.newURI(uri, null, null);
     var extps = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
                     .getService(Components.interfaces.nsIExternalProtocolService);
     extps.loadURI(uriToOpen, null);
+//#endif*/
 }
 
 function pickFile(title, forSave, filters, path, win)
@@ -560,6 +585,34 @@ function generateUniqueId()
     return "uid"+(arguments.callee.value = arguments.callee.value+1 || 0);
 }
 
+function perlSplit(str, split, limit) {
+    if (limit == null || limit <= 0)
+        return str.split(split, limit);
+
+    var res = [];
+    var idx = 0;
+    if (typeof(split) == "string") {
+        for (; limit > 1; limit--) {
+            var nidx = str.indexOf(split, idx);
+            if (nidx < 0)
+                break;
+            res.push(str.substring(idx, nidx));
+            idx = nidx += split.length;
+        }
+        res.push(str.substring(idx));
+    } else {
+        var rx = new RegExp(split.source, "g"), s;
+        for (; limit > 1 && (s = rx(str)); limit--) {
+            alert(rx+", "+s);
+            alert(idx+", "+rx.lastIndex+", "+s.length);
+            res.push(str.substring(idx, rx.lastIndex - s[0].length));
+            idx = rx.lastIndex;
+        }
+        res.push(str.substring(idx));
+    }
+    return res;
+}
+
 function report(to, level, info, context)
 {
     function inspect(object) {
@@ -614,7 +667,7 @@ function report(to, level, info, context)
                 msg += dumpStack(null, "    ");
             }
 
-            if (context) {
+            if (0 && context) {
                 msg += "E CONTEXT:\n";
                 msg += inspect(context);
             }

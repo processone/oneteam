@@ -1,3 +1,7 @@
+var EXPORTED_SYMBOLS = ["DiscoCacheEntry", "DiscoItem", "cleanDiscoCache"];
+
+ML.importMod("roles.js");
+
 function DiscoCacheEntry(jid, node, isCapsNode)
 {
     if (isCapsNode) {
@@ -43,7 +47,7 @@ _DECL_(DiscoCacheEntry).prototype =
                 iq.setQuery("http://jabber.org/protocol/disco#info");
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);
-                con.send(iq, function(pkt, _this) { _this._gotDiscoInfo(pkt) }, this);
+                account.connection.send(iq, function(pkt, _this) { _this._gotDiscoInfo(pkt) }, this);
                 this.discoInfoCallbacks = [[returnType, callback, discoItem]];
             } else
                 this.discoInfoCallbacks.push([returnType, callback, discoItem]);
@@ -68,7 +72,7 @@ _DECL_(DiscoCacheEntry).prototype =
                 iq.setQuery("http://jabber.org/protocol/disco#items");
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);
-                con.send(iq, function(pkt, _this) { _this._gotDiscoItems(pkt) }, this);
+                account.connection.send(iq, function(pkt, _this) { _this._gotDiscoItems(pkt) }, this);
                 this.discoItemsCallbacks = [[callback, discoItem]];
             } else
                 this.discoItemsCallbacks.push([callback, discoItem]);

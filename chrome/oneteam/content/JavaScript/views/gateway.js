@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["GatewaysMenuView", "GatewaysToolbarButtons"];
+
 function GatewaysMenuView(menuItem)
 {
     this.containerNode = menuItem.firstChild;

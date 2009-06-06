@@ -1,3 +1,7 @@
+var EXPORTED_SYMBOLS = ["l10nFormatService", "_"];
+
+ML.importMod("roles.js");
+
 var l10nFormatService = {
     _formatStringCache: { },
 

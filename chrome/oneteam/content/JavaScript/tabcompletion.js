@@ -1,3 +1,10 @@
+var EXPORTED_SYMBOLS = ["DataCompletionEngine", "CommandCompletionEngine",
+                        "CompletionEngine", "ContactCompletionEngine",
+                        "ConferenceCompletionEngine", "NickCompletionEngine",
+                        "JoinCommand", "InviteCommand", "InviteByMailCommand",
+                        "InviteToCommand", "NickCommand", "TopicCommand",
+                        "LeaveCommand", "KickCommand", "BanCommand"];
+
 function DataCompletionEngine()
 {
 }

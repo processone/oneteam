@@ -1,10 +1,8 @@
-/**
- *
- * @tparam    obj
- * @tparam    parent
- *
- * @treturn
- */
+var EXPORTED_SYMBOLS = ["_DECL_", "_DECL_NOW_", "does", "lookupForParentMethod",
+                        "META", "WALK"];
+
+//ML.importMod("exceptions.js");
+
 function _DECL_(obj, parent)
 {
     obj.watch("prototype", setProtoAndMix);
@@ -104,7 +102,7 @@ function setPrototype(obj, oldProto, newProto)
 }
 
 function checkReqs(obj, roleName, reqs, proto, result, mixedProps)
-{
+{try{
     var nmReqs = [];
     for (var i = 0; i < reqs.length; i++) {
         if (reqs[i] instanceof Array) {
@@ -128,6 +126,7 @@ function checkReqs(obj, roleName, reqs, proto, result, mixedProps)
     }
     if (nmReqs.length)
         result.push({name: roleName, reqs: nmReqs});
+}catch(ex){dump(exceptionToString(ex)+"\n")}
 }
 
 function mixProto(cons, exclusions, aliases, objProto, mixedProps,
@@ -239,9 +238,12 @@ function lookupForParentMethod(obj, fun)
 }
 
 var META = {
-    set after(after) {
+    after: function(after) {
         var fun = function() {
             var [name, parent] = lookupForParentMethod(this, arguments.callee);
+
+            if (!parent && this.__proto__[name])
+                parent = "this.__proto__["+uneval(name)+"]";
 
             this[name] = parent ?
                 new Function("", "var ret="+parent+".apply(this, arguments);"+
@@ -253,11 +255,15 @@ var META = {
 
         fun.after = after;
         return fun;
+
     },
 
-    set before(before) {
+    before: function(before) {
         var fun = function() {
             var [name, parent] = lookupForParentMethod(this, arguments.callee);
+
+            if (!parent && this.__proto__[name])
+                parent = "this.__proto__["+uneval(name)+"]";
 
             this[name] = parent ?
                 new Function("", "arguments.callee.before.apply(this, arguments);"+

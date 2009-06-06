@@ -10,8 +10,10 @@
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return onAccept();">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var messages;
     var listControl, typeControl, textControl;
 
@@ -20,7 +22,7 @@
       typeControl = document.getElementById("presenceType");
       textControl = document.getElementById("statusText");
 
-      messages = window.opener.account.cache.getValue("statusMessages");
+      messages = account.cache.getValue("statusMessages");
 
       if (messages) {
         messages = messages.split(/\n/);
@@ -55,12 +57,12 @@
         messages.push(textControl.value.replace(/^\s+|\s+$/g, ""));
         for (var i = 0; i < messages.length; i++)
           messages[i] = messages[i].replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
-        window.opener.account.cache.setValue("statusMessages", messages.join("\n"));
+        account.cache.setValue("statusMessages", messages.join("\n"));
       }
-      var profile = window.opener.account.userPresence;
+      var profile = account.userPresence;
       profile = profile && profile.profile;
 
-      window.opener.account.setPresence(typeControl.value, textControl.value, null, profile, true);
+      account.setPresence(typeControl.value, textControl.value, null, profile, true);
 
       return true;
     }

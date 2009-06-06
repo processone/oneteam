@@ -14,8 +14,10 @@
   ondialogaccept="return acceptInvitation()" ondialogcancel="return declineInvitation()"
   onload="onLoad()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var [conference, by, reason] = window.arguments;
 
     function onLoad()
@@ -31,7 +33,7 @@
     function acceptInvitation()
     {
       window.opener.setTimeout(function(a,c){a.onJoinRoom(c)}, 100,
-                               window.opener.account, conference);
+                               account, conference);
       return true;
     }
 

@@ -12,8 +12,10 @@
   buttonlabelaccept="Join Room" buttonlabelcancel="_('Cancel')"
   onload="onLoad()" ondialogaccept="return joinRoom()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var [conference, errorCode, errorMsg] = window.arguments;
     var nick, password;
 

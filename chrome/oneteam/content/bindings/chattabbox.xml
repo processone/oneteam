@@ -540,7 +540,7 @@
           this._syncTabColor();
           this._onNameChange();
 
-          return val;
+          return this._tabbox.unseenCount;
         ]]></body>
       </method>
     </implementation>

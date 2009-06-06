@@ -1,3 +1,10 @@
+var EXPORTED_SYMBOLS = ["Conference", "ConferenceMember", "ConferenceBookmarks"];
+
+ML.importMod("roles.js");
+ML.importMod("utils.js");
+ML.importMod("modeltypes.js");
+ML.importMod("tabcompletion.js");
+
 function Conference(jid)
 {
     this.init();
@@ -25,7 +32,7 @@ _DECL_(Conference, Contact).prototype =
 
     _sendPresence: function(presence)
     {
-        if (!con)
+        if (!account.connection)
             return;
 
         var pkt = presence.generatePacket(this._myResourceJID || this.myResource.jid);
@@ -39,7 +46,7 @@ _DECL_(Conference, Contact).prototype =
                     appendChild(pkt.getDoc().createTextNode(this._password));
         }
 
-        con.send(pkt);
+        account.connection.send(pkt);
     },
 
     bookmark: function(bookmarkName, autoJoin, nick, password, internal)
@@ -167,7 +174,7 @@ _DECL_(Conference, Contact).prototype =
         node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
             appendChild(pkt.getDoc().createTextNode(reason || "Please join that room"));
 
-        con.send(pkt);
+        account.connection.send(pkt);
     },
 
     onInviteByMail: function()
@@ -189,7 +196,7 @@ _DECL_(Conference, Contact).prototype =
             node.setAttribute("email", email);
             node.setAttribute("url", url);
             node.setAttribute("nick", this.myResource.jid.resource);
-            con.send(iq);
+            account.connection.send(iq);
         } else {
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
                      encodeURIComponent(_("Invitation into {0} conference", this.jid.toUserString()))+
@@ -215,7 +222,7 @@ _DECL_(Conference, Contact).prototype =
         node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
             appendChild(pkt.getDoc().createTextNode(reason || "Sorry i can't join now"));
 
-        con.send(pkt);
+        account.connection.send(pkt);
     },
 
     onRoomConfiguration: function()
@@ -229,7 +236,7 @@ _DECL_(Conference, Contact).prototype =
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, "get");
         iq.setQuery("http://jabber.org/protocol/muc#owner");
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     changeRoomConfiguration: function(payload)
@@ -238,7 +245,7 @@ _DECL_(Conference, Contact).prototype =
         iq.setIQ(this.jid, "set");
         iq.setQuery("http://jabber.org/protocol/muc#owner").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
-        con.send(iq);
+        account.connection.send(iq);
     },
 
     destroyRoom: function(alternateRoom, reason)
@@ -254,7 +261,7 @@ _DECL_(Conference, Contact).prototype =
         if (reason)
             destroy.appendChild(iq.getDoc().createElementNS(ns, reason)).
                 appendChild(iq.getDoc().createTextNode(reason));
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     onEditPermissions: function()
@@ -273,7 +280,7 @@ _DECL_(Conference, Contact).prototype =
         query.appendChild(iq.getDoc().createElementNS(ns, "item")).
             setAttribute("affiliation", affiliation);
 
-        con.send(iq, new Callback(this._requestUsersListCb, this).
+        account.connection.send(iq, new Callback(this._requestUsersListCb, this).
                         addArgs(callback).fromCall());
     },
 
@@ -309,7 +316,7 @@ _DECL_(Conference, Contact).prototype =
         iq.setIQ(this.jid, "set");
         iq.setQuery("http://jabber.org/protocol/muc#admin").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
-        con.send(iq);
+        account.connection.send(iq);
     },
 
     onBookmark: function()
@@ -342,7 +349,7 @@ _DECL_(Conference, Contact).prototype =
         message.setType("groupchat");
         msg.fillPacket(message);
 
-        con.send(message);
+        account.connection.send(message);
     },
 
     changeSubject: function(subject)
@@ -352,7 +359,7 @@ _DECL_(Conference, Contact).prototype =
         message.setType("groupchat");
         message.setSubject(subject)
 
-        con.send(message);
+        account.connection.send(message);
     },
 
     onChangeSubject: function()
@@ -494,9 +501,10 @@ _DECL_(Conference, Contact).prototype =
         if (!pkt.getBody() || (new JID(pkt.getFrom())).resource)
             account.notificationScheme.show("muc", "subjectChange", this, jid);
         else if (this.chatPane && !this.chatPane.closed)
-            this.chatPane.addMessage(new Message(pkt.getBody(), null, this, 4));
+            this.chatPane.thread.addMessage(new Message(pkt.getBody(), null, this, 4));
 
         this.modelUpdated("subject");
+
         return false;
     },
 
@@ -583,7 +591,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
                 appendChild(iq.getDoc().createTextNode(reason));
         iq.setQuery(ns).appendChild(item);
 
-        con.send(iq);
+        account.connection.send(iq);
     },
 
     setRole: function(role, reason)
@@ -606,7 +614,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
                 appendChild(iq.getDoc().createTextNode(reason));
         iq.setQuery(ns).appendChild(item);
 
-        con.send(iq);
+        account.connection.send(iq);
     },
 
     showVCard: function()
@@ -783,7 +791,7 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
                 bookmark.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "password")).
                     appendChild(iq.getDoc().createTextNode(this.bookmarks[i].bookmarkPassword));
         }
-        con.send(iq);
+        account.connection.send(iq);
     },
 
     _clean: function()
@@ -799,7 +807,7 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         iq.setType("get");
         query = iq.setQuery("jabber:iq:private");
         query.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "storage"));
-        con.send(iq, new Callback(this.onBookmarkRetrieved, this));
+        account.connection.send(iq, new Callback(this.onBookmarkRetrieved, this));
     },
 
     onBookmarkRetrieved: function(pkt)

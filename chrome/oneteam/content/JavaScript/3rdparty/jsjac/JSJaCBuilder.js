@@ -36,6 +36,7 @@
  * For details, see the script.aculo.us web site:
  * http://script.aculo.us/<br>
  */
+
 var JSJaCBuilder = {
   /**
    * @private

@@ -9,8 +9,11 @@
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/console.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+    ML.importMod("console.js");
+  ]]></script>
 
   <vbox flex="1">
     <hbox pack="center">

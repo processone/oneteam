@@ -4,6 +4,7 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
+<?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
 
 <dialog id="preferences" windowtype="ot:preferences" title="_('Preferences')"
   width="600" height="500"
@@ -12,8 +13,10 @@
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel" onload="onLoad()" ondialogaccept="return savePrefs()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     function enableDisableAutoAway(event)
     {
       var el = event.target;
@@ -23,7 +26,7 @@
     }
 
     function onLoad() {
-      var style = window.opener.account.style;
+      var style = account.style;
 
       var iconContainer = document.getElementById("statusIconSet");
       for (var i = 0; i < style.statusIcons.length; i++)
@@ -42,14 +45,14 @@
       var prefElems = document.getElementsByAttribute("pref", "*");
       for (i = 0; i < prefElems.length; i++) {
         var pref = prefElems[i].getAttribute("pref").split(/[=:]/);
-        var val = window.opener.prefManager.getPref(pref[0]);
+        var val = prefManager.getPref(pref[0]);
         if (pref[2] == "int") {
             prefElems[i].setAttribute("regex", "^\\d+$");
             prefElems[i].setAttribute("errortext", _("Please enter number"));
             //prefElems[i].setAttribute("type", "verifiable");
         }
         prefElems[i][pref[1]] = val == null ? "" : val;
-        if (window.opener.prefManager.builtinPref(pref[0]))
+        if (prefManager.builtinPref(pref[0]))
           prefElems[i].disabled = true;
       }
 
@@ -57,12 +60,12 @@
       for (i = 0; i < prefElems.length; i++) {
         var prefSetter = prefElems[i].getAttribute("prefSet");
         var prefName = prefElems[i].getAttribute("prefName")
-        var val = window.opener.prefManager.getPref(prefName);
+        var val = prefManager.getPref(prefName);
         try {
         eval("(function(){"+prefSetter+"}).call(__element__)",
              {__element__: prefElems[i], __value__: val == null ? "" : val});
         } catch(ex){}
-        if (window.opener.prefManager.builtinPref(pref[0]))
+        if (prefManager.builtinPref(pref[0]))
           prefElems[i].disabled = true;
       }
       switchHTTPOptions(document.getElementById("protocol"));
@@ -115,7 +118,7 @@
       }
 
       for (i = 0; i < valsToSet.length; i++)
-        window.opener.prefManager.setPref(valsToSet[i][0], valsToSet[i][1])
+        prefManager.setPref(valsToSet[i][0], valsToSet[i][1])
 
       return true;
     }

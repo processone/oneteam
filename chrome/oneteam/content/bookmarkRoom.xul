@@ -13,8 +13,10 @@
   buttons="accept,cancel"
   ondialogaccept="return bookmarkRoom()" onload="onLoad()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var conference = window.arguments && window.arguments[0];
     var conf;
 
@@ -34,18 +36,18 @@
         room.disabled = room.previousSibling.disabled =
         server.disabled = server.previousSibling.disabled = true;
       } else {
-        server.value = window.opener.account.defaultConferenceServer || "";
+        server.value = account.defaultConferenceServer || "";
       }
 
       document.getElementById('nick').value =
-        window.opener.prefManager.getPref('chat.muc.nickname');
+        prefManager.getPref('chat.muc.nickname');
     }
 
     function bookmarkRoom() {
       conf = conference;
 
       if (!conference)
-        conf = window.opener.account.getOrCreateConference(room.value+"@"+server.value);
+        conf = account.getOrCreateConference(room.value+"@"+server.value);
 
       conf.bookmark(bookmarkName.value || conf.jid.node, false, nick.value, password.value);
 
@@ -91,7 +93,7 @@
         <textbox id="bookmarkName" type="verifiable" condition="
           this.value == '' ?
             (this.errortext=_('Bookmark name can\'t be empty'), false) :
-          !conference &amp;&amp; window.opener.account.bookmarks.getBookmarkByName(this.value) ?
+          !conference &amp;&amp; account.bookmarks.getBookmarkByName(this.value) ?
             (this.errortext=_('Bookmark with that name already exists'), false) : true"/>
       </row>
     </rows>

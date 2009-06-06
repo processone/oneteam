@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/command/command.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
+
+<window id="ot:chats" title="_('Chats')"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  width="640" height="480"
+  screenX="10" screenY="10"
+  onload="onLoad()" onunload="onUnload()"
+  persist="screenX screenY width height sizemode">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
+  <script type="application/x-javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+    ML.importMod("utils.js");
+    ML.importMod("dateutils.js");
+    ML.importMod("colorutils.js");
+
+    function onLoad() {
+      window.arguments[0]._onChatWindowOpened();
+    }
+
+    function onUnload() {
+      window.arguments[0]._onChatWindowClosed();
+    }
+  ]]></script>
+
+  <vbox flex="1">
+    <chattabbox id="chats" flex="1"/>
+  </vbox>
+</window>

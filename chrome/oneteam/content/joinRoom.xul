@@ -13,8 +13,10 @@
   buttons="accept,cancel"
   onunload="cleanup()" ondialogaccept="return joinRoom()" onload="onLoad()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var conference = window.arguments && window.arguments[0];
     var conf;
 
@@ -24,12 +26,12 @@
       for each (i in "room server nick password bookmark bookmarkName progressmeter autoJoin".split(" "))
         eval(i+" = document.getElementById("+uneval(i)+")");
 
-      if (conference instanceof window.opener.Conference) {
+      if (conference instanceof Conference) {
         room.value = conference.jid.node;
         server.value = conference.jid.domain;
         nick.value = conference.bookmarkNick ||
-          window.opener.prefManager.getPref('chat.muc.nickname') ||
-          window.opener.account.myJID.node;
+          prefManager.getPref('chat.muc.nickname') ||
+          account.myJID.node;
         password.value = conference.bookmarkPassword || "";
 
         bookmarkName.value = conference.bookmarkName || "";
@@ -38,16 +40,16 @@
         room.disabled = room.previousSibling.disabled =
             server.disabled = server.previousSibling.disabled = true;
       } else {
-        server.value = conference || window.opener.account.defaultConferenceServer || "";
-        nick.value = window.opener.prefManager.getPref('chat.muc.nickname') ||
-            window.opener.account.myJID.node;
+        server.value = conference || account.defaultConferenceServer || "";
+        nick.value = prefManager.getPref('chat.muc.nickname') ||
+            account.myJID.node;
         conference = null;
       }
     }
 
     function joinRoom() {
-      conf = conference || window.opener.account.getOrCreateConference(
-        new window.opener.JID(room.value, server.value));
+      conf = conference || account.getOrCreateConference(
+        new JID(room.value, server.value));
 
       if (bookmark.checked)
         conf.bookmark(bookmarkName.value, autoJoin.checked, nick.value, password.value);

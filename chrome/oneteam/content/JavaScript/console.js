@@ -34,24 +34,24 @@ var handlers =
 
     onModelUpdated: function()
     {
-        if (window.opener.con) {
-            window.opener.con.registerHandler("packet_in", this.onPacketSend);
-            window.opener.con.registerHandler("packet_out", this.onPacketRecv);
+        if (window.opener.account.connection) {
+            window.opener.account.connection.registerHandler("packet_in", this.onPacketSend);
+            window.opener.account.connection.registerHandler("packet_out", this.onPacketRecv);
         }
     },
 
     register: function()
     {
-        this._token = window.opener.account.registerView(this.onModelUpdated, this, "con");
+        this._token = window.opener.account.registerView(this.onModelUpdated, this, "account.connection");
         this.onModelUpdated();
     },
 
     unregister: function()
     {
         window.opener.account.unregisterView(this._token);
-        if (window.opener.con) {
-            window.opener.con.unregisterHandler("packet_in", this.onPacketSend);
-            window.opener.con.unregisterHandler("packet_out", this.onPacketRecv);
+        if (window.opener.account.connection) {
+            window.opener.account.connection.unregisterHandler("packet_in", this.onPacketSend);
+            window.opener.account.connection.unregisterHandler("packet_out", this.onPacketRecv);
         }
     }
 };
@@ -124,12 +124,12 @@ function sendToServer() {
         firstChild.firstChild;
 
     if (intoInput.checked)
-        if (window.opener.con._handleElement)
-            window.opener.con._handleElement(node);
+        if (window.opener.account.connection._handleElement)
+            window.opener.account.connection._handleElement(node);
         else
-            window.opener.con._inQ.push(node);
+            window.opener.account.connection._inQ.push(node);
     else
-        window.opener.con.send(window.opener.JSJaCPacket.wrapNode(node));
+        window.opener.account.connection.send(window.opener.JSJaCPacket.wrapNode(node));
 
     inputEditor.value = "";
 }

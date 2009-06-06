@@ -261,6 +261,10 @@
     var val;
     if (!win)
       win = window;
+
+    if (win.wrappedJSObject)
+      win = win.wrappedJSObject;
+
     try {
       win.__CONSOLE_ARGS__ = {
         scope: {
@@ -272,7 +276,7 @@
       };
 
       val = win.eval("with(__CONSOLE_ARGS__.scope){(function(){"+
-        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}");
+        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", win);
       return {result: val};
     } catch (ex) {
       return {exception: ex}

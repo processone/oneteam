@@ -14,17 +14,16 @@
   ondialogaccept="return acceptFileTransfer()" ondialogcancel="return rejectFileTransfer()"
   onload="onLoad()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/roles.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/utils.js"/>
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
-
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var [fileTransfer, fileName] = window.arguments;
 
     function onLoad()
     {
       document.getElementById("msg").innerHTML =
-        _("<b>{0}</b> wants to send you file", window.opener.xmlEscape(fileTransfer.jid.toUserString()));
+        _("<b>{0}</b> wants to send you file", xmlEscape(fileTransfer.jid.toUserString()));
 
       document.getElementById("name").value = fileName;
 
@@ -42,7 +41,7 @@
     function acceptFileTransfer()
     {
 //#ifdef XULAPP
-      var path = window.opener.pickFile(_("Select a File"), true, "", fileName, window);
+      var path = pickFile(_("Select a File"), true, "", fileName, window);
       if (path) {
         fileTransfer.accept(path);
         return true;

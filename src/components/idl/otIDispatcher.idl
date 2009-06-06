@@ -1,0 +1,21 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(4bccda5f-2bad-4652-bdc3-8ba3e0b2250b)]
+interface otIDispatcher : nsISupports
+{
+  string invoke(in string name, in string argsArray);
+};
+
+%{C++
+
+#define OT_AUDIO_CONTRACTID "@oneteam.im/dispatcher;1"
+
+#define OT_AUDIO_CID \
+{ /* 37fbbb24-d5a2-4316-817c-a863e7534abd */ \
+  0x37fbbb24, \
+  0xd5a2, \
+  0x4316, \
+  {0x81, 0x7c, 0xa8, 0x63, 0xe7, 0x53, 0x4a, 0xbd } \
+}
+
+%}

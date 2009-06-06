@@ -34,7 +34,7 @@ var adhocCmds = {
                     <command xmlns="http://jabber.org/protocol/commands"
                         node={query.@node} sessionid={query.@sessionid} status="completed"/>,
                     iq.getDoc()));
-                con.send(iq);
+                account.connection.send(iq);
                 account.disconnect();
                 return;
             }

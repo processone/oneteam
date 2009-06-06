@@ -13,8 +13,11 @@
   buttons="accept,cancel"
   onload="onLoad()"  ondialogaccept="return onAccept();">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+    ML.importMod("dataforms.js");
+
     var conference = window.arguments[0];
 
     function onLoad() {
@@ -23,16 +26,16 @@
 
     function onConfigurationRecv(pkt) {
       var ns = new Namespace("jabber:x:data");
-      var data = window.opener.DOMtoE4X(pkt.getNode());
+      var data = DOMtoE4X(pkt.getNode());
       if (!data..ns::x[0])
         return;
       document.documentElement.appendChild(
-        window.opener.generateXULFromDataForm(data..ns::x[0], document));
+        generateXULFromDataForm(data..ns::x[0], document));
     }
 
     function onAccept() {
       conference.changeRoomConfiguration(
-        window.opener.buildResponseDataFormFromXUL(document.documentElement.lastChild));
+        buildResponseDataFormFromXUL(document.documentElement.lastChild));
       return true;
     }
   ]]></script>

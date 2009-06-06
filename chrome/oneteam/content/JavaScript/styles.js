@@ -1,3 +1,6 @@
+var EXPORTED_SYMBOLS = ["StylesRegistry", "IconStyle", "SmilesIconStyle",
+                        "StatusIconStyle"];
+
 function StylesRegistry(cache)
 {
     this.smiles = [];

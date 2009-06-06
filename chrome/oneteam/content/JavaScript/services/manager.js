@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["servicesManager"];
+
 function ServicesManager()
 {
     this._iqHandlers = {};
@@ -294,7 +296,7 @@ _DECL_(ServicesManager).prototype =
         if (response.e4x)
             pkt.getNode().appendChild(E4XtoDOM(response.e4x, pkt.getDoc()));
 
-        con.send(pkt, callback);
+        account.connection.send(pkt, callback);
     },
 
     _generatorTrackerCallback: function(service, callback, packet)

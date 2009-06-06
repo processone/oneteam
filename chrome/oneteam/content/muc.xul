@@ -245,7 +245,7 @@
         if (!conf.joined) {
           document.getElementById("main-deck").selectedIndex = 0;
           account.disconnect();
-          //setTimeout(function(){con.disconnect()}, 0);
+          //setTimeout(function(){account.connection.disconnect()}, 0);
         }
       }, false);
 
@@ -274,7 +274,7 @@
 
     function onUnload() {
     //#ifndef XULAPP
-      if (window.con)
+      if (window.account.connection)
         account.disconnect();
     //#endif */
     }
@@ -286,7 +286,7 @@
     window.onbeforeunload = onBeforeUnload;
 
     function quit() {
-      if (window.con)
+      if (window.account.connection)
         account.disconnect();
 
     //#ifdef XULAPP

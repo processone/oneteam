@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["privacyService"];
+
 var privacyService =
 {
     lists: {},
@@ -15,7 +17,7 @@ var privacyService =
         if (name)
             list.setAttribute("name", name);
         iq.setQuery("jabber:iq:privacy").appendChild(list);
-        con.send(iq);
+        account.connection.send(iq);
     },
 
     fetchLists: function(name)
@@ -23,7 +25,7 @@ var privacyService =
         var iq = new JSJaCIQ();
         iq.setIQ(null, "get");
         iq.setQuery("jabber:iq:privacy");
-        con.send(iq, this._fetchListRecv);
+        account.connection.send(iq, this._fetchListRecv);
     },
 
     _fetchListRecv: function(pkt)
@@ -40,7 +42,7 @@ var privacyService =
         var list = iq.getDoc().createElementNS("jabber:iq:privacy", "list");
         list.setAttribute("name", name);
         iq.setQuery("jabber:iq:privacy").appendChild(list);
-        con.send(iq, this._verifyListRecv, name);
+        account.connection.send(iq, this._verifyListRecv, name);
     },
 
     _verifyListRecv: function(pkt, name)
@@ -58,7 +60,7 @@ var privacyService =
         iq.setQuery("jabber:iq:privacy").appendChild(E4XtoDOM(e4x, iq.getDoc()));
         this.lists[e4x.@name] = 2;
 
-        con.send(iq);
+        account.connection.send(iq);
     }
 };
 

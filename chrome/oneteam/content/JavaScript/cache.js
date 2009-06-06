@@ -1,3 +1,8 @@
+var EXPORTED_SYMBOLS = ["PersistantCache"];
+
+ML.importMod("roles.js");
+ML.importMod("file.js");
+
 // #ifdef XULAPP
 function PersistantCache(name)
 {

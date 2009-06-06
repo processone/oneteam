@@ -14,8 +14,9 @@
   buttonlabelaccept="_('Close')"
   buttons="accept">
 
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
-    var _ = window.opener._
+    ML.importMod("model/account.js");
 
     const identMapping = [
       [{category: "server"},
@@ -54,29 +55,29 @@
       ["jabber:iq:register", null,
        _("Register"),
        "chrome://oneteam/skin/disco/imgs/register.png", function(di) {
-          window.opener.account.getOrCreateContact(di.discoJID).onRegister();
+          account.getOrCreateContact(di.discoJID).onRegister();
        }],
       ["jabber:iq:search", null,
        _("Search"),
        "chrome://oneteam/skin/disco/imgs/search.png", function(di) {
-          window.opener.account.getOrCreateContact(di.discoJID).onSearch();
+          account.getOrCreateContact(di.discoJID).onSearch();
        }],
       ["http://jabber.org/protocol/muc", {category: "conference"},
        _("Join room"),
        "chrome://oneteam/skin/disco/imgs/join-conference.png", function(di) {
           var conf = di.discoJID.node ?
-            window.opener.account.getOrCreateConference(di.discoJID) : di.discoJID;
-          window.opener.account.onJoinRoom(conf);
+            account.getOrCreateConference(di.discoJID) : di.discoJID;
+          account.onJoinRoom(conf);
        }],
       ["vcard-temp", null,
        _("View vCard"),
        "chrome://oneteam/skin/chatpane/imgs/vcard.png", function(di) {
-          window.opener.account.getOrCreateContact(di.discoJID).showVCard();
+          account.getOrCreateContact(di.discoJID).showVCard();
        }],
     ];
 
-    var jid = (window.arguments && window.arguments[0]) || window.opener.account.jid;
-    var discoHistory = [new window.opener.DiscoItem(jid)], discoHistoryIdx = 0;
+    var jid = (window.arguments && window.arguments[0]) || account.jid;
+    var discoHistory = [new DiscoItem(jid)], discoHistoryIdx = 0;
     var prevButton, nextButton, jidTextbox, itemsList;
     var discoItem, userAction, expanded;
     var items = {};
@@ -105,7 +106,7 @@
     function go(ua) {
       if (discoHistory[discoHistoryIdx].discoJID != jidTextbox.value) {
         discoHistory.splice(discoHistoryIdx+1, 10000,
-                            new window.opener.DiscoItem(jidTextbox.value));
+                            new DiscoItem(jidTextbox.value));
         discoHistoryIdx = discoHistory.length-1;
       }
 
@@ -251,7 +252,7 @@
             if (!(k in ids[j].features))
               continue;
 
-          item.description.value = window.opener.l10nFormatService.formatString(idm[1],
+          item.description.value = l10nFormatService.formatString(idm[1],
             ids[j].name || "(empty)", ids[j].type, ids[j].category);
           item.icon.src = idm[2];
           found = true;

@@ -1,3 +1,11 @@
+var EXPORTED_SYMBOLS = ["Group", "Contact", "Resource", "MyResourcesContact",
+                        "MyResource"];
+
+ML.importMod("roles.js");
+ML.importMod("utils.js");
+ML.importMod("modeltypes.js");
+ML.importMod("tabcompletion.js");
+
 function Group(name, visibleName, builtinGroup, sortPriority)
 {
     this.name = name;
@@ -117,7 +125,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         }
 
         this.newItem = false;
-        account.contacts[this.jid.normalizedJID] = this;
+        account._onContactAdded(this);
     }
 
     if (!this.jid.node)
@@ -140,6 +148,17 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     get presence() {
         return this.activeResource ? this.activeResource.presence :
             new Presence("unavailable");
+    },
+
+    get serialized() {
+        return {
+            jid: this.jid.toString(),
+            normalizedJID: this.jid.normalizedJID.toString(),
+            name: this.visibleName,
+            subscription: this.subscription,
+            subscriptionAsk: this.subscriptionAsk,
+            presence: this.presence.serialized
+        };
     },
 
     _updateRoster: function(callback)
@@ -172,7 +191,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         delete this._subscriptionAsk;
         delete this._groups;
 
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     _updateFromServer: function(node)
@@ -208,7 +227,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         this.groups = groups;
 
         if (this.subscription == "remove") {
-            delete account.contacts[this.jid.normalizedJID];
+            account._onContactRemoved(this);
             delete account.allContacts[this.jid.normalizedJID]
 
             if (this instanceof Gateway)
@@ -217,7 +236,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
             this.newItem = true;
             this.modelUpdated("newItem");
         } else if (this.newItem) {
-            account.contacts[this.jid.normalizedJID] = this;
+            account._onContactAdded(this);
             this.newItem = false;
             this.modelUpdated("newItem");
         }
@@ -266,8 +285,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     _sendPresence: function(presence)
     {
-        if (con)
-            con.send(presence.generatePacket(this));
+        if (account.connection)
+            account.connection.send(presence.generatePacket(this));
     },
 
     groupsIterator: function(predicate, token)
@@ -292,7 +311,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         if (msg)
             msg.fillPacket(message);
 
-        con.send(message);
+        account.connection.send(message);
     },
 
     onMessage: function(packet)
@@ -445,7 +464,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, "get");
         iq.setQuery('jabber:iq:register');
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     register: function(payload, callback)
@@ -454,7 +473,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         iq.setIQ(this.jid, "set");
         iq.setQuery("jabber:iq:register").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     unregister: function(callback)
@@ -473,7 +492,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, "get");
         iq.setQuery("jabber:iq:search");
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     search: function(payload, callback)
@@ -482,7 +501,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         iq.setIQ(this.jid, "set");
         iq.setQuery("jabber:iq:search").
             appendChild(E4XtoDOM(payload, iq.getDoc()));
-        con.send(iq, callback);
+        account.connection.send(iq, callback);
     },
 
     _onResourceUpdated: function(resource, dontNotifyViews)
@@ -704,7 +723,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (msg)
             msg.fillPacket(message);
 
-        con.send(message);
+        account.connection.send(message);
     },
 
     onMessage: function(packet)

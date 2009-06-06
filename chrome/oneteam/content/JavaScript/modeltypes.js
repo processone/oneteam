@@ -1,3 +1,7 @@
+var EXPORTED_SYMBOLS = ["View", "ContainerView", "Model", "RegsBundle"];
+
+ML.importMod("roles.js");
+
 function View()
 {
 }

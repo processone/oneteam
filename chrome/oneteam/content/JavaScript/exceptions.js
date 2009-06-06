@@ -1,3 +1,10 @@
+var EXPORTED_SYMBOLS = ["dumpStack", "exceptionToString",
+                        "logExceptionInConsole", "GenericError",
+                        "InvalidArgsError", "Error.prototype.toString",
+                        "Components.interfaces.nsIException.toString"];
+
+ML.importMod("roles.js");
+
 function dumpStack(stackFrame, indent)
 {
     var stacktrace = "";

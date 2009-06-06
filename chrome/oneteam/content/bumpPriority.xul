@@ -10,10 +10,11 @@
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel" ondialogaccept="return onAccept();">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     function onAccept() {
-      var account = window.opener.account;
       var cp = account.currentPresence;
       account.setPresence(cp.show, cp.status, window.arguments[0], cp.profile,
                           cp == account.userPresence);

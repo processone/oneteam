@@ -12,8 +12,10 @@
   buttons="accept,cancel"
   ondialogaccept="return saveProfiles()" onload="onLoad()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     var selectedItem;
     var controls = {};
     var list;
@@ -23,7 +25,7 @@
     {
       list = document.getElementById("list");
 
-      var profiles = window.opener.account.presenceProfiles.profiles;
+      var profiles = account.presenceProfiles.profiles;
       for (var i = 0; i < profiles.length; i++) {
         var item = list.appendItem(profiles[i].name);
         item.model = profiles[i];
@@ -129,13 +131,13 @@
         if (item.model)
           item.model.update(item.label, presences);
         else
-          newProfiles.push(new window.opener.PresenceProfile(item.label, presences));
+          newProfiles.push(new PresenceProfile(item.label, presences));
       }
 
       if (newProfiles.length || removedItems.length)
-        window.opener.account.presenceProfiles.update(newProfiles, removedItems);
+        account.presenceProfiles.update(newProfiles, removedItems);
       else
-        window.opener.account.presenceProfiles.storeOnServer();
+        account.presenceProfiles.storeOnServer();
 
       return true;
     }

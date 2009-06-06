@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["prefManager"];
+
 //#ifdef XULAPP
 function PrefManager()
 {

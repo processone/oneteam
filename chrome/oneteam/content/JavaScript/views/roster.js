@@ -1,3 +1,6 @@
+var EXPORTED_SYMBOLS = ["RosterView", "ContactView", "GroupView",
+                        "PresenceProfilesView"];
+
 function RosterView(node)
 {
     this.containerNode = node;
@@ -51,14 +54,15 @@ function GroupView(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
+    this.doc = parentView.containerNode.ownerDocument;
     this.contacts = [];
 
-    this.node = document.createElement("richlistitem");
+    this.node = this.doc.createElement("richlistitem");
     this.node.setAttribute("class", "group-view");
     this.node.model = this.model;
     this.node.view = this;
 
-    this.label = document.createElement("label");
+    this.label = this.doc.createElement("label");
     this.label.setAttribute("flex", "1");
     this.label.setAttribute("crop", "end");
 
@@ -142,19 +146,20 @@ function ContactView(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
+    this.doc = parentView.containerNode.ownerDocument;
 
-    this.node = document.createElement("richlistitem");
-    this.statusIcon = document.createElement("image");
-    this.label = document.createElement("label");
-    this.avatar = document.createElement("avatar");
+    this.node = this.doc.createElement("richlistitem");
+    this.statusIcon = this.doc.createElement("image");
+    this.label = this.doc.createElement("label");
+    this.avatar = this.doc.createElement("avatar");
     this.avatar.model = this.model;
     this.avatar.hidden = !prefManager.getPref("chat.general.showavatars");
 
     if (model instanceof MyResourcesContact) {
-        this.tooltip = new ResourceTooltip(model, this.parentNode);
+        this.tooltip = new ResourceTooltip(model, this.parentView);
         this.node.setAttribute("context", "resource-contextmenu");
     } else {
-        this.tooltip = new ContactTooltip(model, this.parentNode);
+        this.tooltip = new ContactTooltip(model, this.parentView);
         this.node.setAttribute("context", "contact-contextmenu");
     }
 
@@ -170,7 +175,7 @@ function ContactView(model, parentView)
     this.node.menuModel = model;
     this.node.view = this;
 
-    var box = document.createElement("vbox");
+    var box = this.doc.createElement("vbox");
     box.setAttribute("pack", "center");
     box.appendChild(this.statusIcon);
 
@@ -257,12 +262,13 @@ function ContactTooltip(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
+    this.doc = parentView.containerNode.ownerDocument;
 
-    this.node = document.createElement("tooltip");
-    this.avatar = document.createElement("image");
-    this.name = document.createElement("label");
-    this.subscription = document.createElement("label");
-    this.resourcesLabel = document.createElement("label");
+    this.node = this.doc.createElement("tooltip");
+    this.avatar = this.doc.createElement("image");
+    this.name = this.doc.createElement("label");
+    this.subscription = this.doc.createElement("label");
+    this.resourcesLabel = this.doc.createElement("label");
 
     this.id = generateUniqueId();
 
@@ -273,46 +279,46 @@ function ContactTooltip(model, parentView)
 
     this.resourcesLabel.setAttribute("value", "Resources:");
 
-    var box = document.createElement("hbox");
+    var box = this.doc.createElement("hbox");
     box.setAttribute("flex", "1");
     box.setAttribute("align", "start");
     this.node.appendChild(box);
 
-    var grid = document.createElement("grid");
+    var grid = this.doc.createElement("grid");
     box.appendChild(grid);
     box.appendChild(this.avatar);
 
-    var cols = document.createElement("columns");
+    var cols = this.doc.createElement("columns");
     grid.appendChild(cols);
-    var col = document.createElement("column");
+    var col = this.doc.createElement("column");
     cols.appendChild(col);
-    col = document.createElement("column");
+    col = this.doc.createElement("column");
     col.setAttribute("flex", "1");
     cols.appendChild(col);
 
-    var rows = document.createElement("rows");
+    var rows = this.doc.createElement("rows");
     grid.appendChild(rows);
     rows.appendChild(this.name);
 
-    var row = document.createElement("row");
+    var row = this.doc.createElement("row");
     rows.appendChild(row);
-    var label = document.createElement("label");
+    var label = this.doc.createElement("label");
     label.setAttribute("value", "Jabber ID:");
     row.appendChild(label);
-    label = document.createElement("label");
+    label = this.doc.createElement("label");
     label.setAttribute("value", this.model.jid.toUserString());
     row.appendChild(label);
 
-    row = document.createElement("row");
+    row = this.doc.createElement("row");
     rows.appendChild(row);
-    label = document.createElement("label");
+    label = this.doc.createElement("label");
     label.setAttribute("value", "Subscription:");
     row.appendChild(label);
     row.appendChild(this.subscription);
 
     rows.appendChild(this.resourcesLabel);
 
-    grid = this.resourcesContainer = document.createElement("vbox");
+    grid = this.resourcesContainer = this.doc.createElement("vbox");
     grid.setAttribute("class", "contact-tooltip-resources");
     rows.appendChild(grid);
 
@@ -335,34 +341,34 @@ _DECL_(ContactTooltip).prototype =
 
         for (var resource in this.model.resourcesIterator()) {
             if (!firstResource)
-                this.resourcesContainer.appendChild(document.createElement("spacer"));
+                this.resourcesContainer.appendChild(this.doc.createElement("spacer"));
             firstResource = false;
 
-            var box = document.createElement("hbox");
+            var box = this.doc.createElement("hbox");
             box.setAttribute("align", "center");
             this.resourcesContainer.appendChild(box);
 
-            var icon = document.createElement("image");
+            var icon = this.doc.createElement("image");
             icon.setAttribute("src", resource.getStatusIcon());
             box.appendChild(icon);
 
-            var label = document.createElement("label");
+            var label = this.doc.createElement("label");
             label.setAttribute("class", "contact-tooltip-resource-name");
             label.setAttribute("value", resource.jid.resource+" ("+resource.presence.priority+")");
             box.appendChild(label);
 
-            label = document.createElement("label");
+            label = this.doc.createElement("label");
             label.setAttribute("value", "-");
             box.appendChild(label);
 
-            label = document.createElement("label");
+            label = this.doc.createElement("label");
             label.setAttribute("value", resource.presence);
             label.setAttribute("class", "contact-tooltip-resource-show");
             label.setAttribute("style", "color: "+resource.presence.getColor());
             box.appendChild(label);
 
             if (resource.presence.status) {
-                label = document.createElement("description");
+                label = this.doc.createElement("description");
                 label.setAttribute("class", "contact-tooltip-resource-status");
                 label.setAttribute("value", resource.presence.status);
                 label.setAttribute("crop", "end");
@@ -388,13 +394,14 @@ function ResourceTooltip(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
+    this.doc = parentView.containerNode.ownerDocument;
 
-    this.node = document.createElement("tooltip");
-    this.avatar = document.createElement("image");
-    this.icon = document.createElement("image");
-    this.name = document.createElement("label");
-    this.showLabel = document.createElement("label");
-    this.status = document.createElement("description");
+    this.node = this.doc.createElement("tooltip");
+    this.avatar = this.doc.createElement("image");
+    this.icon = this.doc.createElement("image");
+    this.name = this.doc.createElement("label");
+    this.showLabel = this.doc.createElement("label");
+    this.status = this.doc.createElement("description");
 
     this.id = generateUniqueId();
 
@@ -403,44 +410,44 @@ function ResourceTooltip(model, parentView)
     this.node.setAttribute("class", "resource-tooltip");
     this.name.setAttribute("class", "resource-tooltip-name");
 
-    var box = document.createElement("hbox");
+    var box = this.doc.createElement("hbox");
     box.setAttribute("flex", "1");
     box.setAttribute("align", "start");
     this.node.appendChild(box);
 
-    var grid = document.createElement("grid");
+    var grid = this.doc.createElement("grid");
     box.appendChild(grid);
     box.appendChild(this.avatar);
 
-    var cols = document.createElement("columns");
+    var cols = this.doc.createElement("columns");
     grid.appendChild(cols);
-    var col = document.createElement("column");
+    var col = this.doc.createElement("column");
     cols.appendChild(col);
-    col = document.createElement("column");
+    col = this.doc.createElement("column");
     col.setAttribute("flex", "1");
     cols.appendChild(col);
 
-    var rows = document.createElement("rows");
+    var rows = this.doc.createElement("rows");
     grid.appendChild(rows);
-    var box = document.createElement("hbox");
+    var box = this.doc.createElement("hbox");
     box.setAttribute("class", "resource-tooltip-name-container");
     box.setAttribute("align", "center");
     rows.appendChild(box);
 
     box.appendChild(this.icon);
     box.appendChild(this.name);
-    var label = document.createElement("label");
+    var label = this.doc.createElement("label");
     label.setAttribute("value", "-");
     box.appendChild(label);
     box.appendChild(this.showLabel);
     this.showLabel.setAttribute("class", "resource-tooltip-resource-show");
 
-    var row = document.createElement("row");
+    var row = this.doc.createElement("row");
     rows.appendChild(row);
-    var label = document.createElement("label");
+    var label = this.doc.createElement("label");
     label.setAttribute("value", "Jabber ID:");
     row.appendChild(label);
-    label = document.createElement("label");
+    label = this.doc.createElement("label");
     label.setAttribute("value", this.model.jid);
     row.appendChild(label);
 
@@ -480,6 +487,7 @@ _DECL_(ResourceTooltip).prototype =
 function PresenceProfilesView(node, checkbox)
 {
     this.containerNode = node.parentNode;
+    this.doc = node.ownerDocument;
     this.dummyNode = node;
     this.afterlastItemNode = node.nextSibling;
     this.items = [];
@@ -528,7 +536,7 @@ function PresenceProfileView(model, parentView)
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElement("menuitem");
+    this.node = this.doc.createElement("menuitem");
 
     this.node.setAttribute("class", "setPresence-profile-view");
     this.node.setAttribute("label", model.name);

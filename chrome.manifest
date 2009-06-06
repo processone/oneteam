@@ -1,0 +1,10 @@
+content oneteam           file:chrome/oneteam/content/
+
+locale  oneteam  en-US    file:chrome/oneteam/locale/en-US/
+locale  oneteam-branding en-US    file:chrome/oneteam/branding/
+
+skin    oneteam pinestripe/1.0   file:chrome/oneteam/skin/default/
+
+resource oneteam          chrome/oneteam/content/JavaScript/
+
+overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browser-overlay.xul

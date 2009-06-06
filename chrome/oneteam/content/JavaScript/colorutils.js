@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["LUVColor", "HSVColor", "RGBColor"];
+
 function LUVColor(l, u, v)
 {
     [this.l, this.u, this.v] = arguments;

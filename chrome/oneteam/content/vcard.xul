@@ -12,8 +12,10 @@
   buttons="accept"
   onload="onLoad()">
 
-  <script type="text/javascript;version=1.7" src="JavaScript/l10n.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
     function onLoad() {
       if (!window.arguments)
         return;
@@ -132,7 +134,7 @@
 
     function fetchDone(pkt) {
       document.getElementById("updateProgress").style.visibility = "hidden";
-      parse(window.opener.DOMtoE4X(pkt.getNode()).elements(), map);
+      parse(DOMtoE4X(pkt.getNode()).elements(), map);
     }
   ]]></script>
 
