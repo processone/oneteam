@@ -1,4 +1,6 @@
-
+pref("toolkit.defaultChromeURI", "chrome://oneteam/content/main.xul");
+//pref("toolkit.singletonWindowType", "ot:main");
+// debugging prefs
 pref("browser.dom.window.dump.enabled", true);
 pref("javascript.options.showInConsole", true);
 //pref("javascript.options.strict", true);
@@ -8,9 +10,6 @@ pref("nglayout.debug.disable_xul_fastload", true);
 pref("browser.preferences.animateFadeIn", true);
 pref("browser.preferences.instantApply", false);
 
-/*pref("toolkit.defaultChromeURI", "chrome://oneteam/content/main.xul");
-//pref("toolkit.singletonWindowType", "ot:main");
-// debugging prefs
 pref("xpinstall.dialog.confirm", "chrome://mozapps/content/xpinstall/xpinstallConfirm.xul");
 pref("xpinstall.dialog.progress.skin", "chrome://mozapps/content/extensions/extensions.xul?type=themes");
 pref("xpinstall.dialog.progress.chrome", "chrome://mozapps/content/extensions/extensions.xul?type=extensions");
@@ -34,4 +33,3 @@ pref("network.protocol-handler.warn-external.http", false);
 pref("network.protocol-handler.warn-external.https", false);
 pref("network.protocol-handler.warn-external.ftp", false);
 pref("network.protocol-handler.warn-external.mailto", false);
-*/

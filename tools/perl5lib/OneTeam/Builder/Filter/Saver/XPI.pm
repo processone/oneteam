@@ -59,7 +59,7 @@ sub finalize {
            )."\n      ".$2!ei;
     print_to_file(catfile($tmpdir, "install.rdf"), $ir);
 
-    _dircopy('defaults', catdir($tmpdir, 'defaults'));
+    _dircopy('defaults', catdir($tmpdir, 'defaults'), "defaults/preferences/xulapp.js");
     _dircopy('components', catdir($tmpdir, 'components'));
     _dircopy('platform', catdir($tmpdir, 'platform'));
     _dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
@@ -82,11 +82,15 @@ sub finalize {
 }
 
 sub _dircopy {
-    my ($src, $dest) = @_;
+    my ($src, $dest, @skip) = @_;
     my $srclen = length($src) + ($src =~ m!(?:[/\\]$)! ? 0 : 1);
+    my %skip;
+
+    @skip{@skip} = @skip;
 
     find({ wanted => sub {
-        return if not -f $_ or ignored_file($File::Find::name);
+        return if not -f $_ or ignored_file($File::Find::name) or
+            exists $skip{$File::Find::name};
 
         mkpath(length($File::Find::dir) > $srclen ?
             catdir($dest, substr($File::Find::dir, $srclen)) :
