@@ -104,8 +104,7 @@ OneTeamContentDispatcher.prototype = {
             this._listeners[type] = [];
         this._listeners[type].push(data = [listener, useCapture]);
 
-        type = perlSplit(type, 	/-/, 2);
-	alert(type);
+        type = perlSplit(type, "-", 2);
 
         switch (type[0]) {
             case "presence":
