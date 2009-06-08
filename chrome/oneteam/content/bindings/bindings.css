@@ -100,7 +100,7 @@ dialog {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#dialog") !important;
 }
 
-window {
+window:not(.no-verifier) {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#window") !important;
 }
 

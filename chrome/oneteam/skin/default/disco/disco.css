@@ -24,6 +24,11 @@ richlistitem[selected="true"] .extra-content {
   font-size: 110%;
 }
 
+#items {
+  margin: 0;
+  border: none;
+}
+
 #go, #nextButton, #prevButton {
   -moz-binding: url(chrome://global/content/bindings/button.xml#button-image);
   min-width: 0;

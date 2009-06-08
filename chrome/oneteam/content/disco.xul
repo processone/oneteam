@@ -6,7 +6,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/disco/disco.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
-<dialog id="disco" windowtype="ot:disco" title="_('Service Discovery')"
+<window id="disco" windowtype="ot:disco" title="_('Service Discovery')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   onload="onLoad()"
@@ -378,12 +378,14 @@
     }
   ]]></script>
 
-  <dialogheader title="_('Service Discovery')"/>
-  <hbox>
-    <button id="prevButton" oncommand="prevItem()"/>
-    <button id="nextButton" oncommand="nextItem()"/>
-    <textbox id="jid" flex="1"/>
-    <button id="go" oncommand="go(true)"/>
-  </hbox>
+  <toolbox>
+    <toolbar class="toolbar-primary chromeclass-toolbar">
+      <toolbarbutton id="prevButton" oncommand="prevItem()"/>
+      <toolbarbutton id="nextButton" oncommand="nextItem()"/>
+      <textbox id="jid" flex="1"/>
+      <toolbarbutton id="go" oncommand="go(true)"/>
+    </toolbar>
+  </toolbox>
   <richlistbox id="items" flex="1"/>
-</dialog>
+  <statusbar/>
+</window>

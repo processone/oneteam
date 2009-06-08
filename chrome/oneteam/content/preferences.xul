@@ -183,8 +183,8 @@
     }
   ]]></script>
 
-  <tabbox flex="1">
-    <tabs>
+  <tabbox flex="1" class="chromeclass-toolbar">
+    <tabs  style="-moz-appearance: -moz-mac-unified-toolbar;">
       <tab id="general" label="_('General')"/>
       <tab id="connection" label="_('Connection')"/>
       <tab id="status" label="_('Status')"/>

@@ -11,7 +11,7 @@
     </resources>
     <content>
       <xul:hbox align="center">
-        <xul:button type="disclosure" class="expanderButton" anonid="disclosure"
+        <xul:button type="disclosure" class="button-text expanderButton" anonid="disclosure"
           xbl:inherits="disabled" mousethrough="always"/>
         <xul:label class="header expanderButton" anonid="label"
           xbl:inherits="value=label,disabled" mousethrough="always" flex="1"/>
