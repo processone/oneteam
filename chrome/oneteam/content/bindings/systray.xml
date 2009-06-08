@@ -27,7 +27,7 @@
             this.icon = this.getAttribute("icon");
             this._win = window.openDialog("chrome://oneteam/content/bindings/systrayhelper.xul",
                                           "_blank", "chrome=yes,dialog=no,popup=yes");
-          } catch (ex) { this._systray = null; report("developer", "error", ex) }
+          } catch (ex) { this._systray = null }
         ]]>
       </constructor>
 
