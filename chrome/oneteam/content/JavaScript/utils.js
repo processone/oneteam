@@ -821,9 +821,15 @@ var Animator = {
 
     animateStyle: function(element, style, steps, tick, stopCallback) {
         var values = [];
-        var compStyle = element.ownerDocument.defaultView.getComputedStyle(element, "");
-        for (var i = 5; i < arguments.length; i++)
-            values.push(this._parseCssValue(arguments[i], compStyle, element, style == "opacity"));
+        for (var i = 5; i < arguments.length; i++) {
+            var arg = arguments[i], el = element;
+            while (el && (arg2 = arg.replace(/^\s*parent\s*\.\s*/, "")) != arg) {
+                el = el.parentNode;
+                arg = arg2;
+            }
+            compStyle = el.ownerDocument.defaultView.getComputedStyle(el, "");
+            values.push(this._parseCssValue(arg, compStyle, element, style == "opacity"));
+        }
 
         if (values.length < 2)
             return null;

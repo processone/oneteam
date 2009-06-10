@@ -1,11 +1,13 @@
 /* Roster */
+richlistitem:nth-child(2n+1):not([selected=true]) {
+  background-color: -moz-oddtreerow;
+}
 
 #roster-box .groupbox-body {
   padding: 1px !important;
 }
 
 .group-view, .contact-view, .conference-view, .conference-role-view, .conferencemember-view {
-  color: #000;
   padding: 1px;
 }
 
@@ -26,11 +28,9 @@
 
 .conference-role-view[selected=true], .contact-view[selected=true],
 .conferencemember-view[selected=true]{
-  background: #DDE;
 }
 
 .conference-role-view {
-  background: #EEE;
   font-weight : bold;
   padding-left: 4px;
 }

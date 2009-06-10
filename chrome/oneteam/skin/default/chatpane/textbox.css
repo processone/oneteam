@@ -7,7 +7,7 @@
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-  min-height: 29px !important;
+  min-height: 1em !important;
   -moz-appearance: none !important;
   /*height: 1.5em;*/
 }

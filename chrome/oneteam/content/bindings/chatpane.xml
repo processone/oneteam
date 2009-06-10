@@ -907,10 +907,10 @@
           if (this._blinkToken)
             Animator.stopAnimation(this._blinkToken);
 
-          this.style.outline = "3px solid transparent";
-          this._blinkToken = Animator.animateStyle(this, "outlineColor", 20, 20, function(el){
+          this.parentNode.style.outline = "3px solid transparent";
+          this._blinkToken = Animator.animateStyle(this.parentNode, "outlineColor", 20, 20, function(el){
             el.style.outline = "";
-          }, "transparent", "borderTopColor", "transparent");
+          }, "parent.transparent", "borderTopColor", "parent.transparent");
         ]]></body>
       </method>
 
