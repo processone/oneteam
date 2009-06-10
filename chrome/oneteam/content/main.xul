@@ -207,6 +207,7 @@
 
       onConnect: function()
       {
+        document.getElementById("main-toolbox").hidden = !account.connected;
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
         document.getElementById("setPresence-nick").value = account.myResource.visibleName;
         document.getElementById("login-signin").disabled = false;
@@ -641,7 +642,7 @@
     <key id="key_cmdDOMInspector" modifiers="control" key="4" command="cmd_cmdDOMInspector"/>
   </keyset>
 
-      <toolbox class="toolbox-top">
+      <toolbox id="main-toolbox" class="toolbox-top" hidden="true">
         <toolbar class="chromeclass-menubar" type="menubar">
           <toolbaritem>
             <menubar style="border: 0; padding: 0; margin:0; -moz-appearance:none">

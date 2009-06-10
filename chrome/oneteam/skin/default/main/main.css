@@ -112,7 +112,7 @@ richlistbox {
 
 /* Login pane */
 #login-box {
-  background: #000431 url(imgs/background.png) 100% 0%;
+  background: #000431 url(imgs/background.png) 0% 0%;
   background-repeat: no-repeat;
 }
 
