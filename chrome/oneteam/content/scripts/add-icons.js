@@ -62,17 +62,19 @@
 
         link.link.parentNode.insertBefore(el, link.link);
 
-        if (!links.handler) {
-            links.handler = function(e) {
+        if (!links.contact) {
+            links.handleEvent = function(e) {
                 var val = eval(e.newValue);
+                var links = this.links;
+
                 for (var i = 0; i < links.length; i++)
-                    update(val, links.elements[1], links.elements[2], links.elements[3], links.elements[4]);
+                    update(val, links[i].elements[1], links[i].elements[2], links[i].elements[3], links[i].elements[4]);
             };
             links.contact = contact.normalizedJID;
-            otDispatcher.addEventListener("contactInfo-"+contact.normalizedJID, links.handler, false);
+            otDispatcher.addEventListener("contactInfo-"+contact.normalizedJID, links, false);
         }
 
-        link.elements = [el, icon, name. show, status];
+        link.elements = [el, icon, name, show, status];
     }
 
     var interestingLinks = {};
@@ -87,9 +89,11 @@
         var links;
 
         if (!interestingLinks[contact])
-            links = interestingLinks[contact] = {links: [data]};
+            interestingLinks[contact] = {links: [data]};
         else
-            links = interestingLinks[contact].links.push(data);
+            interestingLinks[contact].links.push(data);
+
+        links = interestingLinks[contact];
 
         for (var j in contacts)
             if (j.indexOf(contact) == 0) {
@@ -107,17 +111,17 @@
         var contacts = data.added || [];
         for (var i = 0; i < contacts.length; i++) {
             var links = interestingLinks[contacts[i].normalizedJID.replace(/@.*/, "@")];
-            if (!links || links.handler)
+            if (!links || links.contact)
                 continue;
 
             for (var j = 0; j < links.links.length; j++)
                 generateIcon(contacts[i], links.links[j], links);
         }
-
         contacts = data.removed || [];
+
         for (i = 0; i < contacts.length; i++) {
             var links = interestingLinks[contacts[i].normalizedJID.replace(/@.*/, "@")];
-            if (!links || !links.handler || (links.contact && links.contact != contacts[i].normalizedJID))
+            if (!links || !links.contact || links.contact != contacts[i].normalizedJID)
                 continue;
 
             for (j = 0; j < links.links.length; j++) {
@@ -126,9 +130,7 @@
                 delete links.links[j].elements;
             }
 
-            otDispatcher.removeEventListener("contactInfo-"+links.contact, links.handler, false);
-
-            delete links.handler;
+            otDispatcher.removeEventListener("contactInfo-"+links.contact, links, false);
             delete links.contact;
         }
     }, false);

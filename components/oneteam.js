@@ -191,7 +191,7 @@ OneTeamContentDispatcher.prototype = {
 
     _onContactInfo: function(contact, type, value, listener) {
         try{
-        alert("POST contactInfo: "+uneval(contact.serialized));
+        alert("POST contactInfo: "+contact.jid);//
         this._fireEvent(listener, "contactInfo", contact.jid.normalizedJID, contact.serialized);
         }catch(ex){alert(ex)}
     },
@@ -201,7 +201,7 @@ OneTeamContentDispatcher.prototype = {
         if (values.added)
             pv.added = values.added.map(function(v) v.serialized);
         if (values.removed)
-            pv.removed = values.removes.map(function(v) v.serialized);
+            pv.removed = values.removed.map(function(v) v.serialized);
 
         this._fireEvent(listener, "contacts", null, pv);
     }

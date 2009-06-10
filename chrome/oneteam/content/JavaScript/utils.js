@@ -603,8 +603,6 @@ function perlSplit(str, split, limit) {
     } else {
         var rx = new RegExp(split.source, "g"), s;
         for (; limit > 1 && (s = rx(str)); limit--) {
-            alert(rx+", "+s);
-            alert(idx+", "+rx.lastIndex+", "+s.length);
             res.push(str.substring(idx, rx.lastIndex - s[0].length));
             idx = rx.lastIndex;
         }

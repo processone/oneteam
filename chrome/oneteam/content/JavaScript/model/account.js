@@ -748,12 +748,14 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var groups = this.groups;
         var conferences = this.conferences;
         var gateways = [gateway for each (gateway in this.gateways)];
+        var contacts = [contact for each (contact in this.contacts)];
 
         this._initialize();
 
         this.modelUpdated("groups", {removed: groups});
         this.modelUpdated("conferences", {removed: conferences});
         this.modelUpdated("gateways", {removed: gateways});
+        this.modelUpdated("contacts", {removed: contacts});
 
         this.bookmarks._clean();
         servicesManager._clean();
