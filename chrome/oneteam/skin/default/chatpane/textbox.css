@@ -7,9 +7,14 @@
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-  min-height: 1em !important;
+  min-height: 29px !important;
   -moz-appearance: none !important;
   /*height: 1.5em;*/
+}
+
+toolbar[type="chatpane-commands"] {
+  -moz-appearance: none !important;
+  background: #002e4e !important;
 }
 
 #_counter {

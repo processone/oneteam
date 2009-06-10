@@ -1151,7 +1151,7 @@
 
         <xul:toolbar type="chatpane-commands"/>
 
-        <xul:hbox align="center">
+        <xul:hbox id="input-container" align="center">
           <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true"/>
           <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._doSend(true)"/>
         </xul:hbox>

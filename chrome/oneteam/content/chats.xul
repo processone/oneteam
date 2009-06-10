@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://oneteam/skin/command/command.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/chats/chats.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
@@ -21,11 +21,13 @@
     ML.importMod("colorutils.js");
 
     function onLoad() {
-      window.arguments[0]._onChatWindowOpened();
+      if (window.arguments)
+        window.arguments[0]._onChatWindowOpened();
     }
 
     function onUnload() {
-      window.arguments[0]._onChatWindowClosed();
+      if (window.arguments)
+        window.arguments[0]._onChatWindowClosed();
     }
   ]]></script>
 
