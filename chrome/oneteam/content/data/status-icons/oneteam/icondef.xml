@@ -43,4 +43,9 @@
 		<x xmlns='name'>status/chat</x>
 		<object mime='image/png'>chat.png</object>
 	</icon>
+    
+	<icon>
+		<x xmlns='name'>psi/message</x>
+		<object mime='image/gif'>message.gif</object>
+	</icon>
 </icondef>
