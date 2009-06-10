@@ -1,4 +1,4 @@
-pref("toolkit.defaultChromeURI", "chrome://oneteam/content/main.xul");
+/*pref("toolkit.defaultChromeURI", "chrome://oneteam/content/main.xul");
 //pref("toolkit.singletonWindowType", "ot:main");
 // debugging prefs
 pref("browser.dom.window.dump.enabled", true);
@@ -33,3 +33,4 @@ pref("network.protocol-handler.warn-external.http", false);
 pref("network.protocol-handler.warn-external.https", false);
 pref("network.protocol-handler.warn-external.ftp", false);
 pref("network.protocol-handler.warn-external.mailto", false);
+*/
