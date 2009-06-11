@@ -10,7 +10,7 @@ body {
 
 .message {
     margin: 0 2px;
-    margin-left: 26px;
+    padding-left: 30px;
     border: 0px solid #efefef;
     border-top-width: 1px;
 }
@@ -26,11 +26,15 @@ body {
 .message[starts-chunk=true] > img {
     display: inline;
     float: left;
-    margin-left: -25px;
+    margin-left: -29px;
 }
 
 .message[starts-chunk=true] > .header {
     display: inline;
+}
+
+.message[odd-chunk=true] {
+  background-color: -moz-oddtreerow;
 }
 
 .header {

@@ -465,8 +465,12 @@
               msgEl.setAttribute("color-id", this.colorMap[msg.contactId]);
 
               if (this._lastContactId != msg.contactId || msg.time - this._lastMessageTime > 5*60*1000 ||
-                  !msg.offline != !this._lastMessageOffline)
+                  !msg.offline != !this._lastMessageOffline) {
                 msgEl.setAttribute("starts-chunk", "true");
+                this._oddChunk = !this._oddChunk;
+              }
+              if (!this._oddChunk)
+                msgEl.setAttribute("odd-chunk", "true");
 
               this._lastContactId = msg.contactId;
               this._lastMessageTime = msg.time;
