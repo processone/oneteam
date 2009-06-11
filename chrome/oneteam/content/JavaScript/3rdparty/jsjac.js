@@ -1717,9 +1717,9 @@ function JSJaCJID(jid) {
     }
     this.setDomain(jid);
   } else {
-    this.setNode(jid.node);
-    this.setDomain(jid.domain);
-    this.setResource(jid.resource);
+    this.setNode(jid._node);
+    this.setDomain(jid._domain);
+    this.setResource(jid._resource);
   }
 }
 
