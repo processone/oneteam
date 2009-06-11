@@ -824,6 +824,10 @@ _DECL_(MyResource, null, Model).prototype =
 {
     representsMe: true,
 
+    get avatar() {
+        return account.avatar;
+    },
+
     get presence() {
         return account.currentPresence;
     },

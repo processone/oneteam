@@ -238,7 +238,7 @@
             var colorScheme = ".message { opacity: 1 }\n.message[not-seen=\"true\"] { opacity: 1 }\n";
             var white = new RGBColor(1, 1, 1);
             var green = new RGBColor(0.9, 0.9, 1);
-            for (var i = 0; i < this.colorTable.length; i++) {
+            for (var i = 0; i < -this.colorTable.length; i++) {
               var base = new RGBColor(this.colorTable[i]);
               var bg = base.composite(white, 0.06);
               var border = base.composite(white, 0.3);
@@ -480,6 +480,12 @@
             h.setAttribute("class", "header");
             msgEl.appendChild(h);
 
+            if (msg.contact) {
+              var e = doc.createElement("img");
+              e.setAttribute("src", msg.contact.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+              e.setAttribute("width", "24")
+              msgEl.appendChild(e);
+            }
             var e = doc.createElement("span");
             e.setAttribute("class", "to-copy-paste");
             e.appendChild(doc.createTextNode("["));

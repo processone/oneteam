@@ -5,31 +5,36 @@ body {
 }
 
 .mainContainer {
-    margin-bottom: 8px;
+    margin-bottom: 2px;
 }
 
 .message {
-    margin: 0 8px;
-    border-width: 1px;
-    border-top-width: 0;
-    border-style: solid;
+    margin: 0 2px;
+    margin-left: 26px;
+    border: 0px solid #efefef;
+    border-top-width: 1px;
 }
 
 .message[starts-chunk=true] {
-    border-top-width: 1px;
-    margin-top: 8px;
+    border-top-width: 0;
+}
+
+.message > img {
+    display: none;
+}
+
+.message[starts-chunk=true] > img {
+    display: inline;
+    float: left;
+    margin-left: -25px;
+}
+
+.message[starts-chunk=true] > .header {
+    display: inline;
 }
 
 .header {
     display: none;
-    margin: 1px;
-    padding: 1px 6px;
-    background: url(imgs/header-gradient.png);
-    color: white;
-}
-
-.message[starts-chunk=true] > .header {
-    display: block;
 }
 
 .systemMessage {
@@ -39,7 +44,7 @@ body {
     font-style: italic;
 }
 
-.systemMessage > .header {
+.systemMessage > .header, .systemMessage > img {
     display: none !important;
 }
 
@@ -57,21 +62,22 @@ body {
 
 .author {
     font-weight: bold;
-    float: left;
+    sfloat: left;
 }
 
 .date {
-    float: right;
+    display: none;
+    sfloat: right;
     font-size: 90%;
     opacity: 0.85;
 }
 
 .body {
-    display: block;
+    display: inline;
     padding: 3px 6px;
 }
 
-.header::after {
+.message[starts-chunk=true]::before {
     font-size: 1%;
     line-height: 1%;
     display: block;

@@ -22,4 +22,3 @@ hbox.entry > *:last-child {
 richlistitem:nth-child(2n+1):not([selected=true]) {
   background-color: -moz-oddtreerow;
 }
-
