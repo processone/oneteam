@@ -46,6 +46,6 @@
     
 	<icon>
 		<x xmlns='name'>psi/message</x>
-		<object mime='image/gif'>message.gif</object>
+		<object mime='image/png' blink='true'>message.png</object>
 	</icon>
 </icondef>

@@ -442,6 +442,8 @@
           var msgs = this._msgs;
           this._msgs = [];
 
+          var prevMsg = this._content.lastChild;
+
           var msgsChunk = doc.createDocumentFragment();
 
           for (var i = 0; i < msgs.length; i++) {
@@ -453,6 +455,8 @@
             msgEl.setAttribute("not-seen", "true")
 
             if (msg.isSystemMessage) {
+              if (prevMsg)
+                prevMsg.setAttribute("ends-chunk", "true");
               msgEl.setAttribute("starts-chunk", "true");
               this._lastContactId = null;
             } else {
@@ -466,6 +470,8 @@
 
               if (this._lastContactId != msg.contactId || msg.time - this._lastMessageTime > 5*60*1000 ||
                   !msg.offline != !this._lastMessageOffline) {
+                if (prevMsg)
+                  prevMsg.setAttribute("ends-chunk", "true");
                 msgEl.setAttribute("starts-chunk", "true");
                 this._oddChunk = !this._oddChunk;
               }
@@ -477,12 +483,10 @@
               this._lastMessageOffline = msg.offline
             }
 
+            prevMsg = msgEl;
+
             if (!this._visible && !this._firstNotSeenMsg)
               this._firstNotSeenMsg = msgEl;
-
-            var h = doc.createElement("span");
-            h.setAttribute("class", "header");
-            msgEl.appendChild(h);
 
             if (msg.contact) {
               var e = doc.createElement("img");
@@ -490,6 +494,11 @@
               e.setAttribute("width", "24")
               msgEl.appendChild(e);
             }
+
+            var h = doc.createElement("span");
+            h.setAttribute("class", "header");
+            msgEl.appendChild(h);
+
             var e = doc.createElement("span");
             e.setAttribute("class", "to-copy-paste");
             e.appendChild(doc.createTextNode("["));

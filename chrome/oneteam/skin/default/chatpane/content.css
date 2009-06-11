@@ -11,12 +11,19 @@ body {
 .message {
     margin: 0 2px;
     padding-left: 30px;
-    border: 0px solid #efefef;
-    border-top-width: 1px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+.message:last-child, .message[ends-chunk=true] {
+    border-bottom-color: rgba(40, 40, 40, 0.6);
+}
+
+.systemMessage + .message[starts-chunk=true] {
+    border-top: 1px solid rgba(40, 40, 40, 0.6);
 }
 
 .message[starts-chunk=true] {
-    border-top-width: 0;
+    clear: both;
 }
 
 .message > img {
@@ -44,7 +51,7 @@ body {
 .systemMessage {
     border: 0 !important;
     margin: 2px 4px !important;
-    color: #081;
+    color: #98B54D;
     font-style: italic;
 }
 
@@ -66,19 +73,19 @@ body {
 
 .author {
     font-weight: bold;
-    sfloat: left;
+    float: left;
 }
 
 .date {
-    display: none;
-    sfloat: right;
-    font-size: 90%;
-    opacity: 0.85;
+    display: inline;
+    font-size: 85%;
+    margin-left: 5px;
+    color: #333;
 }
 
 .body {
-    display: inline;
-    padding: 3px 6px;
+    display: block;
+    padding: 3px 0px;
 }
 
 .message[starts-chunk=true]::before {
