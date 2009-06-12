@@ -1,7 +1,5 @@
 .avatarContainer, .avatarIcon img {
-  background: white;
-  padding: 1px;
-  border: 1px solid #999;
+  -moz-border-radius: 2px;
 }
 
 .avatarIcon img {

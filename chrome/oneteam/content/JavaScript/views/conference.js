@@ -41,7 +41,7 @@ function BookmarkMenuItemView(model, parentView)
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElement("menuitem");
+    this.node = document.createElementNS(XULNS, "menuitem");
 
     this.node.setAttribute("class", "conference-bookmark-view");
     this.node.setAttribute("oncommand", "this.model.bookmarkNick ? this.model.backgroundJoinRoom() : this.model.onJoinRoom()");
@@ -115,7 +115,7 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
     this.parentView = parentView;
     this.contacts = [];
 
-    this.node = document.createElement("richlistitem");
+    this.node = document.createElementNS(XULNS, "richlistitem");
 
     this.node.setAttribute("class", "conference-view");
     this.node.setAttribute("context", "conference-contextmenu");
@@ -124,7 +124,7 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
     this.node.view = this;
 
     if (!hideTitle) {
-        this.label = document.createElement("label");
+        this.label = document.createElementNS(XULNS, "label");
         this.label.setAttribute("value", this.model.name);
         this.label.setAttribute("flex", "1");
         this.label.setAttribute("crop", "end");
@@ -133,8 +133,8 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
 
     this.roleNodes = {};
     for each (role in ["moderator", "participant", "visitor", "none"]) {
-        var node = document.createElement("richlistitem");
-        node.appendChild(document.createElement("label"));
+        var node = document.createElementNS(XULNS, "richlistitem");
+        node.appendChild(document.createElementNS(XULNS, "label"));
         node.setAttribute("class", "conference-role-view");
         node.setAttribute("hidden", "true");
         node.role = role;
@@ -247,10 +247,10 @@ function ConferenceMemberView(model, parentView)
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElement("richlistitem");
-    this.statusIcon = document.createElement("image");
-    this.label = document.createElement("label");
-    var avatar = document.createElement("avatar");
+    this.node = document.createElementNS(XULNS, "richlistitem");
+    this.statusIcon = document.createElementNS(XULNS, "image");
+    this.label = document.createElementNS(XULNS, "label");
+    var avatar = document.createElementNS(XULNS, "avatar");
     avatar.model = this.model;
 
     this.node.setAttribute("class", "conferencemember-view");
@@ -264,7 +264,7 @@ function ConferenceMemberView(model, parentView)
     this.node.menuModel = model;
     this.node.view = this;
 
-    var box = document.createElement("vbox");
+    var box = document.createElementNS(XULNS, "vbox");
     box.setAttribute("pack", "center");
     box.appendChild(this.statusIcon);
 
@@ -329,15 +329,15 @@ function ConferenceMemberTooltip(model, parentView)
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElement("tooltip");
-    this.avatar = document.createElement("image");
-    this.statusIcon = document.createElement("image");
-    this.name = document.createElement("label");
-    this.presenceShow = document.createElement("label");
-    this.affiliation = document.createElement("label");
-    this.role = document.createElement("label");
-    this.realJID = document.createElement("label");
-    this.status = document.createElement("description");
+    this.node = document.createElementNS(XULNS, "tooltip");
+    this.avatar = document.createElementNS(XULNS, "image");
+    this.statusIcon = document.createElementNS(XULNS, "image");
+    this.name = document.createElementNS(XULNS, "label");
+    this.presenceShow = document.createElementNS(XULNS, "label");
+    this.affiliation = document.createElementNS(XULNS, "label");
+    this.role = document.createElementNS(XULNS, "label");
+    this.realJID = document.createElementNS(XULNS, "label");
+    this.status = document.createElementNS(XULNS, "description");
 
     this.id = generateUniqueId();
 
@@ -350,58 +350,58 @@ function ConferenceMemberTooltip(model, parentView)
     this.status.setAttribute("class", "conferencemember-tooltip-status");
     this.status.setAttribute("crop", "end");
 
-    var box = document.createElement("hbox");
+    var box = document.createElementNS(XULNS, "hbox");
     box.setAttribute("flex", "1");
     box.setAttribute("align", "start");
     this.node.appendChild(box);
 
-    var cbox = document.createElement("vbox");
+    var cbox = document.createElementNS(XULNS, "vbox");
     cbox.setAttribute("flex", "1");
     box.appendChild(cbox);
     box.appendChild(this.avatar);
 
-    box = document.createElement("hbox");
+    box = document.createElementNS(XULNS, "hbox");
     box.setAttribute("align", "center");
     cbox.appendChild(box);
 
     box.appendChild(this.statusIcon);
     box.appendChild(this.name);
-    var label = document.createElement("label");
+    var label = document.createElementNS(XULNS, "label");
     label.setAttribute("value", "-");
     box.appendChild(label);
     box.appendChild(this.presenceShow);
 
-    var grid = document.createElement("grid");
+    var grid = document.createElementNS(XULNS, "grid");
     grid.setAttribute("class", "conferencemember-tooltip-grid");
     cbox.appendChild(grid);
-    var cols = document.createElement("columns");
+    var cols = document.createElementNS(XULNS, "columns");
     grid.appendChild(cols);
-    var col = document.createElement("column");
+    var col = document.createElementNS(XULNS, "column");
     cols.appendChild(col);
-    col = document.createElement("column");
+    col = document.createElementNS(XULNS, "column");
     col.setAttribute("flex", "1");
     cols.appendChild(col);
 
-    var rows = document.createElement("rows");
+    var rows = document.createElementNS(XULNS, "rows");
     grid.appendChild(rows);
 
-    var row = document.createElement("row");
+    var row = document.createElementNS(XULNS, "row");
     rows.appendChild(row);
-    label = document.createElement("label");
+    label = document.createElementNS(XULNS, "label");
     label.setAttribute("value", "Jabber ID:");
     row.appendChild(label);
     row.appendChild(this.realJID);
 
-    row = document.createElement("row");
+    row = document.createElementNS(XULNS, "row");
     rows.appendChild(row);
-    label = document.createElement("label");
+    label = document.createElementNS(XULNS, "label");
     label.setAttribute("value", "Affiliation:");
     row.appendChild(label);
     row.appendChild(this.affiliation);
 
-    row = document.createElement("row");
+    row = document.createElementNS(XULNS, "row");
     rows.appendChild(row);
-    label = document.createElement("label");
+    label = document.createElementNS(XULNS, "label");
     label.setAttribute("value", "Role:");
     row.appendChild(label);
     row.appendChild(this.role);

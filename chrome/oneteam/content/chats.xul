@@ -2,6 +2,7 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/chats/chats.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/main/roster.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
@@ -19,6 +20,7 @@
     ML.importMod("utils.js");
     ML.importMod("dateutils.js");
     ML.importMod("colorutils.js");
+    ML.importMod("views/conference.js");
 
     function onLoad() {
       if (window.arguments)

@@ -116,19 +116,17 @@
           if ((tab = this.getTab(thread)))
             return tab;
 
-          const ns = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-
-          var content = document.createElementNS(ns, "chattab-content");
+          var content = document.createElementNS(XULNS, "chattab-content");
 
           content._tabbox = this;
 
-          tabpanel = content._tabpanel = document.createElementNS(ns, "tabpanel");
+          tabpanel = content._tabpanel = document.createElementNS(XULNS, "tabpanel");
           tabpanel.setAttribute("flex", "1");
           this._tabpanels.appendChild(tabpanel);
 
           tabpanel.appendChild(content);
 
-          tab = content._tab = document.createElementNS(ns, "tab");
+          tab = content._tab = document.createElementNS(XULNS, "tab");
           tab.setAttribute("hasclosebutton", "true");
           tab.setAttribute("oncommand", "this.controller.close()");
           tab.maxWidth = 250;
@@ -426,9 +424,9 @@
           this._updateChatState("gone");
 
           if (this.thread && this.thread.contact instanceof Conference)
-            setTimeout(function(me){me.thread.contact.exitRoom(); me._tabbox._removeTab(me)}, 0, this);
-          else
-            this._tabbox._removeTab(this);
+            this.thread.contact.exitRoom();
+
+          this._tabbox._removeTab(this);
         ]]></body>
       </method>
 

@@ -1,68 +1,6 @@
 /* Roster */
-richlistitem:nth-child(2n+1):not([selected=true]) {
-  background-color: -moz-oddtreerow;
-}
-
 #roster-box .groupbox-body {
   padding: 1px !important;
-}
-
-.group-view, .contact-view, .conference-view, .conference-role-view, .conferencemember-view {
-  padding: 1px;
-}
-
-.group-view, .conference-view {
-  background: #003E67 url(imgs/group-background.png) center center repeat-x;
-  border: 1px solid #003E67;
-  border-bottom: 0;
-  border-top: 0;
-  color: white;
-  font-weight : bold;
-}
-
-.group-view[selected=true], .conference-view[selected=true] {
-  background-color: #005dc8;
-  background-image: url(imgs/group-background-selected.png);
-  border-color: #005dc8;
-}
-
-.conference-role-view[selected=true], .contact-view[selected=true],
-.conferencemember-view[selected=true]{
-}
-
-.conference-role-view {
-  font-weight : bold;
-  padding-left: 4px;
-}
-
-.contact-view {
-  padding-left: 8px;
-}
-
-.conferencemember-view {
-  padding-left: 16px;
-}
-
-.contact-view[offlineContact=true] {
-  color: #aaa;
-}
-
-.contact-tooltip-name, .resource-tooltip-name, .contact-tooltip-resource-name, .conferencemember-tooltip-name {
-  font-weight: bold;
-}
-
-.contact-tooltip-resource-status, .resource-tooltip-resource-status, .conferencemember-tooltip-status {
-  margin-left: 0;
-  padding-left: 0;
-  font-style: italic;
-}
-
-.resource-tooltip-name-container {
-  margin-left: 0.5em;
-}
-
-.contact-tooltip-resources, .resource-tooltip-resource-status, .conferencemember-tooltip-grid {
-  margin-left: 1em;
 }
 
 tabpanels {
@@ -76,17 +14,18 @@ tabpanels {
   border: 1px solid #999;
 }
 
+#contacts-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
+#contacts-list[hideOffline=true] .contact-view[offlineContact=true]
+{
+  display: none
+}
+
+
 richlistbox {
   -moz-appearance: none !important;
   margin: 4px;
   padding: 0;
   border: 1px solid #aeaeae;
-}
-
-#contacts-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
-#contacts-list[hideOffline=true] .contact-view[offlineContact=true]
-{
-  display: none
 }
 
 /* Toolbar icons */

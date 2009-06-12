@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["account"];
+var EXPORTED_SYMBOLS = ["account", "XULNS", "HTMLNS"];
 
 ML.importMod("roles.js");
 ML.importMod("3rdparty/jsjac/JSJaC.js");
@@ -23,6 +23,9 @@ ML.importMod("services/adhoc.js");
 ML.importMod("services/privacy.js");
 ML.importMod("services/rosterx.js");
 ML.importMod("socks5.js");
+
+var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+var HTMLNS = "http://www.w3.org/1999/xhtml";
 
 function Account()
 {

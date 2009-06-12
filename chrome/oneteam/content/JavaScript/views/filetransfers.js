@@ -47,15 +47,15 @@ function FileTransferView(model, parentView)
     this.node = document.createElement("richlistitem");
     this.node.setAttribute("class", "file-transfer");
 
-    var c = document.createElement("hbox");
+    var c = document.createElementNS(XULNS, "hbox");
     c.setAttribute("flex", "1");
     this.node.appendChild(c);
 
-    this.deck = document.createElement("deck");
+    this.deck = document.createElementNS(XULNS, "deck");
     this.deck.setAttribute("flex", "1");
     c.appendChild(this.deck);
 
-    var c2 = document.createElement("vbox");
+    var c2 = document.createElementNS(XULNS, "vbox");
     c2.setAttribute("flex", "1");
     this.deck.appendChild(c2);
 
@@ -69,7 +69,7 @@ function FileTransferView(model, parentView)
         this.form.setAttribute("method", "POST");
         this.form.setAttribute("enctype", "multipart/form-data");
 
-        var e = document.createElement("label");
+        var e = document.createElementNS(XULNS, "label");
         e.setAttribute("value", "Please choose file to send");
         this.form.appendChild(e);
 
@@ -90,37 +90,37 @@ function FileTransferView(model, parentView)
         this.deck.appendChild(this.frame);
     }
 
-    var c3 = document.createElement("hbox");
+    var c3 = document.createElementNS(XULNS, "hbox");
     c3.setAttribute("class", "filenamebox");
-    var c4 = document.createElement("label");
+    var c4 = document.createElementNS(XULNS, "label");
     c4.setAttribute("value", this.model.jid.toUserString()+" —");
     c3.appendChild(c4);
 
-    this.fileName = document.createElement("label");
+    this.fileName = document.createElementNS(XULNS, "label");
     this.fileName.setAttribute("class", "filename");
     if (this.model.file)
         this.fileName.setAttribute("value", this.model.file.path.match(/[^\/\\]+$/)[0]);
     c3.appendChild(this.fileName);
     c2.appendChild(c3);
 
-    this.progressmeter = document.createElement("progressmeter");
+    this.progressmeter = document.createElementNS(XULNS, "progressmeter");
     this.progressmeter.setAttribute("flex", "1");
     c2.appendChild(this.progressmeter);
 
-    this.stateLabel = document.createElement("label");
+    this.stateLabel = document.createElementNS(XULNS, "label");
     c2.appendChild(this.stateLabel);
 
-    c2 = document.createElement("vbox");
+    c2 = document.createElementNS(XULNS, "vbox");
     c.appendChild(c2);
 
-    this.cancelLink = document.createElement("label");
+    this.cancelLink = document.createElementNS(XULNS, "label");
     this.cancelLink.setAttribute("value", _("Cancel"));
     this.cancelLink.setAttribute("class", "text-link");
     this.cancelLink.setAttribute("onclick", "this.model.cancel()");
     this.cancelLink.model = this.model;
     c2.appendChild(this.cancelLink);
 
-    this.removeLink = document.createElement("label");
+    this.removeLink = document.createElementNS(XULNS, "label");
     this.removeLink.setAttribute("value", _("Remove"));
     this.removeLink.setAttribute("class", "text-link");
     this.removeLink.setAttribute("onclick", "this.model.remove()");
