@@ -7,7 +7,7 @@
 <?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
 
 <dialog id="preferences" windowtype="ot:preferences" title="_('Preferences')"
-  width="600" height="500"
+  width="700" height="500"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
@@ -132,6 +132,7 @@
 
       var ic = document.createElement("hbox");
       ic.setAttribute("flex", "1");
+      ic.setAttribute("align", "end");
       for (var i = 0; i < iconSet.icons.length; i++) {
         var icon = document.createElement("image");
         icon.setAttribute("src", iconSet.icons[i].img);

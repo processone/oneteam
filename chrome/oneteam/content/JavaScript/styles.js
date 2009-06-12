@@ -19,6 +19,7 @@ function StylesRegistry(cache)
     }
 
     styles = ["chrome://oneteam/content/data/smiles/oneteam",
+              "chrome://oneteam/content/data/smiles/oneteam-big",
               "chrome://oneteam/content/data/status-icons/oneteam",
               "chrome://oneteam/content/data/status-icons/crystal",
               "chrome://oneteam/content/data/status-icons/dcraven",
