@@ -108,25 +108,29 @@
     }
 
     function updateSize() {
-      var ratioW = 120/img.naturalWidth;
-      var ratioH = 90/img.naturalHeight;
+      var width = img.naturalWidth;
+      var height = img.naturalHeight
+      var ratioW = 80/width;
+      var ratioH = 60/height;
 
       if (ratioW < 1 || ratioH < 1) {
         var ratio = ratioW > ratioH ? ratioH : ratioW;
-        img.style.width = parseInt(img.naturalWidth * ratio)+"px";
-        img.style.height = parseInt(img.naturalHeight * ratio)+"px";
+        width = parseInt(width*ratio);
+        height = parseInt(height*ratio);
+        img.style.width = width+"px";
+        img.style.height = height+"px";
       }
 
       if (tmpCanvas) {
         canvas.canvas.style.display = "";
-        canvas.canvas.width = tmpCanvas.canvas.width = img.width;
-        canvas.canvas.height = tmpCanvas.canvas.height = img.height;
+        canvas.canvas.width = tmpCanvas.canvas.width = width;
+        canvas.canvas.height = tmpCanvas.canvas.height = height;
 
-        tmpCanvas.drawImage(img, 0, 0);
+        tmpCanvas.drawImage(img, 0, 0, width, height);
 
-        var imgData = tmpCanvas.getImageData(0, 0, img.width, img.height)
+        var imgData = tmpCanvas.getImageData(0, 0, width, height)
         var data = imgData.data, idx = 0;
-        for (var i = 0; i < img.width*img.height; i++) {
+        for (var i = 0; i < width*height; i++) {
           data[idx] = data[idx+1] = data[idx+2] =
             data[idx]*0.3+data[idx+1]*0.59+data[idx+2]*0.11;
           idx += 4;
@@ -137,7 +141,7 @@
           [tmpCanvas.canvas, img] :
           [img, tmpCanvas.canvas];
 
-        var d = { steps: 50, step: 0, src: src, dst: dst};
+        var d = { steps: 50, step: 0, src: src, dst: dst, width: width, height: height};
         fade(d);
         d.timeout = setInterval(fade, 20, d);
       }
@@ -149,10 +153,10 @@
     function fade(d) {
       canvas.globalCompositeOperation = "copy";
       canvas.globalAlpha = 1;
-      canvas.drawImage(d.src, 0, 0);
+      canvas.drawImage(d.src, 0, 0, d.width, d.height);
       canvas.globalCompositeOperation = "over";
       canvas.globalAlpha = d.step/d.steps;
-      canvas.drawImage(d.dst, 0, 0);
+      canvas.drawImage(d.dst, 0, 0, d.width, d.height);
 
       d.step++;
 
