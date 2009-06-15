@@ -21,8 +21,9 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
   border-color: #005dc8;
 }
 
-.contact-view[selected=true],
-.conferencemember-view[selected=true]{
+.contact-view[selected=true] > label,
+.conferencemember-view[selected=true] > label {
+  color: inherit !important;
 }
 
 .conference-role-view {
@@ -36,10 +37,6 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
 
 .conferencemember-view {
   padding-left: 16px;
-}
-
-.contact-view[offlineContact=true] {
-  color: #aaa;
 }
 
 .contact-tooltip-name, .resource-tooltip-name, .contact-tooltip-resource-name, .conferencemember-tooltip-name {
@@ -59,5 +56,3 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
 .contact-tooltip-resources, .resource-tooltip-resource-status, .conferencemember-tooltip-grid {
   margin-left: 1em;
 }
-
-
