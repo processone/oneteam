@@ -101,7 +101,6 @@ function openDialogUniq(type, url, flags)
 
     if (!win) {
         var args = [url, "_blank"].concat(Array.slice(arguments, 2));
-        args[2] = "resizable=yes"+(flags ? ","+flags : "");
         return window.openDialog.apply(window, args);
     }
 

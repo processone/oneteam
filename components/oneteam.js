@@ -480,9 +480,22 @@ function open(url, name, flags)
 
 function openDialog(url, name, flags)
 {
+    flags = (flags||"").split(",");
+    flagsHash = {};
+    for (var i = 0; i < flags.length; i++) {
+        var vals = perlSplit(flags[i], "=", 2);
+        flagsHash[vals[0]] = vals[1];
+    }
+    delete flagsHash.modal;
+    flagsHash.resizable = null;
+
+    flags = "";
+    for (i in flagsHash)
+        flags += (flags ? "," : "") + i + (flagsHash[i] == null ? "" : "="+flagsHash[i]);
+
     var ww = Components.classes["@mozilla.org/embedcomp/window-watcher;1"].
         getService(Components.interfaces.nsIWindowWatcher);
-    var win = ww.openWindow(null, url, name||"_blank", flags||null, null);
+    var win = ww.openWindow(null, url, name||"_blank", flags, null);
 
     win.arguments = Array.slice(arguments, 3);
     win.opener = findCallerWindow();
