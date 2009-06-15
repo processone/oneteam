@@ -23,6 +23,7 @@ ML.importMod("services/adhoc.js");
 ML.importMod("services/privacy.js");
 ML.importMod("services/rosterx.js");
 ML.importMod("socks5.js");
+ML.importMod("filetransfer.js");
 
 var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 var HTMLNS = "http://www.w3.org/1999/xhtml";

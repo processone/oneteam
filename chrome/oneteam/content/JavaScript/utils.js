@@ -139,7 +139,10 @@ function pickFile(title, forSave, filters, path, win)
     var picker = Components.classes["@mozilla.org/filepicker;1"].
         createInstance(Components.interfaces.nsIFilePicker);
 
-    picker.init(win||window, title, forSave ? picker.modeSave : picker.modeOpen);
+    if (!win)
+        win = findCallerWindow();
+
+    picker.init(win, title, forSave ? picker.modeSave : picker.modeOpen);
 
     if (filters) {
         filters = filters.split(/\s*,\s*/);
