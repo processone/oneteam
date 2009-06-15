@@ -226,7 +226,6 @@ _DECL_(ContactView).prototype =
 
     onModelUpdated: function()
     {
-        this.label.setAttribute("style", "color: "+this.model.presence.getColor());
         this.onMsgsInQueueChanged();
 
         this.parentView.onItemUpdated(this);
@@ -249,6 +248,7 @@ _DECL_(ContactView).prototype =
             icon = icon[0];
         }
         this.statusIcon.setAttribute("src", icon);
+        this.label.setAttribute("style", this.model.presence.getStyle(this.model.msgsInQueue));
     },
 
     show: function(rootNode, insertBefore)
@@ -379,7 +379,7 @@ _DECL_(ContactTooltip).prototype =
             label = this.doc.createElementNS(XULNS, "label");
             label.setAttribute("value", resource.presence);
             label.setAttribute("class", "contact-tooltip-resource-show");
-            label.setAttribute("style", "color: "+resource.presence.getColor());
+            label.setAttribute("style", resource.presence.getStyle(resource.msgsInQueue));
             box.appendChild(label);
 
             if (resource.presence.status) {
@@ -483,7 +483,7 @@ _DECL_(ResourceTooltip).prototype =
                                           this.model.activeResource.presence.priority || 0));
         this.icon.setAttribute("src", this.model.activeResource.getStatusIcon());
         this.showLabel.setAttribute("value", this.model.activeResource.presence);
-        this.showLabel.setAttribute("style", "color: "+this.model.activeResource.presence.getColor());
+        this.showLabel.setAttribute("style", this.model.activeResource.presence.getStyle(this.model.activeResource.msgsInQueue));
         this.status.setAttribute("value", this.model.activeResource.presence.status);
     },
 

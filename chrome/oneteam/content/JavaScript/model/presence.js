@@ -120,14 +120,14 @@ _DECL_(Presence, null, Comparator).prototype =
         return showStr+(showStatus && this.status ? " ("+this.status+")" : "");
     },
 
-    getColor: function()
+    getStyle: function(forNewMessage)
     {
-        return account.style.getStatusColor(this);
+        return account.style.getStatusStyle(this, forNewMessage);
     },
 
-    getIcon: function()
+    getIcon: function(forNewMessage)
     {
-        return account.style.getStatusIcon(this.show);
+        return account.style.getStatusIcon(this.show, forNewMessage);
     },
 
     get serialized() {
@@ -136,7 +136,7 @@ _DECL_(Presence, null, Comparator).prototype =
             status: this.status || "",
             priority: this.priority,
             showString: this.toString(),
-            color: this.getColor(),
+            style: this.getStyle(),
             icon: makeDataUrlFromFile(this.getIcon())
         };
     },

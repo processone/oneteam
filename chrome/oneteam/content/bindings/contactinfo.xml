@@ -144,12 +144,10 @@
 
           if (this.model) {
             this._status.value = this.model.presence;
-            this._status.style.color = this.model.presence.getColor();
             this._statusText.value = this.model.presence.status ?
               " - "+this.model.presence.status : "";
           } else {
             this._status.value = this._unavailablePresence;
-            this._status.style.color = this._unavailablePresence.getColor();
             this._statusText.value = "";
           }
         ]]></body>
@@ -177,6 +175,7 @@
               icon = icon[0];
           }
           this._statusIcon.src = icon;
+          this._status.setAttribute("style", this.model.presence.getStyle(this.model.msgsInQueue));
         ]]></body>
       </method>
 

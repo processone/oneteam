@@ -99,15 +99,15 @@ _DECL_(StylesRegistry, null, Model).prototype =
         return [status || status2, "chrome://oneteam/skin/main/imgs/roster-msgicon.png"];
     },
 
-    getStatusColor: function(presence)
+    getStatusStyle: function(presence, forNewMessage)
     {
         const colorCodes = {
-            chat: "#E83",
-            available: "#082",
-            away: "#00C",
-            dnd: "#00C",
-            xa : "#00C",
-            unavailable: "#AAA"
+            chat: "color: black; font-weight: bold;",
+            available: "color: black; font-weight: bold;",
+            away: "color: black;",
+            dnd: "color: #003E67;",
+            xa : "color: #003E67;",
+            unavailable: "color: #AAA;"
         };
 
         if (presence instanceof Resource || presence instanceof Contact)
@@ -116,7 +116,8 @@ _DECL_(StylesRegistry, null, Model).prototype =
         if (typeof(presence) == "object")
             presence = presence.show;
 
-        return colorCodes[presence] || colorCodes["available"];
+        return (colorCodes[presence] || colorCodes["available"]) +
+            (forNewMessage ? "font-style: italic;" : "");
     },
 
     processSmiles: function(str, nextFilter)

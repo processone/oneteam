@@ -304,7 +304,7 @@ _DECL_(ConferenceMemberView).prototype =
     onModelUpdated: function()
     {
         this.statusIcon.setAttribute("src", this.model.getStatusIcon());
-        this.label.setAttribute("style", "color: "+this.model.presence.getColor());
+        this.label.setAttribute("style", this.model.presence.getStyle());
         this.parentView.onItemUpdated(this);
     },
 
@@ -420,7 +420,7 @@ _DECL_(ConferenceMemberTooltip).prototype =
         this.statusIcon.setAttribute("src", this.model.getStatusIcon());
         this.name.setAttribute("value", this.model.name || this.model.jid.toUserString());
         this.presenceShow.setAttribute("value", this.model.presence);
-        this.presenceShow.setAttribute("style", "color: "+this.model.presence.getColor())
+        this.presenceShow.setAttribute("style", this.model.presence.getStyle())
         this.affiliation.setAttribute("value", this.model.affiliation);
         this.role.setAttribute("value", this.model.role);
         if (this.model.realJID)
