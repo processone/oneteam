@@ -63,8 +63,10 @@
             this._regBundle.register(val, this.onNameChange, "visibleName");
             if (modelIsConference)
               this._regBundle.register(val, this.onSubjectChanged, "subject");
-            else
+            else {
               this._regBundle.register(val, this.onPresenceChange, "presence");
+              this._regBundle.register(val, this.onMsgsInQueueChanged, "msgsInQueue");
+            }
           }
 
           this.onSubjectChanged();
@@ -138,18 +140,43 @@
 
       <method name="onPresenceChange">
         <body><![CDATA[
+          this.onMsgsInQueueChanged();
+
           if (this.model) {
-            this._statusIcon.src = this.model.getStatusIcon();
             this._status.value = this.model.presence;
             this._status.style.color = this.model.presence.getColor();
             this._statusText.value = this.model.presence.status ?
               " - "+this.model.presence.status : "";
           } else {
-            this._statusIcon.src = this._unavailablePresence.getIcon();
             this._status.value = this._unavailablePresence;
             this._status.style.color = this._unavailablePresence.getColor();
             this._statusText.value = "";
           }
+        ]]></body>
+      </method>
+
+      <method name="onMsgsInQueueChanged">
+        <body><![CDATA[
+          if (this._blinkingTimeout)
+              clearInterval(this._blinkingTimeout);
+          this._blinkingTimeout = null;
+
+          if (!this.model) {
+            this._statusIcon.src = this._unavailablePresence.getIcon();
+            return;
+          }
+
+          var icon = this.model.getStatusIcon(this.model.msgsInQueue);
+
+          if (this.model.msgsInQueue) {
+              if (icon.length > 1) {
+                  this._blinkingTimeout = setInterval(function(img, icons, idx) {
+                      img.src = icons[idx.idx = (idx.idx+1)%icons.length];
+                  }, 500, this._statusIcon, icon, {idx:0});
+              }
+              icon = icon[0];
+          }
+          this._statusIcon.src = icon;
         ]]></body>
       </method>
 

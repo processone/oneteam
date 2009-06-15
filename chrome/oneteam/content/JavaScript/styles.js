@@ -64,14 +64,39 @@ _DECL_(StylesRegistry, null, Model).prototype =
             }
     },
 
-    getStatusIcon: function(contact)
+
+    getStatusIcon: function(contact, forNewMessage)
     {
+        var val;
+
+        if (forNewMessage)
+            return this._getStatusIconForNewMessage(contact);
+
         for (var i = 0; i < this.statusIcons.length; i++)
             if (this.statusIcons[i] != this.defaultSet &&
-                (val = this.statusIcons[i].getStatusIcon(contact, false)))
+                (val = this.statusIcons[i].getStatusIcon(contact, false, false)))
                 return val;
 
-        return this.defaultSet.getStatusIcon(contact, true);
+        return this.defaultSet.getStatusIcon(contact, false, true);
+    },
+
+    _getStatusIconForNewMessage: function(contact) {
+        var status, msg, blinking;
+
+        for (var i = 0; i < this.statusIcons.length; i++)
+            if (this.statusIcons[i] != this.defaultSet) {
+                [status, msg, blinking] = this.statusIcons[i].getStatusIcon(contact, true, false);
+                if (blinking ? status && msg : msg)
+                    return blinking ? [status, msg] : [msg];
+                if (status || msg)
+                    break;
+            }
+        var [status2, msg2, blinking2] = this.defaultSet.getStatusIcon(contact, true, true);
+        if (msg)
+            return [status2, msg];
+        if (msg2)
+            return blinking2 ? [status || status2, msg2] : [msg2];
+        return [status || status2, "chrome://oneteam/skin/main/imgs/roster-msgicon.png"];
     },
 
     getStatusColor: function(presence)
@@ -272,6 +297,7 @@ function StatusIconStyle(url, iconDefData)
                                    "return "+filters.join("||"));
 
     var ns = new Namespace("name");
+    var ns2 = new Namespace("blink");
     for each (var icon in iconDefData.icon) {
         var type = icon.ns::x;
         var img = icon.object.(function::attribute("mime") in handledMimeTypes)[0];
@@ -280,15 +306,16 @@ function StatusIconStyle(url, iconDefData)
 
         this.icons.push({
             img: url+"/"+img.text(),
-            type: type.text()
+            type: type.text(),
+            blinking: icon.ns2::x.text() == "true"
         });
-        this.iconsMap[type.text()] = url+"/"+img.text();
+        this.iconsMap[type.text()] = this.icons[this.icons.length-1];
     }
 }
 
 _DECL_(StatusIconStyle, IconStyle).prototype =
 {
-    getStatusIcon: function(resource, force)
+    getStatusIcon: function(resource, forNewMessage, force)
     {
         var show = resource, specialIcon;
 
@@ -296,24 +323,31 @@ _DECL_(StatusIconStyle, IconStyle).prototype =
             var contact = resource instanceof Resource ? resource.contact : resource;
 
             if (!force && !(this.filter && this.filter(contact)))
-                return null;
+                return forNewMessage ? [] : null;
 
             show = resource.presence.show;
             if (!(resource instanceof ConferenceMember || contact.canSeeHim))
                 specialIcon = contact.subscriptionAsk ?
                     "status/ask" : "status/noauth";
         } else if (!force)
-            return null;
+            return forNewMessage ? [] : null;
+
+        var icon;
 
         if (specialIcon && this.iconsMap[specialIcon])
-            return this.iconsMap[specialIcon];
+            icon = this.iconsMap[specialIcon];
+        else if (!show || show == "available")
+            icon = this.iconsMap["status/online"];
+        else if (show == "unavailable")
+            icon = this.iconsMap["status/offline"];
+        else
+        icon = this.iconsMap["status/"+show];
 
-        if (!show || show == "available")
-            return this.iconsMap["status/online"];
+        if (!forNewMessage)
+            return icon && icon.img;
 
-        if (show == "unavailable")
-            return this.iconsMap["status/offline"];
+        var msgIcon = this.iconsMap["psi/message"];
 
-        return this.iconsMap["status/"+show];
+        return [icon && icon.img, msgIcon && msgIcon.img, msgIcon && msgIcon.blinking];
     }
 }

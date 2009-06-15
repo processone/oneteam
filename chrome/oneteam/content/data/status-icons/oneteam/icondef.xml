@@ -46,6 +46,7 @@
     
 	<icon>
 		<x xmlns='name'>psi/message</x>
+		<x xmlns='blink'>true</x>
 		<object mime='image/png' blink='true'>message.png</object>
 	</icon>
 </icondef>

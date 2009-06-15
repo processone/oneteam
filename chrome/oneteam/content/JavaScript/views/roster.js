@@ -234,10 +234,21 @@ _DECL_(ContactView).prototype =
 
     onMsgsInQueueChanged: function()
     {
-        this.statusIcon.setAttribute("src", this.model.msgsInQueue ?
-                                     account.style.defaultSet.iconsMap["psi/message"] ||
-                                        "chrome://oneteam/skin/main/imgs/roster-msgicon.png" :
-                                     this.model.getStatusIcon());
+        var icon = this.model.getStatusIcon(this.model.msgsInQueue);
+
+        if (this._blinkingTimeout)
+            clearInterval(this._blinkingTimeout);
+        this._blinkingTimeout = null;
+
+        if (this.model.msgsInQueue) {
+            if (icon.length > 1) {
+                this._blinkingTimeout = setInterval(function(img, icons, idx) {
+                    img.setAttribute("src", icons[idx.idx = (idx.idx+1)%icons.length]);
+                }, 500, this.statusIcon, icon, {idx:0});
+            }
+            icon = icon[0];
+        }
+        this.statusIcon.setAttribute("src", icon);
     },
 
     show: function(rootNode, insertBefore)
@@ -251,6 +262,10 @@ _DECL_(ContactView).prototype =
         this.tooltip.destroy();
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
+
+        if (this._blinkingTimeout)
+            clearInterval(this._blinkingTimeout);
+        this._blinkingTimeout = null;
 
         this._bundle.unregister();
 

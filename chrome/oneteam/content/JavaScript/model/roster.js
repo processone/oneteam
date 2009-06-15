@@ -612,9 +612,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
             this.visibleName > c.visibleName ? 1 : -1;
     },
 
-    getStatusIcon: function()
+    getStatusIcon: function(newMessage)
     {
-        return account.style.getStatusIcon(this.activeResource || this);
+        return account.style.getStatusIcon(this.activeResource || this, newMessage);
     }
 }
 
@@ -755,9 +755,9 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         return this.presence.cmp(c.presence, true);
     },
 
-    getStatusIcon: function()
+    getStatusIcon: function(newMessage)
     {
-        return account.style.getStatusIcon(this);
+        return account.style.getStatusIcon(this, newMessage);
     }
 }
 
