@@ -83,7 +83,7 @@ _DECL_(FileTransferService, null, Model).prototype =
             if (!canceler.cancel())
                 return;
             openDialogUniq(null, "chrome://oneteam/content/fileTransferRequest.xul",
-                           "chrome,modal", ft, name)
+                           "chrome", ft, name)
         }, null).addArgs(fileTransfer, file.@name, canceler);
 
         canceler.add = account.addEvent(_("<b>{0}</b> want to send you file",

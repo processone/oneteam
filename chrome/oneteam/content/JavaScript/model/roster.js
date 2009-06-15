@@ -33,7 +33,7 @@ _DECL_(Group, null, Model).prototype =
     onRename: function(externalDialog)
     {
         openDialogUniq("ot:renameGroup", "chrome://oneteam/content/renameGroup.xul",
-                       "resizable=no,chrome,dialog,modal", this);
+                       "chrome,dialog", this);
     },
 
     rename: function(newName)
@@ -365,7 +365,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     onRename: function(externalDialog)
     {
         openDialogUniq("ot:rename", "chrome://oneteam/content/rename.xul",
-                       "resizable=no,chrome,dialog,modal", this);
+                       "chrome,dialog", this);
     },
 
     rename: function(newName)
@@ -377,7 +377,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     onRemove: function()
     {
         openDialogUniq("ot:removeContact", "chrome://oneteam/content/removeContact.xul",
-                       "resizable=no,chrome,dialog,modal", this);
+                       "chrome,dialog", this);
     },
 
     remove: function()
@@ -389,7 +389,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     onEditContact: function()
     {
         openDialogUniq("ot:editContact", "chrome://oneteam/content/editContact.xul",
-                       "resizable=no,chrome,dialog,modal", this);
+                       "chrome,dialog", this);
     },
 
     editContact: function(newName, newGroups)
@@ -423,7 +423,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     showVCard: function()
     {
         openDialogUniq("ot:vcard", "chrome://oneteam/content/vcard.xul",
-                       "resizable=no,chrome,dialog", this);
+                       "chrome,dialog", this);
     },
 
     onAdHocCommand: function()
@@ -662,7 +662,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 var text = 0 && errorTag.getElementsByTagName('text');
                 if (text)
                     openDialogUniq("ot:error", "chrome://oneteam/content/error.xul",
-                                   "chrome,modal", text.textContent);
+                                   "chrome", text.textContent);
                 return [];
             }
         }
@@ -737,7 +737,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     onAdHocCommand: function()
     {
         openDialogUniq("ot:adhoc", "chrome://oneteam/content/adhoc.xul",
-                       "resizable=no,chrome,dialog", this);
+                       "chrome,dialog", this);
     },
 
     onShowHistory: function()

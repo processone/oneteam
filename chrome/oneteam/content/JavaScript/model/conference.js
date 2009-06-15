@@ -620,7 +620,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
     showVCard: function()
     {
         openDialogUniq("ot:vcard", "chrome://oneteam/content/vcard.xul",
-                       "resizable=no,chrome,dialog", this);
+                       "chrome,dialog", this);
     },
 
     onPresence: function(pkt)

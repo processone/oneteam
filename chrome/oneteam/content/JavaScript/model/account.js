@@ -269,19 +269,19 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     onAddContact: function(contact)
     {
         openDialogUniq("ot:addContact", "addContact.xul",
-                       "chrome,centerscreen,modal", contact);
+                       "chrome,centerscreen", contact);
     },
 
     onJoinRoom: function(bookmark)
     {
         openDialogUniq("ot:joinRoom", "joinRoom.xul",
-                       "chrome,centerscreen,modal", bookmark);
+                       "chrome,centerscreen", bookmark);
     },
 
     onManageBookmarks: function()
     {
         openDialogUniq("ot:manageBookmarks", "manageBookmarks.xul",
-                       "chrome,centerscreen,modal");
+                       "chrome,centerscreen");
     },
 
     showHistoryManager: function(contact)
@@ -323,20 +323,20 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     onCustomPresence: function(presence)
     {
-        openDialogUniq("ot:status", "status.xul", "chrome,centerscreen,modal",
+        openDialogUniq("ot:status", "status.xul", "chrome,centerscreen",
                        presence);
     },
 
     onEditPresenceProfiles: function()
     {
         openDialogUniq("ot:presenceProfiles", "presenceProfiles.xul",
-                       "chrome,centerscreen,modal");
+                       "chrome,centerscreen");
     },
 
     onChangePassword: function()
     {
         openDialogUniq("ot:changePassword", "changePassword.xul",
-                       "chrome,centerscreen,modal");
+                       "chrome,centerscreen");
     },
 
     changePassword: function(password, callback)
@@ -369,7 +369,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     onAdHocCommand: function()
     {
         openDialogUniq("ot:adhoc", "chrome://oneteam/content/adhoc.xul",
-                       "resizable=no,chrome,dialog", this);
+                       "chrome,dialog", this);
     },
 
     onPrefChange: function(name, value)
