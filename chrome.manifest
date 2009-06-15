@@ -5,6 +5,6 @@ locale  oneteam-branding en-US    file:chrome/oneteam/branding/
 
 skin    oneteam pinestripe/1.0   file:chrome/oneteam/skin/default/
 
-resource oneteam          chrome/oneteam/content/JavaScript/
+resource oneteam-skin          chrome/oneteam/skin/default/
 
 overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browser-overlay.xul

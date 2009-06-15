@@ -12,7 +12,11 @@
     <content>
       <xul:hbox flex="1">
         <xul:hbox flex="1">
+<!-- #ifdef XULAPP -->
+          <xul:iframe src="about:blank" id="output" flex="1" type="content"/>
+<!-- #else
           <html:iframe src="../content/blank.html" id="output" flex="1"/>
+// #endif -->
           <xul:stack id="markersContainer">
             <xul:vbox class="marker-arrow"/>
           </xul:stack>
@@ -226,13 +230,13 @@
             this._initialized = true;
 
             var link = this._output.contentDocument.createElement("link");
+            link.setAttribute("rel", "stylesheet");
 // #ifdef XULAPP
-            link.setAttribute("href", "chrome://oneteam/skin/chatpane/content.css");
+            link.setAttribute("href", "resource://oneteam-skin/chatpane/content.css");
 /* #else
             link.setAttribute("href",
               document.location.href.replace(/content\/.*?$/, "skin/chatpane/content.css"));
 // #endif */
-            link.setAttribute("rel", "stylesheet");
             this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
 
             var colorScheme = ".message { opacity: 1 }\n.message[not-seen=\"true\"] { opacity: 1 }\n";
@@ -448,6 +452,7 @@
 
           for (var i = 0; i < msgs.length; i++) {
             var msg = msgs[i];
+            var startsChunk;
 
             var msgEl = doc.createElement("div");
             msgsChunk.appendChild(msgEl);
@@ -473,6 +478,7 @@
                 if (prevMsg)
                   prevMsg.setAttribute("ends-chunk", "true");
                 msgEl.setAttribute("starts-chunk", "true");
+                startsChunk = true;
                 this._oddChunk = !this._oddChunk;
               }
               if (!this._oddChunk)
@@ -488,9 +494,10 @@
             if (!this._visible && !this._firstNotSeenMsg)
               this._firstNotSeenMsg = msgEl;
 
-            if (msg.contact) {
+            if (msg.contact && startsChunk) {
               var e = doc.createElement("img");
-              e.setAttribute("src", msg.contact.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+              e.setAttribute("src", msg.contact.avatar ||
+                             "resource://oneteam-skin/avatar/imgs/default-avatar.png");
               e.setAttribute("width", "24")
               msgEl.appendChild(e);
             }

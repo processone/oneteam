@@ -14,6 +14,13 @@ function PersistantCache(name)
     fileCacheDir.append(name+"Files");
     this.fileCacheDir = new File(fileCacheDir);
 
+    var ioService = Components.classes["@mozilla.org/network/io-service;1"].
+        getService(Components.interfaces.nsIIOService);
+    var resProt = ioService.getProtocolHandler("resource").
+        QueryInterface(Components.interfaces.nsIResProtocolHandler);
+
+    resProt.setSubstitution("oneteam-cache", this.fileCacheDir.uri);
+
     file.append(name+".sqlite");
 
     var storageService = Components.classes["@mozilla.org/storage/service;1"].
@@ -132,6 +139,8 @@ _DECL_(PersistantCache).prototype =
         if (type) {
             if (!asFile)
                 return slurpFile(value);
+            if (value.indexOf(this.fileCacheDir.path) == 0)
+                return value.replace(this.fileCacheDir.path, "resource://oneteam-cache");
             return "file://"+value;
         } else if (asFile)
             throw new GenericError("Unable to return data as file path");

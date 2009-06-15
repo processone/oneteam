@@ -75,7 +75,7 @@ sub finalize {
         for @{$self->{locales}};
     print $fh "locale oneteam-branding $_ jar:chrome/oneteam.jar!/locale/branding/\n"
         for @{$self->{locales}};
-    print $fh "resource oneteam jar:chrome/oneteam.jar!/content/JavaScript/\n";
+    print $fh "resource oneteam-skin jar:chrome/oneteam.jar!/skin/default/\n";
     print $fh "overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browser-overlay.xul";
     close($fh);
     system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, "oneteam.xpi")."' .");
