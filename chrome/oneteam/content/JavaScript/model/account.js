@@ -33,7 +33,7 @@ function Account()
     this._initialize();
     this.currentPresence = {show: "unavailable"};
 
-    this.cache = new PersistantCache("oneteamCache");
+    this.cache = new PersistentCache("oneteamCache");
     this.historyMgr = new HistoryManager();
     this.bookmarks = new ConferenceBookmarks();
     this.presenceProfiles = new PresenceProfiles();

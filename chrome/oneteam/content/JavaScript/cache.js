@@ -1,10 +1,10 @@
-var EXPORTED_SYMBOLS = ["PersistantCache"];
+var EXPORTED_SYMBOLS = ["PersistentCache"];
 
 ML.importMod("roles.js");
 ML.importMod("file.js");
 
 // #ifdef XULAPP
-function PersistantCache(name)
+function PersistentCache(name)
 {
     var file = Components.classes["@mozilla.org/file/directory_service;1"].
         getService(Components.interfaces.nsIProperties).
@@ -29,13 +29,13 @@ function PersistantCache(name)
     this.db = storageService.openDatabase(file);
     var userVersionStmt = this.db.createStatement("PRAGMA user_version");
     if (!userVersionStmt.executeStep())
-        throw new GenericError("Unable to access PersistantCache database");
+        throw new GenericError("Unable to access PersistentCache database");
 
     var version = userVersionStmt.getInt32(0);
     userVersionStmt.reset();
 
     if (version > 1999)
-        throw new GenericError("Unrecognized PersistantCache database version");
+        throw new GenericError("Unrecognized PersistentCache database version");
 
     this.db.createFunction("deleteFile", 1, new StorageFunctionDelete());
 try{
@@ -89,7 +89,7 @@ try{
     this.keyIteratorStmt = this.db.createStatement("SELECT key FROM cache WHERE key LIKE ?1");
 }
 
-_DECL_(PersistantCache).prototype =
+_DECL_(PersistentCache).prototype =
 {
     setValue: function(key, value, expiryDate, storeAsFile)
     {
@@ -220,7 +220,7 @@ _DECL_(StorageFunctionDelete).prototype =
     }
 }
 /* #else
-function PersistantCache(name)
+function PersistentCache(name)
 {
     this.storage = new StorageWrapper("cache");
 
@@ -234,7 +234,7 @@ function PersistantCache(name)
         this.removeValue(keysToDel[i]);
 }
 
-_DECL_(PersistantCache).prototype =
+_DECL_(PersistentCache).prototype =
 {
     setValue: function(key, value, expirationDate, storeAsFile)
     {
