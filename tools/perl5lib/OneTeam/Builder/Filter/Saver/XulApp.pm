@@ -68,7 +68,8 @@ sub finalize {
 
     print $fh "locale oneteam $_ jar:oneteam.jar!/locale/$_/\n"
         for @{$self->{locales}};
-    print $fh "locale branding en-US jar:oneteam.jar!/locale/branding/\n";
+    print $fh "locale oneteam-branding en-US jar:oneteam.jar!/locale/branding/\n";
+    print $fh "resource oneteam-skin chrome://oneteam/skin/\n";
     close($fh);
 
     if ($self->{mar_options}->{MAR_BASE_URL}) {
