@@ -868,9 +868,9 @@ var Animator = {
         return this._animateScroll(token);
     },
 
-    animateScrollToElement: function(element, steps, tick) {
-        var top = element.offsetTop;
+    animateScrollToElement: function(element, steps, tick, xPosition, yPosition) {
         var left = element.offsetLeft;
+        var top = element.offsetTop;
         var p = element.parentNode;
         var op = element.offsetParent
 
@@ -883,15 +883,23 @@ var Animator = {
             p = p.parentNode;
         }
 
-        if (!p)
-            return null;
+        var right = top + element.clientWidth;
+        var bottom = top + element.clientHeight;
+        var positions = []
 
-        if (left + element.clientWidth > p.scrollLeft)
-            left += element.clientWidth;
-        if (top + element.clientHeight > p.scrollTop)
-            top += element.clientHeight;
+        for each (x in [[left, right, xPosition, 0], [top, bottom, yPosition, 1]]) {
+            var res = (x[2]||"").match(/(absolute|percentage):\s*(\d+)/);
+            if (!res)
+                positions[x[3]] = x[1];
+            else if (res[1] == "absolute")
+                positions[x[3]] = +res[2];
+            else if (res[1] == "percentage")
+                positions[x[3]] = parseInt(x[0]*res[2]/100 + x[1]*(1-res[2]/100));
+            else
+                positions[x[3]] = x[1];
+        }
 
-        return this.animateScroll(p, left, top, steps, tick);
+        return this.animateScroll(p, positions[0], positions[1], steps, tick);
     },
 
     animationIsRunning: function(token) {

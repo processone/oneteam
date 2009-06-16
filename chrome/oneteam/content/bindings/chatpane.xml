@@ -220,7 +220,7 @@
         <parameter name="element"/>
         <body><![CDATA[
           Animator.stopAnimation(this._scrollToken);
-          return this._scrollToken = Animator.animateScrollToElement(element, 20, 20);
+          return this._scrollToken = Animator.animateScrollToElement(element, 20, 20, "absolute:0");
         ]]></body>
       </method>
 
