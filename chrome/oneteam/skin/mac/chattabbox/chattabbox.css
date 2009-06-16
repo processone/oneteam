@@ -62,6 +62,7 @@ tabs {
 
 tabbox > tabpanels {
   -moz-appearance: none !important;
+  padding-top: 15px;
 }
 
 /**

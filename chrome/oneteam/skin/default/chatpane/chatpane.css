@@ -33,3 +33,7 @@
   border: 8px solid transparent;
   border-left: 0;
 }
+
+chatpane-view:not([hasRoster=true]) {
+  margin-right: -8px;
+}

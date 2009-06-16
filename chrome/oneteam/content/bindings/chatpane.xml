@@ -60,6 +60,8 @@
           this._roster.hidden = this._roster.previousSibling.hidden =
             !(val && val.contact instanceof Conference);
 
+          this.setAttribute("hasRoster", !this._roster.hidden);
+
           return val;
         ]]></setter>
       </property>
