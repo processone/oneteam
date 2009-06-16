@@ -1,0 +1,48 @@
+@import url(chrome://oneteam-platform/skin/chattabbox/chattabbox.css);
+
+.closebutton > .toolbarbutton-icon {
+  -moz-margin-end: 0px !important;
+  margin-top: 1px;
+}
+
+.closebutton {
+  -moz-appearance: none;
+  -moz-image-region: rect(0px, 14px, 14px, 0px);
+  height: 24px;
+  border: none !important;
+  padding: 0 0 0 4px;
+  cursor: default;
+  list-style-image: url("imgs/close.png");
+}
+
+.closebutton:hover {
+  -moz-image-region: rect(0px, 28px, 14px, 14px);
+}
+
+.closebutton:hover:active {
+  -moz-image-region: rect(0px, 42px, 14px, 28px);
+}
+
+tab[chatstate=modified] .tab-text {
+  color: red;
+}
+
+tab[chatstate=composing] .tab-text {
+  color: green;
+}
+
+#scroll-left-button {
+  list-style-image: url(imgs/scroll-left.png);
+}
+
+#scroll-left-button[disabled="true"] {
+  list-style-image: url(imgs/scroll-left-disabled.png);
+}
+
+#scroll-right-button {
+  list-style-image: url(imgs/scroll-right.png);
+}
+
+#scroll-right-button[disabled="true"] {
+  list-style-image: url(imgs/scroll-right-disabled.png);
+}

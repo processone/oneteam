@@ -1,0 +1,150 @@
+tabbox {
+  margin: 0;
+}
+
+.tab-text {
+  margin-top: 3px;
+  margin-bottom: 0;
+  font: message-box;
+  font-weight: bold;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+tab {
+  -moz-appearance: none;
+  -moz-border-radius: 0 0 6px 6px;
+  color: #222;
+  margin: 0 0 1px;
+  padding: 0 5px;
+  border-style: none solid solid;
+  border-width: 3px;
+  -moz-border-right-colors: rgba(0, 0, 0, .08) rgba(0, 0, 0, .17) rgba(180, 180, 180, .29);
+  -moz-border-bottom-colors: rgba(0, 0, 0, .08) rgba(0, 0, 0, .17) rgba(180, 180, 180, .29);
+  -moz-border-left-colors: rgba(0, 0, 0, .08) rgba(0, 0, 0, .17) rgba(180, 180, 180, .29);
+  -moz-background-clip: padding;
+  min-width: 1px !important;
+  text-align: center;
+  height: 24px;
+  background-image: url(imgs/tab-bkgnd.png);
+}
+
+tab[selected="true"] {
+  padding: 0 6px 1px;
+  border-width: 2px;
+  -moz-border-left-colors: rgba(0, 0, 0, .1) rgba(0, 0, 0, .2);
+  -moz-border-bottom-colors: rgba(0, 0, 0, .1) rgba(0, 0, 0, .2);
+  -moz-border-right-colors: rgba(0, 0, 0, .1) rgba(0, 0, 0, .2);
+  background-image: none;
+  background-color: -moz-mac-chrome-active;
+}
+
+tab[selected="true"]:focus > .tab-text {
+  -moz-box-shadow: 0 0 4px -moz-mac-focusring,
+                   0 0 4px -moz-mac-focusring,
+                   0 0 3px -moz-mac-focusring,
+                   0 0 2px -moz-mac-focusring inset,
+                   0 0 3px -moz-mac-focusring inset;
+}
+
+tabs {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: url("imgs/tabbrowser-tabs-bkgnd.png") repeat-x;
+  -moz-box-pack: start;
+  -moz-box-align: stretch;
+  height: 25px;
+  margin-bottom: 0;
+  margin-top: -1px;
+  border-bottom: 1px solid #404040;
+  background-color: #9B9B9B;
+}
+
+tabbox > tabpanels {
+  -moz-appearance: none !important;
+}
+
+/**
+ * In-tab close button
+ */
+
+.closebutton > .toolbarbutton-icon {
+  -moz-margin-end: 0px !important;
+  margin-top: 1px;
+  padding: 0;
+}
+
+.closebutton {
+  list-style-image: url("imgs/closetab.png");
+  -moz-appearance: none;
+  -moz-image-region: auto !important;
+  border: none !important;
+  padding: 0;
+  margin: 1px 0 0;
+  background: none;
+  cursor: default;
+}
+
+.closebutton:hover,
+.tab[selected="true"] > .closebutton:hover {
+  list-style-image: url("imgs/closetab-hover.png");
+}
+
+.closebutton:hover:active,
+.tab[selected="true"] > .closebutton:hover:active {
+  list-style-image: url("imgs/closetab-active.png");
+}
+
+tab[selected="true"] > .closebutton {
+  /* Make this button focusable so clicking on it will not focus the tab while
+     it's getting closed */
+  -moz-user-focus: normal;
+}
+
+
+
+#scroll-left-button,
+#scroll-right-button {
+  -moz-image-region: rect(0, 11px, 17px, 0);
+  margin: 0;
+  padding: 0 1px;
+  border: none;
+}
+
+#scroll-left-button {
+  list-style-image: url(imgs/tab-arrow-left.png);
+  border-right: 2px solid;
+  -moz-border-right-colors: rgba(0,0,0,0.25) rgba(255,255,255,0.15);
+}
+
+
+#scroll-right-button {
+  list-style-image: url(imgs/tab-arrow-right.png);
+  border-left: 2px solid;
+  -moz-border-left-colors: rgba(0,0,0,0.25) rgba(255,255,255,0.15);
+}
+
+#scroll-right-button:hover,
+#scroll-left-button:hover {
+  -moz-image-region: rect(0, 22px, 17px, 11px);
+  background-color: rgba(0,0,0,0.10);
+}
+
+#scroll-right-button:hover:active,
+#scroll-left-button:hover:active {
+  -moz-image-region: rect(0, 44px, 17px, 33px);
+  background-color: rgba(0,0,0,0.20);
+}
+
+
+#scroll-right-button[disabled=true],
+#scroll-left-button[disabled=true] {
+  -moz-image-region: rect(0, 33px, 17px, 22px) !important;
+  background-color: transparent !important;
+}
+
+#scroll-left-button > .toolbarbutton-text,
+#scroll-right-button > .toolbarbutton-text,
+.closebutton >  .toolbarbutton-text {
+  display: none;
+}

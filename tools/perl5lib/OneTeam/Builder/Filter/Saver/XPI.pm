@@ -68,8 +68,8 @@ sub finalize {
         die "Unable to create file: $!";
     print $fh "content oneteam jar:chrome/oneteam.jar!/content/\n";
 
-    print $fh "skin oneteam ".($_ eq 'default' ? 'classic' : $_)."/1.0 ".
-        "jar:chrome/oneteam.jar!/skin/$_/\n" for keys %{$self->{skins}};
+    print $fh "skin oneteam classic/1.0 jar:chrome/oneteam.jar!/skin/default/\n";
+    print $fh "skin oneteam-platform classic/1.0 jar:chrome/oneteam.jar!/skin/mac/ OS=Darwin\n";
 
     print $fh "locale oneteam $_ jar:chrome/oneteam.jar!/locale/$_/\n"
         for @{$self->{locales}};
