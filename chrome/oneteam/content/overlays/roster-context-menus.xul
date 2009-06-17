@@ -1,0 +1,347 @@
+<overlay id="roster-context-menus" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="text/javascript;version=1.7"><![CDATA[
+    var menuModel;
+
+    function findMenuModel(menu, event) {
+      if (event.target != menu)
+        return false;
+
+      var el = document.popupNode;
+
+      while (el && !el.menuModel)
+        if (el.parentNode)
+          el = el.parentNode;
+        else
+          el = el.__parent__.frameElement;
+
+      if (!el)
+        return false;
+
+      menuModel = el.menuModel;
+
+      return true;
+    }
+
+    function updateContactContextMenu(menu, event) {
+      if (!findMenuModel(menu, event))
+        return;
+
+      var cs = document.getElementById("contact-chat-single");
+      var cm = document.getElementById("contact-chat-multi");
+      var im = document.getElementById("contact-invite");
+      var sf = document.getElementById("contact-send-file");
+      var ah = document.getElementById("contact-adhoc");
+      var ahm = document.getElementById("contact-adhoc-multi");
+
+      sf.hidden = !menuModel.activeResource || !socks5Service.canSendTo(menuModel.activeResource);
+
+      cm.hidden = !(cs.hidden = menuModel.resources.length > 1);
+      if (cs.hidden) {
+        var list = cm.firstChild;
+        while (list && list.firstChild)
+          list.removeChild(list.firstChild);
+        for (var i = 0; i < menuModel.resources.length; i++) {
+          var item = document.createElement("menuitem");
+          item.model = menuModel.resources[i];
+
+          item.setAttribute("label", item.model.jid.resource+
+            (item.model.presence.priority == null ?
+             "" : " ("+item.model.presence.priority+")"));
+          item.setAttribute("oncommand", "this.model.onOpenChat()");
+
+          list.appendChild(item);
+        }
+      }
+
+      im.hidden = !account.conferences.length;
+      if (!im.hidden) {
+        list = im.firstChild;
+        while (list && list.firstChild)
+          list.removeChild(list.firstChild);
+        for (var i = 0; i < account.conferences.length; i++) {
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", account.conferences[i].jid.toUserString());
+          item.setAttribute("oncommand", "this.model.invite(this.contact)");
+          item.model = account.conferences[i];
+          item.contact = menuModel.jid;
+          list.appendChild(item);
+        }
+      }
+
+      var ahr = [];
+      for (var res in menuModel.resourcesIterator()) {
+        if (res.hasDiscoFeature("http://jabber.org/protocol/commands"))
+          ahr.push(res);
+      }
+      ah.hidden = ahr.length != 1 || ahr[0] != menuModel.activeResource;
+      ahm.hidden = !ah.hidden || ahr.length == 0;
+      if (!ahm.hidden) {
+        list = ahm;
+        while (list && list.firstChild)
+          list.removeChild(list.firstChild);
+        for (i = 0; i < ahr.length; i++) {
+          var item = document.createElement("menuitem");
+          item.model = ahr[i];
+
+          item.setAttribute("label", _("{0} ({1})", ahr[i].jid.resource,
+                                       ahr[i].presence.priority || 0));
+          item.setAttribute("oncommand", "this.model.onAdHocCommand()");
+
+          list.appendChild(item);
+        }
+      }
+
+      document.getElementById("contact-authorization-ask").
+        setAttribute("disabled", menuModel.canSeeHim);
+      document.getElementById("contact-authorization-allow").
+        setAttribute("disabled", menuModel.canSeeMe);
+      document.getElementById("contact-authorization-disallow").
+        setAttribute("disabled", !menuModel.canSeeMe);
+    }
+
+    function updateResourceContextMenu(menu, event) {
+      if (!findMenuModel(menu, event))
+        return;
+
+      var im = document.getElementById("resource-invite");
+      var sf = document.getElementById("resource-send-file");
+      var ah = document.getElementById("resource-adhoc");
+
+      sf.hidden = !socks5Service.canSendTo(model);
+
+      im.hidden = !account.conferences.length;
+      if (!im.hidden) {
+        list = im.firstChild;
+        while (list && list.firstChild)
+          list.removeChild(list.firstChild);
+        for (var i = 0; i < account.conferences.length; i++) {
+          var item = document.createElement("menuitem");
+          item.setAttribute("label", account.conferences[i].jid.toUserString());
+          item.setAttribute("oncommand", "this.model.invite(this.contact)");
+          item.model = account.conferences[i];
+          item.contact = menuModel.jid;
+          list.appendChild(item);
+        }
+      }
+
+      ah.hidden = !menuModel.hasDiscoFeature("http://jabber.org/protocol/commands");
+    }
+
+    function updateConferenceMemberContextMenu(menu, event) {
+      if (!findMenuModel(menu, event))
+        return;
+
+      var confMemb = model;
+      var conf = confMemb.contact;
+
+      var kick = document.getElementById("conferencemember-kick");
+      var ban = document.getElementById("conferencemember-ban");
+      var affiliations = document.getElementById("conferencemember-affiliations");
+      var roles = document.getElementById("conferencemember-roles");
+
+      kick.previousSibling.hidden = kick.hidden = ban.hidden = !confMemb.canBeKicked;
+
+      affiliations.hidden = !(conf.iAmAdmin && conf.myResource.isGt(confMemb) || conf.iAmOwner);
+      roles.hidden = confMemb.isAdmin || !conf.iAmModerator;
+
+      for each (var affiliation in "owner admin member none".split(" ")) {
+        var el = document.getElementById("conferencemember-affiliation-"+affiliation);
+        el.hidden = !conf.iAmOwner && conf.myResource.cmp(affiliation, true) >= 0;
+        el.setAttribute("checked", confMemb.affiliation == affiliation);
+      }
+
+      for each (var role in "moderator participant visitor none".split(" ")) {
+        var el = document.getElementById("conferencemember-role-"+role);
+        el.hidden = confMemb.isAdmin || (role == "moderator" && conf.iAmModerator && !conf.iAmAdmin);
+        el.setAttribute("checked", confMemb.role == role);
+      }
+    }
+
+    function updateConferenceContextMenu(menu, event) {
+      if (!findMenuModel(menu, event))
+        return;
+
+      var configuration = document.getElementById("conference-configuration");
+      var permissions = document.getElementById("conference-edit-permissions");
+
+      configuration.hidden = !menuModel.iAmOwner;
+      configuration.previousSibling.hidden = permissions.hidden =
+        !menuModel.iAmAdmin;
+    }
+
+    function updateGatewayMemberContextMenu(menu, event) {
+      if (!findMenuModel(menu, event))
+        return;
+
+      document.getElementById("gateway-login").disabled = !!menuModel.activeResource;
+      document.getElementById("gateway-logout").disabled = !menuModel.activeResource;
+    }
+  ]]></script>
+  <popupset>
+    <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
+      <menuitem id="contact-chat-single" label="_('Send Message...')"
+          oncommand="menuModel.onOpenChat()"/>
+      <menu id="contact-chat-multi" label="_('Send Message...')" hidden="true">
+        <menupopup/>
+      </menu>
+      <menu id="contact-invite" label="_('Invite To')" hidden="true">
+        <menupopup/>
+      </menu>
+
+      <menuseparator/>
+
+      <menuitem label="_('Remove Contact...')" oncommand="menuModel.onRemove()"/>
+      <menuitem label="_('Change Nickname...')" oncommand="menuModel.onRename()"/>
+      <menuitem label="_('Edit Contact...')" oncommand="menuModel.onEditContact()"/>
+
+      <menuseparator/>
+
+      <menu label="_('Authorization')">
+        <menupopup>
+          <menuitem id="contact-authorization-ask" label="_('Ask To See Him')"
+              oncommand="menuModel.askForSubscription()"/>
+          <menuitem id="contact-authorization-allow" label="_('Authorize To See Me')"
+              oncommand="menuModel.allowToSeeMe()"/>
+          <menuitem id="contact-authorization-disallow" label="_('Cancel Authorization')"
+              oncommand="menuModel.disallowToSeeMe()"/>
+        </menupopup>
+      </menu>
+
+      <menuseparator/>
+
+      <menuitem label="_('Show vCard...')" oncommand="menuModel.showVCard()"/>
+      <menuitem id="contact-adhoc" label="_('Execute Command...')" oncommand="menuModel.onAdHocCommand()"/>
+      <menu id="contact-adhoc-multi" label="_('Execute Command...')" hidden="true">
+        <menupopup/>
+      </menu>
+      <menuitem label="_('Show History...')"
+        oncommand="menuModel.onShowHistory()"/>
+      <menuitem id="contact-send-file" label="_('Send File...')"
+        oncommand="menuModel.onSendFile()"/>
+    </popup>
+
+    <popup id="resource-contextmenu" onpopupshowing="updateResourceContextMenu(this, event)">
+      <menuitem label="_('Send Message...')" oncommand="menuModel.onOpenChat()"/>
+      <menu id="resource-invite" label="_('Invite To')" hidden="true">
+        <menupopup/>
+      </menu>
+
+      <menuseparator/>
+
+      <menuitem label="_('Show vCard...')" oncommand="menuModel.showVCard()"/>
+      <menuitem id="resource-adhoc" label="_('Execute Command...')" oncommand="menuModel.onAdHocCommand()"/>
+      <menuitem label="_('Show History...')"
+        oncommand="menuModel.onShowHistory()"/>
+      <menuitem id="resource-send-file" label="_('Send File...')"
+        oncommand="menuModel.onSendFile()"/>
+    </popup>
+
+    <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
+      <menuitem id="conference-invite" label="_('Invite Users To This Room...')"
+          oncommand="menuModel.onInvite()"/>
+      <menuitem id="conference-changeNick" label="_('Change Nick...')"
+          oncommand="menuModel.onChangeNick()"/>
+      <menuitem id="conference-changeSubject" label="_('Change Subject...')"
+          oncommand="menuModel.onChangeSubject()"/>
+      <menuitem id="conference-bookmark" label="_('Bookmark...')"
+          oncommand="menuModel.onBookmark()"/>
+
+      <menuseparator/>
+
+      <menuitem id="conference-configuration" label="_('Configure...')"
+          oncommand="menuModel.onRoomConfiguration()"/>
+      <menuitem id="conference-edit-permissions" label="_('Edit Permissions...')"
+          oncommand="menuModel.onEditPermissions()"/>
+
+      <menuseparator/>
+
+      <menuitem label="_('Show vCard...')"
+        oncommand="menuModel.showVCard()"/>
+      <menuitem label="_('Show History...')"
+        oncommand="menuModel.onShowHistory()"/>
+
+      <menuseparator/>
+
+      <menuitem id="conference-leave" label="_('Leave Conference')"
+          oncommand="menuModel.exitRoom()"/>
+    </popup>
+
+    <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
+      <menuitem id="conferencemember-chat-single" label="_('Send Message...')"
+          oncommand="menuModel.onOpenChat()"/>
+
+      <menuseparator/>
+
+      <menuitem id="conferencemember-kick" label="_('Kick...')"
+          oncommand="menuModel.onKick()"/>
+      <menuitem id="conferencemember-ban" label="_('Ban...')"
+          oncommand="menuModel.onBan()"/>
+      <menu id="conferencemember-affiliations" label="_('Affiliation')">
+        <menupopup>
+          <menuitem id="conferencemember-affiliation-owner" name="affiliations"
+            type="radio" label="_('Owner')"
+            oncommand="menuModel.setAffiliation('owner')"/>
+          <menuitem id="conferencemember-affiliation-admin" name="affiliations"
+            type="radio" label="_('Administrator')"
+            oncommand="menuModel.setAffiliation('admin')"/>
+          <menuitem id="conferencemember-affiliation-member" name="affiliations"
+            type="radio" label="_('Member')"
+            oncommand="menuModel.setAffiliation('member')"/>
+          <menuitem id="conferencemember-affiliation-none" name="affiliations"
+            type="radio" label="_('None')"
+            oncommand="menuModel.setAffiliation('none')"/>
+        </menupopup>
+      </menu>
+
+      <menu id="conferencemember-roles" label="_('Role')">
+        <menupopup>
+          <menuitem id="conferencemember-role-moderator" name="roles"
+            type="radio" label="_('Moderator')"
+            oncommand="menuModel.setRole('moderator')"/>
+          <menuitem id="conferencemember-role-participant" name="roles"
+            type="radio" label="_('Participant')"
+            oncommand="menuModel.setRole('participant')"/>
+          <menuitem id="conferencemember-role-visitor" name="roles"
+            type="radio" label="_('Visitor')"
+            oncommand="menuModel.setRole('visitor')"/>
+          <menuitem id="conferencemember-role-none" name="roles"
+            type="radio" label="_('None')"
+            oncommand="menuModel.setRole('none')"/>
+        </menupopup>
+      </menu>
+
+      <menuseparator/>
+
+      <menuitem label="_('Show vCard...')"
+        oncommand="menuModel.showVCard()"/>
+      <menuitem label="_('Show History...')"
+        oncommand="menuModel.onShowHistory()"/>
+      <menuitem id="conferencemember-send-file" label="_('Send File...')"
+        oncommand="menuModel.onSendFile()"/>
+    </popup>
+
+    <popup id="gateway-contextmenu" onpopupshowing="updateGatewayMemberContextMenu(this, event)">
+      <menuitem id="gateway-chat-single" label="_('Send Message...')"
+          oncommand="menuModel.onOpenChat()"/>
+
+      <menuseparator/>
+
+      <menuitem id="gateway-login" label="_('Login')"
+        oncommand="menuModel.login()"/>
+      <menuitem id="gateway-logout" label="_('Logout')"
+        oncommand="menuModel.logout()"/>
+
+      <menuseparator/>
+
+      <menuitem label="_('Show vCard...')"
+        oncommand="menuModel.showVCard()"/>
+      <menuitem label="_('Show History...')"
+        oncommand="menuModel.onShowHistory()"/>
+
+      <menuseparator/>
+
+      <menuitem label="_('Remove...')"
+        oncommand="menuModel.onRemove()"/>
+    </popup>
+  </popupset>
+</overlay>
