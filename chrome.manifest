@@ -7,5 +7,6 @@ skin     oneteam classic/1.0       file:chrome/oneteam/skin/default/
 skin     oneteam-platform classic/1.0 file:chrome/oneteam/skin/mac/ OS=Darwin
 
 resource oneteam-skin              chrome://oneteam/skin/
+resource oneteam-data              chrome://oneteam/content/data/
 
 overlay  chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browser-overlay.xul

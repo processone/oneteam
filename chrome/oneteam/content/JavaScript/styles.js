@@ -18,15 +18,15 @@ function StylesRegistry(cache)
         this._registerIconSetFromUrl(styles[i]);
     }
 
-    styles = ["chrome://oneteam/content/data/smiles/oneteam",
-              "chrome://oneteam/content/data/smiles/oneteam-big",
-              "chrome://oneteam/content/data/status-icons/oneteam",
-              "chrome://oneteam/content/data/status-icons/crystal",
-              "chrome://oneteam/content/data/status-icons/dcraven",
-              "chrome://oneteam/content/data/status-icons/msn",
-              "chrome://oneteam/content/data/status-icons/aim",
-              "chrome://oneteam/content/data/status-icons/yahoo",
-              "chrome://oneteam/content/data/status-icons/icq"]
+    styles = ["resource://oneteam-data/smiles/oneteam",
+              "resource://oneteam-data/smiles/oneteam-big",
+              "resource://oneteam-data/status-icons/oneteam",
+              "resource://oneteam-data/status-icons/crystal",
+              "resource://oneteam-data/status-icons/dcraven",
+              "resource://oneteam-data/status-icons/msn",
+              "resource://oneteam-data/status-icons/aim",
+              "resource://oneteam-data/status-icons/yahoo",
+              "resource://oneteam-data/status-icons/icq"]
 
     for (i = 0; i < styles.length; i++)
         if (!stylesUrls[styles[i]])
