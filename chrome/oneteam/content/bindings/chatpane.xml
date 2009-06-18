@@ -226,6 +226,22 @@
         ]]></body>
       </method>
 
+      <method name="scrollPageUp">
+        <body><![CDATA[
+          var el = this._output.contentDocument.body;
+          Animator.stopAnimation(this._scrollToken);
+          this._scrollToken = Animator.animateScroll(el, 0, el.scrollTop-el.clientHeight+16, 5, 20);
+        ]]></body>
+      </method>
+
+      <method name="scrollPageDown">
+        <body><![CDATA[
+          var el = this._output.contentDocument.body;
+          Animator.stopAnimation(this._scrollToken);
+          this._scrollToken = Animator.animateScroll(el, 0, el.scrollTop+el.clientHeight-16, 5, 20);
+        ]]></body>
+      </method>
+
       <method name="_init">
         <body>
           <![CDATA[
@@ -1212,6 +1228,21 @@
 
         for (i in state)
           this[i] = state[i];
+
+        var me = this;
+
+        this.addEventListener("keypress", function(event) {
+            if (event.keyCode == KeyEvent.DOM_VK_PAGE_UP ||
+                event.keyCode == KeyEvent.DOM_VK_PAGE_DOWN) {
+              event.stopPropagation();
+              event.preventDefault();
+
+              if (event.keyCode == KeyEvent.DOM_VK_PAGE_UP)
+                me._output.scrollPageUp();
+              else
+                me._output.scrollPageDown();
+            }
+        }, true);
 
         setTimeout(function(me) {
           if (!me._output._output) {
