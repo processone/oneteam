@@ -381,12 +381,12 @@
       <method name="_appendMessages">
         <body><![CDATA[
           var doc = this._output.contentDocument;
-          var scrEl = doc.documentElement;
 
           if (!doc) {
             this._appendTimeout = window.setTimeout(function(t){t._appendMessages()}, 50, this);
             return
           }
+          var scrEl = doc.body;
 
           var scrollToBottom = scrEl.scrollTop + scrEl.clientHeight >= scrEl.scrollHeight - 8 ||
             Animator.animationIsRunning(this._scrollToBottomToken);
