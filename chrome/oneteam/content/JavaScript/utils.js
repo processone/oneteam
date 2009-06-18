@@ -883,23 +883,23 @@ var Animator = {
             p = p.parentNode;
         }
 
-        var right = top + element.clientWidth;
+        var right = left + element.clientWidth;
         var bottom = top + element.clientHeight;
-        var positions = []
+        var pos = [{}, {}]
 
-        for each (x in [[left, right, xPosition, 0], [top, bottom, yPosition, 1]]) {
-            var res = (x[2]||"").match(/(absolute|percentage):\s*(\d+)/);
+        for each (x in [[left, right, p.scrollLeft, xPosition, pos[0]],
+                        [top, bottom, p.scrollTop, yPosition, pos[1]]])
+        {
+            var res = (x[3]||"").match(/(absolute|percentage):\s*(\d+)/);
             if (!res)
-                positions[x[3]] = x[1];
+                x[4].v = x[0] < x[2] ? x[0] : x[1];
             else if (res[1] == "absolute")
-                positions[x[3]] = +res[2];
+                x[4].v = +res[2];
             else if (res[1] == "percentage")
-                positions[x[3]] = parseInt(x[0]*res[2]/100 + x[1]*(1-res[2]/100));
-            else
-                positions[x[3]] = x[1];
+                x[4].v = parseInt(x[0]*res[2]/100 + x[1]*(1-res[2]/100));
         }
 
-        return this.animateScroll(p, positions[0], positions[1], steps, tick);
+        return this.animateScroll(p, pos[0].v, pos[1].v, steps, tick);
     },
 
     animationIsRunning: function(token) {
