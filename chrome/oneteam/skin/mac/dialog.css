@@ -1,5 +1,3 @@
-@import url('chrome://oneteam-base/skin/dialog.css');
-
 window:not([active="true"]) chattabbox tabs {
   background-color: #e2e2e2;
 }
