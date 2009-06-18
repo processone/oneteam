@@ -279,7 +279,7 @@
 
             this._output.contentWindow.addEventListener("resize", function() {
               me._syncMarkers();
-              doc.documentElement.scrollTop = doc.documentElement.scrollHeight;
+              doc.body.scrollTop = doc.body.scrollHeight;
             }, false);
             this._output.contentWindow.addEventListener("scroll", function() {
               me._syncMarkers();
@@ -331,7 +331,10 @@
 
           if (this._appendTimeout)
             window.clearTimeout(this._appendTimeout);
-          this._appendTimeout = window.setTimeout(function(t){t._appendMessages()}, 50, this);
+
+          this._appendTimeout = window.setTimeout(function(t, initial){
+            t._appendMessages(initial)
+          }, 50, this, !model);
         ]]></body>
       </method>
 
@@ -379,11 +382,14 @@
       </method>
 
       <method name="_appendMessages">
+        <parameter name="initial"/>
         <body><![CDATA[
           var doc = this._output.contentDocument;
 
           if (!doc) {
-            this._appendTimeout = window.setTimeout(function(t){t._appendMessages()}, 50, this);
+            this._appendTimeout = window.setTimeout(function(t, initial) {
+              t._appendMessages(initial)
+            }, 50, this, initial);
             return
           }
           var scrEl = doc.body;
@@ -503,7 +509,10 @@
           this._model.removeMessages();
 
           if (this.scrollToBottom && scrollToBottom)
-            this._scrollToBottomToken = this.scrollToElement(msgEl);
+            if (initial)
+              doc.body.scrollTop = doc.body.scrollHeight;
+            else
+              this._scrollToBottomToken = this.scrollToElement(msgEl);
 
           this._updateNonSeenStatus();
           this._syncMarkers();
