@@ -81,13 +81,13 @@
         }, true);
 
         window.addEventListener("keypress", function(event) {
-          if (event.charCode && _this._selectedTab &&
-              !event.ctrlKey && !event.altKey &&
-              event.target.localName != "textbox" &&
-              event.target.localName != "chattabbox")
-          {
-            _this._selectedTab.controller._appendToInput(String.fromCharCode(event.charCode));
-            _this._selectedTab.controller.focus();
+          if (event.charCode && _this._selectedTab) {
+            if (event.target.localName != "textbox" &&
+                event.target.localName != "chattabbox" &&
+                _this._selectedTab.controller._replayEventInInput(event)) {
+              _this._selectedTab.controller.focus();
+              event.preventDefault();
+            }
           }
         }, false);
       ]]></constructor>
@@ -504,6 +504,13 @@
         <parameter name="str"/>
         <body><![CDATA[
           this._chatpane._input._append(str);
+        ]]></body>
+      </method>
+
+      <method name="_replayEventInInput">
+        <parameter name="event"/>
+        <body><![CDATA[
+          return this._chatpane._input._replayEvent(event);
         ]]></body>
       </method>
 

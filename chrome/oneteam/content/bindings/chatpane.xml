@@ -802,6 +802,7 @@
             if (me._toolbar)
               me._toolbar._updateState(event);
             me.maybeResize();
+            me.modified = true;
           }, false);
 
           for each (var event in "keydown keyup mousedown mouseup dragdrop".split(" ")) {
@@ -839,6 +840,42 @@
         <body><![CDATA[
           this._input.contentDocument.execCommand("insertHTML", false, xmlEscape(str));
           this._onUserType();
+        ]]></body>
+      </method>
+
+      <method name="_replayEvent">
+        <parameter name="event"/>
+        <parameter name="skipNavigation"/>
+        <body><![CDATA[
+          if (this._inReplayEvent)
+            return false;
+
+          var navKey = event.keyCode == event.DOM_VK_PAGE_UP ||
+                       event.keyCode == event.DOM_VK_PAGE_DOWN ||
+                       event.keyCode == event.DOM_VK_UP ||
+                       event.keyCode == event.DOM_VK_DOWN ||
+                       event.keyCode == event.DOM_VK_RIGHT ||
+                       event.keyCode == event.DOM_VK_LEFT ||
+                       event.keyCode == event.DOM_VK_HOME ||
+                       event.keyCode == event.DOM_VK_END;
+
+          if (skipNavigation && navKey)
+            return false;
+
+          this._inReplayEvent = true;
+          this.modified = false;
+
+          var altKey = navigator.platform.indexOf("Mac") >= 0 ? 0 : event.altKey;
+
+          var replayEvent = this._input.contentDocument.createEvent("KeyboardEvent");
+          replayEvent.initKeyEvent("keypress", event.bubbles, event.cancelable,
+                                   this._input.contentWindow, event.ctrlKey,
+                                   altKey, event.shiftKey, event.metaKey,
+                                   event.keyCode, event.charCode);
+
+          this._input.contentDocument.documentElement.dispatchEvent(replayEvent);
+          this._inReplayEvent = false;
+          return this.modified || navKey;
         ]]></body>
       </method>
 
@@ -1250,10 +1287,9 @@
             return;
           }
           me._output._output.contentWindow.addEventListener("keypress", function(event) {
-            if (event.charCode && !event.ctrlKey && !event.altKey && !event.metaKey) {
+            if (me._input._replayEvent(event, true)) {
               event.stopPropagation();
               event.preventDefault();
-              me._input._append(String.fromCharCode(event.charCode));
               me.focus();
             }
           }, false);
