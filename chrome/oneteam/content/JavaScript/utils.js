@@ -874,7 +874,7 @@ var Animator = {
         var p = element.parentNode;
         var op = element.offsetParent
 
-        while (p && p.clientWidth == p.scrollWidth & p.clientHeight == p.scrollHeight) {
+        while (p && p.clientWidth == p.scrollWidth && p.clientHeight == p.scrollHeight) {
             if (p == op) {
                 top += op.offsetTop;
                 left += op.offsetLeft;
