@@ -242,52 +242,6 @@
             this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
 
             var colorScheme = ".message { opacity: 1 }\n.message[not-seen=\"true\"] { opacity: 1 }\n";
-            var white = new RGBColor(1, 1, 1);
-            var green = new RGBColor(0.9, 0.9, 1);
-            for (var i = 0; i < -this.colorTable.length; i++) {
-              var base = new RGBColor(this.colorTable[i]);
-              var bg = base.composite(white, 0.06);
-              var border = base.composite(white, 0.3);
-
-              var baseArchived = base.composite(green, 0.4);
-              var bgArchived = baseArchived.composite(white, 0.06);
-              var borderArchived = baseArchived.composite(white, 0.3);
-
-              colorScheme +=
-                <style>
-                  .message[color-id="{i}"] {"{"}
-                      background: {bg};
-                  }
-
-                  .message[color-id="{i}"] {"{"}
-                      border-color: {border};
-                  }
-
-                  .message[color-id="{i}"] > .header {"{"}
-                      background-color: {base}
-                  }
-
-                  .meMessage.message[color-id="{i}"] {"{"}
-                      color: {base}
-                  }
-
-                  .archived.message[color-id="{i}"] {"{"}
-                      background: {bgArchived};
-                  }
-
-                  .archived.message[color-id="{i}"] {"{"}
-                      border-color: {borderArchived};
-                  }
-
-                  .archived.message[color-id="{i}"] > .header {"{"}
-                      background-color: {baseArchived}
-                  }
-
-                  .archived.meMessage.message[color-id="{i}"] {"{"}
-                      color: {baseArchived}
-                  }
-                </style>;
-            }
 
             var colorSchemeTag = this._output.contentDocument.createElement("style");
             colorSchemeTag.setAttribute("type", "text/css");
