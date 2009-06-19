@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+
+<!--#ifdef XPI -->
+<!DOCTYPE overlay [
+  <!ENTITY % baseMenuOverlayDTD SYSTEM "chrome://browser/locale/baseMenuOverlay.dtd">
+  %baseMenuOverlayDTD;
+]>
+<!--#else
+// #endif -->
+
+<?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
+
+<overlay id="macMenuOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <script type="application/javascript" src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/javascript" src="chrome://global/content/macWindowMenu.js"/>
+
+  <group id="macMenu">
+    <command id="minimizeWindow"
+             label="&minimizeWindow.label;"
+             oncommand="window.minimize();" />
+    <command id="zoomWindow"
+             label="&zoomWindow.label;"
+             oncommand="zoomWindow();" />
+    <command id="cmd_closeWindow"
+             label="_('Close')"
+             oncommand="window.close()"/>
+
+    <keyset>
+      <key id="key_minimizeWindow"
+           command="minimizeWindow"
+           key="&minimizeWindow.key;"
+           modifiers="accel"/>
+      <key id="key_closeWindow"
+           key="w"
+           modifiers="accel"
+           command="cmd_closeWindow"/>
+    </keyset>
+
+    <commandset id="editMenuCommands"/>
+    <keyset id="editMenuKeys"/>
+  </group>
+
+  <menubar id="macMenuBar">
+    <menu id="fileMenuTabbed"
+          label="_('File')">
+      <menupopup>
+        <menuitem command="cmd_closeWindow"
+                  key="key_closeWindow"/>
+      </menupopup>
+    </menu>
+
+    <menu id="menu_edit">
+      <menupopup id="editmenu-popup">
+        <menuitem id="menu_undo"/>
+        <menuitem id="menu_redo"/>
+        <menuseparator/>
+        <menuitem id="menu_cut"/>
+        <menuitem id="menu_copy"/>
+        <menuitem id="menu_paste"/>
+        <menuitem id="menu_delete"/>
+        <menuseparator/>
+        <menuitem id="menu_selectAll"/>
+      </menupopup>
+    </menu>
+
+    <menu id="windowMenu"
+          label="&windowMenu.label;"
+          datasources="rdf:window-mediator"
+          ref="NC:WindowMediatorRoot"
+          onpopupshowing="checkFocusedWindow();"
+          hidden="false">
+      <template>
+        <rule>
+          <menupopup>
+            <menuitem uri="rdf:*"
+                      label="rdf:http://home.netscape.com/NC-rdf#Name"
+                      type="radio"
+                      name="windowList"
+                      oncommand="ShowWindowFromResource(event.target)"/>
+          </menupopup>
+        </rule>
+      </template>
+      <menupopup id="windowPopup">
+        <menuitem command="minimizeWindow" key="key_minimizeWindow"/>
+        <menuitem command="zoomWindow"/>
+        <!-- decomment when "BringAllToFront" is implemented
+        <menuseparator/>
+        <menuitem label="&bringAllToFront.label;" disabled="true"/> -->
+        <menuseparator id="sep-window-list"/>
+      </menupopup>
+    </menu>
+  </menubar>
+
+  <group id="macMenuTabbed">
+    <command id="minimizeWindow"
+             label="&minimizeWindow.label;"
+             oncommand="window.minimize();" />
+    <command id="zoomWindow"
+             label="&zoomWindow.label;"
+             oncommand="zoomWindow();" />
+    <command id="cmd_closeWindow"
+             label="_('Close')"
+             oncommand="window.close()"/>
+    <command id="cmd_closeTab"
+             label="_('Close Tab')"/>
+
+    <keyset>
+      <key id="key_minimizeWindow"
+           command="minimizeWindow"
+           key="&minimizeWindow.key;"
+           modifiers="accel"/>
+      <key id="key_closeWindow"
+           key="w"
+           modifiers="accel shift"
+           command="cmd_closeWindow"/>
+      <key id="key_closeTab"
+           key="w"
+           modifiers="accel"
+           command="cmd_closeTab"/>
+    </keyset>
+
+    <commandset id="editMenuCommands"/>
+    <keyset id="editMenuKeys"/>
+  </group>
+
+  <menubar id="macMenuBarTabbed">
+    <menu id="fileMenuTabbed"
+          label="_('File')">
+      <menupopup>
+        <menuitem command="cmd_closeWindow"
+                  key="key_closeWindow"/>
+        <menuitem command="cmd_closeTab"
+                  key="key_closeTab"/>
+      </menupopup>
+    </menu>
+
+    <menu id="menu_edit">
+      <menupopup id="editmenu-popup">
+        <menuitem id="menu_undo"/>
+        <menuitem id="menu_redo"/>
+        <menuseparator/>
+        <menuitem id="menu_cut"/>
+        <menuitem id="menu_copy"/>
+        <menuitem id="menu_paste"/>
+        <menuitem id="menu_delete"/>
+        <menuseparator/>
+        <menuitem id="menu_selectAll"/>
+      </menupopup>
+    </menu>
+
+    <menu id="windowMenu"
+          label="&windowMenu.label;"
+          datasources="rdf:window-mediator"
+          ref="NC:WindowMediatorRoot"
+          onpopupshowing="checkFocusedWindow();"
+          hidden="false">
+      <template>
+        <rule>
+          <menupopup>
+            <menuitem uri="rdf:*"
+                      label="rdf:http://home.netscape.com/NC-rdf#Name"
+                      type="radio"
+                      name="windowList"
+                      oncommand="ShowWindowFromResource(event.target)"/>
+          </menupopup>
+        </rule>
+      </template>
+      <menupopup id="windowPopup">
+        <menuitem command="minimizeWindow" key="key_minimizeWindow"/>
+        <menuitem command="zoomWindow"/>
+        <!-- decomment when "BringAllToFront" is implemented
+        <menuseparator/>
+        <menuitem label="&bringAllToFront.label;" disabled="true"/> -->
+        <menuseparator id="sep-window-list"/>
+      </menupopup>
+    </menu>
+  </menubar>
+
+</overlay>
