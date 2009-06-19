@@ -5,6 +5,8 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <dialog id="fileTransferRequest" windowtype="ot:fileTransferRequest" title="_('File Transfer Request')"
   width="600" height="300"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -60,6 +62,12 @@
       window.close();
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <dialogheader title="_('File Transfer Request')"/>
 

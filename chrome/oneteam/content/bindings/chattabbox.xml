@@ -26,6 +26,9 @@
       <property name="tabCount" onget="return this._tabs.childNodes.length"
                 readonly="true"/>
 
+      <property name="selectedTab" onget="return this._selectedTab"
+                readonly="true"/>
+
       <property name="unseenCount" onget="return this._unseenCount || 0">
         <setter><![CDATA[
           if (val == this._unseenCount)

@@ -3,6 +3,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <dialog id="subscribe" windowtype="ot:subscribe" title="_('Subscription Request')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -40,6 +42,12 @@
       document.getElementById("reason").value = reason;
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <dialogheader title="Subscription Request"/>
 

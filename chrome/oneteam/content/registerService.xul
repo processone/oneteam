@@ -6,6 +6,8 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <dialog id="registerService" windowtype="ot:registerService" title="Service Registration"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
@@ -61,6 +63,12 @@
       alert("Sending registration form failed.");
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <dialogheader title="_('Registering in Service')"/>
 

@@ -6,6 +6,8 @@
 <?xml-stylesheet href="chrome://oneteam/skin/disco/disco.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <window id="disco" windowtype="ot:disco" title="_('Service Discovery')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -377,6 +379,12 @@
       nested = false;
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <toolbox>
     <toolbar class="toolbar-primary chromeclass-toolbar">

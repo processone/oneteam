@@ -4,6 +4,8 @@
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/filetransfers/filetransfers.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <window id="fileTransfers" windowtype="ot:fileTransfers" title="_('File Transfers')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="700" height="400"
@@ -45,6 +47,12 @@
           transfers[i].remove();
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <vbox flex="1">
     <richlistbox id="richlist" orient="vertical" flex="1"/>

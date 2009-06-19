@@ -5,6 +5,8 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <dialog id="presenceProfiles" windowtype="ot:presenceProfiles" title="Presence Profiles"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -143,7 +145,14 @@
     }
   ]]></script>
 
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
+
   <dialogheader title="Presence Profiles"/>
+
   <hbox flex="1">
     <vbox>
       <listbox id="list" flex="1" onselect="profileChanged(this)"/>
@@ -178,7 +187,7 @@
         <textbox id="statusMessage" multiline="true" rows="2" flex="1"/>
       </groupbox>
 
-      <description>Use this presence when contact 
+      <description>Use this presence when contact
         <menulist id="matchType">
           <menupopup>
             <menuitem label="is" value="true"/>
@@ -202,4 +211,3 @@
     </vbox>
   </hbox>
 </dialog>
-

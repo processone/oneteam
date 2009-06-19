@@ -7,6 +7,8 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <wizard id="adhoc" windowtype="ot:adhoc" title="_('Ad-Hoc Commands')"
     onwizardfinish="return true" onwizardcancel="return onWizardCancel()"
     onwizardnext="return onWizardNext()" onwizardback="return onWizardBack()"
@@ -203,6 +205,12 @@
       cp.firstChild.selectedIndex = 1;
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <wizardpage onpageshow="sessionid=null" pageid="first">
     <deck id="main-deck">

@@ -5,6 +5,8 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <dialog id="changeSubject" windowtype="ot:changeSubject" title="_('Change Conference Subject')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="200"
@@ -27,9 +29,15 @@
       return true;
     }
   ]]></script>
-  
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
+
   <dialogheader title="Change Conference Subject"/>
-  
+
   <hbox class="entry">
     <description value="_('New Subject:')"/>
     <textbox id="subject"/>

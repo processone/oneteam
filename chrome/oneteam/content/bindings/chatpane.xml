@@ -749,6 +749,7 @@
           doc.body.style.backgroundColor = "transparent";
 
           doc.addEventListener("keypress", function (event) {
+          //alert("r: "+String.fromCharCode(event.charCode)+", "+event.keyCode+", "+event.altKey+", "+event.metaKey+", "+event.shiftKey);
             event.stopPropagation();
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
               event.preventDefault();

@@ -7,6 +7,8 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <wizard id="search" windowtype="ot:search" title="_('Search')"
     onwizardfinish="return true"
     onwizardnext="return onWizardNext()"
@@ -179,6 +181,12 @@
       account.onAddContact(contact);
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <wizardpage pageid="form">
     <deck id="formDeck" flex="1">

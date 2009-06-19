@@ -4,7 +4,8 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
-<?xul-overlay href="chrome://browser/content/baseMenuOverlay.xul"?>
+
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
 <dialog id="preferences" windowtype="ot:preferences" title="_('Preferences')"
   width="700" height="500"
@@ -183,6 +184,12 @@
         port.value = 5222;
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <tabbox flex="1" class="chromeclass-toolbar">
     <tabs  style="-moz-appearance: -moz-mac-unified-toolbar;">

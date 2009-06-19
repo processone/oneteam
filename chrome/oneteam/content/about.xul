@@ -3,6 +3,8 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <dialog id="about" windowtype="ot:about" title="_('About {0}', _('$$branding$$:OneTeam'))"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="550" height="350"
@@ -17,6 +19,13 @@
       openLink(_("$$branding$$: http://www.process-one.net/en/oneteam/"));
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
+
   <vbox style="background-color: white;" flex="1">
     <hbox>
       <spacer flex="1"/>

@@ -8,6 +8,7 @@
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/roster-context-menus.xul"?>
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
 <window id="ot:chats" title="_('Chats')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -34,7 +35,25 @@
       if (window.arguments)
         window.arguments[0]._onChatWindowClosed();
     }
+
+    function closeTab() {
+      var c = document.getElementById("chats");
+
+      if (c.tabCount == 1)
+        window.close();
+      else
+        c.selectedTab.controller.close();
+    }
   ]]></script>
+
+  <group id="macMenuTabbed">
+    <command id="cmd_closeTab"
+             oncommand="closeTab()"/>
+  </group>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBarTabbed"/>
+  </toolbox>
 
   <vbox flex="1">
     <chattabbox id="chats" flex="1"/>

@@ -4,6 +4,8 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
 <window id="ot:history" title="_('History Manager')" width="640" height="550"
     onload="onLoad()" onunload="onUnload()" persist="width height" windowtype="ot:history"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
@@ -140,6 +142,12 @@
       view.model = tree.myView.currentObject;
     }
   ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
 
   <tabbox flex="1">
     <tabs id="tabs">
