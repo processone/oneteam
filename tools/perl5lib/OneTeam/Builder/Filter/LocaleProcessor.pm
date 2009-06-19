@@ -87,18 +87,36 @@ sub new {
 sub process {
     my ($self, $content, $file, $locale) = @_;
 
-    if (exists $self->{files}->{$file}) {
-        my $new_content = $self->{files}->{$file}->
-            translate($self->{po_files}->{$locale}, $self->{xulapp_strings});
-        if ($file =~ /\.(?:xul|xml)$/ && $new_content ne $content) {
-            $new_content =~ /<(\w+)/;
-            my $first_tag_name = $1;
-            $new_content =~ s[^(<\?xml.*?\?>)?\s*][$1\n\n<!DOCTYPE $first_tag_name SYSTEM "chrome://oneteam/locale/oneteam.dtd">\n\n];
-        }
-        return $new_content;
+    return $content
+        if not exists $self->{files}->{$file};
+
+    my $new_content = $self->{files}->{$file}->
+        translate($self->{po_files}->{$locale}, $self->{xulapp_strings});
+
+    if ($file =~ /\.(?:xul|xml)$/ && $new_content ne $content) {
+        $new_content =~ /<(\w+)/;
+        my $first_tag_name = $1;
+        $new_content =~ s{
+            ^(<\?xml.*?\?>)? \s*
+            (?:
+                <!DOCTYPE\s+\w+\s+
+                (?:
+                    \[ \s* ( [^\]]+? ) \s* \] |
+                    ( [^>]+? )
+                )
+                \s* >
+            )?
+        }{
+            "$1\n\n<!DOCTYPE $first_tag_name ".
+            ($2||$3 ?
+                "[\n  <!ENTITY % oneteamDTD SYSTEM \"chrome://oneteam/locale/oneteam.dtd\">\n  %oneteamDTD;\n".
+                    "  ".($2 ? $2 : "<!ENTITY % otherDTD $3>\n  %otherDTD;")."\n]" :
+                "SYSTEM \"chrome://oneteam/locale/oneteam.dtd\""
+            ).">\n\n"
+        }xe;
     }
 
-    return $content;
+    return $new_content;
 }
 
 sub locales {
