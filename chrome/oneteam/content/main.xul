@@ -6,7 +6,7 @@
 <?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<?xul-overlay href="chrome://oneteam/content/overlays/roster-context-menus.xul"?>
+<?xul-overlay href="chrome://oneteam/content/overlays/rosterContextMenus.xul"?>
 
 <window id="ot:main" title="OneTeam" class="no-verifier"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
