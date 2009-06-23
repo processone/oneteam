@@ -1,8 +1,20 @@
 <?xml version="1.0"?>
 
+<?xml-stylesheet href="chrome://oneteam/skin/browserUI/browserUI.css" type="text/css"?>
+
 <overlay id="oneteamBrowserOverlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <script><![CDATA[
+    var OneTeam = {
+      onStatusClick: function() {
+        if (this.event)
+          this.event();
+        else
+          toggleSidebar("showOneteam");
+      }
+    }
+  ]]></script>
   <menupopup id="viewSidebarMenu">
     <menuitem key="key_showOneteam" observes="showOneteam" />
   </menupopup>
@@ -10,6 +22,19 @@
   <keyset id="mainKeyset">
     <key id="key_showOneteam" command="showOneteam" key="O" modifiers="shift accel"/>
   </keyset>
+
+  <statusbar id="status-bar">
+    <tooltip id="oneteam-default-tooltip">
+      <label value="OneTeam"/>
+    </tooltip>
+
+    <tooltip id="oneteam-messages-tooltip"/>
+
+    <statusbarpanel id="oneteam-status" class="statusbarpanel-menu-iconic"
+                    onclick="OneTeam.onStatusClick(event)"
+                    tooltip="oneteam-default-tooltip"/>
+  </statusbar>
+
 
   <broadcasterset id="mainBroadcasterSet">
     <broadcaster id="showOneteam"

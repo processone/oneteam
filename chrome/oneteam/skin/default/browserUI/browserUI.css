@@ -1,0 +1,7 @@
+#oneteam-status {
+    list-style-image: url(imgs/status-icon.png);
+}
+
+#oneteam-status[hasEvents="true"] {
+    list-style-image: url(imgs/new-events-icon.png);
+}
