@@ -118,3 +118,33 @@ function DOMParser() {
     return Components.classes["@mozilla.org/xmlextras/domparser;1"].
         createInstance(Components.interfaces.nsIDOMParser);
 }
+
+function initTypesFromWindow(win) {
+    if (!this.Document) {
+        var di = Components.classesByID["{3a9cd622-264d-11d4-ba06-0060b0fc76dd}"].
+            createInstance(Components.interfaces.nsIDOMDOMImplementation);
+
+        this.document = di.createDocument(null, null, null);
+
+        this.Window = win.Window;
+        this.Document = win.Document;
+        this.XMLDocument = win.XMLDocument;
+        this.XULDocument = win.XULDocument;
+        this.XULElement = win.XULElement;
+        this.Element = win.Element;
+        this.Node = win.Node;
+        this.Text = win.Text;
+        this.XPathEvaluator = win.XPathEvaluator;
+        this.XPathExpression = win.XPathExpression;
+        this.TreeWalker = win.TreeWalker;
+        this.NodeFilter = win.NodeFilter;
+        this.NodeList = win.NodeList;
+        this.XMLHttpRequest = win.XMLHttpRequest;
+        this.XMLSerializer = win.XMLSerializer;
+        this._atob = win.atob;
+        this._btoa = win.btoa;
+        this.window = this;
+        this.screen = win.screen;
+        this.navigator = win.navigator;
+    }
+}

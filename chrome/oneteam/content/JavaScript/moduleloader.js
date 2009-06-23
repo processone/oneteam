@@ -9,34 +9,7 @@ function MLP() {
     this.gs = gs.wrappedJSObject;
     var i, tmp = this.gs.__parent__;
 
-    if (!tmp.Document) {
-        var di = Components.classesByID["{3a9cd622-264d-11d4-ba06-0060b0fc76dd}"].
-            createInstance(Components.interfaces.nsIDOMDOMImplementation);
-
-        tmp.document = di.createDocument(null, null, null);
-
-        tmp.Window = Window;
-        tmp.Document = Document;
-        tmp.XMLDocument = XMLDocument;
-        tmp.XULDocument = XULDocument;
-        tmp.XULElement = XULElement;
-        tmp.Element = Element;
-        tmp.Node = Node;
-        tmp.Text = Text;
-        tmp.navigator = navigator;
-        //tmp.DOMParser = DOMParser;
-        tmp.XPathEvaluator = XPathEvaluator;
-        tmp.XPathExpression = XPathExpression;
-        tmp.TreeWalker = TreeWalker;
-        tmp.NodeFilter = NodeFilter;
-        tmp.NodeList = NodeList;
-        tmp.XMLHttpRequest = XMLHttpRequest;
-        tmp.XMLSerializer = XMLSerializer;
-        tmp._atob = atob;
-        tmp._btoa = btoa;
-        tmp.window = tmp;
-        tmp.screen = window.screen;
-    }
+    tmp.init(window);
 }
 
 MLP.prototype =

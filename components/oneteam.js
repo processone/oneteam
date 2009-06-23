@@ -375,3 +375,10 @@ var ML = new MLP();
 ML.importMod("exceptions.js");
 ML.importMod("services/xpcom/compatibilityLayer.js")
 ML.importMod("services/xpcom/utils.js")
+
+function init(win) {
+    initTypesFromWindow(win);
+// #ifdef XPI
+    ML.importMod("services/xpcom/scriptInjector.js");
+// #endif
+}
