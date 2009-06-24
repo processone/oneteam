@@ -142,8 +142,9 @@ try{
         }
         this.parents.pop();
 
-        throw new Error(
-            "ML.importMod error: unable to import '"+script+"' file", ex);
+        var error = new Error("ML.importMod error: unable to import '"+script+"' file", ex);
+        alert(error);
+        throw error;
     },
 
     copySymbols: function(script, scope, asPrivate, everything)
