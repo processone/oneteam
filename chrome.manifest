@@ -4,6 +4,7 @@ locale   oneteam  en-US            file:chrome/oneteam/locale/en-US/
 locale   oneteam-branding en-US    file:chrome/oneteam/branding/
 
 skin     oneteam classic/1.0       file:chrome/oneteam/skin/default/
+skin     oneteam-platform classic/1.0 file:chrome/oneteam/skin/default/
 skin     oneteam-platform classic/1.0 file:chrome/oneteam/skin/mac/ OS=Darwin
 
 resource oneteam-skin              chrome://oneteam/skin/
