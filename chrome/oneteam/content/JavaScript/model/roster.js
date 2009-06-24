@@ -70,7 +70,8 @@ _DECL_(Group, null, Model).prototype =
         this.contacts.push(contact);
         if (contact.activeResource) {
             this.availContacts++;
-            this.modelUpdated("contacts", {added: [contact]}, "availContacts");
+            this.modelUpdated("contacts", {added: [contact]});
+            this.modelUpdated("availContacts");
         } else
             this.modelUpdated("contacts", {added: [contact]});
         if (this.contacts.length == 1)
@@ -80,9 +81,10 @@ _DECL_(Group, null, Model).prototype =
     _onContactRemoved: function(contact)
     {
         this.contacts.splice(this.contacts.indexOf(contact), 1);
-        if (this._onContactUpdated(contact, true))
-            this.modelUpdated("contacts", {removed: [contact]}, "availContacts");
-        else
+        if (this._onContactUpdated(contact, true)) {
+            this.modelUpdated("contacts", {removed: [contact]})
+            this.modelUpdated("availContacts");
+        } else
             this.modelUpdated("contacts", {removed: [contact]});
 
         if (this.contacts.length == 0) {
@@ -522,8 +524,10 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
         if (res != this.activeResource) {
             this.activeResource = res;
-            if (!dontNotifyViews)
-                this.modelUpdated("activeResource", null, "presence");
+            if (!dontNotifyViews) {
+                this.modelUpdated("activeResource");
+                this.modelUpdated("presence");
+            }
             return true;
         } else if (!dontNotifyViews && resource == this.activeResource)
             this.modelUpdated("presence");
@@ -540,7 +544,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         this.resources.push(resource);
         if (!this.activeResource || this.activeResource.isLt(resource)) {
             this.activeResource = resource;
-            this.modelUpdated("resources", {added: [resource]}, "activeResource", null, "presence");
+            this.modelUpdated("resources", {added: [resource]});
+            this.modelUpdated("activeResource");
+            this.modelUpdated("presence");
         } else
             this.modelUpdated("resources", {added: [resource]});
         if (notifyGroups && !this._notVisibleInRoster)
@@ -553,15 +559,19 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         this.resources.splice(this.resources.indexOf(resource), 1);
         if (!this.resources.length) {
             this.activeResource = null;
-            this.modelUpdated("resources", {removed: [resource]}, "activeResource", null, "presence");
+            this.modelUpdated("resources", {removed: [resource]});
+            this.modelUpdated("activeResource");
+            this.modelUpdated("presence");
             if (!this._notVisibleInRoster)
                 for (var g in this.groupsIterator())
                     g._onContactUpdated(this);
             return;
         }
-        if (this.activeResource == resource && this._onResourceUpdated(resource, true))
-            this.modelUpdated("resources", {removed: [resource]}, "activeResource", null, "presence");
-        else
+        if (this.activeResource == resource && this._onResourceUpdated(resource, true)) {
+            this.modelUpdated("resources", {removed: [resource]})
+            this.modelUpdated("activeResource");
+            this.modelUpdated("presence");
+        } else
             this.modelUpdated("resources", {removed: [resource]});
     },
 
@@ -811,7 +821,8 @@ _DECL_(MyResourcesContact, Contact).prototype =
         this.name = _("{0}/{1}", nickname, this.jid.resource);
         this.visibleName = _("{0} ({1})", nickname, this.jid.resource);
 
-        this.modelUpdated("visibleName", null, "name");
+        this.modelUpdated("visibleName");
+        this.modelUpdated("name");
     }
 }
 

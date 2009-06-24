@@ -163,7 +163,8 @@ _DECL_(Model).prototype =
     _modelUpdatedCheck: function(oldValues)
     {
         var flags = this._calcModificationFlags(oldValues);
-        this.modelUpdated.apply(this, flags);
+        for (var i = 0; i < flags.length; i++)
+            this.modelUpdated(flags[i]);
 
         return flags;
     },

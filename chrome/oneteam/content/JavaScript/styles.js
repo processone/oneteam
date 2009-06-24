@@ -157,16 +157,16 @@ _DECL_(StylesRegistry, null, Model).prototype =
             this.iconStyles.push(set);
             this.smiles.push(set);
             if (notify)
-                this.modelUpdated("iconStyles", {added: [set]},
-                                  "smiles", {added: [set]});
+                this.modelUpdated("iconStyles", {added: [set]});
+                this.modelUpdated("smiles", {added: [set]});
         } else if (iconDefData..ns::x.(function::text().toString().
                                        indexOf("status") == 0).length()) {
             var set = new StatusIconStyle(url, iconDefData);
             this.iconStyles.push(set);
             this.statusIcons.push(set);
             if (notify)
-                this.modelUpdated("iconStyles", {added: [set]},
-                                  "statusIcons", {added: [set]});
+                this.modelUpdated("iconStyles", {added: [set]});
+                this.modelUpdated("statusIcons", {added: [set]});
         }
     }
 }

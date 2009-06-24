@@ -651,7 +651,9 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             this.visibleName =  this.name + " from " + this.jid.node;
             this.jid = this.jid.createFullJID(this.name);
             account.resources[this.jid.normalizedJID] = this;
-            this.modelUpdated("jid", null, "name", null, "visibleName");
+            this.modelUpdated("jid");
+            this.modelUpdated("name");
+            this.modelUpdated("visibleName");
 
             account.notificationScheme.show("muc", "nickChange", this, oldJID);
             return;

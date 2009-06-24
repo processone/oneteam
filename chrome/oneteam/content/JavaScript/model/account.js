@@ -747,7 +747,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.connectionInitialized = false;
         account.connection = null;
 
-        this.modelUpdated("account.connection", null, "connected", null, "connectionInitialized");
+        this.modelUpdated("account.connection");
+        this.modelUpdated("connected");
+        this.modelUpdated("connectionInitialized");
 
         var groups = this.groups;
         var conferences = this.conferences;
