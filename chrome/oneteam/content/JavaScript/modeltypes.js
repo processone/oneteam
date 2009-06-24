@@ -1,5 +1,6 @@
 var EXPORTED_SYMBOLS = ["View", "ContainerView", "Model", "RegsBundle"];
 
+ML.importMod("utils.js");
 ML.importMod("roles.js");
 
 function View()
@@ -100,54 +101,32 @@ function Model()
 {
 }
 
-_DECL_(Model).prototype =
+_DECL_(Model, CallbacksList).prototype =
 {
     init: function()
     {
-        this._views = {};
+        this._views = new CallbacksList(true);
     },
 
-    registerView: function(method, obj)
+    registerView: function(method, obj, prop, token)
     {
-        var callback = new Callback(method, obj);
-        var flags = arguments.length <= 2 ? [''] : Array.slice(arguments, 2);
-
-        for (var i = 0; i < flags.length; i++) {
-            if (!this._views[flags[i]])
-                this._views[flags[i]] = [callback];
-            else
-                this._views[flags[i]].push(callback);
-        }
-        return callback;
+        return this._views._registerCallback(new Callback(method, obj), token, prop);
     },
 
     unregisterView: function(callback)
     {
-        var idx;
-
-        for (var name in this._views) {
-            if ((idx = this._views[name].indexOf(callback)) >= 0)
-                if (this._views[name].length == 1)
-                    delete this._views[name];
-                else
-                    this._views[name].splice(idx, 1);
-        }
+        this._views._unregisterCallback(callback);
     },
 
-    modelUpdated: function()
+    modelUpdated: function(prop, arg)
     {
-        var records = [];
-        for (var i = 0; i < arguments.length; i+=2) {
-            var views = (this._views[arguments[i]] || []).concat(this._views[''] || []);
-            for (var j = 0; j < views.length; j++)
-                if (1||~records.indexOf(views[j])) {
-                    records.push(views[j]);
-                    try {
-                        views[j](this, arguments[i], arguments[i+1]);
-                    } catch (ex) {
-                        report('developer', 'error', ex, window);
-                    }
-                }
+        for each (var callback in this._views._iterateCallbacks(prop)) {
+            try {
+                callback(this, prop, arg);
+            } catch (ex) {
+                report('developer', 'error', ex, window);
+            }
+
         }
     },
 
