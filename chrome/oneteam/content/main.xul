@@ -24,6 +24,7 @@
     ML.importMod("views/chattabs.js");
 
     var loginProgress;
+    var globalRegToken = new RegistrationToken();
 
     var setPresenceUpdater = {
       onPresenceChange: function() {
@@ -162,10 +163,10 @@
 
       init: function()
       {
-        account.registerView(this.onConnect, this, "connected");
-        account.registerView(this.onPresenceChange, this, "currentPresence");
-        account.myResource.registerView(this.onNickChange, this, "visibleName");
-        account.style.registerView(this.onIconSetChange, this, "defaultSet");
+        account.registerView(this.onConnect, this, "connected", globalRegToken);
+        account.registerView(this.onPresenceChange, this, "currentPresence", globalRegToken);
+        account.myResource.registerView(this.onNickChange, this, "visibleName", globalRegToken);
+        account.style.registerView(this.onIconSetChange, this, "defaultSet", globalRegToken);
 
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.profileChooser = document.getElementById("setPresence-profile-chooser");
@@ -175,8 +176,11 @@
         this.systray.icon = account.style.getStatusIcon(account.currentPresence.show);
 // #endif
         this.presence = this.chooser.value;
-        if (account.connected)
+        if (account.connected) {
           this.onConnect();
+          this.onIconSetChange();
+          this.onNickChange();
+        }
       }
     };
 
@@ -224,7 +228,7 @@
               var jid = new JID(args.openconference);
               account.getOrCreateConference(jid.shortJID).joinRoom(function(){}, jid.resource || username);
             }
-          }, null, "connectionInitialized");
+          }, null, "connectionInitialized", globalRegToken);
       }
 
 // #ifdef XULAPP
@@ -271,6 +275,8 @@
     }
 
     function onUnload() {
+      globalRegToken.unregisterFromAll();
+
       return;
     //#ifdef XULAPP
       var width = self.outerWidth;
@@ -354,7 +360,7 @@
         this.counter = document.getElementById("eventBoxCounter");
         this.prevButton = document.getElementById("eventBoxPrev")
         this.nextButton = document.getElementById("eventBoxNext")
-        account.registerView(this.onEventsChanged, this, "events");
+        account.registerView(this.onEventsChanged, this, "events", globalRegToken);
       },
 
       onEventsChanged: function()
