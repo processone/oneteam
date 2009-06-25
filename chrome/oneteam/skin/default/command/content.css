@@ -43,10 +43,18 @@ body {
     color: #44f;
 }
 
-.value-boolean{
+.value-boolean {
     color: #e2e;
 }
 
 .value-xml {
     color: #383;
+}
+
+.value-function {
+    color: #416;
+}
+
+.value-continue {
+    color: #000;
 }
