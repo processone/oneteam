@@ -5,11 +5,12 @@ body {
     padding: 2px;
 }
 
-.remote > .exec-expr:before {
-    display: block;
-    color: red;
-    font-size: 50%;
-    content: "remote"
+.exec-flags > span {
+    font-size: 75%;
+    -moz-border-radius: 10px;
+    background: red;
+    color: white;
+    padding: 0 4px;
 }
 
 .exec-unit {
@@ -23,8 +24,8 @@ body {
     border-bottom: 1px dotted #eee;
 }
 
-.exec-exception {
-    background: #ffe;
+.exec-unit.exception {
+    background: #ffd;
 }
 
 .value-object {

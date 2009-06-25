@@ -301,33 +301,47 @@
       }), expr);
   }
 
-  function showExecResult(val, expr, remote) {
+  function appendToOutput(val, expr, flags) {
     var output = document.getElementById("output").contentDocument;
     var el = output.createElement("div");
 
-    el.setAttribute("class", "exec-unit"+(remote ? " remote" : ""));
-    el.innerHTML += "<div class='exec-expr'>"+indent(expr)+"</div>";
+    var classes = (flags||[]).map(function(flag) {
+      return flag.replace(/\s+/g, "-")
+    }).join(" ");
 
-    if ("result" in val)
-      el.innerHTML += "<div class='exec-result'>"+genOutput(val.result, true)+"</div>";
-    else
-      el.innerHTML += "<div class='exec-exception'>Exception:"+
-        "<div>"+indent(remoteJID ? val.exception : exceptionToString(val.exception, ""))+"</div></div>";
+    flags = (flags||[]).map(function(flag) {
+      return "<span class='"+flag.replace(/\s+/g, "-")+"'>"+flag+"</span>"
+    }).join("");
+
+    el.setAttribute("class", "exec-unit "+classes);
+    el.innerHTML += "<div class='exec-flags'>"+flags+"</div>";
+    el.innerHTML += "<div class='exec-expr'>"+(expr||"")+"</div>";
+    el.innerHTML += "<div class='exec-result'>"+val+"</div>";
 
     output.body.appendChild(el);
     output.body.scrollTop = output.body.scrollHeight;
   }
 
+  function showExecResult(val, expr, remote) {
+    var flags = [];
+
+    if ("result" in val)
+      val = genOutput(val.result, true);
+    else {
+      val = val.exception;
+      if (typeof(val) != "string")
+        val = exceptionToString(val, "");
+      val = indent(val);
+      flags.push("exception");
+    }
+    if (remote)
+      flags.push("remote");
+
+    appendToOutput(val, indent(expr), flags);
+  }
+
   function dump(value) {
-    var output = document.getElementById("output").contentDocument;
-
-    var el = output.createElement("div");
-    el.setAttribute("class", "exec-unit");
-    el.innerHTML += "<div class='exec-expr'>Dump result:</div>";
-    el.innerHTML += "<div class='exec-result'>"+genOutput(value, true)+"</div>";
-
-    output.body.appendChild(el);
-    output.body.scrollTop = output.body.scrollHeight;
+    appendToOutput(genOutput(value, true), "", ["dump result"]);
   }
 
   function dumps() {
