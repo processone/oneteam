@@ -120,6 +120,13 @@ var remoteDebug = {
         var expr = query.text().toString();
         var value = evalInWindow(expr, win);
 
+        if (query.localName() == "eval") {
+            var cmdWin = this._wm.getMostRecentWindow("ot:command");
+
+            if (cmdWin)
+                cmdWin.showExecResult(value, expr);
+        }
+
         return value.result ?
             <result xmlns="http://oneteam.im/remote-debug">
                 {uneval(query.localName() == "completions" ?
