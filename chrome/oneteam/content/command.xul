@@ -291,7 +291,7 @@
     }
 
     if (remoteJID)
-      remoteDebug.eval(remoteJID, expr, showExecResult, expr);
+      remoteDebug.eval(remoteJID, expr, showExecResult, expr, true);
     else
       showExecResult(evalInWindow(expr, window.opener, {
         dump: dump,
@@ -301,11 +301,11 @@
       }), expr);
   }
 
-  function showExecResult(val, expr) {
+  function showExecResult(val, expr, remote) {
     var output = document.getElementById("output").contentDocument;
     var el = output.createElement("div");
 
-    el.setAttribute("class", "exec-unit");
+    el.setAttribute("class", "exec-unit"+(remote ? " remote" : ""));
     el.innerHTML += "<div class='exec-expr'>"+indent(expr)+"</div>";
 
     if ("result" in val)

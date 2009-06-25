@@ -124,7 +124,7 @@ var remoteDebug = {
             var cmdWin = this._wm.getMostRecentWindow("ot:command");
 
             if (cmdWin)
-                cmdWin.showExecResult(value, expr);
+                cmdWin.showExecResult(value, expr, true);
         }
 
         return value.result ?

@@ -5,6 +5,13 @@ body {
     padding: 2px;
 }
 
+.remote > .exec-expr:before {
+    display: block;
+    color: red;
+    font-size: 50%;
+    content: "remote"
+}
+
 .exec-unit {
     display: block;
     border: 1px solid #ccc;
