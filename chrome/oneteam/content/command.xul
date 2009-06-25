@@ -21,8 +21,9 @@
   ML.importMod("roles.js");
   ML.importMod("exceptions.js");
   ML.importMod("utils.js");
+  ML.importMod("services/remoteDebug.js");
 
-  var input;
+  var input, remoteJID;
 
   function onload() {
     var output = document.getElementById("output");
@@ -145,7 +146,7 @@
       case "function":
         if (!topLevel)
           return "<span class='value-function'>function(){<span class='value-continue'>...</span>}</span>"
-        return "<span class='value-function'>"+indent(uneval(value))+"</span>";
+        return "<span class='value-function'>"+indent(value.toString())+"</span>";
         break;
     }
   }
@@ -198,35 +199,54 @@
     return [str.substr(0, start), "", s];
   }
 
-  function findCompletions(str) {
+  function findCompletions(prevEntry, cursPos, suffix, str) {
     var val = extractExpr(str);
 
     if (!val)
-      return null;
+      return doComplete(cursPos, suffix, str, null);
 
     var expr = val[1];
     var indexPrefix = val[2];
     var prefixLength = val[0].length+val[1].length;
 
-    val = evalInWindow(expr || "this", window.opener);
+    if (remoteJID) {
+      remoteDebug.completions(remoteJID, expr || "this", indexPrefix,
+                              doFindCompletions, expr, indexPrefix, prefixLength,
+                              prevEntry, cursPos, suffix, str);
+    } else
+      doFindCompletions(evalInWindow(expr || "this", window.opener), expr,
+                        indexPrefix, prefixLength, prevEntry, cursPos,
+                        suffix, str);
+  }
 
+  function doFindCompletions(val, expr, indexPrefix, prefixLength, prevEntry,
+                             cursPos, suffix, str)
+  {
     if (val.exception || !val.result)
-      return null;
+      return doComplete(prevEntry, cursPos, suffix, str, null);
 
     var res = [];
 
-    for (var i in val.result)
-      if (i.indexOf(indexPrefix) == 0) {
-        var word = i.search(/^[^\W\d]\w*$/) == 0;
-        if (expr)
-          res.push(word ? "."+i : "["+uneval(i)+"]");
-        else
-          res.push(word ? i : "this["+uneval(i)+"]");
-      }
-    if (!res.length)
-      return null;
+    if (remoteJID)
+      res = val.result.map(function(w) {
+        return w.search(/^[^\W\d]\w*$/) == 0 ?
+          expr ? "."+w : w :
+          expr ? "["+uneval(w)+"]" : "this["+uneval(w)+"]"
+      });
+    else
+      for (var i in val.result)
+        if (i.indexOf(indexPrefix) == 0) {
+          var word = i.search(/^[^\W\d]\w*$/) == 0;
+          if (expr)
+            res.push(word ? "."+i : "["+uneval(i)+"]");
+          else
+            res.push(word ? i : "this["+uneval(i)+"]");
+        }
 
-    return [prefixLength, res.sort()];
+    if (!res.length)
+      return doComplete(prevEntry, cursPos, suffix, str, null);
+
+    doComplete(prevEntry, cursPos, suffix, str, [prefixLength, res.sort()]);
   }
 
   var lastCompletionStr, lastCompletionPrefix, lastCompletionResults, lastCompletionIdx;
@@ -244,7 +264,10 @@
       return;
     }
 
-    var res = findCompletions(str);
+    findCompletions(prevEntry, cursPos, suffix, str);
+  }
+
+  function doComplete(prevEntry, cursPos, suffix, str, res) {
     if (!res) {
       input._blink();
       lastCompletionStr = lastCompletionResults = null;
@@ -260,47 +283,36 @@
     input.selectionStart = input.selectionEnd = lastCompletionStr.length;
   }
 
-  function evalInWindow(expr, win) {
-    var val;
-    if (!win)
-      win = window;
-
-    if (win.wrappedJSObject)
-      win = win.wrappedJSObject;
-
-    try {
-      win.__CONSOLE_ARGS__ = {
-        scope: {
-          dump: dump,
-          dumps: dumps,
-          startVenkman: startVenkman
-        },
-        expr: expr
-      };
-
-      val = win.eval("with(__CONSOLE_ARGS__.scope){(function(){"+
-        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}", win);
-      return {result: val};
-    } catch (ex) {
-      return {exception: ex}
+  function exec() {
+    var r, expr = document.getElementById("input").value;
+    if (r = expr.match(/debugOn\s*=\s*(?:"([^"]+)"|'([^']+)'|null)/)) {
+      remoteJID = r[1] || r[2];
+      return;
     }
+
+    if (remoteJID)
+      remoteDebug.eval(remoteJID, expr, showExecResult, expr);
+    else
+      showExecResult(evalInWindow(expr, window.opener, {
+        dump: dump,
+        dumps: dumps,
+        startVenkman: startVenkman,
+        commandConsole: window
+      }), expr);
   }
 
-  function exec() {
+  function showExecResult(val, expr) {
     var output = document.getElementById("output").contentDocument;
-    var expr = document.getElementById("input").value;
-
     var el = output.createElement("div");
+
     el.setAttribute("class", "exec-unit");
     el.innerHTML += "<div class='exec-expr'>"+indent(expr)+"</div>";
-
-    var val = evalInWindow(expr, window.opener);
 
     if ("result" in val)
       el.innerHTML += "<div class='exec-result'>"+genOutput(val.result, true)+"</div>";
     else
       el.innerHTML += "<div class='exec-exception'>Exception:"+
-        "<div>"+indent(exceptionToString(val.exception, ""))+"</div></div>";
+        "<div>"+indent(remoteJID ? val.exception : exceptionToString(val.exception, ""))+"</div></div>";
 
     output.body.appendChild(el);
     output.body.scrollTop = output.body.scrollHeight;
@@ -328,6 +340,7 @@
     window.open("chrome://venkman/content/venkman.xul", "mozapp:venkman",
                 "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar");
   }
+
   ]]></script>
 
   <group id="macMenu"/>

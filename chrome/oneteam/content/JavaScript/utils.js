@@ -4,7 +4,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "Callback", "CallbacksList", "RegistrationToken",
                         "Comparator", "NotificationsCanceler", "xmlEscape",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
-                        "perlSplit", "report", "Animator"];
+                        "perlSplit", "evalInWindow", "report", "Animator"];
 
 ML.importMod("roles.js");
 
@@ -611,6 +611,29 @@ function perlSplit(str, split, limit) {
         res.push(str.substring(idx));
     }
     return res;
+}
+
+function evalInWindow(expr, win, scope) {
+    var val;
+    if (!win)
+        win = window;
+
+    if (win.wrappedJSObject)
+        win = win.wrappedJSObject;
+
+    try {
+        win.__CONSOLE_ARGS__ = {
+            scope: scope || {},
+            expr: expr
+        };
+
+        val = win.eval("with(__CONSOLE_ARGS__.scope){(function(){"+
+                       "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}",
+                       win);
+        return {result: val};
+    } catch (ex) {
+        return {exception: ex}
+    }
 }
 
 function report(to, level, info, context)

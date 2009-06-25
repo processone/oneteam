@@ -22,6 +22,7 @@ ML.importMod("services/manager.js");
 ML.importMod("services/adhoc.js");
 ML.importMod("services/privacy.js");
 ML.importMod("services/rosterx.js");
+ML.importMod("services/remoteDebug.js");
 ML.importMod("socks5.js");
 ML.importMod("filetransfer.js");
 
