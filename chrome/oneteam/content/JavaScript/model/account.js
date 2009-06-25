@@ -268,74 +268,74 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     onAddContact: function(contact)
     {
-        openDialogUniq("ot:addContact", "addContact.xul",
+        openDialogUniq("ot:addContact", "chrome://oneteam/content/addContact.xul",
                        "chrome,centerscreen", contact);
     },
 
     onJoinRoom: function(bookmark)
     {
-        openDialogUniq("ot:joinRoom", "joinRoom.xul",
+        openDialogUniq("ot:joinRoom", "chrome://oneteam/content/joinRoom.xul",
                        "chrome,centerscreen", bookmark);
     },
 
     onManageBookmarks: function()
     {
-        openDialogUniq("ot:manageBookmarks", "manageBookmarks.xul",
+        openDialogUniq("ot:manageBookmarks", "chrome://oneteam/content/manageBookmarks.xul",
                        "chrome,centerscreen");
     },
 
     showHistoryManager: function(contact)
     {
-        openDialogUniq("ot:history", "history.xul", "chrome,centerscreen,dialog=no",
+        openDialogUniq("ot:history", "chrome://oneteam/content/history.xul", "chrome,centerscreen,dialog=no",
                        contact);
     },
 
     showTransfersManager: function()
     {
-        openDialogUniq("ot:fileTransfers", "fileTransfers.xul",
+        openDialogUniq("ot:fileTransfers", "chrome://oneteam/content/fileTransfers.xul",
                        "chrome,centerscreen,dialog=no");
     },
 
     showAbout: function()
     {
-        openDialogUniq("ot:about", "about.xul", "chrome,centerscreen");
+        openDialogUniq("ot:about", "chrome://oneteam/content/about.xul", "chrome,centerscreen");
     },
 
     showPrefs: function()
     {
-        openDialogUniq("ot:preferences", "preferences.xul", "chrome,centerscreen");
+        openDialogUniq("ot:preferences", "chrome://oneteam/content/preferences.xul", "chrome,centerscreen");
     },
 
     showVCard: function()
     {
-        openDialogUniq("ot:vcardEdit", "vcardEdit.xul", "chrome,centerscreen,dialog=no");
+        openDialogUniq("ot:vcardEdit", "chrome://oneteam/content/vcardEdit.xul", "chrome,centerscreen,dialog=no");
     },
 
     showConsole: function()
     {
-        openDialogUniq("ot:console", "console.xul", "chrome,centerscreen,dialog=no");
+        openDialogUniq("ot:console", "chrome://oneteam/content/console.xul", "chrome,centerscreen,dialog=no");
     },
 
     showDisco: function()
     {
-        openDialogUniq("ot:disco", "disco.xul", "chrome,centerscreen,dialog=no");
+        openDialogUniq("ot:disco", "chrome://oneteam/content/disco.xul", "chrome,centerscreen,dialog=no");
     },
 
     onCustomPresence: function(presence)
     {
-        openDialogUniq("ot:status", "status.xul", "chrome,centerscreen",
+        openDialogUniq("ot:status", "chrome://oneteam/content/status.xul", "chrome,centerscreen",
                        presence);
     },
 
     onEditPresenceProfiles: function()
     {
-        openDialogUniq("ot:presenceProfiles", "presenceProfiles.xul",
+        openDialogUniq("ot:presenceProfiles", "chrome://oneteam/content/presenceProfiles.xul",
                        "chrome,centerscreen");
     },
 
     onChangePassword: function()
     {
-        openDialogUniq("ot:changePassword", "changePassword.xul",
+        openDialogUniq("ot:changePassword", "chrome://oneteam/content/changePassword.xul",
                        "chrome,centerscreen");
     },
 

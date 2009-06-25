@@ -8,7 +8,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/rosterContextMenus.xul"?>
 
-<window id="ot:main" title="OneTeam" class="no-verifier"
+<window id="ot:main" title="OneTeam" class="no-verifier" type="ot:main"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
     width="300" height="600"
     xmlns:html="http://www.w3.org/1999/xhtml"
@@ -453,7 +453,7 @@
 <!-- #ifdef XULAPP -->
     <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
 <!-- #endif -->
-    <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "command.xul", "chrome,dialog=no,all", "")'/>
+    <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "chrome://oneteam/content/command.xul", "chrome,dialog=no,all", "")'/>
     <command id="cmd_cmdVenkman" oncommand='window.openDialogUniq("mozapp:venkman", "chrome://venkman/content/venkman.xul", "chrome,dialog=no,all", "")'/>
     <command id="cmd_cmdDOMInspector" oncommand='window.openDialogUniq("mozapp:dominspector", "chrome://inspector/content/", "chrome,dialog=no,all", "")'/>
 <!-- #endif -->
