@@ -105,7 +105,6 @@ function FileTransfer(offerID, jid, streamID, size, file, description)
     this.sent = size == null ? null : 0;
     this.size = size;
     this.description = description;
-    this._rates = [];
     this.accepted = false;
     this.init();
     this.streamID = streamID;
@@ -145,37 +144,25 @@ _DECL_(FileTransfer, null, Model).prototype =
     },
 
     get rateAndTime() {
-        var now = Date.now();
-        var sent = this.sent || 0;
 
-        if (!this._lastMetering) {
-            this._lastMetering = { sent: sent, date: now, rate: -1, time: -1 };
-            this._rates.push([sent, now]);
+        if (!this._rateCoefficients) {
+            this._rateCoefficients = { n: 0, d: 0 };
+            this._mettering = [];
             return [-1, -1];
         }
 
-        if (now - this._lastMetering.date < 1000)
-            return [this._lastMetering.rate, this._lastMetering.time];
+        var sent = this.sent || 0;
+        var time = (Date.now() - this._startTime)/1000;
 
-        var rate = sent/(now - this._startTime)*1000;
-        for (var i = 0; i < this._rates.length; i++) {
-            var cRate = (sent - this._rates[i][0])/(now - this._rates[i][1])*1000;
-            rate = 0.8*rate + 0.2*cRate;
-        }
-        this._rates.push([sent, now]);
-        if (this._rates.length > 5)
-            this._rates.shift();
 
-        var time = (this.size - sent)/rate, lastTime = this._lastMetering.time;
+        this._rateCoefficients.n += sent*time;
+        this._rateCoefficients.d += time*time;
 
-        if (time/lastTime > 2 || lastTime/time > 2) {
-            var diff = time - lastTime;
-            time = lastTime + (diff < 0 ? 0.3 : 0.1)*diff;
-        }
+        var rate = this._rateCoefficients.n/this._rateCoefficients.d;
 
-        this._lastMetering = { sent: sent, date: now, rate: rate, time: time };
+        this._mettering.push([rate, this.size/rate - time]);
 
-        return [rate, time];
+        return [rate, this.size/rate - time];
     },
 
     get ppRateAndTime()
