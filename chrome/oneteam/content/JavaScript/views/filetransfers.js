@@ -93,7 +93,9 @@ function FileTransferView(model, parentView)
     var c3 = document.createElementNS(XULNS, "hbox");
     c3.setAttribute("class", "filenamebox");
     var c4 = document.createElementNS(XULNS, "label");
-    c4.setAttribute("value", this.model.jid.toUserString()+" \u2014");
+    var contact = account.getContactOrResource(this.model.jid);
+    contact = contact ? contact.visibleName : this.model.jid.toUserString();
+    c4.setAttribute("value", contact+" \u2014");
     c3.appendChild(c4);
 
     this.fileName = document.createElementNS(XULNS, "label");
