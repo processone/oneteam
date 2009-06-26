@@ -38,7 +38,7 @@ MLP.prototype =
         this.importMod(script, false, everything);
 
         var i, tmp = this.loadedscripts[script][0];
-try{
+
         for (i = 0; i < tmp.length; i++)
             if ((tmp2 = tmp[i].split(/\./)).length > 1) {
                 var st = scope[tmp2[0]], ss = this.__parent__[tmp2[0]];
@@ -49,7 +49,7 @@ try{
                 st[tmp2[tmp2.length-1]] = ss[tmp2[tmp2.length-1]];
             } else
                 scope[tmp[i]] = this.__parent__[tmp[i]];
-}catch(ex) { throw new Error(ex+"\n"+i+"\n"+tmp[i]+"\n"+tmp.length+"\n"+script)}
+
         tmp = this.loadedscripts[script][1];
 
         for (i = 0; i < tmp.length; i++)
