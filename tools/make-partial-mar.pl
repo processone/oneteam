@@ -55,7 +55,7 @@ for (sort keys %new_manifest) {
         system($MBSDIFF, $old_path_unp, $new_path_unp, $patch_file_path);
         pack_file($patch_file_path);
 
-        if (-s "$patch_file_path.bz2" lt $size) {
+        if (-s "$patch_file_path.bz2" < $size) {
             rename("$patch_file_path.bz2", "$patch_path.patch");
             print $manifest_fh "patch \"$_.patch\" \"$_\"\n";
             push @files, "$path.patch";
