@@ -114,7 +114,8 @@ function FileTransfer(offerID, jid, streamID, size, file, description)
 
     if (streamID == null) {
         this.streamID = this.idPrefix+(++FileTransfer.prototype.idCount);
-        this.state = "selecting";
+        if (!this.file)
+            this.state = "selecting";
     }
 
     if (this.file)
