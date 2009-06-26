@@ -44,7 +44,7 @@ function FileTransferView(model, parentView)
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElement("richlistitem");
+    this.node = document.createElementNS(XULNS, "richlistitem");
     this.node.setAttribute("class", "file-transfer");
 
     var c = document.createElementNS(XULNS, "hbox");
