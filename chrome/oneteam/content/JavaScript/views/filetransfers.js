@@ -93,7 +93,7 @@ function FileTransferView(model, parentView)
     var c3 = document.createElementNS(XULNS, "hbox");
     c3.setAttribute("class", "filenamebox");
     var c4 = document.createElementNS(XULNS, "label");
-    c4.setAttribute("value", this.model.jid.toUserString()+" —");
+    c4.setAttribute("value", this.model.jid.toUserString()+" \u2014");
     c3.appendChild(c4);
 
     this.fileName = document.createElementNS(XULNS, "label");
@@ -191,8 +191,8 @@ _DECL_(FileTransferView).prototype =
 
         var [rate, time] = this.model.ppRateAndTime;
         this.stateLabel.value = rate ?
-            _("{0} — {1} of {2} ({3})", time, this.model.ppSent, this.model.ppSize, rate) :
-            _("{0} — {1} of {2}", time, this.model.ppSent, this.model.ppSize);
+            _("{0} \u2014 {1} of {2} ({3})", time, this.model.ppSent, this.model.ppSize, rate) :
+            _("{0} \u2014 {1} of {2}", time, this.model.ppSent, this.model.ppSize);
     },
 
     show: function(rootNode, insertBefore)
