@@ -101,7 +101,7 @@ function Model()
 {
 }
 
-_DECL_(Model, CallbacksList).prototype =
+_DECL_(Model).prototype =
 {
     init: function()
     {
