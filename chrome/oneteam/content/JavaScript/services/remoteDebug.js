@@ -110,8 +110,13 @@ var remoteDebug = {
         var win = this._wm.getMostRecentWindow("ot:main");
 
         if (!win) {
-            win = this._wm.getMostRecentWindow("navigator:browser").document.
-                getElementById("sidebar")._contentWindow;
+            var e = this._wm.getEnumerator("navigator:browser");
+            while (e.hasMoreElements()) {
+                win = e.getNext();
+                win = win.document.getElementById("sidebar")._contentWindow;
+                if (win && win.document.documentElement.id == "ot:main")
+                    break;
+            }
         }
 
         if (!win || win.document.documentElement.id != "ot:main")
