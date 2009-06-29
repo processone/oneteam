@@ -2,6 +2,7 @@ var EXPORTED_SYMBOLS = ["remoteDebug"];
 
 ML.importMod("utils.js");
 ML.importMod("xmpptypes.js");
+ML.importMod("file.js");
 
 var remoteDebug = {
     _allowed: {},
@@ -17,6 +18,14 @@ var remoteDebug = {
     },
 
     eval: function(where, expr, callback) {
+        var res;
+        if ((res = expr.match(/^\s*substitute\[([^\]]*)\]\s*=\s*(.*?)\s*$/))) {
+            this.substituteChromeFile(where, res[1], res[2]);
+            var args = Array.slice(arguments, 2);
+            args[0] = {result: "Sending file"};
+            callback.apply(null, args);
+            return;
+        }
         var iq = new JSJaCIQ();
         iq.setIQ(where, "get");
         iq.appendNode("eval", {xmlns: "http://oneteam.im/remote-debug"}, [expr]);
@@ -31,6 +40,143 @@ var remoteDebug = {
                                       prefix: prefix}, [expr]);
         account.connection.send(iq, this._remoteEvalCallback,
                                 Array.slice(arguments, 3));
+    },
+
+    substituteChromeFile: function(where, url, file) {
+        var data = slurpFile(file);
+        this._sendSubstitution(null, [where, url, Math.ceil(data.length/2048), 0, data]);
+    },
+
+    _sendSubstitution: function(pkt, [where, url, parts, part, data]) {
+        globDat = data;
+        if ((pkt && pkt.getType() != "result") || part == parts)
+            return;
+        alert(where+", "+url+", "+parts+", "+part+", "+data.length);
+
+        var fragment = data.substr(part*2048, 2048);
+
+        part++;
+
+        var iq = new JSJaCIQ();
+        iq.setIQ(where, "set");
+        iq.appendNode("substitute", {xmlns: "http://oneteam.im/remote-debug",
+                                     url: url,
+                                     part: part,
+                                     parts: parts}, [btoa(fragment)]);
+
+        account.connection.send(iq, arguments.callee,
+                                [where, url, parts, part, data])
+    },
+
+    _substitutions: {},
+    _substituteChromeFile: function(url, part, parts, content) {
+        if (!this._substitutions[url] || part == 1)
+            this._substitutions[url] = [];
+
+        if (this._substitutions[url].length != part-1) {
+            delete this._substitutions[url];
+            return 0;
+        }
+
+        this._substitutions[url][part-1] = content;
+
+        if (this._substitutions[url].length == parts) {
+            var data = this._substitutions[url].join("");
+            delete this._substitutions[url];
+            this._updateChromeRegistry(url, data);
+        }
+        return { type: "result" };
+    },
+
+    _manifests: {},
+    _updateChromeRegistry: function(url, data) {
+        if (!this._substitutionsDir) {
+            var dir = Components.classes["@mozilla.org/file/directory_service;1"].
+                getService(Components.interfaces.nsIProperties).
+                get("ProfD", Components.interfaces.nsIFile);
+            dir.append("oneteamDebug");
+
+            dir = this._substitutionsDir = new File(dir);
+            if (!dir.exists)
+                dir.createDirectory();
+        }
+
+        var file = new File(this._substitutionsDir, url.replace(/.*\//, ""));
+        file.open(null, 0x02|0x08);
+        file.write(data);
+        file.close();
+
+        if (this._manifests[url])
+            return;
+
+        var path = file.file.path;
+
+        this._manifests[url] = 1;
+        file = new File(path+".manifest");
+        file.open(null, 0x02|0x08);
+        file.write("override "+url+" file:"+path);
+        file.close();
+
+        if (!this._manifestsDirProvider) {
+            this._manifestsDirProvider = {
+                _files: [],
+
+                getFile: function() {
+                    throw Components.results.NS_ERROR_FAILURE
+                },
+
+                getFiles: function(prop) {
+                    if (prop != "ChromeML")
+                        throw Components.results.NS_ERROR_FAILURE;
+                    return {
+                        _files: this._files,
+                        _pos: 0,
+
+                        hasMoreElements: function() {
+                            return this._pos < this._files.length;
+                        },
+
+                        getNext: function() {
+                            if (this._pos < this._files.length)
+                                return this._files[this._pos++];
+                            throw Components.results.NS_ERROR_FAILURE;
+                        },
+                        QueryInterface: function(iid) {
+                            if (iid.equals(Components.interfaces.nsISimpleEnumerator) ||
+                                iid.equals(Components.interfaces.nsISupports))
+                                return this;
+
+                            throw Components.results.NS_ERROR_NO_INTERFACE;
+                        }
+                    };
+                },
+
+                QueryInterface: function(iid) {
+                    if (iid.equals(Components.interfaces.nsIDirectoryServiceProvider) ||
+                        iid.equals(Components.interfaces.nsIDirectoryServiceProvider2) ||
+                        iid.equals(Components.interfaces.nsISupports))
+                        return this;
+
+                    throw Components.results.NS_ERROR_NO_INTERFACE;
+                }
+            }
+            var ds = Components.classes["@mozilla.org/file/directory_service;1"].
+                getService(Components.interfaces.nsIDirectoryService);
+
+            ds.QueryInterface(Components.interfaces.nsIProperties);
+
+            var e = ds.get("ChromeML", Components.interfaces.nsISimpleEnumerator);
+            while (e.hasMoreElements())
+                this._manifestsDirProvider._files.push(e.getNext());
+
+            ds.registerProvider(this._manifestsDirProvider);
+        }
+        this._manifestsDirProvider._files.push(file.file);
+
+        var cr = Components.classes["@mozilla.org/chrome/chrome-registry;1"].
+            getService(Components.interfaces.nsIChromeRegistry);
+
+        cr.checkForNewChrome();
     },
 
     _remoteEvalCallback: function(pkt, token) {
@@ -90,6 +236,10 @@ var remoteDebug = {
     _iqHandler: function(pkt, query, queryDOM) {
         var jid = new JID(pkt.getFrom());
         var ns = new Namespace("http://oneteam.im/remote-debug");
+
+        if (pkt.getType() == "set" && query.localName() == "substitute")
+            return this._substituteChromeFile(query.@url+"", +query.@part,
+                                              +query.@parts, atob(query.text()+""));
 
         if (pkt.getType() != "get" || query.localName() != "eval" && query.localName() != "completions")
             return 0;
