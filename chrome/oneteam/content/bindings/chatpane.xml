@@ -114,16 +114,8 @@
       ]]></constructor>
 
       <destructor><![CDATA[
-        this.destroy();
+        this.model = null;
       ]]></destructor>
-
-      <method name="destroy">
-        <body><![CDATA[
-          if (this._model && this._regToken)
-            this._model.unregisterView(this._regToken);
-          this._regToken = null;
-        ]]></body>
-      </method>
 
       <method name="addMarker">
         <parameter name="element"/>
@@ -1296,12 +1288,6 @@
           }, false);
         }, 0, this);
       ]]></constructor>
-
-      <method name="destroy">
-        <body><![CDATA[
-          this._output.destroy()
-        ]]></body>
-      </method>
 
       <method name="_attachFocusHandler">
         <parameter name="_this"/>

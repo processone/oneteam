@@ -404,7 +404,7 @@
       <method name="destroy">
         <body><![CDATA[
           this._regBundle.unregister();
-          this._chatpane.destroy();
+          this._chatpane.model = null;
         ]]></body>
       </method>
 
