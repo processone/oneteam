@@ -359,6 +359,10 @@ function CallbacksList(hasMultipleContexts)
 
 _DECL_(CallbacksList).prototype =
 {
+    _traces: [],
+    _traceCallbacks: [],
+    trace: false,
+
     _iterateCallbacks: function()
     {
         var callbacks;
@@ -376,6 +380,11 @@ _DECL_(CallbacksList).prototype =
 
     _registerCallback: function(callback, token)
     {
+        if (this.trace) {
+            this._traceCallbacks.push(callback);
+            this._traces.push([this.constructor.name+"."+arguments[2],
+                               dumpStack(null, null, 2)]);
+        }
         if (this._callbacks instanceof Array)
             this._callbacks.push(callback);
         else {
@@ -398,6 +407,14 @@ _DECL_(CallbacksList).prototype =
     {
         var idx;
 
+        if (this.trace) {
+            idx = this._traceCallbacks.indexOf(callback);
+            if (idx >= 0) {
+                this._traceCallbacks.splice(idx, 1);
+                this._traces.splice(idx, 1);
+            }
+        }
+
         if (this._callbacks instanceof Array) {
             if ((idx = this._callbacks.indexOf(callback)) >= 0) {
                 if (this._callbacks[idx] && this._callbacks[idx].__unregister_handler)
@@ -415,14 +432,20 @@ _DECL_(CallbacksList).prototype =
 
     _dumpStats: function()
     {
-        if (this._callbacks instanceof Array) {
-            alert(this._callbacks.length);
-            return;
+        var _this = CallbacksList.prototype
+        var sortHash = {};
+        for (var i = 0; i < _this._traces.length; i++) {
+            if (sortHash[_this._traces[i][0]])
+                sortHash[_this._traces[i][0]].push(_this._traces[i][1]);
+            else
+                sortHash[_this._traces[i][0]] = [_this._traces[i][1]];
         }
-        var res = "";
-        for (var context in this._callbacks)
-            res += context+": "+this._callbacks[context].length+"\n";
+
+        var res = ""
+        for (i in sortHash)
+            res+=i+":\n"+sortHash[i].map(function(a)a.replace(/^|(\n)(.)/g, "$1    $2")).join("\n  ---\n")
         alert(res);
+        return res;
     }
 }
 
@@ -615,7 +638,7 @@ function perlSplit(str, split, limit) {
 
 function evalInWindow(expr, win, scope) {
     var val;
-    if (!win)
+    if (!win || win.closed)
         win = window;
 
     if (win.wrappedJSObject)

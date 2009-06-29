@@ -5,15 +5,15 @@ var EXPORTED_SYMBOLS = ["dumpStack", "exceptionToString",
 
 ML.importMod("roles.js");
 
-function dumpStack(stackFrame, indent)
+function dumpStack(stackFrame, indent, skipFrames)
 {
     var stacktrace = "";
-    var skipFrames = 0;
 
+    skipFrames = skipFrames || 0;
     indent = indent || "";
     if (!stackFrame) {
         stackFrame = (new Error()).stack;
-        skipFrames = 2;
+        skipFrames += 2;
     }
 
     if (typeof(stackFrame) == "string") {
