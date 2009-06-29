@@ -95,7 +95,7 @@
       document.getElementById("titleContent").innerHTML = sanitizeHtml(_title);
       document.getElementById("messageContent").innerHTML = sanitizeHtml(msg);
 
-      if (icon && /^(?:(?:(?:jar:)?http[s]?:\/\/)|data:|chrome:|file:)/.test(icon)) {
+      if (icon && /^(?:(?:(?:jar:)?http[s]?:\/\/)|data:|chrome:|file:|resource:)/.test(icon)) {
         img = document.getElementById("messageImg");
         img.src = icon;
         if (animation == "fadein" || animation == "fadeout") {
