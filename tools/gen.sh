@@ -42,7 +42,6 @@ if [ -n "$1" -o $HEAD != `git rev-list -1 HEAD` ]; then
             $partial =~ s/(.*)\./$1-partial./;
             ($new = $_) =~ s/(.*\.)(\d+)/$1$max/;
             ($partialfile = $partial) =~ s!.*/!!;
-#            print "$partial, $partialfile\n";
             system("tools/make-partial-mar.pl", $_, $new, $partial, "mars-info.txt",
                    "$num", "http://dev3.process-one.net/~prefiks/oneteam/$partialfile", /-mac/ ? 1 : 0);
         }
