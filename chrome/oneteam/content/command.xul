@@ -214,8 +214,10 @@
                               doFindCompletions, expr, indexPrefix, prefixLength,
                               prevEntry, cursPos, suffix, str);
     } else
-      doFindCompletions(evalInWindow(expr || "this", window.opener), expr,
-                        indexPrefix, prefixLength, prevEntry, cursPos,
+      doFindCompletions(evalInWindow(expr || "this", window.opener, {
+                                      commandConsole: window
+                                    }),
+                        expr, indexPrefix, prefixLength, prevEntry, cursPos,
                         suffix, str);
   }
 
