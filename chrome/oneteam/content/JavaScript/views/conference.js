@@ -8,7 +8,7 @@ function BookmarksMenuView(node)
     this.model = account.bookmarks;
 
     this.onModelUpdated(null, "bookmarks", {added: account.bookmarks.bookmarks});
-    this.model.registerView(this.onModelUpdated, this, "bookmarks");
+    this._regToken = this.model.registerView(this.onModelUpdated, this, "bookmarks");
 }
 
 _DECL_(BookmarksMenuView, null, ContainerView).prototype =
@@ -33,6 +33,11 @@ _DECL_(BookmarksMenuView, null, ContainerView).prototype =
             this.onItemRemoved(data.removed[i]);
 
         this.afterlastItemNode.hidden = this.model.bookmarks.length < 1;
+    },
+
+    destroy: function() {
+        ContainerView.prototype.destroy.call(this);
+        this.model.unregisterView(this._regToken);
     }
 }
 
@@ -85,7 +90,7 @@ function ConferencesView(node)
     node.model = this.model;
 
     this.onModelUpdated(null, "conferences", {added: account.conferences});
-    this.model.registerView(this.onModelUpdated, this, "conferences");
+    this._regToken = this.model.registerView(this.onModelUpdated, this, "conferences");
 }
 
 _DECL_(ConferencesView, null, ContainerView).prototype =
@@ -106,6 +111,11 @@ _DECL_(ConferencesView, null, ContainerView).prototype =
 
         for (i = 0; data.removed && i < data.removed.length; i++)
             this.onItemRemoved(data.removed[i]);
+    },
+
+    destroy: function() {
+        ContainerView.prototype.destroy.call(this);
+        this.model.unregisterView(this._regToken);
     }
 }
 

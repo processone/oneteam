@@ -8,7 +8,7 @@ function RosterView(node)
     this.model = account;
 
     this.onModelUpdated(null, "groups", {added: account.groups});
-    this.model.registerView(this.onModelUpdated, this, "groups");
+    this._regToken = this.model.registerView(this.onModelUpdated, this, "groups");
 }
 
 _DECL_(RosterView, null, ContainerView).prototype =
@@ -47,6 +47,11 @@ _DECL_(RosterView, null, ContainerView).prototype =
 
         for (i = 0; data.removed && i < data.removed.length; i++)
             this.onItemRemoved(data.removed[i]);
+    },
+
+    destroy: function() {
+        ContainerView.prototype.destroy.call(this);
+        this.model.unregisterView(this._regToken);
     }
 }
 
@@ -133,12 +138,12 @@ _DECL_(GroupView, null, ContainerView).prototype =
     {
         this._bundle.unregister();
 
+        prefManager.unregisterChangeCallback(this._prefToken, "chat.roster.sortbystatus");
+
         if (!this.items)
             return;
         ContainerView.prototype.destroy.call(this);
         this.containerNode.removeChild(this.node);
-
-        prefManager.unregisterChangeCallback(this._prefToken, "chat.roster.sortbystatus");
     }
 }
 
@@ -510,7 +515,7 @@ function PresenceProfilesView(node, checkbox)
     this.checkbox = checkbox;
 
     this.onModelUpdated(null, "profiles", {added: this.model.profiles});
-    this.model.registerView(this.onModelUpdated, this, "profiles");
+    this._regToken = this.model.registerView(this.onModelUpdated, this, "profiles");
 }
 
 _DECL_(PresenceProfilesView, null, ContainerView).prototype =
@@ -543,6 +548,11 @@ _DECL_(PresenceProfilesView, null, ContainerView).prototype =
             this.containerNode.parentNode.selectedIndex = 0;
             this.checkbox.disabled = false;
         }
+    },
+
+    destroy: function() {
+        ContainerView.prototype.destroy.call(this);
+        this.model.unregisterView(this._regToken);
     }
 }
 

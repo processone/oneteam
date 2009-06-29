@@ -181,6 +181,14 @@
           this.onIconSetChange();
           this.onNickChange();
         }
+      },
+
+      destroy: function() {
+        this.rosterView.destroy();
+        this.bookmarksMenuView.destroy();
+        this.gatewaysMenuView.destroy();
+        this.presenceProfilesView.destroy();
+        this.gatewaysButtonsView.destroy();
       }
     };
 
@@ -276,6 +284,7 @@
 
     function onUnload() {
       globalRegToken.unregisterFromAll();
+      setPresenceUpdater.destroy();
 
       return;
     //#ifdef XULAPP

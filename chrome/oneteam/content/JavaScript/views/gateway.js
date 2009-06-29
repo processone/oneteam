@@ -8,7 +8,7 @@ function GatewaysMenuView(menuItem)
     this.model = account;
 
     this.onModelUpdated(null, "gateways", {added: [gateway for each (gateway in account.gateways)]});
-    this.model.registerView(this.onModelUpdated, this, "gateways");
+    this._regToken = this.model.registerView(this.onModelUpdated, this, "gateways");
 }
 
 _DECL_(GatewaysMenuView, null, ContainerView).prototype =
@@ -44,6 +44,11 @@ _DECL_(GatewaysMenuView, null, ContainerView).prototype =
             this.onItemRemoved(data.removed[i]);
 
         this.menuItem.hidden = account.gateways.__count__ == 0;
+    },
+
+    destroy: function() {
+        ContainerView.prototype.destroy.call(this);
+        this.model.unregisterView(this._regToken);
     }
 }
 
@@ -57,7 +62,7 @@ function GatewaysToolbarButtons(gatewaysSeparator)
     this.model = account;
 
     this.onModelUpdated(null, "gateways", {added: [gateway for each (gateway in account.gateways)]});
-    this.model.registerView(this.onModelUpdated, this, "gateways");
+    this._regToken = this.model.registerView(this.onModelUpdated, this, "gateways");
 }
 
 _DECL_(GatewaysToolbarButtons, null, ContainerView).prototype =
@@ -92,6 +97,11 @@ _DECL_(GatewaysToolbarButtons, null, ContainerView).prototype =
             this._visibleItems.splice(idx);
 
         this.gatewaysSeparator.hidden = this._visibleItems.length == 0;
+    },
+
+    destroy: function() {
+        ContainerView.prototype.destroy.call(this);
+        this.model.unregisterView(this._regToken);
     }
 }
 
