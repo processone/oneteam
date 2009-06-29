@@ -290,10 +290,12 @@
       return;
     }
 
-    if (remoteJID)
+    var local = expr.replace(/^\s*local:\s*/, "")
+
+    if (local == expr && remoteJID)
       remoteDebug.eval(remoteJID, expr, showExecResult, expr, true);
     else
-      showExecResult(evalInWindow(expr, window.opener, {
+      showExecResult(evalInWindow(local, window.opener, {
         dump: dump,
         dumps: dumps,
         startVenkman: startVenkman,
