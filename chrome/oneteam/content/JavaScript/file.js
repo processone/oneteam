@@ -720,8 +720,7 @@ _DECL_(File, Reader).prototype =
 
 function slurpFile()
 {
-    var file = eval("new Reader("+Array.join(Array.map(arguments,function(a,i){
-        return "arguments["+i+"]"}), ",")+")");
+    var file = new Reader(Array.slice(arguments, 0));
 
     file.open(null, 1);
     return file.read();
