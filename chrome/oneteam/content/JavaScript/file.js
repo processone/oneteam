@@ -238,6 +238,8 @@ function Reader(uriString)
             }
             uriString = tmp;
         }
+	if (uriString[0] == "/")
+	    uriString = "file://"+uriString;
         try {
             this.uri = ios.newURI(uriString, null, null);
         } catch (ex) {
