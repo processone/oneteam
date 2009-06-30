@@ -147,9 +147,9 @@
           if (!this._selectedItem.firstChild.avatarHash) {
             var data = atob(this._selectedItem.firstChild.src.
                             slice("data:image/png;base64,".length));
-            var hash = this._rootWin.hex_sha1(data);
-            this._cache.setValue("avatar-"+hash, data,
-                                 new Date(Date.now()+30*24*60*60*1000), true);
+            var hash = hex_sha1(data);
+            account.cache.setValue("avatar-"+hash, data,
+                                   new Date(Date.now()+30*24*60*60*1000), true);
 
             this._selectedItem.firstChild.avatarHash = hash;
           }
@@ -161,14 +161,8 @@
         <![CDATA[
           this._container = document.getAnonymousElementByAttribute(this, "id", "container")
 
-          var root = window;
-          while (!root.account)
-            root = root.opener;
-          this._cache = root.account.cache;
-          this._rootWin = root;
-
-          for (var key in this._cache.iterator("avatar-", true)) {
-            this.addAvatar(this._cache.getValue(key, true), key.slice(7));
+          for (var key in account.cache.iterator("avatar-", true)) {
+            this.addAvatar(account.cache.getValue(key, true), key.slice(7));
           }
          ]]>
       </constructor>
@@ -212,7 +206,7 @@
 
           var fileSize;
           if (/^(\w+):/.test(data) && !/^data:/.test(data)) {
-            var file = new this._rootWin.File(data);
+            var file = new File(data);
             fileSize = file.size;
 
             img.setAttribute("src", data);
@@ -234,7 +228,7 @@
           }
 
           size.setAttribute("class", "size");
-          size.appendChild(document.createTextNode(this._rootWin.ppFileSize(fileSize)));
+          size.appendChild(document.createTextNode(ppFileSize(fileSize)));
 
           if (this._selectedItem)
             this._selectedItem.removeAttribute("selected", "true");
