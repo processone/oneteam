@@ -4,7 +4,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "Callback", "CallbacksList", "RegistrationToken",
                         "Comparator", "NotificationsCanceler", "xmlEscape",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
-                        "perlSplit", "evalInWindow", "report", "Animator"];
+                        "recoverSetters", "perlSplit", "evalInWindow", "report",
+                        "Animator"];
 
 ML.importMod("roles.js");
 
@@ -121,7 +122,6 @@ function openLink(uri)
     }
 
     open(uri, "_blank");
-
 /*#else
     var ioservice = Components.classes["@mozilla.org/network/io-service;1"]
                     .getService(Components.interfaces.nsIIOService);
@@ -130,6 +130,7 @@ function openLink(uri)
                     .getService(Components.interfaces.nsIExternalProtocolService);
     extps.loadURI(uriToOpen, null);
 //#endif*/
+    return false;
 }
 
 function pickFile(title, forSave, filters, path, win)
@@ -593,6 +594,26 @@ function unescapeJS(str)
             if (tab) return "\t";
             return chr;
         });
+}
+
+function recoverSetters(obj, debug) {
+    var p = obj.__proto__;
+    var state = {};
+
+    obj.__proto__ = {};
+
+    for (var i in obj) {
+        if (!p.__lookupSetter__(i))
+            continue;
+
+        state[i] = obj[i];
+        delete obj[i];
+    }
+
+    obj.__proto__ = p;
+
+    for (i in state)
+        obj[i] = state[i];
 }
 
 function generateRandomName(length)
