@@ -430,7 +430,7 @@ _DECL_(CallbacksList).prototype =
                 }
     },
 
-    _dumpStats: function()
+    _stats: function()
     {
         var _this = CallbacksList.prototype
         var sortHash = {};
@@ -444,7 +444,6 @@ _DECL_(CallbacksList).prototype =
         var res = ""
         for (i in sortHash)
             res+=i+":\n"+sortHash[i].map(function(a)a.replace(/^|(\n)(.)/g, "$1    $2")).join("\n  ---\n")
-        alert(res);
         return res;
     }
 }
