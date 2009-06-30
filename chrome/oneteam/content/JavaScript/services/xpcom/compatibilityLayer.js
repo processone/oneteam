@@ -1,9 +1,18 @@
-var EXPORTED_SYMBOLS = ["alert", "atob", "btoa", "setTimeout", "setInterval",
-                        "clearTimeout", "clearInterval", "open", "openDialog",
-                        "DOMParser", "initTypesFromWindow"];
+var EXPORTED_SYMBOLS = ["alert", "alertEx", "atob", "btoa", "setTimeout",
+                        "setInterval", "clearTimeout", "clearInterval", "open",
+                        "openDialog", "DOMParser", "initTypesFromWindow"];
+
+ML.importMod("services/xpcom/utils.js");
 
 function alert(text) {
-    dump("ALERT: "+text+"\n\n");
+    alertEx(null, text);
+}
+
+function alertEx(title, text) {
+    var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
+        getService(Components.interfaces.nsIPromptService)
+
+    ps.alert(findCallerWindow(), title == null ? "Alert" : ""+title, ""+text);
 }
 
 function atob(data)
