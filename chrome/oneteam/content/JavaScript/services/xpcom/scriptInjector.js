@@ -42,7 +42,6 @@ var scriptInjector = {
             return;
         }
 
-
         var win = event.target.defaultView;
         var unsafeWin = win.wrappedJSObject;
         var url = win.location.href;
@@ -69,9 +68,9 @@ try{
 
             try {
                 Components.utils.evalInSandbox(script, sandbox);
-            } catch (ex) { alert(exceptionToString(ex)) }
+            } catch (ex) { DEBUG(exceptionToString(ex)) }
         }
-}catch(ex){alert(ex)}
+}catch(ex){DEBUG(ex)}
     }
 }
 

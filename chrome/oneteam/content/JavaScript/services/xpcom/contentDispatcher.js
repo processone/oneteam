@@ -80,7 +80,7 @@ OneTeamContentDispatcher.prototype = {
             }
         }
 
-        alert("addEventListener: "+type);
+        DEBUG("addEventListener: "+type);
 
         var data;
 
@@ -174,9 +174,9 @@ OneTeamContentDispatcher.prototype = {
 
     _onContactInfo: function(contact, type, value, listener) {
         try{
-        alert("POST contactInfo: "+contact.jid);//
+        DEBUG("POST contactInfo: "+contact.jid);
         this._fireEvent(listener, "contactInfo", contact.jid.normalizedJID, contact.serialized);
-        }catch(ex){alert(ex)}
+        }catch(ex){DEBUG(ex)}
     },
 
     _onContacts: function(ac, type, values, listener) {

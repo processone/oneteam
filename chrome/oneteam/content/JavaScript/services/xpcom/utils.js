@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["findCallerWindow", "soundsPlayer"];
+var EXPORTED_SYMBOLS = ["findCallerWindow", "soundsPlayer", "DEBUG"];
 
 function findCallerWindow()
 {
@@ -47,3 +47,7 @@ var soundsPlayer = {
         } catch(ex){ alert(ex)}
     }
 };
+
+function DEBUG(str) {
+    dump(str+"\n");
+}
