@@ -52,15 +52,15 @@
           return val;
         ]]></setter>
       </property>
+
       <constructor>
         <![CDATA[
           this._image = document.getAnonymousElementByAttribute(this, "id", "image");
           this._container = this._image.parentNode.parentNode.parentNode;
-          if (this.model) {
-            this._model = this.model;
-            this._token = this._model.registerView(this.onAvatarChange, this, "avatar");
-          }
+
           this.onAvatarChange();
+
+          recoverSetters(this);
         ]]>
       </constructor>
 

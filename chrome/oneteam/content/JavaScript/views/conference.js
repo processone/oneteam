@@ -326,6 +326,8 @@ _DECL_(ConferenceMemberView).prototype =
 
     destroy: function()
     {
+        this.avatar.model = null;
+
         this.tooltip.destroy();
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);

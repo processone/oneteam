@@ -157,7 +157,7 @@ function ContactView(model, parentView)
     this.statusIcon = this.doc.createElementNS(XULNS, "image");
     this.label = this.doc.createElementNS(XULNS, "label");
     this.avatar = this.doc.createElementNS(XULNS, "avatar");
-    this.avatar.model = this.model;
+    this.avatar.model = model;
     this.avatar.hidden = !prefManager.getPref("chat.general.showavatars");
 
     if (model instanceof MyResourcesContact) {
@@ -264,7 +264,10 @@ _DECL_(ContactView).prototype =
 
     destroy: function()
     {
+        this.avatar.model = null;
+
         this.tooltip.destroy();
+
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
