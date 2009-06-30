@@ -425,7 +425,7 @@ function File(path)
             } else if (path.search(/\w+:\/\//) == -1)
                 this.file.initWithPath(path);
             else {
-                Reader.call(arguments);
+                Reader.call(this, arguments);
 
                 this.file.initWithPath(this.uri.
                     QueryInterface(interfaces.nsIFileURL).file.path);
