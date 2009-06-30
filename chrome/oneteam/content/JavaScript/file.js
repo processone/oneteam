@@ -1,7 +1,7 @@
 var EXPORTED_SYMBOLS = ["CharsetConverter", "detectXMLCharset",
-						"convertCharsetOfXMLData", "CharsetConvertError",
-						"Reader", "IOError", "File", "slurpFile",
-						"makeDataUrlFromFile"];
+                        "convertCharsetOfXMLData", "CharsetConvertError",
+                        "Reader", "IOError", "File", "slurpFile",
+                        "makeDataUrlFromFile"];
 
 ML.importMod("roles.js");
 ML.importMod("exceptions.js");
