@@ -71,6 +71,8 @@
           this._addButton = document.getAnonymousElementByAttribute(this, "anonid", "add")
           this._removeButton = document.getAnonymousElementByAttribute(this, "anonid", "remove")
 
+          recoverSetters(this);
+
           this._sync();
         ]]>
       </constructor>

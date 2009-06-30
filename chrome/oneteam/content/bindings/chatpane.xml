@@ -86,22 +86,9 @@
         var me = this;
         this._roster = document.getAnonymousElementByAttribute(this, "id", "roster");
         this._output = document.getAnonymousElementByAttribute(this, "id", "output");
-        this._output.addEventListener("load", function(){me._init()}, true)
+        this._output.addEventListener("load", function(){ me._init() }, true);
 
-        var p = this.__proto__;
-        this.__proto__ = {};
-
-        var state = {};
-        for each (var i in "visible model smilesEnabled".split(/ /))
-          if (this[i] != null) {
-            state[i] = this[i];
-            delete this[i];
-          }
-
-        this.__proto__ = p;
-
-        for (i in state)
-          this[i] = state[i];
+        recoverSetters(this);
 
         if (this._visible == null)
           this._visible = true;
@@ -1127,20 +1114,7 @@
         this._sendFile = document.getAnonymousElementByAttribute(this, "id", "sendFile");
         this._extraCmds = document.getAnonymousElementByAttribute(this, "id", "extraCmds");
 
-        var p = this.__proto__;
-        this.__proto__ = {};
-
-        var state = {};
-        for each (var i in "model".split(/ /))
-          if (this[i] != null) {
-            state[i] = this[i];
-            delete this[i];
-          }
-
-        this.__proto__ = p;
-
-        for (i in state)
-          this[i] = state[i];
+        recoverSetters(this);
       ]]></constructor>
 
       <method name="_syncMenu">
@@ -1244,20 +1218,7 @@
         this._input._preMaybeResize = new Callback(this._preMaybeResize, this);
         this._input._postMaybeResize = new Callback(this._postMaybeResize, this);
 
-        var p = this.__proto__;
-        this.__proto__ = {};
-
-        var state = {};
-        for each (var i in "model focusHandler".split(/ /))
-          if (this[i] != null) {
-            state[i] = this[i];
-            delete this[i];
-          }
-
-        this.__proto__ = p;
-
-        for (i in state)
-          this[i] = state[i];
+        recoverSetters(this);
 
         var me = this;
 

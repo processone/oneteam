@@ -100,12 +100,7 @@
 
           this._unavailablePresence = new root.Presence("unavailable");
 
-          if (this.model) {
-            var model = this.model;
-            delete this.model;
-            this._model = null;
-            this.model = model;
-          }
+          recoverSetters(this);
         ]]>
       </constructor>
 

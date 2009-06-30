@@ -60,20 +60,7 @@
 
         var _this = this;
 
-        var p = this.__proto__;
-        this.__proto__ = {};
-
-        var state = {};
-        for each (var i in "unseenCount".split(/ /))
-          if (this[i] != null) {
-            state[i] = this[i];
-            delete this[i];
-          }
-
-        this.__proto__ = p;
-
-        for (i in state)
-          this[i] = state[i];
+        recoverSetters(this);
 
         window.addEventListener("focus", function(event) {
           _this._windowFocusHandler(_this, event)
@@ -379,20 +366,7 @@
         this._chatpane = document.getAnonymousElementByAttribute(this, "anonid", "chatpane");
         this._chatpane.focusHandler = this._tabbox;
 
-        var p = this.__proto__;
-        this.__proto__ = {};
-
-        var state = {};
-        for each (var i in "thread".split(/ /))
-          if (this[i] != null) {
-            state[i] = this[i];
-            delete this[i];
-          }
-
-        this.__proto__ = p;
-
-        for (i in state)
-          this[i] = state[i];
+        recoverSetters(this);
 
         this.closed = false;
       ]]></constructor>

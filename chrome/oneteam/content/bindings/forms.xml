@@ -154,6 +154,10 @@
         ]]></getter>
       </property>
 
+      <constructor><![CDATA[
+        recoverSetters(this);
+      ]]></constructor>
+
     </implementation>
   </binding>
 
@@ -261,6 +265,9 @@
         ]]></getter>
       </property>
 
+      <constructor><![CDATA[
+        recoverSetters(this);
+      ]]></constructor>
     </implementation>
   </binding>
 </bindings>

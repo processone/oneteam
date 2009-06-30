@@ -231,20 +231,7 @@
 
     <implementation>
       <constructor><![CDATA[
-        var p = this.__proto__;
-        this.__proto__ = {};
-
-        var state = {};
-        for each (var i in "checked".split(/ /))
-          if (this[i] != null) {
-            state[i] = this[i];
-            delete this[i];
-          }
-
-        this.__proto__ = p;
-
-        for (i in state)
-          this[i] = state[i];
+        recoverSetters(this);
       ]]></constructor>
     </implementation>
   </binding>
