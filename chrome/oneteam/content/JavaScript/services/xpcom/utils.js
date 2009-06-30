@@ -3,6 +3,7 @@ var EXPORTED_SYMBOLS = ["findCallerWindow", "soundsPlayer", "DEBUG"];
 function findCallerWindow()
 {
     var p, c = arguments.callee.caller;
+    var callers = [];
 
     while (c && c.__parent__) {
         p = c.__parent__;
@@ -10,8 +11,9 @@ function findCallerWindow()
             p = p.__parent__;
         if (p instanceof Window)
             return p.wrappedJSObject ? p.wrappedJSObject : p;
-        if (c == c.caller)
+        if (callers.indexOf(c) >= 0)
             return null;
+        callers.push(c);
         c = c.caller;
     }
     return null;
