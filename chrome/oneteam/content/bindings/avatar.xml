@@ -211,7 +211,7 @@
           el.appendChild(size);
 
           var fileSize;
-          if (/^file:/.test(data)) {
+          if (/^(\w+):/.test(data) && !/^data:/.test(data)) {
             var file = new this._rootWin.File(data);
             fileSize = file.size;
 
