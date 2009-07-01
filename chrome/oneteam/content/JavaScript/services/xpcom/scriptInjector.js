@@ -3,7 +3,8 @@ var EXPORTED_SYMBOLS = ["scriptInjector"];
 var scriptInjector = {
     _scripts: [
         [/^https?:\/\/support\.process-one\.net\/doc\//, "chrome://oneteam/content/scripts/add-icons.js"],
-        [/^file:/, "chrome://oneteam/content/scripts/add-icons.js"]
+        [/^file:/, "chrome://oneteam/content/scripts/add-icons.js"],
+        [/^https?:\/\/(?:.*\.)?newegg.com\//, "chrome://oneteam/content/scripts/newegg.js"]
     ],
 
     init: function() {
