@@ -3,7 +3,8 @@ package OneTeam::Utils;
 use Exporter;
 
 @ISA = qw(Exporter);
-@EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml ignored_file);
+@EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml
+             ignored_file dircopy);
 
 sub slurp {
     my $file = shift;
@@ -70,7 +71,27 @@ sub ignored_file {
     my $file = shift;
 
     return $file =~ /(?:\.swp|~|\.gitignore)$/ or
-        $file =~ m![\\/]\.(?:\#|svn[\\/]|git[\\/])/!;
+        $file =~ m![\\/]\.(?:\#|svn[\\/]|git[\\/]|DS_Store)/!;
+}
+
+sub dircopy {
+    my ($src, $dest, @skip) = @_;
+    my $srclen = length($src) + ($src =~ m!(?:[/\\]$)! ? 0 : 1);
+    my %skip;
+
+    @skip{@skip} = @skip;
+
+    find({ wanted => sub {
+        return if not -f $_ or ignored_file($File::Find::name) or
+            exists $skip{$File::Find::name};
+
+        mkpath(length($File::Find::dir) > $srclen ?
+            catdir($dest, substr($File::Find::dir, $srclen)) :
+            $dest
+        );
+
+        copy($_, catdir($dest, substr($File::Find::name, $srclen)));
+    }, no_chdir => 1}, $src);
 }
 
 1;

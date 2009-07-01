@@ -24,6 +24,6 @@
     <em:description>OneTeam Extension</em:description>
     <em:creator>process-one.net</em:creator>
     <em:homepageURL>http://oneteam.im/</em:homepageURL>
-    <em:iconURL>chrome://oneteam/skin/images/icon.png</em:iconURL>
+    <em:iconURL>chrome://oneteam/skin/icons/main.png</em:iconURL>
   </Description>
 </RDF:RDF>

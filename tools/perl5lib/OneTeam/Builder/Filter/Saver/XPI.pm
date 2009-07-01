@@ -46,6 +46,9 @@ sub finalize {
 
     mkpath([$chromedir], 0);
 
+    dircopy(catdir(qw(chrome icons default)), catdir($self->{outputdir}, qw(skin default icons)),
+             qw(default.ico default.xpm));
+
     system("cd '$self->{outputdir}'; zip -q -0 -r '".catfile($chromedir, 'oneteam.jar')."' .");
 
     my $ir = slurp("install.rdf");
@@ -59,10 +62,8 @@ sub finalize {
            )."\n      ".$2!ei;
     print_to_file(catfile($tmpdir, "install.rdf"), $ir);
 
-    _dircopy('defaults', catdir($tmpdir, 'defaults'), "defaults/preferences/xulapp.js");
-    _dircopy('components', catdir($tmpdir, 'components'));
-    _dircopy('platform', catdir($tmpdir, 'platform'));
-    _dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
+    dircopy('components', catdir($tmpdir, 'components'));
+    dircopy('platform', catdir($tmpdir, 'platform'));
 
     open($fh, ">", catfile($tmpdir, 'chrome.manifest')) or
         die "Unable to create file: $!";
@@ -81,26 +82,6 @@ sub finalize {
     print $fh "overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browserOverlay.xul";
     close($fh);
     system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, "oneteam.xpi")."' .");
-}
-
-sub _dircopy {
-    my ($src, $dest, @skip) = @_;
-    my $srclen = length($src) + ($src =~ m!(?:[/\\]$)! ? 0 : 1);
-    my %skip;
-
-    @skip{@skip} = @skip;
-
-    find({ wanted => sub {
-        return if not -f $_ or ignored_file($File::Find::name) or
-            exists $skip{$File::Find::name};
-
-        mkpath(length($File::Find::dir) > $srclen ?
-            catdir($dest, substr($File::Find::dir, $srclen)) :
-            $dest
-        );
-
-        copy($_, catdir($dest, substr($File::Find::name, $srclen)));
-    }, no_chdir => 1}, $src);
 }
 
 sub _expand_str {
