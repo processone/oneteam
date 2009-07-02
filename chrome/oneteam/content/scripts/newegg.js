@@ -72,7 +72,7 @@ window.wrappedJSObject.mucekStart = function() {
 
     var frame = document.createElement("iframe"), lc = 0;
     frame.setAttribute("src", "http://dev1.process-one.net/~pchmielowski/mucek/?chatWith=mremond@process-one.net&parentUrl="+
-                       document.location.href);
+                       encodeURIComponent(document.location.href));
     frame.addEventListener("load", function() {
         if (lc++ == 1)
             mucekStop();
