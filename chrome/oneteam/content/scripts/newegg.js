@@ -1,28 +1,11 @@
-(function(){
-    var c = document.getElementById("haQuickSearchInfoTab");
-    if (!c)
-        return;
-    var l = document.createElement("a");
-    l.setAttribute("class", "noline");
-    l.setAttribute("onclick", "mucekStart(); return false");
-    l.setAttribute("href", "#");
-    var i = document.createElement("img");
-    i.setAttribute("src", "resource://oneteam-data/scripts/newegg-header.gif")
-    l.appendChild(i);
-    c.appendChild(l);
-    var link = document.createElement("link");
-    link.setAttribute("href", "resource://oneteam-data/scripts/chatstyle.css");
-    link.setAttribute("rel", "stylesheet");
-    document.getElementsByTagName("HEAD")[0].appendChild(link);
-})()
-
-var mucekStop = function() {
+unsafeWindow.mucekStop = function() {
     var w = document.getElementById("mucek-window");
     if (w)
         w.parentNode.removeChild(w);
-}
+    delete unsafeWindow.sessionStorage.mucekOpened;
+};
 
-var mover = {
+unsafeWindow.mover = {
     mousedown: function(e) {
         if (this.button)
             return;
@@ -43,20 +26,24 @@ var mover = {
     },
 
     handleEvent: function(e) {
-        this.el.style.right = (this.x-e.screenX)+"px";
-        this.el.style.top = (this.y+e.screenY)+"px";
+        this.el.style.right = (unsafeWindow.sessionStorage.mucekRight = this.x-e.screenX)+"px";
+        this.el.style.top = (unsafeWindow.sessionStorage.mucekTop = this.y+e.screenY)+"px";
     }
-}
+};
 
-window.wrappedJSObject.mover = mover;
-window.wrappedJSObject.mucekStop = mucekStop;
+unsafeWindow.mucekStart = function() {
+    if (unsafeWindow.sessionStorage.mucekTop == null) {
+        unsafeWindow.sessionStorage.mucekTop = 20;
+        unsafeWindow.sessionStorage.mucekRight = 20;
+    }
+    unsafeWindow.sessionStorage.mucekOpened = true;
 
-window.wrappedJSObject.mucekStart = function() {
     var container = document.createElement("div");
     container.setAttribute("id", "mucek-window");
-    container.setAttribute("style", "top: 20px; right: 20px");
+    container.setAttribute("style", "top: "+unsafeWindow.sessionStorage.mucekTop+"px;"+
+                                    "right: "+unsafeWindow.sessionStorage.mucekRight+"px;");
 
-    mover.el = container;
+    unsafeWindow.mover.el = container;
 
     var header = document.createElement("div");
     header.appendChild(document.createTextNode("Chat"))
@@ -80,4 +67,28 @@ window.wrappedJSObject.mucekStart = function() {
 
     container.appendChild(frame);
     document.body.appendChild(container);
-}
+};
+
+(function(){
+    var c = document.getElementById("haQuickSearchInfoTab");
+    if (!c)
+        return;
+
+    var link = document.createElement("link");
+    link.setAttribute("href", "resource://oneteam-data/scripts/chatstyle.css");
+    link.setAttribute("rel", "stylesheet");
+    document.getElementsByTagName("HEAD")[0].appendChild(link);
+
+    var l = document.createElement("a");
+    l.setAttribute("class", "noline");
+    l.setAttribute("onclick", "mucekStart(); return false");
+    l.setAttribute("href", "#");
+
+    var i = document.createElement("img");
+    i.setAttribute("src", "resource://oneteam-data/scripts/newegg-header.gif")
+    l.appendChild(i);
+    c.appendChild(l);
+
+    if (unsafeWindow.sessionStorage.mucekOpened)
+        unsafeWindow.mucekStart();
+})()

@@ -62,6 +62,7 @@ try{
             if (!sandbox) {
                 sandbox = new Components.utils.Sandbox(win);
                 sandbox.window = win;
+                sandbox.unsafeWindow = unsafeWin;
                 sandbox.document = win.document;
                 sandbox.otDispatcher = unsafeWin.otDispatcher;
                 sandbox.__proto__ = win;
