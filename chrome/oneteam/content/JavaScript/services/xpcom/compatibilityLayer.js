@@ -1,6 +1,7 @@
 var EXPORTED_SYMBOLS = ["alert", "alertEx", "atob", "btoa", "setTimeout",
                         "setInterval", "clearTimeout", "clearInterval", "open",
-                        "openDialog", "DOMParser", "initTypesFromWindow"];
+                        "openDialog", "DOMParser", "initTypesFromWindow",
+                        "screen"];
 
 ML.importMod("services/xpcom/utils.js");
 
@@ -128,6 +129,34 @@ function DOMParser() {
         createInstance(Components.interfaces.nsIDOMParser);
 }
 
+var screen = {
+    _screen: Components.classes["@mozilla.org/gfx/screenmanager;1"].
+        getService(Components.interfaces.nsIScreenManager).primaryScreen,
+
+    _rect: function(idx) {
+        var x = [{}, {}, {}, {}];
+        this._screen.GetRect(x[0], x[1], x[2], x[3]);
+        return x[idx].value;
+    },
+
+    _availRect: function(idx) {
+        var x = [{}, {}, {}, {}];
+        this._screen.GetAvailRect(x[0], x[1], x[2], x[3]);
+        return x[idx].value;
+    },
+
+    get left() {return this._rect(0)},
+    get top() {return this._rect(1)},
+    get width() {return this._rect(2)},
+    get height() {return this._rect(3)},
+    get pixelDepth() {return this._screen.pixelDepth},
+    get colorDepth() {return this._screen.colorDepth},
+    get availLeft() {return this._availRect(0)},
+    get availTop() {return this._availRect(1)},
+    get availWidth() {return this._availRect(2)},
+    get availHeight() {return this._availRect(3)}
+};
+
 function initTypesFromWindow(win) {
     if (!this.Document) {
         var di = Components.classesByID["{3a9cd622-264d-11d4-ba06-0060b0fc76dd}"].
@@ -153,7 +182,6 @@ function initTypesFromWindow(win) {
         this._atob = win.atob;
         this._btoa = win.btoa;
         this.window = this;
-        this.screen = win.screen;
         this.navigator = win.navigator;
     }
 }
