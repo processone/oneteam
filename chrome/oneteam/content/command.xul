@@ -17,6 +17,7 @@
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="application/x-javascript;version=1.7"><![CDATA[
+  ML.importMod("model/account.js");
   ML.importMod("l10n.js");
   ML.importMod("roles.js");
   ML.importMod("exceptions.js");
@@ -24,6 +25,10 @@
   ML.importMod("services/remoteDebug.js");
 
   var input, remoteJID;
+
+  var console = {
+      info: function(msg) { dump(msg) }
+  }
 
   function onload() {
     var output = document.getElementById("output");
@@ -48,16 +53,15 @@
 
     input._tryCompletion = complete;
 
-    window.opener.console =  {
-      info: function(msg) { dump(msg) }
-    }
+    account.console =  console;
 
     window.addEventListener("keypress", handleKeyPress, false);
     output.contentWindow.addEventListener("keypress", handleKeyPress, false);
   }
 
   function onunload() {
-    delete window.opener.console;
+    if (account.console == console)
+      delete account.console;
   }
 
   function handleKeyPress(event) {

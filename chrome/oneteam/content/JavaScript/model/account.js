@@ -498,10 +498,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var args = {
             httpbase: httpbase,
             oDbg: {log: function(a) {
-                //dump(a+"\n");
                 if (!account.jsjacDebug)
                     return
-                window.console ? console.info(a) : dump(a+"\n")
+                account.console ? account.console.info(a) : dump(a+"\n")
             }},
             timerval: 2000};
 
