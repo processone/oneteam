@@ -62,6 +62,7 @@ sub finalize {
            )."\n      ".$2!ei;
     print_to_file(catfile($tmpdir, "install.rdf"), $ir);
 
+    dircopy('defaults', catdir($tmpdir, 'defaults'), "defaults/preferences/xulapp.js");
     dircopy('components', catdir($tmpdir, 'components'));
     dircopy('platform', catdir($tmpdir, 'platform'));
 
