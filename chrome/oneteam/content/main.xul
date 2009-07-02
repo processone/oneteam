@@ -370,6 +370,9 @@
         this.prevButton = document.getElementById("eventBoxPrev")
         this.nextButton = document.getElementById("eventBoxNext")
         account.registerView(this.onEventsChanged, this, "events", globalRegToken);
+
+        if (account.events.length)
+          this.onEventsChanged();
       },
 
       onEventsChanged: function()
