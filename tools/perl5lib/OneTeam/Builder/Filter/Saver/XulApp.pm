@@ -54,10 +54,10 @@ sub finalize {
     $ai =~ s/(buildid\s*=\s*)[^\n]*/$1.$self->{buildid}->()/ei;
     print_to_file(catfile($tmpdir, "application.ini"), $ai);
 
-    _dircopy('defaults', catdir($tmpdir, 'defaults'));
-    _dircopy('components', catdir($tmpdir, 'components'));
-    _dircopy('platform', catdir($tmpdir, 'platform'));
-    _dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
+    dircopy('defaults', catdir($tmpdir, 'defaults'));
+    dircopy('components', catdir($tmpdir, 'components'));
+    dircopy('platform', catdir($tmpdir, 'platform'));
+    dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
 
     open($fh, ">", catfile($chromedir, 'chrome.manifest')) or
         die "Unable to create file: $!";
@@ -81,22 +81,6 @@ sub finalize {
     }
 
     system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, "oneteam.xulapp")."' .");
-}
-
-sub _dircopy {
-    my ($src, $dest) = @_;
-    my $srclen = length($src) + ($src =~ m!(?:[/\\]$)! ? 0 : 1);
-
-    find({ wanted => sub {
-        return if not -f $_ or ignored_file($File::Find::name);
-
-        mkpath(length($File::Find::dir) > $srclen ?
-            catdir($dest, substr($File::Find::dir, $srclen)) :
-            $dest
-        );
-
-        copy($_, catdir($dest, substr($File::Find::name, $srclen)));
-    }, no_chdir => 1}, $src);
 }
 
 sub _expand_str {
@@ -217,9 +201,9 @@ sub finalize {
     my $self = shift;
 
     copy('application.ini', $self->{appdir});
-    _dircopy('defaults', catdir($self->{appdir}, 'defaults'));
-    _dircopy('components', catdir($self->{appdir}, 'components'));
-    _dircopy(catdir(qw(chrome icons)), catdir($self->{appdir}, 'chrome', 'icons'));
+    dircopy('defaults', catdir($self->{appdir}, 'defaults'));
+    dircopy('components', catdir($self->{appdir}, 'components'));
+    dircopy(catdir(qw(chrome icons)), catdir($self->{appdir}, 'chrome', 'icons'));
 
     open(my $fh, ">", catfile($self->{appdir}, 'chrome', 'chrome.manifest')) or
         die "Unable to create file: $!";
