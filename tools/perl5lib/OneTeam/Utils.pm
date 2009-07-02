@@ -1,6 +1,10 @@
 package OneTeam::Utils;
 
 use Exporter;
+use File::Path;
+use File::Find;
+use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
+use File::Copy;
 
 @ISA = qw(Exporter);
 @EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml
