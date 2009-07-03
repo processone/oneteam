@@ -12,7 +12,7 @@ _DECL_(ChatPane).prototype = {
         return this._thread;
     },
 
-    set thread() {
+    set thread(thread) {
         if (this._content)
             this._content.thread = thread;
         if (thread) {
