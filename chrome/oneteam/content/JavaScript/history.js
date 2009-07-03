@@ -54,11 +54,11 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
 
     registerView: function(method, obj)
     {
-        var watched = this._views["messages"];
+        var watched = this._views._hasCallbacks("messages");
 
         var token = MessagesThread.prototype.registerView.apply(this, arguments);
 
-        if (!watched && this._views["messages"]) {
+        if (!watched && this._views._hasCallbacks("messages")) {
             this.watched = true;
             this.getNewMessages();
         }
@@ -68,7 +68,7 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
     unregisterView: function(token)
     {
         MessagesThread.prototype.unregisterView.apply(this, arguments);
-        this.watched = this._views["messages"];
+        this.watched = this._views._hasCallbacks("messages");
     }
 }
 

@@ -431,6 +431,13 @@ _DECL_(CallbacksList).prototype =
                 }
     },
 
+    _hasCallbacks: function(name)
+    {
+        if (this._callbacks instanceof Array)
+            return this._callbacks.length > 0;
+        return this._callbacks[name] && this._callbacks[name].length > 0;
+    },
+
     _stats: function()
     {
         var _this = CallbacksList.prototype
