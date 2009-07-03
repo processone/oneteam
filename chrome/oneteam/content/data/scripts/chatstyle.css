@@ -1,0 +1,28 @@
+#mucek-window {
+  border: 2px solid white;
+  z-index: 1000;
+  position: absolute;
+  background: white;
+  -moz-border-radius-topleft: 8px;
+  -moz-border-radius-topright: 8px;
+  -moz-user-select: none;
+  cursor: default;
+}
+
+#mucek-window > div {
+  padding: 2px 8px;
+  height: 20px;
+}
+
+#mucek-window > iframe {
+  border: 0;
+  width: 600px;
+  height: 350px;
+}
+
+#mucek-window img {
+  position: absolute;
+  right: 8px;
+  top: 4px;
+  cursor: pointer;
+}
