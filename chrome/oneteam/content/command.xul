@@ -267,26 +267,19 @@ function findSubexprStart(str, lsStart, lsEnd) {
 
     var res = [];
 
-    if (remoteJID)
-      res = val.result.map(function(w) {
-        return w.search(/^[^\W\d]\w*$/) == 0 ?
-          expr ? "."+w : w :
-          expr ? "["+uneval(w)+"]" : "this["+uneval(w)+"]"
-      });
-    else
-      for (var i in val.result)
-        if (i.indexOf(indexPrefix) == 0) {
-          var word = i.search(/^[^\W\d]\w*$/) == 0;
-          if (expr)
-            res.push(word ? "."+i : "["+uneval(i)+"]");
-          else
-            res.push(word ? i : "this["+uneval(i)+"]");
-        }
+    if (!remoteJID)
+      val.result = enumerateMatchingProps(val.result, indexPrefix);
+
+    res = val.result.map(function(w) {
+      return w.search(/^[^\W\d]\w*$/) == 0 ?
+        expr ? "."+w : w :
+        expr ? "["+uneval(w)+"]" : "this["+uneval(w)+"]"
+    });
 
     if (!res.length)
       return doComplete(prevEntry, cursPos, suffix, str, null);
 
-    doComplete(prevEntry, cursPos, suffix, str, [prefixLength, res.sort()]);
+    doComplete(prevEntry, cursPos, suffix, str, [prefixLength, res]);
   }
 
   var lastCompletionStr, lastCompletionPrefix, lastCompletionResults, lastCompletionIdx;

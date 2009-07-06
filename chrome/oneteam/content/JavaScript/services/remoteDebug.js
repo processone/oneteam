@@ -285,7 +285,7 @@ var remoteDebug = {
         return value.result ?
             <result xmlns="http://oneteam.im/remote-debug">
                 {uneval(query.localName() == "completions" ?
-                        this._prepareCompletions(query.@prefix.toString(), value.result) :
+                        enumerateMatchingProps(value.result, query.@prefix.toString()) :
                         this._simplifyValue(value.result, true))}
             </result> :
             <exception xmlns="http://oneteam.im/remote-debug">

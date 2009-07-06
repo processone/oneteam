@@ -4,8 +4,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "Callback", "CallbacksList", "RegistrationToken",
                         "Comparator", "NotificationsCanceler", "xmlEscape",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
-                        "recoverSetters", "perlSplit", "evalInWindow", "report",
-                        "Animator"];
+                        "recoverSetters", "perlSplit", "evalInWindow",
+                        "enumerateMatchingProps", "report", "Animator"];
 
 ML.importMod("roles.js");
 
@@ -684,6 +684,71 @@ function evalInWindow(expr, win, scope) {
     } catch (ex) {
         return {exception: ex}
     }
+}
+
+function enumerateMatchingProps(value, pattern) {
+    var res = {};
+
+    var x = function(a, v) {
+        for (var i = 0; i < a.length; i++) {
+            var name = a[i];
+            if (name[0] == "*" && (name = name.substr(1), value[name] === null))
+                continue;
+
+            var name2 = "*"+name;
+
+            if (path.indexOf(pattern) == 0 && (!(name2 in res) || res[name2] > v))
+                res[name2] = v;
+        }
+    }
+
+    var t = function() {x(arguments, 0)}
+    var r = function() {x(arguments, 1)}
+
+    do {
+        switch (typeof(value)) {
+            case "object":
+                if (value !== null) {
+                    r("__count__", "__parent__", "*__proto__", "toSource",
+                      "toString", "toLocaleString", "valueOf", "constructor",
+                      "watch", "unwatch", "hasOwnProperty", "*isPropertyOf",
+                      "propertyIsEnumerable", "__defineGetter__",
+                      "__defineSetter__", "__lookupGetter__", "__lookupSetter__",
+                      "*getPrototypeOf");
+                    if (value instanceof Array)
+                        r("length", "join", "reverse", "sort", "push", "pop",
+                          "shift", "unshift", "splice", "concat", "slice",
+                          "indexOf", "lastIndexOf", "forEach", "map", "reduce",
+                          "reduceRight", "filter", "some", "every");
+                    else if (value instanceof RegExp)
+                        r("compile", "exec", "test", "source", "global",
+                          "ignoreCase", "multiline", "sticky");
+                }
+                break;
+            case "string":
+                r("escape", "unescape", "uneval", "decodeURI", "encodeURI",
+                  "decodeURIComponent", "encodeURIComponent", "quote",
+                  "substring", "toLowerCase", "toUpperCase", "charAt",
+                  "charCodeAt", "indexOf", "lastIndexOf", "trim", "trimLeft",
+                  "trimRight", "toLocaleLowerCase", "toLocaleUpperCase",
+                  "localeCompare", "match", "search", "replace", "split",
+                  "substr", "*concat", "*slice");
+                break;
+            case "function":
+                r("apply", "*arguments", "arity", "call", "*callee", "*caller",
+                  "name", "length");
+                break;
+            case "number":
+                r("toFixed", "toExponential", "toPrecision");
+                break;
+        }
+        for (var i in value)
+            t(i);
+
+        value = value.__proto__;
+    } while (value !== null)
+
+    return [res[i]+i for (i in res)].sort().map(function(s) {return s.substr(2)});
 }
 
 function report(to, level, info, context)
