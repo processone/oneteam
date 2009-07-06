@@ -262,7 +262,7 @@ function findSubexprStart(str, lsStart, lsEnd) {
   function doFindCompletions(val, expr, indexPrefix, prefixLength, prevEntry,
                              cursPos, suffix, str)
   {
-    if (val.exception || !val.result)
+    if (val.exception || val.result == null)
       return doComplete(prevEntry, cursPos, suffix, str, null);
 
     var res = [];
