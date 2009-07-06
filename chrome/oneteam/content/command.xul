@@ -170,13 +170,19 @@
       idx += r.index+1;
       s = s.substr(r.index+1);
       if (r[0] == "\"" || r[0] == "'") {
-        r = s.match(r[0] == "\"" ? /(?:[^\\"]*|\\.)*"/ : /(?:[^\\']*|\\.)*'/);
+        r = s.match(r[0] == "\"" ? /(?:[^\\"]|\\.)*"/ : /(?:[^\\']|\\.)*'/);
         if (!r) {
           if (stack.length && stack[0][0] == "[" && !/\S/.test(str.substring(stack[0][1], idx-1))) {
-            var start = stack.length ? stack[0][1] : 0;
-            var prevStart = stack.length > 1 ? stack[1][1] : start;
-            return [str.substr(0, prevStart), str.substring(prevStart, start-1),
-                    unescapeJS(str.substr(start+1))];
+            var bracket = stack[0][1];
+            var start = stack.length > 1 ? stack[1][1] : 0;
+
+            r = suffix.match(/^\s*]/);
+            var suffixCut = r ? r[0].length : 0;
+            r = str.substr(start, bracket-1).match(/.*[\/*=;,&^%!|+-]+/);
+            start += r ? r[0].length : 0;
+
+            return [str.substr(0, start), str.substring(start, bracket-1),
+                    unescapeJS(str.substr(bracket+1)), suffixCut];
           }
           return null;
         }
@@ -204,7 +210,7 @@
   }
 
   function findCompletions(prevEntry, cursPos, suffix, str) {
-    var val = extractExpr(str);
+    var val = extractExpr(str, suffix);
 
     if (!val)
       return doComplete(cursPos, suffix, str, null);
@@ -212,6 +218,8 @@
     var expr = val[1];
     var indexPrefix = val[2];
     var prefixLength = val[0].length+val[1].length;
+    cursPos += val[3]||0;
+    suffix = suffix.substr(val[3]||0);
 
     if (remoteJID) {
       remoteDebug.completions(remoteJID, expr || "this", indexPrefix,
@@ -265,6 +273,7 @@
       lastCompletionIdx = (lastCompletionResults.length + lastCompletionIdx +
                            (prevEntry ? -1 : 1)) % lastCompletionResults.length;
       lastCompletionStr = lastCompletionPrefix + lastCompletionResults[lastCompletionIdx];
+
       input.value = lastCompletionStr + suffix;
       input.selectionStart = input.selectionEnd = lastCompletionStr.length;
       return;
