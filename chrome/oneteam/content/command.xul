@@ -155,7 +155,31 @@
     }
   }
 
-  function extractExpr(str) {
+function findSubexprStart(str, lsStart, lsEnd) {
+    if (lsStart >= 0 && /^\s*(?:[.\[]\s*[^'"\/*=;,&^%!|+-]*)?$/.
+                        test(str.substring(lsEnd, str.length)))
+      return lsStart;
+
+    var re = /(?:[^'"\/*=;,&^%!|+-]*|"(?:[^\\"]|\\.)*"|'(?:[^\\']|\\.)*')*/g;
+    var re2 = /['"\/*=;,&^%!|+-]+/g;
+    var r, r2, pos = 0;
+
+    re.lastIndex = 0;
+    while ((r = re.exec(str))) {
+      if (r.index != pos)
+        break;
+
+      re2.lastIndex = re.lastIndex;
+      r2 = re2.exec(str);
+      if (!r2 || r2.index != re.lastIndex)
+        break;
+
+      pos = re.lastIndex = re2.lastIndex;
+    }
+    return pos;
+  }
+
+  function extractExpr(str, suffix) {
     const pairs = {
       "}": "{",
       "]": "[",
@@ -165,6 +189,7 @@
     var stack = [];
     var r, s = str;
     var idx = 0;
+    var lsStart, lsEnd = -1;
 
     while ((r = s.match(/[()\[\]{}"']/))) {
       idx += r.index+1;
@@ -176,10 +201,10 @@
             var bracket = stack[0][1];
             var start = stack.length > 1 ? stack[1][1] : 0;
 
+            start += findSubexprStart(str.substring(start, bracket-1), lsStart, lsEnd);
+
             r = suffix.match(/^\s*]/);
             var suffixCut = r ? r[0].length : 0;
-            r = str.substr(start, bracket-1).match(/.*[\/*=;,&^%!|+-]+/);
-            start += r ? r[0].length : 0;
 
             return [str.substr(0, start), str.substring(start, bracket-1),
                     unescapeJS(str.substr(bracket+1)), suffixCut];
@@ -193,14 +218,15 @@
       } else {
         if (!stack.length || stack[0][0] != pairs[r[0]])
           return null;
+        lsStart = stack[0][1]-1;
+        lsEnd = idx;
         stack.shift();
       }
     }
 
     var start = stack.length ? stack[0][1] : 0;
 
-    if ((r = str.substr(start).match(/.*[\/*=;,&^%!|+-]+/)))
-      start += r[0].length;
+    start += findSubexprStart(str.substr(start), lsStart, lsEnd);
     s = str.substr(start);
 
     if ((idx = s.lastIndexOf(".")) > 0)
