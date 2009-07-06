@@ -695,9 +695,22 @@ function enumerateMatchingProps(value, pattern) {
             if (name[0] == "*" && (name = name.substr(1), value[name] === null))
                 continue;
 
-            var name2 = "*"+name;
+            var name2;
+            var noUnderscores = name.replace(/^_+/,"").replace(/_+$/, "");
+            var camelCasePat = noUnderscores.replace(/^([a-z])[a-z]*|([A-Z])[a-z]*/g,
+                                                     "$1$2").toLowerCase();
 
-            if (path.indexOf(pattern) == 0 && (!(name2 in res) || res[name2] > v))
+            if (pattern == camelCasePat)
+                name2 = "*"+name;
+            else
+                for each (var pat in [name, name.toLowerCase(), noUnderscores,
+                                      noUnderscores.toLowerCase()])
+                    if (pat.indexOf(pattern) == 0) {
+                        name2 = "*"+name;
+                        break;
+                    }
+
+            if (name2 != null && (!(name2 in res) || res[name2] > v))
                 res[name2] = v;
         }
     }
