@@ -25,6 +25,12 @@
 
       <property name="isEmpty" onget="return this._input.value == ''" readonly="true"/>
 
+      <property name="selectionStart" onget="return this._input.selectionStart"
+                onset="return this._input.selectionStart = val"/>
+
+      <property name="selectionEnd" onget="return this._input.selectionEnd"
+                onset="return this._input.selectionEnd = val"/>
+
       <constructor><![CDATA[
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
         this._inputClone = document.getAnonymousElementByAttribute(this, "id", "_inputClone");
