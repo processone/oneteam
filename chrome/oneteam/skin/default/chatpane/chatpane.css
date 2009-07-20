@@ -12,10 +12,6 @@
   border: 1px solid #aeaeae !important;
 }
 
-#input-container {
-  padding-right: 2px;
-}
-
 #send {
   background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
   -moz-border-radius: 2px;

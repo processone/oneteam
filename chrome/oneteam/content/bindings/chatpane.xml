@@ -698,9 +698,6 @@
         if (el && el.localName == "toolbar" && el.getAttribute("type") == "chatpane-commands")
           this._toolbar = el;
 
-        setTimeout(function(body) { body.style.margin = "0"; }, 0,
-                   this._input.contentDocument.body);
-
         this._history = [];
         this._historyPosition = 0;
       ]]></constructor>
@@ -723,9 +720,15 @@
           link.setAttribute("rel", "stylesheet");
           doc.getElementsByTagName("HEAD")[0].appendChild(link);
 
+          if (this._toolbar)
+            doc.body.setAttribute("hasSendButton", "true");
+
           doc.designMode = "on";
-          doc.body.style.margin = "0"
-          doc.body.style.backgroundColor = "transparent";
+
+          doc.addEventListener("mousedown", function(event) {
+            if (event.button == 0 && event.clientX >= event.target.clientWidth-42)
+              me._doSend(true);
+          }, false);
 
           doc.addEventListener("keypress", function (event) {
           //alert("r: "+String.fromCharCode(event.charCode)+", "+event.keyCode+", "+event.altKey+", "+event.metaKey+", "+event.shiftKey);
@@ -962,7 +965,8 @@
           } else
             body.style.overflowY = "hidden";
 
-          me._counter.style.fontSize = body.offsetHeight+"px";
+          me._counter.style.fontSize = body.clientHeight+"px";
+          me._counter.style.marginRight = (42+me._input.clientWidth-body.clientWidth)+"px";
           me._input.style.height = (h) + "px";
 
           me._postMaybeResize();
@@ -1164,7 +1168,6 @@
 
         <xul:hbox id="input-container">
           <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true"/>
-          <xul:button id="send" oncommand="this.parentNode.parentNode.parentNode._doSend(true)"/>
         </xul:hbox>
       </xul:vbox>
     </content>
