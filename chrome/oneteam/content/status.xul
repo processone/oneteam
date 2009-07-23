@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://branding/locale/branding.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 

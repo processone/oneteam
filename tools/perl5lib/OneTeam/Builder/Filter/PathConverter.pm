@@ -19,11 +19,11 @@ sub process {
 
     if ($file =~ /\.xml$/) {
         $content =~ s{(?<!src=['"])chrome://oneteam/(content|skin)/}{../$1/}g;
-        $content =~ s{(?<!src=['"])chrome://branding/locale/}{../branding/}g;
+        $content =~ s{(?<!src=['"])chrome://oneteam-branding/locale/}{../branding/}g;
     }
 
     $content =~ s!chrome://oneteam/(content|skin)/!$to_top_dir/$1/!g;
-    $content =~ s!chrome://branding/locale/!$to_top_dir/branding/!g;
+    $content =~ s!chrome://oneteam-branding/locale/!$to_top_dir/branding/!g;
 
     $content;
 }
