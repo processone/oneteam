@@ -481,105 +481,101 @@
   </comandset>
 
   <keyset>
-    <key id="key_xmlConsole" modifiers="control" key="1" command="cmd_xmlConsole"/>
-    <key id="key_cmdConsole" modifiers="control" key="2" command="cmd_cmdConsole"/>
-    <key id="key_cmdVenkman" modifiers="control" key="3" command="cmd_cmdVenkman"/>
-    <key id="key_cmdDOMInspector" modifiers="control" key="4" command="cmd_cmdDOMInspector"/>
   </keyset>
 
-      <toolbox id="main-toolbox" class="toolbox-top" hidden="true">
-        <toolbar class="chromeclass-menubar" type="menubar">
-          <toolbaritem>
-            <menubar style="border: 0; padding: 0; margin:0; -moz-appearance:none">
-              <menu id="lagger-menu" label="_('_Actions')">
-                <menupopup id="file-popup">
-                  <menuitem label="_('_Add Contact...')" command="cmd_addContact"/>
+  <toolbox id="main-toolbox" class="toolbox-top" hidden="true">
+    <toolbar class="chromeclass-menubar" type="menubar">
+      <toolbaritem>
+        <menubar style="border: 0; padding: 0; margin:0; -moz-appearance:none">
+          <menu id="lagger-menu" label="_('_Actions')">
+            <menupopup id="file-popup">
+              <menuitem label="_('_Add Contact...')" command="cmd_addContact" key="key_addContact"/>
 
-                  <menu label="_('_Join Chat Room')">
-                    <menupopup>
-                      <menuitem label="_('Join Chat Room...')" command="cmd_joinRoom"/>
-                      <menuseparator/>
-                      <menuseparator id="conference-menu-separator" hidden="true"/>
-                      <menuitem label="_('_Manage Bookmarks...')" command="cmd_manageBookmarks"/>
-                    </menupopup>
-                  </menu>
-                  <menu label="_('_Gateways')" id="gateways-menu">
-                    <menupopup/>
-                  </menu>
+              <menu label="_('_Join Chat Room')">
+                <menupopup>
+                  <menuitem label="_('Join Chat Room...')" command="cmd_joinRoom" key="key_joinRoom"/>
                   <menuseparator/>
-                  <menuitem label="_('Service _Discovery')" command="cmd_disco"/>
-      <!--              <menuitem label="_('Administration Tools')"/> -->
-                  <menuitem label="_('_Server Commands...')" command="cmd_adhoc"/>
-                  <menuitem label="_('_History Manager...')" command="cmd_history"/>
-                  <menuitem label="_('File _Transfers...')" command="cmd_transfers"/>
-                  <menuseparator/>
-                  <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
-      <!-- #ifdef XULAPP -->
-                  <menuitem label="_('_Quit')" command="cmd_quit"/>
-      <!-- #endif -->
+                  <menuseparator id="conference-menu-separator" hidden="true"/>
+                  <menuitem label="_('_Manage Bookmarks...')" command="cmd_manageBookmarks"/>
                 </menupopup>
               </menu>
-              <menu id="configuration-menu" label="_('_View')">
-                <menupopup id="config-popup">
-                  <menuitem label="_('Show _Actions Toolbar')" command="cmd_toggleShowToolbar"
-                            type="checkbox"/>
-                  <menuseparator/>
-                  <menuitem label="_('Hide _Offline Contacts')" command="cmd_toggleShowOffline"
-                            type="checkbox"/>
-                </menupopup>
+              <menu label="_('_Gateways')" id="gateways-menu">
+                <menupopup/>
               </menu>
-              <menu id="configuration-menu" label="_('_Config')">
-                <menupopup id="config-popup">
-                  <menuitem label="_('_Edit personal info...')" command="cmd_ourVCard"/>
-                  <menuitem label="_('_Change password...')" command="cmd_changePassword"/>
-                  <menuseparator/>
-      <!-- #ifdef XULAPP -->
-                  <menuitem label="_('Plugins...')" command="cmd_extensions"/>
-                  <menuitem label="_('_Themes...')" command="cmd_themes"/>
-                  <menuseparator/>
-      <!-- #endif -->
-                  <menuitem label="_('_Preferences...')" command="cmd_prefs"/>
-                </menupopup>
-              </menu>
-              <menu id="help-menu" label="_('_Help')">
-                <menupopup id="help-popup">
-                  <menuitem label="_('Help _Bot')" command="cmd_help_bot"/>
-                  <menuitem label="_('_Documentation')" command="cmd_help"/>
-                  <menuitem label="_('_Report Bug')" command="cmd_bug"/>
-                  <menuitem label="_('XML _Console...')" command="cmd_xmlConsole"/>
-      <!-- #ifdef DEBUG -->
-      <!-- #ifdef XULAPP -->
-                  <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole"/>
-      <!-- #endif -->
-                  <menuitem label="_('Commands Console...')" command="cmd_cmdConsole"/>
-      <!-- #endif -->
-      <!-- #ifdef XULAPP -->
-                  <menuseparator/>
-                  <menuitem label="_('Check for Updates...')" command="cmd_chkUpdates"/>
-      <!-- #endif -->
-                  <menuseparator/>
-                  <menuitem label="_('About...')" command="cmd_about"/>
-                </menupopup>
-              </menu>
-            </menubar>
-          </toolbaritem>
-        </toolbar>
+              <menuseparator/>
+              <menuitem label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
+              <menuitem label="_('_Server Commands...')" command="cmd_adhoc"/>
+              <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"/>
+              <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"/>
+              <menuseparator/>
+              <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
+  <!-- #ifdef XULAPP -->
+              <menuitem label="_('_Quit')" command="cmd_quit" key="key_quit"/>
+  <!-- #endif -->
+            </menupopup>
+          </menu>
+          <menu id="configuration-menu" label="_('_View')">
+            <menupopup id="config-popup">
+              <menuitem label="_('Show _Actions Toolbar')" command="cmd_toggleShowToolbar"
+                        type="checkbox"/>
+              <menuseparator/>
+              <menuitem label="_('Hide _Offline Contacts')" command="cmd_toggleShowOffline"
+                        type="checkbox"/>
+            </menupopup>
+          </menu>
+          <menu id="configuration-menu" label="_('_Config')">
+            <menupopup id="config-popup">
+              <menuitem label="_('_Edit personal info...')" command="cmd_ourVCard" key="key_ourVCard"/>
+              <menuitem label="_('_Change password...')" command="cmd_changePassword"/>
+              <menuseparator/>
+  <!-- #ifdef XULAPP -->
+              <menuitem label="_('Plugins...')" command="cmd_extensions"/>
+              <menuitem label="_('_Themes...')" command="cmd_themes"/>
+              <menuseparator/>
+  <!-- #endif -->
+              <menuitem label="_('_Preferences...')" command="cmd_prefs" key="key_prefs"/>
+            </menupopup>
+          </menu>
+          <menu id="help-menu" label="_('_Help')">
+            <menupopup id="help-popup">
+              <menuitem label="_('Help _Bot')" command="cmd_help_bot"/>
+              <menuitem label="_('_Documentation')" command="cmd_help"/>
+              <menuitem label="_('_Report Bug')" command="cmd_bug"/>
+              <menuitem label="_('XML _Console...')" command="cmd_xmlConsole"/>
+  <!-- #ifdef DEBUG -->
+  <!-- #ifdef XULAPP -->
+              <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole"/>
+  <!-- #endif -->
+              <menuitem label="_('Commands Console...')" command="cmd_cmdConsole"/>
+  <!-- #endif -->
+  <!-- #ifdef XULAPP -->
+              <menuseparator/>
+              <menuitem label="_('Check for Updates...')" command="cmd_chkUpdates"/>
+  <!-- #endif -->
+              <menuseparator/>
+              <menuitem label="_('About...')" command="cmd_about"/>
+            </menupopup>
+          </menu>
+        </menubar>
+      </toolbaritem>
+    </toolbar>
 
-        <toolbar id="actions-toolbar" class="toolbar-primary chromeclass-toolbar">
-          <toolbarbutton id="adduser-button" tooltiptext="_('Add new contact')"
-              command="cmd_addContact"/>
-          <toolbarbutton id="joinroom-button" tooltiptext="_('Join group chat room')"
-              command="cmd_joinRoom"/>
-          <toolbarseparator/>
-          <toolbarbutton id="toggleshowoffline-button" tooltiptext="_('Toggle offline contacts visibility')"
-              command="cmd_toggleShowOffline"/>
-          <toolbarbutton id="disco-button" tooltiptext="_('Show service discovery')"
-              command="cmd_disco"/>
-          <toolbarbutton id="editgroups-button" tooltiptext="_('Preferences')"
-              command="cmd_prefs"/>
-          <toolbarseparator id="gateways-separator" hidden="true"/>
-        </toolbar>
-      </toolbox>
+    <toolbar id="actions-toolbar" class="toolbar-primary chromeclass-toolbar">
+      <toolbarbutton id="adduser-button" tooltiptext="_('Add new contact')"
+          command="cmd_addContact"/>
+      <toolbarbutton id="joinroom-button" tooltiptext="_('Join group chat room')"
+          command="cmd_joinRoom"/>
+      <toolbarseparator/>
+      <toolbarbutton id="toggleshowoffline-button" tooltiptext="_('Toggle offline contacts visibility')"
+          command="cmd_toggleShowOffline"/>
+      <toolbarbutton id="disco-button" tooltiptext="_('Show service discovery')"
+          command="cmd_disco"/>
+      <toolbarbutton id="editgroups-button" tooltiptext="_('Preferences')"
+          command="cmd_prefs"/>
+      <toolbarseparator id="gateways-separator" hidden="true"/>
+    </toolbar>
+  </toolbox>
+
   <deck id="main-deck" flex="1" selectedIndex="0  ">
     <vbox id="login-box">
       <vbox id="login-entries-box">
