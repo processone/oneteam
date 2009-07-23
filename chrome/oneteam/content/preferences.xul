@@ -8,7 +8,7 @@
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
 <dialog id="preferences" windowtype="ot:preferences" title="_('Preferences')"
-  width="700" height="500"
+  width="700" height="550"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
