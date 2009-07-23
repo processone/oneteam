@@ -65,13 +65,11 @@
       </property>
 
       <property name="hidden">
-        <getter>
-          <![CDATA[
-            return this._hidden;
-          ]]>
-        </getter>
-        <setter>
-          <![CDATA[
+        <getter><![CDATA[
+          return this._hidden;
+        ]]></getter>
+        <setter><![CDATA[
+          try{
             //alert("VISCH1: "+this._icon +", "+!val +", "+!this._reallyHidden);
             if (this._systray && this._icon && !val != !this._reallyHidden) {
             //alert("VISCH");
@@ -84,10 +82,12 @@
                 this._systrayVisibilityToggle();
             }
             this._hidden = val;
+          } catch(ex) {
+            this._systray = null;
+          }
 
-            return val;
-          ]]>
-        </setter>
+          return val;
+        ]]></setter>
       </property>
 
       <method name="onMouseClick">
