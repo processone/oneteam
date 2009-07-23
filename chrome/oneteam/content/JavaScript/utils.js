@@ -1034,6 +1034,9 @@ var Animator = {
             p = p.parentNode;
         }
 
+        if (!p)
+            return null;
+
         var right = left + element.clientWidth;
         var bottom = top + element.clientHeight;
         var pos = [{}, {}]
