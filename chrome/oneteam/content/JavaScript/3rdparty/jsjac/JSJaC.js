@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS = ["JSJaC"];
+
 /**
  * @fileoverview Magic dependency loading. Taken from script.aculo.us
  * and modified to break it.
