@@ -22,10 +22,12 @@ my $topdir = getcwd;
 my $dir = File::Spec->catdir($topdir, qw(chrome oneteam));
 my %defs = @ARGV;
 
-find(sub {
-        push @files, $File::Find::name
-            if -f and not ignored_file($File::Find::name);
-    }, $dir);
+for ($dir, map File::Spec->catdir($topdir, $_), "defaults", "components") {
+    find(sub {
+            push @files, $File::Find::name
+                if -f and not ignored_file($File::Find::name);
+        }, $_);
+}
 
 $defs{VERSION} = sub { get_version($topdir) };
 $defs{BRANCH} = sub { get_branch($topdir) };
@@ -87,7 +89,12 @@ my @locales = $locale_processor->locales;
 for my $file (@files) {
     my $content = slurp($file);
 
-    $content = $_->analyze($content, File::Spec->abs2rel($file, $dir))
+    my $rel_path = File::Spec->abs2rel($file, $dir);
+    my $rel_path2 = File::Spec->abs2rel($file, $topdir);
+    $rel_path = length($rel_path) > length($rel_path2) ? $rel_path2 :
+        "chrome/$rel_path";
+
+    $content = $_->analyze($content, $rel_path)
         for @filters;
 }
 
@@ -96,10 +103,15 @@ for my $file (@files) {
 
     @input{@locales} = (slurp($file)) x @locales;
 
+    my $rel_path = File::Spec->abs2rel($file, $dir);
+    my $rel_path2 = File::Spec->abs2rel($file, $topdir);
+    $rel_path = length($rel_path) > length($rel_path2) ? $rel_path2 :
+        "chrome/$rel_path";
+
     for my $filter (@filters) {
         for my $locale (@locales) {
             $input{$locale} = $filter->process($input{$locale},
-                File::Spec->abs2rel($file, $dir), $locale);
+                                               $rel_path, $locale);
         }
     }
 }

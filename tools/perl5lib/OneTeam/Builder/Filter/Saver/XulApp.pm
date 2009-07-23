@@ -1,6 +1,6 @@
 package OneTeam::Builder::Filter::Saver::XulApp;
 
-use base 'OneTeam::Builder::Filter::Saver';
+use base 'OneTeam::Builder::Filter::Saver::XPI';
 
 use File::Temp 'tempdir';
 use File::Path;
@@ -22,55 +22,10 @@ sub new {
     bless $self, $class;
 }
 
-sub analyze {
-    my ($self, $content, $file) = @_;
-
-    $self->{skins}->{$1} = 1 if $file =~ /(?:^|[\\\/])skin[\\\/]([^\\\/]*)[\\\/]/;
-
-    return $content;
-}
-
-sub path_convert {
-    my ($self, $file, $locale) = @_;
-
-    return catfile($self->{outputdir}, "locale", $file)
-        if $file =~ /(?:^|[\\\/])branding[\\\/]/;
-
-    return catfile($self->{outputdir}, $file);
-}
-
 sub finalize {
     my $self = shift;
 
-    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
-    my $chromedir = catdir($tmpdir, "chrome");
-
-    mkpath([$chromedir], 0);
-
-    system("cd '$self->{outputdir}'; zip -q -0 -r '".catfile($chromedir, 'oneteam.jar')."' .");
-
-    my $ai = slurp("application.ini");
-    $ai =~ s/(version\s*=\s*)[^\n]*/$1.$self->{version}->()/ei;
-    $ai =~ s/(buildid\s*=\s*)[^\n]*/$1.$self->{buildid}->()/ei;
-    print_to_file(catfile($tmpdir, "application.ini"), $ai);
-
-    dircopy('defaults', catdir($tmpdir, 'defaults'));
-    dircopy('components', catdir($tmpdir, 'components'));
-    dircopy('platform', catdir($tmpdir, 'platform'));
-    dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
-
-    open($fh, ">", catfile($chromedir, 'chrome.manifest')) or
-        die "Unable to create file: $!";
-    print $fh "content oneteam jar:oneteam.jar!/content/\n";
-
-    print $fh "skin oneteam ".($_ eq 'default' ? 'classic' : $_)."/1.0 ".
-        "jar:oneteam.jar!/skin/$_/\n" for keys %{$self->{skins}};
-
-    print $fh "locale oneteam $_ jar:oneteam.jar!/locale/$_/\n"
-        for @{$self->{locales}};
-    print $fh "locale oneteam-branding en-US jar:oneteam.jar!/locale/branding/\n";
-    print $fh "resource oneteam-skin chrome://oneteam/skin/\n";
-    close($fh);
+    my ($tmpdir, $chromedir) = $self->SUPER::finalize();
 
     if ($self->{mar_options}->{MAR_BASE_URL}) {
         my @files;
@@ -79,20 +34,38 @@ sub finalize {
         find(sub {push @files, $File::Find::name if -f $_}, $tmpdir);
         $self->_create_mar(map {(substr($_, $tmpdirlen), $_)} @files);
     }
-
-    system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, "oneteam.xulapp")."' .");
 }
 
-sub _expand_str {
-    my ($self, $mac, $str) = @_;
+sub _chrome_manifest_dir {
+    return "chrome";
+}
 
-    return undef if not $str;
+sub _add_browser_overlays {
+    return 0;
+}
 
-    $str =~ s/\@VERSION\@/$self->{version}->()/e;
-    $str =~ s/\@BUILDID\@/$self->{buildid}->()/e;
-    $str =~ s/\@MAC_SUFFIX\@/$mac ? "-mac" : ""/e;
+sub _disabled_prefs {
+    return ();
+}
 
-    return $str;
+sub _output_filename {
+    "oneteam.xulapp";
+}
+
+sub _generate_install_rdf {
+}
+
+sub _prepare_files {
+    my ($self, $tmpdir, $chromedir) = @_;
+
+    $self->SUPER::_prepare_files($tmpdir, $chromedir);
+
+    my $ai = slurp("application.ini");
+    $ai =~ s/(version\s*=\s*)[^\n]*/$1.$self->{version}->()/ei;
+    $ai =~ s/(buildid\s*=\s*)[^\n]*/$1.$self->{buildid}->()/ei;
+    print_to_file(catfile($tmpdir, "application.ini"), $ai);
+
+    dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
 }
 
 sub _create_mar {

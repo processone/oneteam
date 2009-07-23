@@ -133,9 +133,9 @@ sub finalize {
     for (@{$self->{locales}}) {
         my ($props, $entities) = $self->{xulapp_strings}->
             get_locale_files_content($self->{po_files}->{$_});
-        $self->{saver}->process($props, catfile("locale",$_, "oneteam.properties"), $_)
+        $self->{saver}->process($props, catfile("chrome", "locale", $_, "oneteam.properties"), $_)
             if $props;
-        $self->{saver}->process($entities, catfile("locale", $_, "oneteam.dtd"), $_)
+        $self->{saver}->process($entities, catfile("chrome", "locale", $_, "oneteam.dtd"), $_)
             if $entities;
     }
 }
