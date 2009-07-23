@@ -1,9 +1,11 @@
-content oneteam           file:oneteam/content/
+content  oneteam                   file:oneteam/content/
 
-locale  oneteam  en-US    file:oneteam/locale/en-US/
-locale  branding en-US    file:oneteam/branding/
+locale   oneteam  en-US            file:oneteam/locale/en-US/
+locale   oneteam-branding en-US    file:oneteam/branding/
 
-skin    oneteam default   file:oneteam/skin/default/
-skin    oneteam classic   file:oneteam/skin/default/
+skin     oneteam classic/1.0       file:oneteam/skin/default/
+skin     oneteam-platform classic/1.0 file:oneteam/skin/default/
+skin     oneteam-platform classic/1.0 file:oneteam/skin/mac/ OS=Darwin
 
-resource oneteam-skin     chrome/oneteam/skin/default/
+resource oneteam-skin              chrome://oneteam/skin/
+resource oneteam-data              chrome://oneteam/content/data/
