@@ -40,7 +40,7 @@
     <keyset id="editMenuKeys"/>
   </group>
 
-  <menubar id="macMenuBar">
+  <menubar id="macMenuBar" hidden="true">
     <menu id="fileMenuTabbed"
           label="_('File')">
       <menupopup>
@@ -123,7 +123,7 @@
     <keyset id="editMenuKeys"/>
   </group>
 
-  <menubar id="macMenuBarTabbed">
+  <menubar id="macMenuBarTabbed" hidden="true">
     <menu id="fileMenuTabbed"
           label="_('File')">
       <menupopup>
