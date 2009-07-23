@@ -260,8 +260,8 @@ function ConferenceMemberView(model, parentView)
     this.node = document.createElementNS(XULNS, "richlistitem");
     this.statusIcon = document.createElementNS(XULNS, "image");
     this.label = document.createElementNS(XULNS, "label");
-    var avatar = document.createElementNS(XULNS, "avatar");
-    avatar.model = this.model;
+    this.avatar = document.createElementNS(XULNS, "avatar");
+    this.avatar.model = this.model;
 
     this.node.setAttribute("class", "conferencemember-view");
     this.node.setAttribute("context", "conferencemember-contextmenu");
@@ -280,7 +280,7 @@ function ConferenceMemberView(model, parentView)
 
     this.node.appendChild(box);
     this.node.appendChild(this.label);
-    this.node.appendChild(avatar);
+    this.node.appendChild(this.avatar);
 
     this.tooltip = new ConferenceMemberTooltip(model, this.parentNode);
     this.node.setAttribute("tooltip", this.tooltip.id);
