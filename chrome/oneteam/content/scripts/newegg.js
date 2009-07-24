@@ -57,9 +57,17 @@ unsafeWindow.mucekStart = function() {
 
     container.appendChild(header);
 
+    var groups = document.getElementById("bcaBreadcrumbBottom").getElementsByTagName("a");
+    var groupName = [];
+    for (var i = 2; i < groups.length && i < 4; i++)
+        groupName.push(groups[i].firstChild.textContent);
+
+    groupName = groupName.join(" > ");
+
     var frame = document.createElement("iframe"), lc = 0;
     frame.setAttribute("src", "http://dev1.process-one.net/~pchmielowski/mucek/?chatWith=mremond@process-one.net&parentUrl="+
-                       encodeURIComponent(document.location.href));
+                       encodeURIComponent(document.location.href)+"&room=products@conference.process-one.net"+
+                       "&roomDesc="+encodeURIComponent(groupName));
     frame.addEventListener("load", function() {
         if (lc++ == 1)
             mucekStop();
