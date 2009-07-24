@@ -57,12 +57,15 @@ unsafeWindow.mucekStart = function() {
 
     container.appendChild(header);
 
-    var groups = document.getElementById("bcaBreadcrumbBottom").getElementsByTagName("a");
+    var groups = document.getElementById("bcaBreadcrumbTop");
+    groups = groups && groups.getElementsByTagName("dd");
     var groupName = [];
-    for (var i = 2; i < groups.length && i < 4; i++)
-        groupName.push(groups[i].firstChild.textContent);
+    for (var i = 2; groups && i < groups.length && i < 4; i++) {
+        var fc = groups[i].firstChild;
+        groupName.push(fc.firstChild ? fc.firstChild.textContent : fc.textContent);
+    }
 
-    groupName = groupName.join(" > ");
+    groupName = groupName.join(" > ") || "Top Level Category";
 
     var frame = document.createElement("iframe"), lc = 0;
     frame.setAttribute("src", "http://dev1.process-one.net/~pchmielowski/mucek/?chatWith=mremond@process-one.net&parentUrl="+
