@@ -864,12 +864,17 @@ _DECL_(Message).prototype =
         if (flags && flags.skipNL)
             return xmlEscape(str);
 
-        var re = /\n/g;
+        var re = /(^[ \t]+)|\n([ \t]*)/g;
         var match, res = "", last = 0;
 
         while ((match = re.exec(str))) {
             res += xmlEscape(str.substring(last, match.index));
-            res += "<br/>"
+            if (!match[1])
+                res += "<br/>"
+
+            var spaces = match[1] || match[2];
+            if (spaces)
+                res += spaces.replace(/\t/g, "        ").replace(/ /g, "&nbsp;");
             last = re.lastIndex;
         }
         return res + xmlEscape(str.substring(last));
