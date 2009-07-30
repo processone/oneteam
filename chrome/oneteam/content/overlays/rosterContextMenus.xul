@@ -131,7 +131,7 @@
       if (!findMenuModel(menu, event))
         return;
 
-      var confMemb = model;
+      var confMemb = menuModel;
       var conf = confMemb.contact;
 
       var kick = document.getElementById("conferencemember-kick");
