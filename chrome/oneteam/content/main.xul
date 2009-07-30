@@ -184,6 +184,8 @@
       },
 
       destroy: function() {
+        if (!this.rosterView)
+          return;
         this.rosterView.destroy();
         this.bookmarksMenuView.destroy();
         this.gatewaysMenuView.destroy();
