@@ -78,14 +78,13 @@ function ppTimeInterval(time)
 
 function linkEventsRedirector(event)
 {
-    if (event.target.localName.toLowerCase() != "a")
-        return;
-
-    if (event.name == "click" && event.button != 0 && event.button != 1)
+    if (event.target.localName.toLowerCase() != "a" || event.type != "click" ||
+        event.button != 0 && event.button != 1)
         return;
 
     event.preventDefault();
     event.stopPropagation();
+
     openLink(event.target.href);
 }
 
