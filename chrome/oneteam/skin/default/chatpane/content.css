@@ -6,17 +6,19 @@ html, body {
     min-height: 17px;
 }
 
-body[hasSendButton=true]::after {
+body[hasSendButton=true]:after {
     content: "";
     float: right;
     position: fixed;
-    top: 2px;
-    right: 2px;
+    top: -3px;
+    right: 0px;
     background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
     -moz-border-radius: 2px;
-    margin: 0px 0px;
+    margin: 2px 1px 0px 0;
+    padding: 0px;
     width: 38px;
     height: 100%;
+    -moz-box-sizing2: border-box;
 }
 
 body[hasSendButton=true] {
