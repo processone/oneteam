@@ -590,7 +590,7 @@ function unescapeJS(str)
 {
     if (str == null)
         return "";
-    return str.toString().replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.))/g,
+    return str.toString().replace(/\\(?:u([0-9a-fA-F]{4})|x([0-9a-fA-F]{2})|([0-7]{1,3})|(n)|(r)|(t)|(.)|$)/g,
         function(r, uni, hex, oct, nl, cr, tab, chr)
         {
             var charCode = parseInt(uni || hex, 16) || parseInt(oct, 8);
@@ -598,7 +598,7 @@ function unescapeJS(str)
             if (nl) return "\n";
             if (cr) return "\r";
             if (tab) return "\t";
-            return chr;
+            return chr||"";
         });
 }
 
