@@ -121,17 +121,17 @@ function writeXMLMessageHeadline() {
 function sendToServer() {
     var str = inputEditor.value;
 
-    var dp = new DOMParser();
-    var node = dp.parseFromString("<q xmlns='jabber:client'>"+str+"</q>", "text/xml").
-        firstChild.firstChild;
+    if (intoInput.checked) {
+        var dp = new DOMParser();
+        var node = dp.parseFromString("<q xmlns='jabber:client'>"+str+"</q>", "text/xml").
+            firstChild.firstChild;
 
-    if (intoInput.checked)
         if (account.connection._handleElement)
             account.connection._handleElement(node);
         else
             account.connection._inQ.push(node);
-    else
-        account.connection.send(JSJaCPacket.wrapNode(node));
+    } else
+        account.connection.send(JSJaCPacket.wrapNode(str));
 
     inputEditor.value = "";
 }

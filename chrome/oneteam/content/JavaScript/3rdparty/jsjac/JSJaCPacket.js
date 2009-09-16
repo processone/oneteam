@@ -660,6 +660,11 @@ JSJaCMessage.prototype.getSubject = function() {
  */
 JSJaCPacket.wrapNode = function(node) {
   var aNode;
+  if (typeof(node) == "string") {
+    var dp = new DOMParser();
+    node = dp.parseFromString("<q xmlns='jabber:client'>"+node+"</q>", "text/xml").
+        firstChild.firstChild;
+  }
   switch (node.nodeName.toLowerCase()) {
   case 'presence':
     aNode = new JSJaCPresence();
