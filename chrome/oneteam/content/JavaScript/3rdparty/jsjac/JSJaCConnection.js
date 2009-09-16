@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJaCConnection"];
+
 /**
  * @fileoverview Contains all things in common for all subtypes of connections
  * supported.

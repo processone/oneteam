@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJaCConsoleLogger"];
+
 /**
  * @fileoverview Contains Debugger interface for Firebug and Safari
  * @class Implementation of the Debugger interface for {@link

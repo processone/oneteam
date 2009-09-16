@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJACJID_FORBIDDEN", "JSJaCJID", "JSJaCJIDInvalidException"];
+
 /**
  * @fileoverview This file contains all things that make life easier when
  * dealing with JIDs

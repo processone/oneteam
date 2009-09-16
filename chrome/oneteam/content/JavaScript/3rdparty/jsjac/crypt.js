@@ -1,3 +1,14 @@
+var EXPORTED_SYMBOLS=["hexcase", "b64pad", "chrsz", "hex_sha1",
+    "b64_sha1", "str_sha1", "hex_hmac_sha1", "b64_hmac_sha1",
+    "str_hmac_sha1", "sha1_vm_test", "core_sha1", "sha1_ft", "sha1_kt",
+    "core_hmac_sha1", "rol", "str2binb", "binb2str", "binb2hex",
+    "binb2b64", "hex_md5", "b64_md5", "str_md5", "hex_hmac_md5",
+    "b64_hmac_md5", "str_hmac_md5", "md5_vm_test", "core_md5",
+    "md5_cmn", "md5_ff", "md5_gg", "md5_hh", "md5_ii", "core_hmac_md5",
+    "safe_add", "bit_rol", "str2binl", "binl2str", "binl2hex",
+    "binl2b64", "utf8t2d", "utf8d2t", "b64arrays", "b64d2t", "b64t2d",
+    "cnonce"];
+
 /* Copyright (c) 1998 - 2007, Paul Johnston & Contributors
  * All rights reserved.
  *

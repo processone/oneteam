@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJaCBuilder"];
+
 /* Copyright (c) 2005 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
  *
  * Permission is hereby granted, free of charge, to any person

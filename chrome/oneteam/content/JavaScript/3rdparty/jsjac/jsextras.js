@@ -1,11 +1,12 @@
+var EXPORTED_SYMBOLS = ["String.prototype.htmlEnc", "Date.jab2date", "Date.hrTime",
+                        "Date.prototype.jabberDate", "Number.max"]
+
 /**
  * @fileoverview Collection of functions to make live easier
  * @author Stefan Strigler
  * @version $Revision$
  */
 
-var EXPORTED_SYMBOLS = ["String.prototype.htmlEnc", "Date.jab2date", "Date.hrTime",
-                        "Date.prototype.jabberDate", "Number.max"]
 /**
  * Convert special chars to HTML entities
  * @addon

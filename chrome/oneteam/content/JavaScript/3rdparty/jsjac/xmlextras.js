@@ -1,3 +1,4 @@
+var EXPORTED_SYMBOLS=["XmlHttp", "XmlDocument", "Document.prototype.loadXML"];
 
 /* Copyright 2006 Erik Arvidsson
  *

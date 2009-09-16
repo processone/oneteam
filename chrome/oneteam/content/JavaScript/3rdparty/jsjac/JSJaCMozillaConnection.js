@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJaCMozillaConnection"];
+
 /**
  * @fileoverview All stuff related to HTTP Polling
  * @author Stefan Strigler steve@zeank.in-berlin.de

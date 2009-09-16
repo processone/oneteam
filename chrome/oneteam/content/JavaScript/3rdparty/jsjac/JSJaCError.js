@@ -1,3 +1,4 @@
+var EXPORTED_SYMBOLS=["JSJaCError"];
 
 /**
  * an error packet for internal use

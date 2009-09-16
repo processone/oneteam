@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJaCCookie", "JSJaCCookieException"];
+
 /* Copyright 2003-2006 Peter-Paul Koch
  */
 

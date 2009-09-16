@@ -53,19 +53,19 @@ var JSJaC = {
   }
 };
 
-ML.importMod("3rdparty/jsjac/xmlextras.js", false, true);
-ML.importMod("3rdparty/jsjac/jsextras.js", false, true);
-ML.importMod("3rdparty/jsjac/crypt.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCConfig.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCConstants.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCCookie.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCJID.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCBuilder.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCPacket.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCError.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCKeys.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCConnection.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCHttpPollingConnection.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCHttpBindingConnection.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCMozillaConnection.js", false, true);
-ML.importMod("3rdparty/jsjac/JSJaCConsoleLogger.js", false, true);
+ML.importMod("3rdparty/jsjac/xmlextras.js");
+ML.importMod("3rdparty/jsjac/jsextras.js");
+ML.importMod("3rdparty/jsjac/crypt.js");
+ML.importMod("3rdparty/jsjac/JSJaCConfig.js");
+ML.importMod("3rdparty/jsjac/JSJaCConstants.js");
+ML.importMod("3rdparty/jsjac/JSJaCCookie.js");
+ML.importMod("3rdparty/jsjac/JSJaCJID.js");
+ML.importMod("3rdparty/jsjac/JSJaCBuilder.js");
+ML.importMod("3rdparty/jsjac/JSJaCPacket.js");
+ML.importMod("3rdparty/jsjac/JSJaCError.js");
+ML.importMod("3rdparty/jsjac/JSJaCKeys.js");
+ML.importMod("3rdparty/jsjac/JSJaCConnection.js");
+ML.importMod("3rdparty/jsjac/JSJaCHttpPollingConnection.js");
+ML.importMod("3rdparty/jsjac/JSJaCHttpBindingConnection.js");
+ML.importMod("3rdparty/jsjac/JSJaCMozillaConnection.js");
+ML.importMod("3rdparty/jsjac/JSJaCConsoleLogger.js");

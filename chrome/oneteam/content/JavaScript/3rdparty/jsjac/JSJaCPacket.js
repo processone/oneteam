@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJACPACKET_USE_XMLNS", "JSJaCPacket", "JSJaCPresence", "JSJaCIQ", "JSJaCMessage"];
+
 /**
  * @fileoverview Contains all Jabber/XMPP packet related classes.
  * @author Stefan Strigler steve@zeank.in-berlin.de

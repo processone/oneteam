@@ -1,3 +1,5 @@
+var EXPORTED_SYMBOLS=["JSJaCHttpBindingConnection"];
+
 /**
  * @fileoverview All stuff related to HTTP Binding
  * @author Stefan Strigler steve@zeank.in-berlin.de
