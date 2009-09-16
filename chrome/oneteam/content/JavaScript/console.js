@@ -1,3 +1,5 @@
+ML.importMod("model/account.js");
+
 var console;
 var inputEditor;
 var intoInput
@@ -34,24 +36,24 @@ var handlers =
 
     onModelUpdated: function()
     {
-        if (window.opener.account.connection) {
-            window.opener.account.connection.registerHandler("packet_in", this.onPacketSend);
-            window.opener.account.connection.registerHandler("packet_out", this.onPacketRecv);
+        if (account.connection) {
+            account.connection.registerHandler("packet_in", this.onPacketSend);
+            account.connection.registerHandler("packet_out", this.onPacketRecv);
         }
     },
 
     register: function()
     {
-        this._token = window.opener.account.registerView(this.onModelUpdated, this, "account.connection");
+        this._token = account.registerView(this.onModelUpdated, this, "account.connection");
         this.onModelUpdated();
     },
 
     unregister: function()
     {
-        window.opener.account.unregisterView(this._token);
-        if (window.opener.account.connection) {
-            window.opener.account.connection.unregisterHandler("packet_in", this.onPacketSend);
-            window.opener.account.connection.unregisterHandler("packet_out", this.onPacketRecv);
+        account.unregisterView(this._token);
+        if (account.connection) {
+            account.connection.unregisterHandler("packet_in", this.onPacketSend);
+            account.connection.unregisterHandler("packet_out", this.onPacketRecv);
         }
     }
 };
@@ -124,12 +126,12 @@ function sendToServer() {
         firstChild.firstChild;
 
     if (intoInput.checked)
-        if (window.opener.account.connection._handleElement)
-            window.opener.account.connection._handleElement(node);
+        if (account.connection._handleElement)
+            account.connection._handleElement(node);
         else
-            window.opener.account.connection._inQ.push(node);
+            account.connection._inQ.push(node);
     else
-        window.opener.account.connection.send(window.opener.JSJaCPacket.wrapNode(node));
+        account.connection.send(JSJaCPacket.wrapNode(node));
 
     inputEditor.value = "";
 }
