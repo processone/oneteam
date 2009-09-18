@@ -343,5 +343,6 @@ servicesManager.addIQService("jabber:iq:version", function (pkt, query) {
 
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/disco#info");
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/muc");
+servicesManager.publishDiscoInfo("jabber:x:conference");
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/chatstates", "cs");
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/xhtml-im", "xhtml");

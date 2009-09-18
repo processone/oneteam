@@ -23,6 +23,7 @@ ML.importMod("services/adhoc.js");
 ML.importMod("services/privacy.js");
 ML.importMod("services/rosterx.js");
 ML.importMod("services/remoteDebug.js");
+ML.importMod("services/invitations.js");
 ML.importMod("socks5.js");
 ML.importMod("filetransfer.js");
 
@@ -255,6 +256,26 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (this.myResource.jid && this.myResource.jid.normalizedJID == jid.normalizedJID)
             return this.myResource;
         return this.resources[jid.normalizedJID];
+    },
+
+    getContactOrResourceName: function(jid, showResource) {
+        jid = new JID(jid);
+
+        if (!showResource)
+            jid = jid.shortJID;
+
+        var name = this.getContactOrResource(jid);
+        return name ? name.visibleName : jid.toUserString();
+    },
+
+    getActiveResource: function(jid) {
+        jid = new JID(jid);
+
+        if (this.allContacts[jid.normalizedJID])
+            return this.allContacts[jid.normalizedJID].activeResource;
+        if (this.resources[jid.normalizedJID])
+            this.resources[jid.normalizedJID].contact.activeResource;
+        return null;
     },
 
     setVCard: function(vcardE4X)
@@ -902,25 +923,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     onMessage: function(packet)
     {
         var sender = new JID(packet.getFrom());
-        var invite = packet.getNode().
-                getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "invite")[0];
-
-        if (invite) {
-            var conference = this.getOrCreateConference(sender);
-            var reason = invite.getElementsByTagName("reason")[0];
-
-            if (conference.joined)
-                return;
-
-            this.addEvent(_("You have been invited to room <b>{0}</b> by <b>{1}</b>",
-                            xmlEscape(sender), xmlEscape(invite.getAttribute("from"))),
-                          new Callback(openDialogUniq, null).
-                          addArgs(null, "chrome://oneteam/content/invitation.xul",
-                                  "chrome,centerscreen", conference,
-                                  new JID(invite.getAttribute("from")),
-                                  reason && reason.textContent));
-            return;
-        }
 
         // Message come from me
         if (sender.normalizedJID == this.myJID.normalizedJID)

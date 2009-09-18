@@ -20,12 +20,15 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("model/account.js");
 
-    var [conference, by, reason] = window.arguments;
+    var [conference, by, reason, sendDecline] = window.arguments;
 
     function onLoad()
     {
-      document.getElementById("msg").innerHTML = "You have been invited to room <b>"+
-        conference.jid.toUserString()+"</b> by <b>"+by.toUserString("short")+"</b>";
+      document.getElementById("msg").innerHTML =
+        _("You have been invited to room <b>{0}</b> by <b>{1}</b>",
+          xmlEscape(conference.jid.toUserString()),
+          xmlEscape(account.getContactOrResourceName(by)));
+
       if (reason)
         document.getElementById("reason").value = reason;
       else
@@ -41,7 +44,8 @@
 
     function declineInvitation()
     {
-      conference.declineInvitation(by);
+      if (sendDecline)
+        conference.declineInvitation(by);
       window.close();
     }
   ]]></script>

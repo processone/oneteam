@@ -164,15 +164,21 @@ _DECL_(Conference, Contact).prototype =
 
     invite: function(jid, reason)
     {
-        const ns = "http://jabber.org/protocol/muc#user";
-        var pkt = new JSJaCMessage();
-        var x = pkt.getNode().appendChild(pkt.getDoc().createElementNS(ns, "x"));
-        var node = x.appendChild(pkt.getDoc().createElementNS(ns, "invite"));
+        if (!reason)
+            reason = _("Please join that room");
 
-        pkt.setTo(this.jid);
-        node.setAttribute('to', jid);
-        node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
-            appendChild(pkt.getDoc().createTextNode(reason || "Please join that room"));
+        var pkt = new JSJaCMessage();
+
+        var resource = account.getActiveResource(jid);
+        if ((!resource || !resource.hasDiscoFeature("jabber:x:conference")) && this.joined) {
+            pkt.setTo(this.jid);
+            pkt.appendNode("x", {xmlns: "http://jabber.org/protocol/muc#user"}, [
+                                 ["invite", {to: jid}, [["reason", [reason]]]]]);
+
+        } else {
+            pkt.setTo(jid);
+            pkt.appendNode("x", {xmlns: "jabber:x:conference", jid: this.jid, reason: reason});
+        }
 
         account.connection.send(pkt);
     },
