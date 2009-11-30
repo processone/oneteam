@@ -28,7 +28,14 @@
 
     function onLoad() {
       if (window.arguments)
+        callWindowOpened();
+    }
+
+    function callWindowOpened() {
+      if (document.getElementById("chats").openTab)
         window.arguments[0]._onChatWindowOpened();
+      else
+        setTimeout(callWindowOpened, 100);
     }
 
     function onUnload() {
