@@ -111,14 +111,12 @@ _DECL_(Model).prototype =
     registerView: function(method, obj, prop, token)
     {
         var callback = new Callback(method, obj)
-        this._views._registerCallback(callback, token, prop);
-
-        return callback;
+        return this._views._registerCallback(callback, token, prop);
     },
 
-    unregisterView: function(callback)
+    unregisterView: function(token)
     {
-        this._views._unregisterCallback(callback);
+        token.unregister(this._views);
     },
 
     modelUpdated: function(prop, arg)
