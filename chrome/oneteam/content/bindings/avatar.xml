@@ -12,12 +12,9 @@
     </resources>
 
     <content>
-      <xul:hbox flex="1" align="center">
+      <xul:hbox flex="1" align="center" pack="center">
         <xul:vbox class="avatarContainer" hidden="true">
-          <html:div>
-            <html:img id="image" width="1" height="1" style="display: block"
-              onload="try{this.parentNode.parentNode.parentNode.parentNode.onImageLoad()}catch(ex){}"/>
-          </html:div>
+          <xul:image id="image"/>
         </xul:vbox>
       </xul:hbox>
     </content>
@@ -53,36 +50,34 @@
         ]]></setter>
       </property>
 
-      <constructor>
-        <![CDATA[
-          this._image = document.getAnonymousElementByAttribute(this, "id", "image");
-          this._container = this._image.parentNode.parentNode.parentNode;
+      <constructor><![CDATA[
+        this._image = document.getAnonymousElementByAttribute(this, "id", "image");
+        this._container = this._image.parentNode.parentNode;
+        this._imageObj = new Image();
 
-          this.onAvatarChange();
+        var _this = this;
+        this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
 
-          recoverSetters(this);
-        ]]>
-      </constructor>
+        this.onAvatarChange();
 
-      <destructor>
-        <![CDATA[
-          this.model = null;
-        ]]>
-      </destructor>
+        recoverSetters(this);
+      ]]></constructor>
+
+      <destructor><![CDATA[
+        this.model = null;
+      ]]></destructor>
 
       <method name="onAvatarChange">
         <body><![CDATA[
         if (this._model && this._model.avatar) {
           this._container.firstChild.hidden = false;
-          this._src = this._model.avatar;
-          this._image.setAttribute("src", this._src);
+          this._imageObj.src = this._model.avatar;
         } else if (this.getAttribute("showBlankAvatar") == "true") {
           this._container.firstChild.hidden = false;
-            this._src = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
-            this._image.setAttribute("src", this._src);
+          this._imageObj.src = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
         } else {
           this._container.firstChild.hidden = true;
-          this._src = null;
+          this._imageObj.src = null;
         }
         ]]></body>
       </method>
@@ -106,19 +101,16 @@
 
       <method name="onImageLoad">
         <body><![CDATA[
-          if (this._normalize_url(this._src) != this._normalize_url(this._image.src)) {
-            this._image.src = this._src;
-            return;
-          }
+          this._image.style.width = this._image.style.height = "1px";
 
-          this._image.width = this._image.height = 1;
-          var height = this._container.boxObject.height - 4;
+          var height = this._container.boxObject.height;
+          this._image.setAttribute("src", this._imageObj.src);
 
-          if (height > this._image.naturalHeight)
-            height = this._image.naturalHeight;
+          if (height > this._imageObj.naturalHeight)
+            height = this._imageObj.naturalHeight;
 
-          this._image.width = height*this._image.naturalWidth/this._image.naturalHeight;
-          this._image.height = height;
+          this._image.style.width = (height*this._imageObj.naturalWidth/this._imageObj.naturalHeight)+"px";
+          this._image.style.height = height+"px";
         ]]></body>
       </method>
     </implementation>
