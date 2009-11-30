@@ -11,10 +11,10 @@
     </resources>
     <content>
       <xul:hbox align="center">
-        <xul:button type="disclosure" class="button-text expanderButton" anonid="disclosure"
+        <xul:button type="disclosure" class="expanderButton" anonid="disclosure"
           xbl:inherits="disabled" mousethrough="always"/>
         <xul:label class="header expanderButton" anonid="label"
-          xbl:inherits="value=label,disabled" mousethrough="always" flex="1"/>
+          xbl:inherits="value=label,disabled" flex="1" crop="end"/>
       </xul:hbox>
       <xul:vbox flex="1" anonid="container" class="settingsContainer"
         xbl:inherits="align">

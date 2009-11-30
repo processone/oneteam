@@ -2,6 +2,11 @@
     cursor: pointer !important;
     -moz-appearance: none;
 }
+
 .expanderButton[disabled=true] {
     cursor: auto !important;
+}
+
+button.expanderButton {
+    -moz-binding: url("chrome://global/content/bindings/button.xml#button-image");
 }
