@@ -287,13 +287,14 @@ _DECL_(ServicesManager).prototype =
         var item;
         if (from.resource) {
             item = account.getOrCreateResource(from);
-            if (!item)
+            if (!item && pkt.getType() != "groupchat")
                 item = account.getOrCreateContact(from.getShortJID(), true).
                     createResource(from);
         } else
             item = account.getOrCreateContact(from);
 
-        item.onMessage(pkt);
+        if (item)
+            item.onMessage(pkt);
     },
 
     _sendResponse: function(response, packet, callback)
