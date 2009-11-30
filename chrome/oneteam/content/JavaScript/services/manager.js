@@ -5,8 +5,6 @@ function ServicesManager()
     this._iqHandlers = {};
     this._messageHandlers = {}
     this._nodes = {};
-    this._capsExt = {};
-    this._disabledCapsExt = {};
     this._identities = {};
     this._items = {};
 
@@ -16,7 +14,6 @@ function ServicesManager()
 _DECL_(ServicesManager).prototype =
 {
     _capsPrefix: "http://oneteam.im/caps",
-    _capsVersion: "1.0_2",
 
     /**
      * Register new handler for iq stanzas from given namespace.
@@ -37,26 +34,23 @@ _DECL_(ServicesManager).prototype =
      *  should handle.
      * @tparam Function handler   Function or Generator which should handle
      *  requests.
-     * @tparam String capsExt   Name of entity caps extension in which should
-     *  be namespace <code>ns</code> registered. If <em>null</em> is passed
-     *  namespace will be visible in main entity caps block.
      * @tparam bool dontShowInDisco   If <em>true</em> namespace
      *  <code>ns</code> will not be visible in disco or entity caps responses.
      *
      *  @public
      */
-    addIQService: function(ns, handler, capsExt, dontShowInDisco)
+    addIQService: function(ns, handler, dontShowInDisco)
     {
         this._iqHandlers[ns] = handler;
         if (!dontShowInDisco)
-            this.publishDiscoInfo(ns, capsExt);
+            this.publishDiscoInfo(ns);
     },
 
     /**
      * Register new handler for extension in message stanzas.
      *
      * Each handler will be called with three arguments, JSJaC request packet,
-     * extension DOM node, and requestor jid.
+     * extension DOM node, requestor jid, and extension E4X node.
      *
      * Handler should return <em>2</em> to indicate that this message shouldn't
      * be further processed, <em>1</em> to stop other extensions processing,
@@ -75,66 +69,66 @@ _DECL_(ServicesManager).prototype =
         this._messageHandlers[ns] = handler;
     },
 
-    publishDiscoItems: function(node, itemNode, itemName)
+    publishDiscoItems: function(node, itemNode, itemName, checkPerms)
     {
+        var v = {node: itemNode, name: itemName, checkPerms: checkPerms};
+
         if (!this._items[node])
-            this._items[node] = [{node: itemNode, name: itemName}];
+            this._items[node] = [v];
         else
-            this._items[node].push({node: itemNode, name: itemName});
+            this._items[node].push(v);
     },
 
-    publishDiscoInfo: function(ns, capsExt, nodes, identity)
+    publishDiscoIdentity: function(nodes, identity)
     {
-        nodes = nodes instanceof Array ? nodes : nodes == null ? [] : [nodes];
-        capsExt = capsExt instanceof Array ? capsExt : capsExt == null ? [] : [capsExt];
-
-        for (var i = 0; i < capsExt.length; i++) {
-            if (capsExt[i] != this._capsVersion)
-                this._capsExt[capsExt[i]] = 1;
-            nodes.push(this._capsPrefix+"#"+capsExt[i]);
-        }
-        if (nodes.length == 0)
-            nodes.push(this._capsPrefix+"#"+this._capsVersion);
+        if (nodes == null || nodes.length == 0)
+            nodes = [""];
 
         for (i = 0; i < nodes.length; i++) {
-            if (identity)
-                this._identities[nodes[i]] = identity;
+            if (this._identities[nodes[i]])
+                this._identities[nodes[i]].push(identity);
+            else
+                this._identities[nodes[i]] = [identity];
+        }
+    },
+
+    publishDiscoInfo: function(ns, nodes, identity)
+    {
+        nodes = nodes instanceof Array ? nodes : nodes == null ? [] : [nodes];
+        if (nodes.length == 0)
+            nodes[0] = "";
+
+        if (identity)
+            this.publishDiscoIdentity(nodes, identity);
+
+        for (i = 0; i < nodes.length; i++) {
             if (this._nodes[nodes[i]])
                 this._nodes[nodes[i]].push(ns);
             else
                 this._nodes[nodes[i]] = [ns];
         }
-
-        if (capsExt.length)
-            this._sendCaps();
+        if (this._initialPresenceSent)
+            account.setPresence(account.currentPresence);
     },
 
-    disableCapsExt: function(ext)
-    {
-        if (!this._disabledCapsExt[ext] || !this._capsExt[ext])
-            return;
-        this._disabledCapsExt[ext] = 1;
-        this._sendCaps();
-    },
 
-    enableCapsExt: function(ext)
-    {
-        if (this._disabledCapsExt[ext] || !this._capsExt[ext])
-            return;
-        delete this._disabledCapsExt[ext];
-        this._sendCaps();
     },
 
     appendCapsToPresence: function(node)
     {
-        var exts = [c for (c in this._capsExt) if (!(c in this._disabledCapsExt))];
+        var identities = [i.category+"/"+(i.type||"")+"//"+(i.name||"")+">"
+                          for each (i in this._identities[""]||[])];
+        var features = [n+">" for each (n in this._nodes[""]||[])];
+
+        this._capsHash = b64_sha1(identities.sort().join("")+features.sort().join(""));
+
         var capsNode = node.ownerDocument.
             createElementNS("http://jabber.org/protocol/caps", "c");
 
-        capsNode.setAttribute("ver", this._capsVersion);
+        capsNode.setAttribute("hash", "sha-1");
         capsNode.setAttribute("node", this._capsPrefix);
-        if (exts.length)
-            capsNode.setAttribute("ext", exts.join(" "));
+        capsNode.setAttribute("ver", this._capsHash);
+
         node.appendChild(capsNode);
 
         this._initialPresenceSent = true;
@@ -152,30 +146,28 @@ _DECL_(ServicesManager).prototype =
 
             {
                 default xml namespace = "http://jabber.org/protocol/disco#info";
-                var nodes = [], features = {};
+                var nodes = [], features = {}, identities = [];
                 var node = query.getAttribute("node");
-                var id;
 
                 response = <query/>;
 
-                if (node) {
+                if (!node || node == this._capsPrefix+"#"+this._capsHash) {
+                    if (node)
+                        response.@node = node;
+                    identities = this._identities[""];
+                    nodes = [""];
+                } else {
                     response.@node = node;
 
                     if (this._nodes[node]) {
+                        identities = this._identities[node] || [];
                         nodes = [node];
-                        if (node.indexOf(this._capsPrefix+"#") == 0)
-                            response.* += <identity category="client" type="pc" name="OneTeam"/>
-                        else if ((id = this._identities[node]))
-                            response.* += <identity category={id.category} type={id.type} name={id.name}/>
                     } else
                         nodes = [];
-                } else {
-                    nodes = [this._capsPrefix+"#"+c for (c in this._capsExt)
-                             if (!(c in this._disabledCapsExt))];
-                    nodes.push(this._capsPrefix+"#"+this._capsVersion);
-
-                    response.* += <identity category="client" type="pc" name="OneTeam"/>
                 }
+
+                for each (var id in identities)
+                    response.* += <identity category={id.category} type={id.type} name={id.name}/>
 
                 for (var i = 0; i < nodes.length; i++) {
                     var ns = this._nodes[nodes[i]];
@@ -341,8 +333,10 @@ servicesManager.addIQService("jabber:iq:version", function (pkt, query) {
                     </query>;
     });
 
+servicesManager.publishDiscoIdentity([""], {category:"client", type:"pc", name:"OneTeam"});
+
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/disco#info");
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/muc");
 servicesManager.publishDiscoInfo("jabber:x:conference");
-servicesManager.publishDiscoInfo("http://jabber.org/protocol/chatstates", "cs");
-servicesManager.publishDiscoInfo("http://jabber.org/protocol/xhtml-im", "xhtml");
+servicesManager.publishDiscoInfo("http://jabber.org/protocol/chatstates");
+servicesManager.publishDiscoInfo("http://jabber.org/protocol/xhtml-im");

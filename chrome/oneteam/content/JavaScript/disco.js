@@ -85,14 +85,14 @@ _DECL_(DiscoCacheEntry).prototype =
 
     updateCapsInfo: function(caps)
     {
-        var [node, ver, ext] = [this.capsNode, this.capsVer, this.capsExt];
+        var [node, ver, hash] = [this.capsNode, this.capsVer, this.capsHash];
 
         this.capsNode = caps.getAttribute("node");
         this.capsVer = caps.getAttribute("ver");
-        this.capsExt = (caps.getAttribute("ext") || "").split(/\s+/);
+        this.capsHash = caps.getAttribute("hash");
 
         if (node != this.capsNode || ver != this.capsVer ||
-            ext.sort().join(" ") != this.capsExt.sort().join(" "))
+            hash != this.capsHash)
             this.discoInfo = null;
     },
 
@@ -144,46 +144,25 @@ _DECL_(DiscoCacheEntry).prototype =
     _populateDiscoInfoFromCaps: function(returnType, callback, discoItem)
     {
         var nodes = [this.capsVer].concat(this.capsExt);
-        var infos = [];
         var capsCallback, capsCallbackData;
 
-        for (var i = 0; i < nodes.length; i++) {
-            var ce = new DiscoCacheEntry(this.jid, this.capsNode+"#"+nodes[i],
-                                         true);
-            var info = ce.requestDiscoInfo();
-            if (info) {
-                if (infos.length == i)
-                    infos.push(info);
-            } else {
-                if (!capsCallback)
-                    capsCallback = new Callback(this._gotCapsInfo, this).
-                        addArgs(capsCallbackData = {}, returnType, callback, discoItem);
-                capsCallbackData[this.capsNode+"#"+nodes[i]] = 1;
-                ce.requestDiscoInfo(null, false, capsCallback);
-            }
-        }
-
-        if (infos.length == nodes.length) {
-            this.discoInfo = {
-                identities: infos[0].identities,
-                features: {}
-            }
-            for (var i = 0; i < infos.length; i++)
-                for (var j in infos[i].features)
-                    this.discoInfo.features[j] = 1
-        }
+        var ce = new DiscoCacheEntry(this.jid, this.capsNode+"#"+this.capsVer,
+                                     true);
+        ce.requestDiscoInfo(null, false,
+                            new Callback(this._gotCapsInfo, this).
+                                addArgs(returnType, callback, discoItem));
     },
 
     _populateDiscoInfoFromCapsCache: function()
     {
-        var s = account.cache.getValue("caps-"+this.node);
+        var s = account.cache.getValue("caps2-"+this.node);
 
         if (s == null)
             return;
 
         s = s.split("\n");
         this.discoInfo = { features: {} };
-        account.cache.bumpExpirationDate("caps-"+this.node,
+        account.cache.bumpExpirationDate("caps2-"+this.node,
                                          new Date(Date.now()+30*24*60*60*1000));
         var idx = 0, count = 1;
         if (+s[0] > 0) {
@@ -240,7 +219,7 @@ _DECL_(DiscoCacheEntry).prototype =
         }
 
         if (this._isCapsNode)
-            account.cache.setValue("caps-"+this.node, cacheVal,
+            account.cache.setValue("caps2-"+this.node, cacheVal,
                                    new Date(Date.now()+30*24*60*60*1000));
 
         delete this.discoInfoCallbacks;
@@ -265,13 +244,9 @@ _DECL_(DiscoCacheEntry).prototype =
         delete this.discoItemsCallbacks;
     },
 
-    _gotCapsInfo: function(capsItem, info, nodes, returnType, callback, discoItem)
+    _gotCapsInfo: function(capsItem, info, returnType, callback, discoItem)
     {
-        delete nodes[discoItem.node];
-        if (nodes.__count__ != 0)
-            return;
-
-        this._populateDiscoInfoFromCaps();
+        this.discoInfo = info;
         if (callback)
             callback(discoItem, this._parseReturnType(returnType));
     }

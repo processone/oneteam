@@ -108,9 +108,9 @@ servicesManager.addIQService("http://jabber.org/protocol/commands", function (pk
 for (var i in adhocCmds) {
     servicesManager.publishDiscoItems("http://jabber.org/protocol/commands",
                                       i, adhocCmds[i][0]);
-    servicesManager.publishDiscoInfo("http://jabber.org/protocol/commands", null,
+    servicesManager.publishDiscoInfo("http://jabber.org/protocol/commands",
                                      i, {name: adhocCmds[i][0],
                                          category: "automation",
                                          type: "command-node"});
-    servicesManager.publishDiscoInfo("jabber:x:data", null, i);
+    servicesManager.publishDiscoInfo("jabber:x:data", i);
 }
