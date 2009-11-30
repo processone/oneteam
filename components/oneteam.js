@@ -184,7 +184,6 @@ ML.importMod("services/xpcom/contentDispatcher.js");
 // #endif
 
 function init(win) {
-    initTypesFromWindow(win);
 // #ifdef XPI
     ML.importMod("services/xpcom/scriptInjector.js");
     ML.importMod("services/xpcom/browserUIUpdater.js");

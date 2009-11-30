@@ -1,7 +1,6 @@
 var EXPORTED_SYMBOLS = ["alert", "alertEx", "atob", "btoa", "setTimeout",
                         "setInterval", "clearTimeout", "clearInterval", "open",
-                        "openDialog", "DOMParser", "initTypesFromWindow",
-                        "screen"];
+                        "openDialog", "DOMParser", "screen"];
 
 ML.importMod("services/xpcom/utils.js");
 
@@ -16,15 +15,51 @@ function alertEx(title, text) {
     ps.alert(findCallerWindow(), title == null ? "Alert" : ""+title, ""+text);
 }
 
+var _atobMap = {};
+var _btoaMap = [];
+{
+    let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    for (let i = 0; i < str.length; i++) {
+        _atobMap[str.charAt(i)] = i;
+        _btoaMap[i] = str.charAt(i);
+    }
+}
+
 function atob(data)
 {
+    var res = "";
+
     data = data.replace(/\s+/g, "");
-    return _atob.call(null, data);
+
+    for (var i = 0; i < data.length; i+=4) {
+        let v1 =_atobMap[data[i]]||0, v2 = _atobMap[data[i+1]]||0;
+        let v3 =_atobMap[data[i+2]]||0, v4 = _atobMap[data[i+3]]||0;
+        res += String.fromCharCode((v1 << 2 | v2 >> 4) & 255);
+
+        if (data[i+2] != "=")
+            res += String.fromCharCode((v2 << 4 | v3 >> 2) & 255);
+        if (data[i+3] != "=")
+            res += String.fromCharCode((v3 << 6 | v4) & 255);
+    }
+
+    return res;
 }
 
 function btoa(data)
 {
-    return _btoa.call(null, data);
+    var res = "";
+
+    for (var i = 0; i < data.length; i+=3) {
+        let v1 = data.charCodeAt(i);
+        let v2 = i+1 >= data.length ? 4096 : data.charCodeAt(i+1);
+        let v3 = i+2 >= data.length ? 4096 : data.charCodeAt(i+2);
+
+        res += _btoaMap[v1 >> 2] +
+            _btoaMap[((v1 << 4) & 63) | ((v2 >> 4) & 63)] +
+            (_btoaMap[((v2 << 2) & 0x3f03f) | ((v3 >> 6) & 63)] || "=") +
+            (_btoaMap[v3 & 0x3f03f] || "=");
+    }
+    return res
 }
 
 function setTimeout(code, step) {
@@ -157,31 +192,34 @@ var screen = {
     get availHeight() {return this._availRect(3)}
 };
 
-function initTypesFromWindow(win) {
-    if (!this.Document) {
-        var di = Components.classesByID["{3a9cd622-264d-11d4-ba06-0060b0fc76dd}"].
-            createInstance(Components.interfaces.nsIDOMDOMImplementation);
-
-        this.document = di.createDocument(null, null, null);
-
-        this.Window = win.Window;
-        this.Document = win.Document;
-        this.XMLDocument = win.XMLDocument;
-        this.XULDocument = win.XULDocument;
-        this.XULElement = win.XULElement;
-        this.Element = win.Element;
-        this.Node = win.Node;
-        this.Text = win.Text;
-        this.XPathEvaluator = win.XPathEvaluator;
-        this.XPathExpression = win.XPathExpression;
-        this.TreeWalker = win.TreeWalker;
-        this.NodeFilter = win.NodeFilter;
-        this.NodeList = win.NodeList;
-        this.XMLHttpRequest = win.XMLHttpRequest;
-        this.XMLSerializer = win.XMLSerializer;
-        this._atob = win.atob;
-        this._btoa = win.btoa;
-        this.window = this;
-        this.navigator = win.navigator;
+var navigator = {
+    get platform() {
+        return "";
     }
+}
+
+{
+    let global = this.__parent__;
+    let di = Components.classesByID["{3a9cd622-264d-11d4-ba06-0060b0fc76dd}"].
+        createInstance(Components.interfaces.nsIDOMDOMImplementation);
+
+    global.document = di.createDocument(null, null, null);
+
+    global.Window = Components.interfaces.nsIDOMWindow;
+    global.Document = Components.interfaces.nsIDOMDocument;
+    global.XMLDocument = Components.interfaces.nsIDOMXMLDocument;
+    global.XULDocument = Components.interfaces.nsIDOMXULDocument;
+    global.XULElement = Components.interfaces.nsIDOMXULElement;
+    global.Element = Components.interfaces.nsIDOMElement;
+    global.Node = Components.interfaces.nsIDOMNode;
+    global.Text = Components.interfaces.nsIDOMText;
+    global.XMLHttpRequest = function() {
+        return Components.classes["@mozilla.org/xmlextras/xmlhttprequest;1"].
+            createInstance(Components.interfaces.nsIXMLHttpRequest);
+    }
+    global.XMLSerializer = function() {
+        return Components.classes["@mozilla.org/xmlextras/xmlserializer;1"].
+            createInstance(Components.interfaces.nsIDOMSerializer);
+    }
+    global.window = global;
 }
