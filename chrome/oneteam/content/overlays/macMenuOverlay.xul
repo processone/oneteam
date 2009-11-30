@@ -1,12 +1,19 @@
 <?xml version="1.0"?>
 
-<!--#ifdef XPI -->
+<!-- #ifdef XPI
 <!DOCTYPE overlay [
   <!ENTITY % baseMenuOverlayDTD SYSTEM "chrome://browser/locale/baseMenuOverlay.dtd">
   %baseMenuOverlayDTD;
 ]>
-<!--#else
-// #endif -->
+// #else -->
+<!DOCTYPE overlay [
+  <!ENTITY minimizeWindow.key       "m">
+  <!ENTITY minimizeWindow.label     "Minimize">
+  <!ENTITY bringAllToFront.label    "Bring All to Front">
+  <!ENTITY zoomWindow.label         "Zoom">
+  <!ENTITY windowMenu.label         "Window">
+]>
+<!-- #endif -->
 
 <?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
 
