@@ -297,6 +297,16 @@ _DECL_(ServicesManager).prototype =
             item.onMessage(pkt);
     },
 
+    sendIqWithGenerator: function(generator)
+    {
+        var response = generator.next();
+        var callback = new Callback(this._generatorTrackerCallback, this);
+
+        callback.addArgs(generator, callback).fromCall();
+
+        this._sendResponse(response, null, callback);
+    },
+
     _sendResponse: function(response, packet, callback)
     {
         if (!response)
