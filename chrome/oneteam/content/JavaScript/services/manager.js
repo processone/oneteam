@@ -111,7 +111,27 @@ _DECL_(ServicesManager).prototype =
             account.setPresence(account.currentPresence);
     },
 
+    unpublishDiscoInfo: function(ns, nodes) {
+        nodes = nodes instanceof Array ? nodes : nodes == null ? [""] : [nodes];
 
+        if (nodes.length == 0)
+            nodes[0] = "";
+
+        for (var i = 0; i < nodes.length; i++) {
+            var idx, node = this._nodes[nodes[i]];
+            if (!node)
+                continue;
+
+            if ((idx = node.indexOf(ns)) < 0)
+                continue;
+
+            node.splice(idx, 1);
+
+            if (node.length == 0)
+                delete this._nodes[nodes[i]];
+        }
+        if (this._initialPresenceSent)
+            account.setPresence(account.currentPresence);
     },
 
     appendCapsToPresence: function(node)
