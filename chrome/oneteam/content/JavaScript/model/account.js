@@ -24,6 +24,7 @@ ML.importMod("services/privacy.js");
 ML.importMod("services/rosterx.js");
 ML.importMod("services/remoteDebug.js");
 ML.importMod("services/invitations.js");
+ML.importMod("services/pep.js");
 ML.importMod("socks5.js");
 ML.importMod("filetransfer.js");
 
@@ -546,7 +547,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         account.connection.registerHandler("onerror", function(p){account.onError(p)});
         account.connection.registerHandler("status_changed", function(p){account.onStatusChanged(p)});
 // #ifdef DEBUG
-        account.connection.registerHandler("onexception", function(e){alert(exceptionToString(e))});
+        account.connection.registerHandler("onexception", function(e){alert("EX");alert(exceptionToString(e))});
 // #endif
 
         if (this.connectionInfo.user)
