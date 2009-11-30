@@ -6,7 +6,7 @@ _DECL_(RosterExchangeService).prototype =
 {
     _ns: "http://jabber.org/protocol/rosterx",
 
-    _messageHandler: function(pkt, query, jid)
+    _messageHandler: function(pkt, el, jid)
     {
         if (el.nodeName != "x")
             return 0;
