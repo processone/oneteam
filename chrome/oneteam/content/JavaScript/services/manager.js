@@ -322,9 +322,9 @@ _DECL_(ServicesManager).prototype =
                   response.id || packet && packet.getID());
 
         if (response.dom)
-            pkt.getNode().appendChild(pkt.getDoc().adoptNode(response.dom));
+            pkt.appendNode(response.dom);
         if (response.e4x)
-            pkt.getNode().appendChild(E4XtoDOM(response.e4x, pkt.getDoc()));
+            pkt.appendNode(response.e4x);
 
         account.connection.send(pkt, callback);
     },
