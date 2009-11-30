@@ -11,12 +11,13 @@ use OneTeam::Utils;
 use Cwd;
 
 sub new {
-    my ($class, $topdir, $version, $buildid) = @_;
+    my ($class, $topdir, $version, $buildid, $updateURL) = @_;
     my $self = {
         topdir => $topdir,
         outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
         version => $version,
         buildid => $buildid,
+        updateURL => $updateURL,
     };
     bless $self, $class;
 }
@@ -74,6 +75,7 @@ sub _generate_install_rdf {
     my $ir = slurp("install.rdf");
 
     $ir =~ s/(em:version>)[^<]*/$1.$self->{version}->()/ei;
+    $ir =~ s/(em:updateURL>)[^<]*/$1.$self->{updateURL}/ei if $self->{updateURL};
     $ir =~ s!(<Description about="urn:mozilla:extension:file:oneteam.jar">)[\s\S]*?(</Description>)!
         $1.(join"",
               map"\n        <em:package>$_</em:package>",

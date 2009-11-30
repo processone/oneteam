@@ -58,7 +58,7 @@ my $saver = exists $defs{XULAPP} ?
             new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
             new OneTeam::Builder::Filter::Saver::XulApp($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
     exists $defs{XPI} ?
-        new OneTeam::Builder::Filter::Saver::XPI($topdir, \&get_version_str, \&get_buildid) :
+        new OneTeam::Builder::Filter::Saver::XPI($topdir, \&get_version_str, \&get_buildid, $defs{UPDATE_URL}) :
         exists $defs{NOJAR} ?
             new OneTeam::Builder::Filter::Saver::WebDir($topdir, \&get_version_str, \&get_buildid) :
             new OneTeam::Builder::Filter::Saver::WebJar($topdir, \&get_version_str, \&get_buildid);

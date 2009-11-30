@@ -17,7 +17,7 @@ if [ -n "$1" -o $HEAD != `git rev-list -1 HEAD` ]; then
 	MAR_FILE 'oneteam-@BUILDID@@MAC_SUFFIX@.mar' \
 	MAR_UPDATE_URL 'http://dev3.process-one.net/~prefiks/cgi-bin/update.cgi?q=%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml' \
 	|| { rm -f update.lock; exit; }
-    perl build.pl XPI 1 DEBUG 1
+    perl build.pl XPI 1 DEBUG 1 UPDATE_URL 'https://dev3.process-one.net/~prefiks/oneteam/update.rdf'
 
     rm  ../../public_html/oneteam/*.xulapp ../../public_html/oneteam/*-partial.mar ../../public_html/oneteam/*.xpi 2>/dev/null
     cp *.xulapp *.mar *.xpi ../../public_html/oneteam/
