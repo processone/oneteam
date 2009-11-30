@@ -12,7 +12,7 @@ function FileTransfersView(node)
 
 _DECL_(FileTransfersView, null, ContainerView).prototype =
 {
-    afterlastItemNode: null,
+    afterLastItemNode: null,
     containerNode: null,
 
     itemComparator: function(a, b)

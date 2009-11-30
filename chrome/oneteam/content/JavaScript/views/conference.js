@@ -3,7 +3,7 @@ var EXPORTED_SYMBOLS = ["BookmarksMenuView", "ConferencesView", "ConferenceView"
 function BookmarksMenuView(node)
 {
     this.containerNode = node.parentNode;
-    this.afterlastItemNode = node;
+    this.afterLastItemNode = node;
     this.items = [];
     this.model = account.bookmarks;
 
@@ -13,7 +13,7 @@ function BookmarksMenuView(node)
 
 _DECL_(BookmarksMenuView, null, ContainerView).prototype =
 {
-    afterlastItemNode: null,
+    afterLastItemNode: null,
     containerNode: null,
 
     itemComparator: function(a, b)
@@ -32,7 +32,7 @@ _DECL_(BookmarksMenuView, null, ContainerView).prototype =
         for (i = 0; data.removed && i < data.removed.length; i++)
             this.onItemRemoved(data.removed[i]);
 
-        this.afterlastItemNode.hidden = this.model.bookmarks.length < 1;
+        this.afterLastItemNode.hidden = this.model.bookmarks.length < 1;
     },
 
     destroy: function() {
@@ -95,7 +95,7 @@ function ConferencesView(node)
 
 _DECL_(ConferencesView, null, ContainerView).prototype =
 {
-    afterlastItemNode: null,
+    afterLastItemNode: null,
     containerNode: null,
 
     itemComparator: function(a, b)
@@ -158,14 +158,14 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
     this._token = this.model.registerView(this.onModelUpdated, this, "resources");
 
     if (containerNode)
-        this.show(containerNode, this.afterlastItemNode);
+        this.show(containerNode, this.afterLastItemNode);
 }
 
 _DECL_(ConferenceView, null, ContainerView).prototype =
 {
     containerNode: null,
 
-    get afterlastItemNode()
+    get afterLastItemNode()
     {
         if (this.parentView)
             return this.parentView.getNextItemNode(this);

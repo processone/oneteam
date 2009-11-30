@@ -13,7 +13,7 @@ function RosterView(node)
 
 _DECL_(RosterView, null, ContainerView).prototype =
 {
-    afterlastItemNode: null,
+    afterLastItemNode: null,
     containerNode: null,
 
     set hideOffline(val)
@@ -87,7 +87,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
 {
     containerNode: null,
 
-    get afterlastItemNode()
+    get afterLastItemNode()
     {
         return this.parentView.getNextItemNode(this);
     },
@@ -512,7 +512,7 @@ function PresenceProfilesView(node, checkbox)
     this.containerNode = node.parentNode;
     this.doc = node.ownerDocument;
     this.dummyNode = node;
-    this.afterlastItemNode = node.nextSibling;
+    this.afterLastItemNode = node.nextSibling;
     this.items = [];
     this.model = account.presenceProfiles;
     this.checkbox = checkbox;
@@ -523,7 +523,7 @@ function PresenceProfilesView(node, checkbox)
 
 _DECL_(PresenceProfilesView, null, ContainerView).prototype =
 {
-    afterlastItemNode: null,
+    afterLastItemNode: null,
     containerNode: null,
 
     itemComparator: function(a, b)
@@ -543,7 +543,7 @@ _DECL_(PresenceProfilesView, null, ContainerView).prototype =
             this.onItemRemoved(data.removed[i]);
 
         if (this.model.profiles.length == 0) {
-            this.containerNode.insertBefore(this.dummyNode, this.afterlastItemNode);
+            this.containerNode.insertBefore(this.dummyNode, this.afterLastItemNode);
             this.containerNode.parentNode.selectedIndex = 0;
             this.checkbox.disabled = true;
         } else if (this.dummyNode.parentNode) {

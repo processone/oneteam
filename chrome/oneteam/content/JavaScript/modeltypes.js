@@ -18,7 +18,7 @@ function ContainerView()
 
 _DECL_(ContainerView).prototype =
 {
-    ROLE_REQUIRES: ["containerNode", "afterlastItemNode", "itemComparator"],
+    ROLE_REQUIRES: ["containerNode", "afterLastItemNode", "itemComparator"],
 
     onItemAdded: function(item)
     {
@@ -40,7 +40,7 @@ _DECL_(ContainerView).prototype =
         var node = item instanceof Node ? item : item.node;
         var insertBefore = this.items[a+1];
         insertBefore = insertBefore instanceof Node ? insertBefore :
-            insertBefore ? insertBefore.node : this.afterlastItemNode;
+            insertBefore ? insertBefore.node : this.afterLastItemNode;
 
         if (!node.parentNode || node.nextSibling != insertBefore)
             if (item instanceof Node)
@@ -84,7 +84,7 @@ _DECL_(ContainerView).prototype =
     getNextItemNode: function(item)
     {
         var idx = this.items.indexOf(item)+1;
-        return this.items[idx] ? this.items[idx].node : this.afterlastItemNode;
+        return this.items[idx] ? this.items[idx].node : this.afterLastItemNode;
     },
 
     destroy: function()

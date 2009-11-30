@@ -13,7 +13,7 @@ function GatewaysMenuView(menuItem)
 
 _DECL_(GatewaysMenuView, null, ContainerView).prototype =
 {
-    afterlastItemNode: null,
+    afterLastItemNode: null,
     containerNode: null,
 
     itemComparator: function(a, b)
@@ -56,7 +56,7 @@ function GatewaysToolbarButtons(gatewaysSeparator)
 {
     this.gatewaysSeparator = gatewaysSeparator;
     this.containerNode = gatewaysSeparator.parentNode;
-    this.afterlastItemNode = gatewaysSeparator.nextSibling;
+    this.afterLastItemNode = gatewaysSeparator.nextSibling;
     this.items = [];
     this._visibleItems = [];
     this.model = account;
@@ -67,7 +67,7 @@ function GatewaysToolbarButtons(gatewaysSeparator)
 
 _DECL_(GatewaysToolbarButtons, null, ContainerView).prototype =
 {
-    afterlastItemNode: null,
+    afterLastItemNode: null,
     containerNode: null,
 
     itemComparator: function(a, b)
