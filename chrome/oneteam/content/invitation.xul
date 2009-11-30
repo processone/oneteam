@@ -25,9 +25,9 @@
     function onLoad()
     {
       document.getElementById("msg").innerHTML =
-        _("You have been invited to room <b>{0}</b> by <b>{1}</b>",
-          xmlEscape(conference.jid.toUserString()),
-          xmlEscape(account.getContactOrResourceName(by)));
+        _xml("You have been invited to room <b>{0}</b> by <b>{1}</b>",
+          conference.jid.toUserString(),
+          account.getContactOrResourceName(by));
 
       if (reason)
         document.getElementById("reason").value = reason;

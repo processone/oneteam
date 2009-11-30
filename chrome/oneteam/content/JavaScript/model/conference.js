@@ -110,7 +110,8 @@ _DECL_(Conference, Contact).prototype =
         if (!errorTag)
             return;
 
-        account.addEvent("Joining to room <b>"+this.jid.toUserString()+"</b> failed.<br/>Error message: <em>"+errorMsg+"</em>",
+        account.addEvent(_xml("Joining to room <b>{0}</b> failed.<br/>Error message: <em>{1}</em>",
+                              this.jid.toUserString(), errorMsg),
                          new Callback(openDialogUniq).
                             addArgs(null, "chrome://oneteam/content/joinRoomError.xul",
                                     "chrome,centerscreen", this, +errorTag.getAttribute("code"),

@@ -126,8 +126,9 @@ sub _extract_strings {
         }
     }
 
-    while ($str =~ m/\b_\(/g) {
+    while ($str =~ m/\b_(xml)?\(/g) {
         my $pos = pos($str)-2;
+        my $xml_str = $1 eq "xml";
 
         $self->_report_error("Can't parse localized string",
                              $self->_map_pos($start+$pos, 1, @pos_map))
@@ -185,7 +186,8 @@ sub _extract_strings {
             args => [@args],
             accesskey_pos => $accesskey_pos,
             js_code => $in_js_code,
-            escape_xml => $xml_escaped);
+            escape_xml => $xml_escaped,
+            xml_str => $xml_str);
     }
     return @strings;
 }
@@ -294,6 +296,7 @@ has 'args' => (is => 'ro', default => sub { [] });
 has 'accesskey_pos' => (is => 'ro', isa => 'Int', default => sub { -1 });
 has 'js_code' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'escape_xml' => (is => 'ro', isa => 'Bool', default => sub { 0 });
+has 'xml_str' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'line' => (
     is => 'ro',
     isa => 'Int',
@@ -425,7 +428,7 @@ sub _resolve {
         } else {
             my @args = map { ref $_ ? $self->_resolve_array($_, $locale_bundle) : $to_js->($_)}
                 @{$self->args};
-            $result = "_(".join(",", $to_js->($str->str), @args).")";
+            $result = ($self->xml_str ? "_xml(" : "_(").join(",", $to_js->($str->str), @args).")";
         }
     }
 

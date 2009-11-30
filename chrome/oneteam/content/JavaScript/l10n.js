@@ -127,9 +127,24 @@ function _ (id) {
 
     return l10nFormatService.formatString.apply(l10nFormatService, arguments);
 }
+
+function _xml (id) {
+    var args = [id.replace(/^\$\$\w+\$\$:(?:\s*)/, "")];
+    for (var i = 1; i < arguments.length; i++)
+        args[i] = xmlEscape(arguments[i]);
+    return _.apply(null, args);
+}
+
 /* #else
 function _ (id) {
     id = id.replace(/^\$\$\w+\$\$:(?:\s*)/, "");
     return l10nFormatService.formatString.apply(l10nFormatService, arguments);
+}
+
+function _xml (id) {
+    var args = [id.replace(/^\$\$\w+\$\$:(?:\s*)/, "")];
+    for (var i = 1; i < arguments.length; i++)
+        args[i] = xmlEscape(arguments[i]);
+    return l10nFormatService.formatString.apply(l10nFormatService, args);
 }
 // #endif */
