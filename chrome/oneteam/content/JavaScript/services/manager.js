@@ -316,11 +316,15 @@ _DECL_(ServicesManager).prototype =
             response = {e4x: response};
         if (response instanceof Node)
             response = {dom: response};
+        if (response instanceof Array)
+            response = {domBuilder: response};
 
         var pkt = new JSJaCIQ();
         pkt.setIQ(response.to || packet && packet.getFrom(), response.type || "result",
                   response.id || packet && packet.getID());
 
+        if (response.domBuilder)
+            pkt.appendNode.apply(pkt, response.domBuilder);
         if (response.dom)
             pkt.appendNode(response.dom);
         if (response.e4x)
