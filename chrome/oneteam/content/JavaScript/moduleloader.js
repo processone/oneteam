@@ -1,4 +1,6 @@
-function MLP() {
+(function() {
+
+function MLP(scope) {
     var gs = Components.classes["@oneteam.im/loader;1"].
         getService(Components.interfaces.nsISupports);
 
@@ -7,6 +9,7 @@ function MLP() {
     this.loadedscripts = {};
 
     this.gs = gs.wrappedJSObject;
+    this.scope = scope || this.__parent__;
     var i, tmp = this.gs.__parent__;
 
     tmp.init(window);
@@ -49,7 +52,7 @@ MLP.prototype =
                 var i, tmp = this.symbolsToExport.split(/\s+/);
 
                 for (i = 0; i < tmp.length; i++)
-                    this.__parent__[tmp[i]] = scope[tmp[i]];
+                    this.scope[tmp[i]] = scope[tmp[i]];
                 return;
             } catch (ex) {
                 delete this.loadedscripts[script];
@@ -59,7 +62,7 @@ MLP.prototype =
             }
         }
         try {
-            this.gs.__parent__.ML.importModEx(script, asPrivate, this.__parent__, everything);
+            this.gs.__parent__.ML.importModEx(script, asPrivate, this.scope, everything);
             return;
         } catch (ex) {
             alert(ex);
@@ -69,4 +72,10 @@ MLP.prototype =
     }
 }
 
-var ML = new MLP();
+if (document.location.href.indexOf("chrome://oneteam/") != 0) {
+    OneTeam = {};
+    OneTeam.ML = new MLP(OneTeam);
+} else
+    OneTeam = this;
+    ML = new MLP();
+})();
