@@ -14,8 +14,14 @@ tabpanels {
   border: 1px solid #999;
 }
 
-#contacts-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
-#contacts-list[hideOffline=true] .contact-view[offlineContact=true]
+#contacts-list-box {
+  overflow: auto;
+}
+
+#contacts-list-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
+#contacts-list-list[hideOffline=true] .contact-view[offlineContact=true],
+#contacts-list-box[hideOffline=true] .group-view[onlyOfflineContacts=true],
+#contacts-list-box[hideOffline=true] .contact-view[offlineContact=true]
 {
   display: none
 }
@@ -51,6 +57,7 @@ richlistbox {
 
 /* Login pane */
 #login-box {
+  overflow: hidden;
   background: #000431 url(imgs/background.png) 0% 0%;
   background-repeat: no-repeat;
 }

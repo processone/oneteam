@@ -14,6 +14,7 @@ pref("chat.roster.filtered", false);
 pref("chat.roster.showemptygroup", true);
 pref("chat.roster.filtergroups", false);
 pref("chat.roster.sortbystatus", false);
+pref("chat.roster.alternativelook", true);
 
 pref("chat.sounds",true);
 

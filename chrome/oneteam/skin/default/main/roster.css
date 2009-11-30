@@ -6,7 +6,21 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
   padding: 1px;
 }
 
-.group-view, .conference-view, .conference-role-view {
+expander.group-view {
+  -moz-box-align: start;
+}
+
+expander.group-view label.expanderButton {
+  -moz-box-flex: 0;
+  color: white;
+  background: #777;
+  -moz-border-radius: 3px;
+  padding: 0 2px;
+}
+
+richlistitem.group-view,
+richlistitem.conference-view,
+richlistitem.conference-role-view {
   background: #003E67 url(imgs/group-background.png) center center repeat-x;
   border: 1px solid #003E67;
   border-bottom: 0;
@@ -15,10 +29,59 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
   font-weight : bold;
 }
 
-.group-view[selected=true], .conference-view[selected=true], .conference-role-view[selected=true] {
+richlistitem.group-view[selected=true],
+richlistitem.conference-view[selected=true],
+richlistitem.conference-role-view[selected=true] {
   background-color: #005dc8;
   background-image: url(imgs/group-background-selected.png);
   border-color: #005dc8;
+}
+
+.icons-box {
+  margin: 0;
+  padding: 0;
+}
+
+expander .expanderButton {
+  list-style-image: url(../expander/imgs/switch-close-grey.png);
+}
+
+expander[open="true"] .expanderButton {
+  list-style-image: url(../expander/imgs/switch-open-grey.png);
+}
+
+expander .contact-view {
+  max-width: 70px;
+  min-width: 50px;
+  height: 60px;
+  border: 1px solid black;
+  -moz-border-radius: 3px;
+  margin: 4px;
+  padding: 0;
+  background: white;
+  vertical-align: top;
+}
+
+expander > .settingsContainer {
+  padding: 0 5px;
+}
+
+expander .contact-view > hbox {
+  background: #333;
+  font-size: 11px !important;
+  text-align: center;
+}
+
+expander .status-icon {
+  top: 8px;
+  left: 8px;
+}
+
+.contact-view > hbox > label {
+  color: white !important;
+  font-weight: normal !important;
+  margin: 2px 0 0 0;
+  padding: 0;
 }
 
 .contact-view[selected=true] > label,
@@ -31,7 +94,7 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
   padding-left: 4px;
 }
 
-.contact-view {
+richlistitem.contact-view {
   padding-left: 8px;
 }
 
