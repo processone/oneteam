@@ -107,7 +107,7 @@
       var sf = document.getElementById("resource-send-file");
       var ah = document.getElementById("resource-adhoc");
 
-      sf.hidden = !socks5Service.canSendTo(model);
+      sf.hidden = !socks5Service.canSendTo(menuModel);
 
       im.hidden = !account.conferences.length;
       if (!im.hidden) {
