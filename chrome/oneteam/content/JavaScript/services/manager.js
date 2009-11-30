@@ -335,11 +335,11 @@ _DECL_(ServicesManager).prototype =
 
     _generatorTrackerCallback: function(service, callback, packet)
     {
-        var query = packet.getNode().childNodes;
+        var query, queryEls = packet.getNode().childNodes;
 
-        for (var i = 0; i < query.length; i++)
-            if (query[i].nodeType == 1) {
-                query = query[i];
+        for (var i = 0; i < queryEls.length; i++)
+            if (queryEls[i].nodeType == 1) {
+                query = queryEls[i];
                 break;
             }
 
