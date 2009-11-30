@@ -1003,15 +1003,25 @@
           var val = this.value.innerHTML.replace(/<br>$/, "");
           var rangeContent = this._rangeContent(range)
 
+          if (this._historyPosition == this._history.length)
+            this._enteredText = val;
+
           if (rangeContent && rangeContent != "\n")
             return false;
 
-          if (this._historyPosition < this._history.length && val)
-            this._history[this._historyPosition] = val;
+          if (this._historyPosition < this._history.length) {
+            if (val)
+              this._history[this._historyPosition] = val;
+          } else
+            this._enteredText = val;
 
           this.clear();
-          if (histPos < this._history.length) {
-            this._input.contentDocument.execCommand("insertHTML", false, this._history[histPos]);
+
+          var content = histPos < this._history.length ? this._history[histPos] :
+            this._enteredText;
+
+          if (content) {
+            this._input.contentDocument.execCommand("insertHTML", false, content);
             selection = this._input.contentWindow.getSelection();
             selection.selectAllChildren(this._input.contentDocument.body);
             if (up)
