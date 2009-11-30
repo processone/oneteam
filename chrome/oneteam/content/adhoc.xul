@@ -22,8 +22,6 @@
     ML.importMod("dataforms.js");
 
     var contact = window.arguments[0];
-    var generateXULFromDataForm = generateXULFromDataForm;
-    var buildResponseDataFormFromXUL = buildResponseDataFormFromXUL;
 
     var initialized = false;
     var sessionid, id, form, canGoBack, canGoForward;
