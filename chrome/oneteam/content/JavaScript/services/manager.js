@@ -207,12 +207,17 @@ _DECL_(ServicesManager).prototype =
                 default xml namespace = "http://jabber.org/protocol/disco#items";
 
                 response = <query/>;
-                if (query.getAttribute("node"))
-                    response.@node = query.getAttribute("node");
-                var items = this._items[query.getAttribute("node")||""] || [];
+                var node = query.getAttribute("node")||"";
+
+                if (node)
+                    response.@node = node;
+
+                var items = this._items[node] || [];
+                var from = new JID(pkt.getFrom());
 
                 for (var i = 0; i < items.length; i++)
-                    response.* += <item jid={account.myJID} node={items[i].node} name={items[i].name}/>
+                    if (!items[i].checkPerms || items[i].checkPerms(from, items[i].node, node))
+                        response.* += <item jid={account.myJID} node={items[i].node} name={items[i].name}/>
             }
             break;
 
