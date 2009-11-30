@@ -191,5 +191,5 @@ _DECL_(RegsBundle).prototype =
                 this._tokens[i][0].unregisterView(this._tokens[i][1]);
                 this._tokens.splice(i, 1);
             }
-    },
+    }
 }
