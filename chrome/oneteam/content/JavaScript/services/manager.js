@@ -277,7 +277,7 @@ _DECL_(ServicesManager).prototype =
             if (!service)
                 continue;
 
-            var res = service(pkt, nodes[i], from);
+            var res = service(pkt, nodes[i], from, DOMtoE4X(nodes[i]));
             if (res == 1)
                 break;
             if (res == 2)
