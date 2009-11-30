@@ -344,9 +344,8 @@ _DECL_(ServicesManager).prototype =
             }
 
         try {
-            if (query)
-                query = DOMtoE4X(query);
-            this._sendResponse(service.send([packet, query]), packet, callback);
+            var queryE4X = query && DOMtoE4X(query);
+            this._sendResponse(service.send([packet, queryE4X, query]), packet, callback);
         } catch (ex) {}
     },
 
