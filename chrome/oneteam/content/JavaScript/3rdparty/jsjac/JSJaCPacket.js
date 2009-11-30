@@ -374,7 +374,7 @@ JSJaCPacket.prototype.buildNode = function(elementName) {
  * @type JSJaCPacket
  */
 JSJaCPacket.prototype.appendNode = function(element) {
-  if (typeof element=='object') { // seems to be a prebuilt node
+  if (element instanceof Element) { // seems to be a prebuilt node
     return this.getNode().appendChild(element)
   } else { // build node
     return this.getNode().appendChild(this.buildNode(element,
@@ -563,12 +563,12 @@ JSJaCIQ.prototype.reply = function(payload) {
   rIQ.setType('result');
   if (payload) {
     if (typeof payload == 'string')
-      rIQ.getChild.appendChild(rIQ.getDoc().loadXML(payload));
+      rIQ.getChild.appendChild(loadXML(rIQ.getDoc(), payload));
     else if (payload.constructor == Array) {
       var node = rIQ.getChild();
       for (var i=0; i<payload.length; i++)
         if(typeof payload[i] == 'string')
-          node.appendChild(rIQ.getDoc().loadXML(payload[i]));
+          node.appendChild(loadXML(rIQ.getDoc(), payload[i]));
         else if (typeof payload[i] == 'object')
           node.appendChild(payload[i]);
     }

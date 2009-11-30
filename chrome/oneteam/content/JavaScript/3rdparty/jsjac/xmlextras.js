@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS=["XmlHttp", "XmlDocument", "Document.prototype.loadXML"];
+var EXPORTED_SYMBOLS=["XmlHttp", "XmlDocument", "loadXML"];
 
 /* Copyright 2006 Erik Arvidsson
  *
@@ -163,71 +163,21 @@ XmlDocument.getPrefix = function() {
 };
 
 
-// Create the loadXML method
-if (typeof(Document) != 'undefined' && window.DOMParser) {
+/**
+* XMLDocument did not extend the Document interface in some
+* versions of Mozilla.
+* @private
+*/
+function loadXML(s) {
+  // parse the string to a new doc
+  var doc2 = (new DOMParser()).parseFromString(s, "text/xml");
 
-  /**
-   * XMLDocument did not extend the Document interface in some
-   * versions of Mozilla.
-   * @private
-   */
-  Document.prototype.loadXML = function (s) {
+  // remove all initial children
+  while (this.hasChildNodes())
+    this.removeChild(this.lastChild);
 
-    // parse the string to a new doc
-    var doc2 = (new DOMParser()).parseFromString(s, "text/xml");
-
-    // remove all initial children
-    while (this.hasChildNodes())
-      this.removeChild(this.lastChild);
-
-    // insert and import nodes
-    for (var i = 0; i < doc2.childNodes.length; i++) {
-      this.appendChild(this.importNode(doc2.childNodes[i], true));
-    }
-  };
- }
-
-// Create xml getter for Mozilla
-if (window.XMLSerializer &&
-    window.Node && Node.prototype && Node.prototype.__defineGetter__) {
-
-  /**
-   * xml getter
-   *
-   * This serializes the DOM tree to an XML String
-   *
-   * Usage: var sXml = oNode.xml
-   * @deprecated
-   * @private
-   */
-  // XMLDocument did not extend the Document interface in some versions
-  // of Mozilla. Extend both!
-  XMLDocument.prototype.__defineGetter__("xml", function () {
-                                           return (new XMLSerializer()).serializeToString(this);
-                                         });
-  /**
-   * xml getter
-   *
-   * This serializes the DOM tree to an XML String
-   *
-   * Usage: var sXml = oNode.xml
-   * @deprecated
-   * @private
-   */
-  Document.prototype.__defineGetter__("xml", function () {
-                                        return (new XMLSerializer()).serializeToString(this);
-                                      });
-
-  /**
-   * xml getter
-   *
-   * This serializes the DOM tree to an XML String
-   *
-   * Usage: var sXml = oNode.xml
-   * @deprecated
-   * @private
-   */
-  Node.prototype.__defineGetter__("xml", function () {
-                                    return (new XMLSerializer()).serializeToString(this);
-                                  });
- }
+  // insert and import nodes
+  for (var i = 0; i < doc2.childNodes.length; i++) {
+    this.appendChild(this.importNode(doc2.childNodes[i], true));
+  }
+};

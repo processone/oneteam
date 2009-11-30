@@ -45,6 +45,11 @@ var JSJaCBuilder = {
    */
   buildNode: function(doc, elementName) {
 
+    if (typeof(elementName) == "xml") {
+      return E4XtoDOM(elementName, doc);
+    } else if (elementName instanceof Node)
+      return doc.adoptNode(elementName);
+
     var element, ns = arguments[4];
 
     // attributes (or text)
@@ -100,11 +105,11 @@ var JSJaCBuilder = {
         if (children.hasOwnProperty(i)) {
           var e = children[i];
           if (typeof e=='object') {
-            if (e instanceof Array) {
+            if (e instanceof Node) {
+              element.appendChild(e);
+            } else {
               var node = JSJaCBuilder.buildNode(doc, e[0], e[1], e[2], ns);
               element.appendChild(node);
-            } else {
-              element.appendChild(e);
             }
           } else {
             if(JSJaCBuilder._isStringOrNumber(e)) {

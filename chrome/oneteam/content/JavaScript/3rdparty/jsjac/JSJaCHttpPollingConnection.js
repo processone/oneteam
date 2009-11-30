@@ -118,7 +118,7 @@ JSJaCHttpPollingConnection.prototype._getStreamID = function() {
       response += '</stream:stream>';
 
     doc = XmlDocument.create("doc");
-    doc.loadXML(response);
+    loadXML(doc, response);
     if (!this._parseStreamFeatures(doc))
       return;
   } catch(e) {
