@@ -648,6 +648,11 @@ JSJaCMessage.prototype.getSubject = function() {
   return this.getChildVal('subject')
 };
 
+JSJaCPacket.parseXmlString = function(node) {
+    var dp = new DOMParser();
+    return dp.parseFromString("<q xmlns='jabber:client'>"+node+"</q>", "text/xml").
+        firstChild.firstChild;
+}
 
 /**
  * Tries to transform a w3c DOM node to JSJaC's internal representation
@@ -662,11 +667,9 @@ JSJaCMessage.prototype.getSubject = function() {
  */
 JSJaCPacket.wrapNode = function(node) {
   var aNode;
-  if (typeof(node) == "string") {
-    var dp = new DOMParser();
-    node = dp.parseFromString("<q xmlns='jabber:client'>"+node+"</q>", "text/xml").
-        firstChild.firstChild;
-  }
+  if (typeof(node) == "string")
+    node = JSJaCPacket.parseXmlString(node);
+
   switch (node.nodeName.toLowerCase()) {
   case 'presence':
     aNode = new JSJaCPresence();

@@ -122,9 +122,7 @@ function sendToServer() {
     var str = inputEditor.value;
 
     if (intoInput.checked) {
-        var dp = new DOMParser();
-        var node = dp.parseFromString("<q xmlns='jabber:client'>"+str+"</q>", "text/xml").
-            firstChild.firstChild;
+        var node = JSJaCPacket.parseXmlString(str);
 
         if (account.connection._handleElement)
             account.connection._handleElement(node);
