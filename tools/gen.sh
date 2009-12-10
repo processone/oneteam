@@ -22,7 +22,10 @@ if [ -n "$1" -o $HEAD != `git rev-list -1 HEAD` ]; then
     rm  ../../public_html/oneteam/*.xulapp ../../public_html/oneteam/*-partial.mar ../../public_html/oneteam/*.xpi 2>/dev/null
     cp *.xulapp *.mar *.xpi ../../public_html/oneteam/
     perl -e '
-        @files = sort glob("../../public_html/oneteam/*.mar");
+        @files = map { $_->[1] }
+          sort { $a->[0] cmp $b->[0] }
+          map { my $x = $_; $x =~ s/(\d+)/sprintf "%010d", $1/ge; [$x, $_] }
+          glob("../../public_html/oneteam/*.mar");
 
         $files[-1] =~ /.*\.(\d+)/;
         $max = $1;
