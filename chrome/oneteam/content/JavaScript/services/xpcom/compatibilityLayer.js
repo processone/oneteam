@@ -1,6 +1,6 @@
 var EXPORTED_SYMBOLS = ["alert", "alertEx", "atob", "btoa", "setTimeout",
                         "setInterval", "clearTimeout", "clearInterval", "open",
-                        "openDialog", "DOMParser", "screen"];
+                        "openDialog", "DOMParser", "screen", "navigator"];
 
 ML.importMod("services/xpcom/utils.js");
 
