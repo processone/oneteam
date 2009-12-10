@@ -834,7 +834,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         // Delegate rest to respective handlers
 
         var item = sender.resource ? this.getOrCreateResource(sender) :
-            this.conferences[sender.normalizedJID] ||
+            this.allConferences[sender.normalizedJID] ||
             this.getOrCreateResource(sender);
 
         if (item)
