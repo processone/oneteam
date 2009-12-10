@@ -128,7 +128,7 @@ sub _extract_strings {
 
     while ($str =~ m/\b_(xml)?\(/g) {
         my $pos = pos($str)-2;
-        my $xml_str = $1 eq "xml";
+        my $xml_str = ($1||"") eq "xml";
 
         $self->_report_error("Can't parse localized string",
                              $self->_map_pos($start+$pos, 1, @pos_map))
