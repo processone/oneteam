@@ -7,7 +7,6 @@ function MLP(scope) {
     this.loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].
         getService(Components.interfaces.mozIJSSubScriptLoader);
     this.loadedscripts = {};
-
     this.gs = gs.wrappedJSObject;
     this.scope = scope || this.__parent__;
     var i, tmp = this.gs.__parent__;
@@ -72,10 +71,6 @@ MLP.prototype =
     }
 }
 
-if (document.location.href.indexOf("chrome://oneteam/") != 0) {
-    OneTeam = {};
-    OneTeam.ML = new MLP(OneTeam);
-} else
-    OneTeam = this;
-    ML = new MLP();
+OneTeam = document.location.href.indexOf("chrome://oneteam/") == 0 ? this : {};
+OneTeam.ML = new MLP(OneTeam);
 })();
