@@ -420,7 +420,7 @@ _DECL_(MessagesThread, Model).prototype =
             this.modelUpdated("unseenCount", {diff: 1});
         }
 
-        if (this.messages.length > len && !msg.isSystemMessage)
+        if (this.messages.length > len && !msg.isSystemMessage && !msg.isMucMessage)
             msg._canceler.add = account.addEvent(_("You have new message from <b>{0}</b>",
                                                    xmlEscape(msg.contact.visibleName)),
                                                  new Callback(this.openChatTab, this));
