@@ -126,9 +126,10 @@ sub _extract_strings {
         }
     }
 
-    while ($str =~ m/\b_(xml)?\(/g) {
+    while ($str =~ m/\b(OneTeam\.)?_(xml)?\(/g) {
         my $pos = pos($str)-2;
-        my $xml_str = ($1||"") eq "xml";
+        my $in_oneteam_namespace = defined $1;
+        my $xml_str = ($2||"") eq "xml";
 
         $self->_report_error("Can't parse localized string",
                              $self->_map_pos($start+$pos, 1, @pos_map))
@@ -187,7 +188,8 @@ sub _extract_strings {
             accesskey_pos => $accesskey_pos,
             js_code => $in_js_code,
             escape_xml => $xml_escaped,
-            xml_str => $xml_str);
+            xml_str => $xml_str,
+            in_oneteam_namespacee => $in_oneteam_namespace);
     }
     return @strings;
 }
@@ -297,6 +299,7 @@ has 'accesskey_pos' => (is => 'ro', isa => 'Int', default => sub { -1 });
 has 'js_code' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'escape_xml' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'xml_str' => (is => 'ro', isa => 'Bool', default => sub { 0 });
+has 'in_oneteam_namespace' => (is => 'ro', isa => 'Bool', default => sub { 0 });
 has 'line' => (
     is => 'ro',
     isa => 'Int',
@@ -428,7 +431,9 @@ sub _resolve {
         } else {
             my @args = map { ref $_ ? $self->_resolve_array($_, $locale_bundle) : $to_js->($_)}
                 @{$self->args};
-            $result = ($self->xml_str ? "_xml(" : "_(").join(",", $to_js->($str->str), @args).")";
+            $result = ($self->in_oneteam_namespace ? "OneTeam." : "").
+                ($self->xml_str ? "_xml(" : "_(").
+                join(",", $to_js->($str->str), @args).")";
         }
     }
 
