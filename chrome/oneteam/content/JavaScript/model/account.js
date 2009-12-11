@@ -399,9 +399,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         var namePart;
         if ((namePart = name.replace(/^chat\.connection\./, "")) != name) {
-            if (namePart != "host" && namePart != "base" && namePart != "user" &&
-                namePart != "pass" && namePart != "port" && namePart != "type" &&
-                namePart != "domain")
+            if (!(namePart in {host: 1, base: 1, user:1, pass: 1, port: 1, type: 1,
+                         domain: 1, autoconnect: 1, autoreconnect: 1}))
                 return;
 
             if (namePart == "pass")
@@ -566,6 +565,16 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.modelUpdated("connection");
         account.connection.connect(args);
+    },
+
+    maybeConnect: function() {
+        if (this.connectionInfo.autoconnect && this.connectionInfo.user &&
+            this.connectionInfo.pass)
+        {
+            this.setUserAndPass(this.connectionInfo.user, this.connectionInfo.pass,
+                                true);
+            this.connect();
+        }
     },
 
     disconnect: function()
@@ -962,5 +971,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 }
 
 var account = new Account();
+
+account.maybeConnect();
 
 //account.showConsole();

@@ -247,6 +247,8 @@
               <label value="_('HTTP Base:')"/>
               <textbox id="http-base" pref="chat.connection.base=value"/>
             </row>
+            <checkbox label="_('Automatically connect at startup')"
+                      pref="chat.connection.autoconnect=checked"/>
           </rows>
         </grid>
       </tabpanel>
