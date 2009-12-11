@@ -564,7 +564,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 resource: prefManager.getPref("chat.connection.resource") +
                     this.mucMode ? "MUC":"" };
 
-        this.modelUpdated("account.connection");
+        this.modelUpdated("connection");
         account.connection.connect(args);
     },
 
@@ -769,7 +769,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.connectionInitialized = false;
         account.connection = null;
 
-        this.modelUpdated("account.connection");
+        this.modelUpdated("connection");
         this.modelUpdated("connected");
         this.modelUpdated("connectionInitialized");
 

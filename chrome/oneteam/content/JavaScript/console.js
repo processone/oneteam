@@ -44,7 +44,7 @@ var handlers =
 
     register: function()
     {
-        this._token = account.registerView(this.onModelUpdated, this, "account.connection");
+        this._token = account.registerView(this.onModelUpdated, this, "connection");
         this.onModelUpdated();
     },
 
