@@ -86,6 +86,10 @@ richlistbox {
   font-weight: bold;
 }
 
+#login-signin[disabled=true] {
+  color: #aaa;
+}
+
 #login-box spacer {
   -moz-box-flex: 1;
 }

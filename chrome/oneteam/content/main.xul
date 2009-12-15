@@ -38,14 +38,6 @@
         document.getElementById("main-toolbox").hidden = !account.connected;
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
         document.getElementById("setPresence-nick").value = account.myResource.visibleName;
-        document.getElementById("login-signin").disabled = false;
-
-        // Workaround for mozilla bug 432028
-        var progress = document.getElementById("login-progress");
-        if (progress) {
-          loginProgress = progress;
-          progress.parentNode.removeChild(progress);
-        }
 
         if (!this.rosterView) {
           this.updateRoster();
@@ -65,6 +57,26 @@
           account.hasDiscoFeature("http://jabber.org/protocol/commands", false, function(a, val) {
             document.getElementById("cmd_adhoc").hidden = !val;
           });
+      },
+
+      onConnecting: function() {
+        document.getElementById("login-signin").disabled = account.connecting;
+
+        var progress = document.getElementById("login-progress");
+        if (account.connecting) {
+          // Workaround for mozilla bug 432028
+          if (!progress) {
+            var before = document.getElementById("before-login-progress");
+            before.parentNode.insertBefore(loginProgress, before);
+          } else
+            progress.style.visibility = "visible";
+        } else {
+          // Workaround for mozilla bug 432028
+          if (progress) {
+            loginProgress = progress;
+            progress.parentNode.removeChild(progress);
+          }
+        }
       },
 
       onCommand: function()
@@ -181,6 +193,7 @@
       init: function()
       {
         account.registerView(this.onConnect, this, "connected", globalRegToken);
+        account.registerView(this.onConnecting, this, "connecting", globalRegToken);
         account.registerView(this.onPresenceChange, this, "currentPresence", globalRegToken);
         account.myResource.registerView(this.onNickChange, this, "visibleName", globalRegToken);
         account.style.registerView(this.onIconSetChange, this, "defaultSet", globalRegToken);
@@ -195,6 +208,9 @@
         this.systray.icon = account.style.getStatusIcon(account.currentPresence.show);
 // #endif
         this.presence = this.chooser.value;
+
+        this.onConnecting();
+
         if (account.connected) {
           this.onConnect();
           this.onIconSetChange();
@@ -220,7 +236,6 @@
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
       soundsPlayer = document.getElementById("soundsplayer");
-      document.getElementById("login-signin").disabled = false;
 
       var args = {};
       for each (var part in document.location.toString().replace(/.*?\?/, "").split("&")) {
@@ -230,7 +245,7 @@
         args[decodeURIComponent(part[0])] = part.length == 1 ? null : decodeURIComponent(part[1]);
       }
 
-      var username = account.connectionInfo.user;
+      var username = prefManager.getPref("chat.connection.user");
       var password = account.connectionInfo.pass;
       var savePass = account.connectionInfo.pass != null;
 
@@ -365,16 +380,6 @@
     }
 
     function connect() {
-      document.getElementById("login-signin").disabled = true;
-
-      // Workaround for mozilla bug 432028
-      var progress = document.getElementById("login-progress");
-      if (!progress) {
-        var before = document.getElementById("before-login-progress");
-        before.parentNode.insertBefore(loginProgress, before);
-      } else
-        progress.style.visibility = "visible";
-
       account.setUserAndPass(document.getElementById("login-user").value,
         document.getElementById("login-pass").value,
         document.getElementById("login-savePass").checked);

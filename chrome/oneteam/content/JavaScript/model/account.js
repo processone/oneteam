@@ -563,7 +563,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 resource: prefManager.getPref("chat.connection.resource") +
                     this.mucMode ? "MUC":"" };
 
+        this.connecting = true;
+
         this.modelUpdated("connection");
+        this.modelUpdated("connecting");
         account.connection.connect(args);
     },
 
@@ -606,7 +609,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             account.connection.send(iq);
         }
 
-        window.account.connection.disconnect();
+        account.connection.disconnect();
     },
 
     onConnect: function()
@@ -737,8 +740,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.setPresence(this._savedPresence || new Presence(), true);
         this.connectionInitialized = true;
+        this.connecting = false;
         this._savedPresence = null;
         this.modelUpdated("connectionInitialized");
+        this.modelUpdated("connecting");
     },
 
     _initialRosterFetch: function(pkt, _this)
@@ -775,11 +780,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             report("user", "error", "Error during connection. (Wrong username or password?)");
 
         this.connected = false;
+        this.connecting = false;
         this.connectionInitialized = false;
         account.connection = null;
 
         this.modelUpdated("connection");
         this.modelUpdated("connected");
+        this.modelUpdated("connecting");
         this.modelUpdated("connectionInitialized");
 
         var groups = this.groups;
