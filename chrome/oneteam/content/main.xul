@@ -502,6 +502,15 @@
   </comandset>
 
   <keyset>
+<!-- #ifndef XPI -->
+    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
+<!-- #endif -->
+<!-- #ifdef DEBUG -->
+    <key id="key_xmlConsole" modifiers="control" key="1" command="cmd_xmlConsole"/>
+    <key id="key_cmdConsole" modifiers="control" key="2" command="cmd_cmdConsole"/>
+    <key id="key_cmdVenkman" modifiers="control" key="3" command="cmd_cmdVenkman"/>
+    <key id="key_cmdDOMInspector" modifiers="control" key="4" command="cmd_cmdDOMInspector"/>
+<!-- #endif -->
   </keyset>
 
   <toolbox id="main-toolbox" class="toolbox-top" hidden="true">
