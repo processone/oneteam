@@ -513,7 +513,16 @@ function Message(body, body_html, contact, type, time, thread, chatState)
         if (cs)
             this.chatState = cs.localName;
         if (!thread)
-            thread = body.getThread()
+            thread = body.getThread();
+
+        var inResponseTo = body.getNode().
+            getElementsByTagNameNS("http://oneteam.im/threads", "in-response-to")[0];
+        if (inResponseTo) {
+            var txt = inResponseTo.textContent;
+            var idx = txt.lastIndexOf(":");
+            if (idx > 0)
+            this.inResponseTo = [txt.substr(0, idx), txt.substr(idx+1)];
+        }
 
         var html = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
         if (html)
@@ -658,6 +667,10 @@ _DECL_(Message).prototype =
             }
             pkt.getNode().appendChild(html);
         }
+
+        if (this.inResponseTo)
+            pkt.appendNode("in-response-to", {xmlns: "http://oneteam.im/threads"},
+                           [this.inResponseTo.join(":")]);
     },
 
     /*   tag name       can have childrens              keep only if has childrens

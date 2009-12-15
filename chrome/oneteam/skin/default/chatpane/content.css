@@ -18,7 +18,7 @@ body[hasSendButton=true]:after {
     padding: 0px;
     width: 38px;
     height: 100%;
-    -moz-box-sizing2: border-box;
+    /*-moz-box-sizing: border-box;*/
 }
 
 body[hasSendButton=true] {
@@ -31,8 +31,8 @@ body[hasSendButton=true] {
 }
 
 .message {
-    margin: 0 2px;
-    padding-left: 30px;
+    margin: 0;
+    padding: 0;
     border-bottom: 1px solid rgba(128, 128, 128, 0.1);
 }
 
@@ -55,7 +55,6 @@ body[hasSendButton=true] {
 .message[starts-chunk=true] > img {
     display: inline;
     float: left;
-    margin-left: -29px;
 }
 
 .message[starts-chunk=true] > .header {
@@ -65,11 +64,26 @@ body[hasSendButton=true] {
 }
 
 .message[odd-chunk=true] {
-  background-color: -moz-oddtreerow;
+    background-color: -moz-oddtreerow;
 }
 
 .header {
     display: none;
+    margin-left: 30px;
+}
+
+.thread-marker {
+    display: none;
+    position: absolute;
+    left: 2px;
+    top: 0.3em;
+    cursor: pointer;
+}
+
+span.body:hover > .thread-marker,
+.thread-marker:not([src="resource://oneteam-skin/chatpane/imgs/add-thread.png"])
+{
+    display: inline;
 }
 
 .systemMessage {
@@ -108,8 +122,10 @@ body[hasSendButton=true] {
 }
 
 .body {
+    position: relative;
     display: block;
     padding: 3px 0px;
+    padding-left: 30px;
 }
 
 .message[starts-chunk=true]::before {
@@ -118,6 +134,14 @@ body[hasSendButton=true] {
     display: block;
     content: " ";
     clear: both;
+}
+
+body[marked-thread=true] .message {
+    opacity: 0.3;
+}
+
+body[marked-thread=true] .message[in-marked-thread=true] {
+    opacity: 1.0;
 }
 
 .image-replacement {

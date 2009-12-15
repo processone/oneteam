@@ -98,6 +98,9 @@
         this.colorMap = {0: 0};
         this.colorIndex = 1;
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
+
+        this._threads = [];
+        this._threadNickMessages = {}
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -249,7 +252,12 @@
             for (var i = 0; i < account.style.smiles.length; i++)
               account.style.smiles[i].attachStyles(this._output.contentDocument);
 
-            this._output.contentDocument.addEventListener("click", linkEventsRedirector, true)
+            this._output.contentDocument.addEventListener("click", function(event) {
+              if (event.target.className == "thread-marker")
+                me._threadMarkerClick(event.target)
+              else
+                linkEventsRedirector(event);
+            }, true)
 
             if (this._model)
               this._onMessageQueueChanged();
@@ -414,7 +422,42 @@
             var msgEl = doc.createElement("div");
             msgsChunk.appendChild(msgEl);
             msgEl.setAttribute("class", "message "+msg.classes);
-            msgEl.setAttribute("not-seen", "true")
+            msgEl.setAttribute("not-seen", "true");
+
+            if (this._input) {
+              var thread = null;
+              var info = {
+                msgEl: msgEl,
+                nick: msg.nick,
+              }
+
+              var thMsg = null;
+              if (msg.inResponseTo) {
+                thMsg = this._threadNickMessages[msg.inResponseTo[0]];
+                thMsg = thMsg && thMsg[thMsg.length - msg.inResponseTo[1]];
+
+                if (thMsg) {
+                  if (!thMsg.thread) {
+                    thMsg.thread = this._createNewThread(false);
+                    thMsg.msgEl.lastChild.firstChild.src = thMsg.thread.image;
+                  } else
+                    thMsg.thread.temporary = false;
+                  thread = thMsg.thread;
+                }
+              }
+
+              if (!this._threadNickMessages[msg.nick])
+                this._threadNickMessages[msg.nick] = [info];
+              else
+                this._threadNickMessages[msg.nick].push(info);
+
+              info.thread = thread;
+              info.messages = this._threadNickMessages[msg.nick];
+              info.idx = info.messages.length - 1;
+              info.inResponseTo = thMsg && thMsg.msgEl;
+
+              msgEl.threadInfo = info;
+            }
 
             if (msg.isSystemMessage) {
               if (prevMsg)
@@ -453,6 +496,7 @@
 
             if (msg.contact && startsChunk) {
               var e = doc.createElement("img");
+              e.setAttribute("class", "avatar")
               e.setAttribute("src", msg.contact.avatar ||
                              "resource://oneteam-skin/avatar/imgs/default-avatar.png");
               e.setAttribute("width", "24")
@@ -494,6 +538,34 @@
             e.setAttribute("class", "body");
             e.innerHTML = msg.formatedHtml;
 
+            if (this._input) {
+              var im = doc.createElement("img");
+              im.src = thread ? thread.image :
+                "resource://oneteam-skin/chatpane/imgs/add-thread.png";
+              im.setAttribute("class", "thread-marker");
+
+              var handler = {
+                _this: this,
+                handleEvent: function(event) {
+                  if (event.target.src.indexOf("resource://") == 0)
+                    return;
+                  if (event.type == "mouseover") {
+                    if (!this._inside) {
+                      this._inside = true;
+                      this._this._onThreadMarkerOver(event.target);
+                    }
+                  } else if (this._inside) {
+                    this._inside = false;
+                      this._this._onThreadMarkerOut(event.target);
+                  }
+                }
+              }
+              im.addEventListener("mouseover", handler, false);
+              im.addEventListener("mouseout", handler, false);
+
+              e.insertBefore(im, e.firstChild);
+            }
+
             msg.markAsSeen();
 
             msgEl.appendChild(e);
@@ -511,6 +583,114 @@
 
           this._updateNonSeenStatus();
           this._syncMarkers();
+        ]]></body>
+      </method>
+
+      <method name="_threadMarkerClick">
+        <parameter name="el"/>
+        <body><![CDATA[
+          var info = el.parentNode.parentNode.threadInfo;
+
+          this._input.thread = null;
+
+          if (!info.thread) {
+            info.thread = this._createNewThread(true);
+            info.thread.el = el;
+            info.thread.freeCallback = function(t) {
+              t.lastInfo.thread = null;
+              t.lastInfo = null;
+              t.el.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
+            }
+          }
+          info.thread.lastInfo = info;
+
+          el.src = info.thread.image;
+          this._input.thread = info.thread;
+        ]]></body>
+      </method>
+
+      <method name="_createNewThread">
+        <parameter name="temp"/>
+        <body><![CDATA[
+          var cx;
+          var w, h = 14;
+
+          var thread = {
+            _this: this,
+
+            get inResponseTo() {
+              return [this.lastInfo.nick,
+                      this.lastInfo.messages.length - this.lastInfo.idx];
+            },
+
+            free: function() {
+              if (!this.temporary)
+                return;
+
+              this._this._threads.splice(this._this.idx, 1);
+              if (this.freeCallback)
+                this.freeCallback(this);
+              this.freeCallback = null;
+            },
+            temporary: temp,
+          };
+
+          if (!this._canvas) {
+            this._threads = [];
+            this._canvas = document.createElementNS(HTMLNS, "canvas");
+            this._canvas.height = h;
+            cx = this._canvas.getContext("2d");
+          } else
+            cx = this._canvas.getContext("2d");
+
+          var threadNum = this._threads.length+1;
+
+//          cx.mozTextStyle="14px Arial";
+          w = cx.mozMeasureText(threadNum);
+
+          this._canvas.width = w + h - 4;
+
+          cx.fillStyle="hsl("+(threadNum*135)+", 80%, 50%)";
+          cx.beginPath();
+          cx.moveTo(h/2, 0);
+          cx.arc(w+h/2-4, h/2, h/2, -Math.PI/2, Math.PI/2, 0);
+          cx.arc(h/2, h/2, h/2, Math.PI/2, -Math.PI/2, 0);
+          cx.fill();
+          cx.fillStyle = "white";
+          cx.save();
+          cx.translate(h/2-2, h-3);
+          cx.mozDrawText(threadNum);
+          cx.restore();
+
+          thread.image = this._canvas.toDataURL();
+          thread.idx = threadNum;
+          this._threads.push(thread);
+
+          return thread;
+        ]]></body>
+      </method>
+
+      <method name="_onThreadMarkerOver">
+        <parameter name="el"/>
+        <body><![CDATA[
+          el = el.parentNode.parentNode;
+          while (el) {
+            el.setAttribute("in-marked-thread", "true");
+            el = el.threadInfo.inResponseTo;
+          }
+          this._output.contentDocument.body.setAttribute("marked-thread", "true");
+        ]]></body>
+      </method>
+
+      <method name="_onThreadMarkerOut">
+        <parameter name="el"/>
+        <body><![CDATA[
+          el = el.parentNode.parentNode;
+          this._output.contentDocument.body.removeAttribute("marked-thread");
+          while (el) {
+            el.removeAttribute("in-marked-thread")
+            el = el.threadInfo.inResponseTo;
+          }
         ]]></body>
       </method>
 
@@ -685,6 +865,34 @@
         ]]></getter>
       </property>
 
+      <property name="thread" onget="return this._thread">
+        <setter><![CDATA[
+          if (this._thread)
+            this._thread.free();
+
+          this._thread = val;
+
+          var doc = this._input.contentDocument;
+          var prevImg = doc.body.firstChild.localName == "img" &&
+              doc.body.firstChild.hasAttribute("thread-index") ?
+            doc.body.firstChild : null;
+
+          if (val) {
+            var img = doc.createElementNS(HTMLNS, "img");
+            img.setAttribute("src", val.image);
+            img.setAttribute("thread-index", val.idx);
+
+            if (prevImg)
+              doc.body.replaceChild(img, prevImg);
+            else {
+              doc.body.insertBefore(img, doc.body.firstChild);
+              this._fixupThreadMarker();
+            }
+          } else if (prevImg)
+            prevImg.parentNode.removeChild(prevImg);
+        ]]></setter>
+      </property>
+
       <constructor><![CDATA[
         var me = this;
         this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
@@ -779,17 +987,24 @@
 
           window.addEventListener("resize", function(){ try{me.maybeResize()}catch(ex){} }, false);
 
-          doc.addEventListener("DOMSubtreeModified", function(){
+          doc.addEventListener("DOMSubtreeModified", function() {
             me._counter.value = me._domToStr(me._input.contentDocument.body).
               replace(/\n$/,"").length;
             if (me._toolbar)
               me._toolbar._updateState(event);
             me.maybeResize();
             me.modified = true;
+            if (me.thread) {
+              var f = me._input.contentDocument.body.firstChild;
+              if (f && (f.localName != "img" || !f.hasAttribute("thread-index")))
+                me.thread = null;
+            }
           }, false);
 
           for each (var event in "keydown keyup mousedown mouseup dragdrop".split(" ")) {
-            doc.addEventListener(event, function(event){
+            doc.addEventListener(event, function(event) {
+              me._fixupThreadMarker();
+
               if (me._toolbar)
                 me._toolbar._updateState(event);
             }, false);
@@ -812,9 +1027,22 @@
 
       <method name="clear">
         <body><![CDATA[
+          this.thread = null;
           this._input.contentDocument.execCommand("selectAll", false, null);
           this._input.contentDocument.execCommand("delete", false, null);
           this.maybeResize();
+        ]]></body>
+      </method>
+
+      <method name="_fixupThreadMarker">
+        <body><![CDATA[
+          if (this.thread) {
+            var doc = this._input.contentDocument;
+            var selection = this._input.contentWindow.getSelection();
+
+            if (selection.anchorNode == doc.body && selection.anchorOffset == 0)
+              selection.collapse(doc.body, 1);
+          }
         ]]></body>
       </method>
 
@@ -1200,16 +1428,19 @@
 
       <property name="model" onget="return this._model">
         <setter><![CDATA[
+          var isConference = val && val.contact instanceof Conference;
+
           this._model = val;
           this._contactInfo.model = val && val.contact;
           this._output.model = val;
+          this._output._input = isConference ? this._input : null;
           this._chatpaneCommands.model = val && val.contact;
           this.completionEngine = val && val.contact.createCompletionEngine();
 
           if (val && val.contact) {
             this._contactInfo.parentNode.menuModel = val.contact;
             this._contactInfo.parentNode.setAttribute("context",
-              (val.contact instanceof Conference ? "conference" : "contact")+"-contextmenu");
+              (isConference ? "conference" : "contact")+"-contextmenu");
           }
 
           return val;
@@ -1390,6 +1621,9 @@
               var msg = new Message(null, body, myResource,
                                     this._model.contact instanceof Conference ? 1 : 3,
                                     null, this._model)
+
+              if (this._input.thread)
+                msg.inResponseTo = this._input.thread.inResponseTo;
 
               this._model.sendMessage(msg);
 
