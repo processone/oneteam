@@ -119,6 +119,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 yield (contact);
     },
 
+    resourcesIterator: function(predicate, token)
+    {
+        for each (var resource in this.resources)
+            if (!predicate || predicate(resource, token))
+                yield (resource);
+    },
+
     _onGroupAdded: function(group)
     {
         this.groups.push(group);
