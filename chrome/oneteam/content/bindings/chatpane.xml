@@ -100,7 +100,7 @@
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
 
         this._threads = [];
-        this._threadNickMessages = {}
+        this._messageIdMap = {}
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -253,7 +253,7 @@
               account.style.smiles[i].attachStyles(this._output.contentDocument);
 
             this._output.contentDocument.addEventListener("click", function(event) {
-              if (event.target.className == "thread-marker")
+              if (event.target.className.indexOf("thread-marker-reply") >= 0)
                 me._threadMarkerClick(event.target)
               else
                 linkEventsRedirector(event);
@@ -424,41 +424,6 @@
             msgEl.setAttribute("class", "message "+msg.classes);
             msgEl.setAttribute("not-seen", "true");
 
-            if (this._input) {
-              var thread = null;
-              var info = {
-                msgEl: msgEl,
-                nick: msg.nick,
-              }
-
-              var thMsg = null;
-              if (msg.inResponseTo) {
-                thMsg = this._threadNickMessages[msg.inResponseTo[0]];
-                thMsg = thMsg && thMsg[thMsg.length - msg.inResponseTo[1]];
-
-                if (thMsg) {
-                  if (!thMsg.thread) {
-                    thMsg.thread = this._createNewThread(false);
-                    thMsg.msgEl.lastChild.firstChild.src = thMsg.thread.image;
-                  } else
-                    thMsg.thread.temporary = false;
-                  thread = thMsg.thread;
-                }
-              }
-
-              if (!this._threadNickMessages[msg.nick])
-                this._threadNickMessages[msg.nick] = [info];
-              else
-                this._threadNickMessages[msg.nick].push(info);
-
-              info.thread = thread;
-              info.messages = this._threadNickMessages[msg.nick];
-              info.idx = info.messages.length - 1;
-              info.inResponseTo = thMsg && thMsg.msgEl;
-
-              msgEl.threadInfo = info;
-            }
-
             if (msg.isSystemMessage) {
               if (prevMsg)
                 prevMsg.setAttribute("ends-chunk", "true");
@@ -538,11 +503,29 @@
             e.setAttribute("class", "body");
             e.innerHTML = msg.formatedHtml;
 
-            if (this._input && !msg.isSystemMessage) {
+            var parentMsgEl = null;
+            if (msg.xReplyTo && (parentMsgEl = this._messageIdMap[msg.xReplyTo])) {
+              if (!parentMsgEl.thread) {
+                parentMsgEl.thread = this._createNewThread(false);
+                parentMsgEl.lastChild.firstChild.src = parentMsgEl.thread.image;
+              } else
+                parentMsgEl.thread.temporary = false;
+
+              msgEl.parentMsgEl = parentMsgEl;
+              msgEl.thread = parentMsgEl && parentMsgEl.thread;
+            }
+
+            if (msg.xMessageId) {
+              this._messageIdMap[msg.xMessageId] = msgEl;
+
+              msgEl.twitterNick = msg.xTwitterNick;
+              msgEl.messageId = msg.xMessageId;
+            }
+
+            if ((msg.xMessageId || msg.xReplyTo) && !msg.isSystemMessage) {
               var im = doc.createElement("img");
-              im.src = thread ? thread.image :
+              im.src = msgEl.thread ? msgEl.thread.image :
                 "resource://oneteam-skin/chatpane/imgs/add-thread.png";
-              im.setAttribute("class", "thread-marker");
 
               var handler = {
                 _this: this,
@@ -562,6 +545,9 @@
               }
               im.addEventListener("mouseover", handler, false);
               im.addEventListener("mouseout", handler, false);
+
+              im.setAttribute("class", "thread-marker" +
+                              (msg.xMessageId ? " thread-marker-reply" : ""));
 
               e.insertBefore(im, e.firstChild);
             }
@@ -589,23 +575,25 @@
       <method name="_threadMarkerClick">
         <parameter name="el"/>
         <body><![CDATA[
-          var info = el.parentNode.parentNode.threadInfo;
+          var msgEl = el.parentNode.parentNode;
 
           this._input.thread = null;
 
-          if (!info.thread) {
-            info.thread = this._createNewThread(true);
-            info.thread.el = el;
-            info.thread.freeCallback = function(t) {
-              t.lastInfo.thread = null;
-              t.lastInfo = null;
+          if (!msgEl.thread) {
+            msgEl.thread = this._createNewThread(true);
+            msgEl.thread.el = el;
+            msgEl.thread.freeCallback = function(t) {
+              t.msgEl.thread = null;
+              t.msgEl = null;
               t.el.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
             }
           }
-          info.thread.lastInfo = info;
+          msgEl.thread.msgEl = msgEl;
 
-          el.src = info.thread.image;
-          this._input.thread = info.thread;
+          el.src = msgEl.thread.image;
+          this._input.thread = msgEl.thread;
+          if (msgEl.twitterNick)
+          this._input._append("@"+msgEl.twitterNick+"\x0a");
         ]]></body>
       </method>
 
@@ -617,11 +605,6 @@
 
           var thread = {
             _this: this,
-
-            get inResponseTo() {
-              return [this.lastInfo.nick,
-                      this.lastInfo.messages.length - this.lastInfo.idx];
-            },
 
             free: function() {
               if (!this.temporary)
@@ -676,7 +659,7 @@
           el = el.parentNode.parentNode;
           while (el) {
             el.setAttribute("in-marked-thread", "true");
-            el = el.threadInfo.inResponseTo;
+            el = el.parentMsgEl;
           }
           this._output.contentDocument.body.setAttribute("marked-thread", "true");
         ]]></body>
@@ -689,7 +672,7 @@
           this._output.contentDocument.body.removeAttribute("marked-thread");
           while (el) {
             el.removeAttribute("in-marked-thread")
-            el = el.threadInfo.inResponseTo;
+            el = el.parentMsgEl;
           }
         ]]></body>
       </method>
@@ -1050,6 +1033,8 @@
         <parameter name="str"/>
         <body><![CDATA[
           this._input.contentDocument.execCommand("insertHTML", false, xmlEscape(str));
+          if ((this.value.lastChild.localName||"").toUpperCase() != "BR")
+            this._input.contentDocument.execCommand("insertHTML", false, "<br>");
           this._onUserType();
         ]]></body>
       </method>
@@ -1433,7 +1418,7 @@
           this._model = val;
           this._contactInfo.model = val && val.contact;
           this._output.model = val;
-          this._output._input = isConference ? this._input : null;
+          this._output._input = this._input;
           this._chatpaneCommands.model = val && val.contact;
           this.completionEngine = val && val.contact.createCompletionEngine();
 
@@ -1623,7 +1608,7 @@
                                     null, this._model)
 
               if (this._input.thread)
-                msg.inResponseTo = this._input.thread.inResponseTo;
+                msg.xReplyTo = this._input.thread.msgEl.messageId;
 
               this._model.sendMessage(msg);
 

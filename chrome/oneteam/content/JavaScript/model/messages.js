@@ -520,13 +520,12 @@ function Message(body, body_html, contact, type, time, thread, chatState)
         if (!thread)
             thread = body.getThread();
 
-        var inResponseTo = body.getNode().
-            getElementsByTagNameNS("http://oneteam.im/threads", "in-response-to")[0];
-        if (inResponseTo) {
-            var txt = inResponseTo.textContent;
-            var idx = txt.lastIndexOf(":");
-            if (idx > 0)
-            this.inResponseTo = [txt.substr(0, idx), txt.substr(idx+1)];
+        var xThread = body.getNode().
+            getElementsByTagNameNS("http://process-one.net/threads", "x")[0];
+        if (xThread) {
+            this.xMessageId = xThread.getAttribute("id");
+            this.xTwitterNick = xThread.getAttribute("twitter-nick");
+            this.xReplyTo = xThread.getAttribute("reply-to");
         }
 
         var html = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
@@ -673,9 +672,18 @@ _DECL_(Message).prototype =
             pkt.getNode().appendChild(html);
         }
 
-        if (this.inResponseTo)
-            pkt.appendNode("in-response-to", {xmlns: "http://oneteam.im/threads"},
-                           [this.inResponseTo.join(":")]);
+        if (this.xMessageId || this.xTwitterNick || this.xReplyTo) {
+            var attrs = {xmlns: "http://process-one.net/threads"};
+
+            if (this.xMessageId)
+                attrs.id = this.xMessageId;
+            if (this.xTwitterNick)
+                attrs["twitter-nick"] = this.xTwitterNick;
+            if (this.xReplyTo)
+                attrs["reply-to"] = this.xReplyTo;
+
+            pkt.appendNode("x", attrs);
+        }
     },
 
     /*   tag name       can have childrens              keep only if has childrens

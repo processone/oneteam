@@ -76,11 +76,14 @@ body[hasSendButton=true] {
     display: none;
     position: absolute;
     left: 2px;
-    top: 0.3em;
+    bottom: 0.4em;
+}
+
+.thread-marker-reply {
     cursor: pointer;
 }
 
-span.body:hover > .thread-marker,
+span.body:hover > .thread-marker-reply,
 .thread-marker:not([src="resource://oneteam-skin/chatpane/imgs/add-thread.png"])
 {
     display: inline;
