@@ -7,8 +7,6 @@ function RosterView(node)
     this.items = [];
     this.model = account;
 
-    dump("N: "+node.localName+"\n");
-
     this.altLook = node.localName != "richlistbox";
 
     this.onModelUpdated(null, "groups", {added: account.groups});
