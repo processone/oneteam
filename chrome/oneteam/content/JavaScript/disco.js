@@ -2,14 +2,15 @@ var EXPORTED_SYMBOLS = ["DiscoCacheEntry", "DiscoItem", "cleanDiscoCache"];
 
 ML.importMod("roles.js");
 
-function DiscoCacheEntry(jid, node, isCapsNode)
+function DiscoCacheEntry(jid, node, isCapsNode, cacheable)
 {
+    var id = jid + (node ? "#"+node : "");
+
     if (isCapsNode) {
         if (this.capsCache[node])
             return this.capsCache[node];
         this.capsCache[node] = this;
     } else {
-        var id = jid + (node ? "#"+node : "");
         if (this.cache[id])
             return this.cache[id];
         this.cache[id] = this;
@@ -17,7 +18,10 @@ function DiscoCacheEntry(jid, node, isCapsNode)
 
     this.jid = jid;
     this.node = node;
+    this._cacheable = cacheable;
     this._isCapsNode = isCapsNode;
+
+    this._parseCacheVal(account.cache.getValue("disco-"+id));
 
     return this;
 }
@@ -156,14 +160,20 @@ _DECL_(DiscoCacheEntry).prototype =
     _populateDiscoInfoFromCapsCache: function()
     {
         var s = account.cache.getValue("caps2-"+this.node);
+        if (s) {
+            this._parseCacheVal(s);
+            account.cache.bumpExpirationDate("caps2-"+this.node,
+                                             new Date(Date.now()+30*24*60*60*1000));
+        }
+    },
 
+    _parseCacheVal: function(s) {
         if (s == null)
             return;
 
         s = s.split("\n");
         this.discoInfo = { features: {} };
-        account.cache.bumpExpirationDate("caps2-"+this.node,
-                                         new Date(Date.now()+30*24*60*60*1000));
+
         var idx = 0, count = 1;
         if (+s[0] > 0) {
             idx = 1;
@@ -201,7 +211,7 @@ _DECL_(DiscoCacheEntry).prototype =
                     category: identities[i].getAttribute("category") || ""
                 }
                 this.discoInfo.identities.push(ident);
-                if (this._isCapsNode)
+                if (this._isCapsNode || this._cacheable)
                     cacheVal += "\n"+ident.name+"\n"+ident.type+"\n"+ident.category;
             }
         cacheVal = this.discoInfo.identities.length + cacheVal;
@@ -209,7 +219,7 @@ _DECL_(DiscoCacheEntry).prototype =
         for (i = 0; i < features.length; i++) {
             var feature = features[i].getAttribute("var");
             this.discoInfo.features[feature] = 1;
-            if (this._isCapsNode)
+            if (this._isCapsNode || this._cacheable)
                 cacheVal += "\n" + feature;
         }
 
@@ -221,6 +231,9 @@ _DECL_(DiscoCacheEntry).prototype =
         if (this._isCapsNode)
             account.cache.setValue("caps2-"+this.node, cacheVal,
                                    new Date(Date.now()+30*24*60*60*1000));
+        if (this._cacheable)
+            account.cache.setValue("disco-"+this.jid+(this.node ? "#"+this.node : ""),
+                                   cacheVal, new Date(Date.now()+12*60*60*1000));
 
         delete this.discoInfoCallbacks;
     },
@@ -252,11 +265,12 @@ _DECL_(DiscoCacheEntry).prototype =
     }
 }
 
-function DiscoItem(jid, name, node)
+function DiscoItem(jid, name, node, cacheable)
 {
     this.discoJID = new JID(jid);
     this.discoName = name;
     this.discoNode = node;
+    this.discoCacheable = cacheable;
 }
 
 _DECL_(DiscoItem).prototype =
@@ -264,7 +278,8 @@ _DECL_(DiscoItem).prototype =
     get _discoCacheEntry()
     {
         return META.ACCESSORS.replace(this, "_discoCacheEntry",
-            new DiscoCacheEntry(this.discoJID || this.jid, this.discoNode));
+            new DiscoCacheEntry(this.discoJID || this.jid, this.discoNode,
+                                false, this.discoCacheable));
     },
 
     updateCapsInfo: function(node)

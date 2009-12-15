@@ -638,6 +638,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("connected");
 
         this.bookmarks.retrieve();
+        this.getDiscoItems(false, function(account, items) {
+                                for (var i = 0; i < items.length; i++) {
+                                    items[i].discoCacheable = true;
+                                }
+                            });
         this.getDiscoItemsByCategory("conference", "text", false,
                                      function(account, items, item) {
                                         if (!account.defaultConferenceServer)
