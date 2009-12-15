@@ -381,3 +381,4 @@ servicesManager.publishDiscoInfo("http://jabber.org/protocol/muc");
 servicesManager.publishDiscoInfo("jabber:x:conference");
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/chatstates");
 servicesManager.publishDiscoInfo("http://jabber.org/protocol/xhtml-im");
+servicesManager.publishDiscoInfo("http://jabber.org/protocol/caps");
