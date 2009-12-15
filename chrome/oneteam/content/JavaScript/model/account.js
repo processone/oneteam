@@ -614,6 +614,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     onConnect: function()
     {
+        if (this.connection.serverCaps)
+            this.updateCapsInfo(this.connection.serverCaps);
+
         if (!this.mucMode) {
             var pkt = new JSJaCIQ();
             pkt.setIQ(null, 'get');

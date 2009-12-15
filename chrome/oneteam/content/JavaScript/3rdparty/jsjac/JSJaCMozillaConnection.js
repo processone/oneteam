@@ -118,6 +118,10 @@ JSJaCMozillaConnection.prototype = {
           this._onDisconnect();
           return;
         case "features":
+          var caps = node.getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
+          if (caps)
+            this.serverCaps = caps;
+
           if (node.getElementsByTagNameNS("urn:ietf:params:xml:ns:xmpp-tls", "starttls").length) {
             this._sendRaw("<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>")
             return;
