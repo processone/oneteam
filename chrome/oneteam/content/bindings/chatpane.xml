@@ -1612,7 +1612,7 @@
               this.dispatchEvent(ev);
 
               var body = this._input.value;
-              if (body.lastChild.localName == "BR")
+              if ((body.lastChild.localName||"").toUpperCase() == "BR")
                 body.removeChild(body.lastChild);
 
               var myResource = this._model.contact instanceof ConferenceMember ?
