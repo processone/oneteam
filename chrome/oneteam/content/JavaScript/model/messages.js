@@ -266,6 +266,11 @@ _DECL_(MessagesRouter).prototype =
 
     _onChatPaneClosed: function(chatPane)
     {
+        if (this.parentRouter) {
+            this.parentRouter._onChatPaneClosed(chatPane);
+            return;
+        }
+
         var idx = this.chatPanes.indexOf(chatPane);
         if (idx >= 0)
             this.chatPanes.splice(idx, 1);
