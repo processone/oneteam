@@ -538,7 +538,7 @@
             e.setAttribute("class", "body");
             e.innerHTML = msg.formatedHtml;
 
-            if (this._input) {
+            if (this._input && !msg.isSystemMessage) {
               var im = doc.createElement("img");
               im.src = thread ? thread.image :
                 "resource://oneteam-skin/chatpane/imgs/add-thread.png";
