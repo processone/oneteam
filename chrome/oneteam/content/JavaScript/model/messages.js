@@ -293,6 +293,7 @@ function MessagesThread(threadID, contact)
             activeResource.hasDiscoFeature("http://jabber.org/protocol/chatstates");
 
         this._handleXhtmlIM = activeResource.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
+        this._handleXThreads = activeResource.hasDiscoFeature("http://process-one.net/threads");
     }
 }
 
@@ -360,6 +361,11 @@ _DECL_(MessagesThread, Model).prototype =
             this._handleChatState;
     },
 
+    get peerHandlesXThreads() {
+        return this._handleXThreads == null ? !this._afterFirstPeerMessage :
+            this._handleXThreads;
+    },
+
     get chatState() {
         return this._chatState;
     },
@@ -389,6 +395,8 @@ _DECL_(MessagesThread, Model).prototype =
             this._afterFirstPeerMessage = true;
             if (this._handleChatState == null)
                 this._handleChatState = !!msg.chatState;
+            if (this._handleXThreads == null)
+                this._handleXThreads = !!msg.xMessageId;
             this._sessionStarted = this._sessionStarted || msg.threadID;
         }
 
@@ -469,6 +477,9 @@ _DECL_(MessagesThread, Model).prototype =
 
         if (this.peerHandlesChatState)
             msg.chatState = this._chatState;
+
+        if (this.peerHandlesXThreads && !msg.xMessageId)
+            msg.xMessageId = generateRandomName(8);
 
         msg.sendXhtmlIM = this._handleXhtmlIM != false;
 
