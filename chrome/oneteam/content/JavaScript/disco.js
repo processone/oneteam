@@ -116,7 +116,7 @@ _DECL_(DiscoCacheEntry).prototype =
             if (returnType.features)
                 return {};
             if (returnType.feature)
-                return false;
+                return null;
             return null;
         }
 
@@ -147,9 +147,6 @@ _DECL_(DiscoCacheEntry).prototype =
 
     _populateDiscoInfoFromCaps: function(returnType, callback, discoItem)
     {
-        var nodes = [this.capsVer].concat(this.capsExt);
-        var capsCallback, capsCallbackData;
-
         var ce = new DiscoCacheEntry(this.jid, this.capsNode+"#"+this.capsVer,
                                      true);
         ce.requestDiscoInfo(null, false,

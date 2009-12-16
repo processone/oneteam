@@ -288,10 +288,11 @@ function MessagesThread(threadID, contact)
     this.unseenCount = 0;
     if (contact && contact.hasDiscoFeature) {
         this.contact = contact;
+        var activeResource = contact.activeResource || contact
         this._handleChatState = contact instanceof Conference ? false :
-            contact.hasDiscoFeature("http://jabber.org/protocol/chatstates");
+            activeResource.hasDiscoFeature("http://jabber.org/protocol/chatstates");
 
-        this._handleXhtmlIM = contact.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
+        this._handleXhtmlIM = activeResource.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
     }
 }
 
@@ -352,7 +353,11 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     get peerHandlesChatState() {
-        return this._afterFirstMessage && this._handleChatState;
+        if (this.contact instanceof Conference)
+            return false;
+
+        return this._handleChatState == null ? !this._afterFirstPeerMessage :
+            this._handleChatState;
     },
 
     get chatState() {
@@ -360,7 +365,7 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     set chatState(val) {
-        if (this._handleChatState == false || val == this._chatState)
+        if (!this._afterFirstPeerMessage || val == this._chatState)
             return;
 
         this._chatState = val;
@@ -381,6 +386,7 @@ _DECL_(MessagesThread, Model).prototype =
 
         if (msg.contact && !msg.contact.representsMe) {
             this._afterFirstMessage = true;
+            this._afterFirstPeerMessage = true;
             if (this._handleChatState == null)
                 this._handleChatState = !!msg.chatState;
             this._sessionStarted = this._sessionStarted || msg.threadID;
@@ -456,8 +462,8 @@ _DECL_(MessagesThread, Model).prototype =
 
     sendMessage: function(msg) {
         this._afterFirstMessage = true;
-        msg.chatState = this._chatState = "active";
-        this.threadID;
+        this._chatState = "active";
+        this.threadID; // Ensure that threadID is not null
 
         msg.thread = this;
 
@@ -481,6 +487,7 @@ _DECL_(MessagesThread, Model).prototype =
         this.chatState = "gone";
         this.chatPane = null;
         this._afterFirstMessage = false;
+        this._afterFirstPeerMessage = false;
 
         this.visible = true;
 
