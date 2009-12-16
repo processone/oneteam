@@ -393,10 +393,12 @@ _DECL_(MessagesThread, Model).prototype =
         if (msg.contact && !msg.contact.representsMe) {
             this._afterFirstMessage = true;
             this._afterFirstPeerMessage = true;
+
             if (this._handleChatState == null)
                 this._handleChatState = !!msg.chatState;
-            if (this._handleXThreads == null)
+            if (this._handleXThreads == null && (msg.body || msg.xMessageId))
                 this._handleXThreads = !!msg.xMessageId;
+
             this._sessionStarted = this._sessionStarted || msg.threadID;
         }
 
