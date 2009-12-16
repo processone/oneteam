@@ -362,6 +362,9 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     get peerHandlesXThreads() {
+        if (this.contact instanceof Conference)
+            return false;
+
         return this._handleXThreads == null ? !this._afterFirstPeerMessage :
             this._handleXThreads;
     },
