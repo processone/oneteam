@@ -16,7 +16,7 @@ function Conference(jid)
     this.resources = [];
     this.groups = [];
 
-    account.allConferences[this.jid.normalizedJID] = this;
+    this.convertFromContact();
 }
 
 _DECL_(Conference, Contact).prototype =
@@ -30,7 +30,11 @@ _DECL_(Conference, Contact).prototype =
             this._myResourceJID;
     },
 
-    _sendPresence: function(presence)
+    convertFromContact: function() {
+        account.allConferences[this.jid.normalizedJID] = this;
+    },
+
+    _sendMucPresence: function(presence)
     {
         if (!account.connection)
             return;
@@ -38,12 +42,12 @@ _DECL_(Conference, Contact).prototype =
         var pkt = presence.generatePacket(this._myResourceJID || this.myResource.jid);
 
         if (presence.show != "unavailable") {
-            var x = pkt.getDoc().createElementNS("http://jabber.org/protocol/muc", "x");
-            pkt.getNode().appendChild(x);
-
+            var childrens = [];
             if (this._password)
-                x.appendChild(pkt.getDoc().createElement("password")).
-                    appendChild(pkt.getDoc().createTextNode(this._password));
+                childrens = ["password", {}, this._password];
+
+            pkt.appendNode("x", {xmlns: "http://jabber.org/protocol/muc"},
+                           childrens);
         }
 
         account.connection.send(pkt);
@@ -87,12 +91,13 @@ _DECL_(Conference, Contact).prototype =
         if (!this.joined) {
             this._joinRequested = true;
             this._callback = new Callback(callback).fromCons(1);
-            this._addedToRegistry = true;
+            this._cpToken = account.registerView(function() {
+                    this._sendMucPresence(account.currentPresence);
+                }, this, "currentPresence");
             account._onConferenceAdded(this);
-            account._presenceObservers.push(this);
         }
 
-        this._sendPresence(account.currentPresence);
+        this._sendMucPresence(account.currentPresence);
     },
 
     backgroundJoinRoom: function(nick, password)
@@ -123,7 +128,7 @@ _DECL_(Conference, Contact).prototype =
         if (!this._joinRequested && !this.joined)
             return;
 
-        this._sendPresence(new Presence("unavailable", reason));
+        this._sendMucPresence(new Presence("unavailable", reason));
 
         if (this.chatPane)
             this.chatPane.close();
@@ -133,12 +138,10 @@ _DECL_(Conference, Contact).prototype =
 
     _exitRoomCleanup: function()
     {
-        if (this._addedToRegistry) {
+        if (this._cpToken) {
             account._onConferenceRemoved(this);
-            var idx = account._presenceObservers.indexOf(this);
-            if (idx >= 0)
-                account._presenceObservers.splice(idx, 1);
-            this._addedToRegistry = false;
+            this._cpToken.unregisterFromAll();
+            this._cpToken = null;
         }
 
         this.joined = false;

@@ -237,6 +237,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         jid = new JID(jid);
         var normalizedJID = jid.normalizedJID;
 
+        if (this.allContacts[normalizedJID]) {
+            var contact = this.allContacts[normalizedJID];
+            contact.__proto__ = Conference.prototype;
+            contact.convertFromContact();
+            return contact;
+        }
+
         if (this.allConferences[normalizedJID])
             return this.allConferences[normalizedJID];
         return new Conference(jid);

@@ -131,6 +131,7 @@ _DECL_(ChatTabsController).prototype = {
 
         this._chatPanes = [];
         this._chatWindow = null;
+        this._controller = null;
 
         this._inClose = false;
     }
