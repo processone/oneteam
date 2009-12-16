@@ -66,7 +66,7 @@ _DECL_(ChatTabsController).prototype = {
     openTab: function(thread) {
         var chatPane = new ChatPane(thread, this);
 
-        if (this._chatWindow) {
+        if (this._controller) {
             if  (!this._chatWindow.closed) {
                 this._chatPanes.push(chatPane);
                 chatPane._attach(this._controller);
@@ -76,9 +76,10 @@ _DECL_(ChatTabsController).prototype = {
         }
 
         this._chatPanes.push(chatPane);
-        this._chatWindow = openDialogUniq("ot:chats",
-                                          "chrome://oneteam/content/chats.xul",
-                                          "chrome,centerscreen", this);
+        if (!this._chatWindow)
+            this._chatWindow = openDialogUniq("ot:chats",
+                                              "chrome://oneteam/content/chats.xul",
+                                              "chrome,centerscreen", this);
         return chatPane;
     },
 
