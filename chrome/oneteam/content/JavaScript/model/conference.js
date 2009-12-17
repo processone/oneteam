@@ -450,7 +450,7 @@ _DECL_(Conference, Contact).prototype =
               405: _("This room doesn't exist, and can be created only by administrator"),
               406: _("This room can be accessed only by registered persons"),
               407: _("You are not member of this room"),
-              409: _("You nick name is already used, try another nick"),
+              409: _("Your nick name is already used, try another nick"),
               503: _("Conference server can't be contacted or room reached maximum number of users")
             };
             errorMsg = errorCodesMap[+errorTag.getAttribute("code")] ||
