@@ -445,8 +445,8 @@ _DECL_(MessagesThread, Model).prototype =
         }
 
         if (this.messages.length > len && !msg.isSystemMessage && !msg.isMucMessage)
-            msg._canceler.add = account.addEvent(_("You have new message from <b>{0}</b>",
-                                                   xmlEscape(msg.contact.visibleName)),
+            msg._canceler.add = account.addEvent(_xml("You have new message from <b>{0}</b>",
+                                                   msg.contact.visibleName),
                                                  new Callback(this.openChatTab, this));
     },
 

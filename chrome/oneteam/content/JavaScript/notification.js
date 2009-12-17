@@ -45,8 +45,8 @@ _DECL_(NotificationScheme).prototype =
                     return this._nopCanceler;
                 soundsPlayer.playSound(signed ? "connected" : "disconnected");
                 return this._showAlert(signed ?
-                    _("<b>{0}</b> signed in", xmlEscape(model.visibleName)) :
-                    _("<b>{0}</b> signed out", xmlEscape(model.visibleName)),
+                    _xml("<b>{0}</b> signed in", model.visibleName) :
+                    _xml("<b>{0}</b> signed out", model.visibleName),
                     xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
                     model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
                     null, signed ? "fadein" : "fadeout");
@@ -54,8 +54,8 @@ _DECL_(NotificationScheme).prototype =
         } else if (kind == "subscription") {
             model = model.contact || model;
             var msg = type == "subscribed" ?
-                _("<b>{0}</b> authorized you to see his/her status", xmlEscape(model.visibleName)) :
-                _("<b>{0}</b> doesn't authorized you to see his/her status", xmlEscape(model.visibleName));
+                _xml("<b>{0}</b> authorized you to see his/her status", model.visibleName) :
+                _("<b>{0}</b> doesn't authorized you to see his/her status", model.visibleName);
 
             this._showAlert(msg, xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
                             model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
@@ -87,16 +87,16 @@ _DECL_(NotificationScheme).prototype =
         } else if (kind == "filetransfer") {
             if (type == "request")
                 return this._showAlert(_("File transfer request"),
-                                       _("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
-                                         xmlEscape(model), xmlEscape(extra)),
+                                       _xml("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
+                                         model, extra),
                                        "chrome://oneteam/skin/main/imgs/fticon.png", extra2);
             else if (type == "rejected")
-                this._showInChatPane(_("{0} doesn't want to receive your file '{1}'",
-                                       xmlEscape(model.visibleName), xmlEscape(extra)),
+                this._showInChatPane(_xml("{0} doesn't want to receive your file '{1}'",
+                                       model.visibleName, extra),
                                      model, false, true);
             else if (type == "accepted")
-                this._showInChatPane(_("{0} accepted your file '{1}'",
-                                       xmlEscape(model.visibleName), xmlEscape(extra)),
+                this._showInChatPane(_xml("{0} accepted your file '{1}'",
+                                       model.visibleName, extra),
                                      model, false, true);
         }
         return this._nopCanceler;
