@@ -10,7 +10,7 @@
 <dialog id="joinRoomError" windowtype="ot:joinRoomError" title="Joining Room Error"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  width="600" height="250"
+  width="600" height="300"
   buttonlabelaccept="Join Room" buttonlabelcancel="_('Cancel')"
   onload="onLoad()" ondialogaccept="return joinRoom()">
 
