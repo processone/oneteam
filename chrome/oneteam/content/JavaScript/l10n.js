@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["l10nFormatService", "_"];
+var EXPORTED_SYMBOLS = ["l10nFormatService", "_", "_xml"];
 
 ML.importMod("roles.js");
 
