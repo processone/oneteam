@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["dumpStack", "exceptionToString",
+var EXPORTED_SYMBOLS = ["dumpStack", "exceptionToString", "TRACE",
                         "logExceptionInConsole", "GenericError",
                         "InvalidArgsError", "Error.prototype.toString",
                         "Components.interfaces.nsIException.toString"];
@@ -114,6 +114,33 @@ function logExceptionInConsole(exc)
     se.init(msg, file, null, line, 0, 0, "component");
     cs.logMessage(se);
 // #endif
+}
+
+function TRACE(_this, args) {
+    var name = "[anonymous]"
+    for (var i in _this)
+        if (_this[i] == arguments.caller) {
+            name = i;
+            break;
+        }
+
+    var xmlSerializer;
+    var res = [];
+
+    for (var i = 0; i < args.length; i++) {
+        var val;
+
+        if (args[i] instanceof Element)
+            val = DOMtoE4X(args[i]).toXMLString();
+        else if (typeof(args[i]) == "xml")
+            val = args[i].toXMLString();
+        else if (args[i] instanceof JSJaCPacket)
+            val = "JSJaCPacket("+args[i].xml()+")";
+        else
+            val = uneval(args[i]);
+        res.push(val);
+    }
+    dump(name+"("+res.join(", ")+")\n");
 }
 
 Error.prototype.toString = function() {
