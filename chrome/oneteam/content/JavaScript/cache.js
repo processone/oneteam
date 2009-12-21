@@ -104,11 +104,11 @@ _DECL_(PersistentCache).prototype =
                 try {
                     file.open(null, 0x02|0x08|0x80);
                 } catch (ex) { file = null; }
-
             } while (!file);
 
             file.write(value);
             value = file.path;
+            file.close();
         }
         this.setStmt.bindStringParameter(0, key);
         this.setStmt.bindStringParameter(1, value);
@@ -139,6 +139,11 @@ _DECL_(PersistentCache).prototype =
         if (type) {
             if (!asFile)
                 return slurpFile(value);
+
+            if (!(new File(value)).exists) {
+                this.removeValue(key);
+                return null;
+            }
             if (value.indexOf(this.fileCacheDir.path) == 0)
                 return value.replace(this.fileCacheDir.path, "resource://oneteam-cache");
             return "file://"+value;

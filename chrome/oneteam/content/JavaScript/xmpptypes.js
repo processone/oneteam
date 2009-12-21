@@ -306,9 +306,12 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
 
         photo = atob(photo);
         this.avatarHash = hex_sha1(photo);
-        account.cache.setValue("avatar-"+this.avatarHash, photo,
-                               new Date(Date.now()+30*24*60*60*1000), true);
         this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
+        if (!this.avatar) {
+            account.cache.setValue("avatar-"+this.avatarHash, photo,
+                                   new Date(Date.now()+30*24*60*60*1000), true);
+            this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
+        }
         this.modelUpdated("avatar");
     },
 
