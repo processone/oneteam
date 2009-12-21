@@ -19,7 +19,7 @@ ifdef OT_HAS_IDLE_WIN
 	OT_EXTRA_SRCS += \
 		otIdleBase.cpp \
 		otIdleWin.cpp \
-	    	$(NULL)
+		$(NULL)
 endif
 
 NO_DIST_INSTALL=1

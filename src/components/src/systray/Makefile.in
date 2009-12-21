@@ -45,4 +45,5 @@ include $(ottdir)/rules.mk
 
 INCLUDES+= \
 	-I$(otdir)/src/systray \
+	-I$(otdir)/src/systray/includes \
 	$(NULL)

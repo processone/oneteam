@@ -3,16 +3,16 @@ class nsIFrame;
 
 #include "otSystrayBase.h"
 #include "otDebug.h"
-#include "gfxIImageFrame.h"
+#include "gfxIImageFrame1_9.h"
 #include "imgIContainer.h"
 #include "imgIRequest.h"
-#include "nsIImageLoadingContent.h"
 #include "nsIDOMHTMLImageElement.h"
 #include "nsIDOMHTMLCanvasElement.h"
 #include "nsICanvasElement.h"
 #include "otPr0nObserver.h"
 
-NS_IMPL_ISUPPORTS2(otPr0nObserver, imgIDecoderObserver, imgIContainerObserver)
+NS_IMPL_ISUPPORTS4(otPr0nObserver, imgIDecoderObserver1_9, imgIContainerObserver1_9,
+                   imgIDecoderObserver, imgIContainerObserver)
 
 nsresult
 otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
@@ -24,29 +24,50 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
 
   mImgRequest = nsnull;
 
-  if (image) {
-    nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
+  if (!image)
+    return NS_OK;
+  nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
 
-    if (imgEl) {
-      nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
-
-      if (!loader)
-        return NS_ERROR_NOT_AVAILABLE;
-
-      nsCOMPtr<imgIRequest> imgRequest;
-      rv = loader->GetRequest(nsIImageLoadingContent::CURRENT_REQUEST,
-                              getter_AddRefs(imgRequest));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      if (!imgRequest)
-        return NS_ERROR_NOT_AVAILABLE;
-
-      rv = imgRequest->Clone(this, getter_AddRefs(mImgRequest));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      return NS_OK;
-    }
+  if (!imgEl)
     return NS_ERROR_NOT_AVAILABLE;
+
+  nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
+
+  if (loader) {
+    nsCOMPtr<imgIRequest> imgRequest;
+    rv = loader->GetRequest(nsIImageLoadingContent::CURRENT_REQUEST,
+                            getter_AddRefs(imgRequest));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!imgRequest)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsCOMPtr<imgIRequest> imgRequestClone;
+
+    rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mImgRequest = imgRequestClone;
+  } else {
+    nsCOMPtr<nsIImageLoadingContent1_9> loader = do_QueryInterface(imgEl);
+
+    if (!loader)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsCOMPtr<imgIRequest1_9> imgRequest;
+    rv = loader->GetRequest(nsIImageLoadingContent1_9::CURRENT_REQUEST,
+                            getter_AddRefs(imgRequest));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!imgRequest)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsCOMPtr<imgIRequest1_9> imgRequestClone;
+
+    rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mImgRequest = imgRequestClone;
   }
 
   return NS_OK;
@@ -62,10 +83,29 @@ otPr0nObserver::AbortLoad()
 
 NS_IMETHODIMP
 otPr0nObserver::FrameChanged(imgIContainer *aContainer,
-                               gfxIImageFrame *imageFrame,
-                               nsIntRect * aDirtyRect)
+                             nsIntRect *aDirtyRect)
 {
   DEBUG_DUMP("otPr0nObserver::FrameChanged (entered)");
+  nsresult rv;
+  nsRefPtr<gfxImageSurface> surface;
+
+  rv = aContainer->CopyFrame(1, 0, getter_AddRefs(surface));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mListener->ProcessImageData(surface->Width(), surface->Height(),
+                                   surface->Data(), surface->Stride(),
+                                   surface->GetDataSize(), NULL, 0, 8,
+                                   PR_FALSE);
+
+  return rv;
+}
+
+NS_IMETHODIMP
+otPr0nObserver::FrameChanged(imgIContainer *aContainer,
+                             gfxIImageFrame1_9 *imageFrame,
+                             nsIntRect *aDirtyRect)
+{
+  DEBUG_DUMP("otPr0nObserver::FrameChanged1.9 (entered)");
   nsresult rv;
   PRUint8 *rgbData;
   PRUint32 rgbLen, alphaBits;
@@ -110,13 +150,6 @@ otPr0nObserver::FrameChanged(imgIContainer *aContainer,
 }
 
 NS_IMETHODIMP
-otPr0nObserver::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
-{
-  DEBUG_DUMP("otPr0nObserver::OnStopFrame (entered)");
-  return FrameChanged(nsnull, aFrame, nsnull);
-}
-
-NS_IMETHODIMP
 otPr0nObserver::OnStartDecode(imgIRequest *aRequest)
 {
   DEBUG_DUMP("otPr0nObserver::OnStartDecode (entered)");
@@ -126,25 +159,39 @@ otPr0nObserver::OnStartDecode(imgIRequest *aRequest)
 NS_IMETHODIMP
 otPr0nObserver::OnStartContainer(imgIRequest *aRequest, imgIContainer *aContainer)
 {
+  DEBUG_DUMP("otPr0nObserver::OnStartContainer (entered)");
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver::OnStartFrame(imgIRequest *aRequest, gfxIImageFrame *aFrame)
+otPr0nObserver::OnStartFrame(imgIRequest *aRequest, PRUint32 aFrame)
 {
+  DEBUG_DUMP("otPr0nObserver::OnStartFrame (entered)");
   return NS_OK;
 }
 
 NS_IMETHODIMP
-otPr0nObserver::OnDataAvailable(imgIRequest *aRequest, gfxIImageFrame *aFrame,
-                                  const nsIntRect * aRect)
+otPr0nObserver::OnDataAvailable(imgIRequest *aRequest, PRBool aCurrentFrame,
+                                const nsIntRect *aRect)
 {
+  DEBUG_DUMP("otPr0nObserver::OnDataAvailable (entered)");
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otPr0nObserver::OnStopFrame(imgIRequest *aRequest, PRUint32 aFrame)
+{
+  DEBUG_DUMP("otPr0nObserver::OnStopFrame (entered)");
+  nsCOMPtr<imgIContainer> container;
+  aRequest->GetImage(getter_AddRefs(container));
+  FrameChanged(container, nsnull);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 otPr0nObserver::OnStopContainer(imgIRequest *aRequest, imgIContainer *aContainer)
 {
+  DEBUG_DUMP("otPr0nObserver::OnStopContainer (entered)");
   return NS_OK;
 }
 
@@ -152,6 +199,7 @@ NS_IMETHODIMP
 otPr0nObserver::OnStopDecode(imgIRequest *aRequest, nsresult status,
                                const PRUnichar *statusArg)
 {
+  DEBUG_DUMP("otPr0nObserver::OnStopDecode (entered)");
   return NS_OK;
 }
 
@@ -169,3 +217,33 @@ otPr0nObserver::OnStopRequest(imgIRequest* aRequest, PRBool finish)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+otPr0nObserver::OnDiscard(imgIRequest *aRequest)
+{
+  DEBUG_DUMP("otPr0nObserver::OnDiscard (entered)");
+  return NS_OK;
+}
+
+// imgIDecoderObserver1_9 methods
+
+NS_IMETHODIMP
+otPr0nObserver::OnStartFrame(imgIRequest *aRequest, gfxIImageFrame1_9 *aFrame)
+{
+  DEBUG_DUMP("otPr0nObserver::OnStartFrame1.9 (entered)");
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otPr0nObserver::OnDataAvailable(imgIRequest *aRequest, gfxIImageFrame1_9 *aFrame,
+                                  const nsIntRect * aRect)
+{
+  DEBUG_DUMP("otPr0nObserver::OnDataAvailable1.9 (entered)");
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otPr0nObserver::OnStopFrame(imgIRequest *aRequest, gfxIImageFrame1_9 *aFrame)
+{
+  DEBUG_DUMP("otPr0nObserver::OnStopFrame1.9 (entered)");
+  return FrameChanged(nsnull, aFrame, nsnull);
+}
