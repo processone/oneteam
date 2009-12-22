@@ -44,7 +44,7 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
 
         if (clone)
             msg = new Message(msg.text, msg.html, msg.contact, msg.type,
-                              msg.time, this);
+                              msg.time, this, null, msg.myNick);
 
         this.messages.push(msg);
         this.modelUpdated("messages", {added: [msg]});

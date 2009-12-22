@@ -108,6 +108,10 @@ span.body:hover > .thread-marker-reply,
     color: #565;
 }
 
+.directed .body {
+    color: #911;
+}
+
 .to-copy-paste {
     display: none;
 }

@@ -706,7 +706,8 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             if (!packet.getBody())
                 return;
 
-            var msg = new Message(packet, null, this);
+            var msg = new Message(packet, null, this, null, null, null, null,
+                                  this.contact.myResourceJID.resource);
             this.contact.routeMessage(msg);
         } else {
             var msg = new Message(packet, null, this);

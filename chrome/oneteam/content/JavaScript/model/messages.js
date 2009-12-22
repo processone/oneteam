@@ -512,10 +512,11 @@ _DECL_(MessagesThread, Model).prototype =
     }
 }
 
-function Message(body, body_html, contact, type, time, thread, chatState)
+function Message(body, body_html, contact, type, time, thread, chatState, myNick)
 {
     this.contact = contact;
     this.type = type;
+    this.myNick = myNick;
 
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
@@ -548,7 +549,8 @@ function Message(body, body_html, contact, type, time, thread, chatState)
         if (xThread) {
             this.xMessageId = xThread.getAttribute("id");
             this.xTwitterNick = xThread.getAttribute("twitter-nick");
-            this.xReplyTo = xThread.getAttribute("reply-to");
+            var rt = xThread.getElementsByTagNameNS("http://process-one.net/threads", "reply-to");
+            this.xReplyTo = [x.textContent.replace(/\s+/g, "") for (x in rt)];
         }
 
         var html = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
@@ -612,6 +614,10 @@ _DECL_(Message).prototype =
         return (this.type & 4) == 4;
     },
 
+    get isDirectedMessage() {
+        return this.myNick ? this.text.indexOf(this.myNick+":") == 0 : false;
+    },
+
     get nick() {
         return this.isMucMessage ? this.contact.jid.resource : this.contact.visibleName;
     },
@@ -625,6 +631,8 @@ _DECL_(Message).prototype =
             res.push("offline");
         if (this.archived)
             res.push("archived");
+        if (this.isDirectedMessage)
+            res.push("directed");
 
         return res.join(" ");
     },

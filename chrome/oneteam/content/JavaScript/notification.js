@@ -71,9 +71,11 @@ _DECL_(NotificationScheme).prototype =
                 return this._nopCanceler;
 
             var gcMessage = extra instanceof ConferenceMember;
-            soundsPlayer.playSound( gcMessage ? "message2" : "message1");
+            var pureMucMessage = gcMessage && !model.isDirectedMessage;
+            if (!pureMucMessage)
+                soundsPlayer.playSound(gcMessage ? "message2" : "message1");
 
-            if (gcMessage || type != "first")
+            if (pureMucMessage || (!gcMessage && type != "first"))
                 return this._nopCanceler;
 
             var text = model.text.replace(/[ \t]+/g, " ")+" ";
@@ -82,7 +84,9 @@ _DECL_(NotificationScheme).prototype =
             text = text.replace(/\s+$/, "").split(/\n/).slice(0, 8).
                 map(xmlEscape).join("<br/>");
 
-            return this._showAlert(_("New message from <b>{0}</b>", xmlEscape(extra.visibleName)),
+            return this._showAlert(type == "first" ?
+                                   _("New message from <b>{0}</b>", xmlEscape(extra.visibleName)) :
+                                   _("Message from <b>{0}</b>", xmlEscape(extra.visibleName)),
                                    text, "chrome://oneteam/skin/main/imgs/msgicon.png", extra2);
         } else if (kind == "filetransfer") {
             if (type == "request")
