@@ -695,7 +695,8 @@ _DECL_(Message).prototype =
             pkt.getNode().appendChild(html);
         }
 
-        if (this.xMessageId || this.xTwitterNick || this.xReplyTo) {
+        if (this.xMessageId || this.xTwitterNick || (this.xReplyTo && this.xReplyTo.length)) {
+            var childrens;
             var attrs = {xmlns: "http://process-one.net/threads"};
 
             if (this.xMessageId)
@@ -703,9 +704,9 @@ _DECL_(Message).prototype =
             if (this.xTwitterNick)
                 attrs["twitter-nick"] = this.xTwitterNick;
             if (this.xReplyTo)
-                attrs["reply-to"] = this.xReplyTo;
+                childrens = [["reply-to", {}, x] for (x in this.xReplyTo)];
 
-            pkt.appendNode("x", attrs);
+            pkt.appendNode("x", attrs, childrens);
         }
     },
 

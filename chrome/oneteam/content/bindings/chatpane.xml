@@ -504,7 +504,8 @@
             e.innerHTML = msg.formatedHtml;
 
             var parentMsgEl = null;
-            if (msg.xReplyTo && (parentMsgEl = this._messageIdMap[msg.xReplyTo])) {
+            var xReplyTo = msg.xReplyTo && msg.xReplyTo[0];
+            if (xReplyTo && (parentMsgEl = this._messageIdMap[xReplyTo])) {
               if (!parentMsgEl.thread) {
                 parentMsgEl.thread = this._createNewThread(false);
                 parentMsgEl.lastChild.firstChild.src = parentMsgEl.thread.image;
@@ -522,7 +523,7 @@
               msgEl.messageId = msg.xMessageId;
             }
 
-            if ((msg.xMessageId || msg.xReplyTo) && !msg.isSystemMessage) {
+            if ((msg.xMessageId || xReplyTo) && !msg.isSystemMessage) {
               var im = doc.createElement("img");
               im.src = msgEl.thread ? msgEl.thread.image :
                 "resource://oneteam-skin/chatpane/imgs/add-thread.png";
@@ -1608,7 +1609,7 @@
                                     null, this._model)
 
               if (this._input.thread)
-                msg.xReplyTo = this._input.thread.msgEl.messageId;
+                msg.xReplyTo = [this._input.thread.msgEl.messageId];
 
               this._model.sendMessage(msg);
 
