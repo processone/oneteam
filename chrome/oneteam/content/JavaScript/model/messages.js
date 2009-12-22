@@ -556,7 +556,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
 
             var rt = xThread.getElementsByTagNameNS("http://process-one.net/threads", "reply-to");
             for (var i = 0; i < rt.length; i++)
-                this.xReplyTo.push(x.textContent.replace(/\s+/g, ""));
+                this.xReplyTo.push(rt[i].textContent.replace(/\s+/g, ""));
         }
 
         var html = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
