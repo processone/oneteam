@@ -127,7 +127,7 @@ sub _extract_strings {
     }
 
     while ($str =~ m/\b(OneTeam\.)?_(xml)?\(/g) {
-        my $pos = pos($str)-2;
+        my $pos = $-[0];
         my $in_oneteam_namespace = defined $1;
         my $xml_str = ($2||"") eq "xml";
 

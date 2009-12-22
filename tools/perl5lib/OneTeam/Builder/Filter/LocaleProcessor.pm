@@ -210,7 +210,8 @@ sub get_string_ref {
         my $str = join (", ", escape_js_str("p$str->[1]"),
                               $self->_gen_js_args($inp_str->args));
 
-        return $esc->("_(".$str.")");
+        return $esc->(($inp_str->in_oneteam_namespace ? "OneTeam." : "").
+            ($inp_str->xml_str ? "_xml(" : "_("). $str .")");
     }
 
     die "Localized string can not be resolved at compilation time at ".
