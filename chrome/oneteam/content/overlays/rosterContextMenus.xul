@@ -76,7 +76,7 @@
       ah.hidden = ahr.length != 1 || ahr[0] != menuModel.activeResource;
       ahm.hidden = !ah.hidden || ahr.length == 0;
       if (!ahm.hidden) {
-        list = ahm;
+        list = ahm.firstChild;
         while (list && list.firstChild)
           list.removeChild(list.firstChild);
         for (i = 0; i < ahr.length; i++) {
