@@ -512,6 +512,11 @@
               } else
                 parentMsgEl.thread.temporary = false;
 
+              if (this._trackedMessage == xReplyTo) {
+                this._trackedMessage = msg.xMessageId;
+                parentMsgEl.thread.msgEl = msgEl;
+              }
+
               msgEl.parentMsgEl = parentMsgEl;
               msgEl.thread = parentMsgEl && parentMsgEl.thread;
             }
@@ -1016,9 +1021,15 @@
 
       <method name="clear">
         <body><![CDATA[
-          this.thread = null;
+          var thread = this.thread;
+          this._thread = null;
+
           this._input.contentDocument.execCommand("selectAll", false, null);
           this._input.contentDocument.execCommand("delete", false, null);
+
+          if (thread)
+            this.thread = thread;
+
           this.maybeResize();
         ]]></body>
       </method>
@@ -1601,6 +1612,11 @@
 
           if (~text.search(/\S/)) {
             if (!this.completionEngine || !this.completionEngine.execCommand(text)) {
+              var msgEl = this._input.thread && this._input.thread.msgEl;
+
+              if (msgEl)
+                this._output._trackedMessage = msgEl.messageId;
+
               var ev = document.createEvent("Events");
               ev.initEvent("chat-send", true, false);
               this.dispatchEvent(ev);
