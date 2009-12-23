@@ -130,8 +130,9 @@ _DECL_(Conference, Contact).prototype =
 
         this._sendMucPresence(new Presence("unavailable", reason));
 
-        if (this.chatPane)
-            this.chatPane.close();
+        if (this.chatPanes.length)
+            for (var i = 0; i < this.chatPanes.length; i++)
+                this.chatPanes[i].close();
 
         this._exitRoomCleanup();
     },
