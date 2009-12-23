@@ -594,7 +594,7 @@
           el.src = msgEl.thread.image;
           this._input.thread = msgEl.thread;
           if (msgEl.twitterNick)
-          this._input._append("@"+msgEl.twitterNick+"\x0a");
+          this._input._append("@"+msgEl.twitterNick);
         ]]></body>
       </method>
 
@@ -928,18 +928,23 @@
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {
               event.preventDefault();
 
+              var doc = me._input.contentDocument;
               var selection = me._input.contentWindow.getSelection();
-              var range = me._input.contentDocument.createRange();
+              var range = doc.createRange();
 
-              range.setStart(me._input.contentDocument.body, 0);
+              range.setStart(doc.body, 0);
               range.setEnd(selection.anchorNode, selection.anchorOffset);
 
               var res = me._tryCompletion(me._rangeContent(range), event.shiftKey);
               if (res != null) {
                 range.deleteContents();
-                me._input.contentDocument.execCommand("insertHTML", false, xmlEscape(res));
+                doc.execCommand("insertHTML", false, xmlEscape(res));
               }
               range.detach();
+
+              if ((doc.body.lastChild.localName||"").toUpperCase() != "BR")
+                doc.body.insertBefore(doc.createElement("br"), null);
+
               me._onUserType();
               return false;
             }
@@ -1033,9 +1038,13 @@
       <method name="_append">
         <parameter name="str"/>
         <body><![CDATA[
-          this._input.contentDocument.execCommand("insertHTML", false, xmlEscape(str));
-          if ((this.value.lastChild.localName||"").toUpperCase() != "BR")
-            this._input.contentDocument.execCommand("insertHTML", false, "<br>");
+          var doc = this._input.contentDocument;
+
+          doc.execCommand("insertHTML", false, xmlEscape(str));
+
+          if ((doc.body.lastChild.localName||"").toUpperCase() != "BR")
+            doc.body.insertBefore(doc.createElement("br"), null);
+
           this._onUserType();
         ]]></body>
       </method>
