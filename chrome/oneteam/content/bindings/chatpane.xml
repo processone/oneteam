@@ -114,7 +114,7 @@
         <parameter name="clickHandler"/>
         <parameter name="seenHandler"/>
         <body><![CDATA[
-          var marker = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "vbox");
+          var marker = document.createElementNS(XULNS, "vbox");
 
           marker.setAttribute("class", "marker-arrow");
           marker.setAttribute("left", "0");
@@ -594,7 +594,7 @@
           el.src = msgEl.thread.image;
           this._input.thread = msgEl.thread;
           if (msgEl.twitterNick)
-          this._input._append("@"+msgEl.twitterNick);
+            this._input._append("@"+msgEl.twitterNick);
         ]]></body>
       </method>
 
@@ -1123,7 +1123,6 @@
         ]]></body>
       </method>
 
-
       <method name="_doSend">
         <parameter name="withEnter"/>
         <body><![CDATA[
@@ -1588,7 +1587,7 @@
       <method name="_doSend">
         <parameter name="withEnter"/>
         <body><![CDATA[
-          this._input._doSend(withEnter);
+          return this._input._doSend(withEnter);
         ]]></body>
       </method>
 
