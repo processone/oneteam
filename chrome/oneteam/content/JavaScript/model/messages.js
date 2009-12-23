@@ -353,6 +353,14 @@ _DECL_(MessagesThread, Model).prototype =
         return this._contactIds.length;
     },
 
+    get peerHandlesHtmlIM() {
+        if (this.contact instanceof Conference)
+            return true;
+
+        return this._handleXhtmlIM == null ? !this._afterFirstPeerMessage :
+            this._handleXhtmlIM;
+    },
+
     get peerHandlesChatState() {
         if (this.contact instanceof Conference)
             return false;
@@ -397,6 +405,8 @@ _DECL_(MessagesThread, Model).prototype =
             this._afterFirstMessage = true;
             this._afterFirstPeerMessage = true;
 
+            if (this._handleXhtmlIM == null)
+                this._handleXhtmlIM = !!msg.html;
             if (this._handleChatState == null)
                 this._handleChatState = !!msg.chatState;
             if (this._handleXThreads == null && (msg.body || msg.xMessageId))
@@ -418,9 +428,6 @@ _DECL_(MessagesThread, Model).prototype =
         msg.thread = this;
         if (!msg.isSystemMessage)
             this._lastActivity = msg.time.getTime();
-
-        if (this._handleXhtmlIM == null)
-            this._handleXhtmlIM = msg.html;
 
         var len = this.messages.length;
 
@@ -486,7 +493,7 @@ _DECL_(MessagesThread, Model).prototype =
         if (this.peerHandlesXThreads && !msg.xMessageId)
             msg.xMessageId = generateRandomName(8);
 
-        msg.sendXhtmlIM = this._handleXhtmlIM != false;
+        msg.sendXhtmlIM = this.peerHandlesHtmlIM;
 
         if (!(this.contact instanceof Conference) && msg.text) {
             msg.queues.push(this);
