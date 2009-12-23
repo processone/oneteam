@@ -100,7 +100,8 @@
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
 
         this._threads = [];
-        this._messageIdMap = {}
+        this._messageIdMap = {};
+        this._lastNickMessage = {};
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -523,6 +524,7 @@
 
             if (msg.xMessageId) {
               this._messageIdMap[msg.xMessageId] = msgEl;
+              this._lastNickMessage[msg.nick] = msgEl;
 
               msgEl.twitterNick = msg.xTwitterNick;
               msgEl.messageId = msg.xMessageId;
@@ -1439,6 +1441,7 @@
           this._contactInfo.model = val && val.contact;
           this._output.model = val;
           this._output._input = this._input;
+          this._input._output = this._output;
           this._chatpaneCommands.model = val && val.contact;
           this.completionEngine = val && val.contact.createCompletionEngine();
 
@@ -1612,6 +1615,12 @@
 
           if (~text.search(/\S/)) {
             if (!this.completionEngine || !this.completionEngine.execCommand(text)) {
+              var idx = text.indexOf(":");
+              var msgEl = idx > 0  ? this._output._lastNickMessage[text.substr(0, idx)] : null;
+
+              if (msgEl && !this._input.thread)
+                this._output._threadMarkerClick(msgEl.lastChild.firstChild);
+
               var msgEl = this._input.thread && this._input.thread.msgEl;
 
               if (msgEl)
