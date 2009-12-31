@@ -349,12 +349,15 @@ function Callback(fun, obj) {
     return cb;
 }
 
-function CallbacksList(hasMultipleContexts)
+function CallbacksList(hasMultipleContexts, watchers, watchersBaseObject)
 {
     if (hasMultipleContexts)
         this._callbacks = {}
     else
         this._callbacks = [];
+
+    this._watchers = watchers || {};
+    this._watchersBase = watchersBaseObject;
 }
 
 _DECL_(CallbacksList).prototype =
@@ -385,15 +388,26 @@ _DECL_(CallbacksList).prototype =
             this._traces.push([this.constructor.name+"."+arguments[2],
                                dumpStack(null, null, 2)]);
         }
-        if (this._callbacks instanceof Array)
+
+        if (this._callbacks instanceof Array) {
             this._callbacks.push(callback);
+            if (this._callbacks.length == 1 && this._watchers.onStartWatching)
+                this._watchers.onStartWatching(this._watchersBase, "");
+        }
         else {
-            var contexts = arguments.length > 2 ? Array.slice(arguments, 2) : [""];
-            for (var i = 0; i < contexts.length; i++)
+            var contexts = arguments.length > 2 ? arguments : [null, null, ""];
+            for (var i = 2; i < contexts.length; i++) {
                 if (!this._callbacks[contexts[i]])
                     this._callbacks[contexts[i]] = [callback];
                 else
                     this._callbacks[contexts[i]].push(callback);
+
+                if (this._callbacks[contexts[i]].length == 1) {
+                    var watchers = this._watchers[contexts[i]];
+                    if (watchers && watchers.onStartWatching)
+                        watchers.onStartWatching(this._watchersBase, contexts[i]);
+                }
+            }
         }
 
         if (!token)
@@ -420,14 +434,25 @@ _DECL_(CallbacksList).prototype =
                 if (this._callbacks[idx] && this._callbacks[idx].__unregister_handler)
                     this._callbacks[idx].__unregister_handler();
                 this._callbacks.splice(idx, 1);
+
+                if (this._callbacks.length == 0 && this._watchers.onStopWatching)
+                    this._watchers.onStopWatching(this._watchersBase, "");
             }
         } else
-            for each (var context in this._callbacks)
+            for (var prop in this._callbacks) {
+                var context = this._callbacks[prop];
                 if ((idx = context.indexOf(callback)) >= 0) {
                     if (context[idx] && context[idx].__unregister_handler)
                         context[idx].__unregister_handler();
                     context.splice(idx, 1);
+
+                    if (context.length == 0) {
+                        var watchers = this._watchers[prop];
+                        if (watchers && watchers.onStopWatching)
+                            watchers.onStopWatching(this._watchersBase, prop);
+                    }
                 }
+            }
     },
 
     _hasCallbacks: function(name)

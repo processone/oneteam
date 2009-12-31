@@ -52,23 +52,18 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
         return msg;
     },
 
-    registerView: function(method, obj)
-    {
-        var watched = this._views._hasCallbacks("messages");
-
-        var token = MessagesThread.prototype.registerView.apply(this, arguments);
-
-        if (!watched && this._views._hasCallbacks("messages")) {
-            this.watched = true;
-            this.getNewMessages();
+    PROP_VIEWS: {
+        "messages" : {
+            onStartWatching: function(_this, prop) {
+                if (!_this.watched) {
+                    _this.watched = true;
+                    _this.getNewMessages();
+                }
+            },
+            onStopWatching: function(_this, prop) {
+                _this.watched = false;
+            }
         }
-        return token;
-    },
-
-    unregisterView: function(token)
-    {
-        MessagesThread.prototype.unregisterView.apply(this, arguments);
-        this.watched = this._views._hasCallbacks("messages");
     }
 }
 

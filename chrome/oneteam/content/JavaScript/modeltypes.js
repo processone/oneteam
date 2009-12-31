@@ -105,13 +105,13 @@ _DECL_(Model).prototype =
 {
     init: function()
     {
-        this._views = new CallbacksList(true);
+        this._views = new CallbacksList(true, this.PROP_VIEWS, this);
     },
 
     registerView: function(method, obj, prop, token)
     {
-        var callback = new Callback(method, obj)
-        return this._views._registerCallback(callback, token, prop);
+        return this._views._registerCallback(new Callback(method, obj),
+                                             token, prop);
     },
 
     unregisterView: function(token)
