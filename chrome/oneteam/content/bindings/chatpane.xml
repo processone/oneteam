@@ -100,6 +100,7 @@
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
 
         this._threads = [];
+        this._freeThreads = [];
         this._messageIdMap = {};
         this._lastNickMessage = {};
       ]]></constructor>
@@ -611,30 +612,36 @@
           var cx;
           var w, h = 14;
 
-          var thread = {
-            _this: this,
+          var thread;
 
-            free: function() {
-              if (!this.temporary)
-                return;
+          if (this._freeThreads.length) {
+            thread = this._freeThreads.shift();
+            thread.temporary = temp;
+          } else
+            thread = {
+              _this: this,
+              idx: this._threads.length,
 
-              this._this._threads.splice(this._this.idx, 1);
-              if (this.freeCallback)
+              free: function() {
+                if (!this.temporary || !this.freeCallback)
+                  return;
+
+                this._this._freeThreads.push(this)
+
                 this.freeCallback(this);
-              this.freeCallback = null;
-            },
-            temporary: temp,
-          };
+                this.freeCallback = null;
+              },
+              temporary: temp,
+            };
 
           if (!this._canvas) {
-            this._threads = [];
             this._canvas = document.createElementNS(HTMLNS, "canvas");
             this._canvas.height = h;
             cx = this._canvas.getContext("2d");
           } else
             cx = this._canvas.getContext("2d");
 
-          var threadNum = this._threads.length+1;
+          var threadNum = thread.idx + 1;
 
 //          cx.mozTextStyle="14px Arial";
           w = cx.mozMeasureText(threadNum);
@@ -654,7 +661,6 @@
           cx.restore();
 
           thread.image = this._canvas.toDataURL();
-          thread.idx = threadNum;
           this._threads.push(thread);
 
           return thread;
@@ -1621,7 +1627,7 @@
               if (msgEl && !this._input.thread)
                 this._output._threadMarkerClick(msgEl.lastChild.firstChild);
 
-              var msgEl = this._input.thread && this._input.thread.msgEl;
+              msgEl = this._input.thread && this._input.thread.msgEl;
 
               if (msgEl)
                 this._output._trackedMessage = msgEl.messageId;
