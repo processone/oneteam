@@ -676,9 +676,12 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
                 this.affiliation = item.getAttribute("affiliation");
                 this.role = item.getAttribute("role");
-                this.realJID = item.getAttribute("jid");
+                this.realJID = new JID(item.getAttribute("jid"));
 
                 this._modelUpdatedCheck(oldState);
+
+                if (this.realJID)
+                    this.onAvatarChange();
             }
         }
 
@@ -719,24 +722,10 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     onAvatarChange: function(avatarHash)
     {
-        var avatar;
 
-        if (avatarHash == this.avatarHash)
+        if (!this._retrieveAvatar(avatarHash))
             return;
 
-        if (avatarHash) {
-            avatar = account.cache.getValue("avatar-"+avatarHash, true);
-            if (!avatar) {
-                this.avatarHash = avatarHash;
-                this.getVCard(true, function(){});
-                return;
-            }
-            account.cache.bumpExpirationDate("avatar-"+avatarHash,
-                                             new Date(Date.now()+30*24*60*60*1000));
-        }
-
-        this.avatar = avatar;
-        this.avatarHash = avatarHash;
         this.modelUpdated("avatar");
     },
 

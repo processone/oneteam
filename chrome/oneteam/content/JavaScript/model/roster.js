@@ -575,26 +575,21 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
             this.modelUpdated("resources", {removed: [resource]});
     },
 
+    PROP_VIEWS: {
+        "avatar" : {
+            onStartWatching: function(_this, prop) {
+                _this.onAvatarChange();
+            }
+        }
+    },
+
     onAvatarChange: function(avatarHash)
     {
         var avatar;
 
-        if (avatarHash == this.avatarHash)
+        if (!this._retrieveAvatar(avatarHash))
             return;
 
-        if (avatarHash) {
-            avatar = account.cache.getValue("avatar-"+avatarHash, true);
-            if (!avatar) {
-                this.avatarHash = avatarHash;
-                this.getVCard(true, function(){});
-                return;
-            }
-            account.cache.bumpExpirationDate("avatar-"+avatarHash,
-                                             new Date(Date.now()+30*24*60*60*1000));
-        }
-
-        this.avatar = avatar;
-        this.avatarHash = avatarHash;
         this.modelUpdated("avatar");
         for (res in this.resourcesIterator()) {
             res.avatar = avatar;
@@ -691,8 +686,8 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
             var avatarHash = packet.getNode().
                 getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
-            if (avatarHash)
-                this.onAvatarChange(avatarHash.textContent);
+
+            this.onAvatarChange(avatarHash && avatarHash.textContent);
 
             var caps = packet.getNode().
                 getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
@@ -712,6 +707,8 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
         return equal ? [] : ["presence"];
     },
+
+    PROP_VIEWS: Contact.prototype.PROP_VIEWS,
 
     onAvatarChange: function(avatarHash)
     {

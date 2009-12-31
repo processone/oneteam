@@ -283,6 +283,45 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
                                    null, this._handleVCard, forceUpdate, callback);
     },
 
+    _retrieveAvatar: function(avatarHash) {
+        var avatar;
+
+        avatarHash = avatarHash && avatarHash.toLowerCase();
+
+        if ((avatarHash && avatarHash == this.avatarHash) ||
+            (!avatarHash && this.avatarHash))
+            return false;
+
+        var jid = this.realJID ? this.realJID.shortJID :
+            this.jid.resource ? null : this.jid;
+
+        if (!avatarHash && !this.avatarHash && jid) {
+            avatarHash = account.cache.getValue("jidAvatar-"+jid);
+            if (avatarHash == "")
+                return false;
+        }
+
+        if (avatarHash)
+            avatar = account.cache.getValue("avatar-"+avatarHash, true);
+
+        if (!avatar) {
+            this.avatarHash = avatarHash;
+            this.getVCard(true, function(){});
+            return false;
+        }
+
+        this.avatar = avatar;
+        this.avatarHash = avatarHash;
+
+        account.cache.bumpExpirationDate("avatar-"+this.avatarHash,
+                                         new Date(Date.now()+30*24*60*60*1000));
+        if (jid)
+            account.cache.setValue("jidAvatar-"+jid, this.avatarHash,
+                                   new Date(Date.now()+30*24*60*60*1000));
+
+        return true;
+    },
+
     _handleVCard: function(pkt, value)
     {
         var photo, photos = pkt.getNode().getElementsByTagName("PHOTO");
@@ -297,20 +336,36 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
 
         this.avatarRetrieved = true;
 
+        var jid = this.realJID ? this.realJID.shortJID :
+            this.jid.resource ? null : this.jid;
+
         if (!photo) {
             this.avatarHash = null;
             this.avatar = null;
             this.modelUpdated("avatar");
+
+            if (this.jid)
+                account.cache.setValue("jidAvatar-"+jid, "",
+                                       new Date(Date.now()+30*24*60*60*1000));
             return;
         }
 
         photo = atob(photo);
+
         this.avatarHash = hex_sha1(photo);
         this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
+
+        if (jid)
+            account.cache.setValue("jidAvatar-"+jid, this.avatarHash,
+                                   new Date(Date.now()+30*24*60*60*1000));
+
         if (!this.avatar) {
             account.cache.setValue("avatar-"+this.avatarHash, photo,
                                    new Date(Date.now()+30*24*60*60*1000), true);
             this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
+        } else {
+            account.cache.bumpExpirationDate("avatar-"+this.avatarHash,
+                                             new Date(Date.now()+30*24*60*60*1000));
         }
         this.modelUpdated("avatar");
     },
@@ -319,7 +374,8 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
     {
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, 'get');
-        iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
+        iq.appendNode("vCard", {xmlns: "vcard-temp"});
+
         return iq;
     }
 }
