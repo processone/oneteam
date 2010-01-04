@@ -411,7 +411,7 @@ _DECL_(ContactTooltip).prototype =
 
         var firstResource = true;
 
-        for (var resource in this.model.resourcesIterator()) {
+        for (var resource in this.model.resourcesIterator(null, null, function(a, b){return a.cmp(b, true)})) {
             if (!firstResource)
                 this.resourcesContainer.appendChild(this.doc.createElementNS(XULNS, "spacer"));
             firstResource = false;
@@ -540,7 +540,8 @@ _DECL_(ResourceTooltip).prototype =
                                           this.model.activeResource.presence.priority || 0));
         this.icon.setAttribute("src", this.model.activeResource.getStatusIcon());
         this.showLabel.setAttribute("value", this.model.activeResource.presence);
-        this.showLabel.setAttribute("style", this.model.activeResource.presence.getStyle(this.model.activeResource.msgsInQueue));
+        this.showLabel.setAttribute("style", this.model.activeResource.presence.
+                                    getStyle(this.model.activeResource.msgsInQueue));
         this.status.setAttribute("value", this.model.activeResource.presence.status);
     },
 
