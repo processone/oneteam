@@ -23,11 +23,15 @@ function Group(name, visibleName, builtinGroup, sortPriority)
 
 _DECL_(Group, null, Model).prototype =
 {
-    contactsIterator: function(predicate)
+    contactsIterator: function(predicate, token, sortFun)
     {
-        for (var i = 0; i < this.contacts.length; i++)
-            if (!predicate || predicate(this.contacts[i]))
-                yield (this.contacts[i]);
+        var contacts = this.contacts;
+        if (sortFun)
+            contacts = [].concat(contacts).sort(sortFun);
+
+        for (var i = 0; i < contacts.length; i++)
+            if (!predicate || predicate(contacts[i], token))
+                yield (contacts[i]);
     },
 
     onRename: function(externalDialog)
@@ -291,18 +295,26 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
             account.connection.send(presence.generatePacket(this));
     },
 
-    groupsIterator: function(predicate, token)
+    groupsIterator: function(predicate, token, sortFun)
     {
-        for (var i = 0; i < this.groups.length; i++)
-            if (!predicate || predicate(this.groups[i], token))
-                yield (this.groups[i]);
+        var groups = this.groups;
+        if (sortFun)
+            groups = [].concat(groups).sort(sortFun);
+
+        for (var i = 0; i < groups.length; i++)
+            if (!predicate || predicate(groups[i], token))
+                yield (groups[i]);
     },
 
-    resourcesIterator: function(predicate, token)
+    resourcesIterator: function(predicate, token, sortFun)
     {
-        for (var i = 0; i < this.resources.length; i++)
-            if (!predicate || predicate(this.resources[i], token))
-                yield (this.resources[i]);
+        var resources = this.resources;
+        if (sortFun)
+            resources = [].concat(resources).sort(sortFun);
+
+        for (var i = 0; i < resources.length; i++)
+            if (!predicate || predicate(resources[i], token))
+                yield (resources[i]);
     },
 
     sendMessage: function(msg)

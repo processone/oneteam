@@ -105,25 +105,37 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("currentPresence");
     },
 
-    groupsIterator: function(predicate, token)
+    groupsIterator: function(predicate, token, sortFun)
     {
-        for (var i = 0; i < this.groups.length; i++)
-            if (!predicate || predicate(this.groups[i], token))
-                yield (this.groups[i]);
+        var groups = this.groups;
+        if (sortFun)
+            groups = [].concat(groups).sort(sortFun);
+
+        for (var i = 0; i < groups.length; i++)
+            if (!predicate || predicate(groups[i], token))
+                yield (groups[i]);
     },
 
-    contactsIterator: function(predicate, token)
+    contactsIterator: function(predicate, token, sortFun)
     {
-        for each (var contact in this.contacts)
-            if (!predicate || predicate(contact, token))
-                yield (contact);
+        var contacts = [c for each (c in this.contacts)]
+        if (sortFun)
+            contacts = [].concat(contacts).sort(sortFun);
+
+        for (var i = 0; i < contacts.length; i++)
+            if (!predicate || predicate(contacts[i], token))
+                yield (contacts[i]);
     },
 
-    resourcesIterator: function(predicate, token)
+    resourcesIterator: function(predicate, token, sortFun)
     {
-        for each (var resource in this.resources)
-            if (!predicate || predicate(resource, token))
-                yield (resource);
+        var resources = [r for each (r in this.resources)]
+        if (sortFun)
+            resources = [].concat(resources).sort(sortFun);
+
+        for (var i = 0; i < resources.length; i++)
+            if (!predicate || predicate(resources[i], token))
+                yield (resources[i]);
     },
 
     _onGroupAdded: function(group)
