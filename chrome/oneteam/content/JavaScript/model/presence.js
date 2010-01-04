@@ -17,7 +17,7 @@ function Presence(show, status, priority, profile)
         if (!this.show || !(this.show in this._showValues))
             this.show = "available";
         this.status = pkt.getStatus()
-        this.priority = pkt.getPriority();
+        this.priority = pkt.getPriority() || 0;
     } else {
         this.show = show;
         if (!this.show || !(this.show in this._showValues))
@@ -62,9 +62,8 @@ _DECL_(Presence, null, Comparator).prototype =
             if (presence.show && presence.show != "available")
                 pkt.setShow(presence.show);
 
-            pkt.setPriority(presence.priority == null ?
-                            prefManager.getPref("chat.connection.priority") :
-                            presence.priority);
+            if (presence.priority)
+                pkt.setPriority(presence.priority);
 
             if (account.avatarRetrieved) {
                 var photo = pkt.getNode().
