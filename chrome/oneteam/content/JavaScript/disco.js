@@ -194,8 +194,9 @@ _DECL_(DiscoCacheEntry).prototype =
 
     _gotDiscoInfo: function(pkt)
     {
-        var features = pkt.getQuery().getElementsByTagName("feature");
-        var identities = pkt.getQuery().getElementsByTagName("identity");
+        var query = pkt.getQuery();
+        var features = query ? query.getElementsByTagName("feature") : [];
+        var identities = query ? query.getElementsByTagName("identity") : [];
         var cacheVal = "";
 
         this.discoInfo = { identities: [], features: {} };
