@@ -691,11 +691,6 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         if (packet.getType() == "unavailable")
             this._remove();
         else {
-            if (!this._registered)
-                this.contact._onResourceAdded(this);
-            else
-                this.contact._onResourceUpdated(this);
-
             var avatarHash = packet.getNode().
                 getElementsByTagNameNS("vcard-temp:x:update", "photo")[0];
 
@@ -705,6 +700,12 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
             if (caps)
                 this.updateCapsInfo(caps);
+
+            if (!this._registered)
+                this.contact._onResourceAdded(this);
+            else
+                this.contact._onResourceUpdated(this);
+
         }
 
         if (!dontNotifyViews && !equal)
