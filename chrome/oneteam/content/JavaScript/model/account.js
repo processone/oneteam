@@ -827,6 +827,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var conferences = this.conferences;
         var gateways = [gateway for each (gateway in this.gateways)];
         var contacts = [contact for each (contact in this.contacts)];
+        var resources = [resource for each (resource in this.resources)];
 
         this._initialize();
 
@@ -834,6 +835,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("conferences", {removed: conferences});
         this.modelUpdated("gateways", {removed: gateways});
         this.modelUpdated("contacts", {removed: contacts});
+        this.modelUpdated("resources", {removed: resources});
 
         this.bookmarks._clean();
         servicesManager._clean();
