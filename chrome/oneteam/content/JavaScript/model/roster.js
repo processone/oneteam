@@ -604,9 +604,10 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
         this.modelUpdated("avatar");
         for (res in this.resourcesIterator()) {
-            res.avatar = avatar;
+            res.avatar = this.avatar;
             res.modelUpdated("avatar");
         }
+        this.modelUpdated("avatar");
     },
 
     createCompletionEngine: function()
@@ -640,8 +641,11 @@ function Resource(jid, contact)
     this.jid = new JID(jid);
     this.contact = contact || account.allContacts[this.jid.normalizedJID.shortJID];
 
+    this.avatar = this.contact.avatar;
+
     account.resources[this.jid.normalizedJID] = this;
     this.init();
+
     MessagesRouter.call(this, this.contact);
 }
 
