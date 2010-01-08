@@ -165,13 +165,33 @@
         el.parentNode.selectedIndex = altLook ? 1 : 0;
       },
 
-      updatePresenceIcon: function()
-      {
+      _updatePresenceIcon: function(_this, icons, idx) {
         document.getElementById("setPresence-type-image").src =
 // #ifdef XULAPP
-          this.systray.icon =
+          _this.systray.icon =
 // #endif
-          account.style.getStatusIcon(account.currentPresence.show);
+          icons[idx.idx = (idx.idx+1)%icons.length];
+      },
+
+      updatePresenceIcon: function()
+      {
+        var icons = account.style.getStatusIcon(account.currentPresence.show,
+                                               account.events.length > 0);
+
+        if (this._presenceIconBlinkTimeout)
+          clearInterval(this._presenceIconBlinkTimeout);
+
+        this._presenceIconBlinkTimeout = null;
+
+        if (account.events.length > 0) {
+          if (icons.length > 1) {
+            this._presenceIconBlinkTimeout =
+              setInterval(this._updatePresenceIcon, 500, this, icons, {idx: 0});
+          }
+        } else
+          icons = [icons];
+
+        this._updatePresenceIcon(this, icons, {idx: -1});
       },
 
       onIconSetChange: function()
@@ -205,7 +225,6 @@
         this.profileEnable = document.getElementById("setPresence-profile-enable");
 // #ifdef XULAPP
         this.systray = document.getElementById("systray");
-        this.systray.icon = account.style.getStatusIcon(account.currentPresence.show);
 // #endif
         this.presence = this.chooser.value;
 
@@ -403,6 +422,9 @@
 
       onEventsChanged: function()
       {
+        if (this.eventBox.collapsed != (account.events.length == 0))
+          setPresenceUpdater.updatePresenceIcon();
+
       //#ifdef XULAPP
         if (account.events.length)
           window.getAttention();
