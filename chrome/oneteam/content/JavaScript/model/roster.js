@@ -641,7 +641,7 @@ function Resource(jid, contact)
     this.jid = new JID(jid);
     this.contact = contact || account.allContacts[this.jid.normalizedJID.shortJID];
 
-    this.avatar = this.contact.avatar;
+    this.avatar = this.contact && this.contact.avatar;
 
     account.resources[this.jid.normalizedJID] = this;
     this.init();
