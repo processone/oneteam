@@ -194,7 +194,9 @@ var screen = {
 
 var navigator = {
     get platform() {
-        return "";
+        var xr = Components.classes["@mozilla.org/xre/app-info;1"].
+            getService(Components.interfaces.nsIXULRuntime);
+        return xr.OS+" "+xr.XPCOMABI;
     }
 }
 
