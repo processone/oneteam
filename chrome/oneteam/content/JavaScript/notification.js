@@ -40,9 +40,21 @@ _DECL_(NotificationScheme).prototype =
                                               _("{0} has left this room", model),
                                      model, true, false);
             else {
+                if (type.priority < 0)
+                    return this._nopCanceler;
+
                 model = model.contact || model;
                 if (!this._showNotifications(model))
                     return this._nopCanceler;
+
+                var numResources = 0;
+                for (var i = 0; i< model.resources.length; i++)
+                    if (+model.resources[i].presence >= 0)
+                        numResources++;
+
+                if (numResources > 1)
+                    return this._nopCanceler;
+
                 soundsPlayer.playSound(signed ? "connected" : "disconnected");
                 return this._showAlert(signed ?
                     _xml("<b>{0}</b> signed in", model.visibleName) :
