@@ -403,6 +403,11 @@
 
       onEventsChanged: function()
       {
+      //#ifdef XULAPP
+        if (account.events.length)
+          window.getAttention();
+      //#endif
+
         this.eventBox.collapsed = account.events.length == 0;
 
         if (account.events.length) {

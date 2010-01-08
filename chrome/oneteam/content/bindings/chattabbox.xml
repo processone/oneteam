@@ -38,6 +38,9 @@
 
 // #ifdef XULAPP
           var doc = document;
+
+          if (val)
+            window.getAttention();
 /* #else
           var doc = window.top.document;
 // #endif */
