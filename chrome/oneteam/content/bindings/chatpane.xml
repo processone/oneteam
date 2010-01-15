@@ -115,6 +115,7 @@
         <parameter name="tooltip"/>
         <parameter name="clickHandler"/>
         <parameter name="seenHandler"/>
+        <parameter name="visibleHandler"/>
         <body><![CDATA[
           var marker = document.createElementNS(XULNS, "vbox");
 
@@ -133,6 +134,7 @@
             markerColor: markerColor,
             clickHandler: clickHandler || function(){},
             seenHandler: seenHandler,
+            visibleHandler: visibleHandler,
             obj: this
           };
 
@@ -177,17 +179,31 @@
 
 
           if (scrEl && (top < scrEl.scrollTop || top >= (scrEl.scrollTop + scrEl.clientHeight))) {
-            token.markerElement.style.top = parseInt(top/scrEl.scrollHeight*(scrEl.clientHeight-8))+"px";
+            token.markerElement.setAttribute("top", parseInt(top/scrEl.scrollHeight*(scrEl.clientHeight-8)));
             token.markerElement.style.borderRightColor = token.markerColor;
             visible = false;
           } else
             token.markerElement.style.borderRightColor = "transparent";
 
-          if (visible && this.visible && !token.seenTimeout)
-            token.seenTimeout = setTimeout(token.seenHandler, 3000, token, this);
-          else if ((!visible || !this.visible) && token.seenTimeout) {
+          if (visible && this.visible && !token.seenTimeout) {
+            var timeout;
+
+            if (scrEl && top < scrEl.scrollHeight - scrEl.clientHeight) {
+              timeout = 100;
+            } else
+              timeout = 3000;
+
+            token.seenTimeout = setTimeout(token.seenHandler, timeout, token, this);
+          } else if ((!visible || !this.visible) && token.seenTimeout) {
             clearTimeout(token.seenTimeout);
             token.seenTimeout = null;
+          }
+
+          if (this.visible && !visible && !token.visibleTimeout && token.visibleHandler)
+            token.visibleTimeout = setTimeout(token.visibleHandler, 3000, token, this);
+          else if (!this.visible && token.visibleTimeout) {
+            clearTimeout(token.visibleTimeout);
+            token.visibleTimeout = null;
           }
         ]]></body>
       </method>
@@ -367,12 +383,15 @@
               el.removeMarker(token);
               el._unseenMarker = null;
               el._firstNotSeenMsg = null;
-              Animator.animateCssRule(null, rule, "opacity", 20, 20, function(rule){
+              Animator.animateCssRule(null, rule, "opacity", 20, 20, function(rule) {
                 rule.style.outline = "";
                 el._markMessagesAsSeen();
                 if (el._model)
                   el._model.visible = true;
               }, 0.3, 1);
+            }, function(token, el) {
+              if (el._model)
+                el._model.visible = true;
             });
         ]]></body>
       </method>
