@@ -78,6 +78,7 @@ struct ResolvRunnable : public nsIRunnable {
       pos += size + sizeof(*srvRecord);
     }
     mRecord->Deliver(NS_OK);
+    return NS_OK;
   }
 };
 
@@ -125,4 +126,6 @@ otDNSUnix::Observe(nsISupports *subject, const char *topic, const PRUnichar *dat
   nsCOMPtr<nsIObserverService> obsSrv =
     do_GetService("@mozilla.org/observer-service;1", &rv);
   obsSrv->RemoveObserver(this, "quit-application");
+
+  return rv;
 }
