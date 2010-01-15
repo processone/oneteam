@@ -1480,17 +1480,25 @@
 
         var me = this;
 
-        this.addEventListener("keypress", function(event) {
-            if (event.keyCode == KeyEvent.DOM_VK_PAGE_UP ||
-                event.keyCode == KeyEvent.DOM_VK_PAGE_DOWN) {
-              event.stopPropagation();
-              event.preventDefault();
+        this.addEventListener("keypress", function(ev) {
+            if ((ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ||
+                 ev.keyCode == KeyEvent.DOM_VK_PAGE_DOWN))
+              if (ev.shiftKey && !ev.altKey && !ev.ctrlKey && !ev.metaKey) {
+                ev.stopPropagation();
+                ev.preventDefault();
 
-              if (event.keyCode == KeyEvent.DOM_VK_PAGE_UP)
-                me._output.scrollPageUp();
-              else
-                me._output.scrollPageDown();
-            }
+                if (ev.keyCode == KeyEvent.DOM_VK_PAGE_UP)
+                  me._output.scrollPageUp();
+                else
+                  me._output.scrollPageDown();
+              } else if (!ev.shiftKey && !ev.altKey && ev.ctrlKey && !ev.metaKey) {
+                ev.stopPropagation();
+                ev.preventDefault();
+
+                var tabbox = me.parentNode && me.parentNode._tabbox;
+                if (tabbox)
+                  tabbox._tabs.advanceSelectedTab(ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ? -1 : 1, true)
+              }
         }, true);
 
         setTimeout(function(me) {
