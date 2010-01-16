@@ -48,11 +48,11 @@ _DECL_(NotificationScheme).prototype =
                     return this._nopCanceler;
 
                 var numResources = 0;
-                for (var i = 0; i< model.resources.length; i++)
-                    if (+model.resources[i].presence >= 0)
+                for (var i = 0; i < model.resources.length; i++)
+                    if (+model.resources[i].presence.priority >= 0)
                         numResources++;
 
-                if (numResources > 1)
+                if (numResources > 1 || (numResources == 1 && !signed))
                     return this._nopCanceler;
 
                 soundsPlayer.playSound(signed ? "connected" : "disconnected");
