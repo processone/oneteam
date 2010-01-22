@@ -248,6 +248,11 @@
             this._initialized = true;
 
             var link = this._output.contentDocument.createElement("link");
+            if (!window._frames)
+              window._frames = [];
+            window._frames.push(this._output.contentWindow);
+            this._output.contentWindow._frameElement = this._output;
+
             link.setAttribute("rel", "stylesheet");
 // #ifdef XULAPP
             link.setAttribute("href", "resource://oneteam-skin/chatpane/content.css");

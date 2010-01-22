@@ -3,16 +3,26 @@
     var menuModel;
 
     function findMenuModel(menu, event) {
+      gloEv = event;
+      node = document.popupNode;
       if (event.target != menu)
         return false;
 
       var el = document.popupNode;
 
+      if (el.ownerDocument.defaultView != window &&
+          !el.ownerDocument.defaultView.frameElement)
+        for (var i = 0; window._frames &&i < window._frames.length; i++)
+          if (window._frames[i] == el.ownerDocument.defaultView) {
+            el = window._frames[i]._frameElement;
+            break;
+          }
+
       while (el && !el.menuModel)
         if (el.parentNode)
           el = el.parentNode;
         else
-          el = el.__parent__.frameElement;
+          el = el.__parent__ && el.__parent__.frameElement;
 
       if (!el)
         return false;
