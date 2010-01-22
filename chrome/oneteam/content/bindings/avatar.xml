@@ -50,17 +50,34 @@
         ]]></setter>
       </property>
 
+      <property name="_image" readonly="true">
+        <getter><![CDATA[
+          if (!this.__image)
+            this.__image = document.getAnonymousElementByAttribute(this, "id", "image");
+          return this.__image;
+        ]]></getter>
+      </property>
+
+      <property name="_container" readonly="true">
+        <getter><![CDATA[
+          if (!this.__container)
+            this.__container = this._image && this._image.parentNode.parentNode;
+          return this.__container;
+        ]]></getter>
+      </property>
+
       <constructor><![CDATA[
-        this._image = document.getAnonymousElementByAttribute(this, "id", "image");
-        this._container = this._image.parentNode.parentNode;
         this._imageObj = new Image();
 
         var _this = this;
         this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
 
-        this.onAvatarChange();
-
         recoverSetters(this);
+
+        if (!this.model || this.__image) {
+          this.__image = this.__container = null;
+          this.onAvatarChange();
+        }
       ]]></constructor>
 
       <destructor><![CDATA[
