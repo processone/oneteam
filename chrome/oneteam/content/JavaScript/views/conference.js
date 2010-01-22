@@ -125,7 +125,9 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
     this.parentView = parentView;
     this.contacts = [];
 
-    this.node = document.createElementNS(XULNS, "richlistitem");
+    var doc = containerNode.ownerDocument;
+
+    this.node = doc.createElementNS(XULNS, "richlistitem");
 
     this.node.setAttribute("class", "conference-view");
     this.node.setAttribute("context", "conference-contextmenu");
@@ -134,7 +136,7 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
     this.node.view = this;
 
     if (!hideTitle) {
-        this.label = document.createElementNS(XULNS, "label");
+        this.label = doc.createElementNS(XULNS, "label");
         this.label.setAttribute("value", this.model.name);
         this.label.setAttribute("flex", "1");
         this.label.setAttribute("crop", "end");
@@ -143,8 +145,8 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
 
     this.roleNodes = {};
     for each (role in ["moderator", "participant", "visitor", "none"]) {
-        var node = document.createElementNS(XULNS, "richlistitem");
-        node.appendChild(document.createElementNS(XULNS, "label"));
+        var node = doc.createElementNS(XULNS, "richlistitem");
+        node.appendChild(doc.createElementNS(XULNS, "label"));
         node.setAttribute("class", "conference-role-view");
         node.setAttribute("hidden", "true");
         node.role = role;
@@ -175,16 +177,16 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
 
     itemComparator: function(a, b, m, s, e)
     {
-        var role2num = {moderator: 4, participant: 3, visitor: 2, none: 1};
+        var role2num = {moderator: 0, participant: 1, visitor: 2, none: 3};
         var aVal = role2num[a.role ? a.role : a.model.role];
         var bVal = role2num[b.role ? b.role : b.model.role];
 
         if (aVal == bVal) {
-            aVal = a.role ? "1" : "0"+a.model.name;
-            bVal = b.role ? "1" : "0"+b.model.name;
+            aVal = a.role ? "0" : "1"+a.model.name.toLowerCase();
+            bVal = b.role ? "0" : "1"+b.model.name.toLowerCase();
         }
 
-        return aVal == bVal ? 0 : aVal > bVal ? -1 : 1;
+        return aVal == bVal ? 0 : aVal > bVal ? 1 : -1;
     },
 
     onModelUpdated: function(model, type, data)
@@ -194,7 +196,8 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
 
         for (var i = 0; data.added && i < data.added.length; i++) {
             this.updateRoleNode(data.added[i].role, 1)
-            this.onItemAdded(new ConferenceMemberView(data.added[i], this));
+            this.onItemAdded(new ConferenceMemberView(data.added[i], this,
+                                                      this.node.ownerDocument));
         }
 
         for (i = 0; data.removed && i < data.removed.length; i++) {
@@ -252,15 +255,15 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
     }
 }
 
-function ConferenceMemberView(model, parentView)
+function ConferenceMemberView(model, parentView, doc)
 {
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElementNS(XULNS, "richlistitem");
-    this.statusIcon = document.createElementNS(XULNS, "image");
-    this.label = document.createElementNS(XULNS, "label");
-    this.avatar = document.createElementNS(XULNS, "avatar");
+    this.node = doc.createElementNS(XULNS, "richlistitem");
+    this.statusIcon = doc.createElementNS(XULNS, "image");
+    this.label = doc.createElementNS(XULNS, "label");
+    this.avatar = doc.createElementNS(XULNS, "avatar");
     this.avatar.model = this.model;
 
     this.node.setAttribute("class", "conferencemember-view");
@@ -274,7 +277,7 @@ function ConferenceMemberView(model, parentView)
     this.node.menuModel = model;
     this.node.view = this;
 
-    var box = document.createElementNS(XULNS, "vbox");
+    var box = doc.createElementNS(XULNS, "vbox");
     box.setAttribute("pack", "center");
     box.appendChild(this.statusIcon);
 
@@ -282,7 +285,7 @@ function ConferenceMemberView(model, parentView)
     this.node.appendChild(this.label);
     this.node.appendChild(this.avatar);
 
-    this.tooltip = new ConferenceMemberTooltip(model, this.parentNode);
+    this.tooltip = new ConferenceMemberTooltip(model, this.parentNode, doc);
     this.node.setAttribute("tooltip", this.tooltip.id);
 
     this._bundle = new RegsBundle(this);
@@ -336,20 +339,20 @@ _DECL_(ConferenceMemberView).prototype =
     }
 }
 
-function ConferenceMemberTooltip(model, parentView)
+function ConferenceMemberTooltip(model, parentView, doc)
 {
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElementNS(XULNS, "tooltip");
-    this.avatar = document.createElementNS(XULNS, "image");
-    this.statusIcon = document.createElementNS(XULNS, "image");
-    this.name = document.createElementNS(XULNS, "label");
-    this.presenceShow = document.createElementNS(XULNS, "label");
-    this.affiliation = document.createElementNS(XULNS, "label");
-    this.role = document.createElementNS(XULNS, "label");
-    this.realJID = document.createElementNS(XULNS, "label");
-    this.status = document.createElementNS(XULNS, "description");
+    this.node = doc.createElementNS(XULNS, "tooltip");
+    this.avatar = doc.createElementNS(XULNS, "image");
+    this.statusIcon = doc.createElementNS(XULNS, "image");
+    this.name = doc.createElementNS(XULNS, "label");
+    this.presenceShow = doc.createElementNS(XULNS, "label");
+    this.affiliation = doc.createElementNS(XULNS, "label");
+    this.role = doc.createElementNS(XULNS, "label");
+    this.realJID = doc.createElementNS(XULNS, "label");
+    this.status = doc.createElementNS(XULNS, "description");
 
     this.id = generateUniqueId();
 
@@ -362,58 +365,58 @@ function ConferenceMemberTooltip(model, parentView)
     this.status.setAttribute("class", "conferencemember-tooltip-status");
     this.status.setAttribute("crop", "end");
 
-    var box = document.createElementNS(XULNS, "hbox");
+    var box = doc.createElementNS(XULNS, "hbox");
     box.setAttribute("flex", "1");
     box.setAttribute("align", "start");
     this.node.appendChild(box);
 
-    var cbox = document.createElementNS(XULNS, "vbox");
+    var cbox = doc.createElementNS(XULNS, "vbox");
     cbox.setAttribute("flex", "1");
     box.appendChild(cbox);
     box.appendChild(this.avatar);
 
-    box = document.createElementNS(XULNS, "hbox");
+    box = doc.createElementNS(XULNS, "hbox");
     box.setAttribute("align", "center");
     cbox.appendChild(box);
 
     box.appendChild(this.statusIcon);
     box.appendChild(this.name);
-    var label = document.createElementNS(XULNS, "label");
+    var label = doc.createElementNS(XULNS, "label");
     label.setAttribute("value", "-");
     box.appendChild(label);
     box.appendChild(this.presenceShow);
 
-    var grid = document.createElementNS(XULNS, "grid");
+    var grid = doc.createElementNS(XULNS, "grid");
     grid.setAttribute("class", "conferencemember-tooltip-grid");
     cbox.appendChild(grid);
-    var cols = document.createElementNS(XULNS, "columns");
+    var cols = doc.createElementNS(XULNS, "columns");
     grid.appendChild(cols);
-    var col = document.createElementNS(XULNS, "column");
+    var col = doc.createElementNS(XULNS, "column");
     cols.appendChild(col);
-    col = document.createElementNS(XULNS, "column");
+    col = doc.createElementNS(XULNS, "column");
     col.setAttribute("flex", "1");
     cols.appendChild(col);
 
-    var rows = document.createElementNS(XULNS, "rows");
+    var rows = doc.createElementNS(XULNS, "rows");
     grid.appendChild(rows);
 
-    var row = document.createElementNS(XULNS, "row");
+    var row = doc.createElementNS(XULNS, "row");
     rows.appendChild(row);
-    label = document.createElementNS(XULNS, "label");
+    label = doc.createElementNS(XULNS, "label");
     label.setAttribute("value", "Jabber ID:");
     row.appendChild(label);
     row.appendChild(this.realJID);
 
-    row = document.createElementNS(XULNS, "row");
+    row = doc.createElementNS(XULNS, "row");
     rows.appendChild(row);
-    label = document.createElementNS(XULNS, "label");
+    label = doc.createElementNS(XULNS, "label");
     label.setAttribute("value", "Affiliation:");
     row.appendChild(label);
     row.appendChild(this.affiliation);
 
-    row = document.createElementNS(XULNS, "row");
+    row = doc.createElementNS(XULNS, "row");
     rows.appendChild(row);
-    label = document.createElementNS(XULNS, "label");
+    label = doc.createElementNS(XULNS, "label");
     label.setAttribute("value", "Role:");
     row.appendChild(label);
     row.appendChild(this.role);
