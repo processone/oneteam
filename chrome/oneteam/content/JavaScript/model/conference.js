@@ -676,7 +676,9 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
                 this.affiliation = item.getAttribute("affiliation");
                 this.role = item.getAttribute("role");
-                this.realJID = new JID(item.getAttribute("jid"));
+                this.realJID = item.getAttribute("jid");
+                if (this.realJID)
+                    this.realJID = new JID(this.realJID);
 
                 this._modelUpdatedCheck(oldState);
 
