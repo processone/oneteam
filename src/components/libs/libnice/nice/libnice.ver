@@ -1,0 +1,11 @@
+
+libnice {
+global:
+	nice_*;
+};
+
+HIDDEN {
+local:
+	*;
+};
+

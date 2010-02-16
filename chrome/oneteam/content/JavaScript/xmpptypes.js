@@ -26,6 +26,9 @@ function JID(node, domain, resource)
         if (this._cache[node])
             return this._cache[node];
 
+        if (!node)
+            throw new Error("invalid jid");
+
         var atIdx = node.indexOf("@");
         var slashIdx = ~(~node.indexOf("/", atIdx) || ~node.length);
 

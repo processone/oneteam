@@ -1,0 +1,54 @@
+#include "nsISupports.idl"
+#include "otIPipeline.idl"
+
+[scriptable, uuid(1ade5587-7650-4b2c-8b8f-827b0a3c388f)]
+interface otIAudioDevice : nsISupports
+{
+  readonly attribute AString label;
+  readonly attribute AString persistantLabel;
+
+//  void startLevelMonitoring(in otIAudioLevelMonitoring);
+//  void stopLevelMonitoring(in otIAudioLevelMonitoring);
+};
+
+[scriptable, uuid(50cddb27-a9c1-444e-bf89-49e290c5895a)]
+interface otIAudioInputStream : otISource
+{
+  void record();
+//  void pause();
+//  void unpause();
+};
+
+[scriptable, uuid(768697fd-d27a-437b-b105-d8022915b635)]
+interface otIAudioOutputStream : otITarget
+{
+  void play();
+//  void mute();
+//  void unmute();
+};
+
+[scriptable, uuid(916ae723-2e89-46f1-ad09-b843e94da223)]
+interface otIAudio : nsISupports
+{
+/*  attribute otIAudioDevice inputDevice;
+  attribute otIAudioDevice outputDevice;
+  attribute otIAudioDevice ringingDevice;
+
+  void getInputDevices([array, size_is(count)] out otIAudioDevice devices,
+                       out unsigned long count);
+
+  void getOutputDevices([array, size_is(count)] out otIAudioDevice devices,
+                        out unsigned long count);
+*/
+  void createStreams(in otICodecInfo codecInfo,
+                     in otIBufferedSource buffer,
+                     out otIAudioOutputStream output,
+                     out otIAudioInputStream input);
+};
+
+%{C++
+
+#define OT_AUDIO_CONTRACTID "@process-one.net/audio;1"
+#define OT_AUDIO_CONTRACTID_PREFIX OT_AUDIO_CONTRACTID "?type="
+
+%}

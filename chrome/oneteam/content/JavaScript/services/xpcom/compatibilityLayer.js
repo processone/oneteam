@@ -144,6 +144,8 @@ function openDialog(url, name, flags)
     }
     delete flagsHash.modal;
     flagsHash.resizable = null;
+    flagsHash.toolbar = null;
+    flagsHash.statusbar = null;
 
     flags = "";
     for (i in flagsHash)

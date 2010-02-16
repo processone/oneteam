@@ -10,14 +10,12 @@ include $(ottdir)/config.mk
 
 ifdef OT_HAS_IDLE_UNIX
 	OT_EXTRA_SRCS += \
-		otIdleBase.cpp \
 		otIdleUnix.cpp \
 		$(NULL)
 endif
 
 ifdef OT_HAS_IDLE_WIN
 	OT_EXTRA_SRCS += \
-		otIdleBase.cpp \
 		otIdleWin.cpp \
 		$(NULL)
 endif
@@ -31,6 +29,7 @@ REQUIRES= \
 	$(NULL)
 
 CPPSRCS= \
+	otIdleBase.cpp \
 	$(OT_EXTRA_SRCS) \
 	$(NULL)
 

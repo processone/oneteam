@@ -13,9 +13,14 @@ ifdef OT_HAS_DEBUG
 endif
 
 DIRS = \
-	idle \
-	systray \
+	audio \
 	dns \
+	ice \
+	idle \
+	jnrelay \
+	rtp \
+	speex \
+	systray \
 	$(OT_EXTRA_DIRS) \
 	$(NULL)
 

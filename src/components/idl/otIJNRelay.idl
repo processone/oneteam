@@ -1,0 +1,24 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(13709fd5-f360-4d98-b802-14032122305d)]
+interface otIJNRelayService : nsISupports
+{
+  readonly attribute boolean hasPublicAddress;
+
+  void allocateRelay(out ACString host, out unsigned short porta,
+                     out unsigned short portb);
+};
+
+%{C++
+
+#define OT_JNRELAY_CONTRACTID "@process-one.net/jnrelay;1"
+
+#define OT_JNRELAY_CID \
+{ /* 656720d9-8571-41a5-8add-76da924e366b */ \
+  0x656720d9, \
+  0x8571, \
+  0x41a5, \
+  {0x8a, 0xdd, 0x76, 0xda, 0x91, 0x4e, 0x36, 0x6b } \
+}
+
+%}

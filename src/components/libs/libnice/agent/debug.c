@@ -1,0 +1,98 @@
+/*
+ * This file is part of the Nice GLib ICE library.
+ *
+ * (C) 2008 Collabora Ltd.
+ * (C) 2008 Nokia Corporation. All rights reserved.
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is the Nice GLib ICE library.
+ *
+ * The Initial Developers of the Original Code are Collabora Ltd and Nokia
+ * Corporation. All Rights Reserved.
+ *
+ * Contributors:
+ *   Youness Alaoui, Collabora Ltd.
+ *
+ * Alternatively, the contents of this file may be used under the terms of the
+ * the GNU Lesser General Public License Version 2.1 (the "LGPL"), in which
+ * case the provisions of LGPL are applicable instead of those above. If you
+ * wish to allow use of your version of this file only under the terms of the
+ * LGPL and not to allow others to use your version of this file under the
+ * MPL, indicate your decision by deleting the provisions above and replace
+ * them with the notice and other provisions required by the LGPL. If you do
+ * not delete the provisions above, a recipient may use your version of this
+ * file under either the MPL or the LGPL.
+ */
+
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include "debug.h"
+
+#include "stunagent.h"
+
+
+static int debug_enabled = 0;
+
+#define NICE_DEBUG_STUN 1
+#define NICE_DEBUG_NICE 2
+
+static const GDebugKey keys[] = {
+  { (gchar *)"stun",  NICE_DEBUG_STUN },
+  { (gchar *)"nice",  NICE_DEBUG_NICE },
+  { NULL, 0},
+};
+
+
+void nice_debug_init ()
+{
+  const gchar *flags_string;
+  guint flags;
+
+  flags_string = g_getenv ("NICE_DEBUG");
+
+  nice_debug_disable (TRUE);
+
+  if (flags_string != NULL) {
+    flags = g_parse_debug_string (flags_string, keys,  2);
+
+    if (flags & NICE_DEBUG_NICE)
+      nice_debug_enable (FALSE);
+    if (flags & NICE_DEBUG_STUN)
+      stun_debug_enable ();
+
+  }
+}
+
+void nice_debug_enable (gboolean with_stun)
+{
+  debug_enabled = 1;
+  if (with_stun)
+    stun_debug_enable ();
+}
+void nice_debug_disable (gboolean with_stun)
+{
+  debug_enabled = 0;
+  if (with_stun)
+    stun_debug_disable ();
+}
+
+void nice_debug (const char *fmt, ...)
+{
+  va_list ap;
+  if (debug_enabled) {
+    va_start (ap, fmt);
+    g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, fmt, ap);
+    va_end (ap);
+  }
+}

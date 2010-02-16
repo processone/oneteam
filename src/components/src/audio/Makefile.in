@@ -1,0 +1,54 @@
+DEPTH=../..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+ottdir=@ottdir@
+
+include $(ottdir)/config.mk
+
+NO_DIST_INSTALL=1
+MODULE=oneteam
+LIBRARY_NAME=ot_audio_s
+
+REQUIRES= \
+	nspr \
+	$(OT_EXTRA_REQS) \
+	$(NULL)
+
+ifdef OT_HAS_PULSE_AUDIO
+	OT_EXTRA_SRCS += \
+		otPulseAudio.cpp \
+		otPulseAudioStream.cpp \
+		$(NULL)
+endif
+
+ifdef OT_HAS_MAC_AUDIO
+	OT_EXTRA_SRCS += \
+		otMacAudio.cpp \
+		otMacAudioStream.cpp \
+		$(NULL)
+endif
+
+CPPSRCS= \
+	otAudioFilter.cpp \
+	$(OT_EXTRA_SRCS) \
+	$(NULL)
+
+LOCAL_INCLUDES+= \
+	-I$(otdir)/libs/libspeex/include \
+	-I$(otdir)/src/speex \
+	$(NULL)
+FORCE_STATIC_LIB = 1
+
+ifdef WRAP_SYSTEM_INCLUDES
+export::
+	if test ! -d system_wrappers; then mkdir system_wrappers; fi
+	cat $(srcdir)/system-headers | $(PERL) $(topsrcdir)/nsprpub/config/make-system-wrappers.pl system_wrappers
+
+GARBAGE_DIRS += system_wrappers
+LOCAL_INCLUDES += -I$(otdir)/src/audio/system_wrappers
+endif
+
+include $(ottdir)/rules.mk

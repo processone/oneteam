@@ -1,5 +1,4 @@
-*/Makefile
-*/*/Makefile
+Makefile
 *.o
 *.so
 *.xpt
@@ -7,3 +6,4 @@
 .deps
 *.a
 _xpidlgen
+system_wrappers/

@@ -16,6 +16,12 @@ XPIDLSRCS = \
 	otISystray.idl \
 	otIDNSService.idl \
 	otIDispatcher.idl \
+	otIICE.idl \
+	otIPipeline.idl \
+	otIAudio.idl \
+	otICodec.idl \
+	otIRTP.idl \
+	otIJNRelay.idl \
 	$(OT_EXTRA_SRCS) \
 	$(NULL)
 

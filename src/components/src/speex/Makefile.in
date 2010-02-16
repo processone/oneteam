@@ -1,0 +1,34 @@
+DEPTH=../..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+ottdir=@ottdir@
+
+include $(ottdir)/config.mk
+
+NO_DIST_INSTALL=1
+MODULE=oneteam
+LIBRARY_NAME=ot_speex_s
+
+REQUIRES= \
+	nspr \
+	$(OT_EXTRA_REQS) \
+	$(NULL)
+
+CPPSRCS= \
+	otSpeex.cpp \
+	otSpeexDecoder.cpp \
+	otSpeexEncoder.cpp \
+	otCodecInfo.cpp \
+	$(OT_EXTRA_SRCS) \
+	$(NULL)
+
+LOCAL_INCLUDES+= \
+	-I$(otdir)/libs/libspeex/include \
+	$(NULL)
+
+FORCE_STATIC_LIB = 1
+
+include $(ottdir)/rules.mk

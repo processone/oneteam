@@ -429,6 +429,12 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         this.openChatTab();
     },
 
+    onJingleCall: function(session)
+    {
+        if (this.jingleResource)
+            this.jingleResource.onJingleCall(session);
+    },
+
     createResource: function(jid)
     {
         return new Resource(jid, this);
@@ -518,49 +524,35 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         account.connection.send(iq, callback);
     },
 
-    _onResourceUpdated: function(resource, dontNotifyViews)
+    _onResourceUpdated: function(resource)
     {
-        if (!this.resources.length)
-            return false;
+        var oldActiveResource = this.activeResource;
+        this.activeResource = findMax(this.resourcesIterator());
 
-        var res = this.activeResource;
-
-        if (resource == this.activeResource) {
-            res = this.resources[0];
-
-            for (var r in this.resourcesIterator())
-                if (res.isLt(r))
-                    res = r;
-        } else if (!this.activeResource || this.activeResource.isLt(resource))
-            res = resource;
-
-        if (res != this.activeResource) {
-            this.activeResource = res;
-            if (!dontNotifyViews) {
-                this.modelUpdated("activeResource");
-                this.modelUpdated("presence");
-            }
-            return true;
-        } else if (!dontNotifyViews && resource == this.activeResource)
+        if (oldActiveResource != this.activeResource) {
+            this.modelUpdated("activeResource");
             this.modelUpdated("presence");
-
-        return false;
+        }
     },
 
     _onResourceAdded: function(resource)
     {
         var notifyGroups = !this.activeResource;
+        var oldActiveResource = this.activeResource;
 
         this.recoverResourceThreads(resource);
 
         this.resources.push(resource);
-        if (!this.activeResource || this.activeResource.isLt(resource)) {
+
+        if (!this.activeResource || this.activeResource.isLt(resource))
             this.activeResource = resource;
-            this.modelUpdated("resources", {added: [resource]});
+
+        this.modelUpdated("resources", {added: [resource]});
+        if (oldActiveResource != this.activeResource) {
             this.modelUpdated("activeResource");
             this.modelUpdated("presence");
-        } else
-            this.modelUpdated("resources", {added: [resource]});
+        }
+
         if (notifyGroups && !this._notVisibleInRoster)
             for (var g in this.groupsIterator())
                 g._onContactUpdated(this);
@@ -568,23 +560,48 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     _onResourceRemoved: function(resource)
     {
+        var oldActiveResource = this.activeResource;
+
         this.resources.splice(this.resources.indexOf(resource), 1);
-        if (!this.resources.length) {
+
+        if (this.resources.length == 0)
             this.activeResource = null;
-            this.modelUpdated("resources", {removed: [resource]});
+        else if (this.activeResource == resource)
+            this.activeResource = findMax(this.resourcesIterator());
+
+        this.modelUpdated("resources", {removed: [resource]})
+        if (oldActiveResource != this.activeResource) {
             this.modelUpdated("activeResource");
             this.modelUpdated("presence");
-            if (!this._notVisibleInRoster)
-                for (var g in this.groupsIterator())
-                    g._onContactUpdated(this);
-            return;
         }
-        if (this.activeResource == resource && this._onResourceUpdated(resource, true)) {
-            this.modelUpdated("resources", {removed: [resource]})
-            this.modelUpdated("activeResource");
-            this.modelUpdated("presence");
+
+        if (this.resources.length == 0 && !this._notVisibleInRoster)
+            for (var g in this.groupsIterator())
+                g._onContactUpdated(this);
+
+        if (resource == this.jingleResource) {
+            this.jingleResource = this.resources.length == 0 ? null :
+                findMax(this.resourcesIterator(function(r){
+                    return r.jingleResource;
+                }));
+
+            this.modelUpdated("jingleResource");
+        }
+    },
+
+    _onResourceFeaturesChanged: function(resource) {
+        var oldJingleResource = this.jingleResource;
+
+        if (this.jingleResource == resource) {
+            this.jingleResource = findMax(this.resourcesIterator(
+                function(r){return r.jingleResource}));
         } else
-            this.modelUpdated("resources", {removed: [resource]});
+            if (resource.jingleResource &&
+                (!this.jingleResource || this.jingleResource.isLt(resource)))
+                this.jingleResource = resource;
+
+        if (oldJingleResource != this.jingleResource)
+            this.modelUpdated("jingleResource");
     },
 
     PROP_VIEWS: {
@@ -700,16 +717,15 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
             this.onAvatarChange(avatarHash && avatarHash.textContent);
 
-            var caps = packet.getNode().
-                getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
-            if (caps)
-                this.updateCapsInfo(caps);
-
             if (!this._registered)
                 this.contact._onResourceAdded(this);
             else
                 this.contact._onResourceUpdated(this);
 
+            var caps = packet.getNode().
+                getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
+            if (caps)
+                this.updateCapsInfo(caps);
         }
 
         if (!dontNotifyViews && !equal)
@@ -730,6 +746,24 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     onAvatarChange: function(avatarHash)
     {
         this.contact.onAvatarChange(avatarHash);
+    },
+
+    _onDiscoInfoUpdated: function()
+    {
+        dump("ODIU: "+this.jid+"\n");
+        var features = this.getDiscoFeatures(), notify = false;
+        var jingleResource = features && features["urn:xmpp:jingle:1"] &&
+            features["urn:xmpp:jingle:transports:ice-udp:1"] &&
+            features["urn:xmpp:jingle:apps:rtp:1"] &&
+            features["urn:xmpp:jingle:apps:rtp:audio"] ? this : null;
+
+        if (this.jingleResource != jingleResource)
+            notify = true;
+
+        this.jingleResource = jingleResource;
+
+        if (notify)
+            this.contact._onResourceFeaturesChanged(this);
     },
 
     _remove: function()
@@ -767,6 +801,12 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     onShowHistory: function()
     {
         account.showHistoryManager(this.contact);
+    },
+
+    onJingleCall: function(session)
+    {
+        openDialogUniq("ot:jinglCall", "chrome://oneteam/content/jingleCall.xul",
+                       "chrome,dialog", this, session);
     },
 
     createCompletionEngine: function()

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
+
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
+<window id="jingleCall" windowtype="ot:jingleCall" title="_('Jingle Call')"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  width="400" height="450" onload="onLoad()" onunload="onUnload()">
+
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
+  <script type="text/javascript;version=1.7"><![CDATA[
+    ML.importMod("model/account.js");
+
+    var resource = window.arguments[0];
+    var session = window.arguments[1];
+    var acceptButton, rejectButton, endButton, stateLabel;
+    var token;
+
+    function onLoad() {
+      stateLabel = document.getElementById("state");
+      acceptButton = document.getElementById("accept");
+      rejectButton = document.getElementById("reject");
+      endButton = document.getElementById("end");
+
+      if (!session) {
+        session = jingleService.createSession(resource.jid);
+        acceptButton.hidden = rejectButton.hidden = true;
+      } else
+        endButton.hidden = true;
+
+      updateStateLabel();
+      token = session.registerView(updateStateLabel, null, "state");
+    }
+
+    function onUnload() {
+      if (token)
+        token.unregisterFromAll();
+      if (session)
+        session.terminateSession();
+    }
+
+    function updateStateLabel() {
+      stateLabel.textContent = session.state == "terminated" ?
+        "Terminated: "+uneval(session.terminateReason) : session.state;
+
+      if (session.state == "terminated")
+        acceptButton.hidden = rejectButton.hidden = endButton.hidden = true;
+      else if (session.state == "needAccept")
+        acceptButton.hidden = rejectButton.hidden = !(endButton.hidden = true);
+      else
+        acceptButton.hidden = rejectButton.hidden = !(endButton.hidden = false);
+    }
+
+    function acceptCall() {
+      session.acceptSession();
+    }
+
+    function rejectCall() {
+      session.terminateSession("deny");
+    }
+
+    function endCall() {
+      session.terminateSession();
+    }
+  ]]></script>
+
+  <group id="macMenu"/>
+
+  <toolbox id="mainToolbox">
+    <menubar id="macMenuBar"/>
+  </toolbox>
+
+  <vbox flex="1">
+    <description id="state"/>
+    <spacer flex="1"/>
+    <hbox pack="center">
+      <button id="accept" label="_('Accept Call')" oncommand="acceptCall()"/>
+      <button id="reject" label="_('Reject Call')" oncommand="rejectCall()"/>
+      <button id="end" label="_('End Call')" oncommand="endCall()"/>
+    </hbox>
+  </vbox>
+
+</window>

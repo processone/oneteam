@@ -1325,6 +1325,8 @@
                          tooltiptext="_('Show vCard')"/>
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
                          tooltiptext="_('Send file')"/>
+      <xul:toolbarbutton id="jingleCall" oncommand="this.parentNode._model.onJingleCall()"
+                         tooltiptext="_('Jingle call')"/>
       <xul:toolbarbutton id="extraCmds" tooltiptext="_('Additional commands')" type="menu">
         <xul:menupopup onpopupshowing="this.parentNode.parentNode._syncMenu()">
           <xul:menuitem label="_('Invite to group chat room')"
@@ -1364,8 +1366,19 @@
           else
             this.showCounter = false;
 
+          if (this._token)
+            this._token.unregisterFromAll()
+          this._token = null;
+
+          if (val)
+            this._token = val.registerView(this._updateJingleState, this,
+                                           "jingleResource", this._token);
+
+          this._updateJingleState();
+
           this._sendFile.hidden = !val || typeof(socks5Service) == "undefined" ||
             !socks5Service.canSendTo(val.contact ? val : val.activeResource);
+
           this._syncMenu();
         ]]></setter>
       </property>
@@ -1391,10 +1404,17 @@
 
       <constructor><![CDATA[
         this._sendFile = document.getAnonymousElementByAttribute(this, "id", "sendFile");
+        this._jingleCall = document.getAnonymousElementByAttribute(this, "id", "jingleCall");
         this._extraCmds = document.getAnonymousElementByAttribute(this, "id", "extraCmds");
 
         recoverSetters(this);
       ]]></constructor>
+
+      <method name="_updateJingleState">
+        <body><![CDATA[
+          this._jingleCall.hidden = !this.model || !this.model.jingleResource;
+        ]]></body>
+      </method>
 
       <method name="_syncMenu">
         <body><![CDATA[

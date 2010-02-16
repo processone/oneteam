@@ -1,0 +1,29 @@
+#include "nsISupports.idl"
+#include "otICodec.idl"
+
+[ptr] native rawdata(const char);
+
+interface otISource;
+interface otICodecInfo;
+
+[scriptable, uuid(887cf0d8-ce1b-435b-ac6d-9a1107dc1d82)]
+interface otITarget: nsISupports
+{
+  [noscript] void acceptData(in rawdata data, in long length);
+  void sourceSet(in otISource source);
+};
+
+[scriptable, uuid(119d3963-4eda-4ea1-b8c5-7f8c45be005b)]
+interface otISource: nsISupports
+{
+  readonly attribute otICodecInfo codecInfo;
+
+  void setTarget(in otITarget target);
+};
+
+[scriptable, uuid(1ed7fa39-35d9-4a4c-b382-e4fb42021055)]
+interface otIBufferedSource: otISource
+{
+  void deliverData(in short requiredFrames, in short maxFrames);
+  void bufferManagerSet(in otITarget target);
+};

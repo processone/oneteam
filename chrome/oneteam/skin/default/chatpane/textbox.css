@@ -59,6 +59,10 @@ toolbar[type="chatpane-commands"] {
     list-style-image: url(imgs/send-file.png);
 }
 
+#jingleCall {
+    list-style-image: url(imgs/call.png);
+}
+
 #sendFile[disabled=true] {
     list-style-image: url(imgs/send-file-disabled.png);
 }

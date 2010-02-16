@@ -1,0 +1,25 @@
+#include "nsISupports.idl"
+#include "otIPipeline.idl"
+#include "otICodec.idl"
+
+[scriptable, uuid(2567c50a-8155-47cb-a8b5-55b4a84fe353)]
+interface otIRTPService : nsISupports
+{
+  otISource createEncoder();
+  otIBufferedSource createDecoder([array, size_is(count)] in otICodecInfo medias,
+                                  in unsigned long count);
+};
+
+%{C++
+
+#define OT_RTP_CONTRACTID "@process-one.net/rtp;1"
+
+#define OT_RTP_CID \
+{ /* 879a9a83-8d35-4ab0-9932-2a08118e6c6c */ \
+  0x879a9a83, \
+  0x8d35, \
+  0x4ab0, \
+  {0x99, 0x32, 0x2a, 0x08, 0x11, 0x8e, 0x6c, 0x6c } \
+}
+
+%}

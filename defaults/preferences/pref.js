@@ -38,6 +38,8 @@ pref("chat.status.autoaway.time",5);
 pref("chat.status.autoxa", true);
 pref("chat.status.autoxa.time",10);
 
+pref("oneteam.onlyJingleNodes", false);
+
 // #ifdef DEBUG
 pref("nglayout.debug.disable_xul_cache", true);
 pref("nglayout.debug.disable_xul_fastload", true);

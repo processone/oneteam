@@ -1,0 +1,105 @@
+libnice 0.0.10 (2009-11-04)
+===========================
+
+Fix some memory leaks with the gstreamer elements
+Fix username/foundation for google TURN candidates
+Fix the sending of hundreds of connectivity checks at once the stream is connected
+Fix BSD support
+Fix reprocessing of already processed early incoming checks when in dribble-mode
+Fix a rare crash with failing relay candidates allocations
+Add a stun_agent_set_software API
+Add a nice_agent_set_software API
+
+libnice 0.0.9 (2009-07-31)
+===========================
+
+Fix some more issues with peer-reflexive candidates in google mode (for early incoming checks)
+Fix SHA1 algorithm when strict aliasing is used
+Fix google mode connectivity with discovered remote peer reflexive candidates
+Fix google/msn mode by not limiting the conncheck list
+Fix the interfaces discovery by using getifaddrs
+Fix compilation on Mac OS X
+Add ToS support to the sockets
+
+
+libnice 0.0.8 (2009-06-19)
+===========================
+
+Remove deprecated g_strcasecmp call
+Use addr instead of base_addr on assigning remote peer-reflexive candidates (fixes crash)
+Use a global mutex and g_source_is_destroyed to avoid race conditions (fixes crashes)
+Unlock the mutex before calling the recv callback
+
+libnice 0.0.7 (2009-06-11)
+===========================
+
+Added UPnP Support
+Fix a race condition when destroying the nice agent
+Stun headers are now installed
+Unset timer's source if they return FALSE
+Fix interoperability with gtalk2voip.com
+Avoid a race condition where a candidate has the wrong user/pass
+Add support for delayed setting of the remote candidates in google mode
+Better connectivity support and race condition fixes
+Keepalive connchecks do not change the state if they fail but data was still received
+Fix foundation generation for remote peer reflexive candidates
+Drop packets when using TCP and the bandwidth is too slow for the data output
+
+
+libnice 0.0.6 (2009-03-31)
+===========================
+
+Fix connectivity checks for detecting when we loose the connection
+Fix a race condition with gtalk that made the call silent after 30 seconds
+Robustness checks with regards to relay information
+Fix a race condition crash with retransmission ticks
+Added a new STUN API : stun_agent_forget_transaction
+Fix a possible crash if tcp-turn is shutdown early in the process
+Fix a crash when a stream is removed
+Fix MSN support by disable keepalive connchecks
+
+
+libnice 0.0.5 (2009-03-04)
+===========================
+
+Name change from nice to libnice
+Added support for HTTP proxies
+Added a nice_interfaces API to query the local interfaces/ips
+Fixed libnice when used in dribble mode
+Fix a data corruption issue with the SHA1 algorithm
+Endianness gets checked at runtime so libnice should compile and work everywhere
+Add compatiblity for WLM2009 ICE
+Export libstun API and add documentation for libstun
+Add connectivity checks during the connection to detect when the peer gets disconnected
+Bug fixes and code cleaning
+
+
+nice 0.0.4 (2008-12-17)
+========================
+
+Fix compilation for 64bits systems
+Revert the use of netbuffer in the gstreamer elements
+Added support for pseudossl-tcp TURN relay for Google
+Added support for SOCKS5 proxy servers for TCP relaying
+Bug fixes and code cleaning
+
+nice 0.0.3 (2008-11-25)
+========================
+
+Stable google talk support
+Added TCP TURN relay support for google.
+Removed openssl dependency.
+
+nice 0.0.2 (2008-11-12)
+========================
+
+Better support for google talk compatibility mode as well as UDP TURN relay compatibility for Google. 
+Removed -Werror compile flag for releases
+
+nice 0.0.1 (2008-11-05)
+========================
+
+Initial release of libnice.
+It has compatibility support for the latest ICE draft 19, as well as google talk and MSN compatibility.
+It also has support for TURN relays using TURN draft 9 if you're in ICE draft 19 compatibility, or specific Google/MSN relay support if you're in Google/MSN compatibility mode.
+The library is multiplatform and should compile fine on Linux, Mac and Windows systems.

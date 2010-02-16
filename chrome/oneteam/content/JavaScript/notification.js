@@ -100,6 +100,11 @@ _DECL_(NotificationScheme).prototype =
                                    _("New message from <b>{0}</b>", xmlEscape(extra.visibleName)) :
                                    _("Message from <b>{0}</b>", xmlEscape(extra.visibleName)),
                                    text, "chrome://oneteam/skin/main/imgs/msgicon.png", extra2);
+        } else if (kind == "jingleCall") {
+            return this._showAlert(_("Call request received"),
+                                   _xml("User <b>{0}</b> want to initiate call with you",
+                                        model.visibleName),
+                                   "chrome://oneteam/skin/main/imgs/callicon.png", extra);
         } else if (kind == "filetransfer") {
             if (type == "request")
                 return this._showAlert(_("File transfer request"),

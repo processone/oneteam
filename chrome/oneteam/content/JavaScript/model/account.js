@@ -25,6 +25,8 @@ ML.importMod("services/rosterx.js");
 ML.importMod("services/remoteDebug.js");
 ML.importMod("services/invitations.js");
 ML.importMod("services/pep.js");
+ML.importMod("services/jingle.js");
+ML.importMod("services/jinglenodes.js");
 ML.importMod("socks5.js");
 ML.importMod("filetransfer.js");
 
@@ -646,6 +648,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.modelUpdated("connected");
             return;
         }
+
+        jingleService.discoverStun(true);
+        jingleNodesService.maybeEnableRelaying()
+
         this._getSavedPresence();
         this.presenceProfiles.loadFromServer(new Callback(this._gotPresenceProfiles, this));
 
@@ -668,9 +674,13 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                      });
 // #ifdef XULAPP
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
-                                     function(account, items, item) {
-                                        socks5Service.registerProxy(item._discoCacheEntry.jid);
-                                     });
+            function(account, items, item) {
+               socks5Service.registerProxy(item._discoCacheEntry.jid);
+            });
+        this.getDiscoItemsByCategory("proxy", "relay", false,
+            function(account, items, item) {
+               jingleNodesService.askForServices(item._discoCacheEntry.jid);
+            });
 /* #else
         this.getDiscoItemsByFeature("http://oneteam.im/bs-proxy", false,
                                      function(account, items, item) {

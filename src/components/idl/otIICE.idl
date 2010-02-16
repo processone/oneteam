@@ -1,0 +1,74 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(a29b1b15-828e-4178-9411-fbdc8d1a83cc)]
+interface otIICECandidate: nsISupports
+{
+  const short TYPE_HOST = 0;
+  const short TYPE_SRFLX = 1;
+  const short TYPE_PRFLX = 2;
+  const short TYPE_RELAY = 3;
+
+  readonly attribute unsigned long component;
+  readonly attribute ACString foundation;
+  readonly attribute ACString ip;
+  readonly attribute unsigned long port;
+  readonly attribute ACString relIp;
+  readonly attribute unsigned long relPort;
+  readonly attribute unsigned long priority;
+  readonly attribute ACString ufrag;
+  readonly attribute ACString pwd;
+  readonly attribute short type;
+};
+
+[scriptable, uuid(bd0e29cb-f335-4238-8a55-0dfcca81807e)]
+interface otIICESessionCallbacks : nsISupports
+{
+  void onConnectionFail();
+  void onCandidatesGatheringDone();
+  void onCandidateSelected();
+  void onNewCandidateDiscovered(in otIICECandidate candidate);
+};
+
+[scriptable, uuid(d2607449-9187-42a5-b829-13308d1d2782)]
+interface otIICESession : nsISupports
+{
+  readonly attribute ACString ufrag;
+  readonly attribute ACString pwd;
+
+  void addJNRelay(in ACString relayAddr, in unsigned short relayLocalPort,
+                  in unsigned short relayRemotePort);
+  void gatherCandidates();
+
+  void setRemoteCredentials(in ACString ufrag, in ACString pwd);
+  void setRemoteCandidates([array, size_is(count)] in otIICECandidate candidates,
+                           in unsigned long count);
+  void getCandidates([array, size_is(count)] out otIICECandidate candidates,
+                      out unsigned long count);
+};
+
+[scriptable, uuid(29c01307-c58f-4959-8908-11b7f198e20e)]
+interface otIICEService : nsISupports
+{
+  const short MODE_DRAFT19 = 0;
+  const short MODE_GOOGLE = 1;
+
+  void setStunServer(in ACString ip, in unsigned long port, in ACString username,
+                     in ACString password);
+
+  otIICESession createSession(in short mode, in boolean initiator,
+                              in otIICESessionCallbacks callbacks);
+};
+
+%{C++
+
+#define OT_ICE_CONTRACTID "@process-one.net/ice;1"
+
+#define OT_ICE_CID \
+{ /* e4cd6072-f562-43d5-8a9c-474af14f6cf9 */ \
+  0xe4cd6072, \
+  0xf562, \
+  0x43d6, \
+  {0x8a, 0x9c, 0x47, 0x4a, 0xf1, 0x4f, 0x6c, 0xf9 } \
+}
+
+%}

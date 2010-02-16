@@ -1,0 +1,36 @@
+DEPTH=../..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+ottdir=@ottdir@
+
+include $(ottdir)/config.mk
+
+NO_DIST_INSTALL=1
+MODULE=oneteam
+LIBRARY_NAME=ot_rtp_s
+
+REQUIRES= \
+	nspr \
+	$(OT_EXTRA_REQS) \
+	$(NULL)
+
+CPPSRCS= \
+	otRTP.cpp \
+	otRTPDecoder.cpp \
+	otRTPEncoder.cpp \
+	$(OT_EXTRA_SRCS) \
+	$(NULL)
+
+LOCAL_INCLUDES+= \
+	-I$(otdir)/libs/libsrtp/include \
+	-I$(otdir)/libs/libsrtp/crypto/include \
+	-I$(otdir)/libs/libspeex/include \
+	-I$(otdir)/src/speex \
+	$(NULL)
+
+FORCE_STATIC_LIB = 1
+
+include $(ottdir)/rules.mk

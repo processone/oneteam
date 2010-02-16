@@ -1,0 +1,36 @@
+DEPTH=../../../../..
+topsrcdir=@top_srcdir@
+objdir=@objdir@
+srcdir=.
+VPATH=.
+otdir=@otdir@
+ottdir=@ottdir@
+
+include $(ottdir)/config.mk
+
+NO_DIST_INSTALL=1
+MODULE=oneteam
+LIBRARY_NAME=ot_jnrelay_s
+REQUIRES= \
+	xpcom \
+	necko \
+	$(OT_EXTRA_REQS) \
+	$(NULL)
+
+CPPSRCS= \
+	otJNRelay.cpp \
+	$(OT_EXTRA_SRCS) \
+	$(NULL)
+
+FORCE_STATIC_LIB = 1
+
+include $(ottdir)/rules.mk
+
+INCLUDES+= \
+	-I$(otdir)/src/jnrelay \
+	-I$(otdir)/libs/libnice/nice \
+	-I$(otdir)/libs/libnice/agent \
+	-I$(otdir)/libs/libnice/socket \
+	-I$(otdir)/libs/libnice/stun \
+	$(shell pkg-config --cflags glib-2.0) \
+	$(NULL)

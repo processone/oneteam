@@ -37,6 +37,11 @@ LOCAL_INCLUDES = \
 	-I$(otdir)/src/idle \
 	-I$(otdir)/src/systray \
 	-I$(otdir)/src/dns \
+	-I$(otdir)/src/ice \
+	-I$(otdir)/src/audio \
+	-I$(otdir)/src/rtp \
+	-I$(otdir)/src/speex \
+	-I$(otdir)/src/jnrelay \
 	$(NULL)
 
 SHARED_LIBRARY_LIBS += \
@@ -45,15 +50,16 @@ SHARED_LIBRARY_LIBS += \
 
 OS_LIBS += $(OT_EXTRA_SHARED_OS_LIBS)
 
-ifdef GNU_LD
+ifdef GNU_LD2
 	EXTRA_DSO_LDOPTS += \
-	    -x --gc-sections --no-undefined -Wl,--as-needed \
+	    -Wl,--as-needed -Wl,--gc-sections -Wl,--no-undefined \
 	    $(NULL)
 endif
 
 EXTRA_DSO_LDOPTS += \
 	$(XPCOM_GLUE_LDOPTS) \
 	$(XPCOM_FROZEN_LDOPTS) \
+	$(OT_LDOPTS) \
 	$(LIBS_DIR) \
 	$(EXTRA_DSO_LIBS) \
 	$(MOZ_COMPONENT_LIBS) \
