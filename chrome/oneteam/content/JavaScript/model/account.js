@@ -107,35 +107,20 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     groupsIterator: function(predicate, token, sortFun)
     {
-        var groups = this.groups;
-        if (sortFun)
-            groups = [].concat(groups).sort(sortFun);
-
-        for (var i = 0; i < groups.length; i++)
-            if (!predicate || predicate(groups[i], token))
-                yield (groups[i]);
+        for (var x in iteratorEx(this.groups, sortFun, predicate, token))
+            yield x;
     },
 
     contactsIterator: function(predicate, token, sortFun)
     {
-        var contacts = [c for each (c in this.contacts)]
-        if (sortFun)
-            contacts = [].concat(contacts).sort(sortFun);
-
-        for (var i = 0; i < contacts.length; i++)
-            if (!predicate || predicate(contacts[i], token))
-                yield (contacts[i]);
+        for (var x in iteratorEx(this.contacts, sortFun, predicate, token))
+            yield x;
     },
 
     resourcesIterator: function(predicate, token, sortFun)
     {
-        var resources = [r for each (r in this.resources)]
-        if (sortFun)
-            resources = [].concat(resources).sort(sortFun);
-
-        for (var i = 0; i < resources.length; i++)
-            if (!predicate || predicate(resources[i], token))
-                yield (resources[i]);
+        for (var x in iteratorEx(this.resources, sortFun, predicate, token))
+            yield x;
     },
 
     _onGroupAdded: function(group)

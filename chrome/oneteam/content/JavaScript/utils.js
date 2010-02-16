@@ -5,7 +5,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "Comparator", "NotificationsCanceler", "xmlEscape",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
                         "recoverSetters", "perlSplit", "evalInWindow",
-                        "enumerateMatchingProps", "report", "Animator"];
+                        "enumerateMatchingProps", "report", "Animator",
+                        "iteratorEx", "findMax"];
 
 ML.importMod("roles.js");
 
@@ -685,6 +686,36 @@ function perlSplit(str, split, limit) {
         res.push(str.substring(idx));
     }
     return res;
+}
+
+function iteratorEx(container, sortFun, predicateFun, token) {
+    var containerIsArray = container instanceof Array;
+    if (sortFun || containerIsArray) {
+        var array = containerIsArray ?
+            (predicateFun ? container.filter(predicateFun) : container) :
+            [x for each (x in container) if (!predicateFun || predicateFun(x, token))];
+
+        if (sortFun)
+            array = typeof(sortFun) == "function" ? array.sort(sortFun) : array.sort();
+
+        for (var i = 0; i < array.length; i++)
+            yield array[i];
+    } else {
+        for each (var i in container)
+            if (!predicateFun || predicateFun(i, token))
+                yield i;
+    }
+}
+
+function findMax(iterator, sortFun, predicateFun) {
+    var max;
+    for (var i in iterator) {
+        if (predicateFun && !predicateFun())
+            continue;
+        if (!max || (sortFun ? sortFun(i, max) : i.isLt ? max.isLt(i) : i > max))
+            max = i;
+    }
+    return max;
 }
 
 function evalInWindow(expr, win, scope) {
