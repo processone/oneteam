@@ -136,11 +136,13 @@ _DECL_(ServicesManager).prototype =
 
     appendCapsToPresence: function(node)
     {
-        var identities = [i.category+"/"+(i.type||"")+"//"+(i.name||"")+">"
+        var identities = [i.category+"/"+(i.type||"")+"//"+(i.name||"")
                           for each (i in this._identities[""]||[])];
-        var features = [n+">" for each (n in this._nodes[""]||[])];
 
-        this._capsHash = b64_sha1(identities.sort().join("")+features.sort().join(""));
+        var str = identities.sort().join("<")+"<"+
+            (this._nodes[""]||[]).sort().join("<")+"<";
+
+        this._capsHash = b64_sha1(str);
 
         var capsNode = node.ownerDocument.
             createElementNS("http://jabber.org/protocol/caps", "c");
