@@ -14,7 +14,7 @@ sub new {
     my ($class, $topdir, $version, $buildid, $updateURL) = @_;
     my $self = {
         topdir => $topdir,
-        outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 0),
+        outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
         version => $version,
         buildid => $buildid,
         updateURL => $updateURL,
@@ -42,7 +42,7 @@ sub path_convert {
 sub finalize {
     my $self = shift;
 
-    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 0);
+    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
     my $tmppfxdir = $self->_prefix ? catdir($tmpdir, $self->_prefix) : $tmpdir;
     my $chromedir = catdir($tmppfxdir, "chrome");
 
