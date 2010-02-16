@@ -14,6 +14,9 @@ function PersistentCache(name)
     fileCacheDir.append(name+"Files");
     this.fileCacheDir = new File(fileCacheDir);
 
+    if (!this.fileCacheDir.exists)
+        this.fileCacheDir.createDirectory();
+
     var ioService = Components.classes["@mozilla.org/network/io-service;1"].
         getService(Components.interfaces.nsIIOService);
     var resProt = ioService.getProtocolHandler("resource").
@@ -94,9 +97,6 @@ _DECL_(PersistentCache).prototype =
     setValue: function(key, value, expiryDate, storeAsFile)
     {
         if (storeAsFile) {
-            if (!this.fileCacheDir.exists)
-                this.fileCacheDir.createDirectory();
-
             var file;
 
             do {
