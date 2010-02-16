@@ -94,6 +94,11 @@ _DECL_(ContainerView).prototype =
                 this.containerNode.removeChild(this.items[i]);
             else
                 this.items[i].destroy();
+    },
+
+    itemsIterator: function(predicate, token, sortFun) {
+        for (var x in iteratorEx(this.items||[], sortFun, predicate, token))
+            yield x;
     }
 }
 
