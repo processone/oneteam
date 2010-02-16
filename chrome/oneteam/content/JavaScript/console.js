@@ -13,7 +13,7 @@ var handlers =
             var div = console.contentDocument.createElement("div");
             div.setAttribute("class", "message recv");
 
-            msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
+            //msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
             div.innerHTML = msg;
             console.contentDocument.body.appendChild(div);
             console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
@@ -27,7 +27,7 @@ var handlers =
             var div = console.contentDocument.createElement("div");
             div.setAttribute("class", "message send");
 
-            msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
+            //msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");
             div.innerHTML = msg;
             console.contentDocument.body.appendChild(div);
             console.contentWindow.scrollTo(0, console.contentWindow.scrollMaxY+200);
@@ -138,22 +138,26 @@ function clearConsole(){
     console.contentDocument.body.innerHTML = "";
 }
 
-function prettyPrintDOM(dom)
+function prettyPrintDOM(dom, indent)
 {
+    indent = indent || "";
+    var indentEl = "<span class='to-copy-paste'>"+indent+"</span>";
+
     if (dom.nodeType == dom.ELEMENT_NODE) {
         var ret, i;
 
         if (dom.stanzaType == 2)
-            return "<span class='tag'><span class='tag-end'>&lt;/<span class='tag-name'>"+
-		dom.nodeName+"</span>&gt;</span></span>";
+            return "<div class='tag'><div class='tag-end'>"+indentEl+"&lt;/<span class='tag-name'>"+
+		dom.nodeName+"</span>&gt;</div></div>";
 
-        ret = "<span class='tag'><span class='tag-start'>&lt;<span class='tag-name'>"+
+        ret = "<div class='tag'><div class='tag-start'>"+indentEl+"&lt;<span class='tag-name'>"+
     	    dom.nodeName+"</span>";
 
         var i = dom.prefix ? "xmlns:"+dom.prefix : "xmlns";
-        if (!dom.hasAttribute(i) && (!dom.parentNode || dom.prefix != dom.parentNode.prefix ||
-                                     dom.namespaceURI != dom.parentNode.namespaceURI) &&
-             dom.namespaceURI)
+        if (!dom.hasAttribute(i) &&
+            (dom.prefix || (dom.namespaceURI && dom.parentNode && dom.parentNode.nodeType != 9 &&
+                            (dom.prefix != dom.parentNode.prefix ||
+                             dom.namespaceURI != dom.parentNode.namespaceURI))))
             ret += " <span class='attrib-name'>"+ i +
                 "</span>=<span class='attrib-value'>'" +
                 encodeEntity(dom.namespaceURI) +
@@ -167,26 +171,26 @@ function prettyPrintDOM(dom)
         }
 
         if (dom.hasChildNodes()) {
-            ret += "&gt;</span>";
+            ret += "&gt;</div>";
 
             for (i = 0; i < dom.childNodes.length; i++)
-                ret += prettyPrintDOM(dom.childNodes[i]);
+                ret += prettyPrintDOM(dom.childNodes[i], indent+"&nbsp; &nbsp; ");
 
             if (dom.stanzaType != 1)
-                ret += "<span class='tag-end'>&lt;/<span class='tag-name'>"+
-        		    dom.nodeName+"</span>&gt;</span></span>";
+                ret += "<div class='tag-end'>"+indentEl+"&lt;/<span class='tag-name'>"+
+        		    dom.nodeName+"</span>&gt;</div></div>";
         } else if (dom.stanzaType == 1)
-            ret += "&gt;</span></span>";
+            ret += "&gt;</div></div>";
         else
-            ret += "/&gt;</span></span>";
+            ret += "/&gt;</div></div>";
         return ret;
     } else if (dom.nodeType == dom.DOCUMENT_NODE) {
         ret = "";
         for (i = 0; i < dom.childNodes.length; i++)
-            ret += prettyPrintDOM(dom.childNodes[i]);
+            ret += prettyPrintDOM(dom.childNodes[i], indent+"&nbsp; &nbsp; ");
         return ret;
     } else
-        return "<span class='text'>"+encodeEntity(dom.nodeValue)+"</span>";
+        return "<div class='text'>"+indentEl+encodeEntity(dom.nodeValue)+"</div>";
 }
 
 function encodeEntity(string)
