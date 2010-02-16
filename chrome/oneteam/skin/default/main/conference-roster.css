@@ -28,7 +28,7 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
 }
 
 .conferencemember-view > avatar {
-  -moz-box-pack: 0;
+  -moz-box-flex: 0;
   width: 24px;
 }
 
