@@ -3,6 +3,8 @@ Makefile
 *.so
 *.xpt
 *.dll
+*.dylib
+__.SYMDEF SORTED
 .deps
 *.a
 _xpidlgen
