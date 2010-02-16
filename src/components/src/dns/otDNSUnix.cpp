@@ -4,6 +4,10 @@
 #include "nsIObserverService.h"
 #include "nsServiceManagerUtils.h"
 #include "nsComponentManagerUtils.h"
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/nameser.h>
+#include <arpa/nameser_compat.h>
 #include <resolv.h>
 
 struct ResolvRunnable : public nsIRunnable {
@@ -35,7 +39,8 @@ struct ResolvRunnable : public nsIRunnable {
     SRVRecord srv;
     char name[256];
 
-    int answerSize = res_query(mHost.get(), C_IN, T_SRV, (u_char*)&answer, sizeof(answer));
+    int answerSize = res_query(mHost.get(), C_IN, T_SRV, (u_char*)&answer,
+                               sizeof(answer));
 
     if (answerSize < sizeof(answer.hdr) || answerSize > sizeof(answer)) {
       mRecord->Deliver(NS_ERROR_NOT_AVAILABLE);
@@ -53,7 +58,8 @@ struct ResolvRunnable : public nsIRunnable {
     int pos = 0;
     int count = ntohs(answer.hdr.qdcount);
     while (--count >= 0 && answerSize >= 0) {
-      int size = dn_expand((u_char*)&answer, end, (u_char*)answer.data+pos, name, sizeof(name)-1);
+      int size = dn_expand((u_char*)&answer, end, (u_char*)answer.data+pos,
+                           name, sizeof(name)-1);
       if (size <= 0) {
         mRecord->Deliver(NS_ERROR_NOT_AVAILABLE);
         return NS_OK;
@@ -63,26 +69,30 @@ struct ResolvRunnable : public nsIRunnable {
 
     count = ntohs(answer.hdr.ancount);
     while (--count >= 0 && answerSize >= 0) {
-      int size = dn_expand((u_char*)&answer, end, (u_char*)answer.data+pos, name, sizeof(name)-1);
+      int size = dn_expand((u_char*)&answer, end, (u_char*)answer.data+pos,
+                           name, sizeof(name)-1);
       pos += size;
 
       srvRecord = (struct srv_record_t*)((char*)&answer.data+pos);
-      size = dn_expand((u_char*)&answer, end, (u_char*)srvRecord->host, name, sizeof(name)-1);
+      size = dn_expand((u_char*)&answer, end, (u_char*)srvRecord->host, name,
+                       sizeof(name)-1);
 
-      srv.host = name;
-      srv.port = ntohs(srvRecord->port);
-      srv.priority = ntohs(srvRecord->priority);
-      srv.weight = ntohs(srvRecord->weight);
+      if (ntohs(srvRecord->type) == T_SRV) {
+        srv.host = name;
+        srv.port = ntohs(srvRecord->port);
+        srv.priority = ntohs(srvRecord->priority);
+        srv.weight = ntohs(srvRecord->weight);
 
-      mRecord->AddSRVRecord(&srv);
-      pos += size + sizeof(*srvRecord);
+        mRecord->AddSRVRecord(&srv);
+      }
+      pos += size + RRFIXEDSZ;
     }
     mRecord->Deliver(NS_OK);
     return NS_OK;
   }
 };
 
-NS_IMPL_ISUPPORTS1(ResolvRunnable, nsIRunnable);
+NS_IMPL_THREADSAFE_ISUPPORTS1(ResolvRunnable, nsIRunnable);
 NS_IMPL_ISUPPORTS2(otDNSUnix, otIDNSService, nsIObserver);
 
 otDNSUnix::otDNSUnix()
