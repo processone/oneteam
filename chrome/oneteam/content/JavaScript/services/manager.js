@@ -309,6 +309,42 @@ _DECL_(ServicesManager).prototype =
         this._sendResponse(response, null, callback);
     },
 
+    sendIq: function(struct, callback, timeout, deliverRealResultAfterTimeout)
+    {
+        if (timeout) {
+            var state = { aborted: false };
+            var origCallback = callback;
+
+            callback = new Callback(function(pkt, queryE4X, query, cb, deliver, state, abort) {
+                if (abort) {
+                    var iq = new JSJaCIQ();
+                    iq.setIQ(account.myResource.jid, "error");
+                    state.timeout = null;
+                    state.aborted = true;
+                    cb(iq);
+                } else {
+                    if (state.timeout)
+                        clearTimeout(state.timeout)
+                    state.timeout = null;
+
+                    if (!state.aborted || deliver)
+                        cb(pkt, queryE4X, query);
+                }
+            }).addArgs(callback, deliverRealResultAfterTimeout, state);
+
+            state.timeout = setTimeout(callback, timeout, null, null, null,
+                                       origCallback, state, true);
+        }
+        this._sendResponse(struct, {
+            getFrom: function() {
+                throw new Error("No 'to' in struct");
+            },
+            getID: function() {
+                return null;
+            }
+        }, callback);
+    },
+
     _sendResponse: function(response, packet, callback)
     {
         if (!response)
@@ -322,8 +358,9 @@ _DECL_(ServicesManager).prototype =
             response = {domBuilder: response};
 
         var pkt = new JSJaCIQ();
-        pkt.setIQ(response.to || packet && packet.getFrom(), response.type || "result",
-                  response.id || packet && packet.getID());
+        pkt.setIQ(response.to || packet && packet.getFrom(),
+                  response.type || "result",
+                  "id" in response ? response.id : packet && packet.getID());
 
         if (response.domBuilder)
             pkt.appendNode.apply(pkt, response.domBuilder);
@@ -332,7 +369,29 @@ _DECL_(ServicesManager).prototype =
         if (response.e4x)
             pkt.appendNode(response.e4x);
 
-        account.connection.send(pkt, callback);
+        if (response.nextPacket) {
+            account.connection.send(pkt);
+            this._sendResponse(response.nextPacket, packet, callback);
+        } else if (callback)
+            account.connection.send(pkt, this._parseResultCallback, callback);
+        else
+            account.connection.send(pkt);
+    },
+
+    _parseResultCallback: function(packet, callback)
+    {
+        var query, queryEls = packet.getNode().childNodes;
+
+        for (var i = 0; i < queryEls.length; i++)
+            if (queryEls[i].nodeType == 1) {
+                query = queryEls[i];
+                break;
+            }
+
+        try {
+            var queryE4X = query && DOMtoE4X(query);
+            callback(packet, queryE4X, query);
+        } catch (ex) {}
     },
 
     _generatorTrackerCallback: function(service, callback, packet)
