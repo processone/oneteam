@@ -25,9 +25,19 @@
   ML.importMod("services/remoteDebug.js");
 
   var input, remoteJID;
+  var dumpValues = [];
 
   var console = {
       info: function(msg) { dump(msg) }
+  }
+
+  var extraProps = {
+    dump: dump,
+    dumpValues: dumpValues,
+    dumps: dumps,
+    startVenkman: startVenkman,
+    commandConsole: window,
+    Components: Components
   }
 
   function onload() {
@@ -60,6 +70,7 @@
   }
 
   function onunload() {
+    remoteDebug.endSession();
     if (account.console == console)
       delete account.console;
   }
@@ -300,9 +311,7 @@
                               doFindCompletions, expr, indexPrefix, prefixLength,
                               prevEntry, cursPos, suffix, str);
     } else
-      doFindCompletions(evalInWindow(expr || "this", window.opener, {
-                                      commandConsole: window
-                                    }),
+      doFindCompletions(evalInWindow(expr || "this", window.opener, extraProps),
                         expr, indexPrefix, prefixLength, prevEntry, cursPos,
                         suffix, str);
   }
@@ -369,6 +378,14 @@
     var r, expr = document.getElementById("input").value;
     if (r = expr.match(/debugOn\s*=\s*(?:"([^"]+)"|'([^']+)'|null)/)) {
       remoteJID = r[1] || r[2];
+      if (remoteJID)
+        appendToOutput("Debugging on <span class='value-string'>"+remoteJID+
+                       "</span>", expr, ["status"]);
+      else
+        appendToOutput("Stopping debugging", expr, ["status"]);
+
+      remoteDebug._debugOn = remoteJID ? new JID(remoteJID).normalizedJID : null;
+
       return;
     }
 
@@ -377,12 +394,7 @@
     if (local == expr && remoteJID)
       remoteDebug.eval(remoteJID, expr, showExecResult, expr, true);
     else
-      showExecResult(evalInWindow(local, window.opener, {
-        dump: dump,
-        dumps: dumps,
-        startVenkman: startVenkman,
-        commandConsole: window
-      }), expr);
+      showExecResult(evalInWindow(local, window.opener, extraProps), expr);
   }
 
   function appendToOutput(val, expr, flags) {
@@ -411,7 +423,10 @@
 
     if ("result" in val)
       val = genOutput(val.result, true);
-    else {
+    else if ("dump" in val) {
+      flags.push("dump result");
+      val = "dumpValues["+val.idx+"] = "+genOutput(val.dump, true);
+    } else {
       val = val.exception;
       if (typeof(val) != "string")
         val = exceptionToString(val, "");
@@ -421,11 +436,12 @@
     if (remote)
       flags.push("remote");
 
-    appendToOutput(val, indent(expr), flags);
+    appendToOutput(val, expr ? indent(expr) : "", flags);
   }
 
   function dump(value) {
-    appendToOutput(genOutput(value, true), "", ["dump result"]);
+    showExecResult({dump: value, idx: dumpValues.length});
+    dumpValues.push(value);
   }
 
   function dumps() {

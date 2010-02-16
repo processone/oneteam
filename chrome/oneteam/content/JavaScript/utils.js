@@ -747,14 +747,20 @@ function enumerateMatchingProps(value, pattern) {
     var x = function(a, v) {
         for (var i = 0; i < a.length; i++) {
             var name = a[i];
-            if (name[0] == "*" && (name = name.substr(1), value[name] === null))
-                continue;
+
+            if (name[0] == "*") {
+                name = name.substr(1);
+                if (value[name] === null)
+                    continue;
+            }
 
             var name2;
             var noUnderscores = name.replace(/^_+/,"").replace(/_+$/, "");
             var camelCasePat = noUnderscores.replace(/^([a-z])[a-z]*|([A-Z])[a-z]*/g,
                                                      "$1$2").toLowerCase();
 
+            // Some properties (__proto__ for example) aren't enumerable,
+            // which causes problems lates, prepend with * to not hit that case
             if (pattern == camelCasePat)
                 name2 = "*"+name;
             else
@@ -765,8 +771,8 @@ function enumerateMatchingProps(value, pattern) {
                         break;
                     }
 
-            if (name2 != null && (!(name2 in res) || res[name2] > v))
-                res[name2] = v;
+            if (name2 != null && (!(name2 in res) || res[name2][0] > v))
+                res[name2] = v+noUnderscores.toLowerCase();
         }
     }
 
@@ -804,7 +810,7 @@ function enumerateMatchingProps(value, pattern) {
                 break;
             case "function":
                 r("apply", "*arguments", "arity", "call", "*callee", "*caller",
-                  "name", "length");
+                  "name", "length", "prototype");
                 break;
             case "number":
                 r("toFixed", "toExponential", "toPrecision");
@@ -816,7 +822,9 @@ function enumerateMatchingProps(value, pattern) {
         value = value.__proto__;
     } while (value !== null)
 
-    return [res[i]+i for (i in res)].sort().map(function(s) {return s.substr(2)});
+    return [[res[i], i] for (i in res)].sort(function(a,b) {
+        return a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0;
+    }).map(function(s) {return s[1].substr(1)});
 }
 
 function report(to, level, info, context)

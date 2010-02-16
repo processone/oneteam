@@ -6,6 +6,8 @@ ML.importMod("file.js");
 
 var remoteDebug = {
     _allowed: {},
+    _dumpValues: [],
+    _generation: 0,
 
     allow: function(jid) {
         jid = new JID(jid);
@@ -17,15 +19,28 @@ var remoteDebug = {
         delete this._allowed[jid];
     },
 
+    endSession: function() {
+        this._allowed = {};
+        this.clearSession;
+    },
+
+    clearState: function() {
+        this._dumpValues = [];
+        this._generation++
+    },
+
     eval: function(where, expr, callback) {
         var res;
-        if ((res = expr.match(/^\s*substitute\[([^\]]*)\]\s*=\s*(.*?)\s*$/))) {
-            this.substituteChromeFile(where, res[1], res[2]);
+        if ((res = expr.match(/^\s*substitute\[([^\]]+)\]\s*(=\s*(.+?)\s*)?$/))) {
+            var file = res[2] ? res[3] : pickFile();
+            this.substituteChromeFile(where, res[1], file);
+
             var args = Array.slice(arguments, 2);
             args[0] = {result: "Sending file"};
             callback.apply(null, args);
             return;
         }
+
         var iq = new JSJaCIQ();
         iq.setIQ(where, "get");
         iq.appendNode("eval", {xmlns: "http://oneteam.im/remote-debug"}, [expr]);
@@ -51,7 +66,6 @@ var remoteDebug = {
         globDat = data;
         if ((pkt && pkt.getType() != "result") || part == parts)
             return;
-        alert(where+", "+url+", "+parts+", "+part+", "+data.length);
 
         var fragment = data.substr(part*2048, 2048);
 
@@ -180,7 +194,6 @@ var remoteDebug = {
     },
 
     _remoteEvalCallback: function(pkt, token) {
-        gp=pkt;
         var res = pkt.getChild("result");
         if (res)
             res = {result: eval(res.textContent)};
@@ -236,13 +249,27 @@ var remoteDebug = {
     _iqHandler: function(pkt, query, queryDOM) {
         var jid = new JID(pkt.getFrom());
         var ns = new Namespace("http://oneteam.im/remote-debug");
+        var queryName = query.localName();
 
-        if (pkt.getType() == "set" && query.localName() == "substitute")
+        if (pkt.getType() == "set" && queryName == "substitute")
             return this._substituteChromeFile(query.@url+"", +query.@part,
                                               +query.@parts, atob(query.text()+""));
+        if (!this._wm)
+            this._wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+                getService(Components.interfaces.nsIWindowMediator);
 
-        if (pkt.getType() != "get" || query.localName() != "eval" && query.localName() != "completions")
-            return 0;
+        if (pkt.getType() == "set" && queryName == "dump") {
+            if (this._debugOn != jid.normalizedJID)
+                return null;
+
+            var cmdWin = this._wm.getMostRecentWindow("ot:command");
+
+            if (cmdWin)
+                cmdWin.showExecResult({dump: eval(query.text().toString()),
+                                       idx: query.@idx.toString()}, "", true);
+
+            return null;
+        }
 
         if (!this._allowed[jid.normalizedJID.shortJID])
             return {
@@ -253,9 +280,9 @@ var remoteDebug = {
                      </error>
             };
 
-        if (!this._wm)
-            this._wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
-                getService(Components.interfaces.nsIWindowMediator);
+        if (pkt.getType() != "get" ||
+            queryName != "eval" && queryName != "completions")
+            return 0;
 
         var win = this._wm.getMostRecentWindow("ot:main");
 
@@ -273,7 +300,33 @@ var remoteDebug = {
             win = window;
 
         var expr = query.text().toString();
-        var value = evalInWindow(expr, win);
+
+        var _this = this;
+        var _generation = this._generation;
+        var value = evalInWindow(expr, win, {
+            dumpValues: this._dumpValues,
+            dump: function(value) {
+                if (!_this._allowed[jid.normalizedJID.shortJID] ||
+                    _this._generation != _generation)
+                    return;
+
+                var cmdWin = _this._wm.getMostRecentWindow("ot:command");
+
+                if (cmdWin)
+                    cmdWin.showExecResult({dump: value,
+                                          idx: _this._dumpValues.length},
+                                          "", true);
+
+                var iq = new JSJaCIQ();
+                iq.setIQ(jid, "set");
+                iq.appendNode("dump", {xmlns: "http://oneteam.im/remote-debug",
+                                       idx: _this._dumpValues.length},
+                                       [uneval(_this._simplifyValue(value, true))]);
+                account.connection.send(iq, function(){});
+
+                _this._dumpValues.push(value);
+            }
+        });
 
         if (query.localName() == "eval") {
             var cmdWin = this._wm.getMostRecentWindow("ot:command");
@@ -282,7 +335,7 @@ var remoteDebug = {
                 cmdWin.showExecResult(value, expr, true);
         }
 
-        return value.result ?
+        return "result" in value ?
             <result xmlns="http://oneteam.im/remote-debug">
                 {uneval(query.localName() == "completions" ?
                         enumerateMatchingProps(value.result, query.@prefix.toString()) :
