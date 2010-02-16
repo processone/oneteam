@@ -795,6 +795,9 @@ function MyResourcesContact(jid)
 
     this.init();
 
+    if (account.avatarHash)
+        this.onAvatarChange(account.avatarHash);
+
     this._updateNick(account.myResource.visibleName);
     MessagesRouter.call(this);
 
