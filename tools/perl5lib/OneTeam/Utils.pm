@@ -4,7 +4,7 @@ use Exporter;
 use File::Path;
 use File::Find;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
-use File::Copy;
+use File::Copy qw(copy cp);
 
 @ISA = qw(Exporter);
 @EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml
@@ -94,7 +94,7 @@ sub dircopy {
             $dest
         );
 
-        copy($_, catdir($dest, substr($File::Find::name, $srclen)));
+        cp($_, catdir($dest, substr($File::Find::name, $srclen)));
     }, no_chdir => 1}, $src);
 }
 

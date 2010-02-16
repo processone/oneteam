@@ -53,7 +53,9 @@ sub get_buildid {
 
 my %mar_options = map{($_, $defs{$_})} grep { /^MAR_/} keys %defs;
 
-my $saver = exists $defs{XULAPP} ?
+my $saver = exists $defs{DMG} ?
+        new OneTeam::Builder::Filter::Saver::Dmg($topdir, \&get_version_str, \&get_buildid, \%mar_options, $defs{XULRUNNER}) :
+    exists $defs{XULAPP} ?
         exists $defs{NOJAR} ?
             new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
             new OneTeam::Builder::Filter::Saver::XulApp($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
@@ -63,13 +65,13 @@ my $saver = exists $defs{XULAPP} ?
             new OneTeam::Builder::Filter::Saver::WebDir($topdir, \&get_version_str, \&get_buildid) :
             new OneTeam::Builder::Filter::Saver::WebJar($topdir, \&get_version_str, \&get_buildid);
 
-$defs{XULAPP} = 1 if exists $defs{XPI};
+$defs{XULAPP} = 1 if exists $defs{XPI} or exists $defs{DMG};
 
-my $locale_processor = exists $defs{XULAPP} || exists $defs{XPI} ?
+my $locale_processor = exists $defs{XULAPP} ?
     new OneTeam::Builder::Filter::LocaleProcessor::XulApp($saver, split /,/, ($defs{LANGS}||"")) :
     new OneTeam::Builder::Filter::LocaleProcessor::Web($saver, split /,/, ($defs{LANGS}||""));
 
-my @filters = (exists $defs{XULAPP} || exists $defs{XPI} ?
+my @filters = (exists $defs{XULAPP} ?
     (
         new OneTeam::Builder::Filter::Preprocessor(%defs),
         $locale_processor,

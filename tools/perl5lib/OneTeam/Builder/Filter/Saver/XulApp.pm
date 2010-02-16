@@ -25,15 +25,16 @@ sub new {
 sub finalize {
     my $self = shift;
 
-    my ($tmpdir, $chromedir) = $self->SUPER::finalize();
+    my ($tmpdir, $tmppfxdir, $chromedir) = $self->SUPER::finalize();
 
     if ($self->{mar_options}->{MAR_BASE_URL}) {
         my @files;
-        my $tmpdirlen = length($tmpdir) + ($tmpdir =~ m!(?:[/\\]$)! ? 0 : 1);
+        my $tmpdirlen = length($tmppfxdir) + ($tmppfxdir =~ m!(?:[/\\]$)! ? 0 : 1);
 
-        find(sub {push @files, $File::Find::name if -f $_}, $tmpdir);
+        find(sub {push @files, $File::Find::name if -f $_}, $tmppfxdir);
         $self->_create_mar(map {(substr($_, $tmpdirlen), $_)} @files);
     }
+    return ($tmpdir, $tmppfxdir, $chromedir);
 }
 
 sub _chrome_manifest_dir {
@@ -56,14 +57,14 @@ sub _generate_install_rdf {
 }
 
 sub _prepare_files {
-    my ($self, $tmpdir, $chromedir) = @_;
+    my ($self, $tmpdir, $tmppfxdir, $chromedir) = @_;
 
-    $self->SUPER::_prepare_files($tmpdir, $chromedir);
+    $self->SUPER::_prepare_files($tmppfxdir, $tmppfxdir, $chromedir);
 
     my $ai = slurp("application.ini");
     $ai =~ s/(version\s*=\s*)[^\n]*/$1.$self->{version}->()/ei;
     $ai =~ s/(buildid\s*=\s*)[^\n]*/$1.$self->{buildid}->()/ei;
-    print_to_file(catfile($tmpdir, "application.ini"), $ai);
+    print_to_file(catfile($tmppfxdir, "application.ini"), $ai);
 
     dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
 }

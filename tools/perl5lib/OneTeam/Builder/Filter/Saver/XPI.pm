@@ -14,7 +14,7 @@ sub new {
     my ($class, $topdir, $version, $buildid, $updateURL) = @_;
     my $self = {
         topdir => $topdir,
-        outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
+        outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 0),
         version => $version,
         buildid => $buildid,
         updateURL => $updateURL,
@@ -42,36 +42,42 @@ sub path_convert {
 sub finalize {
     my $self = shift;
 
-    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
-    my $chromedir = catdir($tmpdir, "chrome");
+    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 0);
+    my $tmppfxdir = $self->_prefix ? catdir($tmpdir, $self->_prefix) : $tmpdir;
+    my $chromedir = catdir($tmppfxdir, "chrome");
 
     mkpath([$chromedir], 0);
 
-    $self->_prepare_files($tmpdir, $chromedir);
-    $self->_generate_install_rdf($tmpdir);
-    $self->_generate_chrome_manifest($tmpdir);
+    $self->_prepare_files($tmpdir, $tmppfxdir, $chromedir);
+    $self->_generate_install_rdf($tmpdir, $tmppfxdir);
+    $self->_generate_chrome_manifest($tmpdir, $tmppfxdir);
 
-    system("cd '$tmpdir'; zip -q -9 -r '".catfile($self->{topdir}, $self->_output_filename)."' .");
+    $self->_make_package($tmpdir, $tmppfxdir);
 
-    return ($tmpdir, $chromedir);
+    return ($tmpdir, $tmppfxdir, $chromedir);
+}
+
+sub _make_package {
+    my ($self, $tmpdir, $tmppfxdir) = @_;
+    system("cd '$tmppfxdir'; zip -q -9 -r '".catfile($self->{topdir}, $self->_output_filename)."' .")
 }
 
 sub _prepare_files {
-    my ($self, $tmpdir, $chromedir) = @_;
+    my ($self, $tmpdir, $tmppfxdir, $chromedir) = @_;
 
     dircopy(catdir(qw(chrome icons default)), catdir($self->{outputdir}, qw(skin default icons)),
              qw(default.ico default.xpm));
 
     system("cd '$self->{outputdir}/chrome'; zip -q -0 -r '".catfile($chromedir, 'oneteam.jar')."' .");
 
-    dircopy(catdir($self->{outputdir}, "defaults"), catdir($tmpdir, 'defaults'),
+    dircopy(catdir($self->{outputdir}, "defaults"), catdir($tmppfxdir, 'defaults'),
             $self->_disabled_prefs);
-    dircopy(catdir($self->{outputdir}, "components"), catdir($tmpdir, 'components'));
-    dircopy('platform', catdir($tmpdir, 'platform'));
+    dircopy(catdir($self->{outputdir}, "components"), catdir($tmppfxdir, 'components'));
+    dircopy('platform', catdir($tmppfxdir, 'platform'), $self->_platform_files_to_skip);
 }
 
 sub _generate_install_rdf {
-    my ($self, $tmpdir) = @_;
+    my ($self, $tmpdir, $tmppfxdir) = @_;
     my $ir = slurp("install.rdf");
 
     $ir =~ s/(em:version>)[^<]*/$1.$self->{version}->()/ei;
@@ -83,15 +89,15 @@ sub _generate_install_rdf {
                 (map "skin/$_/", keys %{$self->{skins}}),
                 (map "locale/$_/", @{$self->{locales}}),
            )."\n      ".$2!ei;
-    print_to_file(catfile($tmpdir, "install.rdf"), $ir);
+    print_to_file(catfile($tmppfxdir, "install.rdf"), $ir);
 }
 
 sub _generate_chrome_manifest {
-    my ($self, $tmpdir) = @_;
+    my ($self, $tmpdir, $tmppfxdir) = @_;
     my $prefix = File::Spec->abs2rel("chrome", $self->_chrome_manifest_dir);
     $prefix = $prefix eq "." ? "" : "$prefix/";
 
-    open($fh, ">", catfile($tmpdir, $self->_chrome_manifest_dir, 'chrome.manifest')) or
+    open($fh, ">", catfile($tmppfxdir, $self->_chrome_manifest_dir, 'chrome.manifest')) or
         die "Unable to create file: $!";
     print $fh "content oneteam jar:${prefix}oneteam.jar!/content/\n";
 
@@ -110,6 +116,10 @@ sub _generate_chrome_manifest {
     close($fh);
 }
 
+sub _prefix {
+    return "";
+}
+
 sub _chrome_manifest_dir {
     return "";
 }
@@ -124,6 +134,10 @@ sub _disabled_prefs {
 
 sub _output_filename {
     return "oneteam.xpi";
+}
+
+sub _platform_files_to_skip {
+    return ();
 }
 
 sub _expand_str {
