@@ -7,8 +7,6 @@ function RosterView(node)
     this.items = [];
     this.model = account;
 
-    this.altLook = node.localName != "richlistbox";
-
     this.onModelUpdated(null, "groups", {added: account.groups});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "groups");
 }
@@ -45,7 +43,7 @@ _DECL_(RosterView, null, ContainerView).prototype =
     onModelUpdated: function(model, type, data)
     {
         for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new GroupView(data.added[i], this, this.altLook));
+            this.onItemAdded(new GroupView(data.added[i], this));
 
         for (i = 0; data.removed && i < data.removed.length; i++)
             this.onItemRemoved(data.removed[i]);
@@ -57,38 +55,26 @@ _DECL_(RosterView, null, ContainerView).prototype =
     }
 }
 
-function GroupView(model, parentView, altLook)
+function GroupView(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
     this.doc = parentView.containerNode.ownerDocument;
     this.contacts = [];
-    this.altLook = altLook;
 
-    if (this.altLook) {
-        this.node = this.doc.createElementNS(XULNS, "expander");
-        this.node.setAttribute("open", "true");
-    } else
-        this.node = this.doc.createElementNS(XULNS, "richlistitem");
+    this.node = this.doc.createElementNS(XULNS, "expander");
+    this.node.setAttribute("open", "true");
 
     this.node.setAttribute("class", "group-view");
     this.node.model = this.model;
     this.node.view = this;
 
-    if (this.altLook) {
-        this.box = this.doc.createElementNS(XULNS, "description");
+    this.box = this.doc.createElementNS(XULNS, "description");
 
-        this.box.setAttribute("flex", "1");
-        this.box.setAttribute("class", "icons-box");
+    this.box.setAttribute("flex", "1");
+    this.box.setAttribute("class", "icons-box");
 
-        this.node.appendChild(this.box);
-    } else {
-        this.label = this.doc.createElementNS(XULNS, "label");
-        this.label.setAttribute("flex", "1");
-        this.label.setAttribute("crop", "end");
-
-        this.node.appendChild(this.label);
-    }
+    this.node.appendChild(this.box);
 
     this.onAvailUpdated();
 
@@ -106,7 +92,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
 
     get afterLastItemNode()
     {
-        return this.altLook ? null : this.parentView.getNextItemNode(this);
+        return null;
     },
 
     onPrefChange: function(name, value)
@@ -127,10 +113,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
         this.node.setAttribute("onlyOfflineContacts",
                                this.model.availContacts == 0);
 
-        if (this.altLook)
-            this.node.setAttribute("label", name);
-        else
-            this.label.setAttribute("value", name);
+        this.node.setAttribute("label", name);
     },
 
     onModelUpdated: function(model, type, data)
@@ -139,7 +122,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
             return;
 
         for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new ContactView(data.added[i], this, this.altLook));
+            this.onItemAdded(new ContactView(data.added[i], this));
 
         for (i = 0; data.removed && i < data.removed.length; i++)
             this.onItemRemoved(data.removed[i]);
@@ -150,7 +133,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
     show: function(rootNode, insertBefore)
     {
         this.rootNode = rootNode;
-        this.containerNode = this.altLook ? this.box : rootNode;
+        this.containerNode = this.box;
         rootNode.insertBefore(this.node, insertBefore);
 
         if (!this.items) {
@@ -173,47 +156,57 @@ _DECL_(GroupView, null, ContainerView).prototype =
     }
 }
 
-function ContactView(model, parentView, altLook)
+function ContactView(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
     this.doc = parentView.containerNode.ownerDocument;
-    this.altLook = altLook;
 
     this.statusIcon = this.doc.createElementNS(XULNS, "image");
     this.label = this.doc.createElementNS(XULNS, "label");
     this.avatar = this.doc.createElementNS(XULNS, "avatar");
+    this.messagesCounter = this.doc.createElementNS(XULNS, "label");
 
-    if (this.altLook) {
-        this.node = this.doc.createElementNS(XULNS, "vbox");
-        var stack = this.doc.createElementNS(XULNS, "stack");
-        var hbox = this.doc.createElementNS(XULNS, "hbox");
+    this.node = this.doc.createElementNS(XULNS, "hbox");
+    this.iconContainer = this.doc.createElementNS(XULNS, "vbox");
+    var stack = this.doc.createElementNS(XULNS, "stack");
+    var stack2 = this.doc.createElementNS(XULNS, "stack");
+    var hbox = this.doc.createElementNS(XULNS, "hbox");
+    var hbox2 = this.doc.createElementNS(XULNS, "hbox");
+    var vbox = this.doc.createElementNS(XULNS, "vbox");
+    var vbox2 = this.doc.createElementNS(XULNS, "vbox");
+    var image = this.doc.createElementNS(XULNS, "image");
+    var box = this.doc.createElementNS(XULNS, "vbox");
 
-        stack.setAttribute("flex", "1");
+    stack.setAttribute("flex", "1");
 
-        this.statusIcon.setAttribute("top", "2");
-        this.statusIcon.setAttribute("left", "2");
+    this.avatar.setAttribute("showBlankAvatar", "false")
 
-        this.avatar.setAttribute("showBlankAvatar", "true")
+    this.iconContainer.appendChild(this.statusIcon);
 
-        stack.appendChild(this.avatar);
-        stack.appendChild(this.statusIcon);
-        hbox.appendChild(this.label);
+    hbox.appendChild(this.label);
+    stack2.appendChild(hbox);
+    vbox2.appendChild(image);
+    stack2.appendChild(vbox2);
+    stack2.setAttribute("class", "label-box");
 
-        this.node.appendChild(stack);
-        this.node.appendChild(hbox);
-    } else {
-        this.node = this.doc.createElementNS(XULNS, "richlistitem");
-        this.avatar.hidden = !prefManager.getPref("chat.general.showavatars");
+    this.avatar.setAttribute("flex", "1");
 
-        var box = this.doc.createElementNS(XULNS, "vbox");
-        box.setAttribute("pack", "center");
-        box.appendChild(this.statusIcon);
+    box.appendChild(this.avatar);
+    box.setAttribute("class", "avatar-box");
 
-        this.node.appendChild(box);
-        this.node.appendChild(this.label);
-        this.node.appendChild(this.avatar);
-    }
+    vbox.appendChild(this.messagesCounter);
+    hbox2.setAttribute("class", "counter-box");
+    hbox2.appendChild(vbox);
+
+    this.iconContainer.setAttribute("class", "icon-container");
+
+    stack.appendChild(stack2)
+    stack.appendChild(box);
+    stack.appendChild(hbox2);
+
+    this.node.appendChild(this.iconContainer);
+    this.node.appendChild(stack);
 
     this.avatar.model = model;
 
@@ -228,9 +221,8 @@ function ContactView(model, parentView, altLook)
     this.node.setAttribute("tooltip", this.tooltip.id);
     this.node.setAttribute("class", "contact-view");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
-    this.label.setAttribute("value", model.name || model.jid.toUserString());
+    this.label.setAttribute("value", model.name || model.jid.node);
     this.label.setAttribute("flex", "1");
-    this.label.setAttribute("crop", "end");
     this.statusIcon.setAttribute("class", "status-icon");
 
     this.node.model = this.model;
@@ -245,23 +237,23 @@ function ContactView(model, parentView, altLook)
     this._bundle.register(this.model, this.onActiveResourceChange, "activeResource");
     this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
     this._bundle.register(this.model, this.onMsgsInQueueChanged, "msgsInQueue");
+    this._bundle.register(this.model, this.onAvatarChanged, "avatar");
 
     this.onActiveResourceChange();
+    this.onAvatarChanged();
 }
 
 _DECL_(ContactView).prototype =
 {
     onPrefChange: function(name, value) {
-        this.avatar.hidden = !this.altLook || !value;
-
-        // Hack needed to update avatar scale factor after creating frame.
-        if (value)
-            this.avatar.onImageLoad();
     },
 
     onNameChange: function()
     {
         this.label.value = this.model.name;
+        this.label.parentNode.parentNode.setAttribute("overflowed",
+            this.label.clientWidth > this.label.parentNode.clientWidth);
+
         this.parentView.onItemUpdated(this);
     },
 
@@ -276,6 +268,11 @@ _DECL_(ContactView).prototype =
         this.node.setAttribute("offlineContact", this.model.activeResource == null);
         this._activeResource = this.model.activeResource;
         this.onModelUpdated();
+    },
+
+    onAvatarChanged: function()
+    {
+        this.node.setAttribute("hasAvatar", !!(this.model && this.model.avatar));
     },
 
     onModelUpdated: function()
@@ -302,12 +299,16 @@ _DECL_(ContactView).prototype =
             icon = icon[0];
         }
         this.statusIcon.setAttribute("src", icon);
-        this.label.setAttribute("style", this.model.presence.getStyle(this.model.msgsInQueue));
+
+        this.messagesCounter.setAttribute("value", this.model.msgsInQueue);
+        if (this.messagesCounter.parentNode)
+            this.messagesCounter.parentNode.hidden = !this.model.msgsInQueue;
     },
 
     show: function(rootNode, insertBefore)
     {
         rootNode.insertBefore(this.node, insertBefore);
+        this.onNameChange()
         this.tooltip.show(this.node, this.node.firstChild);
     },
 

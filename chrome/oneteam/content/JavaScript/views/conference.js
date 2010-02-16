@@ -146,10 +146,14 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
     this.roleNodes = {};
     for each (role in ["moderator", "participant", "visitor", "none"]) {
         var node = doc.createElementNS(XULNS, "richlistitem");
-        node.appendChild(doc.createElementNS(XULNS, "label"));
         node.setAttribute("class", "conference-role-view");
         node.setAttribute("hidden", "true");
         node.role = role;
+
+        var label = doc.createElementNS(XULNS, "label");
+        label.setAttribute("flex", "1");
+        label.setAttribute("crop", "end");
+        node.appendChild(label);
 
         this.roleNodes[role] = {
             count: 0,

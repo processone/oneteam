@@ -13,8 +13,8 @@
     </resources>
 
     <content>
-      <xul:hbox id="contact-info-box" flex="1">
-        <xul:avatar id="avatar" showBlankAvatar="true"/>
+      <xul:hbox id="contact-info-box" flex="1" align="center">
+        <xul:avatar width="48" height="48" flex="0" id="avatar" showBlankAvatar="true"/>
         <xul:vbox id="conferenceIcon" hidden="true">
           <xul:image id="conferenceIconImage"/>
         </xul:vbox>
@@ -145,6 +145,8 @@
             this._status.value = this._unavailablePresence;
             this._statusText.value = "";
           }
+          this._avatar.style.opacity =
+            !this.model || this.model.presence.show == "unavailable" ? 0.5 : 1;
         ]]></body>
       </method>
 

@@ -3,6 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/main/main.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/main/roster.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/main/conference-roster.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
@@ -37,6 +38,7 @@
       {
         document.getElementById("main-toolbox").hidden = !account.connected;
         document.getElementById("main-deck").selectedIndex = account.connected ? 1 : 0;
+        document.getElementById("setPresence-jid").value = account.myResource.jid.getShortJID().toUserString();
         document.getElementById("setPresence-nick").value = account.myResource.visibleName;
 
         if (!this.rosterView) {
@@ -148,25 +150,17 @@
 
       updateRoster: function()
       {
-        var altLook = prefManager.getPref("chat.roster.alternativelook");
-        var el = document.getElementById(altLook ? "contacts-list-box" : "contacts-list-list");
-
         if (this.rosterView)
-          if (this.rosterView.containerNode == el)
-            return;
-          else
-            this.rosterView.destroy();
+          return;
 
-        this.rosterView = new RosterView(el);
+        this.rosterView = new RosterView(document.getElementById("contacts-list"));
 
         this.rosterView.hideOffline = document.getElementById("cmd_toggleShowOffline").
           getAttribute("checked") == "true";
-
-        el.parentNode.selectedIndex = altLook ? 1 : 0;
       },
 
       _updatePresenceIcon: function(_this, icons, idx) {
-        document.getElementById("setPresence-type-image").src =
+//        document.getElementById("setPresence-type-image").src =
 // #ifdef XULAPP
           _this.systray.icon =
 // #endif
@@ -701,14 +695,15 @@
               </menulist>
             </hbox>
             <spacer/>
-            <hbox id="setPresence-presence-box">
-              <avatar id="setPresence-avatar-image" showBlankAvatar="true"/>
-              <vbox flex="1">
-                <hbox align="center">
-                  <image id="setPresence-type-image"/>
+            <hbox id="setPresence-presence-box" align="center">
+              <avatar flex="0" id="setPresence-avatar-image" showBlankAvatar="true"/>
+              <hbox flex="1" align="end">
+                <vbox flex="1">
+                  <label id="setPresence-jid" flex="1" crop="end"/>
                   <label id="setPresence-nick" flex="1" crop="end"/>
-                </hbox>
-                <menulist id="setPresence-type-chooser" oncommand="setPresenceUpdater.onCommand()">
+                </vbox>
+                <menulist id="setPresence-type-chooser" flex="0" sizetopopup="none"
+                          oncommand="setPresenceUpdater.onCommand()">
                   <menupopup>
                     <menuitem id="setPresence-type-available" label="_('Available')"
                         selected="true" value="available" class="menuitem-iconic"/>
@@ -726,7 +721,7 @@
                     <menuitem id="setPresence-type-custom" label="_('Status message')"/>
                   </menupopup>
                 </menulist>
-              </vbox>
+              </hbox>
             </hbox>
           </vbox>
           <vbox id="eventBox" collapsed="true" onclick="eventBoxHandler.onClick(event)">
@@ -736,10 +731,7 @@
               <button id="eventBoxNext" oncommand="eventBoxHandler.nextMsg()"/>
             </hbox>
           </vbox>
-          <deck id="contacts-list" flex="1" persist="hideOffline">
-            <richlistbox id="contacts-list-list" flex="1" persist="hideOffline"/>
-            <vbox id="contacts-list-box" flex="1" persist="hideOffline"/>
-          </deck>
+          <vbox id="contacts-list" flex="1" persist="hideOffline"/>
         </groupbox>
         <!-- #ifdef XULAPP -->
         <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>

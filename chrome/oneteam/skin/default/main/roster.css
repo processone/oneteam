@@ -1,40 +1,20 @@
-richlistitem:nth-child(2n+1):not([selected=true]) {
-  background-color: -moz-oddtreerow;
-}
-
-.group-view, .contact-view, .conference-view, .conference-role-view, .conferencemember-view {
+.group-view, .contact-view {
   padding: 1px;
 }
 
-expander.group-view {
-  -moz-box-align: start;
+.group-view > hbox {
+  color: white;
+  background: #515151;
+  -moz-border-radius: 2px;
+  font-size: 12px;
+  padding: 0 0 0 4px;
+  margin: 0;
 }
 
-expander.group-view label.expanderButton {
+.group-view label.expanderButton {
   -moz-box-flex: 0;
-  color: white;
-  background: #777;
-  -moz-border-radius: 3px;
-  padding: 0 2px;
-}
-
-richlistitem.group-view,
-richlistitem.conference-view,
-richlistitem.conference-role-view {
-  background: #003E67 url(imgs/group-background.png) center center repeat-x;
-  border: 1px solid #003E67;
-  border-bottom: 0;
-  border-top: 0;
-  color: white;
-  font-weight : bold;
-}
-
-richlistitem.group-view[selected=true],
-richlistitem.conference-view[selected=true],
-richlistitem.conference-role-view[selected=true] {
-  background-color: #005dc8;
-  background-image: url(imgs/group-background-selected.png);
-  border-color: #005dc8;
+  margin: 1px 0 1px 4px;
+  padding: 0;
 }
 
 .icons-box {
@@ -43,22 +23,117 @@ richlistitem.conference-role-view[selected=true] {
 }
 
 expander .expanderButton {
-  list-style-image: url(../expander/imgs/switch-close-grey.png);
+  list-style-image: url(imgs/switch-close-white.png);
 }
 
 expander[open="true"] .expanderButton {
-  list-style-image: url(../expander/imgs/switch-open-grey.png);
+  list-style-image: url(imgs/switch-open-white.png);
 }
 
-expander .contact-view {
-  max-width: 70px;
-  min-width: 50px;
-  height: 60px;
-  border: 1px solid black;
-  -moz-border-radius: 3px;
+.contact-view[offlineContact=true] .label-box,
+.contact-view[offlineContact=true] .avatar-box {
+  opacity: 0.5;
+}
+
+.counter-box {
+  -moz-box-align: start;
+  -moz-box-pack: end;
+}
+
+.counter-box > vbox {
+  background-color: #52affa;
+  border: 3px solid white;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  -moz-border-radius: 20px;
+  min-width: 20px;
+  height: 20px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  text-align: center;
+}
+
+.counter-box > vbox > label {
+  margin: 0;
+  padding: 0 2px;
+}
+
+.avatar-box {
+  margin: 6px 6px 0px 0px;
+}
+
+.avatar-box > avatar {
+  border: 2px solid transparent;
+  -moz-border-radius: 5px;
+}
+
+.contact-view[hasAvatar="true"] .avatar-box > avatar {
+  border-color: #e5e5e5;
+}
+
+.label-box {
+  width: 52px;
+  height: 52px;
+  margin: 6px 6px 0px 0px;
+  background: #e5e5e5;
+  -moz-border-radius: 5px;
+  -moz-box-shadow: 0 0 3px 1px #909090;
+  overflow: hidden;
+  text-align: center;
+  font-weight: bold;
+  font-size: 11px;
+  color: #808080;
+  text-shadow: white -1px -1px, white 1px 1px, white -1px 1px, white 1px -1px;
+}
+
+.contact-view[hasAvatar="true"] .label-box {
+  background: #fff;
+}
+
+.label-box > hbox {
+  -moz-stack-sizing: ignore;
+  -moz-box-align: center;
+  -moz-box-pack: start;
+  padding: 0 2px;
+}
+
+.label-box > hbox > label {
+  margin: 0;
+  padding: 0;
+}
+
+.label-box > vbox {
+  -moz-box-align: end;
+  -moz-box-pack: center;
+}
+
+.label-box > vbox > image {
+  list-style-image: url(imgs/gradient.png);
+}
+
+.label-box[overflowed="false"] > vbox {
+  display: none;
+}
+
+.contact-view[hasAvatar="true"] .label-box > hbox > label {
+  display: none;
+}
+
+.icon-container {
+  background: #c7c7c7;
+  -moz-border-radius: 5px 0 0 5px;
+  margin: 10px 0 6px 0;
+}
+
+.icon-container > * {
+  border-bottom: 2px solid white;
+  -moz-border-bottom-colors: #cfcfcf #bababa;
+}
+
+.contact-view {
   margin: 4px;
   padding: 0;
-  background: white;
   vertical-align: top;
 }
 
@@ -84,29 +159,11 @@ expander .status-icon {
   padding: 0;
 }
 
-.contact-view[selected=true] > label,
-.conferencemember-view[selected=true] > label {
-  color: inherit !important;
-}
-
-.conference-role-view {
-  font-weight : bold;
-  padding-left: 4px;
-}
-
-richlistitem.contact-view {
-  padding-left: 8px;
-}
-
-.conferencemember-view {
-  padding-left: 16px;
-}
-
-.contact-tooltip-name, .resource-tooltip-name, .contact-tooltip-resource-name, .conferencemember-tooltip-name {
+.contact-tooltip-name, .resource-tooltip-name, .contact-tooltip-resource-name {
   font-weight: bold;
 }
 
-.contact-tooltip-resource-status, .resource-tooltip-resource-status, .conferencemember-tooltip-status {
+.contact-tooltip-resource-status, .resource-tooltip-resource-status {
   margin-left: 0;
   padding-left: 0;
   font-style: italic;
@@ -116,6 +173,6 @@ richlistitem.contact-view {
   margin-left: 0.5em;
 }
 
-.contact-tooltip-resources, .resource-tooltip-resource-status, .conferencemember-tooltip-grid {
+.contact-tooltip-resources, .resource-tooltip-resource-status {
   margin-left: 1em;
 }

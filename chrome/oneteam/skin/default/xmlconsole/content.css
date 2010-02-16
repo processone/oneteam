@@ -50,6 +50,7 @@ body {
 .text {
     display: block;
     margin-left: 2em;
+    word-wrap: break-word;
 }
 
 .message > .tag {
@@ -73,3 +74,6 @@ body {
     color: blue;
 }
 
+.to-copy-paste {
+    display: none;
+}

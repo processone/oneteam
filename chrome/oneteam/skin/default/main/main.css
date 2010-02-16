@@ -14,18 +14,17 @@ tabpanels {
   border: 1px solid #999;
 }
 
-#contacts-list-box {
+#contacts-list {
   overflow: auto;
 }
 
-#contacts-list-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
-#contacts-list-list[hideOffline=true] .contact-view[offlineContact=true],
-#contacts-list-box[hideOffline=true] .group-view[onlyOfflineContacts=true],
-#contacts-list-box[hideOffline=true] .contact-view[offlineContact=true]
+#contacts-list[hideOffline=true] .group-view[onlyOfflineContacts=true],
+#contacts-list[hideOffline=true] .contact-view[offlineContact=true],
+.group-view[onlyNonMatchingContacts=true],
+.contact-view[nonMatchingContact=true]
 {
   display: none
 }
-
 
 richlistbox {
   -moz-appearance: none !important;
@@ -130,7 +129,7 @@ richlistbox {
 
 /* Presence box */
 #setPresence-box {
-  padding: 3px;
+  padding: 3px 0;
 }
 
 #setPresence-box > spacer {
@@ -139,16 +138,26 @@ richlistbox {
   border-top: 1px solid #afafaf;
 }
 
+#setPresence-jid {
+  margin: 0 !important;
+  padding-left: 0 !important;
+  font-size: 75%;
+  color: #999;
+}
+
 #setPresence-nick {
-  margin: 0.5em 0 0.5em 0 !important;
+  margin: 0 !important;
   padding-left: 0 !important;
   font-weight: bold;
   font-size: 130%;
+  color: #525252;
 }
 
 #setPresence-type-chooser, #setPresence-profile-chooser {
   margin: 0 !important;
   padding: 0 !important;
+  font-size: 75%;
+  swidth: 18em;
 /*  -moz-appearance: none;*/
 }
 
@@ -157,7 +166,12 @@ richlistbox {
 }
 
 #setPresence-avatar-image {
+  border: 1px solid #b7b7b7;
+  background-color: #e5e5e5;
+  -moz-border-radius: 5px;
   margin-right: 4px;
+  width: 34px;
+  height: 34px;
 }
 
 #eventBox {

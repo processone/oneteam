@@ -1,3 +1,10 @@
+.container {
+  background-repeat: no-repeat;
+  background-position: center center;
+  -moz-background-size: auto 100%;
+  -moz-background-clip: padding;
+}
+
 .avatarContainer, .avatarIcon img {
   -moz-border-radius: 2px;
 }

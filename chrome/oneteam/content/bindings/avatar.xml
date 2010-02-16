@@ -11,7 +11,7 @@
       <stylesheet src="chrome://oneteam/skin/avatar/avatar.css"/>
     </resources>
 
-    <content>
+    <content class="container">
       <xul:hbox flex="1" align="center" pack="center">
         <xul:vbox class="avatarContainer" hidden="true">
           <xul:image id="image"/>
@@ -86,6 +86,12 @@
 
       <method name="onAvatarChange">
         <body><![CDATA[
+        this.style.backgroundImage = "url("+(
+          this._model &&this._model.avatar ?
+            this._model.avatar :
+            this.getAttribute("showBlankAvatar") == "true" ?
+              "chrome://oneteam/skin/avatar/imgs/default-avatar.png" : "")+")";
+        return;
         if (this._model && this._model.avatar) {
           this._container.firstChild.hidden = false;
           this._imageObj.src = this._model.avatar;
