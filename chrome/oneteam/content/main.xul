@@ -483,6 +483,10 @@
       else
         prompter.checkForUpdates();
     }
+
+    function refineSearch(el) {
+      setPresenceUpdater.rosterView.searchTerm = el.value;
+    }
   ]]></script>
 
   <comandset>
@@ -731,6 +735,8 @@
               <button id="eventBoxNext" oncommand="eventBoxHandler.nextMsg()"/>
             </hbox>
           </vbox>
+          <textbox type="search" oncommand="refineSearch(this)"
+                   timeout="50" emptytext="_('Search')"/>
           <vbox id="contacts-list" flex="1" persist="hideOffline"/>
         </groupbox>
         <!-- #ifdef XULAPP -->

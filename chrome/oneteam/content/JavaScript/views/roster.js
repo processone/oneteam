@@ -9,6 +9,7 @@ function RosterView(node)
 
     this.onModelUpdated(null, "groups", {added: account.groups});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "groups");
+    this._hideOffline = node.getAttribute("hideOffline") == "true";
 }
 
 _DECL_(RosterView, null, ContainerView).prototype =
@@ -18,13 +19,29 @@ _DECL_(RosterView, null, ContainerView).prototype =
 
     set hideOffline(val)
     {
-        this.containerNode.setAttribute("hideOffline", !!val);
+        this.containerNode.setAttribute("hideOffline", !!(val && !this._searchTerm));
+        this._hideOffline = val;
+
         return val;
     },
 
     get hideOffline()
     {
-        return this.containerNode.getAttribute("hideOffline") == "true"
+        return this._hideOffline;
+    },
+
+    get searchTerm() {
+        return this._searchTerm;
+    },
+
+    set searchTerm(val) {
+        this._searchTerm = val;
+        this.hideOffline = this._hideOffline;
+
+        for (var item in this.itemsIterator())
+            item.onSearchTermChanged(val);
+
+        return val;
     },
 
     itemComparator: function(ao, bo)
@@ -84,6 +101,7 @@ function GroupView(model, parentView)
     this._bundle = new RegsBundle(this);
     this._bundle.register(this.model, this.onModelUpdated, "contacts");
     this._bundle.register(this.model, this.onAvailUpdated, "availContacts");
+    this._matchingCount = 0;
 }
 
 _DECL_(GroupView, null, ContainerView).prototype =
@@ -128,6 +146,18 @@ _DECL_(GroupView, null, ContainerView).prototype =
             this.onItemRemoved(data.removed[i]);
 
         this.onAvailUpdated();
+    },
+
+    onSearchTermChanged: function(newValue)
+    {
+        for (var item in this.itemsIterator())
+            item.onSearchTermChanged(newValue);
+    },
+
+    onMatchingCountChanged: function(diff)
+    {
+        this._matchingCount += diff;
+        this.node.setAttribute("onlyNonMatchingContacts", this._matchingCount == 0);
     },
 
     show: function(rootNode, insertBefore)
@@ -239,6 +269,10 @@ function ContactView(model, parentView)
     this._bundle.register(this.model, this.onMsgsInQueueChanged, "msgsInQueue");
     this._bundle.register(this.model, this.onAvatarChanged, "avatar");
 
+    this._matches = false;
+
+    this.onSearchTermChanged(parentView.parentView.searchTerm);
+
     this.onActiveResourceChange();
     this.onAvatarChanged();
 }
@@ -303,6 +337,29 @@ _DECL_(ContactView).prototype =
         this.messagesCounter.setAttribute("value", this.model.msgsInQueue);
         if (this.messagesCounter.parentNode)
             this.messagesCounter.parentNode.hidden = !this.model.msgsInQueue;
+    },
+
+    onSearchTermChanged: function(term)
+    {
+        var matches = true;
+        if (term)
+            for each (var t in term.toLowerCase().match(/\S+/g)) {
+                matches = false;
+                for each (var m in [this.model.visibleName, this.model.jid.toUserString()])
+                    if (m.toLowerCase().indexOf(t) >= 0) {
+                        matches = true;
+                        break;
+                    }
+                if (!matches)
+                    break;
+            }
+
+        this.node.setAttribute("nonMatchingContact", !matches);
+
+        if (this._matches != matches)
+            this.parentView.onMatchingCountChanged(matches ? 1 : -1)
+
+        this._matches = !!matches
     },
 
     show: function(rootNode, insertBefore)
