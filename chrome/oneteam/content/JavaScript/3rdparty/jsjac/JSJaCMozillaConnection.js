@@ -77,6 +77,7 @@ JSJaCMozillaConnection.prototype = {
   _handleInitialElement: function(dom) {
     if (dom.hasAttribute("id")) {
       this.streamid = dom.getAttribute("id");
+      this.oDbg.log("recv: "+(new XMLSerializer()).serializeToString(dom),1);
       this.oDbg.log("got streamid: "+this.streamid,2);
     }
     this._connected = true;
@@ -97,6 +98,8 @@ JSJaCMozillaConnection.prototype = {
 
   _handleElement: function(node) {
     var packet = JSJaCPacket.wrapNode(node);
+
+    this.oDbg.log("recv: "+(new XMLSerializer()).serializeToString(node),1);
 
     if (packet)
       this._handleEvent("packet_in", packet);
@@ -141,9 +144,9 @@ JSJaCMozillaConnection.prototype = {
         this._onDisconnect();
         return;
       }
-        this.socket.startTLS();
-        this._reInitStream();
-        return;
+      this.socket.startTLS();
+      this._reInitStream();
+      return;
     }
 
     if (!packet)
