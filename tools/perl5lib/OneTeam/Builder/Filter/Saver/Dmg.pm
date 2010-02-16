@@ -12,6 +12,9 @@ use Cwd;
 
 sub new {
     my ($class, $topdir, $version, $buildid, $mar_options, $xulrunner_path) = @_;
+
+    die "Please set XULRUNNER parameter" if not $xulrunner_path;
+
     my $self = {
         topdir => $topdir,
         outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
