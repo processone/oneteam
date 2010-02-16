@@ -274,7 +274,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         jid = new JID(jid);
 
         if (!showResource)
-            jid = jid.shortJID;
+            jid = jid.getShortJID();
 
         var name = this.getContactOrResource(jid);
         return name ? name.visibleName : jid.toUserString();
