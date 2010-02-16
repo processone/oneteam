@@ -284,7 +284,7 @@ _DECL_(ContactView).prototype =
 
     onNameChange: function()
     {
-        this.label.value = this.model.name;
+        this.label.setAttribute("value", this.model.name);
         this.label.parentNode.parentNode.setAttribute("overflowed",
             this.label.clientWidth > this.label.parentNode.clientWidth);
 
