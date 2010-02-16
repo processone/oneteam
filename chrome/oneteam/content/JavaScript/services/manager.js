@@ -3,7 +3,8 @@ var EXPORTED_SYMBOLS = ["servicesManager"];
 function ServicesManager()
 {
     this._iqHandlers = {};
-    this._messageHandlers = {}
+    this._messageHandlers = {};
+    this._contactHandlers = {};
     this._nodes = {};
     this._identities = {};
     this._items = {};
@@ -67,6 +68,11 @@ _DECL_(ServicesManager).prototype =
     addMessageService: function(ns, handler)
     {
         this._messageHandlers[ns] = handler;
+    },
+
+    addContactService: function(ns, handler)
+    {
+        this._contactHandlers[ns] = handler;
     },
 
     publishDiscoItems: function(node, itemNode, itemName, checkPerms)
@@ -413,6 +419,37 @@ _DECL_(ServicesManager).prototype =
     _clean: function()
     {
         this._initialPresenceSent = false;
+    },
+
+    _onResourcesChanged: function(data) {
+        var discoInfo;
+
+        for (var i = 0; i < data.removed; i++) {
+            if (!(discoInfo = data.removed[i].getDiscoInfo()))
+                continue;
+
+            for (var f in this._contactHandlers)
+                if (discoInfo.features[f])
+                    try {
+                        this._contactHandlers[f](data.removed[i].jid, f,
+                                                 false, discoInfo);
+                    } catch (ex) {
+                        dump("Disco contact handler ex: "+ex);
+                    }
+        }
+    },
+
+    _onResourceDiscoInfo: function(jid, discoInfo) {
+        if (!discoInfo)
+            return;
+
+        for (var f in this._contactHandlers)
+            if (discoInfo.features[f])
+                try {
+                    this._contactHandlers[f](jid, f, true, discoInfo);
+                } catch (ex) {
+                    dump("Disco contact handler ex: "+ex);
+                }
     },
 
     _sendCaps: function()

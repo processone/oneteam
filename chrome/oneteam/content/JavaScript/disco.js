@@ -87,7 +87,7 @@ _DECL_(DiscoCacheEntry).prototype =
         return this.discoItems;
     },
 
-    updateCapsInfo: function(caps)
+    updateCapsInfo: function(caps, discoInfo)
     {
         var [node, ver, hash] = [this.capsNode, this.capsVer, this.capsHash];
 
@@ -97,7 +97,11 @@ _DECL_(DiscoCacheEntry).prototype =
 
         if (node != this.capsNode || ver != this.capsVer ||
             hash != this.capsHash)
+        {
             this.discoInfo = null;
+            if (this.capsNode)
+                this.requestDiscoInfo(null, false, null, discoInfo);
+        }
     },
 
     destroy: function()
@@ -151,7 +155,8 @@ _DECL_(DiscoCacheEntry).prototype =
                                      true);
         ce.requestDiscoInfo(null, false,
                             new Callback(this._gotCapsInfo, this).
-                                addArgs(returnType, callback, discoItem));
+                                addArgs(returnType, callback, discoItem),
+                            discoItem);
     },
 
     _populateDiscoInfoFromCapsCache: function()
@@ -190,6 +195,8 @@ _DECL_(DiscoCacheEntry).prototype =
 
         for (i = idx; i < s.length; i++)
             this.discoInfo.features[s[i]] = 1;
+
+        servicesManager._onResourceDiscoInfo(this.jid, this.discoInfo);
     },
 
     _gotDiscoInfo: function(pkt)
@@ -221,9 +228,20 @@ _DECL_(DiscoCacheEntry).prototype =
                 cacheVal += "\n" + feature;
         }
 
+        var notifiedDiscoItems = [];
+
         for (i = 0; i < this.discoInfoCallbacks.length; i++) {
             var [returnType, callback, discoItem] = this.discoInfoCallbacks[i];
-            callback(discoItem, this._parseReturnType(returnType));
+
+            if (discoItem._onDiscoInfoUpdated &&
+                notifiedDiscoItems.indexOf(discoItem) < 0)
+            {
+                discoItem._onDiscoInfoUpdated();
+                notifiedDiscoItems.push(discoItem);
+            }
+
+            if (callback)
+                callback(discoItem, this._parseReturnType(returnType));
         }
 
         if (this._isCapsNode)
@@ -232,6 +250,8 @@ _DECL_(DiscoCacheEntry).prototype =
         if (this._cacheable)
             account.cache.setValue("disco-"+this.jid+(this.node ? "#"+this.node : ""),
                                    cacheVal, new Date(Date.now()+12*60*60*1000));
+
+        servicesManager._onResourceDiscoInfo(this.jid, this.discoInfo);
 
         delete this.discoInfoCallbacks;
     },
@@ -258,6 +278,10 @@ _DECL_(DiscoCacheEntry).prototype =
     _gotCapsInfo: function(capsItem, info, returnType, callback, discoItem)
     {
         this.discoInfo = info;
+
+        if (discoItem._onDiscoInfoUpdated)
+            discoItem._onDiscoInfoUpdated();
+
         if (callback)
             callback(discoItem, this._parseReturnType(returnType));
     }
@@ -269,9 +293,10 @@ function DiscoItem(jid, name, node, cacheable)
     this.discoName = name;
     this.discoNode = node;
     this.discoCacheable = cacheable;
+    this.init();
 }
 
-_DECL_(DiscoItem).prototype =
+_DECL_(DiscoItem, null, Model).prototype =
 {
     get _discoCacheEntry()
     {
@@ -282,7 +307,7 @@ _DECL_(DiscoItem).prototype =
 
     updateCapsInfo: function(node)
     {
-        this._discoCacheEntry.updateCapsInfo(node);
+        this._discoCacheEntry.updateCapsInfo(node, this);
     },
 
     hasCapsInformations: function()
