@@ -105,7 +105,8 @@ _DECL_(Model).prototype =
 {
     init: function()
     {
-        this._views = new CallbacksList(true, this.PROP_VIEWS, this);
+        if (!this._views)
+            this._views = new CallbacksList(true, this.PROP_VIEWS, this);
     },
 
     registerView: function(method, obj, prop, token)
