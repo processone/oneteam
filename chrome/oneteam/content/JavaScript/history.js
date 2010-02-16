@@ -81,13 +81,21 @@ function HistoryManager()
     var storageService = Components.classes["@mozilla.org/storage/service;1"].
         getService(Components.interfaces.mozIStorageService);
 
-    this.db = storageService.openDatabase(file);
-    var userVersionStmt = this.db.createStatement("PRAGMA user_version");
-    if (!userVersionStmt.executeStep())
-        throw new GenericError("Unable to access HistoryManager database");
+    try {
+        this.db = storageService.openDatabase(file);
+    } catch (ex if ex.result == Components.results.NS_ERROR_FILE_CORRUPTED) {
+        storageService.backupDatabaseFile(file, "messages.sqlite.corrupted");
 
-    var version = userVersionStmt.getInt32(0);
-    userVersionStmt.reset();
+        try { this.db.close() } catch (ex2) {}
+
+        file.remove(false);
+
+        this.db = storageService.openDatabase(file);
+    }
+
+    this.db.executeSimpleSQL("PRAGMA synchronous = OFF");
+
+    var version = this.db.schemaVersion;
 
     if (version > 1999)
         throw new GenericError("Unrecognized HistoryManager database version");

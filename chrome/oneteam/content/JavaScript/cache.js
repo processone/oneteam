@@ -29,18 +29,27 @@ function PersistentCache(name)
     var storageService = Components.classes["@mozilla.org/storage/service;1"].
         getService(Components.interfaces.mozIStorageService);
 
-    this.db = storageService.openDatabase(file);
-    var userVersionStmt = this.db.createStatement("PRAGMA user_version");
-    if (!userVersionStmt.executeStep())
-        throw new GenericError("Unable to access PersistentCache database");
+    try {
+        this.db = storageService.openDatabase(file);
+    } catch (ex if ex.result == Components.results.NS_ERROR_FILE_CORRUPTED) {
+        storageService.backupDatabaseFile(file, name+".sqlite.corrupted");
 
-    var version = userVersionStmt.getInt32(0);
-    userVersionStmt.reset();
+        try { this.db.close() } catch (ex2) {}
+
+        file.remove(false);
+
+        this.db = storageService.openDatabase(file);
+    }
+
+    this.db.executeSimpleSQL("PRAGMA synchronous = OFF");
+
+    var version = this.db.schemaVersion;
 
     if (version > 1999)
         throw new GenericError("Unrecognized PersistentCache database version");
 
     this.db.createFunction("deleteFile", 1, new StorageFunctionDelete());
+
 try{
     if (version == 0)
         this.db.executeSimpleSQL(<sql>
@@ -81,6 +90,7 @@ try{
     else
         this.db.executeSimpleSQL("DELETE FROM cache WHERE expiry_date < "+Date.now());
 }catch(ex){alert(this.db.lastErrorString); throw ex}
+
     this.getStmt = this.db.createStatement("SELECT value, is_file, expiry_date FROM cache "+
                                       "WHERE key = ?1");
     this.setStmt = this.db.createStatement("REPLACE INTO cache (key, value, is_file, "+
