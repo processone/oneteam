@@ -1,10 +1,12 @@
 #include "nsIDNSListener.idl"
 #include "nsIEventTarget.idl"
 
-[scriptable, uuid(f1dc7ce3-8a8f-4df5-a610-478717f80ad5)]
+[scriptable, uuid(4af205ff-820f-493b-a22e-b53cfb6471ef)]
 interface otIDNSService : nsISupports
 {
-  void asyncResolveSRV(in ACString hostName, in nsIDNSListener listener, in nsIEventTarget target);
+  const short RESOLVE_HOSTNAME = 1;
+
+  void asyncResolveSRV(in ACString hostName, in short flags, in nsIDNSListener listener, in nsIEventTarget target);
 };
 
 %{C++

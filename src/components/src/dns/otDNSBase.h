@@ -13,6 +13,7 @@ struct SRVRecord {
   PRUint16 port;
   PRUint16 priority;
   PRUint16 weight;
+  nsICancelable *cancelable;
 
   PRBool operator<(const SRVRecord &b) const {
     return priority < b.priority ? 1 :
@@ -24,12 +25,13 @@ struct SRVRecord {
   };
 };
 
-struct otDNSRecord : public nsIDNSRecord
+struct otDNSRecord : public nsIDNSRecord, public nsIDNSListener
 {
   NS_DECL_ISUPPORTS
   NS_DECL_NSIDNSRECORD
+  NS_DECL_NSIDNSLISTENER
 
-  otDNSRecord(nsIDNSListener *listener);
+  otDNSRecord(nsIDNSListener *listener, PRBool resolve);
 
   void AddSRVRecord(SRVRecord *record);
   void Deliver(nsresult value);
@@ -38,6 +40,9 @@ struct otDNSRecord : public nsIDNSRecord
   nsTArray<nsCString> mResults;
   nsCOMPtr<nsIDNSListener> mListener;
   nsTArray<SRVRecord> mSRVRecords;
+  PRUint16 mUnresolved;
+  PRPackedBool mResolve;
+  PRPackedBool mDeliver;
 };
 
 class otDNSBase : public otIDNSService

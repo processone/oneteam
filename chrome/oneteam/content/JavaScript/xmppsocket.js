@@ -24,7 +24,7 @@ _DECL_(XMPPSocket).prototype =
                     getService(Components.interfaces.nsIThreadManager).mainThread;
                 var _this = this;
 
-                dnsSrv.asyncResolveSRV("_xmpp-client._tcp."+this.domain, this,
+                dnsSrv.asyncResolveSRV("_xmpp-client._tcp."+this.domain, 0, this,
                                        mainThread);
                 return;
             } catch (ex) {}
