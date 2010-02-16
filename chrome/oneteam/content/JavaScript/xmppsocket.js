@@ -254,6 +254,12 @@ _DECL_(XMPPSocket).prototype =
                             getService(Components.interfaces.nsIPromptService);
                         var flags = 0, msg = "", check = {value: false};
 
+                        if (this.socket._sslDowngradeTimeout) {
+                            clearTimeout(this.socket._sslDowngradeTimeout)
+                            delete this.socket._sslDowngradeTimeout;
+                            this.socket.tlsProblemHandled[this.socket.domain] = false;
+                        }
+
                         status = status.QueryInterface(Components.interfaces.nsISSLStatus);
 
                         if (status.isUntrusted) {
@@ -276,6 +282,9 @@ _DECL_(XMPPSocket).prototype =
                                                      127+256*2, _("Continue"), "", "",
                                                      _("Always skip this dialog"), check))
                             return true;
+
+                        if (status.isDomainMismatch)
+                            flags |= srv.ERROR_MISMATCH;
 
                         srv.rememberValidityOverride(this.socket.host, this.socket.port,
                                                      status.serverCert, flags, !check.value);
