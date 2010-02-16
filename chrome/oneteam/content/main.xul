@@ -448,7 +448,7 @@
             description.appendChild(div);
             this.eventBox.appendChild(description);
           } else
-            this.eventBox.appendChild(event[0].generate());
+            this.eventBox.appendChild(event[0].generate(this.eventBox));
         }
       },
 
@@ -467,7 +467,8 @@
         if (!account.events[this.eventNum] || ev.target == this.prevButton || ev.target == this.nextButton)
           return;
 
-        account.events[0][1]();
+        if (account.events[0][1])
+          account.events[0][1]();
         account.removeEvent(account.events[0]);
       }
     }
