@@ -14,6 +14,7 @@ function JingleNodesService() {
 _DECL_(JingleNodesService).prototype =
 {
     _trace: function(args) {
+        return;
         var name = "(unknown)";
 
         for (var i in this)
