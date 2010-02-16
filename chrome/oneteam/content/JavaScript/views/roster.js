@@ -215,6 +215,8 @@ function ContactView(model, parentView)
     this.iconContainer.appendChild(this.statusIcon);
 
     hbox.appendChild(this.label);
+    hbox.setAttribute("align", "center");
+    hbox.setAttribute("pack", "center");
     stack2.appendChild(hbox);
     vbox2.appendChild(image);
     stack2.appendChild(vbox2);
@@ -251,10 +253,17 @@ function ContactView(model, parentView)
     this.node.setAttribute("tooltip", this.tooltip.id);
     this.node.setAttribute("class", "contact-view");
     this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
+    this.label.parentNode.parentNode.setAttribute("overflowed", "false");
+    this.label.parentNode.addEventListener("overflow", function(ev) {
+        ev.target.parentNode.setAttribute("overflowed", "true");
+    }, true);
+    this.label.parentNode.addEventListener("underflow", function(ev) {
+        ev.target.parentNode.setAttribute("overflowed", "false");
+    }, true);
     this.label.setAttribute("value", model.name || model.jid.node);
-    this.label.setAttribute("flex", "1");
     this.statusIcon.setAttribute("class", "status-icon");
 
+    this.label.view = this;
     this.node.model = this.model;
     this.node.menuModel = model;
     this.node.view = this;
@@ -284,9 +293,7 @@ _DECL_(ContactView).prototype =
 
     onNameChange: function()
     {
-        this.label.setAttribute("value", this.model.name);
-        this.label.parentNode.parentNode.setAttribute("overflowed",
-            this.label.clientWidth > this.label.parentNode.clientWidth);
+        this.label.setAttribute("value", this.model.name || this.model.jid.node);
 
         this.parentView.onItemUpdated(this);
     },

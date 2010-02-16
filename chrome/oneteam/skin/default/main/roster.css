@@ -79,7 +79,6 @@ expander[open="true"] .expanderButton {
   background: #e5e5e5;
   -moz-border-radius: 5px;
   -moz-box-shadow: 0 0 3px 1px #909090;
-  overflow: hidden;
   text-align: center;
   font-weight: bold;
   font-size: 11px;
@@ -92,10 +91,10 @@ expander[open="true"] .expanderButton {
 }
 
 .label-box > hbox {
-  -moz-stack-sizing: ignore;
   -moz-box-align: center;
-  -moz-box-pack: start;
+  -moz-box-pack: center;
   padding: 0 2px;
+  overflow: hidden;
 }
 
 .label-box > hbox > label {
@@ -116,7 +115,7 @@ expander[open="true"] .expanderButton {
   display: none;
 }
 
-.contact-view[hasAvatar="true"] .label-box > hbox > label {
+.contact-view[hasAvatar="true"] .label-box > * {
   display: none;
 }
 
