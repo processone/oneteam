@@ -116,7 +116,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this.groups = [];
         this.visibleName = name || this.jid.toUserString("short");
     } else {
-        this.name = name || this.jid.toUserString("short");
+        this.name = name || this.jid.node;
         this.visibleName = name || this.jid.toUserString("short");
         this.subscription = subscription || "none";
         this.subscriptionAsk = !!subscriptionAsk;
