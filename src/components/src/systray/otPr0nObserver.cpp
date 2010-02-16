@@ -8,7 +8,7 @@ class nsIFrame;
 #include "imgIRequest.h"
 #include "nsIDOMHTMLImageElement.h"
 #include "nsIDOMHTMLCanvasElement.h"
-#include "nsICanvasElement.h"
+#include "nsICanvasRenderingContextInternal.h"
 #include "otPr0nObserver.h"
 
 NS_IMPL_ISUPPORTS4(otPr0nObserver, imgIDecoderObserver1_9, imgIContainerObserver1_9,
@@ -21,15 +21,56 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
   nsresult rv;
 
   mListener = listener;
-
   mImgRequest = nsnull;
 
   if (!image)
     return NS_OK;
   nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
 
-  if (!imgEl)
-    return NS_ERROR_NOT_AVAILABLE;
+  if (!imgEl) {
+    nsCOMPtr<nsIDOMHTMLCanvasElement> canvasEl = do_QueryInterface(image);
+    if (!canvasEl)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsCOMPtr<nsISupports> rc;
+    rv = canvasEl->GetContext(NS_LITERAL_STRING("2d"), getter_AddRefs(rc));
+    if (NS_FAILED(rv))
+      return rv;
+
+    nsCOMPtr<nsICanvasRenderingContextInternal> rci = do_QueryInterface(rc);
+    if (!rci)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsRefPtr<gfxASurface> surface;
+    rci->GetThebesSurface(getter_AddRefs(surface));
+
+    if (!surface)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    PRInt32 w, h;
+
+    rv = canvasEl->GetWidth(&w);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = canvasEl->GetHeight(&h);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<gfxImageSurface> imgSurface;
+    if (surface->GetType() == gfxASurface::SurfaceTypeImage)
+      imgSurface = static_cast<gfxImageSurface*>(static_cast<gfxASurface*>(surface));
+    else {
+      imgSurface = new gfxImageSurface(gfxIntSize(w, h), gfxASurface::ImageFormatARGB32);
+
+      nsRefPtr<gfxContext> ctx = new gfxContext(imgSurface);
+      rv = rci->Render(ctx, gfxPattern::FILTER_NEAREST);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    rv = mListener->ProcessImageData(imgSurface->Width(), imgSurface->Height(),
+                                     imgSurface->Data(), imgSurface->Stride(),
+                                     imgSurface->GetDataSize(), NULL, 0, 8,
+                                     PR_FALSE);
+    return rv;
+  }
 
   nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
 
