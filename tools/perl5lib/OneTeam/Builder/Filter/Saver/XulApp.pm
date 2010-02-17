@@ -126,8 +126,14 @@ sub _create_mar_part {
     my $prefix = $mac ? "Contents/Resources/" : "";
     my $manifest_tmp = catfile($tmpdir, "update.manifest.tmp");
 
+    my @files = map {"$prefix$_"} grep {
+        not m!^platform/! or
+        m!^platform/Darwin! and $mac or
+        not m!^platform/Darwin! and not $mac
+    } sort keys %files;
+
     open $fh, ">", $manifest_tmp;
-    for (sort keys %files) {
+    for (@files) {
         my $path = join "/", splitdir($_);
         print $fh "add \"$prefix$path\"\n";
     }
@@ -140,8 +146,6 @@ sub _create_mar_part {
 
     system("bzip2 -cz9 '".$manifest_tmp."' > '".catfile($tmpdir, "update.manifest")."'");
     unlink($manifest_tmp);
-
-    my @files = map {"$prefix$_"} sort keys %files;
 
     system(catfile($self->{topdir}, qw(tools mar)), '-C', $tmpdir,
         '-c', $mar_file_path, @files, "update.manifest");
