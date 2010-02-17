@@ -17,6 +17,10 @@ function PersistentCache(name)
     if (!this.fileCacheDir.exists)
         this.fileCacheDir.createDirectory();
 
+    // XXXpfx if path is not directory at creation url doesn't have / at end
+    // which causes problem when nsResProtocol, tries later to resolve urls.
+    this.fileCacheDir = new File(fileCacheDir);
+
     var ioService = Components.classes["@mozilla.org/network/io-service;1"].
         getService(Components.interfaces.nsIIOService);
     var resProt = ioService.getProtocolHandler("resource").
