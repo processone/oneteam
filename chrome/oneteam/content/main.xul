@@ -610,8 +610,10 @@
               <menuitem label="_('Commands Console...')" command="cmd_cmdConsole"/>
   <!-- #endif -->
   <!-- #ifdef XULAPP -->
+  <!-- #ifndef XPI -->
               <menuseparator/>
               <menuitem label="_('Check for Updates...')" command="cmd_chkUpdates"/>
+  <!-- #endif -->
   <!-- #endif -->
               <menuseparator/>
               <menuitem label="_('About...')" command="cmd_about"/>
