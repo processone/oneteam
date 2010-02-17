@@ -56,6 +56,23 @@ sub _output_filename {
 sub _generate_install_rdf {
 }
 
+sub _generate_chrome_manifest {
+    my ($self, $tmpdir, $tmppfxdir) = @_;
+
+    $self->SUPER::_generate_chrome_manifest($tmppfxdir, $tmppfxdir);
+
+    my $prefix = File::Spec->abs2rel("chrome", $self->_chrome_manifest_dir);
+    $prefix = $prefix eq "." ? "" : "$prefix/";
+
+    open($fh, ">>", catfile($tmppfxdir, $self->_chrome_manifest_dir, 'chrome.manifest')) or
+        die "Unable to create file: $!";
+
+    print $fh "locale branding en-US jar:oneteam.jar!/locale/branding/\n";
+
+    close $fh;
+
+}
+
 sub _prepare_files {
     my ($self, $tmpdir, $tmppfxdir, $chromedir) = @_;
 
