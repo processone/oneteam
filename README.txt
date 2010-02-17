@@ -17,7 +17,7 @@ create targets with additional debug code.
 XULRUNNER APPLICATION
 =====================
 You need to install xulrunner first, you can download it from
-ftp://ftp.mozilla.org/pub/mozilla.org/xulrunner/releases/1.8.1.3/contrib/
+http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/
 
 You can install application with:
   $ /path/to/xulrunner/xulrunner --install-app oneteam.xulapp /path/to/target/directory
