@@ -8,6 +8,10 @@ if lockfile -r 0 -! update.lock 2>/dev/null; then
 fi
 
 function build () {
+    if [ -z "$3" -a "`git rev-list -1 $1-build`" == "`git rev-list -1 origin/$1`" ]; then
+      return
+    fi
+
     rm *.xpi *.xulapp *.mar *.xml 2>/dev/null
 
     git checkout origin/$1
@@ -52,11 +56,9 @@ function build () {
     cp mars-info.txt ..
 }
 
-HEAD=`git rev-list -1 HEAD`
-git pull -q >/dev/null 2>&1
-if [ -n "$1" -o $HEAD != `git rev-list -1 HEAD` ]; then
-  build flash-jingle flash-jingle
-  build master oneteam
-fi
+git pull -q >/dev/null 2>/dev/null
+
+build flash-jingle flash-jingle "$1"
+build master oneteam "$1"
 
 rm -f update.lock
