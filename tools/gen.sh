@@ -8,12 +8,13 @@ if lockfile -r 0 -! update.lock 2>/dev/null; then
 fi
 
 function build () {
-    if [ -z "$3" -a "`git rev-list -1 $1-build`" == "`git rev-list -1 origin/$1`" ]; then
+    if [ -z "$3" -a "`git show-ref -s refs/heads/$1-build`" == "`git show-ref -s remotes/origin/$1`" ]; then
       return
     fi
 
     rm *.xpi *.xulapp *.mar *.xml 2>/dev/null
 
+    git branch -f $1-build origin/$1 >/dev/null
     git checkout origin/$1
 
     perl build.pl XULAPP 1 DEBUG 1 \
