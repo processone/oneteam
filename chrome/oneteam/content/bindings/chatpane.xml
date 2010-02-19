@@ -959,7 +959,16 @@
               me._doSend(true);
           }, false);
 
-          doc.addEventListener("keypress", function (event) {
+          doc.addEventListener("paste", function(event) {
+            var body = me._input.contentDocument.body;
+            setTimeout(sanitizeDOM, 0, body, function(el) {
+              return el == body || el.nodeName.toLowerCase() == "br" ||
+                el == body.firstChild && el.hasAttribute("thread-index") ?
+                  "keep" : null;
+            });
+          }, false);
+
+          doc.addEventListener("keypress", function(event) {
           //alert("r: "+String.fromCharCode(event.charCode)+", "+event.keyCode+", "+event.altKey+", "+event.metaKey+", "+event.shiftKey);
             event.stopPropagation();
             if (event.keyCode == KeyEvent.DOM_VK_TAB) {

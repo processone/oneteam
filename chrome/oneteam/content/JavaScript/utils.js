@@ -6,7 +6,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
                         "recoverSetters", "perlSplit", "evalInWindow",
                         "enumerateMatchingProps", "report", "Animator",
-                        "iteratorEx", "findMax"];
+                        "iteratorEx", "findMax", "sanitizeDOM"];
 
 ML.importMod("roles.js");
 
@@ -626,6 +626,56 @@ function unescapeJS(str)
             if (tab) return "\t";
             return chr||"";
         });
+}
+
+function sanitizeDOM(dom, filter) {
+    debugger;
+    if (dom.nodeType == dom.ELEMENT_NODE) {
+        var info, moveChildrens;
+        var nodeName = dom.nodeName.toLowerCase();
+        var filterVal = filter ? filter(dom) : null
+
+        if (filterVal)
+            moveChildrens = filterVal == "skip";
+        else if ((info = Message.prototype._allowedTags[nodeName])) {
+            if (info[2] && !dom.hasChildNodes()) {
+                dom.parentNode.removeChild(dom);
+                return;
+            }
+
+            for (var i = dom.attributes.length-1; i >= 0; i--)
+                if (info[1].indexOf(dom.attributes[i].name) < 0)
+                    dom.removeAttributeNode(dom.attributes[i]);
+                else if (dom.attributes[i].name == "style") {
+                    var style = "", styles = Message.prototype.
+                        _sanitizeCSS(dom.attributes[i].value);
+
+                    for (var j in styles)
+                        style += j+":"+styles[j]+";";
+
+                    dom.attributes[i].value = style;
+                }
+
+/*            if (info[3] && !dom.hasAttributes())
+                moveChildrens = true;*/
+
+            if (!info[0]) {
+                dom.parentNode.removeChild(dom);
+                return;
+            }
+        } else
+            moveChildrens = true;
+
+        var nextSibling = dom.nextSibling;
+
+        for (var i = dom.childNodes.length-1; i >= 0; i--) {
+            sanitizeDOM(dom.childNodes[i], filter);
+            if (moveChildrens)
+                dom.parentNode.insertBefore(dom.childNodes[i], dom);
+        }
+        if (moveChildrens)
+            dom.parentNode.removeChild(dom);
+    }
 }
 
 function recoverSetters(obj, debug) {
