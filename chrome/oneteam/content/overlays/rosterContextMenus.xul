@@ -109,6 +109,11 @@
         setAttribute("disabled", !menuModel.canSeeMe);
     }
 
+    function updateGroupContextMenu(menu, event) {
+      if (!findMenuModel(menu, event))
+        return;
+    }
+
     function updateResourceContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
         return;
@@ -228,6 +233,10 @@
         oncommand="menuModel.onShowHistory()"/>
       <menuitem id="contact-send-file" label="_('Send File...')"
         oncommand="menuModel.onSendFile()"/>
+    </popup>
+    
+    <popup id="group-contextmenu" onpopupshowing="updateGroupContextMenu(this, event)">
+      <menuitem label="_('Rename...')" oncommand="menuModel.onRename()"/>
     </popup>
 
     <popup id="resource-contextmenu" onpopupshowing="updateResourceContextMenu(this, event)">
