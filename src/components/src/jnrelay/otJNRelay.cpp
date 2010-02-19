@@ -210,7 +210,7 @@ otJNRelay::FindPublicAddress()
     NiceAddress addr;
     nice_address_set_from_string(&addr, (char*)i->data);
 
-    if (1||!nice_address_is_private(&addr)) {
+    if (!nice_address_is_private(&addr)) {
       hasPubAddress = 1;
 
       if (addr.s.addr.sa_family == AF_INET) {
