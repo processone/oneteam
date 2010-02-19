@@ -72,7 +72,7 @@
             this.onCommand(event);
         ]]>
       </handler>
-      <handler event="click">
+      <handler event="click" button="0">
         <![CDATA[
           if (event.originalTarget == this._label &&
               this.getAttribute("disabled") != "true")
