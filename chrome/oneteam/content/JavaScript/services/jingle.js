@@ -233,6 +233,13 @@ _DECL_(JingleSession, null, Model).prototype =
             if (this._remoteCreds)
                 this.iceSession.setRemoteCredentials(this._remoteCreds[0],
                                                      this._remoteCreds[1]);
+            if (this._jnRelay) {
+                if (this._jnRelay.length)
+                    this.iceSession.addJNRelay(this._jnRelay[0], this._jnRelay[1],
+                                               this._jnRelay[2]);
+
+                this.iceSession.gatherCandidates();
+            }
 
             if (this._sendTransportsCalled)
                 this._sendTransports();
@@ -439,16 +446,17 @@ _DECL_(JingleSession, null, Model).prototype =
             this._canceler.cancel();
     },
 
-    rtype: 0,
-    ltype: 0,
-
     _onJingleNodesChannel: function(channel) {
-        dump("OJNC\n");
+        if (!this.iceSession) {
+            this._jnRelay = channel ? [channel.host, channel.localport,
+                                       channel.remoteport] : [];
+            return;
+        }
+
         try{
         if (channel)
             this.iceSession.addJNRelay(channel.host, channel.localport,
                                        channel.remoteport);
-        dump("OJNCend\n")
         }catch(ex){dump(ex+"\n")}
 
         this.iceSession.gatherCandidates();
