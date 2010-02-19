@@ -4,7 +4,7 @@ To build OneTeam you need to have perl with those additional modules:
   Sub::Name
 
 You can create three targets:
-  xpi
+  xpi - ...
   xulapp - archive which can be converted into xulrunner application, to
     generate it call 'perl build.pl XULAPP 1' or 'make xulapp'.
   webjar - jar file with web version of oneteam, generated with 
