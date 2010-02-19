@@ -84,6 +84,7 @@ function GroupView(model, parentView)
 
     this.node.setAttribute("class", "group-view");
     this.node.model = this.model;
+    this.node.menuModel = this.model;
     this.node.view = this;
 
     this.box = this.doc.createElementNS(XULNS, "description");
