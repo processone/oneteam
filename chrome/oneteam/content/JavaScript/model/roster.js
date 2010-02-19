@@ -42,7 +42,7 @@ _DECL_(Group, null, Model).prototype =
 
     rename: function(newName)
     {
-        this._name = name;
+        this._name = newName;
         for (var c in this.contactsIterator())
             c._updateRoster();
         delete this._name;
