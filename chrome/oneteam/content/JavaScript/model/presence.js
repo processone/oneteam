@@ -3,6 +3,7 @@ var EXPORTED_SYMBOLS = ["Presence", "PresenceProfiles", "PresenceProfile"];
 ML.importMod("roles.js");
 ML.importMod("utils.js");
 ML.importMod("modeltypes.js");
+ML.importMod("prefs.js");
 //ML.importMod("l10n.js");
 
 function Presence(show, status, priority, profile)
@@ -25,7 +26,8 @@ function Presence(show, status, priority, profile)
 
         this.status = status;
         this.priority = priority == null || isNaN(+priority) ?
-            this._priorityMap[this.show] : +priority;
+            parseInt(this._priorityMap[this.show]*prefManager.getPref("chat.connection.priority")) :
+            +priority;
     }
 
     this.profile = profile;
@@ -141,11 +143,11 @@ _DECL_(Presence, null, Comparator).prototype =
     },
 
     _priorityMap: {
-        available: 50,
-        chat: 50,
-        dnd: 40,
-        away: 30,
-        xa: 20,
+        available: 5/5,
+        chat: 5/5,
+        dnd: 4/5,
+        away: 3/5,
+        xa: 2/5,
         unavailable: 0
     }
 }
