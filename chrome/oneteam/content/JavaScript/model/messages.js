@@ -818,15 +818,22 @@ _DECL_(Message).prototype =
                 nodeName = null;
 
             if (!skip) {
-                var myCounter;
+                var myCounter, addNewLine;
 
                 isBlock = nodeName in this._blockElements;
 
                 if (nodeName == "ol")
                     myCounter = [counter ? counter[0]+counter[1]+"." : "", 0];
-                else if (nodeName == "li" && counter) {
-                    myCounter = counter;
-                    counter[1]++;
+                else if (nodeName == "ul")
+                    myCounter = counter ? "  "+counter : "  *";
+                else if (nodeName == "li") {
+                    if (typeof(counter) == "string") {
+                        textContent += counter+" ";
+                    } else if (typeof(counter) == "object") {
+                        myCounter = counter;
+                        counter[1]++;
+                        textContent += counter[0]+counter[1]+". ";
+                    }
                 }
 
                 for (i = 0; i < dom.childNodes.length; i++) {
@@ -838,6 +845,8 @@ _DECL_(Message).prototype =
                     textContent += t;
                     sanitizedContent += s;
                 }
+                if (nodeName == "li")
+                    textContent += "\n";
             } else if (nodeName == "img")
                 if (!/^(?:https?|ftp):/.exec(attrs.src||""))
                     nodeName = null;
