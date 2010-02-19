@@ -81,7 +81,8 @@ function GroupView(model, parentView)
 
     this.node = this.doc.createElementNS(XULNS, "expander");
     this.node.setAttribute("open", "true");
-
+    
+    this.node.setAttribute("context", "group-contextmenu");
     this.node.setAttribute("class", "group-view");
     this.node.model = this.model;
     this.node.menuModel = this.model;
