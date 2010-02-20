@@ -11,11 +11,13 @@ my $tools_dir;
 my $force = 0;
 my $config_stamp;
 my $moz_version;
+my @skip_dirs;
 
 Getopt::Long::Configure(qw(pass_through));
 GetOptions(
     "root-dir=s" => \$root_dir,
     "tools-dir=s" => \$tools_dir,
+    "skip-dir=s" => \@skip_dirs,
     "force" => \$force);
 
 sub ex {
@@ -77,6 +79,9 @@ sub libtoolize {
 }
 
 sub process_makefile {
+    for (@skip_dirs) {
+        return if index ($File::Find::name, $_) == 0;
+    }
     libtoolize($File::Find::name, $config{'MOZILLA_SOURCE_'.$moz_version},
         $config{'MOZILLA_OBJ_'.$moz_version}) if -f $_ && /\.in$/;
 }
@@ -102,6 +107,7 @@ $root_dir = simplify_path($root_dir);
 $tools_dir =  simplify_path($tools_dir);
 my $config_path = catfile($tools_dir, 'conf.mk');
 $config_stamp = (stat($config_path))[9];
+@skip_dirs = map {simplify_path($_)} @skip_dirs;
 
 read_config($config_path);
 $moz_version = (sort split /\s+/, $config{MOZILLA_VERSIONS})[-1];

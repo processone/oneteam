@@ -22,13 +22,13 @@ distclean:
 	@$(MAKE) -C build distclean
 
 %/Makefile: %/Makefile.in
-	@perl $(ottdir)/libtoolize.pl --root-dir=. --tools-dir=$(ottdir)
+	@perl $(ottdir)/libtoolize.pl --root-dir=. --tools-dir=$(ottdir) --skip-dir=libs
 
 $(conf_mk):
 	@echo $(error You need to create $(conf_mk) file)
 
 libtoolize: $(conf_mk)
-	@perl $(ottdir)/libtoolize.pl --force --root-dir=. --tools-dir=$(ottdir)
+	@perl $(ottdir)/libtoolize.pl --force --root-dir=. --tools-dir=$(ottdir) --skip-dir=libs
 
 debug-build:
 	$(MAKE) all MOZ_DEBUG=1 STRIP=echo 
