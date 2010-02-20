@@ -3,13 +3,14 @@
 
 #include "imgIRequest1_9.h"
 #include "nsIImageLoadingContent1_9.h"
+#include "nsIImageLoadingContent1_9_2.h"
 #include "nsIImageLoadingContent.h"
-//#include "imgIDecoderObserver1_9.h"
 
 class otSystrayBase;
 
 class otPr0nObserver :
   public imgIDecoderObserver1_9,
+  public imgIDecoderObserver1_9_2,
   public imgIDecoderObserver
 {
 public:

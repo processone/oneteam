@@ -5,13 +5,15 @@ class nsIFrame;
 #include "otDebug.h"
 #include "gfxIImageFrame1_9.h"
 #include "imgIContainer.h"
+#include "imgIContainer1_9_2.h"
 #include "imgIRequest.h"
 #include "nsIDOMHTMLImageElement.h"
 #include "nsIDOMHTMLCanvasElement.h"
 #include "nsICanvasRenderingContextInternal.h"
 #include "otPr0nObserver.h"
 
-NS_IMPL_ISUPPORTS4(otPr0nObserver, imgIDecoderObserver1_9, imgIContainerObserver1_9,
+NS_IMPL_ISUPPORTS6(otPr0nObserver, imgIDecoderObserver1_9, imgIContainerObserver1_9,
+                   imgIDecoderObserver1_9_2, imgIContainerObserver1_9_2,
                    imgIDecoderObserver, imgIContainerObserver)
 
 nsresult
@@ -72,8 +74,52 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
     return rv;
   }
 
-  nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
+  nsCOMPtr<nsIImageLoadingContent1_9> loader1_9 = do_QueryInterface(imgEl);
 
+  if (loader1_9) {
+    nsCOMPtr<imgIRequest1_9> imgRequest;
+    rv = loader1_9->GetRequest(nsIImageLoadingContent1_9::CURRENT_REQUEST,
+                               getter_AddRefs(imgRequest));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!imgRequest)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsCOMPtr<imgIRequest1_9> imgRequestClone;
+
+    rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mImgRequest = imgRequestClone;
+
+    return NS_OK;
+  }
+
+  nsCOMPtr<imgIDecoderObserver1_9_2> observer = do_QueryInterface(imgEl);
+  if (observer) {
+    nsCOMPtr<nsIImageLoadingContent1_9_2> loader = do_QueryInterface(imgEl);
+    if (!loader)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsCOMPtr<imgIRequest> imgRequest;
+    rv = loader->GetRequest(nsIImageLoadingContent1_9_2::CURRENT_REQUEST,
+                            getter_AddRefs(imgRequest));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!imgRequest)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    nsCOMPtr<imgIRequest> imgRequestClone;
+
+    rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mImgRequest = imgRequestClone;
+
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
   if (loader) {
     nsCOMPtr<imgIRequest> imgRequest;
     rv = loader->GetRequest(nsIImageLoadingContent::CURRENT_REQUEST,
@@ -89,29 +135,11 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
     NS_ENSURE_SUCCESS(rv, rv);
 
     mImgRequest = imgRequestClone;
-  } else {
-    nsCOMPtr<nsIImageLoadingContent1_9> loader = do_QueryInterface(imgEl);
 
-    if (!loader)
-      return NS_ERROR_NOT_AVAILABLE;
-
-    nsCOMPtr<imgIRequest1_9> imgRequest;
-    rv = loader->GetRequest(nsIImageLoadingContent1_9::CURRENT_REQUEST,
-                            getter_AddRefs(imgRequest));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (!imgRequest)
-      return NS_ERROR_NOT_AVAILABLE;
-
-    nsCOMPtr<imgIRequest1_9> imgRequestClone;
-
-    rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mImgRequest = imgRequestClone;
+    return NS_OK;
   }
 
-  return NS_OK;
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 nsresult
@@ -130,7 +158,12 @@ otPr0nObserver::FrameChanged(imgIContainer *aContainer,
   nsresult rv;
   nsRefPtr<gfxImageSurface> surface;
 
-  rv = aContainer->CopyFrame(1, 0, getter_AddRefs(surface));
+  nsCOMPtr<imgIContainer1_9_2> container = do_QueryInterface(aContainer);
+  if (container) {
+    rv = container->CopyCurrentFrame(getter_AddRefs(surface));
+  } else
+    rv = aContainer->CopyFrame(1, 0, getter_AddRefs(surface));
+
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mListener->ProcessImageData(surface->Width(), surface->Height(),
