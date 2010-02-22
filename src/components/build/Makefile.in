@@ -40,7 +40,8 @@ LOCAL_INCLUDES = \
 	-I$(otdir)/src/ice \
 	-I$(otdir)/src/audio \
 	-I$(otdir)/src/rtp \
-	-I$(otdir)/src/speex \
+	-I$(otdir)/src/codecs \
+	-I$(otdir)/libs/libilbc \
 	-I$(otdir)/src/jnrelay \
 	$(NULL)
 

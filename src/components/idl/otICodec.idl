@@ -4,11 +4,18 @@
 interface otICodecService;
 interface otISource;
 
+[scriptable, uuid(b7c3df71-0d1b-4893-84c1-c67945a617dd)]
+interface otICodecInfoAttribute : nsISupports
+{
+  readonly attribute ACString name;
+  readonly attribute ACString value;
+};
+
 [scriptable, uuid(9fb428af-5d1e-4f0a-820f-e26de975fc88)]
 interface otICodecInfo : nsISupports
 {
   readonly attribute otICodecService service;
-  readonly attribute string name;
+  readonly attribute ACString name;
   readonly attribute unsigned short payloadId;
   readonly attribute unsigned long clockrate;
   readonly attribute unsigned short channels;

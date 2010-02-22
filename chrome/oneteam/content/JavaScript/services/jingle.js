@@ -130,7 +130,11 @@ _DECL_(JingleSession, null, Model).prototype =
                         clockrate: +p.@clockrate,
                         channels: +p.@channels || 1,
                         maxptime: +p.@maxptime || this.medias[i].maxptime,
-                        ptime: +p.@ptime || this.medias[i].ptime
+                        ptime: +p.@ptime || this.medias[i].ptime,
+                        getAttributes: function(a, c) {
+                            a.value = [];
+                            c.value = 0;
+                        }
                     };
                     break mainLoop;
                 }

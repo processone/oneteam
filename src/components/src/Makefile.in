@@ -19,7 +19,7 @@ DIRS = \
 	idle \
 	jnrelay \
 	rtp \
-	speex \
+	codecs \
 	systray \
 	$(OT_EXTRA_DIRS) \
 	$(NULL)

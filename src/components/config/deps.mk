@@ -54,7 +54,7 @@ endif
 
 OT_EXTRA_SHARED_LIBS += \
 	$(otdir)/src/ice/$(LIB_PREFIX)ot_ice_s.$(LIB_SUFFIX) \
-	$(otdir)/src/speex/$(LIB_PREFIX)ot_speex_s.$(LIB_SUFFIX) \
+	$(otdir)/src/codecs/$(LIB_PREFIX)ot_codecs_s.$(LIB_SUFFIX) \
 	$(otdir)/src/rtp/$(LIB_PREFIX)ot_rtp_s.$(LIB_SUFFIX) \
 	$(otdir)/src/jnrelay/$(LIB_PREFIX)ot_jnrelay_s.$(LIB_SUFFIX) \
 	$(NULL)
@@ -63,6 +63,7 @@ OT_LDOPTS += \
 	$(otdir)/libs/libnice/nice/.libs/$(LIB_PREFIX)nice.$(LIB_SUFFIX) \
 	$(otdir)/libs/libspeex/libspeex/.libs/$(LIB_PREFIX)speex.$(LIB_SUFFIX) \
 	$(otdir)/libs/libspeex/libspeex/.libs/$(LIB_PREFIX)speexdsp.$(LIB_SUFFIX) \
+	$(otdir)/libs/libilbc/$(LIB_PREFIX)ilbc.$(LIB_SUFFIX) \
 	$(otdir)/libs/libsrtp/$(LIB_PREFIX)srtp.$(LIB_SUFFIX) \
 	$(NULL)
 

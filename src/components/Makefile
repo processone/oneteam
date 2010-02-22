@@ -4,6 +4,8 @@ ifeq "$(RECURSIVE_CONFIGURE)$(filter $(conf_mk),$(wildcard  $(conf_mk)*))" "$(co
 -include "$(conf_mk)"
 endif
 
+LIBTOOLIZE_ARGS=--root-dir=. --tools-dir=$(ottdir) --skip-dir=libs/libnice --skip-dir=libs/libspeex --skip-dir=libs/libsrtp
+
 .PHONE: all libtoolize
 
 all: $(conf_mk) idl/Makefile
@@ -22,13 +24,13 @@ distclean:
 	@$(MAKE) -C build distclean
 
 %/Makefile: %/Makefile.in
-	@perl $(ottdir)/libtoolize.pl --root-dir=. --tools-dir=$(ottdir) --skip-dir=libs
+	@perl $(ottdir)/libtoolize.pl $(LIBTOOLIZE_ARGS)
 
 $(conf_mk):
 	@echo $(error You need to create $(conf_mk) file)
 
 libtoolize: $(conf_mk)
-	@perl $(ottdir)/libtoolize.pl --force --root-dir=. --tools-dir=$(ottdir) --skip-dir=libs
+	@perl $(ottdir)/libtoolize.pl --force $(LIBTOOLIZE_ARGS)
 
 debug-build:
 	$(MAKE) all MOZ_DEBUG=1 STRIP=echo 

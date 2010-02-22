@@ -10,7 +10,7 @@ include $(ottdir)/config.mk
 
 NO_DIST_INSTALL=1
 MODULE=oneteam
-LIBRARY_NAME=ot_speex_s
+LIBRARY_NAME=ot_codecs_s
 
 REQUIRES= \
 	nspr \
@@ -21,12 +21,16 @@ CPPSRCS= \
 	otSpeex.cpp \
 	otSpeexDecoder.cpp \
 	otSpeexEncoder.cpp \
+	otILBC.cpp \
+	otILBCDecoder.cpp \
+	otILBCEncoder.cpp \
 	otCodecInfo.cpp \
 	$(OT_EXTRA_SRCS) \
 	$(NULL)
 
 LOCAL_INCLUDES+= \
 	-I$(otdir)/libs/libspeex/include \
+	-I$(otdir)/libs/libilbc \
 	$(NULL)
 
 FORCE_STATIC_LIB = 1

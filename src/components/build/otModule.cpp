@@ -8,6 +8,7 @@
 #include "otICE.h"
 #include "otRTP.h"
 #include "otSpeex.h"
+#include "otILBC.h"
 #include "otJNRelay.h"
 
 #ifdef OT_HAS_PULSE_AUDIO
@@ -23,6 +24,7 @@ OT_SYSTRAY_DEFINE_FACTORY
 OT_DNS_DEFINE_FACTORY
 OT_ICE_DEFINE_FACTORY
 OT_SPEEX_DEFINE_FACTORY
+OT_ILBC_DEFINE_FACTORY
 OT_RTP_DEFINE_FACTORY
 OT_JNRELAY_DEFINE_FACTORY
 
@@ -80,6 +82,10 @@ static const nsModuleComponentInfo components[] =
     OT_SPEEX_CID,
     OT_SPEEX_CONTRACTID,
     OT_SPEEX_FACTORY },
+  { "iLBC codec services",
+    OT_ILBC_CID,
+    OT_ILBC_CONTRACTID,
+    OT_ILBC_FACTORY },
   { "Jingle Relay Nodes services",
     OT_JNRELAY_CID,
     OT_JNRELAY_CONTRACTID,

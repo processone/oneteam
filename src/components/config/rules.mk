@@ -84,7 +84,9 @@ build_files_for_another_moz_version: \
 	$(CPPSRCS_$(TARGET_MOZ_VERSION):.cpp=.$(OBJ_SUFFIX)) \
 	$(CSRCS_$(TARGET_MOZ_VERSION):.cpp=.$(OBJ_SUFFIX))
 
-override AUTOCONF_TOOLS=$(ottdir)/libtoolize.pl --root-dir=$(otdir) --tools-dir=$(ottdir) --skip-dir=$(ottdir)/../libs -- 
+override AUTOCONF_TOOLS=$(ottdir)/libtoolize.pl --root-dir=$(otdir) --tools-dir=$(ottdir) \
+	--skip-dir=$(ottdir)/../libs/libspeex --skip-dir=$(ottdir)/../libs/libnice \
+	--skip-dir=$(ottdir)/../libs/libsrtp -- 
 
 debug-build:
 	$(MAKE) all MOZ_DEBUG=1 STRIP=echo
