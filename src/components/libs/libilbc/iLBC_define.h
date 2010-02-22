@@ -20,7 +20,7 @@ extern "C" {
 
    /* general codec settings */
 
-   #define FS                      (float)8000.0
+/*   #define FS                      (float)8000.0*/
    #define BLOCKL_20MS             160
    #define BLOCKL_30MS             240
    #define BLOCKL_MAX              240
