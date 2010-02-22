@@ -367,6 +367,7 @@ _DECL_(JingleSession, null, Model).prototype =
                 (function::attribute("media")=="audio");
 
             if (transport.length() != 1 && description.length() != 1) {
+                this._sessionTerminated("bad session-initiate stanza");
                 return {
                     nextPacket: {
                         to: this.to,
@@ -380,6 +381,7 @@ _DECL_(JingleSession, null, Model).prototype =
             this.contentName = queryE4X.jingleNS::content.@name.toString();
 
             if (!this.parseMediaDescriptions(queryE4X)) {
+                this._sessionTerminated("media error");
                 return {
                     nextPacket: {
                         id: null,
@@ -404,6 +406,7 @@ _DECL_(JingleSession, null, Model).prototype =
                 return null;
 
             if (!this.parseMediaDescriptions(queryE4X)) {
+                this._sessionTerminated("media error");
                 return {
                     nextPacket: {
                         id: null,
