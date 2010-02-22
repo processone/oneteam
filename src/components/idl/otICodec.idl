@@ -14,14 +14,17 @@ interface otICodecInfo : nsISupports
   readonly attribute unsigned short channels;
   readonly attribute unsigned short ptime;
   readonly attribute unsigned short maxptime;
+  readonly attribute unsigned short weight;
+  void getAttributes([array, size_is(count)] out otICodecInfoAttribute attributes,
+                     out unsigned long count);
 };
 
 [scriptable, uuid(5f785bd1-2fd9-418c-a65b-01b3e01fc595)]
 interface otICodecService : nsISupports
 {
-/*  void getMedias(inout short firstFreePayloadId,
+  void getMedias(inout short firstFreePayloadId,
                  [array, size_is(count)] out otICodecInfo medias,
-                 out unsigned long count);*/
+                 out unsigned long count);
 
   otISource createEncoder();
   otISource createDecoder();

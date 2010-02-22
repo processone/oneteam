@@ -247,27 +247,21 @@ _DECL_(JingleSession, null, Model).prototype =
             this._setRemoteCandidates();
         }
 
-        if (!this.medias)
+        if (!this.medias) {
             jingleNodesService.requestChannel("udp", this.to,
                 new Callback(this._onJingleNodesChannel, this));
 
-            this.medias = [{
-                service: jingleService._speexSvc,
-                payloadId: 111,
-                name: "speex",
-                clockrate: 8000,
-                channels: 1,
-                ptime: 20,
-                maxptime: 20
-            }, {
-                service: jingleService._speexSvc,
-                payloadId: 110,
-                name: "speex",
-                clockrate: 16000,
-                channels: 1,
-                ptime: 20,
-                maxptime: 20
-            }];
+            var payloadId = {value:110}, medias;
+
+            this.medias = [];
+            for (var i = 0; i < jingleService._codecsSvcs.length; i++)
+                try {
+                    jingleService._codecsSvcs[i].getMedias(payloadId, medias={}, {});
+
+                    this.medias.push.apply(this.medias, medias.value);
+                } catch (ex) {alert(ex)}
+            this.medias = this.medias.sort(function(a,b){return b.weight - a.weight});
+        }
     },
 
     _sendTransports: function(startSession, candidate) {
@@ -550,12 +544,15 @@ function JingleService() {
             getService(Components.interfaces.otIRTPService);
     } catch (ex) {}
 
-    try {
-        this._speexSvc = Components.classes["@process-one.net/codec;1?type=speex"].
-            getService(Components.interfaces.otICodecService);
-    } catch (ex) {}
+    this._codecsSvcs = [];
+    for (var i in Components.classes)
+        if (i.indexOf("@process-one.net/codec;1?type=")==0)
+            try {
+                this._codecsSvcs.push(Components.classes[i].
+                                      getService(Components.interfaces.otICodecService));
+            } catch (ex) {}
 
-    if (this._audioSvc && this._iceSvc && this._rtpSvc && this._speexSvc) {
+    if (this._audioSvc && this._iceSvc && this._rtpSvc && this._codecsSvcs.length) {
         servicesManager.addIQService("urn:xmpp:jingle:1",
                                      new Callback(this.onPacket, this));
         servicesManager.publishDiscoInfo("urn:xmpp:jingle:transports:ice-udp:1");
