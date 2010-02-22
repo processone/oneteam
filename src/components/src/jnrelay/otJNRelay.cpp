@@ -161,7 +161,8 @@ otJNRelay::AllocateRelay(nsACString &host NS_OUTPARAM, PRUint16 *porta NS_OUTPAR
     if (!mSockets[mNumSockets + i].fd ||
         PR_Bind(mSockets[mNumSockets + i].fd, &mPublicAddress) != PR_SUCCESS)
     {
-      for (int j = 0; j < (i + (mSockets[mNumSockets + i].fd ? 1 : 0)); i++) {
+      int count = i + mSockets[mNumSockets + i].fd ? 1 : 0;
+      for (int j = 0; j < count; j++) {
         PR_Close(mSockets[mNumSockets + j].fd);
         mSockets[mNumSockets + j].fd = 0;
       }
