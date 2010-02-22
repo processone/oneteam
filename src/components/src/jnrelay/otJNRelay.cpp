@@ -5,6 +5,7 @@
 #include "nice.h"
 #include "prmem.h"
 #include "prnetdb.h"
+#include "stdlib.h"
 
 NS_IMPL_ISUPPORTS2(otJNRelay, otIJNRelayService, nsIObserver);
 
@@ -94,10 +95,10 @@ otJNRelay::ThreadFun(void *data)
 
         _this->mNumSockets-=4;
 
-        memcpy(_this->mSockets+1+i*4, _this->mSockets+1+i*4+4,
-               sizeof(_this->mSockets[0])*(_this->mNumSockets-1-i*4));
-        memcpy(_this->mSocketsInfo+1+i*4, _this->mSocketsInfo+1+i*4+4,
-               sizeof(_this->mSocketsInfo[0])*(_this->mNumSockets-1-i*4));
+        memmove(_this->mSockets+1+i*4, _this->mSockets+1+i*4+4,
+                sizeof(_this->mSockets[0])*(_this->mNumSockets-1-i*4));
+        memmove(_this->mSocketsInfo+1+i*4, _this->mSocketsInfo+1+i*4+4,
+                sizeof(_this->mSocketsInfo[0])*(_this->mNumSockets-1-i*4));
 
       } else if (timeout == 0 || _this->mTimeouts[i] < timeout)
         timeout = _this->mTimeouts[i];
