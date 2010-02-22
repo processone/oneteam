@@ -368,17 +368,27 @@ _DECL_(JingleSession, null, Model).prototype =
 
             if (transport.length() != 1 && description.length() != 1) {
                 return {
-                    nextPacket: this.genSessionTerminate([["failed-application"]])
+                    nextPacket: {
+                        to: this.to,
+                        type: "set",
+                        domBuilder: this.genSessionTerminate([["failed-application"]])
+                    }
                 }
             }
             this._sessionInit();
 
             this.contentName = queryE4X.jingleNS::content.@name.toString();
 
-            if (!this.parseMediaDescriptions(queryE4X))
+            if (!this.parseMediaDescriptions(queryE4X)) {
                 return {
-                    nextPacket: this.genSessionTerminate([["media-error"]])
+                    nextPacket: {
+                        id: null,
+                        to: this.to,
+                        type: "set",
+                        domBuilder: this.genSessionTerminate([["media-error"]])
+                    }
                 };
+            }
             this.parseTranportCandidates(queryE4X);
 
             return {};
@@ -393,10 +403,16 @@ _DECL_(JingleSession, null, Model).prototype =
             if (pkt.getType() != "set")
                 return null;
 
-            if (!this.parseMediaDescriptions(queryE4X))
+            if (!this.parseMediaDescriptions(queryE4X)) {
                 return {
-                    nextPacket: this.genSessionTerminate([["media-error"]])
+                    nextPacket: {
+                        id: null,
+                        to: this.to,
+                        type: "set",
+                        domBuilder: this.genSessionTerminate([["media-error"]])
+                    }
                 }
+            }
             this.parseTranportCandidates(queryE4X);
             this._startMediaSession();
 
