@@ -6,6 +6,7 @@ Makefile.in
 .libs
 Speex.spec
 autom4te.cache/
+aclocal.m4
 config.guess
 config.h
 config.log
