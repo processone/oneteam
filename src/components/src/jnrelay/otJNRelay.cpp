@@ -204,6 +204,7 @@ otJNRelay::FindPublicAddress()
 {
   GList *ips, *i;
   int hasPubAddress = 0;
+  int assumePubAddress = getenv("OT_ASSUME_PUBLIC_ADDRESS") != NULL;
 
   ips = nice_interfaces_get_local_ips(0);
 
@@ -211,7 +212,7 @@ otJNRelay::FindPublicAddress()
     NiceAddress addr;
     nice_address_set_from_string(&addr, (char*)i->data);
 
-    if (!nice_address_is_private(&addr)) {
+    if (assumePubAddress || !nice_address_is_private(&addr)) {
       hasPubAddress = 1;
 
       if (addr.s.addr.sa_family == AF_INET) {
