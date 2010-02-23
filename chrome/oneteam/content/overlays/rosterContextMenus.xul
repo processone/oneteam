@@ -112,9 +112,14 @@
     function updateGroupContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
         return;
+      var rename = document.getElementById("group-rename");
+      var remove = document.getElementById("group-remove");
       if (menuModel.builtinGroup) {
-        document.getElementById("group-rename").hidden = "true";
-        document.getElementById("group-remove").hidden = "true";
+        rename.hidden = "true";
+        remove.hidden = "true";
+      } else {
+        rename.removeAttribute("hidden");
+        remove.removeAttribute("hidden");
       }
     }
 
