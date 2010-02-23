@@ -112,6 +112,8 @@
     function updateGroupContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
         return;
+      if (menuModel.builtinGroup)
+        document.getElementById("group-rename").hidden = "true";
     }
 
     function updateResourceContextMenu(menu, event) {
@@ -236,7 +238,7 @@
     </popup>
     
     <popup id="group-contextmenu" onpopupshowing="updateGroupContextMenu(this, event)">
-      <menuitem label="_('Rename...')" oncommand="menuModel.onRename()"/>
+      <menuitem label="_('Rename...')" id="group-rename" oncommand="menuModel.onRename()"/>
     </popup>
 
     <popup id="resource-contextmenu" onpopupshowing="updateResourceContextMenu(this, event)">
