@@ -47,6 +47,14 @@ _DECL_(Group, null, Model).prototype =
             c._updateRoster();
         delete this._name;
     },
+    
+    onRemove: function() {
+      for (var contact in this.contactsIterator()){
+        contact._groups = [].concat(contact.groups);
+        contact._groups.splice(contact.groups.indexOf(this), 1);
+        contact._updateRoster()
+      }
+    },
 
     _clean: function()
     {
