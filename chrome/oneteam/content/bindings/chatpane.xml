@@ -934,7 +934,7 @@
           doc.designMode = "on";
 
           doc.addEventListener("mousedown", function(event) {
-            if (event.button == 0 && event.clientX >= event.target.clientWidth-42)
+            if (event.button == 0 && event.pageX >= event.target.ownerDocument.body.clientWidth-42)
               me._doSend(true);
           }, false);
 
