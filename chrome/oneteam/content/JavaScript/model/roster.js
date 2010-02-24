@@ -543,6 +543,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         if (oldActiveResource != this.activeResource) {
             this.modelUpdated("activeResource");
             this.modelUpdated("presence");
+        } else if (this.activeResource == resource) {
+            this.modelUpdated("presence");
         }
     },
 
