@@ -1014,7 +1014,7 @@ var Animator = {
 
     _animateColor: function(token, animator) {
         if (token.step == token.steps) {
-            token.valueSetter(animator._toCssValue(token.values[token.values-1]));
+            token.valueSetter(animator._toCssValue(token.values[token.values.length-1]));
             token.timeout = null;
             if (token.stopCallback)
                 token.stopCallback(token.element);
