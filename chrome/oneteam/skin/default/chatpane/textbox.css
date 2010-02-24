@@ -44,11 +44,13 @@ toolbar[type="chatpane-commands"] {
 }
 
 #fontColorButton {
-    list-style-image: url(imgs/text-font-color.png);
+  -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
+  list-style-image: url(imgs/text-font-color.png);
 }
 
 #fontBackgroundButton {
-    list-style-image: url(imgs/text-font-background.png);
+  -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
+  list-style-image: url(imgs/text-font-background.png);
 }
 
 #vcardButton {

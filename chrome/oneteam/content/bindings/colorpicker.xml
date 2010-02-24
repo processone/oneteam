@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<bindings id="colorpickerBindings"
+   xmlns="http://www.mozilla.org/xbl"
+   xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="colorpicker-toolbarbutton"
+           extends="chrome://global/content/bindings/colorpicker.xml#colorpicker-button">
+    <resources>
+      <stylesheet src="chrome://global/skin/colorpicker.css"/>
+      <stylesheet src="chrome://global/skin/toolbarbutton.css"/>
+    </resources>
+
+    <content>
+      <children includes="observes|template|menupopup|panel|tooltip"/>
+      <xul:image class="toolbarbutton-icon" xbl:inherits="validate,src=image,label"/>
+      <xul:label anonid="colorbox" class="toolbarbutton-text" crop="right" flex="1"
+                 xbl:inherits="value=label,accesskey,crop"/>
+
+      <xul:panel class="colorpicker-button-menupopup"
+                 anonid="colorpopup" noautofocus="true" level="top"
+                 onmousedown="event.stopPropagation()"
+                 onpopupshowing="this._colorPicker.onPopupShowing()"
+                 onpopuphiding="this._colorPicker.onPopupHiding()"
+                 onselect="this._colorPicker.pickerChange()">
+        <xul:colorpicker xbl:inherits="palettename,disabled" allowevents="true" anonid="colorpicker"/>
+      </xul:panel>
+    </content>
+
+  </binding>
+
+</bindings>

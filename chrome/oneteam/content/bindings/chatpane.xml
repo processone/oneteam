@@ -748,18 +748,10 @@
       <xul:toolbarbutton id="fontColorButton" cmd="foreColor" tooltiptext="_('Font color')"/>
       <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor" tooltiptext="_('Background color')"/>
       <children/>
-
-      <xul:popupset>
-        <xul:popup id="colorpicker">
-          <xul:colorpicker allowevents="true"/>
-        </xul:popup>
-      </xul:popupset>
     </content>
     <implementation>
 
       <constructor><![CDATA[
-        this._colorpicker = document.getAnonymousElementByAttribute(this, "id", "colorpicker");
-
         var el = this.nextSibling;
         if (el && el.localName != "textbox")
           el = el.firstChild;
@@ -791,32 +783,30 @@
         <body><![CDATA[
         if (!this._textbox)
           return;
+
+        var doc = this._textbox._input.contentDocument;
+
         for each (var cmd in "bold italic underline".split(" ")) {
           document.getAnonymousElementByAttribute(this, "cmd", cmd).checked =
-            this._textbox._input.contentDocument.queryCommandState(cmd);
+            doc.queryCommandState(cmd);
+        }
+        for each (var cmd in "foreColor hiliteColor".split(" ")) {
+          document.getAnonymousElementByAttribute(this, "cmd", cmd).color =
+            this._repairColor(doc.queryCommandValue(cmd));
         }
         ]]></body>
       </method>
     </implementation>
 
     <handlers>
-      <handler event="popuphiding"><![CDATA[
-        if (event.originalTarget != this._colorpicker)
-          return;
-        this._colorpicker.firstChild.removeKeyListener();
-        this._colorpicker.firstChild.mIsPopup = false;
-        this._colorButtonCmd = null;
-      ]]></handler>
-
       <handler event="select"><![CDATA[
-        if (event.originalTarget != this._colorpicker.firstChild || !this._colorButtonCmd)
+        var el = event.originalTarget;
+        if (!this._textbox || !el || el.localName != "colorpicker")
           return;
 
-        if (this._textbox)
-          this._textbox._input.contentDocument.execCommand(this._colorButtonCmd, false,
-            this._repairColor(this._colorpicker.firstChild.color));
-
-        setTimeout(function(me) { me._colorpicker.hidePopup(); }, 0, this)
+        this._textbox._input.contentDocument.execCommand(
+          el.parentNode.parentNode.getAttribute("cmd"), false,
+          this._repairColor(el.color));
       ]]></handler>
 
       <handler event="command"><![CDATA[
@@ -826,17 +816,6 @@
         var cmd = event.originalTarget.getAttribute("cmd");
 
         if (cmd == "foreColor" || cmd == "hiliteColor") {
-          this._colorButtonCmd = cmd;
-
-          this._colorpicker.firstChild.color = this._repairColor(this._textbox._input.
-            contentDocument.queryCommandValue(cmd));
-
-          this._colorpicker.firstChild.addKeyListener();
-          this._colorpicker.firstChild.mIsPopup = true;
-
-          setTimeout(function (popup, button) {
-            popup.showPopup(button, -1, -1, "popup", "bottomleft", "topleft");
-          }, 0, this._colorpicker, event.originalTarget);
         } else if (cmd) {
           this._textbox._input.contentDocument.execCommand(cmd, false, null);
           this._textbox.maybeResize();
@@ -1357,12 +1336,6 @@
       <xul:toolbarseparator/>
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
-
-      <xul:popupset>
-        <xul:popup id="colorpicker">
-          <xul:colorpicker allowevents="true"/>
-        </xul:popup>
-      </xul:popupset>
     </content>
 
     <implementation>
