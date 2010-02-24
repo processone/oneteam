@@ -57,11 +57,25 @@ var soundsPlayer = {
                 }
                 var url = this._ios.newURI("chrome://oneteam/content/data/sounds/"+
                                            type+".wav", null, null);
-                if (this._thread)
-                    this._thread.dispatch({run: function(){this.player.play(this.url)},
-                                          player: this._player, url: url},
-                                          this._thread.DISPATCH_NORMAL);
-                else
+                if (this._thread) {
+                    if (!this._playing || !this._playing.value) {
+                        if (!this._playing)
+                            this._playing = {};
+
+                        this._playing.value = true;
+
+                        this._thread.dispatch({
+                            run: function() {
+                                this.player.play(this.url);
+                                this.playing.value = false;
+                            },
+
+                            player: this._player,
+                            playing: this._playing,
+                            url: url
+                        }, this._thread.DISPATCH_NORMAL);
+                    }
+                } else
                     this._player.play(url);
             }
         } catch(ex){ dump(ex+"\n")}
