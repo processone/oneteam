@@ -129,6 +129,14 @@
           this._unavailablePresence = new root.Presence("unavailable");
 
           recoverSetters(this);
+
+          this._label.parentNode.addEventListener("overflow", function(ev) {
+              ev.target.parentNode.setAttribute("overflowed", "true");
+          }, true);
+
+          this._label.parentNode.addEventListener("underflow", function(ev) {
+              ev.target.parentNode.setAttribute("overflowed", "false");
+          }, true);
         ]]>
       </constructor>
 
