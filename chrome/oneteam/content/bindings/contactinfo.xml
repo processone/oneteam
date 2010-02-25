@@ -169,13 +169,17 @@
         <body><![CDATA[
           this.onMsgsInQueueChanged();
 
+          var modelIsConference = this.model && this.model.joinRoom;
+
           if (this.model) {
             this._statusDesc.value = this.model.presence;
-            this._statusText.textContent = this.model.presence.status ?
-              this.model.presence.status : "(none)";
+            if (!modelIsConference)
+              this._statusText.textContent = this.model.presence.status ?
+                this.model.presence.status : "(none)";
           } else {
             this._statusDesc.value = this._unavailablePresence;
-            this._statusText.textContent = "(none)";
+            if (!modelIsConference)
+              this._statusText.textContent = "(none)";
           }
           this._container.setAttribute("offlineContact",
             !this.model || this.model.presence.show == "unavailable");
@@ -211,7 +215,8 @@
 
       <method name="onSubjectChanged">
         <body><![CDATA[
-          this._statusText.textContent = (this._model && this._model.subject) || "";
+          if (this.model && this.model.joinRoom)
+            this._statusText.textContent = (this._model && this._model.subject) || "";
         ]]></body>
       </method>
 

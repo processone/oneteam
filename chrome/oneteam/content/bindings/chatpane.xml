@@ -1467,14 +1467,6 @@
 
       <property name="inputIsEmpty" onget="return this._input.isEmpty" readonly="true"/>
 
-      <property name="hasSubject"
-        onset="this._subject.parentNode.hidden = !val; return val"
-        onget="return !this._subject.parentNode.hidden" />
-
-      <property name="subject"
-        onset="return this._subject.value = val"
-        onget="return this._subject.value" />
-
       <property name="focusHandler"
         onset="this._attachFocusHandler(this, val); return val"
         onget="return this._focusHandler" />
