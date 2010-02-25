@@ -76,12 +76,16 @@ splitter, .roster-container {
 .roster-container > hbox {
 	color: #515151;
   font-size: 85%;
-  margin-bottom: 1em;
+  margin: 3px 2px 1em 0;
 }
 
 .bookmark-star {
   list-style-image: url(imgs/star.png);
   cursor: pointer;
+}
+
+.bookmark-star[bookmarked=true] {
+  list-style-image: url(imgs/star-on.png);
 }
 
 #roster {

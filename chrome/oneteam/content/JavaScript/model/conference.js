@@ -764,6 +764,15 @@ function ConferenceBookmarks()
 
 _DECL_(ConferenceBookmarks, null, Model).prototype =
 {
+    hasBookmarkForJid: function(jid) {
+        jid = new JID(jid).normalizedJID.shortJID;
+        for (var i = 0; i < this.bookmarks.length; i++)
+            if (this.bookmarks[i].jid.normalizedJID.shortJID == jid)
+                return true;
+
+        return false;
+    },
+
     getBookmarkByName: function(name)
     {
         for (var i = 0; i < this.bookmarks.length; i++)

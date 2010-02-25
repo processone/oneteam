@@ -1450,7 +1450,7 @@
           <xul:vbox class="roster-container" hidden="true">
             <xul:hbox align="baseline" pack="end">
               <xul:label value="_('BOOKMARK')"/>
-              <xul:image class="bookmark-star" onclick="this.parentNode.parentNode.parentNode.parentNode.onStarClick()"/>
+              <xul:image class="bookmark-star" onclick="this._controller.onStarClick()"/>
             </xul:hbox>
             <xul:richlistbox id="roster" flex="1" width="200"/>
           </xul:vbox>
@@ -1483,6 +1483,11 @@
           this._chatpaneCommands.model = val && val.contact;
           this.completionEngine = val && val.contact.createCompletionEngine();
 
+          if (this._regToken) {
+            this._regToken.unregisterFromAll();
+            this._regToken = null;
+          }
+
           if (this._conferenceView) {
             this._conferenceView.destroy();
             this._conferenceView = null;
@@ -1492,8 +1497,12 @@
             this._contactInfo.parentNode.menuModel = val.contact;
             this._contactInfo.parentNode.setAttribute("context",
               (isConference ? "conference" : "contact")+"-contextmenu");
-            if (isConference)
+            if (isConference) {
               this._conferenceView = new ConferenceView(val.contact, null, this._roster, true);
+              this._regToken = account.bookmarks.registerView(this._onBookmarksUpdated, this,
+                                                              "bookmarks", this._regToken)
+              this._onBookmarksUpdated();
+            }
           }
 
           this._roster.parentNode.hidden = this._roster.parentNode.previousSibling.hidden =
@@ -1511,10 +1520,12 @@
         this._input = document.getAnonymousElementByAttribute(this, "id", "input");
         this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
         this._roster = document.getAnonymousElementByAttribute(this, "id", "roster");
-        this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
         this._contactInfo = document.getAnonymousElementByAttribute(this, "id", "contactInfo");
         this._chatpaneCommands = document.getAnonymousElementByAttribute(this, "type", "chatpane-commands");
         this._smilesList = document.getAnonymousElementByAttribute(this, "id", "smilesList");
+        this._bookmarkStar = document.getAnonymousElementByAttribute(this, "class", "bookmark-star");
+
+        this._bookmarkStar._controller = this;
 
         this._input._tryCompletion = new Callback(this._tryCompletion, this);
         this._input._send = new Callback(this._send, this);
@@ -1607,6 +1618,13 @@
             _this._output._output.contentWindow.removeEventListener("blur", _this._focusHandlers[1], true);
             _this._focusHandlerAttached = false;
           }
+        ]]></body>
+      </method>
+
+      <method name="_onBookmarksUpdated">
+        <body><![CDATA[
+          this._bookmarkStar.setAttribute("bookmarked",
+            account.bookmarks.hasBookmarkForJid(this._model.contact.jid))
         ]]></body>
       </method>
 
