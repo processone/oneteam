@@ -83,9 +83,10 @@
 
           if (val) {
             this._regBundle.register(val, this.onNameChange, "visibleName");
-            if (modelIsConference)
+            if (modelIsConference) {
               this._regBundle.register(val, this.onSubjectChanged, "subject");
-            else {
+              this._regBundle.register(val, this.onMsgsInQueueChanged, "msgsInQueue");
+            } else {
               this._regBundle.register(val, this.onPresenceChange, "presence");
               this._regBundle.register(val, this.onMsgsInQueueChanged, "msgsInQueue");
               this._regBundle.register(val, this.onAvatarChanged, "avatar");
