@@ -15,49 +15,49 @@
     <content>
       <xul:stack flex="1">
         <xul:vbox class="background"/>
-      <xul:hbox class="contact-view" align="start" flex="1">
-        <xul:grid class="icon-container">
-          <xul:columns>
-            <xul:column/>
-            <xul:column flex="1" collapsed="true"/>
-          </xul:columns>
-          <xul:rows>
-            <xul:row nonEmpty="true">
-              <xul:image class="status-icon"/>
-              <xul:label class="status-desc" collapsed="true"/>
-            </xul:row>
-            <xul:row>
-              <xul:image class="chatstate-icon"/>
-              <xul:label class="chatstate-desc" collapsed="true"/>
-            </xul:row>
-          </xul:rows>
-        </xul:grid>
-        <xul:stack>
-          <xul:stack class="label-box" overflowed="false">
-            <xul:hbox align="center" pack="center">
-              <xul:label id="label"/>
+        <xul:hbox class="contact-view" align="start" flex="1">
+          <xul:grid class="icon-container">
+            <xul:columns>
+              <xul:column/>
+              <xul:column flex="1" collapsed="true"/>
+            </xul:columns>
+            <xul:rows>
+              <xul:row nonEmpty="true">
+                <xul:image class="status-icon"/>
+                <xul:label class="status-desc" collapsed="true"/>
+              </xul:row>
+              <xul:row>
+                <xul:image class="chatstate-icon"/>
+                <xul:label class="chatstate-desc" collapsed="true"/>
+              </xul:row>
+            </xul:rows>
+          </xul:grid>
+          <xul:stack>
+            <xul:stack class="label-box" overflowed="false">
+              <xul:hbox align="center" pack="center">
+                <xul:label id="label"/>
+              </xul:hbox>
+              <xul:vbox>
+                <xul:image/>
+              </xul:vbox>
+            </xul:stack>
+            <xul:vbox class="avatar-box">
+              <xul:avatar id="avatar" showBlankAvatar="false" flex="1"/>
+            </xul:vbox>
+            <xul:hbox class="counter-box">
+              <xul:vbox hidden="true">
+                <xul:label id="counter" value="0"/>
+              </xul:vbox>
             </xul:hbox>
-            <xul:vbox>
-              <xul:image/>
-            </xul:vbox>
           </xul:stack>
-          <xul:vbox class="avatar-box">
-            <xul:avatar id="avatar" showBlankAvatar="false" flex="1"/>
+          <xul:vbox class="info-box" flex="1">
+            <xul:hbox align="baseline">
+              <xul:label class="contact-name"/>
+              <xul:label flex="1" crop="end" class="contact-jid"/>
+            </xul:hbox>
+            <xul:description flex="1" crop="end" class="status-text"/>
           </xul:vbox>
-          <xul:hbox class="counter-box">
-            <xul:vbox hidden="true">
-              <xul:label id="counter" value="0"/>
-            </xul:vbox>
-          </xul:hbox>
-        </xul:stack>
-        <xul:vbox class="info-box" flex="1">
-          <xul:hbox align="baseline">
-            <xul:label class="contact-name"/>
-            <xul:label flex="1" crop="end" class="contact-jid"/>
-          </xul:hbox>
-          <xul:description flex="1" crop="end" class="status-text"/>
-        </xul:vbox>
-      </xul:hbox>
+        </xul:hbox>
       </xul:stack>
     </content>
 
