@@ -7,9 +7,15 @@
 }
 
 #output, #input-container {
-  margin: 2px 0;
+  margin: 0 0 0 0;
+}
+
+#input-container {
   background: #fff;
   border: 1px solid #aeaeae !important;
+  -moz-border-radius: 3px;
+  margin-top: 2px;
+  padding: 1px;
 }
 
 #send {
@@ -26,10 +32,71 @@
 
 .marker-arrow {
   background: transparent;
-  border: 8px solid transparent;
+  border: 0px solid transparent;
   border-left: 0;
 }
 
-chatpane-view:not([hasRoster=true]) {
-  margin-right: -8px;
+
+chatpane-view {
+  margin-bottom: 3px;
+  background: #c7c7c7;
+  padding: 0 4px 0px 4px;
+  -moz-border-radius: 0px 0px 5px 5px;
+}
+
+chatpane[hasRoster=true] chatpane-view {
+  -moz-border-radius-bottomright: 0px;
+/*  margin-right: -8px;*/
+}
+
+iframe {
+  background: #c7c7c7 !important;
+}
+
+contactinfo .background {
+  -moz-border-radius-bottomleft: 0;
+  -moz-border-radius-bottomright: 0;
+}
+
+chatpane[hasRoster=true] contactinfo .background {
+  -moz-border-radius-topright: 0;
+}
+
+splitter, .roster-container {
+	margin: 16px 0 3px 0;
+}
+
+.roster-container {
+  padding: 0 0px;
+  background: #c7c7c7 !important;
+  border: 0;
+  -moz-border-radius: 0px 5px 5px 0px;
+}
+
+.roster-container > hbox {
+	color: #515151;
+  font-size: 85%;
+  margin-bottom: 1em;
+}
+
+.bookmark-star {
+  list-style-image: url(imgs/star.png);
+  cursor: pointer;
+}
+
+#roster {
+  -moz-appearance: none;
+  background: #c7c7c7 !important;
+  border: 0;
+}
+
+splitter {
+  -moz-appearance: none;
+  padding: 0 0px;
+  background: #c7c7c7;
+  border: 4px solid white;
+  -moz-border-right-colors: #c7c7c7 #c7c7c7 #c7c7c7 #cfcfcf;
+  -moz-border-left-colors: #c7c7c7 #c7c7c7 #c7c7c7 #bababa;
+  border-bottom-width: 0;
+  border-top-width: 0;
 }

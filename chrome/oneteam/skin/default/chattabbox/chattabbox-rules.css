@@ -34,6 +34,10 @@ tab[chatstate=composing] .tab-text {
   color: green;
 }
 
+tabpanels {
+  padding: 1px;
+}
+
 #scroll-left-button {
   list-style-image: url(imgs/scroll-left.png);
 }

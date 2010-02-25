@@ -285,9 +285,9 @@ function ConferenceMemberView(model, parentView, doc)
     box.setAttribute("pack", "center");
     box.appendChild(this.statusIcon);
 
-    this.node.appendChild(box);
-    this.node.appendChild(this.label);
     this.node.appendChild(this.avatar);
+    this.node.appendChild(this.label);
+    this.node.appendChild(box);
 
     this.tooltip = new ConferenceMemberTooltip(model, this.parentNode, doc);
     this.node.setAttribute("tooltip", this.tooltip.id);

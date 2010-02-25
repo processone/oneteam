@@ -1,29 +1,54 @@
-#name, #jid, #status, #statusText {
-	margin-left: 0 !important;
-	margin-right: 0 !important;
-	padding-left: 0 !important;
-	padding-right: 0 !important;
+.background {
+	margin: 16px 0 0 0;
+	padding: 0;
+  background: #c7c7c7;
+  -moz-border-radius: 5px 5px 5px 5px;
 }
 
-#name {
-	font-weight: bold;
-	font-size: 150%;
+.info-box {
+	margin: 10px 0 0 0;
+	padding: 0;
 }
 
-#jid, #chatState {
-	font-weight: normal;
-	font-size: medium;
+.status-desc, .chatstate-desc {
+	margin: 0 !important;
+	padding: 0 !important;
+	font-size: 75%;
 }
 
-#avatar, #statusIcon, #conferenceIcon {
-	margin-right: 0.5em;
+.contact-name, .contact-jid, .status-text {
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
-#conferenceIcon {
-	-moz-box-align: center;
-	-moz-box-pack: center;
+.contact-name {
+	margin-top: 5px !important;
+	color: #515151;
+	font-size: 120%;
 }
 
-#conferenceIconImage {
-	list-style-image: url(imgs/conference.png);
+.contact-jid {
+	margin-left: 5px !important;
+	color: white;
+	font-size: 75%;
+}
+
+.status-text {
+	color: #515151;
+	font-style: italic;
+	font-size: 85%;
+}
+
+.icon-container {
+  background: transparent !important;
+  -moz-border-radius: 0 !important;
+}
+
+.icon-container > * {
+  border-bottom: none !important;
+}
+
+.icon-container row[nonEmpty=true] {
+  border-bottom: 2px solid white;
+  -moz-border-bottom-colors: #cfcfcf #bababa;
 }

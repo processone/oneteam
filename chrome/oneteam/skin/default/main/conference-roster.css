@@ -1,44 +1,42 @@
 richlistitem:nth-child(2n+1):not([selected=true]) {
-  background-color: -moz-oddtreerow;
+  background: #cfcfcf !important;
 }
 
 .conference-view, .conference-role-view, .conferencemember-view {
-  padding: 1px;
+  margin: 0px;
+  padding: 0;
 }
 
 .conference-view,
 .conference-role-view {
-  background: #003E67 url(imgs/group-background.png) center center repeat-x;
-  border: 1px solid #003E67;
-  border-bottom: 0;
-  border-top: 0;
-  color: white;
+  background: #c7c7c7;
+  border: none;
+	color: #515151;
   font-weight : bold;
 }
 
 .conference-view[selected=true],
-.conference-role-view[selected=true] {
-  background-color: #005dc8;
-  background-image: url(imgs/group-background-selected.png);
-  border-color: #005dc8;
-}
-
-.conferencemember-view[selected=true] > label {
+.conference-role-view[selected=true],
+.conferencemember-view[selected=true] {
+  background: #dadada;
   color: inherit !important;
 }
 
 .conferencemember-view > avatar {
   -moz-box-flex: 0;
-  width: 24px;
+  border: 1px solid #ccc;
+  -moz-border-radius: 3px;
+  width: 18px;
 }
 
 .conference-role-view {
-  font-weight : bold;
-  padding-left: 4px;
+  background: #c7c7c7;
+	color: #515151;
+  padding-left: 2px;
 }
 
 .conferencemember-view {
-  padding-left: 16px;
+  padding-left: 2px;
 }
 
 .conferencemember-tooltip-name {

@@ -11,18 +11,14 @@
 
     <content>
       <xul:hbox flex="1">
-        <xul:hbox flex="1">
 <!-- #ifdef XULAPP -->
-          <xul:iframe src="about:blank" id="output" flex="1" type="content"/>
+        <xul:iframe src="about:blank" id="output" flex="1" type="content"/>
 <!-- #else
-          <html:iframe src="../content/blank.html" id="output" flex="1"/>
+        <html:iframe src="../content/blank.html" id="output" flex="1"/>
 // #endif -->
-          <xul:stack id="markersContainer">
-            <xul:vbox class="marker-arrow"/>
-          </xul:stack>
-        </xul:hbox>
-        <xul:splitter hidden="true"/>
-        <xul:richlistbox id="roster" hidden="true" width="200"/>
+        <xul:stack id="markersContainer">
+          <xul:vbox class="marker-arrow"/>
+        </xul:stack>
       </xul:hbox>
     </content>
 
@@ -42,25 +38,12 @@
           if (this._model)
             this._model.unregisterView(this._regToken);
 
-          if (this._conferenceView) {
-            this._conferenceView.destroy();
-            this._conferenceView = null;
-          }
-
           this._model = val;
 
           if (val) {
             this._regToken = val.registerView(this._onMessageQueueChanged, this, "messages");
             this._onMessageQueueChanged();
-
-            if (val.contact instanceof Conference)
-              this._conferenceView = new ConferenceView(val.contact, null, this._roster, true);
           }
-
-          this._roster.hidden = this._roster.previousSibling.hidden =
-            !(val && val.contact instanceof Conference);
-
-          this.setAttribute("hasRoster", !this._roster.hidden);
 
           return val;
         ]]></setter>
@@ -84,7 +67,6 @@
 
       <constructor><![CDATA[
         var me = this;
-        this._roster = document.getAnonymousElementByAttribute(this, "id", "roster");
         this._output = document.getAnonymousElementByAttribute(this, "id", "output");
         this._output.addEventListener("load", function(){ me._init() }, true);
 
@@ -490,7 +472,7 @@
               e.setAttribute("class", "avatar")
               e.setAttribute("src", msg.contact.avatar ||
                              "resource://oneteam-skin/avatar/imgs/default-avatar.png");
-              e.setAttribute("width", "24")
+              e.setAttribute("width", "18")
               msgEl.appendChild(e);
             }
 
@@ -1437,12 +1419,22 @@
 
     <content>
       <xul:vbox flex="1" smiles-enabled="true">
-        <xul:contactinfo id="contactInfo"/>
-
-        <xul:chatpane-view id="output-pane" flex="1"/>
+        <xul:hbox flex="1">
+          <xul:vbox flex="1">
+            <xul:contactinfo id="contactInfo"/>
+            <xul:chatpane-view id="output-pane" flex="1"/>
+          </xul:vbox>
+          <xul:splitter hidden="true"/>
+          <xul:vbox class="roster-container" hidden="true">
+            <xul:hbox align="baseline" pack="end">
+              <xul:label value="_('BOOKMARK')"/>
+              <xul:image class="bookmark-star" onclick="this.parentNode.parentNode.parentNode.parentNode.onStarClick()"/>
+            </xul:hbox>
+            <xul:richlistbox id="roster" flex="1" width="200"/>
+          </xul:vbox>
+        </xul:hbox>
 
         <xul:toolbar type="chatpane-commands"/>
-
         <xul:hbox id="input-container">
           <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true"/>
         </xul:hbox>
@@ -1477,11 +1469,23 @@
           this._chatpaneCommands.model = val && val.contact;
           this.completionEngine = val && val.contact.createCompletionEngine();
 
+          if (this._conferenceView) {
+            this._conferenceView.destroy();
+            this._conferenceView = null;
+          }
+
           if (val && val.contact) {
             this._contactInfo.parentNode.menuModel = val.contact;
             this._contactInfo.parentNode.setAttribute("context",
               (isConference ? "conference" : "contact")+"-contextmenu");
+            if (isConference)
+              this._conferenceView = new ConferenceView(val.contact, null, this._roster, true);
           }
+
+          this._roster.parentNode.hidden = this._roster.parentNode.previousSibling.hidden =
+            !isConference;
+
+          this.setAttribute("hasRoster", !!isConference);
 
           return val;
         ]]></setter>
@@ -1492,6 +1496,7 @@
 
         this._input = document.getAnonymousElementByAttribute(this, "id", "input");
         this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
+        this._roster = document.getAnonymousElementByAttribute(this, "id", "roster");
         this._subject = document.getAnonymousElementByAttribute(this, "id", "subject");
         this._contactInfo = document.getAnonymousElementByAttribute(this, "id", "contactInfo");
         this._chatpaneCommands = document.getAnonymousElementByAttribute(this, "type", "chatpane-commands");
