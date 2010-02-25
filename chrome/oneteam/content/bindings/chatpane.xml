@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
           xmlns:html="http://www.w3.org/1999/xhtml"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -818,15 +819,27 @@
           <xul:spacer flex="1"/>
           <xul:label id="_counter" value="0"/>
         </xul:hbox>
-        <xul:vbox flex="1" class="inputBox">
+        <xul:vbox class="inputBox textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
           <html:iframe id="_input" style="height: 1em"/>
         </xul:vbox>
       </xul:stack>
     </content>
 
-    <implementation>
+    <implementation implements="nsIDOMXULTextBoxElement">
       <property name="value" onget="return this._input.contentDocument.body"
                 onset="return this._input.contentDocument.body.innerHTML = val"/>
+
+      <property name="editor" readonly="true">
+        <getter><![CDATA[
+          var win = this._input.contentWindow.
+            QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+          var webNav = win.getInterface(Components.interfaces.nsIWebNavigation).
+            QueryInterface(Components.interfaces.nsIInterfaceRequestor);
+
+          return webNav.getInterface(Components.interfaces.nsIEditingSession).
+            getEditorForWindow(win);
+        ]]></getter>
+      </property>
 
       <property name="isEmpty" readonly="true">
         <getter><![CDATA[
@@ -880,6 +893,7 @@
         this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
         this._input.addEventListener("load", function(){me._init()}, true)
+        this.inputField = this._input;
 
         var el = this.previousSibling;
         if (!el)
@@ -914,6 +928,14 @@
             doc.body.setAttribute("hasSendButton", "true");
 
           doc.designMode = "on";
+
+          try {
+            var scu = this._input.parentNode.spellCheckerUI;
+            scu.uninit();
+            scu.init(this.editor);
+            scu.enabled = true;
+          } catch (ex) {
+          }
 
           doc.addEventListener("mousedown", function(event) {
             if (event.button == 0 && event.pageX >= event.target.ownerDocument.body.clientWidth-42)
@@ -1436,7 +1458,7 @@
 
         <xul:toolbar type="chatpane-commands"/>
         <xul:hbox id="input-container">
-          <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true"/>
+          <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true" spellcheck="true"/>
         </xul:hbox>
       </xul:vbox>
     </content>
