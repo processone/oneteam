@@ -30,9 +30,13 @@ expander[open="true"] .expanderButton {
   list-style-image: url(imgs/switch-open-white.png);
 }
 
-.contact-view[offlineContact=true] .label-box,
-.contact-view[offlineContact=true] .avatar-box {
+.contact-view[offlineContact=true] .label-box > *,
+.contact-view[offlineContact=true] .avatar-box > * {
   opacity: 0.5;
+}
+
+.contact-view[offlineContact=true] .label-box {
+  background: #d6d6d6;
 }
 
 .counter-box {
