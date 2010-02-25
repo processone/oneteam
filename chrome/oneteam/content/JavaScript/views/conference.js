@@ -321,7 +321,6 @@ _DECL_(ConferenceMemberView).prototype =
     onModelUpdated: function()
     {
         this.statusIcon.setAttribute("src", this.model.getStatusIcon());
-        this.label.setAttribute("style", this.model.presence.getStyle());
         this.parentView.onItemUpdated(this);
     },
 
