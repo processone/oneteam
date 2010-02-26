@@ -2,7 +2,6 @@
 
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/chats/chats.css" type="text/css"?>
-<?xml-stylesheet href="chrome://oneteam/skin/main/roster.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/main/conference-roster.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>

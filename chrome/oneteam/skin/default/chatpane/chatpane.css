@@ -56,6 +56,7 @@ iframe {
 contactinfo .background {
   -moz-border-radius-bottomleft: 0;
   -moz-border-radius-bottomright: 0;
+  margin-bottom: 0;
 }
 
 chatpane[hasRoster=true] contactinfo .background {
@@ -63,7 +64,7 @@ chatpane[hasRoster=true] contactinfo .background {
 }
 
 splitter, .roster-container {
-	margin: 16px 0 3px 0;
+	margin: 4px 0 3px 0;
 }
 
 .roster-container {

@@ -1,5 +1,5 @@
 .background {
-	margin: 16px 0 0 0;
+	margin: 10px 0 4px 0;
 	padding: 0;
   background: #c7c7c7;
   -moz-border-radius: 5px 5px 5px 5px;
@@ -51,4 +51,22 @@
 .icon-container row[nonEmpty=true] {
   border-bottom: 2px solid white;
   -moz-border-bottom-colors: #cfcfcf #bababa;
+}
+
+.noCounter .label-box {
+  width: 48px;
+  height: 48px;
+  margin: 0;
+}
+
+.noCounter .avatar-box {
+  margin: 0;
+}
+
+.noCounter .background {
+	margin: 4px 0 4px 0;
+}
+
+.noCounter .counter-box {
+  display: none;
 }
