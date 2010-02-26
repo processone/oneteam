@@ -53,6 +53,18 @@
   -moz-border-bottom-colors: #cfcfcf #bababa;
 }
 
+.chatstate-active, .chatstate-paused {
+	list-style-image: url(imgs/chat_active.png);
+}
+
+.chatstate-composing {
+	list-style-image: url(imgs/chat_typing.png);
+}
+
+.chatstate-inactive, .chatstate-gone {
+	list-style-image: url(imgs/chat_inactive.png);
+}
+
 .noCounter .label-box {
   width: 48px;
   height: 48px;
