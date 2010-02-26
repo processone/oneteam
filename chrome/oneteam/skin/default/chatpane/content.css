@@ -12,7 +12,9 @@ body {
 }
 
 body[hasSendButton=true] {
-    background: white !important;
+    background: transparent !important;
+    padding-right: 50px;
+    word-wrap: break-word;
 }
 
 body[hasSendButton=true]:after {
@@ -28,11 +30,6 @@ body[hasSendButton=true]:after {
     background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
     padding: 0px;
     width: 38px;
-}
-
-body[hasSendButton=true] {
-    padding-right: 42px;
-    word-wrap: break-word;
 }
 
 .mainContainer {

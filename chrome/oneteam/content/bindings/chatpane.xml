@@ -1223,7 +1223,7 @@
             body.style.overflowY = "hidden";
 
           me._counter.style.fontSize = body.clientHeight+"px";
-          me._counter.style.marginRight = (42+me._input.clientWidth-body.clientWidth)+"px";
+          me._counter.style.marginRight = (50+me._input.clientWidth-body.clientWidth)+"px";
           me._input.style.height = (h) + "px";
 
           me._postMaybeResize();

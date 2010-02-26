@@ -36,7 +36,6 @@
   border-left: 0;
 }
 
-
 chatpane-view {
   margin-bottom: 3px;
   background: #c7c7c7;
@@ -47,10 +46,6 @@ chatpane-view {
 chatpane[hasRoster=true] chatpane-view {
   -moz-border-radius-bottomright: 0px;
 /*  margin-right: -8px;*/
-}
-
-iframe {
-  background: #c7c7c7 !important;
 }
 
 contactinfo .background {
