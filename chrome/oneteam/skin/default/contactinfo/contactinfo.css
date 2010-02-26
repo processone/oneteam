@@ -6,7 +6,7 @@
 }
 
 .info-box {
-	margin: 10px 0 0 0;
+	margin: 6px 0 0 4px;
 	padding: 0;
 }
 
@@ -63,8 +63,12 @@
   margin: 0;
 }
 
-.noCounter .background {
-	margin: 4px 0 4px 0;
+.noCounter .info-box {
+	margin-top: 0;
+}
+
+.noCounter .background, .noCounter .icon-container {
+	margin-top: 4px;
 }
 
 .noCounter .counter-box {
