@@ -79,7 +79,7 @@ body[hasSendButton=true]:after {
   	color: #515151;
     display: none;
     margin-top: 2px;
-    margin-left: 22px;
+    margin-left: 24px;
 }
 
 .thread-marker {
@@ -145,7 +145,7 @@ span.body:hover > .thread-marker-reply,
     position: relative;
     display: block;
     padding: 3px 0px;
-    padding-left: 22px;
+    padding-left: 24px;
 }
 
 .message[starts-chunk=true]::before {
