@@ -159,7 +159,8 @@ _DECL_(PersistentCache).prototype =
                 return null;
             }
             if (value.indexOf(this.fileCacheDir.path) == 0)
-                return value.replace(this.fileCacheDir.path, "resource://oneteam-cache");
+                return value.replace(this.fileCacheDir.path, "resource://oneteam-cache").
+                    replace(/\\/g, "/");
             return "file://"+value;
         } else if (asFile)
             throw new GenericError("Unable to return data as file path");
