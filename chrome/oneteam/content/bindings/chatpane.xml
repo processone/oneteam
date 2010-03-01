@@ -1493,7 +1493,7 @@
         <xul:hbox flex="1">
           <xul:vbox flex="1">
             <xul:contactinfo class="noCounter" id="contactInfo">
-              <xul:hbox id="thread-picker">
+              <xul:hbox id="thread-picker" hidden="true">
                 <xul:label value="_('THREAD')"/>
                 <xul:deck>
                   <xul:radiogroup id="thread-picker-container" orient="horizontal"/>
@@ -1718,6 +1718,10 @@
         <body><![CDATA[
           var radio = document.createElementNS(XULNS, "radio");
           radio.setAttribute("value", value);
+
+          if (!this._threadPickerContainer.childNodes.length)
+            radio.setAttribute("selected", "true");
+
           this._threadPickerContainer.appendChild(radio);
 
           var menuitem = document.createElementNS(XULNS, "menuitem");
@@ -1737,6 +1741,7 @@
       <method name="_onThreadCreated">
         <parameter name="thread"/>
         <body><![CDATA[
+          this._threadPicker.hidden = false;
           this.addThread(thread.idx+1, thread.idx);
         ]]></body>
       </method>
