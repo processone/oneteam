@@ -123,7 +123,10 @@ splitter {
   margin: 2px;
 }
 
-#thread-picker-container .radio-spacer-box {
+#thread-picker-container .radio-spacer-box,
+#thread-picker-container .radio-check,
+#thread-picker-container .radio-check-box1
+{
   display: none;
 }
 
