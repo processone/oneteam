@@ -1506,7 +1506,7 @@
         <xul:hbox flex="1">
           <xul:vbox flex="1">
             <xul:contactinfo class="noCounter" id="contactInfo">
-              <xul:hbox id="thread-picker" hidden="true">
+              <xul:hbox id="thread-picker" hidden="true" align="center">
                 <xul:label value="_('THREAD')"/>
                 <xul:deck>
                   <xul:radiogroup id="thread-picker-container" orient="horizontal"/>
@@ -1729,6 +1729,13 @@
         <parameter name="label"/>
         <parameter name="value"/>
         <body><![CDATA[
+
+          if (this._threadPickerContainer.childNodes.length == 10) {
+            this._threadPickerMenulist.hidden = false
+            this._threadPicker.selectedIndex = 1;
+            this._threadPickerContainer.hidden = true;
+          }
+
           var radio = document.createElementNS(XULNS, "radio");
           radio.setAttribute("value", value);
 
@@ -1738,9 +1745,16 @@
           this._threadPickerContainer.appendChild(radio);
 
           var menuitem = document.createElementNS(XULNS, "menuitem");
-          menuitem.setAttribute("label", label);
+          menuitem.setAttribute("label", "");
           menuitem.setAttribute("value", value);
+          menuitem.setAttribute("class", "menuitem-iconic");
+          menuitem.setAttribute("image", this._output._drawThreadMarker(label));
+          if (!this._threadPickerMenulist.firstChild.childNodes.length)
+            menuitem.setAttribute("selected", "true");
           this._threadPickerMenulist.firstChild.appendChild(menuitem);
+
+          if (this._threadPickerMenulist.firstChild.childNodes.length == 1)
+            this._threadPickerMenulist.selectedIndex = 0;
 
           var ss = document.styleSheets[document.styleSheets.length-1];
 
@@ -1846,8 +1860,8 @@
 
     <handlers>
       <handler event="command"><![CDATA[
-      account.oe = event;
-        if (event.originalTarget.parentNode == this._threadPickerContainer)
+        if (event.originalTarget.parentNode == this._threadPickerContainer ||
+            event.originalTarget.parentNode.parentNode == this._threadPickerMenulist)
           this._output._selectThread(event.originalTarget.value);
       ]]></handler>
 

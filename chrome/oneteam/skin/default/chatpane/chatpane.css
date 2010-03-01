@@ -126,3 +126,18 @@ splitter {
 #thread-picker-container .radio-spacer-box {
   display: none;
 }
+
+#thread-picker-menulist {
+  margin: 0;
+  padding: 0;
+  font-size: 75%;
+}
+
+#thread-picker-menulist .menu-iconic-left,
+#thread-picker-menulist .menu-iconic-icon,
+#thread-picker-menulist menuitem
+{
+  padding-right: 0;
+  width: auto;
+  display: inherit;
+}
