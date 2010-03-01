@@ -20,7 +20,7 @@ body[hasSendButton=true] {
 body[hasSendButton=true]:after {
     content: "";
     float: right;
-    position: absolute;
+    position: fixed;
     top: 0px;
     right: 0px;
     bottom: 0px;
