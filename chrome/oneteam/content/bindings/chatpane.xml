@@ -463,8 +463,6 @@
               this._lastMessageOffline = msg.offline
             }
 
-            prevMsg = msgEl;
-
             if (!this._visible && !this._firstNotSeenMsg)
               this._firstNotSeenMsg = msgEl;
 
@@ -531,6 +529,17 @@
 
               msgEl.parentMsgEl = parentMsgEl;
               msgEl.thread = parentMsgEl && parentMsgEl.thread;
+
+              if (this._selectedThread && this._selectedThread== msgEl.thread.idx) {
+                msgEl.setAttribute("in-selected-thread", "true");
+                if (msgEl.thread._lastMessage != prevMsg) {
+                  msgEl.setAttribute("starts-selected-chunk", "true");
+                  msgEl.thread._lastMessage.setAttribute("ends-selected-chunk", "true");
+                }
+              }
+
+              if (msgEl.thread)
+                msgEl.thread._lastMessage = msgEl;
             }
 
             if (msg.xMessageId) {
@@ -574,6 +583,8 @@
             msg.markAsSeen();
 
             msgEl.appendChild(e);
+
+            prevMsg = msgEl;
           }
 
           this._content.appendChild(msgsChunk);
@@ -739,6 +750,8 @@
               lastEl = el;
             }
           }
+
+          this._selectedThread = id;
 
           if (id == "all")
             this._output.contentDocument.body.removeAttribute("hide-not-marked");
