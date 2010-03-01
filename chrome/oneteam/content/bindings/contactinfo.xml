@@ -57,6 +57,7 @@
             </xul:hbox>
             <xul:description flex="1" crop="end" class="status-text"/>
           </xul:vbox>
+          <children/>
         </xul:hbox>
       </xul:stack>
     </content>

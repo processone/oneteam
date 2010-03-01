@@ -45,7 +45,17 @@ body[hasSendButton=true]:after {
     -moz-box-shadow: 0 0 1px 1px #b4b4b4;
 }
 
-.message[starts-chunk=true]:not(.systemMessage) {
+body[hide-not-marked=true] .message {
+    display: none;
+}
+
+body[hide-not-marked=true] .message[in-selected-thread=true] {
+    display: block;
+}
+
+.message[starts-chunk=true]:not(.systemMessage),
+body[hide-not-marked=true] .message[starts-selected-chunk=true]
+{
     margin-top: 4px;
     border-top-width: 1px;
     -moz-border-radius-topleft: 4px;
@@ -53,7 +63,10 @@ body[hasSendButton=true]:after {
     clear: both;
 }
 
-.message:last-child:not(.systemMessage), .message[ends-chunk=true]:not(.systemMessage) {
+.message:last-child:not(.systemMessage),
+.message[ends-chunk=true]:not(.systemMessage),
+body[hide-not-marked=true] .message[ends-selected-chunk=true]
+{
     -moz-border-radius-bottomleft: 4px;
     -moz-border-radius-bottomright: 4px;
 }
@@ -62,14 +75,18 @@ body[hasSendButton=true]:after {
     display: none;
 }
 
-.message[starts-chunk=true] > img {
+.message[starts-chunk=true] > img,
+body[hide-not-marked=true] .message[starts-selected-chunk=true] > img
+{
     border: 1px solid #ccc;
     -moz-border-radius: 3px;
     display: inline;
     float: left;
 }
 
-.message[starts-chunk=true] > .header {
+.message[starts-chunk=true] > .header,
+body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
+{
     display: block;
     overflow: auto;
     height: auto;

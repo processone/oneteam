@@ -468,7 +468,7 @@
             if (!this._visible && !this._firstNotSeenMsg)
               this._firstNotSeenMsg = msgEl;
 
-            if (msg.contact && startsChunk) {
+            if (msg.contact) {
               var e = doc.createElement("img");
               e.setAttribute("class", "avatar")
               e.setAttribute("src", msg.contact.avatar ||
@@ -518,8 +518,11 @@
               if (!parentMsgEl.thread) {
                 parentMsgEl.thread = this._createNewThread(false);
                 parentMsgEl.lastChild.firstChild.src = parentMsgEl.thread.image;
-              } else
+              } else if (parentMsgEl.thread.temporary) {
                 parentMsgEl.thread.temporary = false;
+                if (this._threadCreatedFun)
+                  this._threadCreatedFun(parentMsgEl.thread);
+              }
 
               if (this._trackedMessage == xReplyTo) {
                 this._trackedMessage = msg.xMessageId;
@@ -613,12 +616,48 @@
         ]]></body>
       </method>
 
+      <method name="_drawThreadMarker">
+        <parameter name="label"/>
+        <parameter name="selected"/>
+        <body><![CDATA[
+          var cx;
+          var w, h = 15;
+
+          if (!this._canvas) {
+            this._canvas = document.createElementNS(HTMLNS, "canvas");
+            this._canvas.height = h;
+            cx = this._canvas.getContext("2d");
+          } else
+            cx = this._canvas.getContext("2d");
+
+          cx.font = "bold 12px Arial";
+          var tw = cx.mozMeasureText(label);
+          w = tw < 14 ? 18 : tw+4;
+
+          this._canvas.width = w;
+
+          cx.fillStyle = selected ? "#fff" : "#7ea1dc";
+          cx.beginPath();
+          cx.moveTo(0, 3);
+          cx.arc(3, 3, 3, -Math.PI, -Math.PI/2, 0);
+          cx.arc(w-3, 3, 3, -Math.PI/2, 0, 0);
+          cx.arc(w-3, h-3, 3, 0, Math.PI/2, 0);
+          cx.arc(3, h-3, 3, Math.PI/2, Math.PI, 0);
+          cx.fill();
+          cx.fillStyle = selected ? "#c7c7c7" : "#fff";
+          cx.save();
+          cx.translate((w-tw)/2, h-3);
+          cx.font = "bold 12px Arial";
+          cx.mozDrawText(label);
+          cx.restore();
+
+          return this._canvas.toDataURL();
+        ]]></body>
+      </method>
+
       <method name="_createNewThread">
         <parameter name="temp"/>
         <body><![CDATA[
-          var cx;
-          var w, h = 14;
-
           var thread;
 
           if (this._freeThreads.length) {
@@ -641,34 +680,11 @@
               temporary: temp,
             };
 
-          if (!this._canvas) {
-            this._canvas = document.createElementNS(HTMLNS, "canvas");
-            this._canvas.height = h;
-            cx = this._canvas.getContext("2d");
-          } else
-            cx = this._canvas.getContext("2d");
-
-          var threadNum = thread.idx + 1;
-
-//          cx.mozTextStyle="14px Arial";
-          w = cx.mozMeasureText(threadNum);
-
-          this._canvas.width = w + h - 4;
-
-          cx.fillStyle="hsl("+(threadNum*135)+", 80%, 50%)";
-          cx.beginPath();
-          cx.moveTo(h/2, 0);
-          cx.arc(w+h/2-4, h/2, h/2, -Math.PI/2, Math.PI/2, 0);
-          cx.arc(h/2, h/2, h/2, Math.PI/2, -Math.PI/2, 0);
-          cx.fill();
-          cx.fillStyle = "white";
-          cx.save();
-          cx.translate(h/2-2, h-3);
-          cx.mozDrawText(threadNum);
-          cx.restore();
-
-          thread.image = this._canvas.toDataURL();
+          thread.image = this._drawThreadMarker(""+(thread.idx+1));
           this._threads.push(thread);
+
+          if (!temp && this._threadCreatedFun)
+            this._threadCreatedFun(thread);
 
           return thread;
         ]]></body>
@@ -695,6 +711,39 @@
             el.removeAttribute("in-marked-thread")
             el = el.parentMsgEl;
           }
+        ]]></body>
+      </method>
+
+      <method name="_selectThread">
+        <parameter name="id"/>
+        <body><![CDATA[
+          var msgs = this._content.childNodes;
+
+          var startNewThread = true, lastEl;
+
+          for (var i = 0; i < msgs.length; i++) {
+            var el = msgs[i];
+            if (id == "all" || !el.thread || el.thread.idx != id) {
+              el.removeAttribute("in-selected-thread");
+              el.removeAttribute("starts-selected-chunk");
+              el.removeAttribute("ends-selected-chunk");
+              startNewThread = true;
+            } else {
+              el.setAttribute("in-selected-thread", "true");
+              if (startNewThread) {
+                if (lastEl)
+                  lastEl.setAttribute("ends-selected-chunk", true);
+                el.setAttribute("starts-selected-chunk", true);
+                startNewThread = false;
+              }
+              lastEl = el;
+            }
+          }
+
+          if (id == "all")
+            this._output.contentDocument.body.removeAttribute("hide-not-marked");
+          else
+            this._output.contentDocument.body.setAttribute("hide-not-marked", "true");
         ]]></body>
       </method>
 
@@ -1443,7 +1492,17 @@
       <xul:vbox flex="1" smiles-enabled="true">
         <xul:hbox flex="1">
           <xul:vbox flex="1">
-            <xul:contactinfo class="noCounter" id="contactInfo"/>
+            <xul:contactinfo class="noCounter" id="contactInfo">
+              <xul:hbox id="thread-picker">
+                <xul:label value="_('THREAD')"/>
+                <xul:deck>
+                  <xul:radiogroup id="thread-picker-container" orient="horizontal"/>
+                  <xul:menulist id="thread-picker-menulist" hidden="true">
+                    <xul:menupopup/>
+                  </xul:menulist>
+                </xul:deck>
+              </xul:hbox>
+            </xul:contactinfo>
             <xul:chatpane-view id="output-pane" flex="1"/>
           </xul:vbox>
           <xul:splitter hidden="true"/>
@@ -1524,6 +1583,9 @@
         this._chatpaneCommands = document.getAnonymousElementByAttribute(this, "type", "chatpane-commands");
         this._smilesList = document.getAnonymousElementByAttribute(this, "id", "smilesList");
         this._bookmarkStar = document.getAnonymousElementByAttribute(this, "class", "bookmark-star");
+        this._threadPicker = document.getAnonymousElementByAttribute(this, "id", "thread-picker");
+        this._threadPickerContainer = document.getAnonymousElementByAttribute(this, "id", "thread-picker-container");
+        this._threadPickerMenulist = document.getAnonymousElementByAttribute(this, "id", "thread-picker-menulist");
 
         this._bookmarkStar._controller = this;
 
@@ -1531,6 +1593,10 @@
         this._input._send = new Callback(this._send, this);
         this._input._preMaybeResize = new Callback(this._preMaybeResize, this);
         this._input._postMaybeResize = new Callback(this._postMaybeResize, this);
+
+        this._output._threadCreatedFun = new Callback(this._onThreadCreated, this);
+
+        this.addThread("ALL", "all");
 
         recoverSetters(this);
 
@@ -1646,6 +1712,35 @@
         ]]></body>
       </method>
 
+      <method name="addThread">
+        <parameter name="label"/>
+        <parameter name="value"/>
+        <body><![CDATA[
+          var radio = document.createElementNS(XULNS, "radio");
+          radio.setAttribute("value", value);
+          this._threadPickerContainer.appendChild(radio);
+
+          var menuitem = document.createElementNS(XULNS, "menuitem");
+          menuitem.setAttribute("label", label);
+          menuitem.setAttribute("value", value);
+          this._threadPickerMenulist.firstChild.appendChild(menuitem);
+
+          var ss = document.styleSheets[document.styleSheets.length-1];
+
+          ss.insertRule('#thread-picker-container radio[value="'+value+'"] {'+
+                        'list-style-image: url("'+this._output._drawThreadMarker(label)+'");}', 0);
+          ss.insertRule('#thread-picker-container radio[value="'+value+'"][selected="true"] {'+
+                        'list-style-image: url("'+this._output._drawThreadMarker(label, true)+'");}', 0);
+        ]]></body>
+      </method>
+
+      <method name="_onThreadCreated">
+        <parameter name="thread"/>
+        <body><![CDATA[
+          this.addThread(thread.idx+1, thread.idx);
+        ]]></body>
+      </method>
+
       <method name="_tryCompletion">
         <parameter name="str"/>
         <body><![CDATA[
@@ -1732,13 +1827,17 @@
     </implementation>
 
     <handlers>
-      <handler event="smilesToggle">
-        <![CDATA[
-          var enabled = this._contactInfo.parentNode.getAttribute("smiles-enabled") != "true"
-          this._contactInfo.parentNode.setAttribute("smiles-enabled", enabled);
-          this._output.smilesEnabled = enabled;
-        ]]>
-      </handler>
+      <handler event="command"><![CDATA[
+      account.oe = event;
+        if (event.originalTarget.parentNode == this._threadPickerContainer)
+          this._output._selectThread(event.originalTarget.value);
+      ]]></handler>
+
+      <handler event="smilesToggle"><![CDATA[
+        var enabled = this._contactInfo.parentNode.getAttribute("smiles-enabled") != "true"
+        this._contactInfo.parentNode.setAttribute("smiles-enabled", enabled);
+        this._output.smilesEnabled = enabled;
+      ]]></handler>
     </handlers>
   </binding>
 </bindings>

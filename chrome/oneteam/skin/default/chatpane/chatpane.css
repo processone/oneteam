@@ -100,3 +100,29 @@ splitter {
   border-bottom-width: 0;
   border-top-width: 0;
 }
+
+#thread-picker {
+  margin: 3px 2px 1em 0;
+}
+
+#thread-picker > label {
+	color: #515151;
+  font-size: 85%;
+}
+
+#thread-picker-container, #thread-picker-container * {
+  -moz-appearance: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  width: auto;
+  height: auto;
+}
+
+#thread-picker-container > radio {
+  margin: 2px;
+}
+
+#thread-picker-container .radio-spacer-box {
+  display: none;
+}
