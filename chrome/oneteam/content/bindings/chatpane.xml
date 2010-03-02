@@ -463,7 +463,7 @@
               this._lastMessageOffline = msg.offline
             }
 
-            if (!this._visible && !this._firstNotSeenMsg)
+            if (!this._visible && !this._firstNotSeenMsg && !msg.isSystemMessage)
               this._firstNotSeenMsg = msgEl;
 
             if (msg.contact) {
