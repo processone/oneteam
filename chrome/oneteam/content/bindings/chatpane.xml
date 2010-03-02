@@ -1529,7 +1529,7 @@
             </xul:contactinfo>
             <xul:chatpane-view id="output-pane" flex="1"/>
           </xul:vbox>
-          <xul:splitter hidden="true"/>
+          <xul:splitter class="roster-splitter" hidden="true"/>
           <xul:vbox class="roster-container" hidden="true">
             <xul:hbox align="baseline" pack="end">
               <xul:label value="_('BOOKMARK')"/>

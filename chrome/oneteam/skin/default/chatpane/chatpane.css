@@ -90,7 +90,7 @@ splitter, .roster-container {
   border: 0;
 }
 
-splitter {
+splitter.roster-splitter {
   -moz-appearance: none;
   padding: 0 0px;
   background: #c7c7c7;
