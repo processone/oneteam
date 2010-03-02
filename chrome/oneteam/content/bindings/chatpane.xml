@@ -632,7 +632,7 @@
         <parameter name="selected"/>
         <body><![CDATA[
           var cx;
-          var w, h = 15;
+          var w, h = 14;
 
           if (!this._canvas) {
             this._canvas = document.createElementNS(HTMLNS, "canvas");
@@ -646,14 +646,15 @@
           w = tw < 14 ? 18 : tw+4;
 
           this._canvas.width = w;
+          var radius = 2;
 
           cx.fillStyle = selected ? "#fff" : "#7ea1dc";
           cx.beginPath();
-          cx.moveTo(0, 3);
-          cx.arc(3, 3, 3, -Math.PI, -Math.PI/2, 0);
-          cx.arc(w-3, 3, 3, -Math.PI/2, 0, 0);
-          cx.arc(w-3, h-3, 3, 0, Math.PI/2, 0);
-          cx.arc(3, h-3, 3, Math.PI/2, Math.PI, 0);
+          cx.moveTo(0, radius);
+          cx.arc(radius, radius, radius, -Math.PI, -Math.PI/2, 0);
+          cx.arc(w-radius, radius, radius, -Math.PI/2, 0, 0);
+          cx.arc(w-radius, h-radius, radius, 0, Math.PI/2, 0);
+          cx.arc(radius, h-radius, radius, Math.PI/2, Math.PI, 0);
           cx.fill();
           cx.fillStyle = selected ? "#c7c7c7" : "#fff";
           cx.save();

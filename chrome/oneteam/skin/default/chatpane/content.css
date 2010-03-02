@@ -102,7 +102,7 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
 .thread-marker {
     display: none;
     position: absolute;
-    left: 2px;
+    left: 1px;
     bottom: 0.4em;
 }
 
