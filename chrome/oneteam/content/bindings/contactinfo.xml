@@ -51,13 +51,15 @@
             </xul:hbox>
           </xul:stack>
           <xul:vbox class="info-box" flex="1">
-            <xul:hbox align="baseline">
-              <xul:label class="contact-name"/>
-              <xul:label flex="1" crop="end" class="contact-jid"/>
-            </xul:hbox>
-            <xul:description flex="1" crop="end" class="status-text"/>
+            <xul:vbox>
+              <xul:hbox align="baseline">
+                <xul:label class="contact-name"/>
+                <xul:label flex="1" crop="end" class="contact-jid"/>
+                <children/>
+              </xul:hbox>
+              <xul:description flex="1" crop="end" class="status-text"/>
+            </xul:vbox>
           </xul:vbox>
-          <children/>
         </xul:hbox>
       </xul:stack>
     </content>
@@ -138,6 +140,7 @@
           this._label.parentNode.addEventListener("underflow", function(ev) {
               ev.target.parentNode.setAttribute("overflowed", "false");
           }, true);
+          this._label.style.margin="";
         ]]>
       </constructor>
 

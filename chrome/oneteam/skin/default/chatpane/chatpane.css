@@ -102,11 +102,16 @@ splitter {
 }
 
 #thread-picker {
-  margin: 3px 2px 1em 0;
+  margin: 3px 2px 0 0;
 }
 
-#thread-picker > label {
-	color: #515151;
+#thread-picker > deck > hbox:first-child {
+  overflow:hidden;
+  -moz-stack-sizing: ignore;
+}
+
+#thread-picker > deck > hbox > label {
+  color: #515151;
   font-size: 85%;
 }
 

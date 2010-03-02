@@ -1506,13 +1506,18 @@
         <xul:hbox flex="1">
           <xul:vbox flex="1">
             <xul:contactinfo class="noCounter" id="contactInfo">
-              <xul:hbox id="thread-picker" hidden="true" align="center">
-                <xul:label value="_('THREAD')"/>
-                <xul:deck>
-                  <xul:radiogroup id="thread-picker-container" orient="horizontal"/>
-                  <xul:menulist id="thread-picker-menulist" hidden="true">
-                    <xul:menupopup/>
-                  </xul:menulist>
+              <xul:hbox id="thread-picker" flex="1000" hidden="true">
+                <xul:deck flex="1">
+                  <xul:hbox align="center" pack="end">
+                    <xul:label value="_('THREAD')"/>
+                    <xul:radiogroup id="thread-picker-container" orient="horizontal"/>
+                  </xul:hbox>
+                  <xul:hbox align="center" pack="end">
+                    <xul:label value="_('THREAD')"/>
+                    <xul:menulist id="thread-picker-menulist">
+                      <xul:menupopup/>
+                    </xul:menulist>
+                  </xul:hbox>
                 </xul:deck>
               </xul:hbox>
             </xul:contactinfo>
@@ -1608,6 +1613,16 @@
         this._input._postMaybeResize = new Callback(this._postMaybeResize, this);
 
         this._output._threadCreatedFun = new Callback(this._onThreadCreated, this);
+
+        var deck = this._threadPickerContainer.parentNode;
+
+        deck.addEventListener("underflow", function(event) {
+          event.target.parentNode.selectedIndex = 0;
+        }, false);
+
+        deck.addEventListener("overflow", function(event) {
+          event.target.parentNode.selectedIndex = 1;
+        }, false);
 
         this.addThread("ALL", "all");
 
@@ -1729,13 +1744,6 @@
         <parameter name="label"/>
         <parameter name="value"/>
         <body><![CDATA[
-
-          if (this._threadPickerContainer.childNodes.length == 10) {
-            this._threadPickerMenulist.hidden = false
-            this._threadPicker.selectedIndex = 1;
-            this._threadPickerContainer.hidden = true;
-          }
-
           var radio = document.createElementNS(XULNS, "radio");
           radio.setAttribute("value", value);
 
@@ -1749,8 +1757,6 @@
           menuitem.setAttribute("value", value);
           menuitem.setAttribute("class", "menuitem-iconic");
           menuitem.setAttribute("image", this._output._drawThreadMarker(label));
-          if (!this._threadPickerMenulist.firstChild.childNodes.length)
-            menuitem.setAttribute("selected", "true");
           this._threadPickerMenulist.firstChild.appendChild(menuitem);
 
           if (this._threadPickerMenulist.firstChild.childNodes.length == 1)
@@ -1863,6 +1869,9 @@
         if (event.originalTarget.parentNode == this._threadPickerContainer ||
             event.originalTarget.parentNode.parentNode == this._threadPickerMenulist)
           this._output._selectThread(event.originalTarget.value);
+
+        this._threadPickerMenulist.value = this._threadPickerContainer.value =
+          event.originalTarget.value
       ]]></handler>
 
       <handler event="smilesToggle"><![CDATA[
