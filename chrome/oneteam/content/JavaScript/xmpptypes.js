@@ -290,15 +290,14 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
         var avatar;
 
         avatarHash = avatarHash && avatarHash.toLowerCase();
-
         if ((avatarHash && avatarHash == this.avatarHash) ||
-            (!avatarHash && this.avatarHash))
+            (avatarHash == null && this.avatarHash))
             return false;
 
         var jid = this.realJID ? this.realJID.shortJID :
             this.jid.resource ? null : this.jid;
 
-        if (!avatarHash && !this.avatarHash && jid) {
+        if (avatarHash == null && !this.avatarHash && jid) {
             avatarHash = account.cache.getValue("jidAvatar-"+jid);
             if (avatarHash == "")
                 return false;
@@ -307,7 +306,7 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
         if (avatarHash)
             avatar = account.cache.getValue("avatar-"+avatarHash, true);
 
-        if (!avatar) {
+        if (!avatar && (avatarHash || avatarHash == null)) {
             this.avatarHash = avatarHash;
             this.getVCard(true, function(){});
             return false;

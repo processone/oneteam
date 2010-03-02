@@ -47,7 +47,7 @@ _DECL_(Group, null, Model).prototype =
             c._updateRoster();
         delete this._name;
     },
-    
+
     onRemove: function() {
       for (var contact in this.contactsIterator()){
         contact._groups = [].concat(contact.groups);
@@ -629,7 +629,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     {
         var avatar;
 
-        if (!this._retrieveAvatar(avatarHash))
+        if (!this._retrieveAvatar(avatarHash) && avatarHash == null)
             return;
 
         this.modelUpdated("avatar");
