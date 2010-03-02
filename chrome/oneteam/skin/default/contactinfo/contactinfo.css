@@ -16,7 +16,7 @@
 	font-size: 75%;
 }
 
-.contact-name, .contact-jid, .status-text {
+#label, .contact-name, .contact-jid, .status-text {
 	margin: 0 !important;
 	padding: 0 !important;
 }

@@ -36,7 +36,8 @@ expander[open="true"] .expanderButton {
 }
 
 .contact-view[offlineContact=true] .label-box {
-  background: #d6d6d6;
+  background: #ddd;
+  -moz-box-shadow: 0 0 3px 1px #b0b0b0;
 }
 
 .counter-box {
@@ -77,8 +78,8 @@ expander[open="true"] .expanderButton {
 }
 
 .label-box {
-  width: 52px;
-  height: 52px;
+  width: 48px;
+  height: 48px;
   margin: 6px 6px 0px 0px;
   background: #e5e5e5;
   -moz-border-radius: 5px;
