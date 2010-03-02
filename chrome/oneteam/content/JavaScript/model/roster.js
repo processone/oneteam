@@ -25,13 +25,8 @@ _DECL_(Group, null, Model).prototype =
 {
     contactsIterator: function(predicate, token, sortFun)
     {
-        var contacts = this.contacts;
-        if (sortFun)
-            contacts = [].concat(contacts).sort(sortFun);
-
-        for (var i = 0; i < contacts.length; i++)
-            if (!predicate || predicate(contacts[i], token))
-                yield (contacts[i]);
+        for (var x in iteratorEx(this.contacts, sortFun, predicate, token))
+            yield x;
     },
 
     onRename: function(externalDialog)
@@ -305,24 +300,14 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     groupsIterator: function(predicate, token, sortFun)
     {
-        var groups = this.groups;
-        if (sortFun)
-            groups = [].concat(groups).sort(sortFun);
-
-        for (var i = 0; i < groups.length; i++)
-            if (!predicate || predicate(groups[i], token))
-                yield (groups[i]);
+        for (var x in iteratorEx(this.groups, sortFun, predicate, token))
+            yield x;
     },
 
     resourcesIterator: function(predicate, token, sortFun)
     {
-        var resources = this.resources;
-        if (sortFun)
-            resources = [].concat(resources).sort(sortFun);
-
-        for (var i = 0; i < resources.length; i++)
-            if (!predicate || predicate(resources[i], token))
-                yield (resources[i]);
+        for (var x in iteratorEx(this.resources, sortFun, predicate, token))
+            yield x;
     },
 
     sendMessage: function(msg)
