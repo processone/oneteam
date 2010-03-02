@@ -19,7 +19,7 @@
       <xul:tabbox flex="1">
         <xul:tabs class="with-scroll" setfocus="false" anonid="tabs"/>
         <xul:tabpanels anonid="tabpanels" flex="1"
-                       onselect="this.selectedPanel.controller.focus()"/>
+                       onselect="if (event.originalTarget==this) this.selectedPanel.controller.focus()"/>
       </xul:tabbox>
     </content>
     <implementation>
