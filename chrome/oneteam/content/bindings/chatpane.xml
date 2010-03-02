@@ -532,10 +532,11 @@
 
               if (this._selectedThread && this._selectedThread== msgEl.thread.idx) {
                 msgEl.setAttribute("in-selected-thread", "true");
-                if (msgEl.thread._lastMessage != prevMsg) {
+                msgEl.setAttribute("ends-selected-chunk", "true");
+                if (msgEl.thread._lastMessage != prevMsg)
                   msgEl.setAttribute("starts-selected-chunk", "true");
-                  msgEl.thread._lastMessage.setAttribute("ends-selected-chunk", "true");
-                }
+                else
+                  msgEl.thread._lastMessage.removeAttribute("ends-selected-chunk");
               }
 
               if (msgEl.thread)
@@ -750,6 +751,10 @@
               }
               lastEl = el;
             }
+          }
+          if (lastEl) {
+            lastEl.setAttribute("ends-selected-chunk", true);
+            lastEl.thread._lastMessage = lastEl;
           }
 
           this._selectedThread = id;
