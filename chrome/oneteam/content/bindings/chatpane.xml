@@ -1601,6 +1601,7 @@
         this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 
         this._input = document.getAnonymousElementByAttribute(this, "id", "input");
+        this._container = this._input.parentNode.parentNode;
         this._output = document.getAnonymousElementByAttribute(this, "id", "output-pane");
         this._roster = document.getAnonymousElementByAttribute(this, "id", "roster");
         this._contactInfo = document.getAnonymousElementByAttribute(this, "id", "contactInfo");
@@ -1881,8 +1882,8 @@
       ]]></handler>
 
       <handler event="smilesToggle"><![CDATA[
-        var enabled = this._contactInfo.parentNode.getAttribute("smiles-enabled") != "true"
-        this._contactInfo.parentNode.setAttribute("smiles-enabled", enabled);
+        var enabled = this._container.getAttribute("smiles-enabled") != "true";
+        this._container.setAttribute("smiles-enabled", enabled);
         this._output.smilesEnabled = enabled;
       ]]></handler>
     </handlers>
