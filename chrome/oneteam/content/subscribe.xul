@@ -33,6 +33,7 @@
 
     function denySubscription() {
       contact.disallowToSeeMe();
+      this.close(); 
       return true;
     }
 
