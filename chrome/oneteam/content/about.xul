@@ -7,7 +7,7 @@
 
 <dialog id="about" windowtype="ot:about" title="_('About {0}', _('$$branding$$:OneTeam'))"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  width="550" height="350"
+  xmlns:html="http://www.w3.org/1999/xhtml"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept">
 
@@ -26,29 +26,32 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <vbox style="background-color: white;" flex="1">
+  <vbox style="background-color: white;">
     <hbox>
-      <spacer flex="1"/>
-      <image src="chrome://oneteam-branding/locale/powered_by_process-one.png"
-             onclick="openLink('http://www.process-one.net/en/')"
-             style="cursor: pointer"/>
-      <spacer width="30"/>
+      <image src="chrome://oneteam-branding/locale/ot_logo.png" style="cursor: pointer" onclick="launchBrowser();"/>
+        <vbox pack="center" align="start">
+          <image src="chrome://oneteam-branding/locale/ot_text.png" style="cursor: pointer" onclick="launchBrowser();"/>
+          <label value="_('Release {0} ({1})', '@@VERSION@@', '@@BRANCH@@-@@VERSION@@')" style="font-size: 10px"/>
+        </vbox>
     </hbox>
-    <vbox align="center" flex="1">
-
-      <spacer height="30"/>
-
-      <label value="_('$$branding$$:OneTeam Instant Messenger')" style="font-size: 20pt"/>
-
-      <spacer height="20"/>
-
-      <label value="_('Release {0} ({1})', '@@VERSION@@', '@@BRANCH@@-@@VERSION@@')"/>
-
-      <spacer height="40"/>
-
-      <image src="chrome://oneteam-branding/locale/logo.png" style="cursor: pointer" onclick="launchBrowser();"/>
-
-      <spacer height="30"/>
-    </vbox>
+    <spacer height="5"/>
+    <html:hr style="background-color: #ededed; border: 0; height: 1;"/>
+    <spacer height="20"/>
+    <hbox>
+      <spacer width="170"/>
+      <vbox>
+        <label value="_('$$branding$$:OneTeam Instant Messenging Client')" style="font-size: 10px"/>
+        <spacer height="10"/>
+        <hbox>
+          <vbox align="start" pack="center">
+            <label value="_('$$branding$$:Created by ProcessOne')" style="font-size: 9px"/>
+            <label value="_('$$branding$$:www.process-one.net')" style="font-size: 9px"/>
+          </vbox>
+          <image src="chrome://oneteam-branding/locale/p1_logo.png"/>
+        </hbox>
+      </vbox>
+    </hbox>
   </vbox>
 </dialog>
+
+
