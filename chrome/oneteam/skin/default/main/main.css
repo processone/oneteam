@@ -248,6 +248,14 @@ richlistbox {
   list-style-image: url(imgs/gatewayicons/twitter-connected.png);
 }
 
+.gateway-toolbarbutton[gateway-type="gwave"] {
+  list-style-image: url(imgs/gatewayicons/gwave.png);
+}
+
+.gateway-toolbarbutton[gateway-type="gwave"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/gwave-connected.png);
+}
+
 #eventBoxPrev, #eventBoxNext {
   -moz-binding: url(chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image);
 }
