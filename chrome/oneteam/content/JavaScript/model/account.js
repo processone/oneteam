@@ -212,27 +212,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         return null;
     },
 
-    _handleVCard: function(pkt, value)
-    {
-        var oldHash = this.avatarHash;
-        var oldAvatarRetrieved = this.avatarRetrieved;
-
-        vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
-
-        var nickname = account.getVCard() &&
-            account.getVCard().getNode().getElementsByTagName("NICKNAME")[0];
-        nickname = (nickname && nickname.textContent) || account.myJID.node;
-
-        if (nickname != this.myResource.nickname) {
-            this.myResource._updateNick(nickname)
-            for each (var res in this.myResources)
-                res._updateNick(nickname);
-        }
-
-        if (!oldAvatarRetrieved || this.avatarHash != oldHash)
-            this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
-    },
-
     getOrCreateConference: function(jid)
     {
         jid = new JID(jid);
@@ -302,6 +281,27 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         account.connection.send(iq);
         this._storeXMPPData("_vCardAccessorState", null, this._handleVCard, iq);
+    },
+
+    _handleVCard: function(pkt, value)
+    {
+        var oldHash = this.avatarHash;
+        var oldAvatarRetrieved = this.avatarRetrieved;
+
+        vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
+
+        var nickname = account.getVCard() &&
+            account.getVCard().getNode().getElementsByTagName("NICKNAME")[0];
+        nickname = (nickname && nickname.textContent) || account.myJID.node;
+
+        if (nickname != this.myResource.nickname) {
+            this.myResource._updateNick(nickname)
+            for each (var res in this.myResources)
+                res._updateNick(nickname);
+        }
+
+        if (!oldAvatarRetrieved || this.avatarHash != oldHash)
+            this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
     },
 
     onAddContact: function(contact)
