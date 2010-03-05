@@ -352,3 +352,4 @@ var fileTransferService = new FileTransferService();
 
 servicesManager.addIQService("http://jabber.org/protocol/si",
                              new Callback(fileTransferService.onIQ, fileTransferService));
+servicesManager.publishDiscoInfo("http://jabber.org/protocol/si/profile/file-transfer");
