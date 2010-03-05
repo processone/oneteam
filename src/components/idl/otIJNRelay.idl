@@ -1,9 +1,11 @@
 #include "nsISupports.idl"
+#include "nsIDNSRecord.idl"
 
 [scriptable, uuid(13709fd5-f360-4d98-b802-14032122305d)]
 interface otIJNRelayService : nsISupports
 {
   readonly attribute boolean hasPublicAddress;
+  readonly attribute nsIDNSRecord ips;
 
   void allocateRelay(out ACString host, out unsigned short porta,
                      out unsigned short portb);

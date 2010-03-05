@@ -321,3 +321,59 @@ otJNRelay::Observe(nsISupports *subject, const char *topic, const PRUnichar *dat
   }
   return NS_OK;
 }
+
+struct otIpRecord : public nsIDNSRecord
+{
+  NS_DECL_ISUPPORTS
+
+  otIpRecord(GList *ips) {
+    mIps = mIpsHead = ips;
+    NS_ADDREF(this);
+  }
+
+  ~otIpRecord() {
+    g_list_foreach (mIps, (GFunc)g_free, NULL);
+    g_list_free(mIps);
+  }
+
+  NS_IMETHOD GetCanonicalName(nsACString &result) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  NS_IMETHOD GetNextAddr(PRUint16 port, PRNetAddr *address) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  NS_IMETHOD GetNextAddrAsString(nsACString &result) {
+    if (!mIpsHead)
+      return NS_ERROR_NOT_AVAILABLE;
+
+    result.Assign((char*)mIpsHead->data);
+    mIpsHead = mIpsHead->next;
+
+    return NS_OK;
+  }
+
+  NS_IMETHOD HasMore(PRBool *result)
+  {
+    *result = mIpsHead != nsnull;
+    return NS_OK;
+  }
+
+  NS_IMETHOD Rewind() {
+    mIpsHead = mIps;
+    return NS_OK;
+  }
+
+  GList *mIps;
+  GList *mIpsHead;
+};
+NS_IMPL_ISUPPORTS1(otIpRecord, nsIDNSRecord);
+
+NS_IMETHODIMP
+otJNRelay::GetIps(nsIDNSRecord **aIps)
+{
+  *aIps = new otIpRecord(nice_interfaces_get_local_ips(0));
+
+  return NS_OK;
+}

@@ -58,21 +58,32 @@ _DECL_(SOCKS5Service).prototype =
         token.bytestream = new SOCKSBytestreamInitiator(SOCKSHostName, this, token);
 
         if (!this.ipAddresses.length) {
-            var ds = Components.classes["@mozilla.org/network/dns-service;1"].
-                getService(Components.interfaces.nsIDNSService);
+            try {
+                var jnrs = Components.classes["@process-one.net/jnrelay;1"].
+                    getService(Components.interfaces.otIJNRelayService);
+                var record = jnrs.ips;
 
-            var IPs = {};
-            for each (var name in [ds.myHostName, "localhost"])
-                try {
-                    var record = ds.resolve(name, 0);
-                    while (record && record.hasMore()) {
-                        var ip = record.getNextAddrAsString();
-                        if (ip in IPs || ip.indexOf("127.") == 0)
-                            continue;
-                        IPs[ip] = 1;
+                while (record && record.hasMore()) {
+                    var ip = record.getNextAddrAsString();
+                    if (ip.indexOf("127.") != 0 && this.ipAddresses.indexOf(ip) < 0)
                         this.ipAddresses.push(ip);
-                    }
-                } catch (ex) { }
+                }
+            } catch (ex) { }
+
+            if (this.ipAddresses.length == 0) {
+                var ds = Components.classes["@mozilla.org/network/dns-service;1"].
+                    getService(Components.interfaces.nsIDNSService);
+                for each (var name in [ds.myHostName, "localhost"])
+                    try {
+                        var record = ds.resolve(name, 0);
+
+                        while (record && record.hasMore()) {
+                            var ip = record.getNextAddrAsString();
+                            if (ip.indexOf("127.") != 0 && this.ipAddresses.indexOf(ip) < 0)
+                                this.ipAddresses.push(ip);
+                        }
+                    } catch (ex) { }
+            }
         }
 
         for (var i = 0; i < this.ipAddresses.length; i++)
