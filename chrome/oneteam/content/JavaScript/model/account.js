@@ -50,7 +50,7 @@ function Account()
 
     this.defaultGroup = new Group(null, _("Contacts"), true, -1);
     this.notInRosterGroup = new Group(null, _("Not in roster"), true, 1);
-    this.myEventsGroup = new Group(null, _("Me events"), true, -3);
+    this.myEventsGroup = new Group(null, _("My events"), true, -3);
     this.otherResourcesGroup = new Group(null, _("My other resources"), true, -2);
 
     this.connectionInfo = {};
