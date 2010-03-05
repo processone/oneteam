@@ -65,10 +65,34 @@ _DECL_(XMPPSocket).prototype =
                                                this.host, this.port, proxyInfo);
         this.transport.setEventSink(this, mainThread);
         this.is = this.transport.openInputStream(0, 0, 0);
+        var tee = Components.classes["@mozilla.org/network/stream-listener-tee;1"].
+            createInstance(Components.interfaces.nsIStreamListenerTee);
+        tee.init(this, {
+            listener: this.listener,
+
+            close: function() {
+
+            },
+            flush: function() {
+
+            },
+            write: function(buf, count) {
+                this.listener._receivedData(buf.substr(0, count));
+                return count;
+            },
+
+            writeFrom: function(is, count) {
+                return count;
+            },
+
+            isNonBlocking: function() {
+                return false;
+            }
+        });
         var pump = Components.classes['@mozilla.org/network/input-stream-pump;1'].
             createInstance(Components.interfaces.nsIInputStreamPump);
         pump.init(this.is, -1, -1, 0, 0, false);
-        pump.asyncRead(this, null);
+        pump.asyncRead(tee, null);
 
         this.os = this.transport.openOutputStream(1, 0, 0);
         this.bos = Components.classes["@mozilla.org/binaryoutputstream;1"].
