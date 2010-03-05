@@ -1014,11 +1014,14 @@ var Animator = {
 
     _animateColor: function(token, animator) {
         if (token.step == token.steps) {
-            token.valueSetter(animator._toCssValue(token.values[token.values.length-1]));
-            token.timeout = null;
-            if (token.stopCallback)
-                token.stopCallback(token.element);
-            return null;
+            if (!token.loop) {
+                token.valueSetter(animator._toCssValue(token.values[token.values.length-1]));
+                token.timeout = null;
+                if (token.stopCallback)
+                    token.stopCallback(token.element);
+                return null;
+            }
+            token.step = 0;
         }
 
         var proportion = token.step*(token.values.length-1)/token.steps;
@@ -1077,7 +1080,8 @@ var Animator = {
             element: selector,
             values: values,
             tick: tick,
-            steps: steps,
+            steps: steps < 0 ? -steps : steps,
+            loop: steps < 0,
             step: 0,
             stopCallback: stopCallback,
             valueSetter: function(value) { selector.style[style] = value }
@@ -1104,7 +1108,8 @@ var Animator = {
             element: element,
             values: values,
             tick: tick,
-            steps: steps,
+            steps: steps < 0 ? -steps : steps,
+            loop: steps < 0,
             step: 0,
             stopCallback: stopCallback,
             valueSetter: function(value) { element.style[style] = value }
