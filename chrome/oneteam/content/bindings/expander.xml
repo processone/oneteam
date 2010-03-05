@@ -16,7 +16,7 @@
         <xul:label class="header expanderButton" anonid="label"
           xbl:inherits="value=label,disabled" flex="1" crop="end"/>
       </xul:hbox>
-      <xul:vbox flex="1" anonid="container" class="settingsContainer"
+      <xul:vbox flex="1" anonid="container" context="" class="settingsContainer"
         xbl:inherits="align">
         <children/>
       </xul:vbox>
