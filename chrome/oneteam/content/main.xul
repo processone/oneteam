@@ -148,6 +148,11 @@
       {
       },
 
+      onContactsWithEventChanged: function()
+      {
+
+      },
+
       updateRoster: function()
       {
         if (this.rosterView)
@@ -170,14 +175,14 @@
       updatePresenceIcon: function()
       {
         var icons = account.style.getStatusIcon(account.currentPresence.show,
-                                               account.events.length > 0);
+                                               account.contactsWithEvents.length > 0);
 
         if (this._presenceIconBlinkTimeout)
           clearInterval(this._presenceIconBlinkTimeout);
 
         this._presenceIconBlinkTimeout = null;
 
-        if (account.events.length > 0) {
+        if (account.contactsWithEvents.length > 0) {
           if (icons.length > 1) {
             this._presenceIconBlinkTimeout =
               setInterval(this._updatePresenceIcon, 500, this, icons, {idx: 0});
@@ -410,67 +415,23 @@
         this.nextButton = document.getElementById("eventBoxNext")
         account.registerView(this.onEventsChanged, this, "events", globalRegToken);
 
-        if (account.events.length)
+        if (account.contactsWithEvents.length)
           this.onEventsChanged();
       },
 
+      hasEvents: false,
       onEventsChanged: function()
       {
-        if (this.eventBox.collapsed != (account.events.length == 0))
+        var hasEvents = account.contactsWithEvents.length > 0;
+        if (this.hadEvents != hasEvents)
           setPresenceUpdater.updatePresenceIcon();
 
       //#ifdef XULAPP
-        if (account.events.length)
+        if (hasEvents)
           window.getAttention();
       //#endif
-
-        this.eventBox.collapsed = account.events.length == 0;
-
-        if (account.events.length) {
-          if (this.eventNum > account.events.length)
-            this.eventNum = account.events.length-1;
-
-          this.counter.textContent = _("Event {0} of {1}", this.eventNum+1, account.events.length);
-          this.prevButton.disabled = this.eventNum == 0;
-          this.nextButton.disabled = this.eventNum+1 == account.events.length;
-
-          if (this.eventBox.childNodes[1])
-            this.eventBox.removeChild(this.eventBox.childNodes[1]);
-
-          var event = account.events[this.eventNum];
-
-          if (typeof(event[0]) == "string") {
-            var description = document.createElement("description");
-            var div = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
-
-            div.innerHTML = event[0];
-
-            description.appendChild(div);
-            this.eventBox.appendChild(description);
-          } else
-            this.eventBox.appendChild(event[0].generate(this.eventBox));
-        }
+        this.hadEvents = hasEvents;
       },
-
-      prevMsg: function() {
-        this.eventNum--;
-        this.onEventsChanged();
-      },
-
-      nextMsg: function() {
-        this.eventNum++;
-        this.onEventsChanged();
-      },
-
-      onClick: function(ev)
-      {
-        if (!account.events[this.eventNum] || ev.target == this.prevButton || ev.target == this.nextButton)
-          return;
-
-        if (account.events[0][1])
-          account.events[0][1]();
-        account.removeEvent(account.events[0]);
-      }
     }
 
     function checkForUpdates() {
