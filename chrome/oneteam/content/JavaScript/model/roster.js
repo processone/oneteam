@@ -890,6 +890,7 @@ function MyResourcesContact(jid)
     this.jid = new JID(jid);
     this.groups = [account.otherResourcesGroup];
     this.resources = []
+    this.events = [];
 
     account.myResources[this.jid.normalizedJID] = this;
 
