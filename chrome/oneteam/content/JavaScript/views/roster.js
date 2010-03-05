@@ -176,7 +176,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
         if (this.model == account.myEventsGroup)
             this.animToken = Animator.animateStyle(this.node._container,
                                                    "background", -20, 100,
-                                                   null, "transparent", "#fff",
+                                                   null, "transparent", "#ff6",
                                                    "transparent");
     },
 
