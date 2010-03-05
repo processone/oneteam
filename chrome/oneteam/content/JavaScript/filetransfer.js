@@ -86,8 +86,9 @@ _DECL_(FileTransferService, null, Model).prototype =
                            "chrome", ft, name)
         }, null).addArgs(fileTransfer, file.@name, canceler);
 
-        canceler.add = account.addEvent(_("<b>{0}</b> want to send you file",
-                                          xmlEscape(pkt.getFrom())),
+        canceler.add = account.addEvent(pkt.getFrom(), "filetransfer",
+                                        _xml("<b>{0}</b> want to send you file",
+                                             pkt.getFrom()),
                                         callback);
         canceler.add = account.notificationScheme.show("filetransfer", "request",
                                                        pkt.getFrom(), file.@name,

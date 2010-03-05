@@ -112,6 +112,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 
     this.jid = new JID(jid);
     this.resources = [];
+    this.events = [];
     if (newItem) {
         this._name = name;
         this._groups = groups || [];
@@ -260,6 +261,26 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         if (this._modelUpdatedCheck(oldState).indexOf("visibleName") >= 0)
             for (i = 0; i < this.resources.length; i++)
                 this.resources[i].modelUpdated("visibleName");
+    },
+
+    _addToGroup: function(group)
+    {
+        for (var i = 0; i < this.groups.length; i++)
+            if (this.groups[i] == group)
+                return;
+
+        this.groups.push(group);
+        group._onContactAdded(this);
+    },
+
+    _removeFromGroup: function(group)
+    {
+        for (var i = 0; i < this.groups.length; i++)
+            if (this.groups[i] == group) {
+                group._onContactRemoved(this);
+                this.groups.splice(i, 1);
+                return;
+            }
     },
 
     _setGateway: function(gateway)
@@ -423,6 +444,47 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     onOpenChat: function()
     {
         this.openChatTab();
+    },
+
+    onDblClick: function()
+    {
+        if (!this.events.length) {
+            this.onOpenChat();
+            return;
+        }
+
+        this.events[0].action();
+    },
+
+    addEvent: function(info)
+    {
+        this.events.push(info);
+        if (this.events.length == 1)
+            this._addToGroup(account.myEventsGroup);
+        this.modelUpdated("events", {added: [info]});
+    },
+
+    removeEventsWithKeys: function(keys)
+    {
+        var retVal = false;
+        var removed = [];
+
+        for (var i = this.events.length-1; i >= 0; i--)
+            if (this.events[i].key in keys) {
+                retVal = true;
+                removed.push(this.events[i]);
+                this.events.splice(i, 1);
+                if (this.events.length == 0) {
+                    this._removeFromGroup(account.myEventsGroup);
+                    this.modelUpdated("events", {removed: removed});
+                    return true;
+                }
+            }
+
+        if (removed.length)
+            this.modelUpdated("events", {removed: removed});
+
+        return retVal;
     },
 
     onJingleCall: function(session)
@@ -828,6 +890,7 @@ function MyResourcesContact(jid)
     this.jid = new JID(jid);
     this.groups = [account.otherResourcesGroup];
     this.resources = []
+    this.events = [];
 
     account.myResources[this.jid.normalizedJID] = this;
 

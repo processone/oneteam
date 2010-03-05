@@ -43,13 +43,14 @@ function Account()
     this.bookmarks = new ConferenceBookmarks();
     this.presenceProfiles = new PresenceProfiles();
     this.style = new StylesRegistry(this.cache);
-    this.events = [];
+    this.contactsWithEvents = [];
     this.connected = false;
 
     this.init();
 
     this.defaultGroup = new Group(null, _("Contacts"), true, -1);
     this.notInRosterGroup = new Group(null, _("Not in roster"), true, 1);
+    this.myEventsGroup = new Group(null, _("My events"), true, -3);
     this.otherResourcesGroup = new Group(null, _("My other resources"), true, -2);
 
     this.connectionInfo = {};
@@ -181,7 +182,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (this.allConferences[normalizedJID])
             return this.allConferences[normalizedJID];
         if (showInRoster) {
-            var contact = new Contact(jid, name, [this.notInRosterGroup], null, null);
+            var contact = new Contact(jid, name, groups||[this.notInRosterGroup],
+                                      null, null);
             contact.newItem = true;
             return contact;
         } else
@@ -208,27 +210,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             return this.allConferences[normalizedJID.shortJID].createResource(jid);
 
         return null;
-    },
-
-    _handleVCard: function(pkt, value)
-    {
-        var oldHash = this.avatarHash;
-        var oldAvatarRetrieved = this.avatarRetrieved;
-
-        vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
-
-        var nickname = account.getVCard() &&
-            account.getVCard().getNode().getElementsByTagName("NICKNAME")[0];
-        nickname = (nickname && nickname.textContent) || account.myJID.node;
-
-        if (nickname != this.myResource.nickname) {
-            this.myResource._updateNick(nickname)
-            for each (var res in this.myResources)
-                res._updateNick(nickname);
-        }
-
-        if (!oldAvatarRetrieved || this.avatarHash != oldHash)
-            this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
     },
 
     getOrCreateConference: function(jid)
@@ -300,6 +281,27 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         account.connection.send(iq);
         this._storeXMPPData("_vCardAccessorState", null, this._handleVCard, iq);
+    },
+
+    _handleVCard: function(pkt, value)
+    {
+        var oldHash = this.avatarHash;
+        var oldAvatarRetrieved = this.avatarRetrieved;
+
+        vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
+
+        var nickname = account.getVCard() &&
+            account.getVCard().getNode().getElementsByTagName("NICKNAME")[0];
+        nickname = (nickname && nickname.textContent) || account.myJID.node;
+
+        if (nickname != this.myResource.nickname) {
+            this.myResource._updateNick(nickname)
+            for each (var res in this.myResources)
+                res._updateNick(nickname);
+        }
+
+        if (!oldAvatarRetrieved || this.avatarHash != oldHash)
+            this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
     },
 
     onAddContact: function(contact)
@@ -449,28 +451,24 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     _uniqEventId: 0,
 
-    addEvent: function(content, callback, key)
+    addEvent: function(jid, type, msg, action, key)
     {
         if (!key)
             key = "autogen"+(++this._uniqEventId);
 
-        var token = [content, callback, key];
-        content.token = token;
-        content.key = key;
+        jid = new JID(jid);
 
-        this.events.push(token);
-        this.modelUpdated("events", {added: [token]});
+        var contact = this.getOrCreateContact(jid.shortJID, true, null, []);
+        contact.addEvent({
+            type: type,
+            msg: msg,
+            action: action,
+            key: key
+        });
+        if (contact.events.length == 1)
+            this.contactsWithEvents.push(contact);
 
         return key;
-    },
-
-    removeEvent: function(token)
-    {
-        var idx = this.events.indexOf(token);
-        if (idx >= 0) {
-            this.events.splice(idx, 1);
-            this.modelUpdated("events", {removed: [token]});
-        }
     },
 
     removeEventsByKey: function()
@@ -479,14 +477,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         for (var i = 0; i < arguments.length; i++)
             keys[arguments[i]] = 1;
 
-        var removed = [];
-        for (var i = this.events.length-1; i >= 0; i--)
-            if (this.events[i][2] in keys) {
-                removed.push(this.events[i]);
-                this.events.splice(i, 1);
-            }
-        if (removed.length)
-            this.modelUpdated("events", {removed: removed});
+        for (var i = this.contactsWithEvents.length-1; i >= 0; i--)
+            if (this.contactsWithEvents[i].removeEventsWithKeys(keys) &&
+                this.contactsWithEvents[i].events.length == 0)
+                this.contactsWithEvents.splice(i, 1);
     },
 
     setUserAndPass: function(user, pass, savePass)
@@ -860,8 +854,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 return;
             }
 
-            this.addEvent(_("You got subscription request from <b>{0}</b>",
-                            xmlEscape(sender)),
+            this.addEvent(sender, "subscription",
+                          _xml("You got subscription request from <b>{0}</b>",
+                               sender),
                           new Callback(openDialogUniq, null).
                           addArgs(null, "chrome://oneteam/content/subscribe.xul",
                                   "chrome,centerscreen,resizable",

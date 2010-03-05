@@ -31,9 +31,10 @@ _DECL_(MessageInvitationsService).prototype =
         if (conference.joined)
             return 2;
 
-        account.addEvent(_("You have been invited to room <b>{0}</b> by <b>{1}</b>",
-                           xmlEscape(conference.jid.toUserString()),
-                           xmlEscape(account.getContactOrResourceName(from))),
+        account.addEvent(from, "mucinvite",
+                         _xml("You have been invited to room <b>{0}</b> by <b>{1}</b>",
+                              conference.jid.toUserString(),
+                              account.getContactOrResourceName(from)),
                          new Callback(openDialogUniq, null).
                          addArgs(null, "chrome://oneteam/content/invitation.xul",
                                  "chrome,centerscreen", conference,

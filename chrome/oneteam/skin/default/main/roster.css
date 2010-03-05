@@ -43,6 +43,11 @@ expander[open="true"] .expanderButton {
 .counter-box {
   -moz-box-align: start;
   -moz-box-pack: end;
+  background: no-repeat top right transparent;
+}
+
+.counter-box[event="jinglecall"] {
+  background-image: url(../chatpane/imgs/call.png);
 }
 
 .counter-box > vbox {
