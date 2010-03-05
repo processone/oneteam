@@ -81,7 +81,7 @@ function GroupView(model, parentView)
 
     this.node = this.doc.createElementNS(XULNS, "expander");
     this.node.setAttribute("open", "true");
-    
+
     this.node.setAttribute("context", "group-contextmenu");
     this.node.setAttribute("class", "group-view");
     this.node.model = this.model;
@@ -172,10 +172,19 @@ _DECL_(GroupView, null, ContainerView).prototype =
             this.items = [];
             this.onModelUpdated(this.model, "contacts", {added: this.model.contacts});
         }
+
+        if (this.model == account.myEventsGroup)
+            this.animToken = Animator.animateStyle(this.node._container,
+                                                   "background", -20, 100,
+                                                   null, "transparent", "#fff",
+                                                   "transparent");
     },
 
     destroy: function()
     {
+        if (this.animToken)
+            Animator.stopAnimation(this.animToken);
+
         this._bundle.unregister();
 
         prefManager.unregisterChangeCallback(this._prefToken, "chat.roster.sortbystatus");
@@ -254,7 +263,7 @@ function ContactView(model, parentView)
 
     this.node.setAttribute("tooltip", this.tooltip.id);
     this.node.setAttribute("class", "contact-view");
-    this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
+    this.node.setAttribute("ondblclick", "this.model.onDblClick()");
     this.label.parentNode.parentNode.setAttribute("overflowed", "false");
     this.label.parentNode.addEventListener("overflow", function(ev) {
         ev.target.parentNode.setAttribute("overflowed", "true");
@@ -279,6 +288,7 @@ function ContactView(model, parentView)
     this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
     this._bundle.register(this.model, this.onMsgsInQueueChanged, "msgsInQueue");
     this._bundle.register(this.model, this.onAvatarChanged, "avatar");
+    this._bundle.register(this.model, this.onEventsChanged, "events");
 
     this._matches = false;
 
@@ -286,11 +296,20 @@ function ContactView(model, parentView)
 
     this.onActiveResourceChange();
     this.onAvatarChanged();
+    this.onEventsChanged();
 }
 
 _DECL_(ContactView).prototype =
 {
     onPrefChange: function(name, value) {
+    },
+
+    onEventsChanged: function() {
+        if (this.model.events.length && !this.model.msgsInQueue) {
+            this.messagesCounter.parentNode.parentNode.
+                setAttribute("event", this.model.events[0].type);
+        } else
+            this.messagesCounter.parentNode.parentNode.removeAttribute("event");
     },
 
     onNameChange: function()
@@ -340,7 +359,9 @@ _DECL_(ContactView).prototype =
                 }, 500, this.statusIcon, icon, {idx:0});
             }
             icon = icon[0];
-        }
+        } else
+            this.onEventsChanged();
+
         this.statusIcon.setAttribute("src", icon);
 
         this.messagesCounter.setAttribute("value", this.model.msgsInQueue);
