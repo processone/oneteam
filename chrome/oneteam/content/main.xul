@@ -504,8 +504,7 @@
     <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
     <command id="cmd_changePassword" oncommand="account.onChangePassword()"/>
 <!-- #ifdef XULAPP -->
-    <command id="cmd_extensions" oncommand=""/>
-    <command id="cmd_themes" key="key_themes" oncommand=""/>
+    <command id="cmd_addons" oncommand="window.openDialog('chrome://mozapps/content/extensions/extensions.xul');"/>
 <!-- #endif -->
     <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
 
@@ -590,8 +589,7 @@
               <menuitem label="_('_Change password...')" command="cmd_changePassword"/>
               <menuseparator/>
   <!-- #ifdef XULAPP -->
-              <menuitem label="_('Plugins...')" command="cmd_extensions"/>
-              <menuitem label="_('_Themes...')" command="cmd_themes"/>
+              <menuitem label="_('Add-ons...')" command="cmd_addons"/>
               <menuseparator/>
   <!-- #endif -->
               <menuitem label="_('_Preferences...')" command="cmd_prefs" key="key_prefs"/>
