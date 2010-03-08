@@ -512,23 +512,14 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     onSendFile: function()
     {
-// #ifdef XULAPP
-        if (!this.activeResource)
-            return;
-
-        var path = pickFile(_("Select a File"), false);
-        if (path)
-            this.sendFile(path);
-/* #else
-        this.sendFile();
-// #endif */
+        if (this.activeResource)
+            this.activeResource.onSendFile();
     },
 
     sendFile: function(path)
     {
-        if (!this.activeResource)
-            return;
-        fileTransferService.sendFile(this.activeResource.jid, path);
+        if (this.activeResource)
+            this.activeResource.sendFile(path);
     },
 
     onRegister: function()
@@ -856,6 +847,22 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     {
         openDialogUniq("ot:adhoc", "chrome://oneteam/content/adhoc.xul",
                        "chrome,dialog", this);
+    },
+
+    onSendFile: function()
+    {
+// #ifdef XULAPP
+        var path = pickFile(_("Select a File"), false);
+        if (path)
+            this.sendFile(path);
+/* #else
+        this.sendFile();
+// #endif */
+    },
+
+    sendFile: function(path)
+    {
+        fileTransferService.sendFile(this.jid, path);
     },
 
     onShowHistory: function()

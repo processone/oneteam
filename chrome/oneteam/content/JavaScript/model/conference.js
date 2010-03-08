@@ -726,11 +726,15 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     onAvatarChange: function(avatarHash)
     {
-
         if (!this._retrieveAvatar(avatarHash))
             return;
 
         this.modelUpdated("avatar");
+    },
+
+    sendFile: function(path)
+    {
+        fileTransferService.sendFile(this.realJID || this.jid, path);
     },
 
     onShowHistory: function()

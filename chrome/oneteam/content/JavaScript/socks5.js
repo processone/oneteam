@@ -47,7 +47,7 @@ _DECL_(SOCKS5Service).prototype =
         var xml = <query xmlns="http://jabber.org/protocol/bytestreams" mode="tcp"
                      sid={fileTransfer.streamID}/>;
 
-        var SOCKSHostName = hex_sha1(fileTransfer.streamID + account.myJID +
+        var SOCKSHostName = hex_sha1(fileTransfer.streamID + fileTransfer.ourJid +
                                      fileTransfer.jid);
 
         var token = {
@@ -87,7 +87,7 @@ _DECL_(SOCKS5Service).prototype =
         }
 
         for (var i = 0; i < this.ipAddresses.length; i++)
-            xml.appendChild(<streamhost host={this.ipAddresses[i]} jid={account.myJID}
+            xml.appendChild(<streamhost host={this.ipAddresses[i]} jid={fileTransfer.ourJid}
                                 port={token.bytestream.port} />);
 
         for (i in this.proxies)
@@ -127,7 +127,7 @@ _DECL_(SOCKS5Service).prototype =
         var bsNS = new Namespace("http://jabber.org/protocol/bytestreams");
         var jid = xml..bsNS::["streamhost-used"].@jid.toString();
 
-        if (jid == account.myJID.toString()) {
+        if (jid == token.fileTransfer.ourJid.toString()) {
             if (token.accepted) {
                 token.fileTransfer.file.open(null, token.fileTransfer.file.MODE_RDONLY);
                 token.bytestream.sendFile(token.fileTransfer.file);
@@ -188,7 +188,7 @@ _DECL_(SOCKS5Service).prototype =
         }
 
         var SOCKSHostName = hex_sha1(token.fileTransfer.streamID + token.fileTransfer.jid +
-                                     account.myJID);
+                                     token.fileTransfer.ourJid);
 
         token.id = pkt.getID();
 

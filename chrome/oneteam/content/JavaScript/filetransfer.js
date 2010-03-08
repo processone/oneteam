@@ -16,8 +16,13 @@ _DECL_(FileTransferService, null, Model).prototype =
                 return null;
         }
 
-        var fileTransfer = new FileTransfer(null, new JID(to), null, file && file.size,
+        var recv = new JID(to);
+        var fileTransfer = new FileTransfer(null, recv, null, file && file.size,
                                             file, description);
+
+        var conf = account.allConferences[recv.normalizedJID.shortJID];
+        fileTransfer.ourJid = conf ? conf.myResourceJID : account.myJID;
+
         this.fileTransfers.push(fileTransfer);
         this.modelUpdated("fileTransfers", {added: [fileTransfer]});
 
@@ -71,12 +76,16 @@ _DECL_(FileTransferService, null, Model).prototype =
                      </error>
             }
 
-        var fileTransfer = new FileTransfer(pkt.getID(), new JID(pkt.getFrom()),
+        var sender = new JID(pkt.getFrom());
+        var fileTransfer = new FileTransfer(pkt.getID(), sender,
                                             query.@id.toString(),
                                             file.@size.length() ? +file.@size : null,
                                             null, file.ftNS::desc.text().toString());
 
         fileTransfer.method = "http://jabber.org/protocol/bytestreams";
+
+        var conf = account.allConferences[sender.normalizedJID.shortJID];
+        fileTransfer.ourJid = conf ? conf.myResourceJID : account.myJID;
 
         var canceler = new NotificationsCanceler();
         var callback = new Callback(function(ft, name, canceler) {
