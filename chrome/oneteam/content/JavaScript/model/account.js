@@ -468,6 +468,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (contact.events.length == 1)
             this.contactsWithEvents.push(contact);
 
+        this.modelUpdated("contactsWithEvents");
+
         return key;
     },
 
@@ -481,6 +483,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             if (this.contactsWithEvents[i].removeEventsWithKeys(keys) &&
                 this.contactsWithEvents[i].events.length == 0)
                 this.contactsWithEvents.splice(i, 1);
+
+        this.modelUpdated("contactsWithEvents");
     },
 
     setUserAndPass: function(user, pass, savePass)

@@ -7,24 +7,39 @@ var uiUpdater = {
         while (el.firstChild)
             el.removeChild(el.firstChild);
 
-        for (var i = 0; i < account.events.length && i < 4; i++) {
+        var idx = 0, idx2 = 0, count = 0;
+        do {
+            if (account.contactsWithEvents.length > idx) {
+                if (account.contactsWithEvents[idx].events.length <= idx2) {
+                    idx++;
+                    idx2 = 0;
+                    if (account.contactsWithEvents.length <= idx)
+                        break;
+                }
+            } else
+                break;
+
+            if (count == 4) {
+                var label = el.ownerDocument.createElementNS(XULNS, "label");
+                label.setAttribute("value", "...")
+                el.appendChild(label);
+                break;
+            }
+
             var description = el.ownerDocument.createElementNS(XULNS, "description");
             var div = document.createElementNS(HTMLNS, "div");
 
-            div.innerHTML = account.events[i][0];
+            div.innerHTML = account.contactsWithEvents[idx].events[idx2].msg;
 
             description.appendChild(div);
             el.appendChild(description);
-        }
-        if (i < account.events.length) {
-            var label = el.ownerDocument.createElementNS(XULNS, "label");
-            label.setAttribute("value", "...")
-            el.appendChild(label);
-        }
+            idx2++;
+            count++;
+        } while (true);
     },
 
     onEventsChanged: function() {
-        var hasEvents = account.events.length > 0
+        var hasEvents = account.contactsWithEvents.length > 0
         var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
             getService(Components.interfaces.nsIWindowMediator);
         var br = wm.getEnumerator("navigator:browser");
@@ -41,8 +56,7 @@ var uiUpdater = {
                 this.generateEventsTooltip(doc.getElementById("oneteam-messages-tooltip"));
 
                 win.OneTeam.event = function() {
-                    account.events[0][1]();
-                    account.removeEvent(account.events[0]);
+                    account.contactsWithEvents[0].event[0].action();
                 }
             } else
                 win.OneTeam.event = null;
@@ -54,7 +68,7 @@ var uiUpdater = {
     },
 
     init: function() {
-        account.registerView(this.onEventsChanged, this, "events");
+        account.registerView(this.onEventsChanged, this, "contactsWithEvents");
     }
 }
 
