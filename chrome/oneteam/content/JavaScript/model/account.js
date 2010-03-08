@@ -462,8 +462,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         contact.addEvent({
             type: type,
             msg: msg,
-            action: action,
-            key: key
+            _action: action,
+            key: key,
+            action: function() {
+                account.removeEventsByKey(this.key);
+                return this._action();
+            }
         });
         if (contact.events.length == 1)
             this.contactsWithEvents.push(contact);
