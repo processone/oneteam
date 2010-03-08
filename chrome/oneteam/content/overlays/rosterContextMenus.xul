@@ -32,6 +32,33 @@
       return true;
     }
 
+    function updateMenuList(multipleItemsMenuList, singleItemMenuItem, items,
+                            action, labelFun, hideWhenNoItems)
+    {
+      if (singleItemMenuItem)
+        singleItemMenuItem.hidden = hideWhenNoItems ?
+          items.length != 1 : items.length > 1;
+
+      multipleItemsMenuList.hidden = items.length <= 1;
+
+      if (items.length <= 1)
+        return;
+
+      var list = multipleItemsMenuList.firstChild;
+      while (list && list.firstChild)
+        list.removeChild(list.firstChild);
+
+      for (var i = 0; i < items.length; i++) {
+        var item = document.createElementNS(XULNS, "menuitem");
+        item.model = items[i];
+
+        item.setAttribute("label", labelFun(item.model));
+        item.setAttribute("oncommand", action);
+
+        list.appendChild(item);
+      }
+    }
+
     function updateContactContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
         return;
@@ -47,89 +74,41 @@
 
       sf.hidden = !menuModel.activeResource || !socks5Service.canSendTo(menuModel.activeResource);
 
-      cm.hidden = !(cs.hidden = menuModel.resources.length > 1);
-      if (cs.hidden) {
-        var list = cm.firstChild;
-        while (list && list.firstChild)
-          list.removeChild(list.firstChild);
-        for (var i = 0; i < menuModel.resources.length; i++) {
-          var item = document.createElement("menuitem");
-          item.model = menuModel.resources[i];
+      updateMenuList(cm, cs, menuModel.resources, "this.model.onOpenChat()",
+                     function(i) {
+                        return _("{0} ({1})", i.jid.resource,
+                                 i.presence.priority || 0);
+                     });
 
-          item.setAttribute("label", item.model.jid.resource+
-            (item.model.presence.priority == null ?
-             "" : " ("+item.model.presence.priority+")"));
-          item.setAttribute("oncommand", "this.model.onOpenChat()");
+      var items = menuModel.jingleResource ?
+        [r for (r in menuModel.resourcesIterator(function(e) {
+            return e.jingleResource
+          }))] : [];
 
-          list.appendChild(item);
-        }
-      }
+      updateMenuList(vcm, vc, items, "this.model.onJingleCall()", function(i) {
+                        return _("{0} ({1})", i.jid.resource,
+                                 i.presence.priority || 0);
+                     }, true);
 
-      if (!menuModel.jingleResource)
-        vc.hidden = vcm.hidden = true;
-      else {
-        var resources = [r for (r in menuModel.resourcesIterator(
-          function(e){return e.jingleResource}))];
+      updateMenuList(im, null, account.conferences, "this.model.invite(menuModel.jid)",
+                     function(i) {
+                        return i.jid.toUserString();
+                     });
 
-        vc.hidden = resources.length != 1;
-        vcm.hidden = !vc.hidden;
+      updateMenuList(im, null, account.conferences, "this.model.invite(menuModel.jid)",
+                     function(i) {
+                        return i.jid.toUserString();
+                     });
 
-        if (resources.length > 1) {
-          list = vcm.firstChild;
-          while (list && list.firstChild)
-            list.removeChild(list.firstChild);
+      items = [r for (r in menuModel.resourcesIterator(function(e) {
+            return e.hasDiscoFeature("http://jabber.org/protocol/commands")
+          }))];
 
-          for (var i = 0; i < resources.length; i++) {
-            var item = document.createElementNS(XULNS, "menuitem");
-            item.model = resources[i];
-
-            item.setAttribute("label", item.model.jid.resource+
-              (item.model.presence.priority == null ?
-               "" : " ("+item.model.presence.priority+")"));
-            item.setAttribute("oncommand", "this.model.onJingleCall()");
-
-            list.appendChild(item);
-          }
-        }
-      }
-
-      im.hidden = !account.conferences.length;
-      if (!im.hidden) {
-        list = im.firstChild;
-        while (list && list.firstChild)
-          list.removeChild(list.firstChild);
-        for (var i = 0; i < account.conferences.length; i++) {
-          var item = document.createElement("menuitem");
-          item.setAttribute("label", account.conferences[i].jid.toUserString());
-          item.setAttribute("oncommand", "this.model.invite(this.contact)");
-          item.model = account.conferences[i];
-          item.contact = menuModel.jid;
-          list.appendChild(item);
-        }
-      }
-
-      var ahr = [];
-      for (var res in menuModel.resourcesIterator()) {
-        if (res.hasDiscoFeature("http://jabber.org/protocol/commands"))
-          ahr.push(res);
-      }
-      ah.hidden = ahr.length != 1 || ahr[0] != menuModel.activeResource;
-      ahm.hidden = !ah.hidden || ahr.length == 0;
-      if (!ahm.hidden) {
-        list = ahm.firstChild;
-        while (list && list.firstChild)
-          list.removeChild(list.firstChild);
-        for (i = 0; i < ahr.length; i++) {
-          var item = document.createElement("menuitem");
-          item.model = ahr[i];
-
-          item.setAttribute("label", _("{0} ({1})", ahr[i].jid.resource,
-                                       ahr[i].presence.priority || 0));
-          item.setAttribute("oncommand", "this.model.onAdHocCommand()");
-
-          list.appendChild(item);
-        }
-      }
+      updateMenuList(ahm, ah, items, "this.model.onAdHocCommand()",
+                     function(i) {
+                        return _("{0} ({1})", i.jid.resource,
+                                 i.presence.priority || 0);
+                     }, true);
 
       document.getElementById("contact-authorization-ask").
         setAttribute("disabled", menuModel.canSeeHim);
