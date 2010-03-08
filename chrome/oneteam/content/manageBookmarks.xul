@@ -26,10 +26,12 @@
 
     function onLoad()
     {
+      var selectedIdx = -1;
+
       list = document.getElementById("list");
-      for each (var id in "name room server nick pass autoJoin".split(/ /)) {
+      for each (var id in "name room server nick pass autoJoin".split(/ /))
         textBoxes[id] = document.getElementById(id);
-      }
+
       var bookmarks = account.bookmarks.bookmarks;
       for (var i = 0; i < bookmarks.length; i++) {
         var item = list.appendItem(bookmarks[i].bookmarkName);
@@ -39,9 +41,11 @@
         item["val-nick"] = bookmarks[i].bookmarkNick || "";
         item["val-pass"] = bookmarks[i].bookmarkPassword || "";
         item["val-autoJoin"] = bookmarks[i].autoJoin;
+        if (window.arguments && window.arguments[0] == bookmarks[i].jid.normalizedJID)
+          selectedIdx = i;
       }
       if (i)
-        list.selectedIndex = 0;
+        list.selectedIndex = selectedIdx < 0 ? 0 : selectedIdx;
       else
         for each (var textbox in textBoxes)
           textbox.disabled = textbox.previousSibling.disabled = true;

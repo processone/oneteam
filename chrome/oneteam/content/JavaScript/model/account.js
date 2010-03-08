@@ -316,10 +316,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                        "chrome,centerscreen", bookmark);
     },
 
-    onManageBookmarks: function()
+    onManageBookmarks: function(jid)
     {
         openDialogUniq("ot:manageBookmarks", "chrome://oneteam/content/manageBookmarks.xul",
-                       "chrome,centerscreen");
+                       "chrome,centerscreen", jid);
     },
 
     showHistoryManager: function(contact)

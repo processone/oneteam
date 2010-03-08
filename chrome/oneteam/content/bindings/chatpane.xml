@@ -1729,6 +1729,15 @@
         ]]></body>
       </method>
 
+      <method name="onStarClick">
+        <body><![CDATA[
+          if (account.bookmarks.hasBookmarkForJid(this._model.contact.jid))
+            account.onManageBookmarks(this._model.contact.jid);
+          else
+            this._model.contact.onBookmark();
+        ]]></body>
+      </method>
+
       <method name="focus">
         <body><![CDATA[
           this._input.focus();
