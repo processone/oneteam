@@ -409,17 +409,13 @@
 
       init: function()
       {
-        this.eventBox = document.getElementById("eventBox");
-        this.counter = document.getElementById("eventBoxCounter");
-        this.prevButton = document.getElementById("eventBoxPrev")
-        this.nextButton = document.getElementById("eventBoxNext")
-        account.registerView(this.onEventsChanged, this, "events", globalRegToken);
+        account.registerView(this.onEventsChanged, this, "contactsWithEvents", globalRegToken);
 
         if (account.contactsWithEvents.length)
           this.onEventsChanged();
       },
 
-      hasEvents: false,
+      hadEvents: false,
       onEventsChanged: function()
       {
         var hasEvents = account.contactsWithEvents.length > 0;
@@ -688,13 +684,6 @@
                   </menupopup>
                 </menulist>
               </hbox>
-            </hbox>
-          </vbox>
-          <vbox id="eventBox" collapsed="true" onclick="eventBoxHandler.onClick(event)">
-            <hbox id="eventBoxCounterBox">
-              <button id="eventBoxPrev" oncommand="eventBoxHandler.prevMsg()"/>
-              <description id="eventBoxCounter" flex="1"/>
-              <button id="eventBoxNext" oncommand="eventBoxHandler.nextMsg()"/>
             </hbox>
           </vbox>
           <textbox type="search" oncommand="refineSearch(this)"
