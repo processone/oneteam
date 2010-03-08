@@ -6,7 +6,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script><![CDATA[
-    var OneTeam = {
+    var OneTeamUpdater = {
       onStatusClick: function() {
         if (this.event)
           this.event();
@@ -31,7 +31,7 @@
     <tooltip id="oneteam-messages-tooltip"/>
 
     <statusbarpanel id="oneteam-status" class="statusbarpanel-menu-iconic"
-                    onclick="OneTeam.onStatusClick(event)"
+                    onclick="OneTeamUpdater.onStatusClick(event)"
                     tooltip="oneteam-default-tooltip"/>
   </statusbar>
 

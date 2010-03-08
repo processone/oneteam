@@ -55,11 +55,11 @@ var uiUpdater = {
             if (hasEvents) {
                 this.generateEventsTooltip(doc.getElementById("oneteam-messages-tooltip"));
 
-                win.OneTeam.event = function() {
+                win.OneTeamUpdater.event = function() {
                     account.contactsWithEvents[0].event[0].action();
                 }
             } else
-                win.OneTeam.event = null;
+                win.OneTeamUpdater.event = null;
 
             el.setAttribute("tooltip", hasEvents ? "oneteam-messages-tooltip" :
                             "oneteam-default-tooltip");
