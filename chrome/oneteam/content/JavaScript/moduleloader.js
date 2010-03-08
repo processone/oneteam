@@ -1,3 +1,5 @@
+var OneTeam;
+
 (function() {
 
 function MLP(scope) {
