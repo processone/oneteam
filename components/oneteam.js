@@ -57,11 +57,12 @@ MLP.prototype =
         for (i = 0; i < tmp.length; i++)
             if ((tmp2 = tmp[i].split(/\./)).length > 1) {
                 var st = scope[tmp2[0]], ss = this.__parent__[tmp2[0]];
-                for (var j = 1; j < tmp2.length-1; j++) {
+                for (var j = 1; st && j < tmp2.length-1; j++) {
                     ss = ss[tmp2[j]]
                     st = st[tmp2[j]]
                 }
-                st[tmp2[tmp2.length-1]] = ss[tmp2[tmp2.length-1]];
+				if (st)
+					st[tmp2[tmp2.length-1]] = ss[tmp2[tmp2.length-1]];
             } else
                 scope[tmp[i]] = this.__parent__[tmp[i]];
 
