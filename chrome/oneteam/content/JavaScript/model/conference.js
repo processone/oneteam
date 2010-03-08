@@ -15,6 +15,7 @@ function Conference(jid)
     this.visibleName = this.jid.node;
     this.resources = [];
     this.groups = [];
+    this.events = [];
 
     this.convertFromContact();
 }
