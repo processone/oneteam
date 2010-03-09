@@ -87,6 +87,8 @@ function GroupView(model, parentView)
     this.node.model = this.model;
     this.node.menuModel = this.model;
     this.node.view = this;
+    if (this.model == account.myEventsGroup)
+        this.node.setAttribute("showOffline", "true");
 
     this.box = this.doc.createElementNS(XULNS, "description");
 
