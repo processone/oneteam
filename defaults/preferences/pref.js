@@ -1,4 +1,4 @@
-pref ("general.skins.selectedSkin","");
+pref ("general.skins.selectedSkin", "classic/1.0");
 
 pref("chat.connection.priority", 5);
 pref("chat.connection.base", "http-poll");

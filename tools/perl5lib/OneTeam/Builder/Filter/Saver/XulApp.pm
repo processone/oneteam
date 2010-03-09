@@ -82,7 +82,7 @@ sub _prepare_files {
     $ai =~ s/(version\s*=\s*)[^\n]*/$1.$self->{version}->()/ei;
     $ai =~ s/(buildid\s*=\s*)[^\n]*/$1.$self->{buildid}->()/ei;
     print_to_file(catfile($tmppfxdir, "application.ini"), $ai);
-
+    dircopy("extensions", catdir($tmppfxdir, 'extensions'));
     dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
 }
 
