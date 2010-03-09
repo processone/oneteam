@@ -95,11 +95,6 @@
                         return i.jid.toUserString();
                      });
 
-      updateMenuList(im, null, account.conferences, "this.model.invite(menuModel.jid)",
-                     function(i) {
-                        return i.jid.toUserString();
-                     });
-
       items = [r for (r in menuModel.resourcesIterator(function(e) {
             return e.hasDiscoFeature("http://jabber.org/protocol/commands")
           }))];
