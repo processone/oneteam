@@ -42,7 +42,7 @@
         document.getElementById("setPresence-nick").value = account.myResource.visibleName;
 
         if (!this.rosterView) {
-          this.updateRoster();
+          this.rosterView = new RosterView(document.getElementById("contacts-list"));
           this.bookmarksMenuView =
             new BookmarksMenuView(document.getElementById("conference-menu-separator"));
           this.gatewaysMenuView =
@@ -51,6 +51,9 @@
             new PresenceProfilesView(document.getElementById("setPresence-profile-dummy"),
                                      this.profileEnable);
           this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
+
+          this.rosterView.hideOffline = document.getElementById("cmd_toggleShowOffline").
+            getAttribute("checked") == "true";
         }
         if (!account.connected) {
           if (!quitSequence)
@@ -153,17 +156,6 @@
 
       },
 
-      updateRoster: function()
-      {
-        if (this.rosterView)
-          return;
-
-        this.rosterView = new RosterView(document.getElementById("contacts-list"));
-
-        this.rosterView.hideOffline = document.getElementById("cmd_toggleShowOffline").
-          getAttribute("checked") == "true";
-      },
-
       _updatePresenceIcon: function(_this, icons, idx) {
 //        document.getElementById("setPresence-type-image").src =
 // #ifdef XULAPP
@@ -216,8 +208,6 @@
         account.registerView(this.onPresenceChange, this, "currentPresence", globalRegToken);
         account.myResource.registerView(this.onNickChange, this, "visibleName", globalRegToken);
         account.style.registerView(this.onIconSetChange, this, "defaultSet", globalRegToken);
-
-        prefManager.registerChangeCallback(new Callback(this.updateRoster, this), "chat.roster.alternativelook");
 
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.profileChooser = document.getElementById("setPresence-profile-chooser");
