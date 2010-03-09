@@ -143,20 +143,10 @@
 
       sf.hidden = !socks5Service.canSendTo(menuModel);
 
-      im.hidden = !account.conferences.length;
-      if (!im.hidden) {
-        list = im.firstChild;
-        while (list && list.firstChild)
-          list.removeChild(list.firstChild);
-        for (var i = 0; i < account.conferences.length; i++) {
-          var item = document.createElement("menuitem");
-          item.setAttribute("label", account.conferences[i].jid.toUserString());
-          item.setAttribute("oncommand", "this.model.invite(this.contact)");
-          item.model = account.conferences[i];
-          item.contact = menuModel.jid;
-          list.appendChild(item);
-        }
-      }
+      updateMenuList(im, null, account.conferences, "this.model.invite(menuModel.jid)",
+                     function(i) {
+                        return i.jid.toUserString();
+                     });
 
       vc.hidden = !menuModel.jingleResource;
 
