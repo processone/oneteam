@@ -8,19 +8,25 @@
 
 <dialog id="bumpPriority" windowtype="ot:bumpPriority" title="_('Another client active')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  width="300" height="200"
+  width="300" height="200" onload="onLoad();"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel" ondialogaccept="return onAccept();">
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("model/account.js");
-
+    ML.importMod("prefs.js");
+    function onLoad() {
+      document.getElementById("bumpPref").checked = prefManager.getPref("chat.general.bumppriority");
+    }
     function onAccept() {
       var cp = account.currentPresence;
       account.setPresence(cp.show, cp.status, window.arguments[0], cp.profile,
                           cp == account.userPresence);
       return true;
+    }
+    function savePref(checked) {
+      prefManager.setPref("chat.general.bumppriority", checked);
     }
   ]]></script>
 
@@ -35,6 +41,7 @@
                  higher priority that this client, messages usualy will be routed to
                  that client.")</description>
     <description>_("Do you want to bump this client priority to make it main client?")</description>
+    <checkbox id="bumpPref" label="_('Ask me the next time.')" oncommand="savePref(this.checked);"/>
   </vbox>
 
 </dialog>
