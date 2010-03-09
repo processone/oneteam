@@ -205,6 +205,8 @@
         <checkbox label="_('Play sounds')" pref="chat.sounds=checked"/>
         <checkbox label="_('Notify about other clients with higher priority')"
                   pref="chat.general.bumppriority=checked"/>
+        <checkbox label="_('Show the system tray icon.')"
+                  pref="chat.systray=checked"/>
       </tabpanel>
 
       <tabpanel>
