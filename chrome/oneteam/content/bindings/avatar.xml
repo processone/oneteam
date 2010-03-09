@@ -12,11 +12,6 @@
     </resources>
 
     <content class="container">
-      <xul:hbox flex="1" align="center" pack="center">
-        <xul:vbox class="avatarContainer" hidden="true">
-          <xul:image id="image"/>
-        </xul:vbox>
-      </xul:hbox>
     </content>
 
     <implementation>
@@ -29,11 +24,6 @@
         <setter><![CDATA[
           if (this._model == val)
             return val;
-
-          if (!this._container) {
-            this._model = val;
-            return;
-          }
 
           if (this._token) {
             this._model.unregisterView(this._token);
@@ -50,22 +40,6 @@
         ]]></setter>
       </property>
 
-      <property name="_image" readonly="true">
-        <getter><![CDATA[
-          if (!this.__image)
-            this.__image = document.getAnonymousElementByAttribute(this, "id", "image");
-          return this.__image;
-        ]]></getter>
-      </property>
-
-      <property name="_container" readonly="true">
-        <getter><![CDATA[
-          if (!this.__container)
-            this.__container = this._image && this._image.parentNode.parentNode;
-          return this.__container;
-        ]]></getter>
-      </property>
-
       <constructor><![CDATA[
         this._imageObj = new Image();
 
@@ -73,11 +47,6 @@
         this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
 
         recoverSetters(this);
-
-        if (!this.model || this.__image) {
-          this.__image = this.__container = null;
-          this.onAvatarChange();
-        }
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -86,20 +55,12 @@
 
       <method name="onAvatarChange">
         <body><![CDATA[
-        this.style.backgroundImage = "url("+(
-          this._model &&this._model.avatar ?
-            this._model.avatar :
-            this.getAttribute("showBlankAvatar") == "true" ?
-              "chrome://oneteam/skin/avatar/imgs/default-avatar.png" : "")+")";
-        return;
         if (this._model && this._model.avatar) {
-          this._container.firstChild.hidden = false;
           this._imageObj.src = this._model.avatar;
         } else if (this.getAttribute("showBlankAvatar") == "true") {
-          this._container.firstChild.hidden = false;
           this._imageObj.src = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
         } else {
-          this._container.firstChild.hidden = true;
+          this.style.backgroundImage = "";
           this._imageObj.src = null;
         }
         ]]></body>
@@ -124,16 +85,51 @@
 
       <method name="onImageLoad">
         <body><![CDATA[
-          this._image.style.width = this._image.style.height = "1px";
+          var width = this.boxObject.width;
+          var height = this.boxObject.height;
+          var url = this._imageObj.src;
 
-          var height = this._container.boxObject.height;
-          this._image.setAttribute("src", this._imageObj.src);
+          if (width < this._imageObj.naturalWidth || height < this._imageObj.naturalHeight)
+          {
+            var cacheKey = "avatar-"+(this.model.avatarHash||"default")+"-"+width+"-"+height;
+            var val = account.cache.getValue(cacheKey, true);
 
-          if (height > this._imageObj.naturalHeight)
-            height = this._imageObj.naturalHeight;
+            if (val)
+              account.cache.bumpExpirationDate(cacheKey, new Date(Date.now()+30*24*60*60*1000));
+            else {
+              if (!this._canvas)
+                this._canvas = this.ownerDocument.createElementNS(HTMLNS, "canvas");
 
-          this._image.style.width = (height*this._imageObj.naturalWidth/this._imageObj.naturalHeight)+"px";
-          this._image.style.height = height+"px";
+              this._canvas.width = width;
+              this._canvas.height = height;
+              var ctx = this._canvas.getContext("2d");
+
+              var scaledWidth = this._imageObj.naturalWidth;
+              var scaledHeight = this._imageObj.naturalHeight;
+
+              if (scaledWidth*height > width*scaledHeight) {
+                scaledHeight = parseInt(scaledHeight*width/scaledWidth);
+                scaledWidth = width;
+              } else {
+                scaledWidth = parseInt(scaledWidth*height/scaledHeight);
+                scaledHeight = height;
+              }
+
+              ctx.drawImage(this._imageObj,
+                            parseInt((width-scaledWidth)/2),
+                            parseInt((height-scaledHeight)/2),
+                            scaledWidth, scaledHeight);
+
+              var data = atob(this._canvas.toDataURL().replace(/^.*,/, ""));
+              account.cache.setValue(cacheKey, data,
+                                     new Date(Date.now()+30*24*60*60*1000),
+                                     true);
+              val = account.cache.getValue(cacheKey, true);
+            }
+            url = val;
+          }
+
+          this.style.backgroundImage = "url("+url+")";
         ]]></body>
       </method>
     </implementation>
