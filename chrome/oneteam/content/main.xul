@@ -325,8 +325,10 @@
 
     function onClose() {
     //#ifdef XULAPP
-      setPresenceUpdater.systray.minimized = true;
-      return false;
+      if(document.getElementById("systray").hidden == false){
+        setPresenceUpdater.systray.minimized = true;
+        return false;
+      }
     /*#else
       return true;
     //#endif */
