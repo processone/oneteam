@@ -813,7 +813,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.connected = false;
         this.connecting = false;
         this.connectionInitialized = false;
-        account.connection = null;
+        account.connection = {
+            send: function() {},
+            disconnect: function() {},
+            registerHandler: function() {},
+            unregisterHandler: function() {}
+        };
 
         this.modelUpdated("connection");
         this.modelUpdated("connected");

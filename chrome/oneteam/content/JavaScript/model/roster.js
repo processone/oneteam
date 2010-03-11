@@ -315,8 +315,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     _sendPresence: function(presence)
     {
-        if (account.connection)
-            account.connection.send(presence.generatePacket(this));
+        account.connection.send(presence.generatePacket(this));
     },
 
     groupsIterator: function(predicate, token, sortFun)
@@ -333,9 +332,6 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     sendMessage: function(msg)
     {
-        if (!account.connection)
-            return;
-
         var message = new JSJaCMessage();
         message.setTo(this.jid);
         message.setType("chat");
