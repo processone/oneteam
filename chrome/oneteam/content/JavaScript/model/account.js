@@ -633,9 +633,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.updateCapsInfo(this.connection.serverCaps);
 
         if (!this.mucMode) {
+            var ver = this.connection.hasRosterVersioning ?
+                this.cache.getValue("rosterVersion") : null;
+
             var pkt = new JSJaCIQ();
             pkt.setIQ(null, 'get');
             pkt.setQuery('jabber:iq:roster');
+            if (ver != null)
+                pkt.getQuery().setAttribute("ver", ver);
+
             account.connection.send(pkt, this._initialRosterFetch, this);
         }
 
@@ -780,7 +786,17 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     _initialRosterFetch: function(pkt, _this)
     {
         if (pkt)
-            _this.onIQ(pkt);
+            if (pkt.getNode().childNodes.length)
+                _this.onIQ(pkt);
+            else {
+                contacts = _this.cache.getValue("roster") || [];
+                for (var i = 0; i < contacts.length; i++) {
+                    c = contacts[i];
+                    new Contact(c.jid, c.name, c.groups.length ?
+                                    c.groups : [this.defaultGroup],
+                                c.subscription, c.subscriptionAsk);
+                }
+            }
 
         _this._initConnectionStep(1);
     },
@@ -974,6 +990,19 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             } else
                 new Contact(items[i]);
         }
+
+        var contacts = [];
+        for (var contact in this.contactsIterator(function(c){return !c.newItem}))
+            contacts.push({
+                jid: contact.jid.toString(),
+                name: contact.name,
+                subscription: contact.subscription,
+                subscriptionAsk: contact.subscriptionAsk,
+                groups: [g.name for (g in contact.groupsIterator(function(g){return g.name}))]
+            });
+
+        this.cache.setValue("roster", contacts);
+        this.cache.setValue("rosterVersion", query.getAttribute("ver") || "");
     },
 
     onMessage: function(packet)

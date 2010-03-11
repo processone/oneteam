@@ -1065,6 +1065,9 @@ JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
     return false;
   }
 
+  if (doc.getElementsByTagNameNS("urn:xmpp:features:rosterver", "ver").length)
+    this.hasRosterVersioning = true;
+
   this._parseMechanisms(doc.getElementsByTagName("mechanisms"));
 
   return true;

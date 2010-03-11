@@ -105,9 +105,20 @@ JSJaCMozillaConnection.prototype = {
     if (packet)
       this._handleEvent("packet_in", packet);
 
+    if (node.localName == "features" &&
+        node.namespaceURI == "http://etherx.jabber.org/streams")
+    {
+      var caps = node.getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
+      if (caps)
+        this.serverCaps = caps;
+
+      if (node.getElementsByTagNameNS("urn:xmpp:features:rosterver", "ver").length)
+        this.hasRosterVersioning = true;
+    }
+
     if (this._sendRawCallbacks.length) {
       var cb = this._sendRawCallbacks[0];
-      this._sendRawCallbacks = this._sendRawCallbacks.slice(1, this._sendRawCallbacks.length);
+      this._sendRawCallbacks.splice(0, 1);
       cb.fn.call(this, node, cb.arg);
       return;
     }
@@ -122,10 +133,6 @@ JSJaCMozillaConnection.prototype = {
           this._onDisconnect();
           return;
         case "features":
-          var caps = node.getElementsByTagNameNS("http://jabber.org/protocol/caps", "c")[0];
-          if (caps)
-            this.serverCaps = caps;
-
           if (node.getElementsByTagNameNS("urn:ietf:params:xml:ns:xmpp-tls", "starttls").length) {
             this._sendRaw("<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>")
             return;
