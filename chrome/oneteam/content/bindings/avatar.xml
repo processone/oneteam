@@ -89,6 +89,18 @@
           var height = this.boxObject.height;
           var url = this._imageObj.src;
 
+          if (account.cache.getValue("avatarEpoch") < 1) {
+            account.cache.setValue("avatarEpoch", 1);
+
+            var toRemove = [];
+            for (i in account.cache.iterator("avatar-"))
+              if (/avatar-.*-/.exec(i))
+                toRemove.push(i);
+
+            for (var i = 0; i < toRemove.length)
+              account.cache.removeValue(toRemove[i]);
+          }
+
           if (width < this._imageObj.naturalWidth || height < this._imageObj.naturalHeight)
           {
             var cacheKey = "avatar-"+(this.model.avatarHash||"default")+"-"+width+"-"+height;
@@ -105,20 +117,19 @@
               var ctx = this._canvas.getContext("2d");
 
               var scaledWidth = this._imageObj.naturalWidth;
+              var naturalWidth = scaledWidth;
               var scaledHeight = this._imageObj.naturalHeight;
 
-              if (scaledWidth*height > width*scaledHeight) {
-                scaledHeight = parseInt(scaledHeight*width/scaledWidth);
-                scaledWidth = width;
-              } else {
-                scaledWidth = parseInt(scaledWidth*height/scaledHeight);
-                scaledHeight = height;
-              }
+              if (scaledWidth*height < width*scaledHeight)
+                scaledHeight = parseInt(height*scaledWidth/width);
+              else
+                scaledWidth = parseInt(width*scaledHeight/height);
 
               ctx.drawImage(this._imageObj,
-                            parseInt((width-scaledWidth)/2),
-                            parseInt((height-scaledHeight)/2),
-                            scaledWidth, scaledHeight);
+                            parseInt((naturalWidth-scaledWidth)/2),
+                            0,
+                            scaledWidth, scaledHeight,
+                            0, 0, width, height);
 
               var data = atob(this._canvas.toDataURL().replace(/^.*,/, ""));
               account.cache.setValue(cacheKey, data,
