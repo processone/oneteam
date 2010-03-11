@@ -273,7 +273,7 @@ function ContactView(model, parentView)
     this.label.parentNode.addEventListener("underflow", function(ev) {
         ev.target.parentNode.setAttribute("overflowed", "false");
     }, true);
-    this.label.setAttribute("value", model.name || model.jid.node);
+    this.label.setAttribute("value", model.visibleName || model.jid.node);
     this.statusIcon.setAttribute("class", "status-icon");
 
     this.label.view = this;
@@ -493,7 +493,7 @@ _DECL_(ContactTooltip).prototype =
     onTooltipShowing: function()
     {
         this.avatar.setAttribute("src", this.model.avatar);
-        this.name.setAttribute("value", this.model.name || this.model.jid.toUserString());
+        this.name.setAttribute("value", this.model.visibleName || this.model.jid.toUserString());
         this.subscription.setAttribute("value", this.model.subscription);
 
         while (this.resourcesContainer.firstChild)
@@ -626,7 +626,7 @@ _DECL_(ResourceTooltip).prototype =
     onTooltipShowing: function()
     {
         this.avatar.setAttribute("src", this.model.avatar);
-        this.name.setAttribute("value", _("{0} ({1})", this.model.name,
+        this.name.setAttribute("value", _("{0} ({1})", this.model.visibleName,
                                           this.model.activeResource.presence.priority || 0));
         this.icon.setAttribute("src", this.model.activeResource.getStatusIcon());
         this.showLabel.setAttribute("value", this.model.activeResource.presence);

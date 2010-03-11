@@ -27,8 +27,8 @@
           if (contact.bookmarkName)
             return contact.bookmarkName;
 
-          if (contact.name)
-            return contact.name;
+          if (contact.visibleName)
+            return contact.visibleName;
 
           return value.jid.toUserString();
         }
