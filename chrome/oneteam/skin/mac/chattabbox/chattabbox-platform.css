@@ -46,6 +46,10 @@ tab[selected="true"]:focus > .tab-text {
                    0 0 3px -moz-mac-focusring inset;
 }
 
+tab[chatstate=modified] .tab-text {
+  color: white;
+}
+
 tabs {
   padding: 0;
   margin: 0;
