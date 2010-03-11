@@ -97,7 +97,7 @@
               if (/avatar-.*-/.exec(i))
                 toRemove.push(i);
 
-            for (var i = 0; i < toRemove.length)
+            for (var i = 0; i < toRemove.length; i++)
               account.cache.removeValue(toRemove[i]);
           }
 
