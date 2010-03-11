@@ -41,11 +41,11 @@
       </property>
 
       <constructor><![CDATA[
-        this._imageObj = new Image();
-
-        var _this = this;
-        this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
-
+        if (!this._imageObj) {
+          this._imageObj = new Image();
+          var _this = this;
+          this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
+        }
         recoverSetters(this);
       ]]></constructor>
 
