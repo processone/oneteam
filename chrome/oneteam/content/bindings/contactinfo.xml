@@ -233,7 +233,7 @@
       <method name="updateChatState">
         <parameter name="state"/>
         <body><![CDATA[
-          this._chatStateIcon.parentNode.setAttribute("nonEmpty", state != "gone");
+          this._chatStateIcon.parentNode.setAttribute("nonEmpty", !!state);
           this._chatStateIcon.className = "chatstate-"+state;
           switch (state) {
             case "active":
