@@ -125,7 +125,8 @@ _DECL_(PersistentCache).prototype =
             file.close();
         }
         this.setStmt.bindStringParameter(0, key);
-        this.setStmt.bindStringParameter(1, value);
+        this.setStmt.bindStringParameter(1, typeof(value) == "object" ?
+                                         "JSON:"+JSON.encode(value) : value);
         this.setStmt.bindInt32Parameter(2, storeAsFile ? 1 : 0);
         this.setStmt.bindInt64Parameter(3, expiryDate ? expiryDate.getTime() : 0x7fffffffffff);
         this.setStmt.execute();
@@ -164,6 +165,9 @@ _DECL_(PersistentCache).prototype =
             return "file://"+value;
         } else if (asFile)
             throw new GenericError("Unable to return data as file path");
+
+        if (value.indexOf("JSON:") == 0)
+            value = JSON.decode(value.substr(5));
 
         return value;
     },
