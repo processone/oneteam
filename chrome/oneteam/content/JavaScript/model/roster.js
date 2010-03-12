@@ -716,8 +716,20 @@ function Resource(jid, contact)
 _DECL_(Resource, null, Model, DiscoItem, Comparator,
        XMPPDataAccessor("Version", function() {
             var iq = new JSJaCIQ();
+            iq.setIQ(this.jid, "get");
             iq.setQuery('jabber:iq:version');
             return iq;
+       }, function(pkt) {
+            var node = pkt.getNode();
+            var name = node.getElementsByTagName("name")[0];
+            var version = node.getElementsByTagName("version")[0];
+            var os = node.getElementsByTagName("os")[0];
+
+            return {
+                name: name && name.textContent,
+                version: version && version.textContent,
+                os: os && os.textContent
+            }
        }), MessagesRouter).prototype =
 {
     _registered: false,

@@ -267,7 +267,7 @@ function XMPPDataAccessor(prefix, pktGeneratorFun, pktParserFun)
 
     fun.prototype["get"+prefix] = function(forceUpdate, callbacks) {
         return this._fetchXMPPData("_"+prefix+"State", pktGeneratorFun, pktParserFun,
-                                   null, null, forceUpdate, callbacks);
+                                   null, forceUpdate, callbacks);
     }
     return fun;
 }
