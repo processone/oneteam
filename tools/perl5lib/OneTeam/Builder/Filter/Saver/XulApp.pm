@@ -27,7 +27,7 @@ sub finalize {
 
     my ($tmpdir, $tmppfxdir, $chromedir) = $self->SUPER::finalize();
 
-    if ($self->{mar_options}->{MAR_BASE_URL}) {
+    if ($self->{mar_options}->{MAR_BASE_URL} and not $self->{mar_options}->{MAR_SKIP}) {
         my @files;
         my $tmpdirlen = length($tmppfxdir) + ($tmppfxdir =~ m!(?:[/\\]$)! ? 0 : 1);
 
@@ -84,6 +84,20 @@ sub _prepare_files {
     print_to_file(catfile($tmppfxdir, "application.ini"), $ai);
     dircopy("extensions", catdir($tmppfxdir, 'extensions'));
     dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
+
+    if ($self->{mar_options}->{MAR_BASE_URL}) {
+        my $mar_base_url = $self->_expand_str(0, $self->{mar_options}->{MAR_BASE_URL});
+        my $mar_update_url = $self->_expand_str(0, $self->{mar_options}->{MAR_UPDATE_URL}) ||
+            "$mar_base_url/cgi-bin/update.cgi?q=%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%OS_VERSION%/".
+            "%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml";
+
+        open my $fh, ">>", catfile($tmppfxdir, qw(defaults preferences pref.js));
+        print $fh "pref(\"app.update.mode\", 1);\n";
+        print $fh "pref(\"app.update.enabled\", true);\n";
+        print $fh "pref(\"app.update.auto\", true);\n";
+        print $fh "pref(\"app.update.url\", \"$mar_update_url\");\n";
+        close($fh);
+    }
 }
 
 sub _create_mar {
@@ -96,15 +110,6 @@ sub _create_mar {
         "%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xmlupdate.xml";
 
     my $version = $self->{version}->();
-
-    open my $fh, ">>", $files{catfile(qw(defaults preferences pref.js))};
-    print $fh "pref(\"app.update.mode\", 1);\n";
-    print $fh "pref(\"app.update.enabled\", true);\n";
-    print $fh "pref(\"app.update.auto\", true);\n";
-    print $fh "pref(\"app.update.url\", \"$mar_update_url\");\n";
-    close($fh);
-
-    return if $self->{mar_options}->{MAR_SKIP};
 
     my $tmpdirbase = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
     my $tmpdir = catdir($tmpdirbase, "Contents", "Resources");
