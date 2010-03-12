@@ -790,7 +790,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             if (pkt.getNode().childNodes.length)
                 _this.onIQ(pkt);
             else {
-                contacts = _this.cache.getValue("roster-"+this.myJID.shortJID) || [];
+                contacts = _this.cache.getValue("roster-"+_this.myJID.shortJID) || [];
                 for (var i = 0; i < contacts.length; i++) {
                     c = contacts[i];
                     new Contact(c.jid, c.name, c.groups.length ?
