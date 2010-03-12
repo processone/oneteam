@@ -629,6 +629,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     onConnect: function()
     {
+        this.myJID = new JID(account.connection.fulljid);
+        this.jid = new JID(this.myJID.domain);
+
         if (this.connection.serverCaps)
             this.updateCapsInfo(this.connection.serverCaps);
 
@@ -648,8 +651,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.connected = true;
         this.connectedAt = new Date();
 
-        this.myJID = new JID(account.connection.fulljid);
-        this.jid = new JID(this.myJID.domain);
 
         if (this.mucMode) {
             this._initialRosterFetch(null, this);
