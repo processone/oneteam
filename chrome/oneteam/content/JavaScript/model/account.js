@@ -793,7 +793,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 for (var i = 0; i < contacts.length; i++) {
                     c = contacts[i];
                     new Contact(c.jid, c.name, c.groups.length ?
-                                    c.groups : [this.defaultGroup],
+                                    c.groups : [_this.defaultGroup],
                                 c.subscription, c.subscriptionAsk);
                 }
             }
