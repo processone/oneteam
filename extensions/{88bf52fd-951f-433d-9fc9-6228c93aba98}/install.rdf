@@ -33,7 +33,7 @@
     <em:locked>true</em:locked>
 
     <!-- Front End Integration Hooks (used by Theme Manager)-->
-    <em:creator>Process-One</em:creator>
+    <em:creator>ProcessOne</em:creator>
 
     <em:internalName>classic/1.0</em:internalName>
   </Description>      
