@@ -188,7 +188,7 @@ _DECL_(DiscoCacheEntry).prototype =
         this.discoInfo = { features: {} };
 
         var idx = 0, count = 1;
-        if (+s[0] > 0) {
+        if (+s[0] >= 0) {
             idx = 1;
             count = +s[0];
         }
