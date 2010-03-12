@@ -634,7 +634,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (!this.mucMode) {
             var ver = this.connection.hasRosterVersioning ?
-                this.cache.getValue("rosterVersion") : null;
+                this.cache.getValue("rosterVersion-"+this.myJID.shortJID) : null;
 
             var pkt = new JSJaCIQ();
             pkt.setIQ(null, 'get');
@@ -789,7 +789,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             if (pkt.getNode().childNodes.length)
                 _this.onIQ(pkt);
             else {
-                contacts = _this.cache.getValue("roster") || [];
+                contacts = _this.cache.getValue("roster-"+this.myJID.shortJID) || [];
                 for (var i = 0; i < contacts.length; i++) {
                     c = contacts[i];
                     new Contact(c.jid, c.name, c.groups.length ?
@@ -1001,8 +1001,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 groups: [g.name for (g in contact.groupsIterator(function(g){return g.name}))]
             });
 
-        this.cache.setValue("roster", contacts);
-        this.cache.setValue("rosterVersion", query.getAttribute("ver") || "");
+        this.cache.setValue("roster-"+this.myJID.shortJID, contacts);
+        this.cache.setValue("rosterVersion-"+this.myJID.shortJID,
+                            query.getAttribute("ver") || "");
     },
 
     onMessage: function(packet)
