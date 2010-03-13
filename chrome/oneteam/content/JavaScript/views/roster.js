@@ -704,7 +704,9 @@ function PresenceProfileView(model, parentView)
     this.model = model;
     this.parentView = parentView;
 
-    this.node = this.doc.createElementNS(XULNS, "menuitem");
+    var doc = this.parentView.doc;
+
+    this.node = doc.createElementNS(XULNS, "menuitem");
 
     this.node.setAttribute("class", "setPresence-profile-view");
     this.node.setAttribute("label", model.name);
