@@ -913,7 +913,7 @@ function report(to, level, info, context)
 
             var msg = "";
 
-            if('name' in info && 'message' in info)
+            if(typeof(info) == "object" && 'name' in info && 'message' in info)
                 msg += exceptionToString(info, "E ") + '\n';
             else {
                 if(typeof(info) == 'string')
@@ -937,6 +937,7 @@ function report(to, level, info, context)
             }
 // #ifdef XULAPP
             dump(msg);
+            logExceptionInConsole(info);
 /* #else
 // #ifdef DEBUG
             alert(msg);

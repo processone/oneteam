@@ -561,7 +561,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         account.connection.registerHandler("onerror", function(p){account.onError(p)});
         account.connection.registerHandler("status_changed", function(p){account.onStatusChanged(p)});
 // #ifdef DEBUG
-        account.connection.registerHandler("onexception", function(e){alert("EX");alert(exceptionToString(e))});
+        account.connection.registerHandler("onexception", function(e) {
+            report("developer", "error", e, this);
+        });
 // #endif
 
         if (this.connectionInfo.user)
@@ -629,12 +631,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     onConnect: function()
     {
+        this.myJID = new JID(account.connection.fulljid);
+        this.jid = new JID(this.myJID.domain);
+
         if (this.connection.serverCaps)
             this.updateCapsInfo(this.connection.serverCaps);
 
         if (!this.mucMode) {
             var ver = this.connection.hasRosterVersioning ?
-                this.cache.getValue("rosterVersion") : null;
+                this.cache.getValue("rosterVersion-"+this.myJID.shortJID) : null;
 
             var pkt = new JSJaCIQ();
             pkt.setIQ(null, 'get');
@@ -648,8 +653,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.connected = true;
         this.connectedAt = new Date();
 
-        this.myJID = new JID(account.connection.fulljid);
-        this.jid = new JID(this.myJID.domain);
 
         if (this.mucMode) {
             this._initialRosterFetch(null, this);
@@ -789,7 +792,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             if (pkt.getNode().childNodes.length)
                 _this.onIQ(pkt);
             else {
-                contacts = _this.cache.getValue("roster") || [];
+                contacts = _this.cache.getValue("roster-"+_this.myJID.shortJID) || [];
                 for (var i = 0; i < contacts.length; i++) {
                     c = contacts[i];
                     new Contact(c.jid, c.name, c.groups.length ?
@@ -1001,8 +1004,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 groups: [g.name for (g in contact.groupsIterator(function(g){return g.name}))]
             });
 
-        this.cache.setValue("roster", contacts);
-        this.cache.setValue("rosterVersion", query.getAttribute("ver") || "");
+        this.cache.setValue("roster-"+this.myJID.shortJID, contacts);
+        this.cache.setValue("rosterVersion-"+this.myJID.shortJID,
+                            query.getAttribute("ver") || "");
     },
 
     onMessage: function(packet)

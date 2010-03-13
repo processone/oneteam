@@ -46,7 +46,7 @@ otILBC::GetMedias(PRInt16 *firstFreePayloadId NS_INOUTPARAM,
     return NS_ERROR_OUT_OF_MEMORY;
   }
 
-  codecs[0] = new otCodecInfo(this, "ILBC", (*firstFreePayloadId)++, 8000,
+  codecs[0] = new otCodecInfo(this, "iLBC", (*firstFreePayloadId)++, 8000,
                               1, 30, 30, 9000, attrs, 1);
   if (!codecs[0]) {
     delete attrs[0];

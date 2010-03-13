@@ -133,7 +133,6 @@ _DECL_(Model).prototype =
             } catch (ex) {
                 report('developer', 'error', ex, window);
             }
-
         }
     },
 
