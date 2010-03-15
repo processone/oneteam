@@ -15,7 +15,7 @@
     <em:updateURL>https://oneteam.im/update.rdf</em:updateURL>
     <em:name>OneTeam</em:name>
     <em:description>OneTeam Extension</em:description>
-    <em:creator>process-one.net</em:creator>
+    <em:creator>ProcessOne</em:creator>
     <!--Firefox 3.5 compatibility-->
     <em:iconURL>chrome://oneteam/skin/icons/main.png</em:iconURL>
     <!-- -->
