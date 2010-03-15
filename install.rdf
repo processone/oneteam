@@ -14,13 +14,6 @@
     </em:targetApplication>
     <em:updateURL>https://oneteam.im/update.rdf</em:updateURL>
     <em:name>OneTeam</em:name>
-    <em:file>
-      <Description about="urn:mozilla:extension:file:oneteam.jar">
-        <em:package>content/</em:package>
-        <em:package>skin/classic/</em:package>
-        <em:package>locale/en-US/</em:package>
-      </Description>
-    </em:file>
     <em:description>OneTeam Extension</em:description>
     <em:creator>process-one.net</em:creator>
     <!--Firefox 3.5 compatibility-->
