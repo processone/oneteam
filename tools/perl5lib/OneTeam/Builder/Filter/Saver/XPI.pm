@@ -41,13 +41,12 @@ sub path_convert {
 
 sub finalize {
     my $self = shift;
-
     my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
     my $tmppfxdir = $self->_prefix ? catdir($tmpdir, $self->_prefix) : $tmpdir;
     my $chromedir = catdir($tmppfxdir, "chrome");
 
     mkpath([$chromedir], 0);
-
+    copy('icon.png', $tmpdir);
     $self->_prepare_files($tmpdir, $tmppfxdir, $chromedir);
     $self->_generate_install_rdf($tmpdir, $tmppfxdir);
     $self->_generate_chrome_manifest($tmpdir, $tmppfxdir);
