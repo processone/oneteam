@@ -60,7 +60,7 @@ function JSJaCConnection(oArg) {
   /**
    * @private
    */
-  this._ID = 0;
+  this._ID = parseInt(Math.random()*1000000);
   /**
    * @private
    */
