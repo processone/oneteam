@@ -87,13 +87,12 @@ otJNRelay::ThreadFun(void *data)
     }
 
     timeout = 0;
-    for (int i = (_this->mNumSockets-2)/4; i >= 0; i--) {
+    for (int i = (_this->mNumSockets-2)/4; _this->mNumSockets > 1 && i >= 0; i--) {
       if (_this->mTimeouts[i] <= now) {
-        for (int j = 1+i*4; j < 1+i*4+4; j++) {
+        for (int j = 1+i*4; j < 1+i*4+4; j++)
           PR_Close(_this->mSockets[j].fd);
-        }
 
-        _this->mNumSockets-=4;
+        _this->mNumSockets -= 4;
 
         memmove(_this->mSockets+1+i*4, _this->mSockets+1+i*4+4,
                 sizeof(_this->mSockets[0])*(_this->mNumSockets-1-i*4));
