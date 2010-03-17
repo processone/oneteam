@@ -20,11 +20,6 @@ function findCallerWindow()
 }
 
 var soundsPlayer = {
-    _player: Components.classes["@mozilla.org/sound;1"].
-        createInstance(Components.interfaces.nsISound),
-    _ios: Components.classes["@mozilla.org/network/io-service;1"].
-        getService(Components.interfaces.nsIIOService),
-
     playSound: function(type, loops) {
         try {
             if (!prefManager.getPref("chat.sounds"))
@@ -32,6 +27,14 @@ var soundsPlayer = {
 
             if (this._html5Player == null) {
                 var win = findCallerWindow();
+
+                if (!win) {
+                    var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+                        getService(Components.interfaces.nsIWindowMediator);
+                    var br = wm.getEnumerator("");
+                    win = br.getNext();
+                }
+
                 if (win)
                     this._html5Player = win.document.createElementNS(HTMLNS, "audio");
                 if (!this._html5Player || !("src" in this._html5Player))
@@ -44,6 +47,17 @@ var soundsPlayer = {
                 this._html5Player.load();
                 this._html5Player.play();
                 return;
+            }
+
+            if (this._player == null) {
+                try {
+                    this._player = Components.classes["@mozilla.org/sound;1"].
+                        createInstance(Components.interfaces.nsISound);
+                    this._ios = Components.classes["@mozilla.org/network/io-service;1"].
+                        getService(Components.interfaces.nsIIOService);
+                } catch (ex) {
+                    this._player = false;
+                }
             }
 
             if (this._player) {
