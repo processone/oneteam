@@ -639,7 +639,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (!this.mucMode) {
             var ver = this.connection.hasRosterVersioning ?
-                this.cache.getValue("rosterVersion-"+this.myJID.shortJID) : null;
+                this.cache.getValue("rosterVersion-"+this.myJID.shortJID)||"" : null;
 
             var pkt = new JSJaCIQ();
             pkt.setIQ(null, 'get');
