@@ -68,6 +68,20 @@ function Account()
                                        "chat.general", true);
     prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
                                        "chat.status", true);
+
+    var [user, host] = this.getConnectionCreds();
+
+    if (host && user) {
+        var lm = Components.classes["@mozilla.org/login-manager;1"].
+            getService(Components.interfaces.nsILoginManager);
+        var logins = lm.findLogins({}, "xmpp://"+host, null, host);
+        for (var i = 0; i < logins.length; i++)
+            if (logins[i].username == user) {
+                this.connectionInfo.pass = logins[0].password;
+                this.modelUpdated("connectionInfo");
+                break;
+            }
+    }
 }
 
 _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
@@ -410,17 +424,32 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                        "chrome,dialog", this);
     },
 
+    getConnectionCreds: function() {
+        var user = this.connectionInfo.userName;
+
+        if (user && ~user.search(/@/)) {
+            user = new JID(user);
+            return [user.node, user.domain];
+        }
+
+        var host = this.connectionInfo.domain || this.connectionInfo.host;
+
+        return [user, host];
+    },
+
     onPrefChange: function(name, value)
     {
         var namePart;
         if ((namePart = name.replace(/^chat\.connection\./, "")) != name) {
-            if (!(namePart in {host: 1, base: 1, user:1, pass: 1, port: 1, type: 1,
+            if (!(namePart in {host: 1, base: 1, user:1, port: 1, type: 1,
                          domain: 1, autoconnect: 1, autoreconnect: 1}))
                 return;
 
-            if (namePart == "pass")
-                value = value || "";
+            if (namePart == "user")
+                namePart = "userName";
+
             this.connectionInfo[namePart] = value;
+
             this.modelUpdated("connectionInfo");
         } else if (name == "chat.general.iconset") {
             this.style.setDefaultIconSet(value);
@@ -491,38 +520,39 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("contactsWithEvents");
     },
 
-    setUserAndPass: function(user, pass, savePass)
+    setUserAndPass: function(userName, pass, savePass)
     {
-        prefManager.setPref("chat.connection.user", user);
+        prefManager.setPref("chat.connection.user", userName);
 
-        if (~user.search(/@/)) {
-            var jid = new JID(user);
-// #ifdef XULAPP
-            this.connectionInfo.host = jid.domain;
-/* #else
-            this.connectionInfo.domain = jid.domain;
-// #endif */
-            this.connectionInfo.user = jid.node;
-        } else
-// #ifdef XULAPP
-            this.connectionInfo.host = prefManager.getPref("chat.connection.host");
-/* #else
-            this.connectionInfo.domain = prefManager.getPref("chat.connection.domain")
-// #endif */
+        var lm = Components.classes["@mozilla.org/login-manager;1"].
+            getService(Components.interfaces.nsILoginManager);
 
-        if (savePass)
-            prefManager.setPref("chat.connection.pass", pass);
-        else
-            prefManager.deletePref("chat.connection.pass");
+        var [user, host] = this.getConnectionCreds();
 
+        var logins = lm.findLogins({}, "xmpp://"+host, null, host);
+        for (var i = 0; i < logins.length; i++)
+            if (logins[i].username == user)
+                lm.removeLogin(logins[i]);
+
+        if (savePass && pass) {
+            var li = Components.classes["@mozilla.org/login-manager/loginInfo;1"].
+                createInstance(Components.interfaces.nsILoginInfo);
+
+            li.init("xmpp://"+host, null, host, user,
+                    pass, "", "");
+            lm.addLogin(li);
+        }
         this.connectionInfo.pass = pass;
+        this.modelUpdated("connectionInfo");
     },
 
     connect: function()
     {
+        var [user, host] = this.getConnectionCreds();
+
 // #ifdef XULAPP
-        var domain = this.connectionInfo.domain || this.connectionInfo.host;
-        var httpbase = "http://"+this.connectionInfo.host+":"+
+        var domain = host;
+        var httpbase = "http://"+host+":"+
             this.connectionInfo.port+"/"+this.connectionInfo.base+"/";
 /* #else
         var domain = this.connectionInfo.domain || this.connectionInfo.host ||
@@ -566,10 +596,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         });
 // #endif
 
-        if (this.connectionInfo.user)
+        if (user)
             args = {
                 domain: domain,
-                username: this.connectionInfo.user,
+                username: user,
                 pass: this.connectionInfo.pass,
                 resource: prefManager.getPref("chat.connection.resource") +
                     (this.mucMode ? "MUC":"") };
@@ -588,10 +618,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     },
 
     maybeConnect: function() {
-        if (this.connectionInfo.autoconnect && this.connectionInfo.user &&
+        if (this.connectionInfo.autoconnect && this.connectionInfo.userName &&
             this.connectionInfo.pass)
         {
-            this.setUserAndPass(this.connectionInfo.user, this.connectionInfo.pass,
+            this.setUserAndPass(this.connectionInfo.userName, this.connectionInfo.pass,
                                 true);
             this.connect();
         }
