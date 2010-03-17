@@ -77,7 +77,7 @@ otICECandidate::GetPriority(PRUint32 *aPriority)
 NS_IMETHODIMP
 otICECandidate::GetType(PRInt16 *aType)
 {
-  *aType = mCandidate->type;
+  *aType = mCandidate->type > 3 ? 3 : mCandidate->type;
   return NS_OK;
 }
 

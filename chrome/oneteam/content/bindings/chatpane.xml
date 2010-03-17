@@ -999,7 +999,6 @@
 
           try {
             var scu = this._input.parentNode.spellCheckerUI;
-            scu.uninit();
             scu.init(this.editor);
             scu.enabled = true;
           } catch (ex) {
@@ -1406,6 +1405,11 @@
         </xul:menupopup>
       </xul:toolbarbutton>
       <xul:toolbarseparator/>
+      <xul:toolbarbutton id="spellingButton"
+                     type="menu-button"
+                     oncommand="spellcheck.toggle(this);">
+        <xul:menupopup id="languageMenuList" onpopupshowing="spellcheck.onShowDictionariesMenu(this, event.target);"/>
+      </xul:toolbarbutton>
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
     </content>
@@ -1541,7 +1545,7 @@
 
         <xul:toolbar type="chatpane-commands"/>
         <xul:hbox id="input-container">
-          <xul:textbox type="resizable-richtext" id="input" flex="1" multiline="true" spellcheck="true"/>
+          <xul:textbox type="resizable-richtext" id="input" class="input" flex="1" multiline="true" spellcheck="true" context="inputContext"/>
         </xul:hbox>
       </xul:vbox>
     </content>

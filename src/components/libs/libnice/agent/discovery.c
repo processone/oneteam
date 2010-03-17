@@ -694,7 +694,7 @@ discovery_add_jn_relay_candidate (
   if (!agent_find_component (agent, stream_id, component_id, &stream, &component))
     return NULL;
 
-  candidate = nice_candidate_new (NICE_CANDIDATE_TYPE_RELAYED);
+  candidate = nice_candidate_new (NICE_CANDIDATE_TYPE_JN_RELAYED);
   if (candidate) {
     candidate->stream_id = stream_id;
     candidate->component_id = component_id;

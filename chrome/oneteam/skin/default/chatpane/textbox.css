@@ -73,3 +73,11 @@ toolbar[type="chatpane-commands"] {
 #extraCmds {
     list-style-image: url(imgs/extra-cmds.png);
 }
+
+#spellingButton {
+  list-style-image: url("imgs/spellcheck.png");
+}
+
+#spellingButton[disable="true"] {
+  list-style-image: url("imgs/spellcheck-disabled.png");
+}
