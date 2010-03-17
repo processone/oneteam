@@ -374,5 +374,19 @@
       <menuitem label="_('Remove...')"
         oncommand="menuModel.onRemove()"/>
     </popup>
+    <popup id="inputContext" onpopuphidden="spellcheck.onHiddenSuggestionsMenu(this);" onpopupshowing="spellcheck.onShowSuggestionsMenu(this);">
+      <menuitem id="spellCheckNoSuggestions" label="_('No Suggestions')" disabled="true"/>
+      <menuseparator id="suggestions-separator"/>
+      <menuitem id="menu_undo_cm"   label="_('Undo')"   accesskey=""   command="cmd_undo"/>
+      <menuitem id="menu_redo_cm"   label="_('Redo')"   accesskey=""   command="cmd_redo"/>
+      <menuseparator id="undoredo-separator"/>
+
+      <menuitem id="menu_cut_cm"    label="_('Cut')"    accesskey=""    command="cmd_cut"/>
+      <menuitem id="menu_copy_cm"   label="_('Copy')"   accesskey=""   command="cmd_copy"/>
+      <menuitem id="menu_paste_cm"  label="_('Paste')"  accesskey=""  command="cmd_paste"/>
+      <menuitem id="menu_delete_cm" label="_('Delete')" accesskey="" command="cmd_delete"/>
+      <menuseparator id="edit-separator"/>
+      <menuitem id="menu_selectAll_cm" label="_('Select All')" accesskey="" command="cmd_selectAll"/>
+    </popup>
   </popupset>
 </overlay>

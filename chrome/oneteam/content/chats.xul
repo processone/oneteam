@@ -19,9 +19,11 @@
   persist="screenX screenY width height sizemode">
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
+  <script type="text/javascript;version=1.7" src="JavaScript/spellcheck.js"/>
   <script type="application/x-javascript;version=1.7"><![CDATA[
     ML.importMod("model/account.js");
     ML.importMod("utils.js");
+    ML.importMod("prefs.js");
     ML.importMod("dateutils.js");
     ML.importMod("colorutils.js");
     ML.importMod("views/conference.js");
@@ -52,6 +54,30 @@
         c.selectedTab.controller.close();
     }
   ]]></script>
+
+  <command id="cmd_undo" 
+           oncommand="goDoCommand('cmd_undo')"
+           disabled="true"/>
+  <command id="cmd_redo" 
+           oncommand="goDoCommand('cmd_redo')"
+           disabled="true"/>
+  <command id="cmd_cut" 
+           oncommand="goDoCommand('cmd_cut')"
+           disabled="true"/>
+  <command id="cmd_copy" 
+           oncommand="goDoCommand('cmd_copy')"
+           disabled="true"/>
+  <command id="cmd_paste" 
+           oncommand="goDoCommand('cmd_paste')"
+           disabled="true"/>
+  <command id="cmd_delete"
+           oncommand="goDoCommand('cmd_delete')"
+           valueDefault=""
+           valueDefaultAccessKey=""
+           disabled="true"/>
+  <command id="cmd_selectAll"
+           oncommand="goDoCommand('cmd_selectAll')"
+           disabled="true"/>
 
   <group id="macMenuTabbed">
     <command id="cmd_closeTab"
