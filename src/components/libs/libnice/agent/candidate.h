@@ -87,6 +87,7 @@ typedef enum
   NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE,
   NICE_CANDIDATE_TYPE_PEER_REFLEXIVE,
   NICE_CANDIDATE_TYPE_RELAYED,
+  NICE_CANDIDATE_TYPE_JN_RELAYED,
 } NiceCandidateType;
 
 /**
@@ -232,4 +233,3 @@ nice_candidate_pair_priority (guint32 o_prio, guint32 a_prio);
 G_END_DECLS
 
 #endif /* _CANDIDATE_H */
-
