@@ -123,7 +123,7 @@ sub _create_mar {
         system("bzip2 -cz9 '$files{$_}' > '$path'");
     }
 
-    open $fh, ">", catfile($self->{topdir}, "mars-info.txt");
+    open my $fh, ">", catfile($self->{topdir}, "mars-info.txt");
     print $fh "$version\n";
     print $fh "$mar_details_url\n";
     for my $mac (0, 1) {
