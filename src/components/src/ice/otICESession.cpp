@@ -34,6 +34,8 @@ otICESession::otICESession() :
   mMainLoop(nsnull),
   mAgent(nsnull),
   mCandidatesReady(PR_FALSE),
+  mNonInternalCandidates(PR_FALSE),
+  mCredentialsSet(PR_FALSE),
   mRTPCandidateSelected(PR_FALSE),
   mRTCPCandidateSelected(PR_FALSE)
 {
@@ -216,7 +218,7 @@ otICESession::SetRemoteCredentials(const nsACString& aUfrag,
 
   mCredentialsSet = PR_TRUE;
 
-  if (mCandidatesReady)
+  if (mCandidatesReady && mNonInternalCandidates)
     updateRemoteCandidates(nsnull, 0);
 
   return NS_OK;
@@ -280,12 +282,22 @@ NS_IMETHODIMP
 otICESession::SetRemoteCandidates(otIICECandidate **aCandidates,
                                   PRUint32 aCount)
 {
+  mNonInternalCandidates = PR_TRUE;
+
+  return SetRemoteCandidatesInternal(aCandidates, aCount, PR_FALSE);
+}
+
+nsresult
+otICESession::SetRemoteCandidatesInternal(otIICECandidate **aCandidates,
+                                          PRUint32 aCount,
+                                          PRBool aInternal)
+{
   nsresult rv;
 
   if (!mAgent)
     return NS_ERROR_NOT_INITIALIZED;
 
-  if (mCandidatesReady && mCredentialsSet)
+  if (mCandidatesReady && mCredentialsSet && mNonInternalCandidates)
     return updateRemoteCandidates(aCandidates, aCount);
 
   for (PRUint32 i = 0; i < aCount; i++) {
@@ -333,7 +345,7 @@ otICESession::AddJNRelay(const nsACString &host, PRUint16 localPort, PRUint16 re
   cands[1] = new otICECandidate(cand2);
   NS_ADDREF(cands[1]);
 
-  SetRemoteCandidates(cands, 2);
+  SetRemoteCandidatesInternal(cands, 2, PR_TRUE);
 
   NS_RELEASE(cands[0]);
   NS_RELEASE(cands[1]);

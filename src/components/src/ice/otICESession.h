@@ -40,8 +40,11 @@ class otICESession : public otIICESession, public otITarget, public otISource {
   nsCOMPtr<otITarget> mTarget;
 
   nsresult updateRemoteCandidates(otIICECandidate **candidates, PRUint32 count);
+  nsresult SetRemoteCandidatesInternal(otIICECandidate **aCandidates,
+                                       PRUint32 aCount, PRBool aInternal);
 
   PRPackedBool mCandidatesReady;
+  PRPackedBool mNonInternalCandidates;
   PRPackedBool mCredentialsSet;
   PRPackedBool mRTPCandidateSelected;
   PRPackedBool mRTCPCandidateSelected;
