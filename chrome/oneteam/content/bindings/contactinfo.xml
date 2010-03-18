@@ -12,8 +12,8 @@
       <stylesheet src="chrome://oneteam/skin/contactinfo/contactinfo.css"/>
     </resources>
 
-    <content>
-      <xul:stack flex="1">
+    <content class="container">
+      <xul:stack class="stack">
         <xul:vbox class="background"/>
         <xul:hbox class="contact-view" align="start" flex="1">
           <xul:grid class="icon-container">
@@ -62,6 +62,10 @@
           </xul:vbox>
         </xul:hbox>
       </xul:stack>
+      <xul:vbox class="vertical-info-box">
+        <xul:label class="contact-name2"/>
+        <xul:label flex="1" crop="end" class="contact-jid2"/>
+      </xul:vbox>
     </content>
 
     <implementation>
@@ -116,6 +120,8 @@
           this._counter = document.getAnonymousElementByAttribute(this, "id", "counter");
           this._name = document.getAnonymousElementByAttribute(this, "class", "contact-name");
           this._jid = document.getAnonymousElementByAttribute(this, "class", "contact-jid");
+          this._name2 = document.getAnonymousElementByAttribute(this, "class", "contact-name2");
+          this._jid2 = document.getAnonymousElementByAttribute(this, "class", "contact-jid2");
           this._statusText = document.getAnonymousElementByAttribute(this, "class", "status-text");
           this._statusIcon = document.getAnonymousElementByAttribute(this, "class", "status-icon");
           this._statusDesc = document.getAnonymousElementByAttribute(this, "class", "status-desc");
@@ -166,6 +172,8 @@
           this._label.value = this.model.visibleName;
           this._name.value = this.model.visibleName;
           this._jid.value = jid;
+          this._name2.value = this.model.visibleName;
+          this._jid2.value = jid;
         ]]></body>
       </method>
 

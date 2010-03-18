@@ -1,0 +1,89 @@
+description, label {
+  margin: 0;
+  padding: 0;
+}
+
+#container {
+  background: white;
+  margin: 10px;
+  -moz-border-radius: 5px;
+  -moz-box-shadow: 0 0 4px 1px #b4b4b4;
+}
+
+#state-deck {
+  border-bottom: 1px solid #c7c7c7;
+  color: #515151;
+  padding: 6px;
+}
+
+#state {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.8em;
+}
+
+#active-state {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+#timer {
+  font-size: 0.9em;
+}
+
+#buttons-deck {
+  border-top: 1px solid #c7c7c7;
+  padding: 6px;
+}
+
+#accept, #reject, #end {
+  border: 1px solid white;
+  -moz-appearance: none;
+  color: white;
+  font-weight: bold;
+  margin: 0 5px;
+  padding: 2px 8px;
+}
+
+#accept {
+  -moz-border-image: url(imgs/green-border-image.png) 2/2px repeat stretch;
+  text-shadow: #560 0 0 4px;
+}
+
+#accept .button-icon {
+  display: -moz-box;
+  list-style-image: url(imgs/start.png);
+}
+
+#accept:hover {
+  -moz-border-image: url(imgs/green-border-image-hover.png) 2/2px repeat stretch;
+}
+
+#accept:hover:active {
+  -moz-border-image: url(imgs/green-border-image-pushed.png) 2/2px repeat stretch;
+}
+
+#reject, #end {
+  -moz-border-image: url(imgs/red-border-image.png) 2/2px repeat stretch;
+  text-shadow: #500 0 0 4px;
+}
+
+#reject .button-icon, #end .button-icon {
+  display: -moz-box;
+  list-style-image: url(imgs/end.png);
+}
+
+#reject:hover, #end:hover {
+  -moz-border-image: url(imgs/red-border-image-hover.png) 2/2px repeat stretch;
+}
+
+#reject:hover:active, #end:hover:active {
+  -moz-border-image: url(imgs/red-border-image-pushed.png) 2/2px repeat stretch;
+}
+
+#accept[disabled=true], #reject[disabled=true], #end[disabled=true],
+#accept[disabled=true]:hover:active, #reject[disabled=true]:hover:active,
+#end[disabled=true]:hover:active {
+  text-shadow: #666 0 0 4px;
+  -moz-border-image: url(imgs/border-image-disabled.png) 2/2px repeat stretch;
+}

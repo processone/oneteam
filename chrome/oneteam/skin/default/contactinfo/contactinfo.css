@@ -1,3 +1,32 @@
+.stack {
+	-moz-box-flex: 1;
+}
+
+.vertical-info-box {
+	display: none;
+}
+
+.container[orient=vertical] {
+	-moz-box-align: center;
+}
+
+.container[orient=vertical] .stack {
+	-moz-box-flex: 0;
+}
+
+.container[orient=vertical] .background {
+	margin-right: 20px;
+}
+
+.container[orient=vertical] .info-box {
+	display: none;
+}
+
+.container[orient=vertical] .vertical-info-box {
+	display: -moz-box;
+	text-align: center;
+}
+
 .background {
 	margin: 10px 0 4px 0;
 	padding: 0;
@@ -16,7 +45,7 @@
 	font-size: 75%;
 }
 
-#label, .contact-name, .contact-jid, .status-text {
+#label, .contact-name, .contact-jid, .status-text, .contact-name2, .contact-jid2 {
 	margin: 0 !important;
 	padding: 0 !important;
 }
@@ -37,6 +66,17 @@
 	color: #515151;
 	font-style: italic;
 	font-size: 85%;
+}
+
+.contact-name2 {
+	margin-top: 4px !important;
+	color: #515151;
+	font-weight: bold;
+}
+
+.contact-jid2 {
+	color: #515151;
+	font-size: 75%;
 }
 
 .icon-container {

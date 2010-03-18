@@ -193,10 +193,14 @@ _DECL_(JingleSession, null, Model).prototype =
         try{
 
         if (!this.peerMedia) {
-            this.state = "connected";
-            this.modelUpdated("state");
             return;
         }
+
+        if (!this._sessionStarted)
+            return;
+
+        this.state = "connectionEstabilishing";
+        this.modelUpdated("state");
 
         if (!this._connectionEstabilished || !this._sessionStarted)
             return;
@@ -424,7 +428,12 @@ _DECL_(JingleSession, null, Model).prototype =
             if (pkt.getType() != "set")
                 return null;
 
-            this._sessionTerminated(queryE4X.jingleNS::reason);
+            var name;
+            try {
+                name = queryE4X.jingleNS::reason.jingleNS::*[0].localName().toString();
+            } catch (ex){}
+
+            this._sessionTerminated(name);
             return {};
         } else if (action == "session-info") {
             if (pkt.getType() != "set")

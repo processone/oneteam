@@ -3,6 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/jingle/jingle.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
@@ -10,7 +11,7 @@
 <window id="jingleCall" windowtype="ot:jingleCall" title="_('Jingle Call')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  width="400" height="450" onload="onLoad()" onunload="onUnload()">
+  width="400" height="300" onload="onLoad()" onunload="onUnload()">
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
@@ -22,19 +23,21 @@
     var token;
 
     function onLoad() {
+      stateDeck = document.getElementById("state-deck");
+      buttonsDeck = document.getElementById("buttons-deck");
       stateLabel = document.getElementById("state");
+      timerLabel = document.getElementById("timer");
+      contactInfo = document.getElementById("contactInfo");
       acceptButton = document.getElementById("accept");
       rejectButton = document.getElementById("reject");
       endButton = document.getElementById("end");
 
-      if (!session) {
+      if (!session)
         session = jingleService.createSession(resource.jid);
-        acceptButton.hidden = rejectButton.hidden = true;
-      } else
-        endButton.hidden = true;
 
       updateStateLabel();
       token = session.registerView(updateStateLabel, null, "state");
+      contactInfo.model = resource;
     }
 
     function onUnload() {
@@ -42,18 +45,64 @@
         token.unregisterFromAll();
       if (session)
         session.terminateSession();
+      contactInfo.model = null;
+    }
+
+    var timerId, timerStart;
+
+    function timerUpdater() {
+      var secs = parseInt((Date.now() - timerStart)/1000);
+      timerLabel.value = parseInt(secs/60)+":"+("0"+secs%60).substr(-2);
     }
 
     function updateStateLabel() {
-      stateLabel.textContent = session.state == "terminated" ?
-        "Terminated: "+uneval(session.terminateReason) : session.state;
+      if (session.state == "terminated") {
+        var msg;
 
-      if (session.state == "terminated")
-        acceptButton.hidden = rejectButton.hidden = endButton.hidden = true;
-      else if (session.state == "needAccept")
-        acceptButton.hidden = rejectButton.hidden = !(endButton.hidden = true);
-      else
-        acceptButton.hidden = rejectButton.hidden = !(endButton.hidden = false);
+        if (session.terminateReason)
+          switch (session.terminateReason) {
+            case "success":
+            case "gone":
+            case "timeout":
+            case "expired":
+              msg = _("Call Ended");
+              break;
+            case "cancel":
+            case "decline":
+              msg = _("Call Rejected");
+              break;
+            case "busy":
+              msg = _("Caller Busy");
+              break;
+            default:
+              _("Connection Error");
+          }
+
+        stateLabel.textContent = msg || _("Call Ended");
+        stateDeck.selectedIndex = 0;
+        buttonsDeck.selectedIndex = 1;
+        endButton.disabled = true;
+        if (timerId)
+          clearInterval(timerId);
+      } else if (session.state == "callinprogress") {
+        stateDeck.selectedIndex = 1;
+        buttonsDeck.selectedIndex = 1;
+        timerStart = Date.now();
+        timerId = setInterval(timerUpdater, 400);
+        timerUpdater();
+      } else if (session.state == "needAccept") {
+        stateLabel.textContent = _("Incomming Call");
+        stateDeck.selectedIndex = 0;
+        buttonsDeck.selectedIndex = 0;
+      } else if (session.state == "waitingForAccept") {
+        stateLabel.textContent = _("Waiting for Accept");
+        stateDeck.selectedIndex = 0;
+        buttonsDeck.selectedIndex = 1;
+      } else {
+        stateLabel.textContent = _("Connecting");
+        stateDeck.selectedIndex = 0;
+        buttonsDeck.selectedIndex = 1;
+      }
     }
 
     function acceptCall() {
@@ -61,7 +110,7 @@
     }
 
     function rejectCall() {
-      session.terminateSession("deny");
+      session.terminateSession("decline");
     }
 
     function endCall() {
@@ -75,14 +124,26 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <vbox flex="1">
-    <description id="state"/>
+  <vbox flex="1" id="container">
+    <deck id="state-deck">
+      <description id="state"/>
+      <hbox align="center">
+        <description id="active-state" flex="1">_('Active Call')</description>
+        <label id="timer"/>
+      </hbox>
+    </deck>
     <spacer flex="1"/>
-    <hbox pack="center">
-      <button id="accept" label="_('Accept Call')" oncommand="acceptCall()"/>
-      <button id="reject" label="_('Reject Call')" oncommand="rejectCall()"/>
-      <button id="end" label="_('End Call')" oncommand="endCall()"/>
-    </hbox>
+    <contactinfo id="contactInfo" orient="vertical"/>
+    <spacer flex="1"/>
+    <deck id="buttons-deck">
+      <hbox pack="center">
+        <button id="accept" label="_('Accept')" oncommand="acceptCall()"/>
+        <button id="reject" label="_('Reject')" oncommand="rejectCall()"/>
+      </hbox>
+      <hbox pack="center">
+        <button id="end" label="_('End Call')" oncommand="endCall()"/>
+      </hbox>
+    </deck>
   </vbox>
 
 </window>
