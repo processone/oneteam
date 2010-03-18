@@ -2,7 +2,7 @@
 #include "otILBC.h"
 #include "iLBC_decode.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(otILBCDecoder, otITarget, otISource);
+NS_IMPL_THREADSAFE_ISUPPORTS2(otILBCDecoder, otITarget, otISource)
 
 otILBCDecoder::otILBCDecoder()
 {
@@ -63,8 +63,6 @@ NS_IMETHODIMP
 otILBCDecoder::SourceSet(otISource *source)
 {
   nsresult rv;
-  PRUint32 sampleRate;
-  PRUint16 ptime;
 
   if (!source) {
     if (mTarget)

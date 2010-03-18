@@ -1,7 +1,7 @@
 #include "nsMemory.h"
 #include "otCodecInfo.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(otCodecInfoAttribute, otICodecInfoAttribute);
+NS_IMPL_THREADSAFE_ISUPPORTS1(otCodecInfoAttribute, otICodecInfoAttribute)
 
 otCodecInfoAttribute::otCodecInfoAttribute(const char* name, const char* value)
 {
@@ -25,7 +25,7 @@ otCodecInfoAttribute::GetValue(nsACString &aValue)
   return NS_OK;
 }
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(otCodecInfo, otICodecInfo);
+NS_IMPL_THREADSAFE_ISUPPORTS1(otCodecInfo, otICodecInfo)
 
 otCodecInfo::otCodecInfo(otICodecInfo *ci)
 {
@@ -147,7 +147,7 @@ otCodecInfo::GetAttributes(otICodecInfoAttribute ***aAttributes NS_OUTPARAM,
   if (!attrs)
     return NS_ERROR_OUT_OF_MEMORY;
 
-  for (PRUint32 i = 0; i < mAttributes.Count(); i++)
+  for (PRInt32 i = 0; i < mAttributes.Count(); i++)
     attrs[i] = mAttributes[i];
 
   *aAttributes = attrs;

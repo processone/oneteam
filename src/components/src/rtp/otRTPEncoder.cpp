@@ -2,7 +2,7 @@
 #include "otDebug.h"
 #include "srtp.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(otRTPEncoder, otITarget, otISource);
+NS_IMPL_THREADSAFE_ISUPPORTS2(otRTPEncoder, otITarget, otISource)
 
 struct rtp_packet_t {
   srtp_hdr_t header;

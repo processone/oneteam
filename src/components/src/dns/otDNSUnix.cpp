@@ -34,12 +34,12 @@ struct ResolvRunnable : public nsIRunnable {
       u_int16_t priority;
       u_int16_t weight;
       u_int16_t port;
-      char host[0];
+      char host[1];
     } *srvRecord;
     SRVRecord srv;
     char name[256];
 
-    int answerSize = res_query(mHost.get(), C_IN, T_SRV, (u_char*)&answer,
+    unsigned int answerSize = res_query(mHost.get(), C_IN, T_SRV, (u_char*)&answer,
                                sizeof(answer));
 
     if (answerSize < sizeof(answer.hdr) || answerSize > sizeof(answer)) {
@@ -92,8 +92,8 @@ struct ResolvRunnable : public nsIRunnable {
   }
 };
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(ResolvRunnable, nsIRunnable);
-NS_IMPL_ISUPPORTS2(otDNSUnix, otIDNSService, nsIObserver);
+NS_IMPL_THREADSAFE_ISUPPORTS1(ResolvRunnable, nsIRunnable)
+NS_IMPL_ISUPPORTS2(otDNSUnix, otIDNSService, nsIObserver)
 
 otDNSUnix::otDNSUnix()
 {

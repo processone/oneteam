@@ -267,7 +267,7 @@ otPulseAudioInputStream::Record()
 // -----------------------------------
 
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(otPulseAudioOutputStream, otITarget, otIAudioOutputStream);
+NS_IMPL_THREADSAFE_ISUPPORTS2(otPulseAudioOutputStream, otITarget, otIAudioOutputStream)
 
 otPulseAudioOutputStream::otPulseAudioOutputStream() :
   mFrameSize(0)

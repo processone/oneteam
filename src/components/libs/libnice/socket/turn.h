@@ -42,7 +42,7 @@
 typedef enum {
   NICE_TURN_SOCKET_COMPATIBILITY_DRAFT9,
   NICE_TURN_SOCKET_COMPATIBILITY_GOOGLE,
-  NICE_TURN_SOCKET_COMPATIBILITY_MSN,
+  NICE_TURN_SOCKET_COMPATIBILITY_MSN
 } NiceTurnSocketCompatibility;
 
 #include "socket.h"
@@ -68,4 +68,3 @@ nice_turn_socket_new (NiceAgent *agent, NiceAddress *addr,
 G_END_DECLS
 
 #endif /* _TURN_H */
-

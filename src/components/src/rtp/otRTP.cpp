@@ -1,6 +1,6 @@
 #include "otRTP.h"
 
-NS_IMPL_ISUPPORTS1(otRTP, otIRTPService);
+NS_IMPL_ISUPPORTS1(otRTP, otIRTPService)
 
 NS_IMETHODIMP
 otRTP::CreateEncoder(otISource **aEncoder NS_OUTPARAM)

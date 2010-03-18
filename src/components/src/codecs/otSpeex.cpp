@@ -2,7 +2,7 @@
 #include "nsMemory.h"
 #include "otCodecInfo.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(otSpeex, otICodecService);
+NS_IMPL_THREADSAFE_ISUPPORTS1(otSpeex, otICodecService)
 
 NS_IMETHODIMP
 otSpeex::CreateEncoder(otISource **aEncoder NS_OUTPARAM)

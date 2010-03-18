@@ -3,7 +3,7 @@
 #include "speex/speex.h"
 #include "speex/speex_bits.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(otSpeexEncoder, otITarget, otISource);
+NS_IMPL_THREADSAFE_ISUPPORTS2(otSpeexEncoder, otITarget, otISource)
 
 otSpeexEncoder::otSpeexEncoder() :
   mSpeexState(nsnull),

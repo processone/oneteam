@@ -7,7 +7,7 @@
 #include "prnetdb.h"
 #include "stdlib.h"
 
-NS_IMPL_ISUPPORTS2(otJNRelay, otIJNRelayService, nsIObserver);
+NS_IMPL_ISUPPORTS2(otJNRelay, otIJNRelayService, nsIObserver)
 
 otJNRelay::otJNRelay() : mThread(nsnull), mMonitor(nsnull), mNumSockets(-1),
   mQuit(PR_FALSE)
@@ -53,7 +53,6 @@ otJNRelay::ThreadFun(void *data)
           _this->mSocketsInfo[i].addr = addr;
           _this->mSocketsInfo[i].validAddr = 1;
         } else {
-          PRNetAddr *caddr = &_this->mSocketsInfo[i].addr;
           if (_this->mSocketsInfo[i].addr.raw.family != addr.raw.family)
             continue;
           if (addr.raw.family == PR_AF_INET) {
@@ -115,8 +114,6 @@ otJNRelay::ThreadFun(void *data)
 NS_IMETHODIMP
 otJNRelay::GetHasPublicAddress(PRBool *aHasPublicAddress)
 {
-  nsresult rv;
-
   if (mNumSockets == -1)
     FindPublicAddress();
 
@@ -367,7 +364,8 @@ struct otIpRecord : public nsIDNSRecord
   GList *mIps;
   GList *mIpsHead;
 };
-NS_IMPL_ISUPPORTS1(otIpRecord, nsIDNSRecord);
+
+NS_IMPL_ISUPPORTS1(otIpRecord, nsIDNSRecord)
 
 NS_IMETHODIMP
 otJNRelay::GetIps(nsIDNSRecord **aIps)

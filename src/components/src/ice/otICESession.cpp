@@ -26,7 +26,7 @@ public:
   }
 };
 
-NS_IMPL_ISUPPORTS3(otICESession, otIICESession, otITarget, otISource);
+NS_IMPL_ISUPPORTS3(otICESession, otIICESession, otITarget, otISource)
 
 otICESession::otICESession() :
   mThread(nsnull),

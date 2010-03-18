@@ -8,7 +8,7 @@
 #include "nsIProxyObjectManager.h"
 #include "glib-object.h"
 
-NS_IMPL_ISUPPORTS1(otICEService, otIICEService);
+NS_IMPL_ISUPPORTS1(otICEService, otIICEService)
 
 otICEService::otICEService() :
   mGlibInitialized(PR_FALSE)

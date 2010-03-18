@@ -7,7 +7,7 @@
 #include "nsIProxyObjectManager.h"
 #include "nice.h"
 
-NS_IMPL_ISUPPORTS1(otICECandidate, otIICECandidate);
+NS_IMPL_ISUPPORTS1(otICECandidate, otIICECandidate)
 
 otICECandidate::otICECandidate(NiceCandidate *candidate) :
   mCandidate(candidate)

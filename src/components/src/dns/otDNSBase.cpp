@@ -10,7 +10,7 @@
 #include "prnetdb.h"
 #include "stdio.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(otDNSRecord, nsIDNSRecord);
+NS_IMPL_THREADSAFE_ISUPPORTS1(otDNSRecord, nsIDNSRecord)
 
 otDNSBase::otDNSBase()
 {
@@ -98,8 +98,6 @@ NS_IMETHODIMP
 otDNSRecord::OnLookupComplete(nsICancelable *request, nsIDNSRecord *record,
                               nsresult status)
 {
-  PRBool allResolved = PR_TRUE;
-
   for (PRUint32 i = 0; i < mSRVRecords.Length(); i++)
     if (mSRVRecords[i].cancelable == request) {
       PRNetAddr addr;

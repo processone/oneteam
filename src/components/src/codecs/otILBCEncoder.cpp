@@ -2,7 +2,7 @@
 #include "otDebug.h"
 #include "iLBC_encode.h"
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(otILBCEncoder, otITarget, otISource);
+NS_IMPL_THREADSAFE_ISUPPORTS2(otILBCEncoder, otITarget, otISource)
 
 otILBCEncoder::otILBCEncoder()
 {

@@ -6,7 +6,7 @@
 #include "speex/speex_jitter.h"
 
 NS_IMPL_THREADSAFE_ISUPPORTS3(otRTPDecoder, otITarget, otIBufferedSource,
-                              otISource);
+                              otISource)
 
 struct rtp_packet_t {
   srtp_hdr_t header;
