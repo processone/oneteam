@@ -811,9 +811,9 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
     _onDiscoInfoUpdated: function()
     {
-        dump("ODIU: "+this.jid+"\n");
         var features = this.getDiscoFeatures(), notify = false;
-        var jingleResource = features && features["urn:xmpp:jingle:1"] &&
+        var jingleResource = jingleService.enabled && features &&
+            features["urn:xmpp:jingle:1"] &&
             features["urn:xmpp:jingle:transports:ice-udp:1"] &&
             features["urn:xmpp:jingle:apps:rtp:1"] &&
             features["urn:xmpp:jingle:apps:rtp:audio"] ? this : null;

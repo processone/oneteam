@@ -585,6 +585,7 @@ function JingleService() {
             } catch (ex) {}
 
     if (this._audioSvc && this._iceSvc && this._rtpSvc && this._codecsSvcs.length) {
+        this.enabled = true;
         servicesManager.addIQService("urn:xmpp:jingle:1",
                                      new Callback(this.onPacket, this));
         servicesManager.publishDiscoInfo("urn:xmpp:jingle:transports:ice-udp:1");
@@ -789,6 +790,9 @@ _DECL_(JingleService).prototype =
     },
 
     onPacket: function(pkt, queryE4X, query) {
+        if (!this.enabled)
+            return 0;
+
         if (!this._sessions[queryE4X.@sid] && queryE4X.@action == "session-initiate") {
             var js = new JingleSession(pkt.getFrom(), queryE4X.@sid.toString());
             this._sessions[queryE4X.@sid] = js;
