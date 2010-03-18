@@ -669,6 +669,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         this.modelUpdated("avatar");
         for (res in this.resourcesIterator()) {
             res.avatar = this.avatar;
+            res.avatarHash = this.avatarHash;
             res.modelUpdated("avatar");
         }
         this.modelUpdated("avatar");
@@ -706,6 +707,7 @@ function Resource(jid, contact)
     this.contact = contact || account.allContacts[this.jid.normalizedJID.shortJID];
 
     this.avatar = this.contact && this.contact.avatar;
+    this.avatarHash = this.contact && this.contact.avatarHash;
 
     account.resources[this.jid.normalizedJID] = this;
     this.init();
