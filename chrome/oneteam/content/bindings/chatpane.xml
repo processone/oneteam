@@ -231,7 +231,7 @@
             this._initialized = true;
 
             var link = this._output.contentDocument.createElement("link");
-            if (!window._frames)
+            if (!("_frames" in window))
               window._frames = [];
             window._frames.push(this._output.contentWindow);
             this._output.contentWindow._frameElement = this._output;
@@ -1701,11 +1701,11 @@
             if (!_this._focusHandlers) {
               _this._focusHandlers = [];
               _this._focusHandlers[0] = function(event) {
-                if (event.target.nodeType == 9 && _this._focusHandler)
+                if ("nodeType" in event.target && event.target.nodeType == 9 && _this._focusHandler)
                   _this._focusHandler._windowFocusHandler(_this._focusHandler, event);
               };
               _this._focusHandlers[1] = function(event) {
-                if (event.target.nodeType == 9 && _this._focusHandler)
+                if ("nodeType" in event.target && event.target.nodeType == 9 && _this._focusHandler)
                   _this._focusHandler._windowBlurHandler(_this._focusHandler, event);
               };
             }

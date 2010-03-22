@@ -1,7 +1,6 @@
 var EXPORTED_SYMBOLS = ["dumpStack", "exceptionToString", "TRACE",
                         "logExceptionInConsole", "GenericError",
-                        "InvalidArgsError", "Error.prototype.toString",
-                        "Components.interfaces.nsIException.toString"];
+                        "InvalidArgsError", "Error.prototype.toString"];
 
 ML.importMod("roles.js");
 

@@ -144,7 +144,8 @@ _DECL_(MessagesRouter).prototype =
     _selectOrCreateTab: function(contact, thread)
     {
         if (!thread)
-            thread = this.newThreads[contact.jid]
+            thread = contact.jid in this.newThreads ?
+                this.newThreads[contact.jid] : null;
         if (!thread) {
             thread = new MessagesThread(null, contact);
             thread._msgThreadsToken = thread.registerView(this._onMsgCountChanged, this, "messages");
@@ -299,6 +300,13 @@ function MessagesThread(threadID, contact)
 
 _DECL_(MessagesThread, Model).prototype =
 {
+    peerChatState: null,
+    _visible: false,
+    _handleChatState: null,
+    _handleXThreads: null,
+    _handleXhtmlIM: null,
+    _chatState: null,
+
     get threadID()
     {
         if (!this._threadID)

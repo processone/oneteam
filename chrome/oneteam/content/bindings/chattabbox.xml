@@ -283,7 +283,7 @@
         <parameter name="_this"/>
         <parameter name="event"/>
         <body><![CDATA[
-          if (event.target.nodeType != 9)
+          if (!("nodeType" in event.target) || event.target.nodeType != 9)
             return;
 
           if (_this._blurTimeout) {
@@ -303,7 +303,7 @@
         <parameter name="_this"/>
         <parameter name="event"/>
         <body><![CDATA[
-          if (event.target.nodeType != 9 || _this._blurTimeout)
+          if (!("nodeType" in event.target) || event.target.nodeType != 9 || _this._blurTimeout)
             return;
 
           _this._blurTimeout = setTimeout(function(_this) {

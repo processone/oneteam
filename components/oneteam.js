@@ -52,7 +52,7 @@ MLP.prototype =
     {
         this.importMod(script, false, everything);
 
-        var i, tmp = this.loadedscripts[script][0];
+        var i, tmp = this.loadedscripts[script][0], tmp2;
 
         for (i = 0; i < tmp.length; i++)
             if ((tmp2 = tmp[i].split(/\./)).length > 1) {

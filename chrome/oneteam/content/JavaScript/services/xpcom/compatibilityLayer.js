@@ -136,12 +136,15 @@ function open(url, name, flags)
 
 function openDialog(url, name, flags)
 {
+    var flagsHash = {};
+
     flags = (flags||"").split(",");
-    flagsHash = {};
+
     for (var i = 0; i < flags.length; i++) {
         var vals = perlSplit(flags[i], "=", 2);
         flagsHash[vals[0]] = vals[1];
     }
+
     delete flagsHash.modal;
     flagsHash.resizable = null;
     flagsHash.toolbar = null;
