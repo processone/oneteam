@@ -19,7 +19,7 @@ pref("chat.roster.alternativelook", true);
 
 pref("chat.sounds",true);
 
-pref("chat.systray", false);
+pref("chat.systray", true);
 
 pref("chat.muc.nickname", "");
 
@@ -48,4 +48,7 @@ pref("nglayout.debug.disable_xul_fastload", true);
 pref("browser.dom.window.dump.enabled", true);
 pref("javascript.options.showInConsole", true);
 pref("dom.report_all_js_exceptions", true);
+pref("extensions.logging.enabled", true);
+pref("javascript.options.strict", true);
+pref("signon.debug", true);
 // #endif

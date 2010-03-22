@@ -30,4 +30,6 @@ pref("network.protocol-handler.warn-external.ftp", false);
 pref("network.protocol-handler.warn-external.mailto", false);
 
 pref("spellchecker.dictionary", "en-US");
+
+pref("chat.general.ask_to_quit", true);
 // #endif */
