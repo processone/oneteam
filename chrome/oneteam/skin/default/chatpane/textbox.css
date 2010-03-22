@@ -15,7 +15,8 @@
 
 toolbar[type="chatpane-commands"] {
   -moz-appearance: none !important;
-  background: #002e4e !important;
+  background: #515151 !important;
+  -moz-border-radius: 2px;
 }
 
 #_counter {
