@@ -26,7 +26,7 @@ body[hasSendButton=true]:after {
     bottom: 0px;
     margin: 0px;
     right: 0px;
-    -moz-border-image: url(imgs/button_send.png) 5/5px repeat repeat;
+    -moz-border-image: url(imgs/send-border-image.png) 5/5px repeat repeat;
     background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
     padding: 0px;
     width: 38px;

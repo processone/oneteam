@@ -76,12 +76,12 @@ splitter, .roster-container {
 }
 
 .bookmark-star {
-  list-style-image: url(imgs/star.png);
+  list-style-image: url(imgs/star-disabled.png);
   cursor: pointer;
 }
 
 .bookmark-star[bookmarked=true] {
-  list-style-image: url(imgs/star-on.png);
+  list-style-image: url(imgs/star.png);
 }
 
 #roster {
