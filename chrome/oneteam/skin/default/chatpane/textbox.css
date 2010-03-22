@@ -75,9 +75,9 @@ toolbar[type="chatpane-commands"] {
 }
 
 #spellingButton {
-  list-style-image: url("imgs/spellcheck.png");
+  list-style-image: url(imgs/spellcheck.png);
 }
 
 #spellingButton[disable="true"] {
-  list-style-image: url("imgs/spellcheck-disabled.png");
+  list-style-image: url(imgs/spellcheck-disabled.png);
 }
