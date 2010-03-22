@@ -159,6 +159,17 @@ _DECL_(ServicesManager).prototype =
 
         node.appendChild(capsNode);
 
+        var dce = new DiscoCacheEntry(null, this._capsPrefix+"#"+this._capsHash, true);
+        if (!dce.discoInfo) {
+            dce.discoInfo = {
+                identities: [{name: i.name, type: i.type, category: i.category}
+                             for each (i in this._identities[""])],
+                features: {}
+            }
+            for each (var f in this._nodes[""])
+                dce.discoInfo.features[f] = 1;
+        }
+
         this._initialPresenceSent = true;
     },
 
@@ -174,16 +185,24 @@ _DECL_(ServicesManager).prototype =
 
             {
                 default xml namespace = "http://jabber.org/protocol/disco#info";
-                var nodes = [], features = {}, identities = [];
+                var nodes = [], features = {}, identities = [], extraFeatures = {};
                 var node = query.getAttribute("node");
 
                 response = <query/>;
 
-                if (!node || node == this._capsPrefix+"#"+this._capsHash) {
+                if (!node) {
                     if (node)
                         response.@node = node;
                     identities = this._identities[""];
                     nodes = [""];
+                } else if (node.indexOf(this._capsPrefix+"#") == 0) {
+                    var dce = new DiscoCacheEntry(null, node, true);
+                    if (dce.discoInfo) {
+                        identities = dce.discoInfo.identities;
+                        extraFeatures = dce.discoInfo.features;
+                    }
+                    response.@node = node;
+                    nodes = [];
                 } else {
                     response.@node = node;
 
@@ -205,6 +224,12 @@ _DECL_(ServicesManager).prototype =
                             response.* += <feature var={ns[j]}/>
                         }
                 }
+
+                for (i in extraFeatures)
+                    if (!features[i]) {
+                        features[i] = 1;
+                        response.* += <feature var={i}/>
+                    }
             }
             break;
 
