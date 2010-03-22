@@ -401,6 +401,11 @@
         document.getElementById("login-savePass").checked);
       account.connect();
     }
+    
+    function _connect(event) {
+      if(event.keyCode == 13)
+        connect();
+    }
 
     eventBoxHandler = {
       eventNum: 0,
@@ -601,7 +606,7 @@
         </vbox>
         <vbox id="login-pass-box">
           <label control="login-pass" value="_('Password')"/>
-          <textbox id="login-pass" type="password"/>
+          <textbox id="login-pass" onkeypress="_connect(event)" type="password"/>
         </vbox>
         <hbox pack="center" id="before-login-progress">
   <!-- #ifdef XULAPP -->
