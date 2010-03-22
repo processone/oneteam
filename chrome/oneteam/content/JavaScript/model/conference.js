@@ -88,7 +88,7 @@ _DECL_(Conference, Contact).prototype =
 
         if (!this.joined) {
             this._joinRequested = true;
-            this._callback = new Callback(callback).fromCons(1);
+            this._callback = new Callback(callback).addArgsSlice(arguments, 1);
             this._cpToken = account.registerView(function() {
                     this._sendMucPresence(account.currentPresence);
                 }, this, "currentPresence");

@@ -307,14 +307,11 @@ StorageWrapper.prototype =
 //#endif */
 
 function Callback(fun, obj) {
-    if (fun._isaCallback) {
-        fun._consArgs = arguments.callee.caller ? arguments.callee.caller.arguments : [];
+    if (fun._isaCallback)
         return fun;
-    }
 
     var cb = new Function("", "return arguments.callee.apply(this, arguments)");
     cb.apply = function(_this, _args) {
-        delete this._consArgs;
         var args = this._args.slice();
 
         this._callArgs = this._callArgs ? this._callArgs.length == 0 ?
@@ -330,15 +327,14 @@ function Callback(fun, obj) {
     cb._fun = fun;
     cb._obj = obj;
     cb._args = [];
-    cb._consArgs = arguments.callee.caller ? arguments.callee.caller.arguments : [];
     cb._callArgs = [];
     cb._isaCallback = true;
     cb.addArgs = function() { this._args.push.apply(this._args, arguments); return this; };
-    cb.fromCons = function(start, stop) {
-        this._args.push.apply(this._args, Array.slice(this._consArgs, start,
+    cb.addArgsSlice = function(array, start, stop) {
+        this._args.push.apply(this._args, Array.slice(array, start,
                                                       stop == null ? Infinity : stop));
         return this;
-    };
+    }
     cb.fromCall = function(start, stop) {
         if (!this._callArgs || start < 0) {
             delete this._callArgs;
