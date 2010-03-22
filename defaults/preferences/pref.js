@@ -19,7 +19,7 @@ pref("chat.roster.alternativelook", true);
 
 pref("chat.sounds",true);
 
-pref("chat.systray", false);
+pref("chat.systray", true);
 
 pref("chat.muc.nickname", "");
 
