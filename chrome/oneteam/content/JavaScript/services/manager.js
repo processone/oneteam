@@ -142,13 +142,22 @@ _DECL_(ServicesManager).prototype =
 
     appendCapsToPresence: function(node)
     {
-        var identities = [i.category+"/"+(i.type||"")+"//"+(i.name||"")
-                          for each (i in this._identities[""]||[])];
+        var dce = new DiscoCacheEntry();
+        if (!dce.discoInfo) {
+            dce.discoInfo = {
+                identities: [{name: i.name, type: i.type, category: i.category}
+                             for each (i in this._identities[""])],
+                features: {},
+                forms: []
+            }
+            for each (var f in this._nodes[""])
+                dce.discoInfo.features[f] = 1;
+        }
+        this._capsHash = dce.calculateCapsHash();
 
-        var str = identities.sort().join("<")+"<"+
-            (this._nodes[""]||[]).sort().join("<")+"<";
-
-        this._capsHash = b64_sha1(str);
+        dce.node = this._capsPrefix+"#"+this._capsHash;
+        dce._isCapsNode = true;
+        dce.capsCache[dce.node] = dce;
 
         var capsNode = node.ownerDocument.
             createElementNS("http://jabber.org/protocol/caps", "c");
@@ -158,17 +167,6 @@ _DECL_(ServicesManager).prototype =
         capsNode.setAttribute("ver", this._capsHash);
 
         node.appendChild(capsNode);
-
-        var dce = new DiscoCacheEntry(null, this._capsPrefix+"#"+this._capsHash, true);
-        if (!dce.discoInfo) {
-            dce.discoInfo = {
-                identities: [{name: i.name, type: i.type, category: i.category}
-                             for each (i in this._identities[""])],
-                features: {}
-            }
-            for each (var f in this._nodes[""])
-                dce.discoInfo.features[f] = 1;
-        }
 
         this._initialPresenceSent = true;
     },

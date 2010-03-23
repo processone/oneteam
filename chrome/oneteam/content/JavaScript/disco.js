@@ -21,7 +21,8 @@ function DiscoCacheEntry(jid, node, isCapsNode, cacheable)
     this._cacheable = cacheable;
     this._isCapsNode = isCapsNode;
 
-    this._parseCacheVal(account.cache.getValue("disco-"+id));
+    if (!this.discoInfo)
+        this.discoInfo = account.cache.getValue("disco2-"+id);
 
     return this;
 }
@@ -105,6 +106,37 @@ _DECL_(DiscoCacheEntry).prototype =
         }
     },
 
+    calculateCapsHash: function()
+    {
+        if (!this.discoInfo)
+            return null;
+
+        var identities = [i.category+"/"+(i.type||"")+"/"+(i.lang||"")+"/"+(i.name||"")
+                          for each (i in this.discoInfo.identities)];
+
+        var features = [f for (f in this.discoInfo.features)];
+
+        var forms = [];
+        for (var i = 0; i < this.discoInfo.forms.length; i++) {
+            var fields = this.discoInfo.forms[i];
+            var form = [f == "FORM_TYPE" ?
+                        ["", fields[f].join("<")+"<", fields[f][0]] :
+                        [f, f+"<"+fields[f].join("<")+"<"]
+                            for (f in fields)];
+            forms[i] = [form[0][2], form.sort(function(a,b) {
+                    return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0
+                }).map(function(v){return v[1]}).join("")];
+        }
+
+        var str = identities.sort().join("<")+"<"+
+            features.sort().join("<")+"<"+
+            forms.sort(function(a,b) {
+                return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0
+            }).map(function(v){return v[1]}).join("");
+
+        return b64_sha1(str);
+    },
+
     destroy: function()
     {
         if (!this._isCapsNode)
@@ -172,42 +204,12 @@ _DECL_(DiscoCacheEntry).prototype =
 
     _populateDiscoInfoFromCapsCache: function()
     {
-        var s = account.cache.getValue("caps2-"+this.node);
-        if (s) {
-            this._parseCacheVal(s);
-            account.cache.bumpExpirationDate("caps2-"+this.node,
+        var val = account.cache.getValue("caps3-"+this.node);
+        if (val) {
+            this.discoItem = val;
+            account.cache.bumpExpirationDate("caps3-"+this.node,
                                              new Date(Date.now()+30*24*60*60*1000));
         }
-    },
-
-    _parseCacheVal: function(s) {
-        if (s == null)
-            return;
-
-        s = s.split("\n");
-        this.discoInfo = { features: {} };
-
-        var idx = 0, count = 1;
-        if (+s[0] >= 0) {
-            idx = 1;
-            count = +s[0];
-        }
-
-        this.discoInfo.identities = [];
-        for (var i = 0; i < count; i++) {
-            if (s[idx] || s[idx+1] || s[idx+2])
-                this.discoInfo.identities.push({
-                    name: s[idx],
-                    type: s[idx+1],
-                    category: s[idx+2]
-                });
-            idx += 3;
-        }
-
-        for (i = idx; i < s.length; i++)
-            this.discoInfo.features[s[i]] = 1;
-
-        servicesManager._onResourceDiscoInfo(this.jid, this.discoInfo);
     },
 
     _gotDiscoInfo: function(pkt)
@@ -215,28 +217,35 @@ _DECL_(DiscoCacheEntry).prototype =
         var query = pkt.getQuery();
         var features = query ? query.getElementsByTagName("feature") : [];
         var identities = query ? query.getElementsByTagName("identity") : [];
-        var cacheVal = "";
+        var forms = query ? query.getElementsByTagNameNS("jabber:x:data", "x") : [];
 
-        this.discoInfo = { identities: [], features: {} };
+        this.discoInfo = { identities: [], features: {}, forms: [] };
 
         if (identities.length)
             for (var i = 0; i < identities.length; i++) {
                 var ident = {
                     name: identities[i].getAttribute("name") || "",
                     type: identities[i].getAttribute("type") || "",
+                    lang: identities[i].getAttribute("xml:lang") || "",
                     category: identities[i].getAttribute("category") || ""
                 }
                 this.discoInfo.identities.push(ident);
-                if (this._isCapsNode || this._cacheable)
-                    cacheVal += "\n"+ident.name+"\n"+ident.type+"\n"+ident.category;
             }
-        cacheVal = this.discoInfo.identities.length + cacheVal;
 
         for (i = 0; i < features.length; i++) {
             var feature = features[i].getAttribute("var");
             this.discoInfo.features[feature] = 1;
-            if (this._isCapsNode || this._cacheable)
-                cacheVal += "\n" + feature;
+        }
+
+        for (i = 0; i < forms.length; i++) {
+            var fields = forms[i].getElementsByTagNameNS("jabber:x:data", "field");
+            this.discoInfo.forms[i] = {};
+            for (var j = 0; j < fields.length; j++) {
+                var values = fields[j].getElementsByTagNameNS("jabber:x:data", "value");
+
+                this.discoInfo.forms[i][fields[j].getAttribute("var")] =
+                    [v.textContent for each (v in values)];
+            }
         }
 
         var notifiedDiscoItems = [];
@@ -255,12 +264,14 @@ _DECL_(DiscoCacheEntry).prototype =
                 callback(discoItem, this._parseReturnType(returnType));
         }
 
+
         if (this._isCapsNode)
-            account.cache.setValue("caps2-"+this.node, cacheVal,
+            account.cache.setValue("caps3-"+this.node, this.discoInfo,
                                    new Date(Date.now()+30*24*60*60*1000));
+
         if (this._cacheable)
-            account.cache.setValue("disco-"+this.jid+(this.node ? "#"+this.node : ""),
-                                   cacheVal, new Date(Date.now()+12*60*60*1000));
+            account.cache.setValue("disco2-"+this.jid+(this.node ? "#"+this.node : ""),
+                                   this.discoInfo, new Date(Date.now()+12*60*60*1000));
 
         servicesManager._onResourceDiscoInfo(this.jid, this.discoInfo);
 
