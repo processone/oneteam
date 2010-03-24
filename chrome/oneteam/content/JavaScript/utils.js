@@ -778,7 +778,7 @@ function evalInWindow(expr, win, scope) {
             expr: expr
         };
 
-        val = win.eval("with(__CONSOLE_ARGS__.scope){(function(){"+
+        val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
                        "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}",
                        win);
         return {result: val};
@@ -796,7 +796,7 @@ function enumerateMatchingProps(value, pattern) {
 
             if (name[0] == "*") {
                 name = name.substr(1);
-                if (value[name] === null)
+                if (!(name in value))
                     continue;
             }
 
@@ -1089,12 +1089,12 @@ var Animator = {
     animateStyle: function(element, style, steps, tick, stopCallback) {
         var values = [];
         for (var i = 5; i < arguments.length; i++) {
-            var arg = arguments[i], el = element;
+            var arg = arguments[i], el = element, arg2;
             while (el && (arg2 = arg.replace(/^\s*parent\s*\.\s*/, "")) != arg) {
                 el = el.parentNode;
                 arg = arg2;
             }
-            compStyle = el.ownerDocument.defaultView.getComputedStyle(el, "");
+            var compStyle = el.ownerDocument.defaultView.getComputedStyle(el, "");
             values.push(this._parseCssValue(arg, compStyle, element, style == "opacity"));
         }
 
