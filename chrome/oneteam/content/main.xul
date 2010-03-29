@@ -554,7 +554,7 @@
               <menuitem label="_('_Edit personal info...')" command="cmd_ourVCard" key="key_ourVCard"/>
               <menuitem label="_('_Change password...')" command="cmd_changePassword"/>
               <menuseparator/>
-  <!-- #ifdef XULAPP -->
+  <!-- #ifndef XPI -->
               <menuitem label="_('Add-ons...')" command="cmd_addons"/>
               <menuseparator/>
   <!-- #endif -->
