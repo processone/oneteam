@@ -19,6 +19,7 @@
     <!--Firefox 3.5 compatibility-->
     <em:iconURL>chrome://oneteam/skin/icons/main.png</em:iconURL>
     <!-- -->
+    <em:optionsURL>chrome://oneteam/content/preferences.xul</em:optionsURL>
     <em:homepageURL>http://oneteam.im/</em:homepageURL>
   </Description>
 </RDF:RDF>
