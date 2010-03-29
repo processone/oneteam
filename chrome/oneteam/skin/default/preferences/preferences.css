@@ -1,129 +1,43 @@
 #statusIconSet, #smileSet {
-    height: 8em;
-    background: white;
-    border: 2px solid;
-    -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
-    -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
-    -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
-    -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
+  height: 8em;
+  background: white;
+  border: 2px solid;
+  -moz-border-top-colors: ThreeDShadow ThreeDDarkShadow;
+  -moz-border-right-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-bottom-colors: ThreeDHighlight ThreeDLightShadow;
+  -moz-border-left-colors: ThreeDShadow ThreeDDarkShadow;
 }
 
 .iconSetItem {
-    padding-top: 8px;
-    padding-bottom: 8px;
-    -moz-padding-start: 13px;
-    -moz-padding-end: 10px;
-    min-height: 18px;
-    border-bottom: 1px dotted #C0C0C0;
-    overflow: hidden;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  -moz-padding-start: 13px;
+  -moz-padding-end: 10px;
+  min-height: 18px;
+  border-bottom: 1px dotted #C0C0C0;
+  overflow: hidden;
 }
 
 .iconSetItem image {
-    padding: 1px;
+  padding: 1px;
 }
 
-dialog {
-    padding: 0;
+#preferences radio[pane] {
+  list-style-image: url("imgs/icons.png");
 }
 
-dialog > tabbox > tabs {
-    -moz-appearance: none;
-    color: -moz-FieldText;
-    background-color: -moz-Field;
-    margin: 0px;
-    -moz-padding-start: 10px;
-    border-bottom: 2px groove ThreeDFace;
+radio[pane=general] {
+  -moz-image-region: rect( 0px, 96px, 32px, 64px )
 }
 
-dialog > tabbox > tabpanels {
-    -moz-appearance: none;
-    background: -moz-dialog;
-    border: none;
+radio[pane=connection] {
+  -moz-image-region: rect( 0px, 64px, 32px, 32px )
 }
 
-dialog > tabbox > tabpanels > tabpanel {
-    -moz-appearance: none;
-    border: none;
-    background: -moz-dialog;
-    padding-top: 8px;
-    padding-bottom: 10px;
-    -moz-padding-start: 8px;
-    -moz-padding-end: 10px;
+radio[pane=appearance] {
+  -moz-image-region: rect( 0px, 128px, 32px, 96px )
 }
 
-dialog > tabbox > tabs > tab {
-    -moz-appearance: none;
-    -moz-box-orient: vertical;
-    -moz-box-align: center;
-    margin: 0px 1px 0px 1px;
-    padding: 1px 3px 1px 3px;
-    min-width: 4.5em;
-    border: none;
-    background: white;
-    list-style-image: url( "imgs/icons.png" );
-}
-
-dialog > tabbox > tabs > tab:hover {
-    background-color: #E0E8F6;
-    color: black;
-}
-
-dialog > tabbox > tabs > tab[selected="true"] {
-    background-color: #C1D2EE;
-    color: black;
-}
-
-.tab-icon {
-    width: 32px;
-    height: 32px;
-}
-
-.dialog-button-box {
-    padding-bottom: 10px;
-    -moz-padding-start: 8px;
-    -moz-padding-end: 10px;
-}
-
-#general {
-    -moz-image-region: rect( 0px, 96px, 32px, 64px )
-}
-
-#general:hover, #general[selected="true"] {
-    -moz-image-region: rect( 32px, 96px, 64px, 64px )
-}
-
-#connection {
-    -moz-image-region: rect( 0px, 64px, 32px, 32px )
-}
-
-#connection:hover, #connection[selected="true"] {
-    -moz-image-region: rect( 32px, 64px, 64px, 32px )
-}
-
-#appearance {
-    -moz-image-region: rect( 0px, 128px, 32px, 96px )
-}
-
-#appearance:hover, #appearance[selected="true"] {
-    -moz-image-region: rect( 32px, 128px, 64px, 96px )
-}
-
-radio[pane=editor] {
-    -moz-image-region: rect( 0px, 160px, 32px, 128px )
-}
-
-radio[pane=editor]:hover, radio[pane=editor][selected="true"] {
-    -moz-image-region: rect( 32px, 160px, 64px, 128px )
-}
-
-#status {
-    -moz-image-region: rect( 0px, 192px, 32px, 160px )
-}
-
-#status:hover, #status[selected="true"] {
-    -moz-image-region: rect( 32px, 192px, 64px, 160px )
-}
-
-textbox[pref] {
-  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#textbox");
+radio[pane=status] {
+  -moz-image-region: rect( 0px, 192px, 32px, 160px )
 }

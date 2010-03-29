@@ -37,8 +37,10 @@ pref("chat.editor.size", 5);
 
 pref("chat.status.autoaway", true);
 pref("chat.status.autoaway.time",5);
+pref("chat.status.autoaway.status", "");
 pref("chat.status.autoxa", true);
 pref("chat.status.autoxa.time",10);
+pref("chat.status.autoxa.status", "");
 
 pref("oneteam.onlyJingleNodes", false);
 

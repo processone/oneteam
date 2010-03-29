@@ -32,4 +32,7 @@ pref("network.protocol-handler.warn-external.mailto", false);
 pref("spellchecker.dictionary", "en-US");
 
 pref("chat.general.ask_to_quit", true);
+
+pref("browser.preferences.instantApply", true);
+pref("browser.preferences.animateFadeIn", false);
 // #endif */
