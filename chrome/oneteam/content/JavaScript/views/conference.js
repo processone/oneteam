@@ -154,6 +154,7 @@ function ConferenceView(model, parentView, containerNode, hideTitle)
         label.setAttribute("flex", "1");
         label.setAttribute("crop", "end");
         node.appendChild(label);
+        node.model = null;
 
         this.roleNodes[role] = {
             count: 0,
