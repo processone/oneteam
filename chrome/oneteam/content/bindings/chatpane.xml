@@ -1336,8 +1336,12 @@
           if (this._historyPosition == this._history.length)
             this._enteredText = val;
 
-          if (rangeContent && rangeContent != "\n")
-            return false;
+
+          if ("getClientRects" in range) {
+            if (range.getClientRects().length > 1)
+              return false;
+          } else if (rangeContent && rangeContent != "\n")
+              return false;
 
           if (this._historyPosition < this._history.length) {
             if (val)
