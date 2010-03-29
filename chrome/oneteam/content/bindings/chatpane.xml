@@ -1048,12 +1048,18 @@
             var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
             if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
                 !event.shiftKey && !event.altKey && !event.ctrlKey &&
-                !event.metaKey && me._input.selectionStart == me._input.selectionEnd)
-              if (me._handleHistoryKey(upKey)) {
+                !event.metaKey)
+            {
+              var s =  me._input.contentWindow.getSelection();
+
+              if (s.anchorNode == s.focusNode && s.anchorOffset == s.focusOffset &&
+                  me._handleHistoryKey(upKey))
+              {
                 event.preventDefault();
                 me._onUserType();
                 return false;
               }
+            }
 
             var inputValue;
             if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
