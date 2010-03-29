@@ -1888,10 +1888,15 @@
       <handler event="command"><![CDATA[
         if (event.originalTarget.parentNode == this._threadPickerContainer ||
             event.originalTarget.parentNode.parentNode == this._threadPickerMenulist)
+        {
           this._output._selectThread(event.originalTarget.value);
 
-        this._threadPickerMenulist.value = this._threadPickerContainer.value =
-          event.originalTarget.value
+          this._threadPickerMenulist.value = this._threadPickerContainer.value =
+            event.originalTarget.value;
+
+          var doc = this._output._output.contentDocument;
+          doc.body.scrollTop = doc.body.scrollHeight;
+        }
       ]]></handler>
 
       <handler event="smilesToggle"><![CDATA[
