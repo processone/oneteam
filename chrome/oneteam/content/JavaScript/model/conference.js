@@ -151,9 +151,7 @@ _DECL_(Conference, Contact).prototype =
         delete this._callback;
         delete this.joinedAt;
 
-        for (var resource in account.resourcesIterator(function(r,j) {
-                return r.jid.normalizedJID.shortJID == j;
-            }, this.myResourceJID.normalizedJID.shortJID))
+        for (var resource in this.resourcesIterator())
             resource._remove();
 
         delete this.myResource;
