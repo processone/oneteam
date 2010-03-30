@@ -773,7 +773,7 @@ JSJaCConnection.prototype._doSASLAuth = function() {
       this.username+String.fromCharCode(0)+
       this.pass;
       this.oDbg.log("authenticating with '"+authStr+"'",2);
-      authStr = btoa(authStr);
+      authStr = btoa(toUtf8(authStr));
       return this._sendRaw("<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl' mechanism='PLAIN'>"+authStr+"</auth>",
                            this._doSASLAuthDone);
     }
@@ -816,7 +816,7 @@ JSJaCConnection.prototype._doSASLAuthDigestMd5S1 = function(el) {
 
     this._nc = '00000001';
 
-    var A1 = str_md5(this.username+':'+this.domain+':'+this.pass)+
+    var A1 = str_md5(toUtf8(this.username+':'+this.domain+':'+this.pass))+
     ':'+this._nonce+':'+this._cnonce;
 
     var A2 = 'AUTHENTICATE:'+this._digest_uri;
@@ -832,7 +832,7 @@ JSJaCConnection.prototype._doSASLAuthDigestMd5S1 = function(el) {
     this.oDbg.log("response: "+rPlain,2);
 
     this._sendRaw("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>"+
-                  binb2b64(str2binb(rPlain))+"</response>",
+                  binb2b64(str2binb(toUtf8(rPlain)))+"</response>",
                   this._doSASLAuthDigestMd5S2);
   }
 };
@@ -857,7 +857,7 @@ JSJaCConnection.prototype._doSASLAuthDigestMd5S2 = function(el) {
   var rspauth = response.substring(response.indexOf("rspauth=")+8);
   this.oDbg.log("rspauth: "+rspauth,2);
 
-  var A1 = str_md5(this.username+':'+this.domain+':'+this.pass)+
+  var A1 = str_md5(toUtf8(this.username+':'+this.domain+':'+this.pass))+
   ':'+this._nonce+':'+this._cnonce;
 
   var A2 = ':'+this._digest_uri;
