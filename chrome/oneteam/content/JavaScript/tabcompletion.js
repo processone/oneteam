@@ -338,7 +338,7 @@ _DECL_(NickCompletionEngine, null, DataCompletionEngine).prototype =
 
     _normalizeForComparision: function(data)
     {
-        return data.toLowerCase();
+        return data.toLowerCase().replace(/^\s+/, "");
     }
 }
 
