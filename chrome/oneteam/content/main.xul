@@ -535,7 +535,7 @@
               <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"/>
               <menuseparator/>
               <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
-  <!-- #ifndef XULAPP -->
+  <!-- #ifndef XPI -->
               <menuitem label="_('_Quit')" command="cmd_quit" key="key_quit"/>
   <!-- #endif -->
             </menupopup>
