@@ -17,7 +17,7 @@ pref("chat.roster.filtergroups", false);
 pref("chat.roster.sortbystatus", false);
 pref("chat.roster.alternativelook", true);
 
-pref("chat.sounds",true);
+pref("chat.general.sounds",true);
 
 pref("chat.systray", true);
 

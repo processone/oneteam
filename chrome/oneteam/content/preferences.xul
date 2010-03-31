@@ -154,7 +154,7 @@
     <preferences id="general-preferences">
       <preference id="showavatars" name="chat.general.showavatars" type="bool"/>
       <preference id="sortbystatus" name="chat.roster.sortbystatus" type="bool"/>
-      <preference id="sounds" name="chat.sounds" type="bool"/>
+      <preference id="sounds" name="chat.general.sounds" type="bool"/>
       <preference id="bumppriority" name="chat.general.bumppriority" type="bool"/>
       <preference id="ask_to_quit" name="chat.general.ask_to_quit" type="bool"/>
       <preference id="systray" name="chat.systray" type="bool"/>

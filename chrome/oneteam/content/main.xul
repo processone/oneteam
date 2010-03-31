@@ -628,13 +628,9 @@
       </hbox>
     </vbox>
   </deck>
-  <!-- #ifdef XULAPP -->
   <otsystray id="systray" type="minimizer"/>
-  <!-- #endif -->
-  <!-- #ifndef XULAPP
   <soundsplayer id="soundsplayer"/>
   <vbox id="hiddenContainer" collapsed="true">
     <html:iframe id="hiddenFrame"/>
   </vbox>
-  // #endif -->
 </window>

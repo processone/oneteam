@@ -22,7 +22,7 @@ function findCallerWindow()
 var soundsPlayer = {
     playSound: function(type, loops) {
         try {
-            if (!prefManager.getPref("chat.sounds"))
+            if (!prefManager.getPref("chat.general.sounds"))
                 return;
 
             if (this._html5Player == null) {
