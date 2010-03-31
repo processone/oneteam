@@ -160,7 +160,8 @@ _DECL_(DiscoCacheEntry).prototype =
         if (!returnType)
             return this.discoInfo;
         if (returnType.identity)
-            if (returnType.identity.__count__ == 0)
+            if (!("name" in returnType.identity || "type" in returnType.identity ||
+                "category" in returnType.identity))
                 return this.discoInfo.identities;
             else {
                 var ret = [];
