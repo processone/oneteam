@@ -9,48 +9,113 @@
             windowtype="ot:preferences"
             title="_('Preferences')"
             onload="onLoad()"
+            onunload="onUnload()"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("prefs.js");
     ML.importMod("model/account.js");
+    var prevType;
+    prefObserver = {
+      init: function() {
+        prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.status", true);
+        prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.connection", true);
+        prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.general", true);
+      },
+      uninit: function() {
+        prefManager.unregisterChangeCallback(this.onPrefChange, "chat.status");
+        prefManager.unregisterChangeCallback(this.onPrefChange, "chat.connection");
+        prefManager.unregisterChangeCallback(this.onPrefChange, "chat.general");
+      },
+      onPrefChange: function(name, value) {
+        if (name == "chat.status.autoaway"){
+          var el = document.getElementById("autoAwayCheckbox");
+          el.nextSibling.disabled =
+          el.parentNode.nextSibling.childNodes[1].disabled = !value;
+        }
+        else if (name == "chat.status.autoxa"){
+          var el = document.getElementById("autoXACheckbox");
+          el.nextSibling.disabled =
+          el.parentNode.nextSibling.childNodes[1].disabled = !value;
+        }
+        else if (name == "chat.connection.ssl"){
+          var port = document.getElementById("port");
+          if (value && port.value == "5222")
+            port.value = 5223;
+          if (!value && port.value == "5223")
+            port.value = 5222;
+        }
+        else if (name == "chat.general.iconset"){
+          var iconsContainer = document.getElementById("iconsSet");
+          if(iconsContainer)
+            iconsContainer.selectItem(value);  
+        }
+        else if (name == "chat.general.smilesset"){
+          var smilesContainer = document.getElementById("smilesSet");
+          if(smilesContainer)
+            smilesContainer.selectItem(value);  
+        }
+        else if (name == "chat.connection.type"){
+          var el = document.getElementById("protocol");
+          el.parentNode.nextSibling.collapsed = el.value != "native";
+          el.parentNode.nextSibling.nextSibling.collapsed = el.value == "native";
 
-    function enableDisableAutoAway(event) {
-      var el = event.target;
+          if (!prevType) {
+            prevType = el.value;
+            return;
+          }
 
-      el.nextSibling.disabled =
-        el.parentNode.nextSibling.childNodes[1].disabled = !el.checked;
+          var port = document.getElementById("port");
+          var httpBase = document.getElementById("http-base");
+
+          var portVal = el.parentNode.nextSibling.checked ? "5223" : "5222"
+
+          if (prevType == "native") {
+            if (el.value != "native" && port.value == portVal)
+              port.value = 5280
+          } else if (el.value == "native"  && port.value == "5280")
+            port.value = portVal;
+
+          if (el.value == "http-bind")
+            httpBase.value = httpBase.value.replace(/http-poll/, "http-bind");
+          else if (el.value == "http-polling")
+            httpBase.value = httpBase.value.replace(/http-bind/, "http-poll");
+
+          prevType = el.value;
+        }
+      }
     }
 
     function onLoad() {
+      prefObserver.init();
       var style = account.style;
-      var iconContainer = document.getElementById("statusIconSet");
-      for (var i = 0; i < style.statusIcons.length; i++)
-        iconContainer.appendChild(generateIconSetElement(style.statusIcons[i]));
-      var iconset = prefManager.getPref("chat.general.iconset");
-      if(iconset)
-        iconContainer.selectItem(document.getElementsByAttribute('value', iconset)[0]);
-      
 
-      iconContainer = document.getElementById("smileSet");
+      var iconsContainer = document.getElementById("iconsSet");
+      for (var i = 0; i < style.statusIcons.length; i++)
+        iconsContainer.appendChild(generateIconSetElement(style.statusIcons[i]));
+      var iconsset = prefManager.getPref("chat.general.iconset");
+      if(iconsset)
+        iconsContainer.selectItem(document.getElementById('iconSet-'+iconsset));
+
+      var smilesContainer = document.getElementById("smilesSet");
       for (i = 0; i < style.smiles.length; i++)
-        iconContainer.appendChild(generateIconSetElement(style.smiles[i]));
+        smilesContainer.appendChild(generateIconSetElement(style.smiles[i]));
       var smilesset = prefManager.getPref("chat.general.smilesset");
       if(smilesset)
-        iconContainer.selectItem(document.getElementsByAttribute('value', smilesset)[0]);
-        
-      document.getElementById("autoAwayCheckbox").addEventListener("CheckboxStateChange", enableDisableAutoAway, false);
-
-      document.getElementById("autoXACheckbox").addEventListener("CheckboxStateChange", enableDisableAutoAway, false);
-
-      switchHTTPOptions(document.getElementById("protocol"));
+        smilesContainer.selectItem(document.getElementById('iconSet-'+smilesset));
+    }
+    
+    function onUnload() {
+      //tofix
+      prefObserver.uninit();
     }
 
     function generateIconSetElement(iconSet) {
       var rli = document.createElement("richlistitem");
       rli.setAttribute("orient", "vertical");
       rli.setAttribute("class", "iconSetItem");
+      rli.setAttribute("id", "iconSet-"+iconSet.name);
       rli.setAttribute("value", iconSet.name);
       rli.model = iconSet;
 
@@ -70,49 +135,12 @@
       return rli;
     }
 
-    function iconSetPref(event) {
+    function iconsSetPref(event) {
       prefManager.setPref("chat.general.iconset", event.target.value);
     }
 
     function smilesSetPref(event) {
       prefManager.setPref("chat.general.smilesset", event.target.value);
-    }
-
-    var prevType;
-    function switchHTTPOptions(el) {
-      el.parentNode.nextSibling.collapsed = el.value != "native";
-      el.parentNode.nextSibling.nextSibling.collapsed = el.value == "native";
-
-      if (!prevType) {
-        prevType = el.value;
-        return;
-      }
-
-      var port = document.getElementById("port");
-      var httpBase = document.getElementById("http-base");
-
-      var portVal = el.parentNode.nextSibling.checked ? "5223" : "5222"
-
-      if (prevType == "native") {
-        if (el.value != "native" && port.value == portVal)
-          port.value = 5280
-      } else if (el.value == "native"  && port.value == "5280")
-        port.value = portVal;
-
-      if (el.value == "http-bind")
-        httpBase.value = httpBase.value.replace(/http-poll/, "http-bind");
-      else if (el.value == "http-polling")
-        httpBase.value = httpBase.value.replace(/http-bind/, "http-poll");
-
-      prevType = el.value;
-    }
-
-    function switchSSLOption(el) {
-      var port = document.getElementById("port");
-      if (el.checked && port.value == "5222")
-        port.value = 5223;
-      if (!el.checked && port.value == "5223")
-        port.value = 5222;
     }
   ]]></script>
 
@@ -177,7 +205,7 @@
         </row>
         <row>
           <label value="_('Connection Method:')"/>
-          <menulist id="protocol" preference="type" oncommand="switchHTTPOptions(this)">
+          <menulist id="protocol" preference="type">
             <menupopup>
               <menuitem label="Native" value="native"/>
               <menuitem label="HTTP Bind" value="http-bind"/>
@@ -185,7 +213,7 @@
             </menupopup>
           </menulist>
         </row>
-          <checkbox label="_('SSL Connection')" preference="ssl" oncommand="switchSSLOption(this)"/>
+          <checkbox label="_('SSL Connection')" preference="ssl" id="ssl-checkbox"/>
         <row>
           <label value="_('HTTP Base:')"/>
           <textbox id="http-base" preference="base"/>
@@ -241,10 +269,10 @@
       <preference id="usegatewayicons" name="chat.general.usegatewayicons" type="bool"/>
     </preferences>
     <label value="_('Default icon set:')"/>
-    <richlistbox id="statusIconSet" onselect="iconSetPref(event);"/>
+    <richlistbox id="iconsSet" onselect="iconsSetPref(event);"/>
     <checkbox label="_('Use gateway specific icons')" preference="usegatewayicons"/>
     <spacer/>
     <label value="_('Default smiles set:')"/>
-    <richlistbox id="smileSet" onselect="smilesSetPref(event);"/>
+    <richlistbox id="smilesSet" onselect="smilesSetPref(event);"/>
   </prefpane>
 </prefwindow>
