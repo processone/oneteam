@@ -52,9 +52,6 @@
             new BookmarksMenuView(document.getElementById("conference-menu-separator"));
           this.gatewaysMenuView =
             new GatewaysMenuView(document.getElementById("gateways-menu"));
-          this.presenceProfilesView =
-            new PresenceProfilesView(document.getElementById("setPresence-profile-dummy"),
-                                     this.profileEnable);
           this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
 
           this.rosterView.hideOffline = document.getElementById("cmd_toggleShowOffline").
@@ -96,69 +93,13 @@
 
         if (this.chooser.value) {
           this.presence = this.chooser.value;
-          account.setPresence(this.presence, null, null,
-            this.profileEnable.checked ? this.profile : null, true);
+          account.setPresence(this.presence, null, null, null, true);
         } else {
           this._skip = true;
           this.chooser.value = this.presence;
           this._skip = false;
-          account.onCustomPresence(this.presence,
-            this.profileEnable.checked ? this.profile : null);
+          account.onCustomPresence(this.presence, null);
         }
-      },
-
-      get profile()
-      {
-        if (this.profileEnable.checked)
-          return this.profileChooser.selectedItem && this.profileChooser.selectedItem.model;
-        return null;
-      },
-
-      set profile(val)
-      {
-        this.profileEnable.checked = val != null;
-        if (!val)
-          return val;
-        var profiles = this.profileChooser.childNodes;
-        for (var i = 0 ; i < profiles.length; i++)
-          if (profiles[i].model == val) {
-            this.profileChooser.selectedIndex = i;
-            break;
-          }
-        return val;
-      },
-
-      onProfileCommand: function()
-      {
-        if (this._skip)
-          return;
-        if (this.profileChooser.value) {
-          this.profileValue = this.profileChooser.value;
-
-          if (this.profileEnable.checked)
-            account.setPresence(this.presence, null, null, this.profile, true);
-        } else {
-          this._skip = true;
-          this.profileChooser.value = this.profileValue;
-          this._skip = false;
-
-          account.onEditPresenceProfiles();
-        }
-      },
-
-      onProfileEnable: function()
-      {
-          account.setPresence(this.presence, null, null,
-            this.profileEnable.checked ? this.profile : null, true);
-      },
-
-      onProfilesChange: function()
-      {
-      },
-
-      onContactsWithEventChanged: function()
-      {
-
       },
 
       _updatePresenceIcon: function(_this, icons, idx) {
@@ -215,8 +156,6 @@
         account.style.registerView(this.onIconSetChange, this, "defaultSet", globalRegToken);
 
         this.chooser = document.getElementById("setPresence-type-chooser");
-        this.profileChooser = document.getElementById("setPresence-profile-chooser");
-        this.profileEnable = document.getElementById("setPresence-profile-enable");
 // #ifdef XULAPP
         this.systray = document.getElementById("systray");
 // #endif
@@ -237,7 +176,6 @@
         this.rosterView.destroy();
         this.bookmarksMenuView.destroy();
         this.gatewaysMenuView.destroy();
-        this.presenceProfilesView.destroy();
         this.gatewaysButtonsView.destroy();
       }
     };
@@ -645,29 +583,8 @@
     </vbox>
     <vbox id="main-box" flex="1">
       <hbox flex="1">
-        <!-- #ifdef XULAPP -->
-        <groupbox id="roster-box" flex="1">
-        <!-- #else
-        <vbox width="250">
-        // #endif -->
-          <vbox id="presenceBoxLogo">
-            <image />
-          </vbox>
+        <vbox id="roster-box" flex="1">
           <vbox id="setPresence-box">
-            <hbox>
-              <checkbox id="setPresence-profile-enable" disabled="true"
-                oncommand="setPresenceUpdater.onProfileEnable()"/>
-              <menulist id="setPresence-profile-chooser" flex="1"
-                oncommand="setPresenceUpdater.onProfileCommand()">
-                <menupopup>
-                  <menuitem id="setPresence-profile-dummy" label="_('No profiles configured')"
-                    disabled="true" value="dummy-profile"/>
-                  <menuseparator/>
-                  <menuitem id="setPresence-profile-create" label="_('Edit profiles...')"/>
-                </menupopup>
-              </menulist>
-            </hbox>
-            <spacer/>
             <hbox id="setPresence-presence-box" align="center">
               <avatar flex="0" id="setPresence-avatar-image" showBlankAvatar="true"/>
               <hbox flex="1" align="end">
@@ -700,7 +617,7 @@
           <textbox type="search" oncommand="refineSearch(this)"
                    timeout="50" emptytext="_('Search')"/>
           <vbox id="contacts-list" flex="1" persist="hideOffline"/>
-        </groupbox>
+        </vbox>
         <!-- #ifdef XULAPP -->
         <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
         <chattabbox id="chats" collapsed="true" flex="1"/>
