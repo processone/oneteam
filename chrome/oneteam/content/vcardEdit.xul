@@ -25,16 +25,6 @@
 //        document.getElementById("tabs").selectedIndex = 2;
       avatarList = document.getElementById("avatarList");
       fetchVCard(true);
-/* #ifndef XULAPP
-      if (document.getElementById("avatarFile").files)
-        document.getElementById("avatarSubmit").style.display = "none";
-      document.getElementById("avatarUploadForm").action = document.location.href.
-// #ifdef NOJAR
-        replace(/\/content\/.*$/, "/service/b64encode");
-// #else
-        replace(/jar:/, "").replace(/\/[^\/]*!.*$/, "/service/b64encode");
-// #endif
-// #endif */
     }
 
     function handlePhoto(generateResult, tree)

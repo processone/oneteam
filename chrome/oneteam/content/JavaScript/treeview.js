@@ -21,18 +21,9 @@ function TreeView(tree, dataModel, noNaturalOrder) {
             this._order.unshift(i);
         } else
             this._order.push(i);
-        /* #ifndef XULAPP
-        treecols[i].addEventListener("click", function(event) {
-            event.target.parentNode.parentNode.myView._cycleColumnSort(event.target, i);
-        }, false);
-        // #endif */
     }
 
-    // #ifdef XULAPP
     tree.view = this;
-    /* #else
-    this._treeEl = tree;
-    // #endif */
 }
 
 TreeView.prototype = {

@@ -273,10 +273,6 @@
     }
 
     function onUnload() {
-    //#ifndef XULAPP
-      if (window.account.connection)
-        account.disconnect();
-    //#endif */
     }
 
     function onBeforeUnload() {

@@ -104,9 +104,7 @@
 
       _updatePresenceIcon: function(_this, icons, idx) {
 //        document.getElementById("setPresence-type-image").src =
-// #ifdef XULAPP
           _this.systray.icon =
-// #endif
           icons[idx.idx = (idx.idx+1)%icons.length];
       },
 
@@ -156,9 +154,7 @@
         account.style.registerView(this.onIconSetChange, this, "defaultSet", globalRegToken);
 
         this.chooser = document.getElementById("setPresence-type-chooser");
-// #ifdef XULAPP
         this.systray = document.getElementById("systray");
-// #endif
         this.presence = this.chooser.value;
 
         this.onConnecting();
@@ -227,7 +223,6 @@
           }, null, "connectionInitialized", globalRegToken);
       }
 
-// #ifdef XULAPP
 /*
       chatTabsController.addEventListener("tab-added", function(event) {
         if (event.target.tabCount != 1)
@@ -258,18 +253,13 @@
         self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
       }, false);
 */
-// #endif
     }
 
     function onClose() {
-    //#ifdef XULAPP
       if(document.getElementById("systray").hidden == false){
         setPresenceUpdater.systray.minimized = true;
         return false;
       }
-    /*#else
-      return true;
-    //#endif */
     }
 
     function onUnload() {
@@ -277,7 +267,6 @@
       setPresenceUpdater.destroy();
 
       return;
-    //#ifdef XULAPP
       var width = self.outerWidth;
 
       if (chatTabsController.tabCount) {
@@ -291,25 +280,10 @@
       document.documentElement.setAttribute("height", self.outerHeight)
       document.persist(document.documentElement.getAttribute("id"), "width");
       document.persist(document.documentElement.getAttribute("id"), "height");
-    /*#else
-      document.getElementById("login-signin").disabled = true;
-      if (window.account.connection)
-        account.disconnect();
-      closeAllWindows();
-    //#endif */
     }
-    //#ifndef XULAPP
-    function onBeforeUnload() {
-      return;
-      if (account.connected)
-        return "Are you sure you want to leave OneTeam?";
-    }
-    window.onbeforeunload = onBeforeUnload;
-    //#endif
 
     var quitSequence = false;
     function quit() {
-    //#ifdef XULAPP
       var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
         getService(Components.interfaces.nsIPromptService);
 
@@ -323,20 +297,15 @@
             return;
         }
 
-    //#endif
 
       quitSequence = true;
 
       if (window.account.connection)
         account.disconnect();
 
-    //#ifdef XULAPP
       Components.classes['@mozilla.org/toolkit/app-startup;1'].
         getService(Components.interfaces.nsIAppStartup).
           quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
-    /*#else
-      window.close();
-    //#endif */
     }
 
     function connect() {
@@ -369,10 +338,8 @@
         if (this.hadEvents != hasEvents)
           setPresenceUpdater.updatePresenceIcon();
 
-      //#ifdef XULAPP
         if (hasEvents)
           window.getAttention();
-      //#endif
         this.hadEvents = hasEvents;
       },
     }
@@ -407,7 +374,7 @@
 
     <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
     <command id="cmd_changePassword" oncommand="account.onChangePassword()"/>
-<!-- #ifdef XULAPP -->
+<!-- #ifndef XPI -->
     <command id="cmd_addons" oncommand="window.openDialog('chrome://mozapps/content/extensions/extensions.xul');"/>
 <!-- #endif -->
     <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
@@ -417,9 +384,7 @@
     <command id="cmd_bug" oncommand="openLink('https://support.process-one.net/browse/TEAM')"/>
     <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
 <!-- #ifdef DEBUG -->
-<!-- #ifdef XULAPP -->
     <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
-<!-- #endif -->
     <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "chrome://oneteam/content/command.xul", "chrome,dialog=no,all", "")'/>
     <command id="cmd_cmdVenkman" oncommand='window.openDialogUniq("mozapp:venkman", "chrome://venkman/content/venkman.xul", "chrome,dialog=no,all", "")'/>
     <command id="cmd_cmdDOMInspector" oncommand='window.openDialogUniq("mozapp:dominspector", "chrome://inspector/content/", "chrome,dialog=no,all", "")'/>
@@ -521,16 +486,12 @@
               <menuitem label="_('_Report Bug')" command="cmd_bug"/>
               <menuitem label="_('XML _Console...')" command="cmd_xmlConsole"/>
   <!-- #ifdef DEBUG -->
-  <!-- #ifdef XULAPP -->
               <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole"/>
-  <!-- #endif -->
               <menuitem label="_('Commands Console...')" command="cmd_cmdConsole"/>
   <!-- #endif -->
-  <!-- #ifdef XULAPP -->
   <!-- #ifndef XPI -->
               <menuseparator/>
               <menuitem label="_('Check for Updates...')" command="cmd_chkUpdates"/>
-  <!-- #endif -->
   <!-- #endif -->
               <menuseparator/>
               <menuitem label="_('About...')" command="cmd_about"/>
@@ -555,11 +516,7 @@
           <textbox id="login-pass" onkeypress="_connect(event)" type="password"/>
         </vbox>
         <hbox pack="center" id="before-login-progress">
-  <!-- #ifdef XULAPP -->
           <checkbox id="login-savePass" checked="true" label="_('Remember password')"/>
-  <!-- #else
-          <checkbox id="login-savePass" checked="false" label="_('Remember password')"/>
-  // #endif -->
         </hbox>
         <progressmeter id="login-progress" style="visibility: hidden" mode="undetermined"/>
         <hbox pack="center">
@@ -618,13 +575,8 @@
                    timeout="50" emptytext="_('Search')"/>
           <vbox id="contacts-list" flex="1" persist="hideOffline"/>
         </vbox>
-        <!-- #ifdef XULAPP -->
         <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
         <chattabbox id="chats" collapsed="true" flex="1"/>
-        <!-- #else
-        <splitter id="chats-splitter"/>
-        <chattabbox id="chats" flex="1"/>
-        // #endif -->
       </hbox>
     </vbox>
   </deck>

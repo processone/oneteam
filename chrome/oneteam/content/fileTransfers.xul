@@ -20,16 +20,6 @@
 
     var view;
 
-/* #ifndef XULAPP
-    function onBeforeUnload() {
-      var fts = fileTransferService.fileTransfers;
-      for (var i = 0; i < fts.length; i++)
-        if (fts[i].type == "send" && (fts[i].state == "waiting" || fts[i].state == "started"))
-          return _("If you close this window all file transfers will be aborted.");
-    }
-    window.onbeforeunload = onBeforeUnload;
-// #endif */
-
     function onLoad()
     {
       view = new FileTransfersView(document.getElementById("richlist"));
