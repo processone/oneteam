@@ -1021,7 +1021,7 @@
           doc.addEventListener("keypress", function(event) {
           //alert("r: "+String.fromCharCode(event.charCode)+", "+event.keyCode+", "+event.altKey+", "+event.metaKey+", "+event.shiftKey);
             event.stopPropagation();
-            if (event.keyCode == KeyEvent.DOM_VK_TAB) {
+            if (event.keyCode == KeyEvent.DOM_VK_TAB && !event.ctrlKey) {
               event.preventDefault();
 
               var doc = me._input.contentDocument;
@@ -1652,6 +1652,8 @@
         var me = this;
 
         this.addEventListener("keypress", function(ev) {
+            var switchTab = 0;
+
             if ((ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ||
                  ev.keyCode == KeyEvent.DOM_VK_PAGE_DOWN))
               if (ev.shiftKey && !ev.altKey && !ev.ctrlKey && !ev.metaKey) {
@@ -1665,11 +1667,22 @@
               } else if (!ev.shiftKey && !ev.altKey && ev.ctrlKey && !ev.metaKey) {
                 ev.stopPropagation();
                 ev.preventDefault();
-
-                var tabbox = me.parentNode && me.parentNode._tabbox;
-                if (tabbox)
-                  tabbox._tabs.advanceSelectedTab(ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ? -1 : 1, true)
+                switchTab = ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ? -1 : 1;
               }
+
+            if (ev.keyCode == KeyEvent.DOM_VK_TAB && !ev.altKey && !ev.metaKey &&
+                ev.ctrlKey)
+            {
+              ev.stopPropagation();
+              ev.preventDefault();
+              switchTab = ev.shiftKey ? -1 : 1;
+            }
+
+            if (switchTab) {
+              var tabbox = me.parentNode && me.parentNode._tabbox;
+              if (tabbox)
+                tabbox._tabs.advanceSelectedTab(switchTab, true)
+            }
         }, true);
 
         setTimeout(function(me) {
