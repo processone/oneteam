@@ -200,13 +200,24 @@ TreeView.prototype = {
 
             while (a <= b) {
                 mid = (a+b)>>1;
-                if (sortKey < items[mid].sortKey)
-                    b = mid-1;
-                else if (sortKey > items[mid].sortKey)
-                    a = mid+1;
-                else {
-                    found = true;
-                    break;
+                if (this.sortAscending) {
+                    if (sortKey < items[mid].sortKey)
+                        b = mid-1;
+                    else if (sortKey > items[mid].sortKey)
+                        a = mid+1;
+                    else {
+                        found = true;
+                        break;
+                    }
+                } else {
+                    if (sortKey > items[mid].sortKey)
+                        b = mid-1;
+                    else if (sortKey < items[mid].sortKey)
+                        a = mid+1;
+                    else {
+                        found = true;
+                        break;
+                    }
                 }
             }
             if (!found)
