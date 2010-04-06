@@ -195,10 +195,9 @@
             <tree id="contacts-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, contactsMessages)">
               <treecols>
-                <treecol sortDirection="ascending" sortActive="true"
-                         primary="true" ordinal="1" flex="5" label="_('Contact')" id="jid"/>
+                <treecol primary="true" ordinal="1" flex="5" label="_('Contact')" id="jid"/>
                 <splitter class="tree-splitter"/>
-                <treecol flex="1" label="_('Date')" id="date"/>
+                <treecol sortDirection="descending" sortActive="true" flex="1" label="_('Date')" id="date"/>
               </treecols>
               <treechildren/>
             </tree>
@@ -222,10 +221,9 @@
             <tree id="conferences-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, conferencesMessages)">
               <treecols>
-                <treecol sortDirection="ascending" sortActive="true"
-                         primary="true" flex="5" label="_('Conference')" id="jid"/>
+                <treecol primary="true" flex="5" label="_('Conference')" id="jid"/>
                 <splitter class="tree-splitter"/>
-                <treecol flex="1" label="_('Date')" id="date"/>
+                <treecol sortDirection="descending" sortActive="true" flex="1" label="_('Date')" id="date"/>
               </treecols>
               <treechildren/>
             </tree>
