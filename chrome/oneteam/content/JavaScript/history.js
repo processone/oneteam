@@ -16,6 +16,8 @@ function ArchivedMessagesThreadBase(contact, threadID, time)
     this.time = time;
     this.jid = contact.jid;
     this._nicksHash = {};
+    this._msgIdMap = {};
+    this._revMsgIdMap = {};
 }
 
 _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
@@ -38,13 +40,40 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
         return {visibleName: jid, jid: jid, representsMe: representsMe};
     },
 
+    startBatch: function() {
+        this.inBatch = true;
+        this.batchMsgs = [];
+    },
+
+    endBatch: function() {
+        var msgs = this.batchMsgs;
+        this.inBatch = false;
+        this.batchMsgs = null;
+        this.messages.push.apply(this.messages, msgs);
+        this.modelUpdated("messages", {added: msgs});
+    },
+
     addMessage: function(msg, clone) {
         if (!msg.text)
             return msg;
 
-        if (clone)
+        if (clone) {
+            var [msgId, replyTo] = [msg.xMessageId, msg.xReplyTo];
+
             msg = new Message(msg.text, msg.html, msg.contact, msg.type,
                               msg.time, this, null, msg.myNick);
+
+            if (msgId)
+                msg.xMessageId = msgId;
+
+            if (replyTo)
+                msg.xReplyTo = replyTo;
+        }
+
+        if (this.inBatch) {
+            this.batchMsgs.push(msg);
+            return msg;
+        }
 
         this.messages.push(msg);
         this.modelUpdated("messages", {added: [msg]});
@@ -97,7 +126,7 @@ function HistoryManager()
 
     var version = this.db.schemaVersion;
 
-    if (version > 1999)
+    if (version > 2999)
         throw new GenericError("Unrecognized HistoryManager database version");
 
     if (version == 0)
@@ -112,6 +141,9 @@ function HistoryManager()
                 CREATE TABLE threads (id INTEGER PRIMARY KEY, jid_id INTEGER NOT NULL,
                                       time INTEGER(64) NOT NULL, type INTEGER(8) NOT NULL);
 
+                CREATE TABLE message_replies (id INTEGER PRIMARY KEY,
+                                              replies_to INTEGER NOT NULL);
+
                 CREATE INDEX messages_by_jid_id ON messages (jid_id);
                 CREATE INDEX messages_by_thread_id_and_time ON messages (thread_id, time);
 
@@ -123,6 +155,16 @@ function HistoryManager()
                 PRAGMA user_version = 1001;
             COMMIT TRANSACTION;
         </sql>.toString());
+    if (version < 2000) {
+        this.db.executeSimpleSQL(<sql>
+            BEGIN IMMEDIATE TRANSACTION;
+                CREATE TABLE message_replies (id INTEGER PRIMARY KEY,
+                                              replies_to INTEGER NOT NULL);
+
+                PRAGMA user_version = 2001;
+            COMMIT TRANSACTION;
+        </sql>.toString());
+    }
 
     this.addJidStmt = this.db.createStatement(<sql>
             INSERT OR IGNORE INTO jids (jid) VALUES (?1);
@@ -146,8 +188,16 @@ function HistoryManager()
                 ORDER BY T.time ASC;
         </sql>.toString());
     this.getThreadMessagesStmt = this.db.createStatement(<sql>
-            SELECT J.jid, M.flags, body, body_html, nick, time FROM messages M, jids J
+            SELECT J.jid, M.flags, body, body_html, nick, time, M.id FROM messages M, jids J
                 WHERE thread_id = ?1 AND jid_id = J.id AND time > ?2 ORDER BY time ASC;
+        </sql>.toString());
+    this.addReplyStmt = this.db.createStatement(<sql>
+            INSERT INTO message_replies (id, replies_to)
+                VALUES (?1, ?2)
+        </sql>.toString());
+    this.findRepliesStmt = this.db.createStatement(<sql>
+            SELECT replies_to FROM message_replies
+                WHERE id = ?1;
         </sql>.toString());
 }
 
@@ -338,6 +388,22 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         stmt.bindInt32Parameter(6, archivedThread.threadID);
         stmt.execute();
 
+        rowId = this.db.lastInsertRowID;
+        if (msg.xMessageId) {
+            archivedThread._msgIdMap[msg.xMessageId] = rowId;
+            archivedThread._revMsgIdMap[rowId] = msg.xMessageId;
+        }
+
+        var stmt = this.addReplyStmt;
+        if ("xReplyTo" in msg)
+            for (var i = 0; i < msg.xReplyTo.length; i++) {
+                if (msg.xReplyTo[i] in archivedThread._msgIdMap) {
+                    stmt.bindInt32Parameter(0, rowId);
+                    stmt.bindInt32Parameter(1, archivedThread._msgIdMap[msg.xReplyTo[i]]);
+                    stmt.execute();
+                }
+            }
+
         if (archivedThread.watched)
             archivedThread.addMessage(msg, true);
 
@@ -373,6 +439,8 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
         stmt.bindInt32Parameter(0, this.threadID);
         stmt.bindInt64Parameter(1, this._lastMessageTime);
 
+        this.startBatch();
+
         while (stmt.executeStep()) {
             try {
                 var jid = new JID(stmt.getString(0));
@@ -381,12 +449,32 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
 
                 this._lastMessageTime = stmt.getInt64(5);
 
-                this.addMessage(new Message(stmt.getString(2), stmt.getString(3),
-                                            contact, stmt.getInt32(1),
-                                            new Date(this._lastMessageTime), this));
+                var msg = new Message(stmt.getString(2), stmt.getString(3),
+                                      contact, stmt.getInt32(1),
+                                      new Date(this._lastMessageTime), this);
+
+                msg.xMessageId = generateRandomName(8);
+                this._msgIdMap[msg.xMessageId] = stmt.getInt64(6);
+                this._revMsgIdMap[stmt.getInt64(6)] = msg.xMessageId;
+
+                this.addMessage(msg);
             } catch (ex) { }
         }
         stmt.reset();
+
+        var stmt = account.historyMgr.findRepliesStmt;
+        for (var i = 0; i < this.batchMsgs.length; i++) {
+            stmt.bindInt64Parameter(0, this._msgIdMap[this.batchMsgs[i].xMessageId]);
+            while (stmt.executeStep()) {
+                if ("xReplyTo" in this.batchMsgs[i])
+                    this.batchMsgs[i].xReplyTo.push(this._revMsgIdMap[stmt.getInt64(0)]);
+                else
+                    this.batchMsgs[i].xReplyTo = [this._revMsgIdMap[stmt.getInt64(0)]];
+            }
+            stmt.reset();
+        }
+
+        this.endBatch();
     }
 }
 
