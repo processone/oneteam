@@ -147,6 +147,9 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 
 _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesRouter).prototype =
 {
+    avatar: null,
+    avatarHash: null,
+
     get canSeeMe() {
         return this.subscription == "both" || this.subscription == "from";
     },
@@ -737,6 +740,8 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     _registered: false,
     presence: new Presence("unavailable"),
     representsMe: false,
+    avatar: null,
+    avatarHash: null,
 
     get visibleName()
     {

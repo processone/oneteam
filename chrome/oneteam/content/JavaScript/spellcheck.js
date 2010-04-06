@@ -1,4 +1,4 @@
-spellcheck =
+var spellcheck =
 {
   enabled: true,
   fillWithDictionaries: function(aMenu){
@@ -52,7 +52,7 @@ spellcheck =
       aMenu.appendChild(item);
     }
   },
-  
+
   fillWithSuggestions: function(aMenu, aInput){
     var scu = aInput._input.parentNode.spellCheckerUI;
     var children = aMenu.childNodes;
@@ -68,7 +68,7 @@ spellcheck =
     else
       noSuggestions.hidden = false;
   },
-  
+
   onShowSuggestionsMenu: function(aMenu) {
     if (!aMenu)
       return;
@@ -84,7 +84,7 @@ spellcheck =
       this.fillWithSuggestions(aMenu, aInput);
     }
   },
-  
+
   onHiddenSuggestionsMenu: function(aMenu) {
     if (!aMenu)
       return;
@@ -94,7 +94,7 @@ spellcheck =
     var scu = aInput._input.parentNode.spellCheckerUI;
     scu.clearSuggestionsFromMenu();
   },
-  
+
   onShowDictionariesMenu: function(aMenu, aTarget) {
     if (!aMenu)
       return;
@@ -104,7 +104,7 @@ spellcheck =
     if (languages.length > 0)
       languages[0].setAttribute("checked", true);
   },
-  
+
   toggle: function(aItem, aEvent) {
     //tofix
     var input = aItem.parentNode.parentNode.lastChild.firstChild;
@@ -120,7 +120,7 @@ spellcheck =
       prefManager.setPref("spellchecker.disable", true);
     }
   },
-  
+
   getDictionaryIndex: function(aDicID) {
     var spellchecker = Components.classes["@mozilla.org/spellchecker/" + ("@mozilla.org/spellchecker/myspell;1" in Components.classes ? "myspell;1" : "engine;1")].createInstance(Components.interfaces.mozISpellCheckingEngine);
     var o1 = {}, o2 = {};
@@ -132,6 +132,7 @@ spellcheck =
         break;
       }
     }
+    return -1;
   },
 
   setDict: function(aDicID, aEvent) {
@@ -142,7 +143,7 @@ spellcheck =
     var scu = aInput.parentNode.spellCheckerUI;
 
     prefManager.setPref("spellchecker.dictionary", aDicID);
-    
+
     scu.mInlineSpellChecker.spellChecker.SetCurrentDictionary(aDicID);
     scu.mInlineSpellChecker.spellCheckRange(null);
     aEvent.stopPropagation();
