@@ -787,9 +787,12 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
     {
         var iq = new JSJaCIQ();
         iq.setType("set");
-        query = iq.setQuery("jabber:iq:private");
-        var storage = query.appendChild(iq.getDoc().createElementNS(
-            "storage:bookmarks", "storage"));
+        pubsub = iq.setPubsub("http://jabber.org/protocol/pubsub");
+        var publish = pubsub.appendChild(iq.getDoc().createElement("publish"));
+        publish.setAttribute("node", "storage:bookmarks");
+        var item = publish.appendChild(iq.getDoc().createElement("item"));
+        item.setAttribute("id", "current");
+        var storage = item.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "storage"));
 
         for (var i = 0; i < this.bookmarks.length; i++) {
             var bookmark = storage.appendChild(iq.getDoc().createElementNS(
@@ -819,15 +822,15 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
     {
         var iq = new JSJaCIQ();
         iq.setType("get");
-        query = iq.setQuery("jabber:iq:private");
-        query.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "storage"));
+        pubsub = iq.setPubsub("http://jabber.org/protocol/pubsub");
+        var storage = pubsub.appendChild(iq.getDoc().createElement("items"));
+        storage.setAttribute("node", "storage:bookmarks");
         account.connection.send(iq, new Callback(this.onBookmarkRetrieved, this));
     },
 
     onBookmarkRetrieved: function(pkt)
     {
-        var bookmarksTags = pkt.getNode().
-            getElementsByTagNameNS("storage:bookmarks", "conference");
+        var bookmarksTags = pkt.getNode().getElementsByTagNameNS("storage:bookmarks", "conference");
         this.bookmarks = [];
 
         for (var i = 0; i < bookmarksTags.length; i++) {

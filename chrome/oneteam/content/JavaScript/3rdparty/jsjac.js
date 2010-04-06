@@ -2467,6 +2467,20 @@ JSJaCIQ.prototype.setQuery = function(xmlns) {
   this.getNode().appendChild(query);
   return query;
 };
+//Sonny
+JSJaCIQ.prototype.setPubsub = function(xmlns) {
+  var pubsub;
+  try {
+    pubsub = this.getDoc().createElementNS(xmlns,'pubsub');
+  } catch (e) {
+    // fallback
+    query = this.getDoc().createElement('pubsub');
+  }
+  if (query && query.getAttribute('xmlns') != xmlns) // fix opera 8.5x
+    query.setAttribute('xmlns',xmlns);
+  this.getNode().appendChild(query);
+  return query;
+};
 
 /**
  * Gets the 'query' node of this packet
