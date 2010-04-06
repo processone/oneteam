@@ -1,0 +1,22 @@
+#include "nsISupports.idl"
+
+[scriptable, uuid(e76111ca-61f5-4fc2-8be8-9f0b7310232f)]
+interface otIOSXBadge : nsISupports
+{
+  void setLabel(in AString value);
+  //void setIcon(in nsISupports source);
+};
+
+%{C++
+
+#define OT_OSXBADGE_CONTRACTID "@process-one.net/osxbadge;1"
+
+#define OT_OSXBADGE_CID \
+{ /* 1418aa75-f37c-40c4-83cb-4759d454fc31 */ \
+  0x1418aa75, \
+  0xf37c, \
+  0x40c4, \
+  {0x83, 0xcb, 0x47, 0x59, 0xd4, 0x54, 0xfc, 0x31 } \
+}
+
+%}

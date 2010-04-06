@@ -43,6 +43,7 @@ LOCAL_INCLUDES = \
 	-I$(otdir)/src/codecs \
 	-I$(otdir)/libs/libilbc \
 	-I$(otdir)/src/jnrelay \
+	-I$(otdir)/src/osxbadge \
 	$(NULL)
 
 SHARED_LIBRARY_LIBS += \

@@ -21,6 +21,7 @@ DIRS = \
 	rtp \
 	codecs \
 	systray \
+	osxbadge \
 	$(OT_EXTRA_DIRS) \
 	$(NULL)
 

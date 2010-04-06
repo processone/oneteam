@@ -22,6 +22,7 @@ XPIDLSRCS = \
 	otICodec.idl \
 	otIRTP.idl \
 	otIJNRelay.idl \
+	otIOSXBadge.idl \
 	$(OT_EXTRA_SRCS) \
 	$(NULL)
 

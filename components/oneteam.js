@@ -202,8 +202,8 @@ ML.importMod("services/xpcom/contentDispatcher.js");
 function init(win) {
 // #ifdef XPI
     ML.importMod("services/xpcom/scriptInjector.js");
-    ML.importMod("services/xpcom/browserUIUpdater.js");
 // #endif
+    ML.importMod("services/xpcom/browserUIUpdater.js");
 }
 
 var components = [OneTeamLoader

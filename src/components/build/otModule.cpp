@@ -11,12 +11,17 @@
 #include "otILBC.h"
 #include "otJNRelay.h"
 
+
 #ifdef OT_HAS_PULSE_AUDIO
 #include "otPulseAudio.h"
 #endif
 
 #ifdef OT_HAS_MAC_AUDIO
 #include "otMacAudio.h"
+#endif
+
+#ifdef OT_HAS_OSXBADGE
+#include "otOSXBadge.h"
 #endif
 
 OT_IDLE_DEFINE_FACTORY
@@ -34,6 +39,10 @@ OT_PULSE_AUDIO_DEFINE_FACTORY
 
 #ifdef OT_HAS_MAC_AUDIO
 OT_MAC_AUDIO_DEFINE_FACTORY
+#endif
+
+#ifdef OT_HAS_OSXBADGE
+OT_OSXBADGE_DEFINE_FACTORY
 #endif
 
 static const nsModuleComponentInfo components[] =
@@ -69,6 +78,13 @@ static const nsModuleComponentInfo components[] =
     OT_MAC_AUDIO_CID,
     OT_MAC_AUDIO_CONTRACTID,
     OT_MAC_AUDIO_FACTORY },
+#endif
+#ifdef OT_HAS_OSXBADGE
+  {
+    "MacOSX badges",
+    OT_OSXBADGE_CID,
+    OT_OSXBADGE_CONTRACTID,
+    OT_OSXBADGE_FACTORY },
 #endif
   { "ICE services",
     OT_ICE_CID,

@@ -35,15 +35,17 @@ endif
 
 ifeq "$(MOZ_WIDGET_TOOLKIT)" "cocoa"
 	OT_HAS_DNS_UNIX=1
-	OS_CXXFLAGS += -DOT_HAS_DNS_UNIX
-	OT_EXTRA_SHARED_OS_LIBS += -lresolv -liconv -lc
+	OT_HAS_MAC_AUDIO=1
+	OT_HAS_OSXBADGE=1
+	OS_CXXFLAGS += -DOT_HAS_DNS_UNIX -DOT_HAS_MAC_AUDIO -DOT_HAS_OSXBADGE
+	OT_EXTRA_SHARED_OS_LIBS += -lresolv -liconv -lc \
+		-framework AudioUnit -framework CoreAudio -framework AudioToolbox \
+		-framework AppKit
 	OT_EXTRA_SHARED_LIBS += \
 		$(otdir)/src/dns/$(LIB_PREFIX)ot_dns_s.$(LIB_SUFFIX) \
+		$(otdir)/src/audio/$(LIB_PREFIX)ot_audio_s.$(LIB_SUFFIX) \
+		$(otdir)/src/osxbadge/$(LIB_PREFIX)ot_osxbadge_s.$(LIB_SUFFIX) \
 		$(NULL)
-	OT_HAS_MAC_AUDIO=1
-	OS_CXXFLAGS += -DOT_HAS_MAC_AUDIO
-	OT_EXTRA_SHARED_LIBS += $(otdir)/src/audio/$(LIB_PREFIX)ot_audio_s.$(LIB_SUFFIX)
-	OT_EXTRA_SHARED_OS_LIBS += -framework AudioUnit -framework CoreAudio -framework AudioToolbox
 	OT_LDOPTS += \
 		/usr/local/lib/libglib-2.0.a \
 		/usr/local/lib/libgobject-2.0.a \

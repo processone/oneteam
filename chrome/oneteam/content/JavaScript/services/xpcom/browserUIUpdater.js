@@ -65,6 +65,24 @@ var uiUpdater = {
                             "oneteam-default-tooltip");
             el.setAttribute("hasEvents", hasEvents);
         }
+
+        if (this._osxBadgeSvc == null)
+            try {
+                this._osxBadgeSvc = Components.classes["@process-one.net/osxbadge;1"].
+                    getService(Components.interfaces.otIOSXBadge);
+                } catch (ex) {
+                    this._osxBadgeSvc = false;
+                }
+
+        if (this._osxBadgeSvc) {
+            if (hasEvents) {
+                var count = 0;
+                for (var i = 0; i < account.contactsWithEvents.length; i++)
+                    count += account.contactsWithEvents[i].events.length;
+                this._osxBadgeSvc.setLabel(count);
+            } else
+                this._osxBadgeSvc.setLabel("");
+        }
     },
 
     init: function() {
