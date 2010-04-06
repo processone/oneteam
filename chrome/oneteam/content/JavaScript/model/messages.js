@@ -283,7 +283,6 @@ function MessagesThread(threadID, contact)
     this.init();
 
     this.messages = [];
-    this.archivedMessages = [];
     this._threadID = threadID;
     this._contactIds = [];
     this.unseenCount = 0;
@@ -476,19 +475,12 @@ _DECL_(MessagesThread, Model).prototype =
             return;
 
         var msgs = this.messages;
-        var msgsToArchive = [];
         this.messages = [];
 
         for (var i = msgs.length-1; i >= 0; i--) {
             if (msgs[i]._canceler)
                 msgs[i]._canceler.cancel();
-            if (!(this.contact instanceof Conference) && msgsToArchive.length < 10 &&
-                !msgs[i].isSystemMessage)
-                msgsToArchive.unshift(msgs[i]);
         }
-
-        this.archivedMessages.push.apply(this.archivedMessages, msgsToArchive);
-        this.archivedMessages.splice(0,this.archivedMessages.length-10);
 
         this.modelUpdated("messages", {removed: msgs});
     },
@@ -527,7 +519,7 @@ _DECL_(MessagesThread, Model).prototype =
 
         this.visible = true;
 
-        if (this._threadID && !this.archivedMessages.length)
+        if (this._threadID && !this._afterFirstMessage)
             this.contact._onThreadDestroyed(this)
     }
 }

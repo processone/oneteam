@@ -328,15 +328,18 @@
           if (!this._initialized)
             return;
 
-          if (!this._msgs)
-            // we need snapshot of archivedMessage, thats why we use concat here
-            this._msgs = this._model.archivedMessages.concat([]);
+          var newMessages = arg ? arg.added : this._model.messages;
 
-          if (arg && arg.added) {
-            this._msgs.push.apply(this._msgs, arg.added);
-            this._model.removeMessages();
-          } else if (!arg && this._model.messages.length) {
-            this._msgs.push.apply(this._msgs, this._model.messages);
+          if (!this._msgs) {
+            [this.archivedMsgToken, this._msgs] = account.historyMgr.
+              getLastMessagesFromContact(this._model.contact, 10,
+                                         newMessages && newMessages.length ?
+                                            newMessages[0].time.getTime() : null);
+          }
+
+
+          if (newMessages && newMessages.length) {
+            this._msgs.push.apply(this._msgs, newMessages);
             this._model.removeMessages();
           }
 

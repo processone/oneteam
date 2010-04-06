@@ -414,6 +414,59 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
                 this._searchPhrases[i].observer._addRecord(archivedThread);
                 this._searchPhrases[i].threads.push(archivedThread);
             }
+    },
+
+    getLastMessagesFromContact: function(contact, count, token) {
+        var olderThan = Infinity;
+
+        if (typeof(token) == "number") {
+            olderThan = token;
+            token = null;
+        }
+
+        if (!token) {
+            token = {threads: [], lastIndex: 0};
+
+            if (!this._jidIds)
+                this._loadJIDs();
+
+            var stmt = this.getThreadsForJidIdsStmt;
+
+            stmt.bindInt32Parameter(0, this._jidIds[contact.jid]);
+
+            while (stmt.executeStep())
+                token.threads.push(this._getArchivedThread(contact, stmt.getInt32(0),
+                                                           new Date(stmt.getInt64(2))));
+
+            stmt.reset();
+
+            var lastThread = token.threads[token.threads.length-1];
+            if (lastThread) {
+                lastThread.getNewMessages();
+                token.lastIndex = lastThread.messages.length-1;
+            }
+        }
+
+        var msgs = [];
+        while (msgs.length < count) {
+            if (token.lastIndex < 0) {
+                token.threads.pop();
+                lastThread = token.threads[token.threads.length-1];
+                if (!lastThread)
+                    break;
+                lastThread.getNewMessages();
+                token.lastIndex = lastThread.messages.length-1;
+            } else
+                lastThread = token.threads[token.threads.length-1];
+
+            var msg = lastThread.messages[token.lastIndex--];
+
+            if (!msg.isSystemMessage && msg.time.getTime() < olderThan) {
+                msg.archived = true;
+                msgs.unshift(msg);
+            }
+        }
+        return [token, msgs];
     }
 }
 
