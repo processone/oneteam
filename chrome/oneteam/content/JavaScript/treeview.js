@@ -50,9 +50,6 @@ TreeView.prototype = {
             this.selection && this.selection.currentIndex < 0)
             return null;
 
-        if (this._treeEl)
-            return this._treeEl.body.childNodes[this._treeEl.currentIndex].model;
-
         if (this.sortColumn < 0)
             return this._results[this.selection.currentIndex].value;
 
@@ -78,19 +75,17 @@ TreeView.prototype = {
         if (this.selection)
             this.selection.clearSelection();
 
-        if (this._treeEl) {
-            while (this._treeEl.body.firstChild)
-                this._treeEl.body.removeChild(this._treeEl.body.firstChild);
-        } else {
-            var len = this._results.length;
-            this._results = [];
-            this._sortTab = [];
-            this._tree.rowCountChanged(0, -len);
-        }
+        var len = this._results.length;
+        this._results = [];
+        this._sortTab = [];
+        this._tree.rowCountChanged(0, -len);
+
         this._inClear = false;
     },
 
     _selectRow: function(idx) {
+        if (!this._tree)
+            return;
         this.selection.select(idx);
         this._tree.ensureRowIsVisible(idx);
     },
@@ -100,90 +95,60 @@ TreeView.prototype = {
 
         var selection = this.selection ? this.selection.currentIndex : -1;
 
-        if (this._treeEl) {
-            frag = document.createDocumentFragment();
-            items = this._treeEl.body.childNodes;
+        if (this.sortColumn < 0) {
+            if (selection >= 0)
+                selection = this._sortTab[selection].idx;
 
-            if (this.sortColumn < 0) {
-                sortTab = [];
-                for (var i = 0; i < items.length; i++)
-                    sortTab.push({key: items[i].order, value: items[i]});
-
-                sortTab.sort(function(a,b) {
-                    return a.key - b.key;
-                });
-            } else if (onlyReverse) {
-                while (treeRows.firstChild)
-                    frag.appendChild(treeRows.firstChild);
-                this._treeEl.body.appendChild(frag);
-
-                return;
-            }
-        } else {
-            if (this.sortColumn < 0) {
-                if (selection >= 0)
-                    selection = this._sortTab[selection].idx;
-
-                this._sortTab = null;
+            this._sortTab = null;
+            if (this._tree.invalidate)
                 this._tree.invalidate();
 
-                if (selection >= 0)
-                    this._selectRow(selection);
+            if (selection >= 0)
+                this._selectRow(selection);
 
-                return;
-            } else if (onlyReverse) {
-                this._sortTab.reverse();
+            return;
+        } else if (onlyReverse) {
+            this._sortTab.reverse();
+            if (this._tree.invalidate)
                 this._tree.invalidate();
 
-                if (selection >= 0)
-                    this._selectRow(this._results.length - selection - 1);
+            if (selection >= 0)
+                this._selectRow(this._results.length - selection - 1);
 
-                return;
-            }
-            items = this._results;
+            return;
         }
+        items = this._results;
 
         if (selection >= 0)
             selection = this._sortTab[selection].idx;
 
-        if (!sortTab) {
-            sortTab = [];
-            for (var i = 0; i < items.length; i++) {
-                for (var j = 0, sortKey = ""; j < this._order.length; j++)
-                    sortKey += items[i].sortKeys[this._order[j]]+"\0";
+        sortTab = [];
+        for (var i = 0; i < items.length; i++) {
+            for (var j = 0, sortKey = ""; j < this._order.length; j++)
+                sortKey += items[i].sortKeys[this._order[j]]+"\0";
 
-                if (this._treeEl) {
-                    items[i].sortKey = sortKey;
-                    sortTab.push({sortKey: sortKey, value: items[i]});
-                } else
-                    sortTab.push({sortKey: sortKey, idx: i});
-            }
-
-            if (this.sortAscending)
-                sortTab.sort(function(a, b) {
-                    return a.sortKey > b.sortKey ? 1 : a.sortKey < b.sortKey ? -1 : 0;
-                });
-            else
-                sortTab.sort(function(a, b) {
-                    return a.sortKey > b.sortKey ? -1 : a.sortKey < b.sortKey ? 1 : 0;
-                });
+            sortTab.push({sortKey: sortKey, idx: i});
         }
 
-        if (this._treeEl) {
-            for (var i = 0; i < sortTab.length; i++)
-                frag.appendChild(sortTab[1].value);
-            this._treeEl.body.appendChild(frag);
-        } else {
-            this._sortTab = sortTab;
+        if (this.sortAscending)
+            sortTab.sort(function(a, b) {
+                return a.sortKey > b.sortKey ? 1 : a.sortKey < b.sortKey ? -1 : 0;
+            });
+        else
+            sortTab.sort(function(a, b) {
+                return a.sortKey > b.sortKey ? -1 : a.sortKey < b.sortKey ? 1 : 0;
+            });
+
+        this._sortTab = sortTab;
+        if (this._tree.invalidate)
             this._tree.invalidate();
 
-            if (selection >= 0)
-                for (var i = 0; i < sortTab.length; i++)
-                    if (sortTab[i].idx == selection) {
-                        this._selectRow(i);
-                        break;
-                    }
-        }
+        if (selection >= 0)
+            for (var i = 0; i < sortTab.length; i++)
+                if (sortTab[i].idx == selection) {
+                    this._selectRow(i);
+                    break;
+                }
     },
 
     _cycleColumnSort: function(treecol, idx) {
@@ -220,34 +185,13 @@ TreeView.prototype = {
     addValue: function(value) {
         var columns, items;
 
-        if (this._treeEl) {
-            var item = document.createElement("treeitem");
-            var row = document.createElement("treerow");
-
-            item.appendChild(row);
-            item.model = value;
-            items = this._treeEl.body.childNodes;
-
-            columns = this._treeEl.columns;
-            for (var i = 0; i < columns.count; i++) {
-                row.appendChild(document.createElement("treecell")).
-                    setAttribute("label", this.dataModel.
-                                 cellText(columns.getColumnAt(i).id, value));
-            }
-        } else {
-            columns = this._tree.columns;
-            items = this._sortTab;
-        }
+        columns = this._tree.columns;
+        items = this._sortTab;
 
         var sortKeys = this.dataModel.sortKeys(columns, value);
 
         for (var i = 0, sortKey = ""; i < this._order.length; i++)
             sortKey += sortKeys[this._order[i]]+"\0";
-
-        if (this._treeEl) {
-            item.sortKeys = sortKeys;
-            item.sortKey = sortKey;
-        }
 
         var mid = 0;
         if (this.sortColumn >= 0) {
@@ -268,16 +212,10 @@ TreeView.prototype = {
             if (!found)
                 mid = a;
 
-            if (this._treeEl)
-                this._treeEl.body.insertBefore(item, items[mid]);
-            else {
-                this._sortTab.splice(mid, 0, {sortKey: sortKey, idx: this._results.length});
-                this._results.push({value: value, sortKeys: sortKeys});
-                this._tree.rowCountChanged(mid, 1);
-            }
-        } else if (this._treeEl)
-            this._treeEl.body.appendChild(item)
-        else {
+            this._sortTab.splice(mid, 0, {sortKey: sortKey, idx: this._results.length});
+            this._results.push({value: value, sortKeys: sortKeys});
+            this._tree.rowCountChanged(mid, 1);
+        } else {
             this._sortTab.push({sortKey: sortKey, idx: this._results.length});
             this._results.push({value: value, sortKeys: sortKeys});
             this._tree.rowCountChanged(this._results.length-1, 1);
