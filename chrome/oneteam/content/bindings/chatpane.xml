@@ -46,6 +46,11 @@
             this._onMessageQueueChanged();
           }
 
+          this._threads = [];
+          this._freeThreads = [];
+          this._messageIdMap = {};
+          this._lastNickMessage = {};
+
           return val;
         ]]></setter>
       </property>
