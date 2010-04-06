@@ -146,8 +146,47 @@ _DECL_(NotificationScheme).prototype =
     },
 
 // #ifdef XULAPP
+    _fixMsgForAS: function(str) {
+        return str.replace(/<b>/g, "").replace(/<\/b>/g, "").replace(/<br\/>/g, " - ");
+    },
+
     _showAlert: function(title, msg, icon, clickHandler, animation)
     {
+        if (this._alertSvc == null) {
+            if (navigator.platform.indexOf("Mac") >= 0 ||
+                navigator.platform.indexOf("Darwin") >= 0)
+            {
+                try {
+                    this._alertSvc = Components.classes["@mozilla.org/alerts-service;1"].
+                        getService(Components.interfaces.nsIAlertsService);
+                } catch (ex) {
+                    this._alertSvc = false;
+                }
+            } else
+                this._alertSvc = false;
+        }
+
+        if (this._alertSvc) {
+            try {
+                this._alertSvc.showAlertNotification(icon,
+                                                     this._fixMsgForAS(title),
+                                                     this._fixMsgForAS(msg),
+                                                     false, null, {
+                                                        ch: clickHandler,
+                                                        win: findCallerWindow(),
+                                                        observe: function(s, t, d) {
+                                                            if (t != "alertclickcallback")
+                                                                return;
+                                                            if (this.win)
+                                                                this.win.focus();
+                                                            if (this.ch)
+                                                                this.ch.call();
+                                                        }
+                                                     });
+                return this._nopCanceler;
+            } catch (ex) { }
+        }
+
         if (this._top < 150 || this._wins.length > 8)
             return this._nopCanceler;
         return {
