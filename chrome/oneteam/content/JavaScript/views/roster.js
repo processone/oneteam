@@ -316,7 +316,7 @@ _DECL_(ContactView).prototype =
 
     onNameChange: function()
     {
-        this.label.setAttribute("value", this.model.name || this.model.jid.node);
+        this.label.setAttribute("value", this.model.visibleName);
 
         this.parentView.onItemUpdated(this);
     },
@@ -493,7 +493,7 @@ _DECL_(ContactTooltip).prototype =
     onTooltipShowing: function()
     {
         this.avatar.setAttribute("src", this.model.avatar);
-        this.name.setAttribute("value", this.model.visibleName || this.model.jid.toUserString());
+        this.name.setAttribute("value", this.model.visibleName);
         this.subscription.setAttribute("value", this.model.subscription);
 
         while (this.resourcesContainer.firstChild)

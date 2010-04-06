@@ -118,10 +118,10 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
         this._groups = groups || [];
         this.newItem = true;
         this.groups = [];
-        this.visibleName = name || this.jid.node;
+        this.visibleName = name || this.jid.node || this.jid.toUserString();
     } else {
         this.name = name;
-        this.visibleName = name || this.jid.node;
+        this.visibleName = name || this.jid.node || this.jid.toUserString();
         this.subscription = subscription || "none";
         this.subscriptionAsk = !!subscriptionAsk;
 
@@ -216,7 +216,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
             this._parseNode(node, true);
 
         this.name = this.name;
-        this.visibleName = this.name || this.jid.node;
+        this.visibleName = this.name || this.jid.node || this.jid.toUserString();
         delete this._inRoster;
 
         for (var i = 0; i < this.groups.length; i++) {
