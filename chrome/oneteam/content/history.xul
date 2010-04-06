@@ -38,7 +38,7 @@
 
       sortKeys: function(columns, value) {
         if (columns.count > 1)
-          return [this.cellText("jid", value), ""+value.time.getTime()];
+          return [this.cellText("jid", value), ""+(100000000000000+value.time.getTime())];
 
         return [this.cellText("jid", value)]
       }
