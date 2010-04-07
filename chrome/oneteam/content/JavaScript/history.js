@@ -425,7 +425,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         }
 
         if (!token) {
-            token = {threads: [], lastIndex: 0};
+            token = {threads: [], lastIndex: -1};
 
             if (!this._jidIds)
                 this._loadJIDs();
