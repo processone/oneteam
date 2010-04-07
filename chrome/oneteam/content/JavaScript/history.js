@@ -241,7 +241,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         if (!this._jidIds)
             this._loadJIDs();
 
-        if (!this._jidIds[jid]) {
+        if (!(jid in this._jidIds)) {
             this.addJidStmt.bindStringParameter(0, jid);
             this.addJidStmt.execute();
             return this._jidIds[jid] = this.db.lastInsertRowID;
@@ -296,6 +296,12 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             this._loadJIDs();
 
         var stmt = this.getThreadsForJidIdsStmt;
+
+        if (!(contact.jid in this._jidIds)) {
+            observer._startBatchUpdate();
+            observer._endBatchUpdate(true);
+            return this._registerCallback(observer, token, "threads-"+contact.jid);
+        }
 
         stmt.bindInt32Parameter(0, this._jidIds[contact.jid]);
 
@@ -431,6 +437,9 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
                 this._loadJIDs();
 
             var stmt = this.getThreadsForJidIdsStmt;
+
+            if (!(contact.jid in this._jidIds))
+                return [token, []];
 
             stmt.bindInt32Parameter(0, this._jidIds[contact.jid]);
 
