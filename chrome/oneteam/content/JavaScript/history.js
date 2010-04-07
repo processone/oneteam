@@ -152,7 +152,7 @@ function HistoryManager()
 
                 CREATE UNIQUE INDEX jids_by_jid ON jids (jid);
 
-                PRAGMA user_version = 1001;
+                PRAGMA user_version = 2001;
             COMMIT TRANSACTION;
         </sql>.toString());
     if (version < 2000) {
