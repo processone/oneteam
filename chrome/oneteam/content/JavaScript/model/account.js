@@ -1076,7 +1076,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.connected = true;
             this.onDisconnect();
         }
-        report("developer", "error", error, this);
+        var text = error.getElementsByTagName("text")[0];
+        text = text ? text.textContent : "";
+        var stanza = error.getElementsByTagNameNS(NS_STANZAS, "*")[0]
+        stanza = stanza ? stanza.localName : "(unknown)"
+        report("developer", "error", "Error: "+stanza+" "+text, this);
     }
 }
 

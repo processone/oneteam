@@ -209,13 +209,17 @@ _DECL_(XMPPSocket).prototype =
 
     error: function(locator, error)
     {
-        this.listener._handleError();
+        this.listener._handleError("line "+locator.lineNumber+
+                                   ", column "+locator.columnNumber+
+                                   ", error "+error);
     },
 
     fatalError: function(locator, error)
     {
         if (this.is || this.os)
-            this.listener._handleError();
+            this.listener._handleError("line "+locator.lineNumber+
+                                       ", column "+locator.columnNumber+
+                                       ", error "+error);
     },
 
     ignorableWarning: function(locator, error)

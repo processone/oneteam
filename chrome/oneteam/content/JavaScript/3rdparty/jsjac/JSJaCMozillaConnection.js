@@ -86,8 +86,12 @@ JSJaCMozillaConnection.prototype = {
     this._connected = true;
   },
 
-  _handleError: function() {
-    this._handleEvent('onerror',JSJaCError('503','cancel','session-terminate'));
+  _handleError: function(message) {
+    var err = JSJaCError('503','cancel','session-terminate');
+    var te = err.ownerDocument.createElementNS(NS_STANZAS, "text");
+    te.textContent = message;
+    err.appendChild(te);
+    this._handleEvent('onerror', err);
     this._onDisconnect();
   },
 
