@@ -31,8 +31,9 @@
 
 
     function onLoad() {
-      pendingRequests = types.__count__;
+      pendingRequests = 0;
       for (var type in types) {
+        pendingRequests++;
         usersListsEl[type] = document.getElementById(type+"-list");
         usersLists[type] = {};
         document.getElementById(type+"-tab").collapsed = false;

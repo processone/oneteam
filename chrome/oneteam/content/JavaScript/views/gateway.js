@@ -43,7 +43,11 @@ _DECL_(GatewaysMenuView, null, ContainerView).prototype =
         for (i = 0; data.removed && i < data.removed.length; i++)
             this.onItemRemoved(data.removed[i]);
 
-        this.menuItem.hidden = account.gateways.__count__ == 0;
+        for (i in account.gateways) {
+            this.menuItem.hidden = false;
+            return;
+        }
+        this.menuItem.hidden = true;
     },
 
     destroy: function() {

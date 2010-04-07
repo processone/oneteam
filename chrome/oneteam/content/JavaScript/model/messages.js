@@ -770,7 +770,7 @@ _DECL_(Message).prototype =
             var style = {};
             if (el.getAttribute("color"))
                 style.color = el.getAttribute("color")+";";
-            if (style.__count__)
+            for (var i in style)
                 return ["span", {style: style }];
             return [null, null];
         }
@@ -811,8 +811,13 @@ _DECL_(Message).prototype =
                             attrs[info[1][i]] = attr;
                     }
                 }
-                if (info[3] && !attrs.__count__)
-                    nodeName = null;
+                if (info[3]) {
+                    var a = null;
+                    for (a in attrs)
+                        break;
+                    if (!a)
+                        nodeName = null;
+                }
                 if (!info[0])
                     skip = true;
             } else

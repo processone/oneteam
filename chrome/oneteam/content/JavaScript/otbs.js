@@ -34,12 +34,19 @@ _DECL_(SOCKS5Service).prototype =
     },
 
     canReceive: function() {
-        return this.proxies.__count__ > 0;
+        for (i in this.proxies)
+            return true;
+
+        return false;
     },
 
     canSendTo: function(contact)
     {
-        return contact != null && this.proxies.__count__ > 0;
+        if (contact == null)
+            return false;
+        for (var i in this.proxies)
+            return true;
+        return false;
     },
 
     sendFile: function(fileTransfer, rangeOffset, rangeLength)
