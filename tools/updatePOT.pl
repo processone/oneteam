@@ -9,6 +9,7 @@ use Cwd qw(realpath getcwd);
 
 use lib ("$FindBin::Bin/perl5lib", "$FindBin::Bin/perl5lib/3rdparty");
 
+use OneTeam::Utils;
 use OneTeam::L10N::InputFile;
 use OneTeam::L10N::POFile;
 
