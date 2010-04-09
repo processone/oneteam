@@ -336,10 +336,10 @@
           var newMessages = arg ? arg.added : this._model.messages;
 
           if (!this._msgs) {
-            [this.archivedMsgToken, this._msgs] = account.historyMgr.
-              getLastMessagesFromContact(this._model.contact, 10,
-                                         newMessages && newMessages.length ?
-                                            newMessages[0].time.getTime() : null);
+            [this.archivedMsgToken, this._msgs, this._hasMoreArchivedMessages] =
+              account.historyMgr.getLastMessagesFromContact(this._model.contact, 10,
+                                                            newMessages && newMessages.length ?
+                                                            newMessages[0].time.getTime() : null);
           }
 
 
@@ -408,9 +408,12 @@
 
       <method name="_prependMessages">
         <body><![CDATA[
-          var msgs;
-          [this.archivedMsgToken, msgs] = account.historyMgr.
+          var msgs, hasMore;
+          [this.archivedMsgToken, msgs, hasMore] = account.historyMgr.
             getLastMessagesFromContact(this._model.contact, 10, this.archivedMsgToken);
+
+          if (!hasMore)
+            this._fetchMoreArrow.style.display = "none";
 
           var doc = this._output.contentDocument;
           var pos = doc.body.clientHeight - doc.body.scrollTop;
@@ -442,7 +445,7 @@
           }
           var scrEl = doc.body;
 
-          if (!this._fetchMoreArrow) {
+          if (!this._fetchMoreArrow && this._hasMoreArchivedMessages) {
             this._fetchMoreArrow = doc.createElement("div");
             this._fetchMoreArrow.setAttribute("class", "fetch-more");
             this._fetchMoreArrow.textContent = _("Load more messages from history");

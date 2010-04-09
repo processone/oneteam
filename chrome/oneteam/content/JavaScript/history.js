@@ -475,7 +475,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
                 msgs.unshift(msg);
             }
         }
-        return [token, msgs];
+        return [token, msgs, token.lastIndex >= 0 || token.threads.length > 1];
     }
 }
 
