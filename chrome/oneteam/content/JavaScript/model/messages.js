@@ -1,5 +1,5 @@
 var EXPORTED_SYMBOLS = ["ContactInfo", "MessagesRouter", "MessagesThread",
-                        "Message"];
+                        "Message", "ReplyGroups"];
 
 ML.importMod("roles.js");
 ML.importMod("modeltypes.js");
@@ -968,5 +968,173 @@ _DECL_(Message).prototype =
             last = re.lastIndex;
         }
         return res + xmlEscape(str.substring(last));
+    }
+}
+
+function ReplyGroups(redisplayFun, groupsChangedFun, threadDestroyedFun) {
+    this.age = 0;
+    this.threadsByAge = [];
+    this.msgIdMap = {};
+    this.repliesMap = {};
+    this.redisplayFun = redisplayFun;
+    this.groupsChangedFun = groupsChangedFun;
+    this.threadDestroyedFun = threadDestroyedFun;
+}
+_DECL_(ReplyGroups).prototype =
+{
+    addMessage: function(msg, view) {
+        var msgToken;
+
+        if ("xMessageId" in msg) {
+            if (msg.xMessageId in this.msgIdMap) {
+                msgToken = this.msgIdMap[msg.xMessageId];
+            } else
+                msgToken = this.msgIdMap[msg.xMessageId] = [msg, view];
+
+            if (msg.xMessageId in this.repliesMap) {
+                var replies = this.repliesMap[msg.xMessageId];
+                var thread = -1, threads = [];
+
+                for (var i = 0; i < replies.length; i++)
+                    if (replies[i][2] && threads.indexOf(replies[i][2]) < 0) {
+                        if (thread < 0 || threads[thread].age > replies[i][2].age)
+                            thread = threads.length;
+                        threads.push(replies[i][2]);
+                    }
+
+                if (thread >= 0) {
+                    for (i = 0; i < threads.length; i++)
+                        if (i != thread) {
+                            threadsMap[threads[i]].id = threads[thread];
+                            threads[thread].merge(threads[i]);
+                        }
+
+                    threads[thread].addMessage(msgToken, true);
+
+                    this.age = threads[thread].age+1;
+                    threads = this.threadsByAge.splice(this.age, 10000);
+
+                    for (i = 0; i < threads.length; i++) {
+                        threads[i].invalidated = true;
+                        threads[i].age = this.age++;
+                        this.threadsByAge[threads[i].age] = threads[i];
+                        this.redisplayFun(threads[i]);
+                    }
+                } else
+                    this.getThreadForMsgId(msg.xMessageId);
+
+                for (var i = 0; i < replies.length; i++)
+                    if (!replies[i][2])
+                        msgToken[2].addMessage(replies[i]);
+
+                this.redisplayFun(msgToken[2]);
+                if (thread >= 0)
+                    this.groupsChangedFun();
+
+                delete this.repliesMap[msg.xMessageId];
+            }
+        }
+
+        if (!msgToken)
+            msgToken = [msg, view];
+
+        var xReplyTo = "xReplyTo" in msg ? msg.xReplyTo[0] : null;
+        if (xReplyTo)
+            if (xReplyTo in this.msgIdMap) {
+                this.getThreadForMsgId(xReplyTo).addMessage(msgToken);
+                this.redisplayFun(msgToken[2], msgToken);
+            } else {
+                if (!(xReplyTo in this.repliesMap))
+                    this.repliesMap[xReplyTo] = [];
+                this.repliesMap[xReplyTo].push(msgToken);
+            }
+        if (msgToken[2])
+            msgToken[2].temp = false;
+    },
+
+    repliesIterator: function(msgId) {
+        var token = this.msgIdMap[msgId];
+        while (token) {
+            yield(token);
+            msgId = "xReplyTo" in token[0] ? token[0].xReplyTo[0] : null;
+            token = msgId in this.msgIdMap ? this.msgIdMap[msgId] : null;
+        }
+    },
+
+    getThreadForMsgId: function(msgId) {
+        var token = this.msgIdMap[msgId];
+
+        if (token[2])
+            return token[2];
+
+        token[2] = new ReplyGroup(this);
+        token[2].addMessage(token);
+
+        this.redisplayFun(token[2], token);
+        this.groupsChangedFun(token[2]);
+
+        return token[2];
+    }
+}
+
+function ReplyGroup(groups) {
+    this.invalidated = true;
+    this.age = groups.age++;
+    this.tokens = [];
+    this.groups = groups;
+
+    groups.threadsByAge[this.age] = this;
+}
+_DECL_(ReplyGroup).prototype =
+{
+    temp: true,
+
+    addMessage: function(token, prepend) {
+        if (prepend)
+            this.tokens.unshift(token)
+        else
+            this.tokens.push(token)
+        token[2] = this;
+    },
+
+    merge: function(group) {
+        group.age = this.age;
+        for (var i = 0, j = 0; i < this.tokens.length && j < group.tokens.length;)
+            if (this.tokens[i][1].compareDocumentPosition(group.tokens[j][1]) == 2)
+                i++;
+            else {
+                this.tokens.splice(i, 0, this.group[i]);
+                i++;
+                j++;
+            }
+
+        for (;j < group.tokens.length; j++)
+            this.tokens.push(group.tokens[j]);
+    },
+
+    destroy: function() {
+        if (!this.temp)
+            return;
+        this.groups.threadDestroyedFun(this);
+
+        for (var i = 0; i < this.tokens.length; i++)
+            this.tokens[i][2] = null;
+
+        this.groups.age = this.age;
+        var threads = this.groups.threadsByAge.splice(this.age, 10000);
+
+        this.age = -1;
+
+        for (i = 0; i < threads.length; i++) {
+            threads[i].invalidated = true;
+            threads[i].age = this.age++;
+            this.groups.threadsByAge[threads[i].age] = threads[i];
+        }
+        this.groups.groupsChangedFun();
+    },
+
+    iterator: function(predicate, token, sortFun) {
+        for (var x in iteratorEx(this.tokens, sortFun, predicate, token))
+            yield x;
     }
 }

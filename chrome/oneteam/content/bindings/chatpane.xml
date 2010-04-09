@@ -46,9 +46,6 @@
             this._onMessageQueueChanged();
           }
 
-          this._threads = [];
-          this._freeThreads = [];
-          this._messageIdMap = {};
           this._lastNickMessage = {};
 
           return val;
@@ -87,9 +84,9 @@
         this.colorIndex = 1;
         this.colorTable = prefManager.getPref("chat.messages.colors").split(/\s*,\s*/);
 
-        this._threads = [];
-        this._freeThreads = [];
-        this._messageIdMap = {};
+        this._threadingDriver = new ReplyGroups(new Callback(this._onUpdateThreadsDisplay, this),
+                                                this._threadsChangedFun || function(){},
+                                                new Callback(this._onThreadDestroyed, this))
         this._lastNickMessage = {};
       ]]></constructor>
 
@@ -266,6 +263,8 @@
             this._output.contentDocument.addEventListener("click", function(event) {
               if (event.target.className.indexOf("thread-marker-reply") >= 0)
                 me._threadMarkerClick(event.target)
+              else if (event.target.className.indexOf("fetch-more") >= 0)
+                me._prependMessages();
               else
                 linkEventsRedirector(event);
             }, true)
@@ -275,6 +274,12 @@
 
             var doc = this._output.contentDocument;
             var me = this;
+
+            this._output.contentDocument.addEventListener("contactdblclick", function(event) {
+              var target = event.target;
+              if (target && target.contact)
+                target.contact.onOpenChat();
+            }, false);
 
             this._output.contentDocument.addEventListener("replacewithimage", function(event) {
               var target = event.target;
@@ -401,6 +406,29 @@
         ]]></body>
       </method>
 
+      <method name="_prependMessages">
+        <body><![CDATA[
+          var msgs;
+          [this.archivedMsgToken, msgs] = account.historyMgr.
+            getLastMessagesFromContact(this._model.contact, 10, this.archivedMsgToken);
+
+          var doc = this._output.contentDocument;
+          var pos = doc.body.clientHeight - doc.body.scrollTop;
+
+          var fragment = this._genDocFragmentFromMsgs(msgs, doc, null, null,
+                                                      this._firstMsg, this._firstMsgEl);
+
+          var firstMsgEl = fragment.firstChild;
+
+          this._content.insertBefore(fragment, this._firstMsgEl);
+
+          this._firstMsg = msgs[0];
+          this._firstMsgEl = firstMsgEl;
+
+          doc.body.scrollTop = 0;
+        ]]></body>
+      </method>
+
       <method name="_appendMessages">
         <parameter name="initial"/>
         <body><![CDATA[
@@ -413,6 +441,14 @@
             return
           }
           var scrEl = doc.body;
+
+          if (!this._fetchMoreArrow) {
+            this._fetchMoreArrow = doc.createElement("div");
+            this._fetchMoreArrow.setAttribute("class", "fetch-more");
+            this._fetchMoreArrow.textContent = _("Load more messages from history");
+
+            doc.body.appendChild(this._fetchMoreArrow);
+          }
 
           var scrollToBottom = scrEl.scrollTop + scrEl.clientHeight >= scrEl.scrollHeight - 8 ||
             Animator.animationIsRunning(this._scrollToBottomToken);
@@ -427,48 +463,60 @@
 
           var msgs = this._msgs;
           this._msgs = [];
+          var fragment = this._genDocFragmentFromMsgs(msgs, doc, this._lastMsg, this._lastMsgEl);
+          var msgEl = fragment.lastChild;
 
-          var prevMsg = this._content.lastChild;
+          if (!this._firstMsg) {
+            this._firstMsg = msgs[0];
+            this._firstMsgEl = fragment.firstChild;
+          }
 
-          var msgsChunk = doc.createDocumentFragment();
+          this._content.appendChild(fragment);
+
+          this._model.removeMessages();
+
+          if (this.scrollToBottom && scrollToBottom)
+            if (initial)
+              doc.body.scrollTop = doc.body.scrollHeight;
+            else
+              this._scrollToBottomToken = this.scrollToElement(msgEl);
+
+          this._lastMsg = msgs[msgs.length-1];
+          this._lastMsgEl = msgEl;
+
+          this._updateNonSeenStatus();
+          this._syncMarkers();
+        ]]></body>
+      </method>
+
+      <method name="_genDocFragmentFromMsgs">
+        <parameter name="msgs"/>
+        <parameter name="doc"/>
+        <parameter name="beforeMsg"/>
+        <parameter name="beforeMsgEl"/>
+        <parameter name="afterMsg"/>
+        <parameter name="afterMsgEl"/>
+        <body><![CDATA[
+          var fragment = doc.createDocumentFragment();
 
           for (var i = 0; i < msgs.length; i++) {
             var msg = msgs[i];
             var startsChunk;
 
             var msgEl = doc.createElement("div");
-            msgsChunk.appendChild(msgEl);
             msgEl.setAttribute("class", "message "+msg.classes);
             msgEl.setAttribute("not-seen", "true");
 
-            if (msg.isSystemMessage) {
-              if (prevMsg)
-                prevMsg.setAttribute("ends-chunk", "true");
+            fragment.appendChild(msgEl);
+
+            if (msg.isSystemMessage || !beforeMsg ||
+                beforeMsg.contactId != msg.contactId ||
+                msg.time - beforeMsg.time > 5*60*1000 ||
+                (beforeMsg.offline && !msg.offline))
+            {
+              if (beforeMsgEl)
+                beforeMsgEl.setAttribute("ends-chunk", "true");
               msgEl.setAttribute("starts-chunk", "true");
-              this._lastContactId = null;
-            } else {
-              if (!(msg.contactId in this.colorMap)) {
-                this.colorMap[msg.contactId] = this.colorIndex;
-                this.colorIndex = this.colorIndex%(this.colorTable.length-1) + 1;
-              }
-
-              msgEl.setAttribute("author-id", msg.contactId);
-              msgEl.setAttribute("color-id", this.colorMap[msg.contactId]);
-
-              if (this._lastContactId != msg.contactId || msg.time - this._lastMessageTime > 5*60*1000 ||
-                  !msg.offline != !this._lastMessageOffline) {
-                if (prevMsg)
-                  prevMsg.setAttribute("ends-chunk", "true");
-                msgEl.setAttribute("starts-chunk", "true");
-                startsChunk = true;
-                this._oddChunk = !this._oddChunk;
-              }
-              if (!this._oddChunk)
-                msgEl.setAttribute("odd-chunk", "true");
-
-              this._lastContactId = msg.contactId;
-              this._lastMessageTime = msg.time;
-              this._lastMessageOffline = msg.offline
             }
 
             if (!this._visible && !this._firstNotSeenMsg && !msg.isSystemMessage)
@@ -518,121 +566,140 @@
             e.setAttribute("class", "body");
             e.innerHTML = msg.formatedHtml;
 
-            var parentMsgEl = null;
-            var xReplyTo = msg.xReplyTo && msg.xReplyTo[0];
-            if (xReplyTo && (parentMsgEl = this._messageIdMap[xReplyTo])) {
-              if (!parentMsgEl.thread) {
-                parentMsgEl.thread = this._createNewThread(false);
-                parentMsgEl.lastChild.firstChild.src = parentMsgEl.thread.image;
-              } else if (parentMsgEl.thread.temporary) {
-                parentMsgEl.thread.temporary = false;
-                if (this._threadCreatedFun)
-                  this._threadCreatedFun(parentMsgEl.thread);
-              }
-
-              if (this._trackedMessage == xReplyTo) {
-                this._trackedMessage = msg.xMessageId;
-                parentMsgEl.thread.msgEl = msgEl;
-              }
-
-              msgEl.parentMsgEl = parentMsgEl;
-              msgEl.thread = parentMsgEl && parentMsgEl.thread;
-
-              if (this._selectedThread && this._selectedThread== msgEl.thread.idx) {
-                msgEl.setAttribute("in-selected-thread", "true");
-                msgEl.setAttribute("ends-selected-chunk", "true");
-                if (msgEl.thread._lastMessage != prevMsg)
-                  msgEl.setAttribute("starts-selected-chunk", "true");
-                else
-                  msgEl.thread._lastMessage.removeAttribute("ends-selected-chunk");
-              }
-
-              if (msgEl.thread)
-                msgEl.thread._lastMessage = msgEl;
-            }
-
-            if (msg.xMessageId) {
-              this._messageIdMap[msg.xMessageId] = msgEl;
-              this._lastNickMessage[msg.nick] = msgEl;
-
-              msgEl.twitterNick = msg.xTwitterNick;
-              msgEl.messageId = msg.xMessageId;
-            }
-
-            if ((msg.xMessageId || xReplyTo) && !msg.isSystemMessage) {
-              var im = doc.createElement("img");
-              im.src = msgEl.thread ? msgEl.thread.image :
-                "resource://oneteam-skin/chatpane/imgs/add-thread.png";
-
-              var handler = {
-                _this: this,
-                handleEvent: function(event) {
-                  if (event.target.src.indexOf("resource://") == 0)
-                    return;
-                  if (event.type == "mouseover") {
-                    if (!this._inside) {
-                      this._inside = true;
-                      this._this._onThreadMarkerOver(event.target);
-                    }
-                  } else if (this._inside) {
-                    this._inside = false;
-                      this._this._onThreadMarkerOut(event.target);
-                  }
-                }
-              }
-              im.addEventListener("mouseover", handler, false);
-              im.addEventListener("mouseout", handler, false);
-
-              im.setAttribute("class", "thread-marker" +
-                              (msg.xMessageId ? " thread-marker-reply" : ""));
-
-              e.insertBefore(im, e.firstChild);
-            }
-
             msg.markAsSeen();
-
             msgEl.appendChild(e);
 
-            prevMsg = msgEl;
+            beforeMsg = msg;
+            beforeMsgEl = msgEl;
+
+            if (!msg.isSystemMessage) {
+              var xReplyTo = "xReplyTo" in msg ? msg.xReplyTo[0] : null;
+              var xMessageId = "xMessageId" in msg ? msg.xMessageId : null;
+
+              if (xMessageId) {
+                if (!afterMsg)
+                  this._lastNickMessage[msg.nick] = xMessageId;
+
+                msgEl.twitterNick = msg.xTwitterNick;
+                msgEl.msgId = xMessageId;
+              }
+
+              if (xReplyTo || xMessageId) {
+                var im = doc.createElement("img");
+                im.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
+
+                var handler = {
+                  _this: this,
+                  handleEvent: function(event) {
+                    if (event.target.src.indexOf("resource://") == 0)
+                      return;
+                    if (event.type == "mouseover") {
+                      if (!this._inside) {
+                        this._inside = true;
+                        this._this._onThreadMarkerOver(event.target);
+                      }
+                    } else if (this._inside) {
+                      this._inside = false;
+                        this._this._onThreadMarkerOut(event.target);
+                    }
+                  }
+                }
+                im.addEventListener("mouseover", handler, false);
+                im.addEventListener("mouseout", handler, false);
+
+                im.setAttribute("class", "thread-marker" +
+                                (msg.xMessageId ? " thread-marker-reply" : ""));
+
+                e.insertBefore(im, e.firstChild);
+
+                this._threadingDriver.addMessage(msg, msgEl);
+
+                if (xMessageId && this._input.thread &&
+                    this._threadingDriver.msgIdMap[xMessageId][2] == this._input.thread)
+                  this._input.msgId = xMessageId;
+              }
+            }
           }
 
-          this._content.appendChild(msgsChunk);
+          if (afterMsg) {
+            if (!msg.isSystemMessage && afterMsg.contactId == msg.contactId &&
+                afterMsg.time - msg.time < 5*60*1000 &&
+                afterMsg.offline == msg.offline)
+            {
+              afterMsgEl.removeAttribute("starts-chunk");
+              msgEl.removeAttribute("ends-chunk");
+            } else
+              msgEl.setAttribute("ends-chunk", "true");
+          }
 
-          this._model.removeMessages();
+          return fragment;
+        ]]></body>
+      </method>
 
-          if (this.scrollToBottom && scrollToBottom)
-            if (initial)
-              doc.body.scrollTop = doc.body.scrollHeight;
-            else
-              this._scrollToBottomToken = this.scrollToElement(msgEl);
+      <method name="_onUpdateThreadsDisplay">
+        <parameter name="thread"/>
+        <parameter name="msgToken"/>
+        <body><![CDATA[
+          if (this._selectedThread)
+            if (this._selectedThread.age == thread.age && msgToken) {
+              msgToken[1].setAttribute("in-selected-thread", "true");
+              msgToken[1].setAttribute("ends-selected-chunk", "true");
 
-          this._updateNonSeenStatus();
-          this._syncMarkers();
+              lastThreadMsgToken = thread.tokens[thread.tokens.length-2];
+
+              if (msgToken[1].previousSibling == lastThreadMsgToken[1])
+                msgEl.setAttribute("starts-selected-chunk", "true");
+              else
+                lastThreadMsgToken[1].removeAttribute("ends-selected-chunk");
+            } else
+              this._selectThread(this._selectedThread);
+
+          if (thread.invalidated) {
+            thread.image = this._drawThreadMarker(""+(thread.age+1));
+            thread.invalidated = false;
+          }
+
+          if (!msgToken) {
+            for (var token in thread.iterator())
+              token[1].lastChild.firstChild.src = thread.image;
+          } else
+            msgToken[1].lastChild.firstChild.src = thread.image;
+        ]]></body>
+      </method>
+
+      <method name="_onThreadDestroyed">
+        <parameter name="thread"/>
+        <body><![CDATA[
+          for (var token in thread.iterator())
+            token[1].lastChild.firstChild.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
+        ]]></body>
+      </method>
+
+      <method name="_setInputReplyMsgId">
+        <parameter name="msgId"/>
+        <body><![CDATA[
+          this._input.thread = null;
+
+          var thread = this._threadingDriver.getThreadForMsgId(msgId);
+          if (thread.invalidated) {
+            thread.image = this._drawThreadMarker(""+(thread.age+1));
+            thread.invalidated = false;
+          }
+
+          var msgEl = this._threadingDriver.msgIdMap[msgId][1];
+
+          this._input.thread = thread;
+          this._input.msgId = msgId;
+
+          if (msgEl.twitterNick)
+            this._input._append("@"+msgEl.twitterNick);
         ]]></body>
       </method>
 
       <method name="_threadMarkerClick">
         <parameter name="el"/>
         <body><![CDATA[
-          var msgEl = el.parentNode.parentNode;
-
-          this._input.thread = null;
-
-          if (!msgEl.thread) {
-            msgEl.thread = this._createNewThread(true);
-            msgEl.thread.el = el;
-            msgEl.thread.freeCallback = function(t) {
-              t.msgEl.thread = null;
-              t.msgEl = null;
-              t.el.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
-            }
-          }
-          msgEl.thread.msgEl = msgEl;
-
-          el.src = msgEl.thread.image;
-          this._input.thread = msgEl.thread;
-          if (msgEl.twitterNick)
-            this._input._append("@"+msgEl.twitterNick);
+          this._setInputReplyMsgId(el.parentNode.parentNode.msgId);
         ]]></body>
       </method>
 
@@ -676,49 +743,12 @@
         ]]></body>
       </method>
 
-      <method name="_createNewThread">
-        <parameter name="temp"/>
-        <body><![CDATA[
-          var thread;
-
-          if (this._freeThreads.length) {
-            thread = this._freeThreads.shift();
-            thread.temporary = temp;
-          } else
-            thread = {
-              _this: this,
-              idx: this._threads.length,
-
-              free: function() {
-                if (!this.temporary || !this.freeCallback)
-                  return;
-
-                this._this._freeThreads.push(this)
-
-                this.freeCallback(this);
-                this.freeCallback = null;
-              },
-              temporary: temp,
-            };
-
-          thread.image = this._drawThreadMarker(""+(thread.idx+1));
-          this._threads.push(thread);
-
-          if (!temp && this._threadCreatedFun)
-            this._threadCreatedFun(thread);
-
-          return thread;
-        ]]></body>
-      </method>
-
       <method name="_onThreadMarkerOver">
         <parameter name="el"/>
         <body><![CDATA[
-          el = el.parentNode.parentNode;
-          while (el) {
-            el.setAttribute("in-marked-thread", "true");
-            el = el.parentMsgEl;
-          }
+          for (var token in this._threadingDriver.repliesIterator(el.parentNode.parentNode.msgId))
+            token[1].setAttribute("in-marked-thread", "true");
+
           this._output.contentDocument.body.setAttribute("marked-thread", "true");
         ]]></body>
       </method>
@@ -726,50 +756,52 @@
       <method name="_onThreadMarkerOut">
         <parameter name="el"/>
         <body><![CDATA[
-          el = el.parentNode.parentNode;
           this._output.contentDocument.body.removeAttribute("marked-thread");
-          while (el) {
-            el.removeAttribute("in-marked-thread")
-            el = el.parentMsgEl;
-          }
+          for (var token in this._threadingDriver.repliesIterator(el.parentNode.parentNode.msgId))
+            token[1].removeAttribute("in-marked-thread");
         ]]></body>
       </method>
 
       <method name="_selectThread">
-        <parameter name="id"/>
+        <parameter name="thread"/>
         <body><![CDATA[
           var msgs = this._content.childNodes;
 
-          var startNewThread = true, lastEl;
+          if (!thread)
+            this._output.contentDocument.body.removeAttribute("hide-not-marked");
 
-          for (var i = 0; i < msgs.length; i++) {
-            var el = msgs[i];
-            if (id == "all" || !el.thread || el.thread.idx != id) {
-              el.removeAttribute("in-selected-thread");
-              el.removeAttribute("starts-selected-chunk");
-              el.removeAttribute("ends-selected-chunk");
-              startNewThread = true;
-            } else {
-              el.setAttribute("in-selected-thread", "true");
-              if (startNewThread) {
-                if (lastEl)
-                  lastEl.setAttribute("ends-selected-chunk", true);
-                el.setAttribute("starts-selected-chunk", true);
-                startNewThread = false;
-              }
-              lastEl = el;
+          if (this._selectedThread && (!thread || this._selectedThread.age != thread.age)) {
+            for (var token in this._selectedThread.iterator()) {
+              token[1].removeAttribute("in-selected-thread");
+              token[1].removeAttribute("starts-selected-chunk");
+              token[1].removeAttribute("ends-selected-chunk");
             }
           }
-          if (lastEl) {
-            lastEl.setAttribute("ends-selected-chunk", true);
-            lastEl.thread._lastMessage = lastEl;
+
+          if (thread) {
+            var prevToken;
+            for (var token in thread.iterator()) {
+              token[1].setAttribute("in-selected-thread", "true");
+              if (!prevToken || prevToken[1] != token[1].previousSibling) {
+                if (prevToken)
+                  prevToken[1].setAttribute("ends-selected-chunk", true);
+                token[1].setAttribute("starts-selected-chunk", true);
+              } else {
+                if (prevToken)
+                  prevToken[1].removeAttribute("ends-selected-chunk");
+                token[1].removeAttribute("starts-selected-chunk");
+              }
+              prevToken = token;
+            }
           }
 
-          this._selectedThread = id;
+          if (token) {
+            token[1].setAttribute("ends-selected-chunk", true);
+          }
 
-          if (id == "all")
-            this._output.contentDocument.body.removeAttribute("hide-not-marked");
-          else
+          this._selectedThread = thread;
+
+          if (thread)
             this._output.contentDocument.body.setAttribute("hide-not-marked", "true");
         ]]></body>
       </method>
@@ -939,7 +971,7 @@
       <property name="thread" onget="return this._thread">
         <setter><![CDATA[
           if (this._thread)
-            this._thread.free();
+            this._thread.destroy();
 
           this._thread = val;
 
@@ -1641,7 +1673,7 @@
         this._input._preMaybeResize = new Callback(this._preMaybeResize, this);
         this._input._postMaybeResize = new Callback(this._postMaybeResize, this);
 
-        this._output._threadCreatedFun = new Callback(this._onThreadCreated, this);
+        this._output._threadsChangedFun = new Callback(this._onThreadsChanged, this);
 
         var deck = this._threadPickerContainer.parentNode;
 
@@ -1653,7 +1685,7 @@
           event.target.parentNode.selectedIndex = 1;
         }, false);
 
-        this.addThread("ALL", "all");
+        this.addThread("ALL", "-1");
 
         recoverSetters(this);
 
@@ -1815,6 +1847,11 @@
 
           var ss = document.styleSheets[document.styleSheets.length-1];
 
+          if (this._maxThreads >= value)
+            return;
+
+          this._maxThreads = value;
+
           ss.insertRule('#thread-picker-container radio[value="'+value+'"] {'+
                         'list-style-image: url("'+this._output._drawThreadMarker(label)+'");}', 0);
           ss.insertRule('#thread-picker-container radio[value="'+value+'"][selected="true"] {'+
@@ -1822,11 +1859,41 @@
         ]]></body>
       </method>
 
-      <method name="_onThreadCreated">
+      <method name="_onThreadsChanged">
         <parameter name="thread"/>
         <body><![CDATA[
-          this._threadPicker.hidden = false;
-          this.addThread(thread.idx+1, thread.idx);
+          if (thread) {
+            this._threadPicker.hidden = false;
+            this.addThread(thread.age+1, thread.age);
+          } else {
+            var threads = this._output._threadingDriver.threadsByAge;
+
+            if (threads.length == 0)
+              this._threadPicker.hidden = true;
+
+            var list = this._threadPickerContainer;
+            var list2 = this._threadPickerMenulist.firstChild;
+
+            while (threads.length < list.childNodes.length-1) {
+              list.removeChild(list.lastChild);
+              list2.removeChild(list2.lastChild);
+            }
+
+            var st = this._output._selectedThread;
+
+            if (st) {
+              var thread = st.age < 0 ?
+                null : this._output._threadingDriver.threadsByAge[st];
+
+              if (thread != st) {
+                this._output._selectThread(thread);
+
+                this._threadPickerMenulist.value = this._threadPickerContainer.value =
+                  this._output._selectedThread ?
+                    this._output._selectedThread.age : -1;
+              }
+            }
+          }
         ]]></body>
       </method>
 
@@ -1877,15 +1944,13 @@
           if (~text.search(/\S/)) {
             if (!this.completionEngine || !this.completionEngine.execCommand(text)) {
               var idx = text.indexOf(":");
-              var msgEl = idx > 0  ? this._output._lastNickMessage[text.substr(0, idx)] : null;
+              var nick = idx > 0 ? text.substr(0, idx) : "";
 
-              if (msgEl && !this._input.thread)
-                this._output._threadMarkerClick(msgEl.lastChild.firstChild);
+              var msgId = nick in this._output._lastNickMessage ?
+                this._output._lastNickMessage[nick] : null;
 
-              msgEl = this._input.thread && this._input.thread.msgEl;
-
-              if (msgEl)
-                this._output._trackedMessage = msgEl.messageId;
+              if (msgId && !this._input.thread)
+                this._output._setInputReplyMsgId(msgId);
 
               var ev = document.createEvent("Events");
               ev.initEvent("chat-send", true, false);
@@ -1903,7 +1968,7 @@
                                     null, this._model)
 
               if (this._input.thread)
-                msg.xReplyTo = [this._input.thread.msgEl.messageId];
+                msg.xReplyTo = [this._input.msgId];
 
               this._model.sendMessage(msg);
 
@@ -1920,7 +1985,8 @@
         if (event.originalTarget.parentNode == this._threadPickerContainer ||
             event.originalTarget.parentNode.parentNode == this._threadPickerMenulist)
         {
-          this._output._selectThread(event.originalTarget.value);
+          this._output._selectThread(this._output._threadingDriver.
+                                     threadsByAge[event.originalTarget.value]);
 
           this._threadPickerMenulist.value = this._threadPickerContainer.value =
             event.originalTarget.value;

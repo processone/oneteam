@@ -209,3 +209,18 @@ body[marked-thread=true] .message[in-marked-thread=true] {
     margin: 15px 10px;
     bottom: 0px;
 }
+
+.fetch-more {
+    font-size: 75%;
+    color: #959595;
+    padding-top: 30px;
+    background: url(imgs/fetch-more.png) center top no-repeat;
+    text-align: center;
+    cursor: pointer;
+    -moz-user-select: none;
+}
+
+.fetch-more:hover {
+    background: red;
+    color: #515151;
+}
