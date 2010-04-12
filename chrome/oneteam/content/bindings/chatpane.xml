@@ -337,11 +337,9 @@
 
           if (!this._msgs) {
             [this.archivedMsgToken, this._msgs, this._hasMoreArchivedMessages] =
-              account.historyMgr.getLastMessagesFromContact(this._model.contact, 10,
-                                                            newMessages && newMessages.length ?
-                                                            newMessages[0].time.getTime() : null);
+              this.model.getMessagesFromHistory(10, newMessages && newMessages.length ?
+                                                newMessages[0].time.getTime() : null);
           }
-
 
           if (newMessages && newMessages.length) {
             this._msgs.push.apply(this._msgs, newMessages);
@@ -409,8 +407,8 @@
       <method name="_prependMessages">
         <body><![CDATA[
           var msgs, hasMore;
-          [this.archivedMsgToken, msgs, hasMore] = account.historyMgr.
-            getLastMessagesFromContact(this._model.contact, 10, this.archivedMsgToken);
+          [this.archivedMsgToken, msgs, hasMore] =
+            this.model.getMessagesFromHistory(10, this.archivedMsgToken);
 
           if (!hasMore)
             this._fetchMoreArrow.style.display = "none";
@@ -507,7 +505,7 @@
             var startsChunk;
 
             var msgEl = doc.createElement("div");
-            msgEl.setAttribute("class", "message "+msg.classes);
+            msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
             msgEl.setAttribute("not-seen", "true");
 
             fragment.appendChild(msgEl);
@@ -617,7 +615,7 @@
 
                 this._threadingDriver.addMessage(msg, msgEl);
 
-                if (xMessageId && this._input.thread &&
+                if (xMessageId && this._input && this._input.thread &&
                     this._threadingDriver.msgIdMap[xMessageId][2] == this._input.thread)
                   this._input.msgId = xMessageId;
               }
@@ -815,10 +813,12 @@
             if (this._content)
               this._content.parentNode.removeChild(this._content);
 
-            this._content = this._msgsContainer =
-              this._lastMessageTime = this._lastContactId = null;
-            this._lastMessageOffline = false;
-            this._msgs = null;
+            this._content = this._msgsContainer = this.archivedMsgToken =
+              this._msgs = this._firstNotSeenMsg =
+              this._firstMsg = this._firstMsgEl =
+              this._lastMsg = this._lastMsgEl = null;
+
+            this._threadingDriver.reset();
           ]]>
         </body>
       </method>

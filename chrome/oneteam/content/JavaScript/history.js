@@ -18,10 +18,13 @@ function ArchivedMessagesThreadBase(contact, threadID, time)
     this._nicksHash = {};
     this._msgIdMap = {};
     this._revMsgIdMap = {};
+    this.allMessages = [];
 }
 
 _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
 {
+    isFromArchive: true,
+
     _getContact: function(nick, jid, representsMe)
     {
         var contact = account.getContactOrResource(jid);
@@ -50,6 +53,7 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
         this.inBatch = false;
         this.batchMsgs = null;
         this.messages.push.apply(this.messages, msgs);
+        this.allMessages.push.apply(this.allMessages, msgs);
         this.modelUpdated("messages", {added: msgs});
     },
 
@@ -62,6 +66,7 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
 
             msg = new Message(msg.text, msg.html, msg.contact, msg.type,
                               msg.time, this, null, msg.myNick);
+            msg.archived = true;
 
             if (msgId)
                 msg.xMessageId = msgId;
@@ -76,9 +81,14 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
         }
 
         this.messages.push(msg);
+        this.allMessages.push(msg);
         this.modelUpdated("messages", {added: [msg]});
 
         return msg;
+    },
+
+    getMessagesFromHistory: function(count, token) {
+        return [null, [], false];
     },
 
     PROP_VIEWS: {
@@ -86,6 +96,7 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
             onStartWatching: function(_this, prop) {
                 if (!_this.watched) {
                     _this.watched = true;
+                    _this.messages = _this.allMessages.concat([]);
                     _this.getNewMessages();
                 }
             },
@@ -452,7 +463,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             var lastThread = token.threads[token.threads.length-1];
             if (lastThread) {
                 lastThread.getNewMessages();
-                token.lastIndex = lastThread.messages.length-1;
+                token.lastIndex = lastThread.allMessages.length-1;
             }
         }
 
@@ -464,16 +475,15 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
                 if (!lastThread)
                     break;
                 lastThread.getNewMessages();
-                token.lastIndex = lastThread.messages.length-1;
+                token.lastIndex = lastThread.allMessages.length-1;
             } else
                 lastThread = token.threads[token.threads.length-1];
 
-            var msg = lastThread.messages[token.lastIndex--];
+            dump(token.lastIndex+"\n");
+            var msg = lastThread.allMessages[token.lastIndex--];
 
-            if (!msg.isSystemMessage && msg.time.getTime() < olderThan) {
-                msg.archived = true;
+            if (!msg.isSystemMessage && msg.time.getTime() < olderThan)
                 msgs.unshift(msg);
-            }
         }
         return [token, msgs, token.lastIndex >= 0 || token.threads.length > 1];
     }
@@ -514,6 +524,7 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
                 var msg = new Message(stmt.getString(2), stmt.getString(3),
                                       contact, stmt.getInt32(1),
                                       new Date(this._lastMessageTime), this);
+                msg.archived = true;
 
                 msg.xMessageId = generateRandomName(8);
                 this._msgIdMap[msg.xMessageId] = stmt.getInt64(6);

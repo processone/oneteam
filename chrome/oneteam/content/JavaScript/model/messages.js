@@ -286,8 +286,8 @@ function MessagesThread(threadID, contact)
     this._threadID = threadID;
     this._contactIds = [];
     this.unseenCount = 0;
+    this.contact = contact;
     if (contact && contact.hasDiscoFeature) {
-        this.contact = contact;
         var activeResource = contact.activeResource || contact
         this._handleChatState = contact instanceof Conference ? false :
             activeResource.hasDiscoFeature("http://jabber.org/protocol/chatstates");
@@ -299,6 +299,7 @@ function MessagesThread(threadID, contact)
 
 _DECL_(MessagesThread, Model).prototype =
 {
+    isFromArchive: false,
     peerChatState: null,
     _visible: false,
     _handleChatState: null,
@@ -510,6 +511,11 @@ _DECL_(MessagesThread, Model).prototype =
         this.contact.sendMessage(msg);
     },
 
+    getMessagesFromHistory: function(count, token) {
+        return account.historyMgr.
+            getLastMessagesFromContact(this.contact, count, token);
+    },
+
     _onChatPaneClosed: function() {
         this.contact._onChatPaneClosed(this.chatPane);
         this.chatState = "gone";
@@ -640,14 +646,14 @@ _DECL_(Message).prototype =
         return this.isMucMessage ? this.contact.jid.resource : this.contact.visibleName;
     },
 
-    get classes() {
+    getClasses: function(neverArchived) {
         var res = this.isSystemMessage ? ["systemMessage"] : [];
 
         if (this.text.indexOf("/me ") == 0)
             res.push("meMessage");
         if (this.offline)
             res.push("offline");
-        if (this.archived)
+        if (this.archived && !neverArchived)
             res.push("archived");
         if (this.isDirectedMessage)
             res.push("directed");
@@ -689,9 +695,7 @@ _DECL_(Message).prototype =
 
     markAsSeen: function()
     {
-        if (typeof(ArchivedMessagesThreadBase) == "undefined" ||
-                !(this.thread instanceof ArchivedMessagesThreadBase))
-            this.archived = true;
+        this.archived = true;
     },
 
     fillPacket: function(pkt)
@@ -972,13 +976,11 @@ _DECL_(Message).prototype =
 }
 
 function ReplyGroups(redisplayFun, groupsChangedFun, threadDestroyedFun) {
-    this.age = 0;
-    this.threadsByAge = [];
-    this.msgIdMap = {};
-    this.repliesMap = {};
     this.redisplayFun = redisplayFun;
     this.groupsChangedFun = groupsChangedFun;
     this.threadDestroyedFun = threadDestroyedFun;
+
+    this.reset();
 }
 _DECL_(ReplyGroups).prototype =
 {
@@ -1050,6 +1052,13 @@ _DECL_(ReplyGroups).prototype =
             }
         if (msgToken[2])
             msgToken[2].temp = false;
+    },
+
+    reset: function() {
+        this.age = 0;
+        this.threadsByAge = [];
+        this.msgIdMap = {};
+        this.repliesMap = {};
     },
 
     repliesIterator: function(msgId) {

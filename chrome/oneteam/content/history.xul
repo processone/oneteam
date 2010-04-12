@@ -17,7 +17,7 @@
     ML.importMod("colorutils.js");
     ML.importMod("dateutils.js");
 
-    contact = window.arguments && window.arguments[0];
+    var contact = window.arguments && window.arguments[0];
 
     var dataModel = {
       cellText: function(id, value) {
