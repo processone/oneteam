@@ -464,8 +464,18 @@
 
           var msgs = this._msgs;
           this._msgs = [];
+
+          var notSeenIndex = -1;
+          if (!this._visible && !this._firstNotSeenMsg)
+            for (var i = 0; notSeenIndex < 0 && i < msgs.length; i++)
+              if (!msgs[i].archived && !msgs[i].isSystemMessage)
+                notSeenIndex = i;
+
           var fragment = this._genDocFragmentFromMsgs(msgs, doc, this._lastMsg, this._lastMsgEl);
           var msgEl = fragment.lastChild;
+
+          if (notSeenIndex >= 0)
+            this._firstNotSeenMsg = fragment.childNodes[notSeenIndex];
 
           if (!this._firstMsg) {
             this._firstMsg = msgs[0];
@@ -520,9 +530,6 @@
                 beforeMsgEl.setAttribute("ends-chunk", "true");
               msgEl.setAttribute("starts-chunk", "true");
             }
-
-            if (!this._visible && !this._firstNotSeenMsg && !msg.isSystemMessage)
-              this._firstNotSeenMsg = msgEl;
 
             if (msg.contact) {
               var e = doc.createElement("img");
