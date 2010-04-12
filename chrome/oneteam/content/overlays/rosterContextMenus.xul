@@ -3,8 +3,6 @@
     var menuModel;
 
     function findMenuModel(menu, event) {
-      gloEv = event;
-      node = document.popupNode;
       if (event.target != menu)
         return false;
 
