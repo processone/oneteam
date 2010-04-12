@@ -1015,7 +1015,7 @@ var Animator = {
                 token.valueSetter(animator._toCssValue(token.values[token.values.length-1]));
                 token.timeout = null;
                 if (token.stopCallback)
-                    token.stopCallback(token.element);
+                    token.stopCallback(token.element, token);
                 return null;
             }
             token.step = 0;
@@ -1044,12 +1044,15 @@ var Animator = {
         return token;
     },
 
-    _animateScroll: function(token) {
-        token.element.scrollLeft = token.startX + token.step*token.diffX/token.steps;
-        token.element.scrollTop = token.startY + token.step*token.diffY/token.steps;
+    _animateDimensions: function(token) {
+        for (var i = 0; i < token.startValues.length; i++)
+            token.valueSetter(token.element, token.fields[i], token.startValues[i] +
+                              token.step*token.diffValues[i]/token.steps);
 
         if (token.step == token.steps) {
             token.timeout = null;
+            if (token.stopCallback)
+                token.stopCallback(token.element, token);
             return null;
         }
         token.step++;
@@ -1122,16 +1125,16 @@ var Animator = {
 
         var token = {
             element: element,
-            startX: element.scrollLeft,
-            startY: element.scrollTop,
-            diffX: targetX - element.scrollLeft,
-            diffY: targetY - element.scrollTop,
+            startValues: [element.scrollLeft, element.scrollTop],
+            diffValues: [targetX - element.scrollLeft, targetY - element.scrollTop],
+            fields: ["scrollLeft", "scrollTop"],
+            valueSetter: function(el, field, value) { element[field] = value },
             step: 0,
             steps: steps,
             tick: tick
         }
 
-        return this._animateScroll(token);
+        return this._animateDimensions(token);
     },
 
     animateScrollToElement: function(element, steps, tick, xPosition, yPosition) {

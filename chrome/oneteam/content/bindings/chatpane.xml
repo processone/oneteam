@@ -405,7 +405,14 @@
       </method>
 
       <method name="_prependMessages">
+        <parameter name="numCalls"/>
         <body><![CDATA[
+
+          if (Animator.animationIsRunning(this._prependAnimation)) {
+            this._prependAnimation.numCalls++;
+            return;
+          }
+
           var msgs, hasMore;
           [this.archivedMsgToken, msgs, hasMore] =
             this.model.getMessagesFromHistory(10, this.archivedMsgToken);
@@ -421,7 +428,40 @@
 
           var firstMsgEl = fragment.firstChild;
 
-          this._content.insertBefore(fragment, this._firstMsgEl);
+          var d1 = doc.createElement("div");
+          d1.setAttribute("style", "overflow: hidden; height: 0; position: relative")
+          var d2 = doc.createElement("div");
+          d2.setAttribute("style", "left: 0; right: 0; bottom: 0; position: absolute")
+          d1.appendChild(d2);
+          d2.appendChild(fragment);
+          this._content.insertBefore(d1, this._firstMsgEl);
+
+          // force relayout
+          d1.clientHeight;
+
+          var token = {
+            element: d1,
+            startValues: [0],
+            diffValues: [d2.scrollHeight],
+            fields: ["height"],
+            valueSetter: function(el, field, value) { el.style.height = value+"px" },
+            step: 0,
+            steps: 20,
+            tick: 20,
+            numCalls: (numCalls||1) - 1,
+            cp: this,
+            stopCallback: function(el, token) {
+              while (el.firstChild.firstChild)
+                el.parentNode.insertBefore(el.firstChild.firstChild, el);
+              el.parentNode.removeChild(el);
+              if (token.numCalls)
+                token.cp._prependMessages(token.numCalls);
+            }
+          }
+
+          this._prependAnimation = Animator._animateDimensions(token);
+
+//          this._content.insertBefore(fragment, this._firstMsgEl);
 
           this._firstMsg = msgs[0];
           this._firstMsgEl = firstMsgEl;
