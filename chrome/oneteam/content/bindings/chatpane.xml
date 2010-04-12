@@ -511,6 +511,7 @@
             fragment.appendChild(msgEl);
 
             if (msg.isSystemMessage || !beforeMsg ||
+                beforeMsg.isSystemMessage ||
                 beforeMsg.contactId != msg.contactId ||
                 msg.time - beforeMsg.time > 5*60*1000 ||
                 (beforeMsg.offline && !msg.offline))
