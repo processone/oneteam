@@ -479,7 +479,6 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             } else
                 lastThread = token.threads[token.threads.length-1];
 
-            dump(token.lastIndex+"\n");
             var msg = lastThread.allMessages[token.lastIndex--];
 
             if (!msg.isSystemMessage && msg.time.getTime() < olderThan)
