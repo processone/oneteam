@@ -530,26 +530,6 @@ JSJaCIQ.prototype.setQuery = function(xmlns) {
   this.getNode().appendChild(query);
   return query;
 };
-//Sonny
-/**
- * Creates a 'pubsub' child node with given XMLNS
- * @param {String} xmlns The namespace for the 'pubsub' node
- * @return The pubsub node
- * @type {@link  http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247 Node}
- */
-JSJaCIQ.prototype.setPubsub = function(xmlns) {
-  var pubsub;
-  try {
-    pubsub = this.getDoc().createElementNS(xmlns,'pubsub');
-  } catch (e) {
-    // fallback
-    query = this.getDoc().createElement('pubsub');
-  }
-  if (pubsub && pubsub.getAttribute('xmlns') != xmlns) // fix opera 8.5x
-    pubsub.setAttribute('xmlns',xmlns);
-  this.getNode().appendChild(pubsub);
-  return pubsub;
-};
 
 /**
  * Gets the 'query' node of this packet
