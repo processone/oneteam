@@ -98,12 +98,14 @@ sub _prepare_files {
         my $mar_update_url = $self->_expand_str(0, $self->{mar_options}->{MAR_UPDATE_URL}) ||
             "$mar_base_url/cgi-bin/update.cgi?q=%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%OS_VERSION%/".
             "%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml";
+        my $mar_update_channel = $self->{mar_options}->{MAR_UPDATE_CHANNEL};
 
         open my $fh, ">>", catfile($tmppfxdir, qw(defaults preferences pref.js));
         print $fh "pref(\"app.update.mode\", 1);\n";
         print $fh "pref(\"app.update.enabled\", true);\n";
         print $fh "pref(\"app.update.auto\", true);\n";
         print $fh "pref(\"app.update.url\", \"$mar_update_url\");\n";
+        print $fh "pref(\"app.update.channel\", \"$mar_update_url\");\n" if $mar_update_channel;
         close($fh);
     }
 }

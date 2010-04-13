@@ -18,7 +18,7 @@ function build () {
     git checkout origin/$1
 
     perl build.pl XULAPP 1 DEBUG 1 \
-      UPDATECHANNEL $2 \
+      MAR_UPDATE_CHANNEL $2 \
       MAR_BASE_URL "https://download.process-one.net/oneteam/$2" \
       MAR_FILE 'oneteam-@BUILDID@@MAC_SUFFIX@.mar' \
       MAR_UPDATE_URL 'https://download.process-one.net/oneteam/update.cgi?q=%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%OS_VERSION%/%CHANNEL%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml' \
