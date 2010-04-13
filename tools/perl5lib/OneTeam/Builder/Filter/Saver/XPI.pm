@@ -46,7 +46,6 @@ sub finalize {
     my $chromedir = catdir($tmppfxdir, "chrome");
 
     mkpath([$chromedir], 0);
-    copy('icon.png', $tmpdir);
     $self->_prepare_files($tmpdir, $tmppfxdir, $chromedir);
     $self->_generate_install_rdf($tmpdir, $tmppfxdir);
     $self->_generate_chrome_manifest($tmpdir, $tmppfxdir);
@@ -78,6 +77,8 @@ sub _prepare_files {
 sub _generate_install_rdf {
     my ($self, $tmpdir, $tmppfxdir) = @_;
     my $ir = slurp("install.rdf");
+
+    copy("icon.png", $tmpdir);
 
     $ir =~ s/(em:version>)[^<]*/$1.$self->{version}->()/ei;
     $ir =~ s/(em:updateURL>)[^<]*/$1.$self->{updateURL}/ei if $self->{updateURL};
