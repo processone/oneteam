@@ -166,15 +166,17 @@ function HistoryManager()
                 PRAGMA user_version = 2001;
             COMMIT TRANSACTION;
         </sql>.toString());
-    if (version < 2000) {
-        this.db.executeSimpleSQL(<sql>
-            BEGIN IMMEDIATE TRANSACTION;
-                CREATE TABLE message_replies (id INTEGER PRIMARY KEY,
-                                              replies_to INTEGER NOT NULL);
+    else {
+        if (version < 2000) {
+            this.db.executeSimpleSQL(<sql>
+                BEGIN IMMEDIATE TRANSACTION;
+                    CREATE TABLE message_replies (id INTEGER PRIMARY KEY,
+                                                  replies_to INTEGER NOT NULL);
 
-                PRAGMA user_version = 2001;
-            COMMIT TRANSACTION;
-        </sql>.toString());
+                    PRAGMA user_version = 2001;
+                COMMIT TRANSACTION;
+            </sql>.toString());
+        }
     }
 
     this.addJidStmt = this.db.createStatement(<sql>
