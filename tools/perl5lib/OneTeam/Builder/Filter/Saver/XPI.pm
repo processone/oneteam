@@ -41,7 +41,7 @@ sub path_convert {
 
 sub finalize {
     my $self = shift;
-    my $tmpdir = tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1);
+    my $tmpdir = catdir(tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1), "OneTeam");
     my $tmppfxdir = $self->_prefix ? catdir($tmpdir, $self->_prefix) : $tmpdir;
     my $chromedir = catdir($tmppfxdir, "chrome");
 
