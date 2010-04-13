@@ -37,7 +37,7 @@ function build () {
         @files = map { $_->[1] }
           sort { $a->[0] cmp $b->[0] }
           map { my $x = $_; $x =~ s/(\d+)/sprintf "%010d", $1/ge; [$x, $_] }
-          glob("../../public_html/$ARGV[0]/*.mar");
+          glob("../../public_html/oneteam/$ARGV[0]/*.mar");
 
         $files[-1] =~ /.*\.(\d+)/;
         $max = $1;
