@@ -5,9 +5,9 @@ my $q = new CGI;
 
 print $q->header(-type => "text/xml", -expires => "1h");
 
-my ($product, $version, $build, $arch, $os) = (split "/", $q->param("q"));
+my ($product, $version, $build, $arch, $os, $channel) = (split "/", $q->param("q"));
 
-open(my $fh, "<", "../oneteam/mars-info.txt");
+open(my $fh, "<", "mars-info-$channel.txt") or empty_update();
 my @mars = <$fh>;
 close($fh);
 chomp(@mars);
@@ -16,12 +16,7 @@ my $current_version = shift @mars;
 my $details_url = shift @mars;
 
 if ($version ge $current_version) {
-  print <<ENDSTR;
-<?xml version="1.0"?>
-
-<updates>
-</updates>
-ENDSTR
+  empty_update();
 } else {
   print "<?xml version=\"1.0\"?>\n\n<updates>\n";
   print "  <update type=\"minor\" version=\"$current_version\" extensionVersion=\"1.0\" detailsURL=\"$details_url\">\n";
@@ -31,4 +26,14 @@ ENDSTR
     print "    <patch type=\"$type\" URL=\"$url\" hashFunction=\"sha1\" hashValue=\"$hash\" size=\"$size\"/>\n";
   }
   print "  </update>\n</updates>\n";
+}
+
+sub empty_update {
+  print <<ENDSTR;
+<?xml version="1.0"?>
+
+<updates>
+</updates>
+ENDSTR
+  exit 0
 }
