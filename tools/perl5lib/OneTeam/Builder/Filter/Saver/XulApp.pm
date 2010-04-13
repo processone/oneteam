@@ -86,7 +86,12 @@ sub _prepare_files {
     $ai =~ s/(buildid\s*=\s*)[^\n]*/$1.$self->{buildid}->()/ei;
     print_to_file(catfile($tmppfxdir, "application.ini"), $ai);
     dircopy("extensions", catdir($tmppfxdir, 'extensions'));
+
     dircopy(catdir(qw(chrome icons)), catdir($chromedir, 'icons'));
+
+    mkpath(catdir($tmppfxdir, "icons"));
+    copy(catfile(qw(chrome icons default updater.png)),
+         catdir(($tmppfxdir, "icons")));
 
     if ($self->{mar_options}->{MAR_BASE_URL}) {
         my $mar_base_url = $self->_expand_str(0, $self->{mar_options}->{MAR_BASE_URL});
