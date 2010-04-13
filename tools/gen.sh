@@ -63,7 +63,7 @@ function build () {
     ' $2
     cp mars-info.txt ..
 
-    scp *.xpi *.xulapp *.mar update.rdf s2:download.process-one.net/$2/
+    rsync -a --delete ../public_html/oneteam/$2/ s2:download.process-one.net/$2/
     scp mars-info.txt s2:download.process-one.net/mars-info-$2.txt
 }
 
