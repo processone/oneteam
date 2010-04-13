@@ -15,7 +15,7 @@ chomp(@mars);
 my $current_version = shift @mars;
 my $details_url = shift @mars;
 
-if ($version ge $current_version) {
+if (normalize_ver($version) ge normalize_ver($current_version)) {
   empty_update();
 } else {
   print "<?xml version=\"1.0\"?>\n\n<updates>\n";
@@ -26,6 +26,14 @@ if ($version ge $current_version) {
     print "    <patch type=\"$type\" URL=\"$url\" hashFunction=\"sha1\" hashValue=\"$hash\" size=\"$size\"/>\n";
   }
   print "  </update>\n</updates>\n";
+}
+
+sub normalize_ver {
+  my $ver = shift;
+
+  $ver =~ s/(\d+)/sprintf"%05d",$1/eg;
+
+  return $ver;
 }
 
 sub empty_update {
