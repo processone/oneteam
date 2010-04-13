@@ -105,7 +105,8 @@ sub _prepare_files {
         print $fh "pref(\"app.update.enabled\", true);\n";
         print $fh "pref(\"app.update.auto\", true);\n";
         print $fh "pref(\"app.update.url\", \"$mar_update_url\");\n";
-        print $fh "pref(\"app.update.channel\", \"$mar_update_url\");\n" if $mar_update_channel;
+        print $fh "pref(\"app.update.channel\", \"$mar_update_channel\");\n"
+            if $mar_update_channel;
         close($fh);
     }
 }
