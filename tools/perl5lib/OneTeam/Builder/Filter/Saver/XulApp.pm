@@ -46,7 +46,7 @@ sub _add_browser_overlays {
 }
 
 sub _disabled_prefs {
-    return ();
+    return ("defaults/preferences/non-build.js");
 }
 
 sub _output_filename {

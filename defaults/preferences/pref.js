@@ -9,6 +9,7 @@ pref("chat.connection.type", "native");
 pref("chat.connection.ssl", false);
 pref("chat.connection.overridehost", false);
 pref("chat.connection.autoconnect", false);
+pref("chat.connection.reconnect", true);
 
 pref("chat.roster.showoffline", false);
 pref("chat.roster.filtered", false);
@@ -44,13 +45,3 @@ pref("chat.status.autoxa.status", "");
 
 pref("oneteam.onlyJingleNodes", false);
 
-// #ifdef DEBUG
-pref("nglayout.debug.disable_xul_cache", true);
-pref("nglayout.debug.disable_xul_fastload", true);
-pref("browser.dom.window.dump.enabled", true);
-pref("javascript.options.showInConsole", true);
-pref("dom.report_all_js_exceptions", true);
-pref("extensions.logging.enabled", true);
-pref("javascript.options.strict", true);
-pref("signon.debug", true);
-// #endif

@@ -79,15 +79,20 @@ sub ignored_file {
 }
 
 sub dircopy {
-    my ($src, $dest, @skip) = @_;
+    my ($src, $dest, $skip_prefix, @skip) = @_;
     my $srclen = length($src) + ($src =~ m!(?:[/\\]$)! ? 0 : 1);
     my %skip;
 
     @skip{@skip} = @skip;
 
     find({ wanted => sub {
-        return if not -f $_ or ignored_file($File::Find::name) or
-            exists $skip{$File::Find::name};
+        my $path = $File::Find::name;
+        $path =~ s!\\!/!g;
+        $path = File::Spec->abs2rel($path, $skip_prefix)
+            if $skip_prefix;
+
+        return if not -f $_ or ignored_file($path) or
+            exists $skip{$path};
 
         mkpath(length($File::Find::dir) > $srclen ?
             catdir($dest, substr($File::Find::dir, $srclen)) :

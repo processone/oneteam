@@ -65,13 +65,14 @@ sub _make_package {
 sub _prepare_files {
     my ($self, $tmpdir, $tmppfxdir, $chromedir) = @_;
 
-    dircopy(catdir(qw(chrome icons default)), catdir($self->{outputdir}, qw(skin default icons)),
-             qw(default.ico default.xpm));
+    my $d = catdir(qw(chrome icons default));
+    dircopy($d, catdir($self->{outputdir}, qw(skin default icons)),
+            $d, qw(default.ico default.xpm));
 
     system("cd '$self->{outputdir}/chrome'; zip -q -0 -r '".catfile($chromedir, 'oneteam.jar')."' .");
 
     dircopy(catdir($self->{outputdir}, "defaults"), catdir($tmppfxdir, 'defaults'),
-            $self->_disabled_prefs);
+            $self->{outputdir}, $self->_disabled_prefs);
     dircopy(catdir($self->{outputdir}, "components"), catdir($tmppfxdir, 'components'));
     dircopy('platform', catdir($tmppfxdir, 'platform'), $self->_platform_files_to_skip);
 }
@@ -165,7 +166,8 @@ sub _add_browser_overlays {
 }
 
 sub _disabled_prefs {
-    return "defaults/preferences/xulapp.js";
+    return ("defaults/preferences/xulapp.js",
+            "defaults/preferences/non-build.js");
 }
 
 sub _output_filename {
