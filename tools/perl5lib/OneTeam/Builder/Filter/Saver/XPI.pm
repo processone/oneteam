@@ -11,13 +11,14 @@ use OneTeam::Utils;
 use Cwd;
 
 sub new {
-    my ($class, $topdir, $version, $buildid, $updateURL) = @_;
+    my ($class, $topdir, $version, $buildid, $updateURL, $xpiURL) = @_;
     my $self = {
         topdir => $topdir,
         outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
         version => $version,
         buildid => $buildid,
         updateURL => $updateURL,
+        xpiURL => $xpiURL,
     };
     bless $self, $class;
 }
@@ -48,6 +49,7 @@ sub finalize {
     mkpath([$chromedir], 0);
     $self->_prepare_files($tmpdir, $tmppfxdir, $chromedir);
     $self->_generate_install_rdf($tmpdir, $tmppfxdir);
+    $self->_generate_update_rdf($tmpdir, $tmppfxdir);
     $self->_generate_chrome_manifest($tmpdir, $tmppfxdir);
 
     $self->_make_package($tmpdir, $tmppfxdir);
@@ -90,6 +92,40 @@ sub _generate_install_rdf {
                 (map "locale/$_/", @{$self->{locales}}),
            )."\n      ".$2!ei;
     print_to_file(catfile($tmppfxdir, "install.rdf"), $ir);
+}
+
+sub  _generate_update_rdf {
+    my ($self, $tmpdir, $tmppfxdir) = @_;
+
+    my $version = $self->{version}->();
+    my $xpi_url = $self->{xpiURL};
+
+    print_to_file(catfile($self->{topdir}, "update.rdf"), <<END) if $xpi_url;
+<?xml version='1.0'?>
+
+<RDF:RDF xmlns:RDF='http://www.w3.org/1999/02/22-rdf-syntax-ns#'
+  xmlns:em='http://www.mozilla.org/2004/em-rdf#'>
+  <RDF:Description about='urn:mozilla:extension:oneteam\@oneteam.im'>
+    <em:updates>
+      <RDF:Seq>
+        <RDF:li>
+          <RDF:Description>
+            <em:version>$version</em:version>
+            <em:targetApplication>
+              <RDF:Description>
+                <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+                <em:minVersion>3.5</em:minVersion>
+                <em:maxVersion>3.6.*</em:maxVersion>
+                <em:updateLink>$xpi_url</em:updateLink>
+              </RDF:Description>
+            </em:targetApplication>
+          </RDF:Description>
+        </RDF:li>
+      </RDF:Seq>
+    </em:updates>
+  </RDF:Description>
+</RDF:RDF>
+END
 }
 
 sub _generate_chrome_manifest {

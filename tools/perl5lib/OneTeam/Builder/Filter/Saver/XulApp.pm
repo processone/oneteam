@@ -56,6 +56,9 @@ sub _output_filename {
 sub _generate_install_rdf {
 }
 
+sub  _generate_update_rdf {
+}
+
 sub _generate_chrome_manifest {
     my ($self, $tmpdir, $tmppfxdir) = @_;
 

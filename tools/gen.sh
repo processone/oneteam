@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/prefiks/oneteam/oneteam
+cd oneteam
 export PATH=$PWD/tools:$PATH
 
 if lockfile -r 0 -! update.lock 2>/dev/null; then
@@ -18,14 +18,18 @@ function build () {
     git checkout origin/$1
 
     perl build.pl XULAPP 1 DEBUG 1 \
-      MAR_BASE_URL "http://dev3.process-one.net/~prefiks/$2" \
+      UPDATECHANNEL $2 \
+      MAR_BASE_URL "https://download.process-one.net/oneteam/$2" \
       MAR_FILE 'oneteam-@BUILDID@@MAC_SUFFIX@.mar' \
-      MAR_UPDATE_URL 'http://dev3.process-one.net/~prefiks/cgi-bin/update.cgi?q=%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml' \
+      MAR_UPDATE_URL 'https://download.process-one.net/oneteam/update.cgi?q=%PRODUCT%/%VERSION%/%BUILD_ID%/%BUILD_TARGET%/%OS_VERSION%/%CHANNEL%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/update.xml' \
     || { rm -f update.lock; exit; }
-    perl build.pl XPI 1 DEBUG 1 UPDATE_URL 'https://dev3.process-one.net/~prefiks/oneteam/update.rdf'
+    perl build.pl XPI 1 DEBUG 1 \
+      UPDATE_URL "https://download.process-one.net/oneteam/$2/update.rdf" \
+      XPI_URL "https://download.process-one.net/oneteam/$2/oneteam.xpi" \
+    || { rm -f update.lock; exit; }
 
     rm  ../../public_html/$2/*.xulapp ../../public_html/$2/*-partial.mar ../../public_html/$2/*.xpi 2>/dev/null
-    cp *.xulapp *.mar *.xpi ../../public_html/$2/
+    cp *.xulapp *.mar *.xpi update.rdf ../../public_html/$2/
     perl -e '
         @files = map { $_->[1] }
           sort { $a->[0] cmp $b->[0] }
@@ -51,15 +55,17 @@ function build () {
             ($new = $_) =~ s/(.*\.)(\d+)/$1$max/;
             ($partialfile = $partial) =~ s!.*/!!;
             system("tools/make-partial-mar.pl", $_, $new, $partial, "mars-info.txt",
-                   "$num", "http://dev3.process-one.net/~prefiks/oneteam/$partialfile", /-mac/ ? 1 : 0);
+                   "$num", "https://download.process-one.net/oneteam/$ARGV[0]/$partialfile", /-mac/ ? 1 : 0);
         }
     ' $2
     cp mars-info.txt ..
+
+    scp *.xpi *.xulapp *.mar update.rdf s2:download.process-one.net/$2/
+    scp mars-info.txt s2:download.process-one.net/mars-info-$2.txt
 }
 
 git pull -q >/dev/null 2>/dev/null
 
-build flash-jingle flash-jingle "$1"
-build master oneteam "$1"
+build master devel "$1"
 
 rm -f update.lock

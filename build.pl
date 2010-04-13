@@ -54,13 +54,15 @@ sub get_buildid {
 my %mar_options = map{($_, $defs{$_})} grep { /^MAR_/} keys %defs;
 
 my $saver = exists $defs{DMG} ?
-        new OneTeam::Builder::Filter::Saver::Dmg($topdir, \&get_version_str, \&get_buildid, \%mar_options, $defs{XULRUNNER}) :
+        new OneTeam::Builder::Filter::Saver::Dmg($topdir, \&get_version_str, \&get_buildid,
+                                                 \%mar_options, $defs{XULRUNNER}) :
     exists $defs{XULAPP} ?
         exists $defs{NOJAR} ?
             new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
             new OneTeam::Builder::Filter::Saver::XulApp($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
     exists $defs{XPI} ?
-        new OneTeam::Builder::Filter::Saver::XPI($topdir, \&get_version_str, \&get_buildid, $defs{UPDATE_URL}) :
+        new OneTeam::Builder::Filter::Saver::XPI($topdir, \&get_version_str, \&get_buildid,
+                                                 $defs{UPDATE_URL}, $defs{XPI_URL}) :
         exists $defs{NOJAR} ?
             new OneTeam::Builder::Filter::Saver::WebDir($topdir, \&get_version_str, \&get_buildid) :
             new OneTeam::Builder::Filter::Saver::WebJar($topdir, \&get_version_str, \&get_buildid);
