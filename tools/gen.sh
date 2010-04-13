@@ -28,8 +28,11 @@ function build () {
       XPI_URL "https://download.process-one.net/oneteam/$2/oneteam.xpi" \
     || { rm -f update.lock; exit; }
 
-    rm  ../../public_html/$2/*.xulapp ../../public_html/$2/*-partial.mar ../../public_html/$2/*.xpi 2>/dev/null
-    cp *.xulapp *.mar *.xpi update.rdf ../../public_html/$2/
+    rm  ../../public_html/oneteam/$2/*.xulapp \
+      ../../public_html/oneteam/$2/*-partial.mar \
+      ../../public_html/oneteam/$2/*.xpi 2>/dev/null
+    cp *.xulapp *.mar *.xpi update.rdf ../../public_html/oneteam/$2/
+
     perl -e '
         @files = map { $_->[1] }
           sort { $a->[0] cmp $b->[0] }
