@@ -8,14 +8,15 @@ if lockfile -r 0 -! update.lock 2>/dev/null; then
 fi
 
 function build () {
-    if [ -z "$3" -a "`git show-ref -s refs/heads/$1-build`" == "`git show-ref -s remotes/origin/$1`" ]; then
+    ref=`basename $1`
+    if [ -z "$3" -a "`git rev-parse --revs-only refs/heads/$ref-build`" == "`git rev-parse --revs-only $1^0`" ]; then
       return
     fi
 
     rm *.xpi *.xulapp *.mar *.xml 2>/dev/null
 
-    git branch -f $1-build origin/$1 >/dev/null
-    git checkout origin/$1
+    git branch -f $ref-build $1 >/dev/null
+    git checkout $1
 
     perl build.pl XULAPP 1 DEBUG 1 \
       MAR_UPDATE_CHANNEL $2 \
@@ -39,26 +40,21 @@ function build () {
           map { my $x = $_; $x =~ s/(\d+)/sprintf "%010d", $1/ge; [$x, $_] }
           glob("../../public_html/oneteam/$ARGV[0]/*.mar");
 
-        $files[-1] =~ /.*\.(\d+)/;
-        $max = $1;
-
         while (@files > 8) {
             unlink shift @files;
         }
 
-        for (@files) {
-            /.*\.(\d+)/;
-            next if $1 == $max;
+        $files[-1] =~ /(\d+(?:\.\d+)*)/;
+        my $maxversion = $1;
 
-	    /(\d+(?:\.\d+)*)/;
-            $num = $1;
+        for (@files[0..$#files-2]) {
+            $_ =~ /(\d+(?:\.\d+)*)/;
+            my $version = $1;
+            ($patch = $_) =~ s/(-mac)?\.mar$/-$maxversion$1-partial.mar/;
+            ($patchfile = $patch) =~ s!.*/!!;
 
-            ($partial = $_) =~ s/(.*\.(\d+))/$1-$max/;
-            $partial =~ s/(.*)\./$1-partial./;
-            ($new = $_) =~ s/(.*\.)(\d+)/$1$max/;
-            ($partialfile = $partial) =~ s!.*/!!;
-            system("tools/make-partial-mar.pl", $_, $new, $partial, "mars-info.txt",
-                   "$num", "https://download.process-one.net/oneteam/$ARGV[0]/$partialfile", /-mac/ ? 1 : 0);
+            system("tools/make-partial-mar.pl", $files[-1], $_, $patch, "mars-info.txt",
+                   $version, "https://download.process-one.net/oneteam/$ARGV[0]/$patchfile", /-mac/ ? 1 : 0);
         }
     ' $2
     cp mars-info.txt ..
@@ -69,6 +65,10 @@ function build () {
 
 git pull -q >/dev/null 2>/dev/null
 
-build master devel "$1"
+build remotes/origin/master devel "$1"
+
+git for-each-ref --format '%(refname)' 'refs/tags/' | while read tag; do
+    build $tag release ""
+done
 
 rm -f update.lock
