@@ -22,7 +22,7 @@ sub get_version {
 
     my $verstr = `git --git-dir="$gitdir" describe HEAD`;
 
-    $verstr =~ /^v(.+?)(?:-(\d+))?\s*/;
+    $verstr =~ /^v([^-\s]+)(?:-(\d+))?/;
     $version = $2 ? "$1.$2" : $1;
 
     return $version
