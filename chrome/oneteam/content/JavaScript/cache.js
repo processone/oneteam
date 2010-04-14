@@ -155,13 +155,14 @@ _DECL_(PersistentCache).prototype =
             if (!asFile)
                 return slurpFile(value);
 
-            if (!(new File(value)).exists) {
+            var fileObj = new File(value);
+
+            if (!fileObj.exists) {
                 this.removeValue(key);
                 return null;
             }
-            if (value.indexOf(this.fileCacheDir.path) == 0)
-                return value.replace(this.fileCacheDir.path, "resource://oneteam-cache").
-                    replace(/\\/g, "/");
+            if (this.fileCacheDir.file.contains(fileObj.file, false))
+                return "resource://oneteam-cache/"+fileObj.file.leafName;
             return "file://"+value;
         } else if (asFile)
             throw new GenericError("Unable to return data as file path");
