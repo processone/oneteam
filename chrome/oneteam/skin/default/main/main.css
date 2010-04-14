@@ -81,6 +81,17 @@ richlistbox {
   font-weight: bold;
 }
 
+#login-signin:hover {
+  background: #a6cc00;
+}
+
+#login-signin:hover:active {
+  background: #a6cc00;
+  border: 1px solid #a7d000;
+  border-top-color: #678100;
+  border-left-color: #678100;
+}
+
 #login-signin[disabled=true] {
   color: #aaa;
 }
