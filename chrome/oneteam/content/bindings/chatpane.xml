@@ -1168,7 +1168,12 @@
             return true;
           }, true);
 
-          window.addEventListener("resize", function(){ try{me.maybeResize()}catch(ex){} }, false);
+          window.addEventListener("resize", function(ev) {
+            if (ev.target == window)
+              try {
+                me.maybeResize()
+              } catch(ex){}
+          }, false);
 
           doc.addEventListener("DOMSubtreeModified", function() {
             me._counter.value = me._domToStr(me._input.contentDocument.body).
