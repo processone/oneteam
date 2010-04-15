@@ -37,7 +37,7 @@ body[hasSendButton=true]:after {
 }
 
 .message {
-    margin: 0 6px 0 6px;
+    margin: 0 10px 0 10px;
     padding: 1px 6px;
     background: white;
     border: 1px solid #b3b3b3;
@@ -223,4 +223,21 @@ body[marked-thread=true] .message[in-marked-thread=true] {
 .fetch-more:hover {
     background: red;
     color: #515151;
+}
+
+.gradient {
+    position: fixed;
+    display: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    height: 16px;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: url(imgs/vertical-gradient.png) top left repeat-x;
+}
+
+.gradient[visible=true] {
+    display: block;
 }
