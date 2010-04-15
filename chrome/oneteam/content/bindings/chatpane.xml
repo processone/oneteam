@@ -196,11 +196,6 @@
       <method name="_syncMarkers">
         <parameter name="token"/>
         <body><![CDATA[
-          if (this._gradient) {
-            var doc = this._output.contentDocument.body;
-            this._gradient.setAttribute("visible", doc.clientHeight != doc.scrollHeight);
-          }
-
           if (!this._markers)
             return;
           for (var i = 0; i < this._markers.length; i++)
