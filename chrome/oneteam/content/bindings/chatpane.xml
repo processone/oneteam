@@ -1034,6 +1034,7 @@
           if (val) {
             var img = doc.createElementNS(HTMLNS, "img");
             img.setAttribute("src", val.image);
+            img.setAttribute("style", "padding-right: 2px");
             img.setAttribute("thread-index", val.idx);
 
             if (prevImg)

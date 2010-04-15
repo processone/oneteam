@@ -39,7 +39,7 @@
 chatpane-view {
   margin-bottom: 3px;
   background: #c7c7c7;
-  padding: 0 4px 0px 4px;
+  padding: 0 0px 0px 0px;
   -moz-border-radius: 0px 0px 5px 5px;
 }
 
@@ -92,11 +92,11 @@ splitter, .roster-container {
 
 splitter.roster-splitter {
   -moz-appearance: none;
-  padding: 0 0px;
+  padding: 0;
   background: #c7c7c7;
-  border: 4px solid white;
-  -moz-border-right-colors: #c7c7c7 #c7c7c7 #c7c7c7 #cfcfcf;
-  -moz-border-left-colors: #c7c7c7 #c7c7c7 #c7c7c7 #bababa;
+  border: 2px solid white;
+  -moz-border-right-colors: #c7c7c7 #cfcfcf;
+  -moz-border-left-colors: #c7c7c7 #bababa;
   border-bottom-width: 0;
   border-top-width: 0;
 }
@@ -147,5 +147,6 @@ splitter.roster-splitter {
 {
   padding-right: 0;
   width: auto;
+  height: 14px;
   display: inherit;
 }
