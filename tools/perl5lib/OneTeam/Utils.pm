@@ -8,7 +8,7 @@ use File::Copy qw(copy cp);
 
 @ISA = qw(Exporter);
 @EXPORT = qw(slurp print_to_file unescape_js escape_js_str escape_xml
-             ignored_file dircopy);
+             ignored_file dircopy escape_dtd);
 
 sub slurp {
     my $file = shift;
@@ -62,6 +62,19 @@ sub escape_js_str {
 sub escape_xml {
     my $str = shift;
 
+    $str =~ s/&/&amp;/g;
+    $str =~ s/'/&apos;/g;
+    $str =~ s/"/&quot;/g;
+    $str =~ s/</&lt;/g;
+    $str =~ s/>/&gt;/g;
+
+    return $str;
+}
+
+sub escape_dtd {
+    my $str = shift;
+
+    $str =~ s/%/&#37;/g;
     $str =~ s/&/&amp;/g;
     $str =~ s/'/&apos;/g;
     $str =~ s/"/&quot;/g;

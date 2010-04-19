@@ -238,7 +238,7 @@ sub get_locale_files_content {
                 $str =~ s/_(\w)/$1/;
                 push @dtd, "<!ENTITY e$_->[1].key \"$1\">";
             }
-            push @dtd, "<!ENTITY e$_->[1] \"".escape_xml($str)."\">";
+            push @dtd, "<!ENTITY e$_->[1] \"".escape_dtd($str)."\">";
         }
     }
 
