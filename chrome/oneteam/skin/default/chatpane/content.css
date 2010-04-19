@@ -236,5 +236,6 @@ body[marked-thread=true] .message[in-marked-thread=true] {
     left: 0;
     right: 0;
     pointer-events: none;
+    z-index: 1000;
     background: url(imgs/vertical-gradient.png) top left repeat-x;
 }
