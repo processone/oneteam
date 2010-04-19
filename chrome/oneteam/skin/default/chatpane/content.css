@@ -37,12 +37,16 @@ body[hasSendButton=true]:after {
 }
 
 .message {
-    margin: 0 10px 0 10px;
+    margin: 0 7px 0 7px;
     padding: 1px 6px;
     background: white;
-    border: 1px solid #b3b3b3;
+    border: 3px solid #b3b3b3;
+    -moz-border-top-colors: #c2c2c2 #b9b9b9 #b3b3b3;
+    -moz-border-bottom-colors: #c2c2c2 #b9b9b9 #b3b3b3;
+    -moz-border-left-colors: #c2c2c2 #b9b9b9 #b3b3b3;
+    -moz-border-right-colors: #c2c2c2 #b9b9b9 #b3b3b3;
     border-top-width: 0;
-    -moz-box-shadow: 0 0 1px 1px #b4b4b4;
+    border-bottom-width: 1px;
 }
 
 body[hide-not-marked=true] .message {
@@ -56,10 +60,9 @@ body[hide-not-marked=true] .message[in-selected-thread=true] {
 .message[starts-chunk=true]:not(.systemMessage),
 body[hide-not-marked=true] .message[starts-selected-chunk=true]
 {
-    margin-top: 4px;
-    border-top-width: 1px;
-    -moz-border-radius-topleft: 4px;
-    -moz-border-radius-topright: 4px;
+    border-top-width: 3px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
     clear: both;
 }
 
@@ -67,8 +70,9 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true]
 .message[ends-chunk=true]:not(.systemMessage),
 body[hide-not-marked=true] .message[ends-selected-chunk=true]
 {
-    -moz-border-radius-bottomleft: 4px;
-    -moz-border-radius-bottomright: 4px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    border-bottom-width: 3px;
 }
 
 .message > img {
@@ -122,7 +126,6 @@ span.body:hover > .thread-marker-reply,
     background: transparent;
     font-style: italic;
     font-size: 85%;
-    -moz-box-shadow: none;
 }
 
 .systemMessage > .header, .systemMessage > img {
