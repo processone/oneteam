@@ -50,32 +50,34 @@
 	padding: 0 !important;
 }
 
+.contact-name, .status-text, .contact-name2, .contact-jid2 {
+	color: #515151;
+	text-shadow: #eee 0 1px 0;
+}
+
 .contact-name {
 	margin-top: 5px !important;
-	color: #515151;
 	font-size: 120%;
 }
 
 .contact-jid {
 	margin-left: 5px !important;
 	color: white;
+	text-shadow: #aaa 0 -1px 0;
 	font-size: 75%;
 }
 
 .status-text {
-	color: #515151;
 	font-style: italic;
 	font-size: 85%;
 }
 
 .contact-name2 {
 	margin-top: 4px !important;
-	color: #515151;
 	font-weight: bold;
 }
 
 .contact-jid2 {
-	color: #515151;
 	font-size: 75%;
 }
 

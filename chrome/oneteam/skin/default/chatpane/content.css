@@ -37,14 +37,14 @@ body[hasSendButton=true]:after {
 }
 
 .message {
-    margin: 0 7px 0 7px;
+    margin: 0 3px 0 11px;
     padding: 1px 6px;
     background: white;
     border: 3px solid #b3b3b3;
-    -moz-border-top-colors: #c2c2c2 #b9b9b9 #b3b3b3;
-    -moz-border-bottom-colors: #c2c2c2 #b9b9b9 #b3b3b3;
-    -moz-border-left-colors: #c2c2c2 #b9b9b9 #b3b3b3;
-    -moz-border-right-colors: #c2c2c2 #b9b9b9 #b3b3b3;
+    -moz-border-top-colors: #c1c1c1 #bbbbbb #b3b3b3;
+    -moz-border-bottom-colors: #c1c1c1 #bbbbbb #b3b3b3;
+    -moz-border-left-colors: #c1c1c1 #bbbbbb #b3b3b3;
+    -moz-border-right-colors: #c1c1c1 #bbbbbb #b3b3b3;
     border-top-width: 0;
     border-bottom-width: 1px;
 }

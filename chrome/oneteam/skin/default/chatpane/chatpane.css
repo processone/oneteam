@@ -70,7 +70,8 @@ splitter, .roster-container {
 }
 
 .roster-container > hbox {
-	color: #515151;
+  color: #515151;
+  text-shadow: #eee 0 1px 0;
   font-size: 85%;
   margin: 3px 2px 1em 0;
 }
@@ -112,6 +113,7 @@ splitter.roster-splitter {
 
 #thread-picker > deck > hbox > label {
   color: #515151;
+  text-shadow: #eee 0 1px 0;
   font-size: 85%;
 }
 

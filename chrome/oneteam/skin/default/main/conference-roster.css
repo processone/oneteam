@@ -8,10 +8,16 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
 }
 
 .conference-view,
-.conference-role-view {
+.conference-role-view,
+.conferencemember-view {
   background: #c7c7c7;
   border: none;
-	color: #515151;
+  color: #515151;
+  text-shadow: #eee 0 1px 0;
+}
+
+.conference-view,
+.conference-role-view {
   font-weight : bold;
 }
 
@@ -19,7 +25,6 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
 .conference-role-view[selected=true],
 .conferencemember-view[selected=true] {
   background: #dadada;
-  color: inherit !important;
 }
 
 .conferencemember-view > avatar {
@@ -27,15 +32,16 @@ richlistitem:nth-child(2n+1):not([selected=true]) {
   border: 1px solid #ccc;
   -moz-border-radius: 3px;
   width: 18px;
+  height: 18px;
 }
 
 .conference-role-view {
-  background: #c7c7c7;
-	color: #515151;
   padding-left: 2px;
 }
 
 .conferencemember-view {
+  -moz-box-pack: center;
+  -moz-box-align: center;
   padding-left: 2px;
 }
 
