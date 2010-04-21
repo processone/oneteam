@@ -844,7 +844,9 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
 
             this.bookmarks.push(conference);
             if (conference.autoJoin)
-                conference.backgroundJoinRoom();
+                OnModelStateCall(account, "connectionInitialized", IsTrue, function() {
+                    conference.backgroundJoinRoom();
+                });
         }
         this.modelUpdated("bookmarks", {added: this.bookmarks});
     },
