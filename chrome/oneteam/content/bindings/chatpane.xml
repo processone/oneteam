@@ -569,7 +569,7 @@
               var match, range, lastMsg = msg.nick in this._lastNickMessage ?
                 this._lastNickMessage[msg.nick] : null;
 
-              if (lastMsg && (match = msg.text.match(/s\/([^\/]+)\/([^\/]+)\//)) &&
+              if (lastMsg && (match = msg.text.match(/^s\/([^\/]+)\/([^\/]+)\/\s*$/)) &&
                   (range = createRangeForSubstring(match[1], lastMsg[1].lastChild)))
               {
                 var e = lastMsg[1].ownerDocument.createElement("span");
