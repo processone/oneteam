@@ -8,3 +8,4 @@
 *.swp
 .DS_Store
 *.xpi
+/mars-info.txt
