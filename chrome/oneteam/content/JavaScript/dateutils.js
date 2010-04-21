@@ -85,16 +85,9 @@ function dateToUTCString(date)
 
 function utcStringToDate(string)
 {
-    var date = new Date();
-
-    date.setUTCFullYear(string.substr(0,4));
-    date.setUTCMonth(string.substr(4,2)-1);
-    date.setUTCDate(string.substr(6,2));
-    date.setUTCHours(string.substr(9,2) || 0);
-    date.setUTCMinutes(string.substr(12,2) || 0);
-    date.setUTCSeconds(string.substr(15,2) || 0);
-
-    return date;
+    return Date.UTC(string.substr(0,4), string.substr(4,2)-1, string.substr(6,2),
+                    string.substr(9,2) || 0, string.substr(12,2) || 0,
+                    string.substr(15,2) || 0, 0);
 }
 
 function dateToISO8601Timestamp(date, accuracy)
