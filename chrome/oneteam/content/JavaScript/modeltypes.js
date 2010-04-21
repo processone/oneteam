@@ -1,4 +1,5 @@
-var EXPORTED_SYMBOLS = ["View", "ContainerView", "Model", "RegsBundle"];
+var EXPORTED_SYMBOLS = ["View", "ContainerView", "Model", "RegsBundle",
+                        "OnModelStateCall", "IsTrue"];
 
 ML.importMod("utils.js");
 ML.importMod("roles.js");
@@ -162,6 +163,24 @@ _DECL_(Model).prototype =
                 info.push(i+": "+this._views[i].length);
         return info.join(", ");
     }
+}
+
+function OnModelStateCall(model, prop, stateFun, fun)
+{
+    if (stateFun(model, prop)) {
+        fun(model, prop);
+        return;
+    }
+    var token = model.registerView(function() {
+        if (!stateFun(model, prop))
+            return;
+        fun(model, prop);
+        token.unregisterFromAll();
+    }, null, prop);
+}
+
+function IsTrue(model, prop) {
+    return model[prop];
 }
 
 function RegsBundle(view)
