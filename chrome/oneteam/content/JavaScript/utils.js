@@ -6,7 +6,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
                         "recoverSetters", "perlSplit", "evalInWindow",
                         "enumerateMatchingProps", "report", "Animator",
-                        "iteratorEx", "findMax", "sanitizeDOM", "bsearch"];
+                        "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
+                        "createRangeForSubstring"];
 
 ML.importMod("roles.js");
 
@@ -692,6 +693,36 @@ function bsearch(array, value, comparatorFun, toLower) {
         if (a >= array.length || comparatorFun(value, array[a]) != 0)
             return a-1;
     return a;
+}
+
+function createRangeForSubstring(substring, root) {
+    var map = [], text = "", node;
+    var iterator = root.ownerDocument.createNodeIterator(root, 4, {
+        acceptNode: function() { return 1; }
+    }, true);
+
+    while ((node = iterator.nextNode())) {
+        map.push([text.length, node]);
+        text += node.textContent;
+    }
+
+    var idx = text.indexOf(substring);
+    if (idx < 0)
+        return null;
+
+    var range = root.ownerDocument.createRange();
+
+    var cmpFun = function(a,b){return a < b[0] ? -1 : a > b[0] ? 1 : 0};
+
+    var pos = bsearch(map, idx, cmpFun, true);
+    range.setStart(map[pos][1], idx - map[pos][0]);
+
+    idx += substring.length;
+
+    pos = bsearch(map, idx, cmpFun, true);
+    range.setEnd(map[pos][1], idx - map[pos][0]);
+
+    return range;
 }
 
 function recoverSetters(obj, debug) {
