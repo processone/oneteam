@@ -23,23 +23,12 @@ _DECL_(ContainerView).prototype =
 
     onItemAdded: function(item)
     {
-        var a = 0, b = this.items.length-1, mid;
-        while (a <= b) {
-            mid = (a+b)>>1;
-            val = this.itemComparator(item, this.items[mid]);
-            if (val == 0) {
-                a = mid;
-                break;
-            }
-            if (val < 0)
-                b = mid-1;
-            else
-                a = mid+1;
-        }
-        this.items.splice(a, 0, item);
+        var idx = bsearch(this.items, item, this.itemComparator);
+
+        this.items.splice(idx, 0, item);
 
         var node = item instanceof Node ? item : item.node;
-        var insertBefore = this.items[a+1];
+        var insertBefore = this.items[idx+1];
         insertBefore = insertBefore instanceof Node ? insertBefore :
             insertBefore ? insertBefore.node : this.afterLastItemNode;
 

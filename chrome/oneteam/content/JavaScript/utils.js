@@ -6,7 +6,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
                         "recoverSetters", "perlSplit", "evalInWindow",
                         "enumerateMatchingProps", "report", "Animator",
-                        "iteratorEx", "findMax", "sanitizeDOM"];
+                        "iteratorEx", "findMax", "sanitizeDOM", "bsearch"];
 
 ML.importMod("roles.js");
 
@@ -672,6 +672,23 @@ function sanitizeDOM(dom, filter) {
         if (moveChildrens)
             dom.parentNode.removeChild(dom);
     }
+}
+
+function bsearch(array, value, comparatorFun) {
+    var a = 0, b = array.length-1, mid, val;
+    while (a <= b) {
+        mid = (a+b)>>1;
+        val = comparatorFun(value, array[mid]);
+        if (val == 0) {
+            a = mid;
+            break;
+        }
+        if (val < 0)
+            b = mid-1;
+        else
+            a = mid+1;
+    }
+    return a;
 }
 
 function recoverSetters(obj, debug) {
