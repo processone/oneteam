@@ -46,6 +46,7 @@
             this._onMessageQueueChanged();
           }
 
+          this._lastNickMessageId = {};
           this._lastNickMessage = {};
 
           return val;
@@ -87,6 +88,7 @@
         this._threadingDriver = new ReplyGroups(new Callback(this._onUpdateThreadsDisplay, this),
                                                 this._threadsChangedFun || function(){},
                                                 new Callback(this._onThreadDestroyed, this))
+        this._lastNickMessageId = {};
         this._lastNickMessage = {};
       ]]></constructor>
 
@@ -515,6 +517,12 @@
                 notSeenIndex = i;
 
           var fragment = this._genDocFragmentFromMsgs(msgs, doc, this._lastMsg, this._lastMsgEl);
+
+          if (!fragment.childNodes.length) {
+            this._model.removeMessages();
+            return;
+          }
+
           var msgEl = fragment.lastChild;
 
           if (notSeenIndex >= 0)
@@ -557,11 +565,36 @@
             var msg = msgs[i];
             var startsChunk;
 
+            if (!afterMsg) {
+              var match, range, lastMsg = msg.nick in this._lastNickMessage ?
+                this._lastNickMessage[msg.nick] : null;
+
+              if (lastMsg && (match = msg.text.match(/s\/([^\/]+)\/([^\/]+)\//)) &&
+                  (range = createRangeForSubstring(match[1], lastMsg[1].lastChild)))
+              {
+                var e = lastMsg[1].ownerDocument.createElement("span");
+                range.deleteContents();
+
+                e.textContent = match[2];
+                range.insertNode(e);
+
+                range.detach();
+
+                if (!msg.archived)
+                  Animator.animateStyle(e, "background", 20, 20, null, "#fd0", "parent.transparent");
+
+                continue;
+              }
+            }
+
             var msgEl = doc.createElement("div");
             msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
             msgEl.setAttribute("not-seen", "true");
 
             fragment.appendChild(msgEl);
+
+            if (!afterMsg && !msg.isSystemMessage)
+              this._lastNickMessage[msg.nick] = [msg, msgEl];
 
             if (msg.isSystemMessage || !beforeMsg ||
                 beforeMsg.isSystemMessage ||
@@ -630,7 +663,7 @@
 
               if (xMessageId) {
                 if (!afterMsg)
-                  this._lastNickMessage[msg.nick] = xMessageId;
+                  this._lastNickMessageId[msg.nick] = xMessageId;
 
                 msgEl.twitterNick = msg.xTwitterNick;
                 msgEl.msgId = xMessageId;
@@ -2006,8 +2039,8 @@
               var idx = text.indexOf(":");
               var nick = idx > 0 ? text.substr(0, idx) : "";
 
-              var msgId = nick in this._output._lastNickMessage ?
-                this._output._lastNickMessage[nick] : null;
+              var msgId = nick in this._output._lastNickMessageId ?
+                this._output._lastNickMessageId[nick] : null;
 
               if (msgId && !this._input.thread)
                 this._output._setInputReplyMsgId(msgId);
