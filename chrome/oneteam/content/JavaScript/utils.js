@@ -674,7 +674,7 @@ function sanitizeDOM(dom, filter) {
     }
 }
 
-function bsearch(array, value, comparatorFun) {
+function bsearch(array, value, comparatorFun, toLower) {
     var a = 0, b = array.length-1, mid, val;
     while (a <= b) {
         mid = (a+b)>>1;
@@ -688,6 +688,9 @@ function bsearch(array, value, comparatorFun) {
         else
             a = mid+1;
     }
+    if (toLower)
+        if (a >= array.length || comparatorFun(value, array[a]) != 0)
+            return a-1;
     return a;
 }
 
