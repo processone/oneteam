@@ -539,14 +539,14 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
 
-        var stampNode = body.getNode().getElementsByTagNameNS("jabber:x:delay", "x")[0];
-        var stamp = stampNode && stampNode.getAttribute("stamp");
+        stampNode = body.getNode().getElementsByTagNameNS("urn:xmpp:delay", "delay")[0];
+        stamp = stampNode && stampNode.getAttribute("stamp");
         if (stamp)
-            this.time = utcStringToDate(stamp);
+            this.time = iso8601TimestampToDate(stamp);
         else {
-            stampNode = body.getNode().getElementsByTagNameNS("urn:xmpp:delay", "delay")[0];
-            stamp = stampNode && stampNode.getAttribute("stamp");
-            this.time = stamp ? iso8601TimestampToDate(stamp) : new Date();
+            var stampNode = body.getNode().getElementsByTagNameNS("jabber:x:delay", "x")[0];
+            var stamp = stampNode && stampNode.getAttribute("stamp");
+            this.time = stamp ? utcStringToDate(stamp) : new Date();
         }
 
         this.type = (type&~3) | ({normal: 0, groupchat: 1, headline: 2, chat: 3}
