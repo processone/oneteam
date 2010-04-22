@@ -710,18 +710,22 @@ function createRangeForSubstring(substring, root) {
         text += node.textContent;
     }
 
-    var idx = text.indexOf(substring);
-    if (idx < 0)
+    var reStr = "", match, re = /(\S+)(\s*)|(\s+)/g;
+    while ((match = re.exec(substring)))
+        reStr += match[1] ? escapeRe(match[1])+(match[2] ? "\\s+" : "") : "\\s+";
+
+    match = new RegExp(reStr, "i").exec(text);
+    if (!match)
         return null;
 
+    var idx = match.index;
     var range = root.ownerDocument.createRange();
-
     var cmpFun = function(a,b){return a < b[0] ? -1 : a > b[0] ? 1 : 0};
 
     var pos = bsearch(map, idx, cmpFun, true);
     range.setStart(map[pos][1], idx - map[pos][0]);
 
-    idx += substring.length;
+    idx += match[0].length;
 
     pos = bsearch(map, idx, cmpFun, true);
     range.setEnd(map[pos][1], idx - map[pos][0]);
