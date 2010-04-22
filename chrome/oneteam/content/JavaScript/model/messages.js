@@ -876,7 +876,7 @@ _DECL_(Message).prototype =
                                 pfx += xmlEscape(j)+":"+xmlEscape(attrs[i][j])+";";
                             pfx += "\" ";
                         } else
-                            pfx += i+"=\""+xmlEscape(attrs[i])+"\"";
+                            pfx += i+"=\""+xmlEscape(attrs[i])+"\" ";
                     content = pfx + (content ? ">" + content + "</"+nodeName+">" : "/>");
                     sanitizedContent = pfx + ">" + sanitizedContent + "</"+nodeName+">"
                 }
