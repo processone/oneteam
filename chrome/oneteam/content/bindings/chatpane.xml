@@ -292,7 +292,12 @@
                 for each (var thread in me.model.contact.threads)
                   if (thread.chatPane)
                     try {
-                      thread.chatPane._chatpane._output._replaceWithImage();
+                      thread.chatPane._content._chatpane._output._replaceWithImage();
+                    } catch (ex) {alert(ex)}
+                for each (var thread in me.model.contact.newThreads)
+                  if (thread.chatPane)
+                    try {
+                      thread.chatPane._content._chatpane._output._replaceWithImage();
                     } catch (ex) {alert(ex)}
               } else
                 me._replaceWithImage(event.target);
