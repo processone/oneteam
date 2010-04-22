@@ -605,6 +605,8 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
 
 _DECL_(Message).prototype =
 {
+    epoch: 0,
+
     get contactId() {
         if (this._contactId == null)
             this._contactId = this.thread.getContactID(this.contact)
@@ -662,7 +664,8 @@ _DECL_(Message).prototype =
     },
 
     get formatedHtml() {
-        if (!this._html) {
+
+        if (!this._html || this._formatedHtmlEpoch != Message.prototype.epoch) {
             if (!this.html)
                 this._html = this._processUrls(this.text);
             else {
@@ -681,6 +684,8 @@ _DECL_(Message).prototype =
 
             if (this.text.indexOf("/me ") == 0)
                 this._html = this._html.replace(/\/me\s/, "<b>* "+xmlEscape(this.nick)+"</b> ");
+
+            this._formatedHtmlEpoch = Message.prototype.epoch
         }
 
         return this._html;

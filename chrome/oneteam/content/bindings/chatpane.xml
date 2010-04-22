@@ -299,6 +299,7 @@
                     try {
                       thread.chatPane._content._chatpane._output._replaceWithImage();
                     } catch (ex) {alert(ex)}
+                Message.prototype.epoch++;
               } else
                 me._replaceWithImage(event.target);
             }, false);
