@@ -7,7 +7,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "recoverSetters", "perlSplit", "evalInWindow",
                         "enumerateMatchingProps", "report", "Animator",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
-                        "createRangeForSubstring"];
+                        "createRangeForSubstring", "escapeRe"];
 
 ML.importMod("roles.js");
 
@@ -693,6 +693,10 @@ function bsearch(array, value, comparatorFun, toLower) {
         if (a >= array.length || comparatorFun(value, array[a]) != 0)
             return a-1;
     return a;
+}
+
+function escapeRe(string) {
+    return string.replace(/([\$\^\\\|\[\]\(\)\*\?\.\+\{\}])/g, "\\$1")
 }
 
 function createRangeForSubstring(substring, root) {
