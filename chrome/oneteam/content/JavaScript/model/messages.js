@@ -669,7 +669,7 @@ _DECL_(Message).prototype =
                 this._html = this.html;
                 if (!this.contact.representsMe &&
                     !account.cache.getValue("loadimage-"+this.contact.jid.normalizedJID.shortJID))
-                    this._html = this.html.replace(/<img((?:\s+[^\/]+=(?:"[^"]*"|'[^']*'))+\s*)\/>/g,
+                    this._html = this.html.replace(/<img\s+((?:[^\/]+=(?:"[^"]*"|'[^']*')\s*)+)\/>/g,
                         "<div class='image-replacement' onclick=\"var ev = document.createEvent('Events');"+
                             "ev.initEvent('replacewithimage', true, false);"+
                             "this.dispatchEvent(ev)\" $1>" +
