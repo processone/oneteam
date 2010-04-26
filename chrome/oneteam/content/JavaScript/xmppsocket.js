@@ -15,7 +15,15 @@ _DECL_(XMPPSocket).prototype =
 {
     tlsProblemHandled: {},
 
+    debug: false,
+
+    log: function(a) {
+        if (this.debug && window.account)
+            account.console ? account.console.info(a) : dump(a+"\n")
+    },
+
     connect: function() {
+        this.log("XMPPSocket.connect");
         if (this.host == this.domain) {
             try {
                 var dnsSrv = Components.classes["@process-one.net/dns;1"].
@@ -26,6 +34,7 @@ _DECL_(XMPPSocket).prototype =
 
                 dnsSrv.asyncResolveSRV("_xmpp-client._tcp."+this.domain, 0, this,
                                        mainThread);
+                this.log("XMPPSocket.connect (DNSSRV)");
                 return;
             } catch (ex) {}
         }
@@ -33,6 +42,7 @@ _DECL_(XMPPSocket).prototype =
     },
 
     onLookupComplete: function(request, response) {
+        this.log("XMPPSocket.onLookupComplete");
         if (response && response.hasMore())
             [this.host, this.port] = response.getNextAddrAsString().split(":");
 
@@ -41,6 +51,7 @@ _DECL_(XMPPSocket).prototype =
     },
 
     doConnect: function() {
+        this.log("XMPPSocket.doConnect");
         var ioSrv = Components.classes["@mozilla.org/network/io-service;1"].
             getService(Components.interfaces.nsIIOService);
         var pps = Components.classes["@mozilla.org/network/protocol-proxy-service;1"].
@@ -230,6 +241,7 @@ _DECL_(XMPPSocket).prototype =
     // nsIStreamListener
     onStartRequest: function(request, context)
     {
+        this.log("XMPPSocket.onStartRequest");
         this.saxParser.onStartRequest.apply(this.saxParser, arguments);
     },
 
@@ -249,6 +261,7 @@ _DECL_(XMPPSocket).prototype =
 
     onStopRequest: function(request, context, status)
     {
+        this.log("XMPPSocket.onStopRequest ("+status+")");
         if (this.reconnect) {
             this.disconnect();
             this.doConnect();
@@ -266,6 +279,7 @@ _DECL_(XMPPSocket).prototype =
 
     onTransportStatus: function(transport, status, progress, progressMax)
     {
+        this.log("XMPPSocket.onTransportStatus ("+status+")");
         if (status != transport.STATUS_CONNECTING_TO)
             return;
 
