@@ -52,14 +52,17 @@ _DECL_(XMPPSocket).prototype =
 
     doConnect: function() {
         this.log("XMPPSocket.doConnect");
+        try{
         var ioSrv = Components.classes["@mozilla.org/network/io-service;1"].
             getService(Components.interfaces.nsIIOService);
         var pps = Components.classes["@mozilla.org/network/protocol-proxy-service;1"].
             getService(Components.interfaces.nsIProtocolProxyService);
+        this.log("XMPPSocket.doConnect (1)");
         var proxyUri = ioSrv.newURI((this.ssl == "ssl" ? "https://" : "http://")+this.host,
                                     null, null);
         var proxyInfo = pps.resolve(proxyUri, pps.RESOLVE_NON_BLOCKING);
 
+        this.log("XMPPSocket.doConnect (2)");
         var mainThread = Components.classes["@mozilla.org/event-queue-service;1"] ?
             Components.classes["@mozilla.org/event-queue-service;1"].
                 getService(Components.interfaces.nsIEventQueueService).
@@ -67,17 +70,22 @@ _DECL_(XMPPSocket).prototype =
             Components.classes["@mozilla.org/thread-manager;1"].
                 getService().mainThread;
 
+        this.log("XMPPSocket.doConnect (3)");
         var stSrv = Components.classes["@mozilla.org/network/socket-transport-service;1"].
           getService(Components.interfaces.nsISocketTransportService);
 
+        this.log("XMPPSocket.doConnect (4)");
         this.reset();
 
+        this.log("XMPPSocket.doConnect (5)");
         this.transport = stSrv.createTransport([this.ssl ? "ssl" : "starttls"], 1,
                                                this.host, this.port, proxyInfo);
+        this.log("XMPPSocket.doConnect (6)");
         this.transport.setEventSink(this, mainThread);
         this.is = this.transport.openInputStream(0, 0, 0);
         var tee = Components.classes["@mozilla.org/network/stream-listener-tee;1"].
             createInstance(Components.interfaces.nsIStreamListenerTee);
+        this.log("XMPPSocket.doConnect (7)");
         tee.init(this, {
             listener: this.listener,
 
@@ -100,17 +108,22 @@ _DECL_(XMPPSocket).prototype =
                 return false;
             }
         });
+        this.log("XMPPSocket.doConnect (8)");
         var pump = Components.classes['@mozilla.org/network/input-stream-pump;1'].
             createInstance(Components.interfaces.nsIInputStreamPump);
         pump.init(this.is, -1, -1, 0, 0, false);
         pump.asyncRead(tee, null);
 
+        this.log("XMPPSocket.doConnect (9)");
         this.os = this.transport.openOutputStream(1, 0, 0);
         this.bos = Components.classes["@mozilla.org/binaryoutputstream;1"].
           createInstance(Components.interfaces.nsIBinaryOutputStream);
+        this.log("XMPPSocket.doConnect (10)");
         this.bos.setOutputStream(this.os);
+        this.log("XMPPSocket.doConnect (11)");
         this._pingInterval = window.setInterval(function(t){t.send(" ")}, 50000, this);
         this.reconnect = false;
+        }catch(ex){this.log("XMPPSocket.doConnect (exc: "+ex+")")}
     },
 
     send: function(data) {
