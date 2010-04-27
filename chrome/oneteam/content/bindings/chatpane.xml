@@ -61,6 +61,7 @@
           this._visible = val;
           this._updateNonSeenStatus();
           this._syncMarkers();
+          this._updateVisibleAnimations();
 
           if (!val && this._model)
             this._model.visible = false;
@@ -196,12 +197,28 @@
       </method>
 
       <method name="_syncMarkers">
-        <parameter name="token"/>
         <body><![CDATA[
           if (!this._markers)
             return;
           for (var i = 0; i < this._markers.length; i++)
             this._syncMarker(this._markers[i]);
+        ]]></body>
+      </method>
+
+      <method name="_updateVisibleAnimations">
+        <body><![CDATA[
+          if (!this.visible && this._visibleAnimationsTimeout) {
+            clearTimeout(this._visibleAnimationsTimeout);
+            this._visibleAnimationsTimeout = null;
+          } else if (this.visible && !this._visibleAnimationsTimeout &&
+                     this._visibleAnimations)
+          {
+            setTimeout(function(_this) {
+              for (var i = 0; i < _this._visibleAnimations.length; i++)
+                _this._visibleAnimations[i].start();
+              _this._visibleAnimations = null;
+            }, 250, this);
+          }
         ]]></body>
       </method>
 
@@ -614,7 +631,14 @@
                   element: e,
                   style: "background",
                   stopValue: "",
+                  paused: !this.visible
                 }, "#fd0", "parent.transparent");
+
+                if (!this.visible)
+                  if (this._visibleAnimations)
+                    this._visibleAnimations.push(animation)
+                  else
+                    this._visibleAnimations = [animation];
 
                 continue;
               }
