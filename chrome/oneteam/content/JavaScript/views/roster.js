@@ -176,16 +176,18 @@ _DECL_(GroupView, null, ContainerView).prototype =
         }
 
         if (this.model == account.myEventsGroup)
-            this.animToken = Animator.animateStyle(this.node._container,
-                                                   "background", -20, 100,
-                                                   null, "transparent", "#ff6",
-                                                   "transparent");
+            this.animation = Animator.animateStyle({
+                element: this.node._container,
+                style:"background",
+                tick: 100,
+                loop: true
+            }, "transparent", "#ff6", "transparent");
     },
 
     destroy: function()
     {
-        if (this.animToken)
-            Animator.stopAnimation(this.animToken);
+        if (this.animation)
+            this.animation.stop();
 
         this._bundle.unregister();
 

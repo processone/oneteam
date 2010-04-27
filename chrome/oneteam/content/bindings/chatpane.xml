@@ -208,24 +208,40 @@
       <method name="scrollToElement">
         <parameter name="element"/>
         <body><![CDATA[
-          Animator.stopAnimation(this._scrollToken);
-          return this._scrollToken = Animator.animateScrollToElement(element, 20, 20, "absolute:0");
+          if (this._scrollAnimation)
+            this._scrollAnimation.stop();
+
+          return this._scrollAnimation = Animator.animateScrollToElement({
+            element: element,
+          }, "absolute:0");
         ]]></body>
       </method>
 
       <method name="scrollPageUp">
         <body><![CDATA[
           var el = this._output.contentDocument.body;
-          Animator.stopAnimation(this._scrollToken);
-          this._scrollToken = Animator.animateScroll(el, 0, el.scrollTop-el.clientHeight+16, 5, 20);
+
+          if (this._scrollAnimation)
+            this._scrollAnimation.stop();
+
+          this._scrollAnimation = Animator.animateScroll({
+            element: el,
+            steps: 5,
+          }, 0, el.scrollTop-el.clientHeight+16);
         ]]></body>
       </method>
 
       <method name="scrollPageDown">
         <body><![CDATA[
           var el = this._output.contentDocument.body;
-          Animator.stopAnimation(this._scrollToken);
-          this._scrollToken = Animator.animateScroll(el, 0, el.scrollTop+el.clientHeight-16, 5, 20);
+
+          if (this._scrollAnimation)
+            this._scrollAnimation.stop();
+
+          this._scrollAnimation = Animator.animateScroll({
+            element: el,
+            steps: 5,
+          }, 0, el.scrollTop+el.clientHeight+16);
         ]]></body>
       </method>
 
@@ -390,11 +406,15 @@
               el.removeMarker(token);
               el._unseenMarker = null;
               el._firstNotSeenMsg = null;
-              Animator.animateCssRule(null, rule, "opacity", 20, 20, function(rule) {
-                rule.style.outline = "";
-                el._markMessagesAsSeen();
-                if (el._model)
-                  el._model.visible = true;
+              Animator.animateCssRule({
+                rule: rule,
+                style: "opacity",
+                stopCallback: function(token) {
+                  token.rule.style.opacity = "";
+                  el._markMessagesAsSeen();
+                  if (el._model)
+                    el._model.visible = true;
+                }
               }, 0.3, 1);
             }, function(token, el) {
               if (el._model)
@@ -416,7 +436,7 @@
         <parameter name="numCalls"/>
         <body><![CDATA[
 
-          if (Animator.animationIsRunning(this._prependAnimation)) {
+          if (this._prependAnimation && this._prependAnimation.running) {
             this._prependAnimation.numCalls++;
             return;
           }
@@ -447,27 +467,28 @@
           // force relayout
           d1.clientHeight;
 
-          var token = {
-            element: d1,
-            startValues: [0],
-            diffValues: [d2.scrollHeight],
-            fields: ["height"],
-            valueSetter: function(el, field, value) { el.style.height = value+"px" },
-            step: 0,
-            steps: 20,
-            tick: 20,
-            numCalls: (numCalls||1) - 1,
-            cp: this,
-            stopCallback: function(el, token) {
-              while (el.firstChild.firstChild)
-                el.parentNode.insertBefore(el.firstChild.firstChild, el);
-              el.parentNode.removeChild(el);
-              if (token.numCalls)
-                token.cp._prependMessages(token.numCalls);
-            }
-          }
+          var token = Animator._createToken({
+              stopCallback: function(token) {
+                var el = token.element;
 
-          this._prependAnimation = Animator._animateDimensions(token);
+                while (el.firstChild.firstChild)
+                  el.parentNode.insertBefore(el.firstChild.firstChild, el);
+                el.parentNode.removeChild(el);
+                if (token.numCalls)
+                  token.chatpane._prependMessages(token.numCalls);
+              }
+          });
+          token.element = d1;
+          token.values = [[0], [d2.scrollHeight]];
+          token.setProportionValue = Animator._setDimensionProportionValue;
+          token.setValue = function(value, token) {
+            token.element.style.height = value[0]+"px";
+          };
+          token.numCalls = (numCalls||1) - 1;
+          token.chatpane = this;
+          token._init();
+
+          this._prependAnimation = token;
 
 //          this._content.insertBefore(fragment, this._firstMsgEl);
 
@@ -500,7 +521,7 @@
           }
 
           var scrollToBottom = scrEl.scrollTop + scrEl.clientHeight >= scrEl.scrollHeight - 8 ||
-            Animator.animationIsRunning(this._scrollToBottomToken);
+            this._scrollToBottomAnimation.running;
 
           this._appendTimeout = null;
 
@@ -547,7 +568,7 @@
             if (initial)
               doc.body.scrollTop = doc.body.scrollHeight;
             else
-              this._scrollToBottomToken = this.scrollToElement(msgEl);
+              this._scrollToBottomAnimation = this.scrollToElement(msgEl);
 
           this._lastMsg = msgs[msgs.length-1];
           this._lastMsgEl = msgEl;
@@ -586,8 +607,14 @@
 
                 range.detach();
 
-                if (!msg.archived)
-                  Animator.animateStyle(e, "background", 20, 20, null, "#fd0", "parent.transparent");
+                if (msg.archived)
+                  continue;
+
+                var animation = Animator.animateStyle({
+                  element: e,
+                  style: "background",
+                  stopValue: "",
+                }, "#fd0", "parent.transparent");
 
                 continue;
               }
@@ -1400,12 +1427,15 @@
 
       <method name="_blink">
         <body><![CDATA[
-          if (this._blinkToken)
-            Animator.stopAnimation(this._blinkToken);
+          if (this._blinkAnimation)
+            this._blinkAnimation.stop();
 
-          this.parentNode.style.outline = "3px solid transparent";
-          this._blinkToken = Animator.animateStyle(this.parentNode, "outlineColor", 20, 20, function(el){
-            el.style.outline = "";
+          this.style.outline = "3px solid transparent";
+
+          this._blinkAnimation = Animator.animateStyle({
+            element: this,
+            style: "outlineColor",
+            stopValue: "",
           }, "parent.transparent", "borderTopColor", "parent.transparent");
         ]]></body>
       </method>

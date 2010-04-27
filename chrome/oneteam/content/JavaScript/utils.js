@@ -1068,39 +1068,75 @@ var Animator = {
         return value;
     },
 
-    _animateColor: function(token, animator) {
-        if (token.step == token.steps) {
-            if (!token.loop) {
-                token.valueSetter(animator._toCssValue(token.values[token.values.length-1]));
-                token.timeout = null;
-                if (token.stopCallback)
-                    token.stopCallback(token.element, token);
-                return null;
+    _tokenClass: {
+        get running() {
+            return this.step < this.steps;
+        },
+
+        stop: function() {
+            if (this.step >= this.steps)
+                return;
+
+            this.step = this.steps;
+
+            if (this.timeout)
+                clearInterval(this.timeout);
+
+            try {
+                var stopValue = this.stopValue != null ?
+                    this.stopValue : this.values[this.values.length-1];
+                this.setValue(stopValue, this);
+            } catch (ex) { }
+
+            try {
+                if (this.stopCallback)
+                    this.stopCallback(this);
+            } catch (ex) { }
+        },
+
+        start: function() {
+            if (this.timeout)
+                return;
+
+            if (this.step == 0)
+                this._doStep();
+
+            this.paused = false;
+
+            this.timeout = setInterval(function(a){a._doStep()}, this.tick, this);
+        },
+
+        _init: function() {
+            if (this.paused)
+                this._doStep();
+            else
+                this.start();
+        },
+
+        _doStep: function() {
+            if (this.step == this.steps) {
+                this.step = 0;
+
+                if (!this.loop) {
+                    this.stop();
+                    return;
+                }
             }
-            token.step = 0;
+
+            var proportion = this.step*(this.values.length-1)/this.steps;
+            var idx = Math.floor(proportion);
+            var val;
+            proportion = proportion - idx;
+
+            try {
+                this.setProportionValue(this.values[idx], this.values[idx+1],
+                                        proportion, this);
+            } catch (ex) {
+                this.stop();
+            }
+
+            this.step++;
         }
-
-        var proportion = token.step*(token.values.length-1)/token.steps;
-        var idx = Math.floor(proportion);
-        var val;
-        proportion = proportion - idx;
-
-        if (token.values[idx] instanceof Array) {
-            val = [token.values[idx][0]*(1-proportion) + token.values[idx+1][0]*proportion,
-                   token.values[idx][1]*(1-proportion) + token.values[idx+1][1]*proportion,
-                   token.values[idx][2]*(1-proportion) + token.values[idx+1][2]*proportion]
-            if (token.values[idx].length == 4)
-                val[4] = token.values[idx][3]*(1-proportion) + (token.values[idx+1][3]||255)*proportion;
-            else if (token.values[idx].length == 4)
-                val[4] = 255*(1-proportion) + (token.values[idx+1][3])*proportion;
-        } else
-            val = token.values[idx]*(1-proportion) + token.values[idx+1]*proportion;
-
-        token.valueSetter(animator._toCssValue(val));
-        token.step++;
-        token.timeout = setTimeout(arguments.callee, token.tick, token, animator);
-
-        return token;
     },
 
     _animateDimensions: function(token) {
@@ -1120,87 +1156,139 @@ var Animator = {
         return token;
     },
 
-    animateCssRule: function(stylesheet, selector, style, steps, tick, stopCallback) {
+    _setColorProportionValue: function(v1, v2, proportion, token) {
+        var revProportion = 1-proportion, val;
+
+        if (v1 instanceof Array) {
+            val = [v1[0]*revProportion + v2[0]*proportion,
+                   v1[1]*revProportion + v2[1]*proportion,
+                   v1[2]*revProportion + v2[2]*proportion];
+            if (v1.length == 4)
+                val[4] = v1[3]*revProportion + (v2[3]||255)*proportion;
+            else if (v2.length == 4)
+                val[4] = 255*revProportion + v2[3]*proportion;
+        } else
+            val = v1*revProportion + v2*proportion;
+
+        token.setValue(val, token);
+    },
+
+    _setDimensionProportionValue: function(v1, v2, proportion, token) {
+        var revProportion = 1-proportion;
+        var v = [];
+        for (var i = 0; i < v1.length; i++)
+            v[i] = v1[i]*revProportion + v2[i]*proportion;
+
+        token.setValue(v, token);
+    },
+
+    _createToken: function(data) {
+        return {
+            __proto__: this._tokenClass,
+            animator: this,
+            tick: "tick" in data ? data.tick : 20,
+            step: 0,
+            steps: "steps" in data ? data.steps : 20,
+            loop: "loop" in data ? data.loop : false,
+            paused: "paused" in data ? data.paused : false,
+            stopValue: "stopValue" in data ? data.stopValue : null,
+            stopCallback: "stopCallback" in data ? data.stopCallback : null
+        };
+    },
+
+    animateCssRule: function(data) {
         var values = [];
 
-        for (var i = 6; i < arguments.length; i++)
-            values.push(this._parseCssValue(arguments[i], typeof(selector) == "string" ? null : selector,
+        var rule = data.rule;
+        var style = data.style;
+
+        for (var i = 1; i < arguments.length; i++)
+            values.push(this._parseCssValue(arguments[i], typeof(rule) == "string" ? null : rule,
                                             null, style == "opacity"));
 
         if (values.length < 2)
             return null;
 
-        if (typeof(selector) == "string") {
-            selector = stylesheet.insertRule(selector+"{"+style+":"+this._toCssValue(values[0])+"}",
-                                             stylesheet.cssRules.length)
-            selector = stylesheet.cssRules[selector];
+        if (typeof(rule) == "string") {
+            rule = data.stylesheet.insertRule(rule+"{"+style+":"+
+                                                  this._toCssValue(values[0])+"}",
+                                                  data.stylesheet.cssRules.length);
+            rule = data.stylesheet.cssRules[rule];
         }
-        var token = {
-            element: selector,
-            values: values,
-            tick: tick,
-            steps: steps < 0 ? -steps : steps,
-            loop: steps < 0,
-            step: 0,
-            stopCallback: stopCallback,
-            valueSetter: function(value) { selector.style[style] = value }
-        };
-        return this._animateColor(token, this);
+
+        var token = this._createToken(data);
+
+        token.rule = rule;
+        token.style = style;
+        token.values = values;
+        token.setProportionValue = this._setColorProportionValue;
+        token.setValue = function(value, token) {
+            token.rule.style[token.style] = token.animator._toCssValue(value);
+        }
+
+        token._init();
+        return token;
     },
 
-    animateStyle: function(element, style, steps, tick, stopCallback) {
+    animateStyle: function(data) {
         var values = [];
-        for (var i = 5; i < arguments.length; i++) {
-            var arg = arguments[i], el = element, arg2;
+        for (var i = 1; i < arguments.length; i++) {
+            var arg = arguments[i], el = data.element, arg2;
             while (el && (arg2 = arg.replace(/^\s*parent\s*\.\s*/, "")) != arg) {
                 el = el.parentNode;
                 arg = arg2;
             }
             var compStyle = el.ownerDocument.defaultView.getComputedStyle(el, "");
-            values.push(this._parseCssValue(arg, compStyle, element, style == "opacity"));
+            values.push(this._parseCssValue(arg, compStyle, data.element, data.style == "opacity"));
         }
 
         if (values.length < 2)
             return null;
 
-        var token = {
-            element: element,
-            values: values,
-            tick: tick,
-            steps: steps < 0 ? -steps : steps,
-            loop: steps < 0,
-            step: 0,
-            stopCallback: stopCallback,
-            valueSetter: function(value) { element.style[style] = value }
-        };
-        return this._animateColor(token, this);
+        var token = this._createToken(data);
+
+        token.element = data.element;
+        token.style = data.style;
+        token.values = values;
+        token.setProportionValue = this._setColorProportionValue;
+        token.setValue = function(value, token) {
+            token.element.style[token.style] = token.animator._toCssValue(value);
+        }
+
+        token._init();
+
+        return token;
     },
 
-    animateScroll: function(element, targetX, targetY, steps, tick) {
+    animateScroll: function(data, targetX, targetY) {
+        var element = data.element;
+
         targetX = targetX == null ? element.scrollLeft :
             Math.min(Math.max(targetX, 0), element.scrollWidth - element.clientWidth);
         targetY = targetY == null ? element.scrollTop :
             Math.min(Math.max(targetY, 0), element.scrollHeight - element.clientHeight);
 
-        var token = {
-            element: element,
-            startValues: [element.scrollLeft, element.scrollTop],
-            diffValues: [targetX - element.scrollLeft, targetY - element.scrollTop],
-            fields: ["scrollLeft", "scrollTop"],
-            valueSetter: function(el, field, value) { element[field] = value },
-            step: 0,
-            steps: steps,
-            tick: tick
+        var token = this._createToken(data);
+
+        token.element = element;
+        token.values = [[element.scrollLeft, element.scrollTop], [targetX, targetY]];
+        token.setProportionValue = this._setDimensionProportionValue;
+        token.setValue = function(value, token) {
+            token.element.scrollLeft = value[0];
+            token.element.scrollTop = value[1];
         }
 
-        return this._animateDimensions(token);
+        token._init();
+
+        return token;
     },
 
-    animateScrollToElement: function(element, steps, tick, xPosition, yPosition) {
+    animateScrollToElement: function(data, xPosition, yPosition) {
+        var element = data.element;
         var left = element.offsetLeft;
         var top = element.offsetTop;
         var p = element.parentNode;
-        var op = element.offsetParent
+        var op = element.offsetParent;
 
         while (p && p.clientWidth == p.scrollWidth && p.clientHeight == p.scrollHeight) {
             if (p == op) {
@@ -1230,19 +1318,8 @@ var Animator = {
                 x[4].v = parseInt(x[0]*res[2]/100 + x[1]*(1-res[2]/100));
         }
 
-        return this.animateScroll(p, pos[0].v, pos[1].v, steps, tick);
-    },
+        data.element = p;
 
-    animationIsRunning: function(token) {
-        return token && token.timeout;
-    },
-
-    stopAnimation: function(token) {
-        if (!token || !token.timeout)
-            return;
-
-        clearTimeout(token.timeout);
-        if (token.stopCallback)
-            token.stopCallback(token.element);
+        return this.animateScroll(data, pos[0].v, pos[1].v);
     }
 }

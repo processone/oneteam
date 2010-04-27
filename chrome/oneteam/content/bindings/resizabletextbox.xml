@@ -114,12 +114,15 @@
 
       <method name="_blink">
         <body><![CDATA[
-          if (this._blinkToken)
-            Animator.stopAnimation(this._blinkToken);
+          if (this._blinkAnimation)
+            this._blinkAnimation.stop();
 
           this.style.outline = "3px solid transparent";
-          this._blinkToken = Animator.animateStyle(this, "outlineColor", 20, 20, function(el){
-            el.style.outline = "";
+
+          this._blinkAnimation = Animator.animateStyle({
+            element: this,
+            style: "outlineColor",
+            stopValue: "",
           }, "transparent", "borderTopColor", "transparent");
         ]]></body>
       </method>
