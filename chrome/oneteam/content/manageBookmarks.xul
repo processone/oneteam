@@ -158,9 +158,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Bookmark Manager')"/>
-
-  <hbox flex="1">
+  <hbox flex="1" style="padding-top: 20px;padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
     <vbox>
       <listbox id="list" flex="1" onselect="roomChange(this)"/>
       <hbox>
@@ -217,8 +215,11 @@
           </row>
 
           <spacer/>
-
-          <checkbox label="_('Always join this room at startup')" id="autoJoin"/>
+          
+          <row>
+            <box/>
+            <checkbox label="_('Always join this room at startup')" id="autoJoin"/>
+          </row>
         </rows>
       </grid>
     </verifier>

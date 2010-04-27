@@ -10,7 +10,7 @@
 <dialog id="joinRoom" windowtype="ot:joinRoom" title="Join Room"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  width="600" height="400"
+  width="600" height="310"
   buttonlabelaccept="Join" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onunload="cleanup()" ondialogaccept="return joinRoom()" onload="onLoad()">
@@ -86,8 +86,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="Join Room"/>
-
   <grid>
     <columns>
       <column/>
@@ -117,19 +115,23 @@
         <textbox id="password" type="password"/>
       </row>
 
-      <spacer/>
-
-      <checkbox label="Bookmark this room" id="bookmark"
-          oncommand="autoJoin.disabled = bookmarkName.disabled = bookmarkName.previousSibling.disabled = !this.checked"/>
-      <row align="center">
-        <label style="margin-left: 2em" value="Name:" control="bookmarkName" disabled="true"/>
-        <textbox type="verifiable" regex="." id="bookmarkName" disabled="true"
-                 errortext="Bookmark name can't be empty"/>
-      </row>
-      <checkbox style="margin-left: 2em" label="Always join this room at startup" id="autoJoin" disabled="true"/>
     </rows>
   </grid>
-
+  
+  <spacer/>
+  
+  <separator class="groove"/>
+  
+  <spacer/>
+  
+  <hbox>
+    <checkbox label="Bookmark this room as" id="bookmark"
+            oncommand="autoJoin.disabled = bookmarkName.disabled = !this.checked"/>
+    <textbox type="verifiable" regex="." flex="1" id="bookmarkName" disabled="true"
+            errortext="Bookmark name can't be empty"/>
+  </hbox>
+  <checkbox style="margin-left: 2em" label="Always join this room at startup" id="autoJoin" disabled="true"/>
+  
   <spacer/>
 
   <progressmeter id="progressmeter" style="visibility: hidden" mode="undetermined"/>
