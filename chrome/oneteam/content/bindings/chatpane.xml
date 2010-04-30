@@ -862,10 +862,15 @@
 
           ML.importMod("wave.js");
 
-          return this._deltaTracker = new EditorDeltaTracker(this.editor, msgEl,
-            new Callback(this.model.msgModified, this.model).addArgs(msg).fromCall());
+          setTimeout(function(msgEl){try{msgEl.focus()}catch(ex){alert(ex)}}, 100, msgEl);
 
-          setTimeout(function(msgEl){try{msgEl.focus()}catch(ex){alert(ex)};alert(1)}, 1000, msgEl);
+          var callback = this.model.msgModified ?
+            new Callback(this.model.msgModified, this.model).addArgs(msg).fromCall() :
+            null;
+
+          return this._deltaTracker = new EditorDeltaTracker(this.editor, msgEl,
+                                                             callback);
+
         ]]></body>
       </method>
 
