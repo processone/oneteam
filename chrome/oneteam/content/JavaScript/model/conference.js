@@ -22,6 +22,7 @@ function Conference(jid)
 
 _DECL_(Conference, Contact).prototype =
 {
+    contactContainer: true,
     get iAmOwner() { return this.myResource ? this.myResource.isOwner : false },
     get iAmAdmin() { return this.myResource ? this.myResource.isAdmin : false },
     get iAmModerator() { return this.myResource ? this.myResource.isModerator : false },

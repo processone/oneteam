@@ -103,19 +103,21 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
     margin-left: 24px;
 }
 
-.thread-marker {
+.message-action {
     display: none;
     position: absolute;
     left: 1px;
     bottom: 0.4em;
 }
 
-.thread-marker-reply {
+.thread-marker-reply,
+.edit-message
+{
     cursor: pointer;
 }
 
-span.body:hover > .thread-marker-reply,
-.thread-marker:not([src="resource://oneteam-skin/chatpane/imgs/add-thread.png"])
+.message > span.body:hover > .message-action,
+.message-action:not([src="resource://oneteam-skin/chatpane/imgs/add-thread.png"])
 {
     display: inline;
 }
@@ -140,7 +142,7 @@ span.body:hover > .thread-marker-reply,
     color: #565;
 }
 
-.directed .body {
+.directed > .body {
     color: #911;
 }
 
@@ -161,7 +163,7 @@ span.body:hover > .thread-marker-reply,
     color: #333;
 }
 
-.body {
+.message > .body {
     position: relative;
     display: block;
     padding: 3px 0px;
@@ -186,6 +188,7 @@ body[marked-thread=true] .message[in-marked-thread=true] {
 
 .image-replacement {
     cursor: pointer;
+    -moz-user-select: none;
     display: inline-block;
     position: relative;
     width: 300px;

@@ -147,6 +147,7 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 
 _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesRouter).prototype =
 {
+    contactContainer: false,
     avatar: null,
     avatarHash: null,
 
@@ -740,6 +741,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     _registered: false,
     presence: new Presence("unavailable"),
     representsMe: false,
+    contactContainer: false,
     avatar: null,
     avatarHash: null,
 

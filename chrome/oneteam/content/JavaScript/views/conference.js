@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["BookmarksMenuView", "ConferencesView", "ConferenceView"];
+var EXPORTED_SYMBOLS = ["BookmarksMenuView", "ConferencesView", "ConferenceView", "RosterViewEx"];
 
 function BookmarksMenuView(node)
 {
@@ -459,5 +459,163 @@ _DECL_(ConferenceMemberTooltip).prototype =
     {
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
+    }
+}
+
+function RosterViewEx(model, parentView, containerNode, hideTitle)
+{
+    this.model = model;
+    this.parentView = parentView;
+    this.contacts = [];
+
+    var doc = containerNode.ownerDocument;
+
+    this.node = doc.createElementNS(XULNS, "richlistitem");
+
+    this.node.setAttribute("class", "conference-view");
+    this.node.setAttribute("context", "conference-contextmenu");
+    this.node.model = this.model;
+    this.node.menuModel = model;
+    this.node.view = this;
+
+    if (!hideTitle) {
+        this.label = doc.createElementNS(XULNS, "label");
+        this.label.setAttribute("value", this.model.name);
+        this.label.setAttribute("flex", "1");
+        this.label.setAttribute("crop", "end");
+        this.node.appendChild(this.label);
+    }
+
+    this._token = this.model.registerView(this.onModelUpdated, this, "resources");
+
+    if (containerNode)
+        this.show(containerNode, this.afterLastItemNode);
+}
+
+_DECL_(RosterViewEx, null, ContainerView).prototype =
+{
+    containerNode: null,
+
+    get afterLastItemNode()
+    {
+        if (this.parentView)
+            return this.parentView.getNextItemNode(this);
+
+        return null;
+    },
+
+    itemComparator: function(a, b, m, s, e)
+    {
+        aVal = a.model.name.toLowerCase();
+        bVal = b.model.name.toLowerCase();
+
+        return aVal == bVal ? 0 : aVal > bVal ? 1 : -1;
+    },
+
+    onModelUpdated: function(model, type, data)
+    {
+        if (!this.items)
+            return;
+
+        for (var i = 0; data.added && i < data.added.length; i++) {
+            this.onItemAdded(new RosterMemberView(data.added[i], this,
+                                                      this.node.ownerDocument));
+        }
+
+        for (i = 0; data.removed && i < data.removed.length; i++) {
+            this.onItemRemoved(data.removed[i]);
+        }
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        this.containerNode = rootNode;
+        rootNode.insertBefore(this.node, insertBefore);
+
+        if (!this.items) {
+            this.items = [];
+            for each (var item in this.roleNodes)
+                this.onItemAdded(item.node);
+            this.onModelUpdated(this.model, "resources", {added: this.model.resources});
+        }
+    },
+
+    destroy: function()
+    {
+        this.model.unregisterView(this._token);
+
+        if (!this.items)
+            return;
+        ContainerView.prototype.destroy.call(this);
+        this.containerNode.removeChild(this.node);
+    }
+}
+
+function RosterMemberView(model, parentView, doc)
+{
+    this.model = model;
+    this.parentView = parentView;
+
+    this.node = doc.createElementNS(XULNS, "richlistitem");
+    this.statusIcon = doc.createElementNS(XULNS, "image");
+    this.label = doc.createElementNS(XULNS, "label");
+    this.avatar = doc.createElementNS(XULNS, "avatar");
+    this.avatar.model = this.model;
+
+    this.node.setAttribute("class", "conferencemember-view");
+    this.node.setAttribute("context", "conferencemember-contextmenu");
+    this.node.setAttribute("ondblclick", "this.model.onOpenChat()");
+    this.label.setAttribute("value", model.name);
+    this.label.setAttribute("flex", "1");
+    this.label.setAttribute("crop", "end");
+
+    this.node.model = this.model;
+    this.node.menuModel = model;
+    this.node.view = this;
+
+    var box = doc.createElementNS(XULNS, "vbox");
+    box.setAttribute("pack", "center");
+    box.appendChild(this.statusIcon);
+
+    this.node.appendChild(this.avatar);
+    this.node.appendChild(this.label);
+    this.node.appendChild(box);
+
+    this._bundle = new RegsBundle(this);
+    this._bundle.register(this.model, this.onNameChange, "name");
+    this._bundle.register(this.model, this.onModelUpdated, "presence");
+    this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
+
+    this.onModelUpdated();
+    this._oldRole = this.model.role;
+}
+
+_DECL_(RosterMemberView).prototype =
+{
+    onNameChange: function()
+    {
+        this.label.value = this.model.name;
+        this.parentView.onItemUpdated(this);
+    },
+
+    onModelUpdated: function()
+    {
+        this.statusIcon.setAttribute("src", this.model.getStatusIcon());
+        this.parentView.onItemUpdated(this);
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        rootNode.insertBefore(this.node, insertBefore);
+    },
+
+    destroy: function()
+    {
+        this.avatar.model = null;
+
+        if (this.node.parentNode)
+            this.node.parentNode.removeChild(this.node);
+
+        this._bundle.unregister();
     }
 }

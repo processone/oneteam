@@ -301,6 +301,7 @@ _DECL_(MessagesThread, Model).prototype =
 {
     isFromArchive: false,
     peerChatState: null,
+    allowsModifications: false,
     _visible: false,
     _handleChatState: null,
     _handleXThreads: null,
@@ -606,6 +607,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
 _DECL_(Message).prototype =
 {
     epoch: 0,
+    dontGroup: false,
 
     get contactId() {
         if (this._contactId == null)
