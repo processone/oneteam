@@ -313,7 +313,7 @@ _DECL_(EditorDeltaTracker).prototype =
     },
 
     _deleteSelectionHelper: function(node, offset, pos, endNode, endOffset) {
-        while (node) {
+        while (node && node != this.root) {
             if (node.nodeType == node.TEXT_NODE) {
                 var val = node.nodeValue;
                 if (node == endNode)
@@ -335,7 +335,7 @@ _DECL_(EditorDeltaTracker).prototype =
             if (node == endNode)
                 return;
 
-            while (node != endNode && !node.nextSibling)
+            while (node != endNode && node != this.root && !node.nextSibling)
                 node = node.parentNode;
 
             if (node != endNode)
