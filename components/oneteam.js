@@ -3,6 +3,8 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 var JSON = Components.classes["@mozilla.org/dom/json;1"].
     createInstance(Components.interfaces.nsIJSON);
 
+var OneTeam = this;
+
 function OneTeamLoader() {
     this.wrappedJSObject = this;
 }
