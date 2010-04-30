@@ -850,9 +850,9 @@
               ev.stopPropagation();
             }
           }
-          msgEl.addEventListener("keypress", this._editMessageHandler, false);
-          msgEl.addEventListener("keydown", this._editMessageHandler, false);
-          msgEl.addEventListener("keyup", this._editMessageHandler, false);
+          msgEl.addEventListener("keypress", this._editMessageHandler, true);
+          msgEl.addEventListener("keydown", this._editMessageHandler, true);
+          msgEl.addEventListener("keyup", this._editMessageHandler, true);
 /*          msgEl.addEventListener("DOMNodeInserted", this._editMessageHandler, false);
           msgEl.addEventListener("DOMNodeRemoved", this._editMessageHandler, false);
           msgEl.addEventListener("DOMAttrModified", this._editMessageHandler, false);
@@ -879,9 +879,9 @@
           var msgEl = this._editMessageHandler.msgEl;
 
           msgEl.contentEditable = false;
-          msgEl.removeEventListener("keypress", this._editMessageHandler, false);
-          msgEl.removeEventListener("keydown", this._editMessageHandler, false);
-          msgEl.removeEventListener("keyup", this._editMessageHandler, false);
+          msgEl.removeEventListener("keypress", this._editMessageHandler, true);
+          msgEl.removeEventListener("keydown", this._editMessageHandler, true);
+          msgEl.removeEventListener("keyup", this._editMessageHandler, true);
 /*          msgEl.removeEventListener("DOMNodeInserted", this._editMessageHandler, false);
           msgEl.removeEventListener("DOMNodeRemoved", this._editMessageHandler, false);
           msgEl.removeEventListener("DOMAttrModified", this._editMessageHandler, false);
@@ -1380,7 +1380,7 @@
 
             me._onUserType();
             return true;
-          }, false);
+          }, true);
 
           window.addEventListener("resize", function(ev) {
             if (ev.target == window)
@@ -2002,7 +2002,7 @@
               if (tabbox)
                 tabbox._tabs.advanceSelectedTab(switchTab, true)
             }
-        }, false);
+        }, true);
 
         setTimeout(function(me) {
           if (!me._output._output) {
