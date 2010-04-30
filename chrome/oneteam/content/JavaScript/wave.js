@@ -207,17 +207,26 @@ _DECL_(EditorDeltaTracker).prototype =
                         }
                     }
                 }
-                if (this.log[p].start < op.start)
-                    break;
+            } else {
+                if (op.type == op.TAG && prevOp.op == op.TAG) {
+                    if (op.start == prevOp.start && op.op != prevOp.op) {
+                        this.log.splice(p, 1);
+                        op = null;
+                        break;
+                    }
+                }
+            }
 
-                if (prevOp && this.log[p] == prevOp) {
-                   if (op.op == op.INSERT) {
-                       prevOp.start += op.end-op.start;
-                       prevOp.end += op.end-op.start;
-                   } else {
-                       prevOp.start -= op.end-op.start;
-                       prevOp.end -= op.end-op.start;
-                   }
+            if (this.log[p].start < op.start)
+                break;
+
+            if (prevOp && this.log[p] == prevOp) {
+               if (op.op == op.INSERT) {
+                   prevOp.start += op.end-op.start;
+                   prevOp.end += op.end-op.start;
+               } else {
+                   prevOp.start -= op.end-op.start;
+                   prevOp.end -= op.end-op.start;
                }
            }
         }
