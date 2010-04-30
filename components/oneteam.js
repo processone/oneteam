@@ -63,8 +63,8 @@ MLP.prototype =
                     ss = ss[tmp2[j]]
                     st = st[tmp2[j]]
                 }
-				if (st)
-					st[tmp2[tmp2.length-1]] = ss[tmp2[tmp2.length-1]];
+                if (st)
+                    st[tmp2[tmp2.length-1]] = ss[tmp2[tmp2.length-1]];
             } else
                 scope[tmp[i]] = this.__parent__[tmp[i]];
 
