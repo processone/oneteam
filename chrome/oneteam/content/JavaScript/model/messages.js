@@ -289,11 +289,13 @@ function MessagesThread(threadID, contact)
     this.contact = contact;
     if (contact && contact.hasDiscoFeature) {
         var activeResource = contact.activeResource || contact
-        this._handleChatState = contact instanceof Conference ? false :
-            activeResource.hasDiscoFeature("http://jabber.org/protocol/chatstates");
+        if (activeResource.hasDiscoFeature) {
+            this._handleChatState = contact instanceof Conference ? false :
+                activeResource.hasDiscoFeature("http://jabber.org/protocol/chatstates");
 
-        this._handleXhtmlIM = activeResource.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
-        this._handleXThreads = activeResource.hasDiscoFeature("http://process-one.net/threads");
+            this._handleXhtmlIM = activeResource.hasDiscoFeature("http://jabber.org/protocol/xhtml-im");
+            this._handleXThreads = activeResource.hasDiscoFeature("http://process-one.net/threads");
+        }
     }
 }
 
