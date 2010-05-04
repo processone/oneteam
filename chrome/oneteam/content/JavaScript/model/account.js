@@ -29,6 +29,7 @@ ML.importMod("services/jingle.js");
 ML.importMod("services/jinglenodes.js");
 ML.importMod("socks5.js");
 ML.importMod("filetransfer.js");
+ML.importMod("wave.js");
 
 var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 var HTMLNS = "http://www.w3.org/1999/xhtml";

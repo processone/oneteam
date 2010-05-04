@@ -395,6 +395,23 @@
 
           var newMessages = arg ? arg.added : this._model.messages;
 
+          if (arg && arg.modified) {
+            for (var i = 0; i < arg.modified.length; i++) {
+              var msgEl = this._msgElList[this._msgList.indexOf(arg.modified[i][0])].
+                lastChild.lastChild;
+
+              if (this._deltaTracker && this._deltaTracker.root == msgEl)
+              {
+                var [l1, l2] = this._deltaTracker.rebase(arg.modified[i][1], this._deltaTracker.log);
+                this._deltaTracker.replayOps(l1);
+                this._deltaTracker.log = l2;
+              } else {
+                var replayer = new DeltaReplayer(msgEl);
+                replayer.replayOps(arg.modified[i][1]);
+              }
+            }
+          }
+
           if (!this._msgs) {
             [this.archivedMsgToken, this._msgs, this._hasMoreArchivedMessages] =
               this.model.getMessagesFromHistory(10, newMessages && newMessages.length ?
@@ -405,14 +422,6 @@
             this._msgs.push.apply(this._msgs, newMessages);
             this._model.removeMessages();
           }
-
-          var modifications = arg ? arg.modified : null;
-
-          if (modifications)
-            for (var i = 0; i < modifications.length; i++) {
-              var idx = this._msgList.indexOf(modifications[i][0]);
-              this.model.modifyElement(this._msgElList[idx], modifications[i][1]);
-            }
 
           if (!this._msgs.length)
             return;
@@ -832,6 +841,7 @@
 
           this._editMessageHandler = {
             msgEl: msgEl,
+            msg: msg,
             model: this.model,
             timeout: function(_this) {
               _this._timeout = null;
@@ -868,8 +878,8 @@
             new Callback(this.model.msgModified, this.model).addArgs(msg).fromCall() :
             null;
 
-          return this._deltaTracker = new EditorDeltaTracker(this.editor, msgEl,
-                                                             callback);
+          return this._deltaTracker = new EditorDeltaTracker(this.editor, callback,
+                                                             msgEl);
 
         ]]></body>
       </method>
