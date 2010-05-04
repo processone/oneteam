@@ -56,7 +56,7 @@ function Account()
 
     this.connectionInfo = {};
     this.notificationScheme = new NotificationScheme();
-    this.myResource = new MyResource();
+    this.myResource = new MyResource(this);
 
     this.autoAway = {
         away: {enabled: false},

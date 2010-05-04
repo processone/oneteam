@@ -968,27 +968,24 @@ _DECL_(MyResourcesContact, Contact).prototype =
     }
 }
 
-function MyResource()
+function MyResource(account)
 {
     this.init();
+    this.contact = this;
+
+    modelPropTracer(account, "avatar", this, null, true, function(m, p, a) {
+        m.avatarHash = a.avatarHash;
+    });
+    modelPropTracer(account, "currentPresence", this, "presence", true);
 }
 
-_DECL_(MyResource, null, Model).prototype =
+_DECL_(MyResource, Resource).prototype =
 {
     representsMe: true,
-
-    get avatar() {
-        return account.avatar;
-    },
-
-    get presence() {
-        return account.currentPresence;
-    },
 
     get jid() {
         return account.myJID;
     },
-
 
     get visibleName() {
         return this.nickname || (account.myJID && account.myJID.node) ||
@@ -996,8 +993,13 @@ _DECL_(MyResource, null, Model).prototype =
             _("(Anonymous)");
     },
 
+    get name() {
+        return this.visibleName;
+    },
+
     _updateNick: function(nick) {
         this.nickname = nick;
         this.modelUpdated("visibleName");
+        this.modelUpdated("name");
     }
 }
