@@ -1,5 +1,5 @@
 var EXPORTED_SYMBOLS = ["View", "ContainerView", "Model", "RegsBundle",
-                        "OnModelStateCall", "IsTrue"];
+                        "OnModelStateCall", "IsTrue", "modelPropTracer"];
 
 ML.importMod("utils.js");
 ML.importMod("roles.js");
@@ -203,4 +203,20 @@ _DECL_(RegsBundle).prototype =
                 this._tokens.splice(i, 1);
             }
     }
+}
+
+function modelPropTracer(baseModel, baseProp, model, prop, reflect, extraOps) {
+    prop = prop || baseProp;
+    model[prop] = baseModel[baseProp];
+
+    if (extraOps)
+        extraOps(model, prop, baseModel, baseProp);
+
+    return baseModel.registerView(function(a, b, data) {
+        model[prop] = baseModel[baseProp];
+        if (extraOps)
+            extraOps(model, prop, baseModel, baseProp);
+        if (reflect)
+            model.modelUpdated(prop, data);
+    }, null, baseProp);
 }
