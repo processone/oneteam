@@ -506,8 +506,8 @@ _DECL_(RosterViewEx, null, ContainerView).prototype =
 
     itemComparator: function(a, b, m, s, e)
     {
-        aVal = a.model.name.toLowerCase();
-        bVal = b.model.name.toLowerCase();
+        var aVal = a.model.name.toLowerCase();
+        var bVal = b.model.name.toLowerCase();
 
         return aVal == bVal ? 0 : aVal > bVal ? 1 : -1;
     },
