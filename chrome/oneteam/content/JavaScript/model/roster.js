@@ -983,6 +983,10 @@ _DECL_(MyResource, Resource).prototype =
 {
     representsMe: true,
 
+    onAvatarChange: function() {
+
+    },
+
     get jid() {
         return account.myJID;
     },
