@@ -9,6 +9,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/rosterContextMenus.xul"?>
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+<?xul-overlay href="chrome://oneteam/content/overlays/contactsAutocomplete.xul"?>
 
 <window id="ot:chats" title="_('Chats')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -55,19 +56,19 @@
     }
   ]]></script>
 
-  <command id="cmd_undo" 
+  <command id="cmd_undo"
            oncommand="goDoCommand('cmd_undo')"
            disabled="true"/>
-  <command id="cmd_redo" 
+  <command id="cmd_redo"
            oncommand="goDoCommand('cmd_redo')"
            disabled="true"/>
-  <command id="cmd_cut" 
+  <command id="cmd_cut"
            oncommand="goDoCommand('cmd_cut')"
            disabled="true"/>
-  <command id="cmd_copy" 
+  <command id="cmd_copy"
            oncommand="goDoCommand('cmd_copy')"
            disabled="true"/>
-  <command id="cmd_paste" 
+  <command id="cmd_paste"
            oncommand="goDoCommand('cmd_paste')"
            disabled="true"/>
   <command id="cmd_delete"

@@ -1904,7 +1904,7 @@
       <property name="model" onget="return this._model">
         <setter><![CDATA[
           var isConference = val && val.contact instanceof Conference;
-          var hasRoster = val && val.contact && val.contact.contactContainer;
+          var hasRoster = val && val.contact && val.contact.ViewConstructor;
 
           this._model = val;
           this._contactInfo.model = val && val.contact;
@@ -1928,13 +1928,14 @@
             this._contactInfo.parentNode.menuModel = val.contact;
             this._contactInfo.parentNode.setAttribute("context",
               (isConference ? "conference" : "contact")+"-contextmenu");
+            if (hasRoster)
+              this._rosterView = new val.contact.ViewConstructor(val.contact, this._roster);
+
             if (isConference) {
-              this._rosterView = new ConferenceView(val.contact, null, this._roster, true);
               this._regToken = account.bookmarks.registerView(this._onBookmarksUpdated, this,
                                                               "bookmarks", this._regToken)
               this._onBookmarksUpdated();
-            } else if (hasRoster)
-              this._rosterView = new RosterViewEx(val.contact, null, this._roster, true);
+            }
           }
 
           this._roster.parentNode.hidden = this._roster.parentNode.previousSibling.hidden =
