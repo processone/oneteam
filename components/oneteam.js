@@ -13,24 +13,23 @@ OneTeamLoader.prototype = {
     classDescription:  "OneTeam Loader Service",
     classID:           Components.ID("{cbbda744-0deb-495e-8c1b-8054b7ba9b4b}"),
     contractID:        "@oneteam.im/loader;1",
-	_xpcom_categories: [{category: "app-startup", service: true}],
+    _xpcom_categories: [{category: "app-startup", service: true}],
 
     QueryInterface: XPCOMUtils.generateQI(
         [Components.interfaces.nsISupports,
-		 Components.interfaces.nsIObserver]),
+         Components.interfaces.nsIObserver]),
 
-	observe: function(subject, topic, data) {
-		var os = Components.classes["@mozilla.org/observer-service;1"].
-			getService(Components.interfaces.nsIObserverService);
+        observe: function(subject, topic, data) {
+            var os = Components.classes["@mozilla.org/observer-service;1"].
+                getService(Components.interfaces.nsIObserverService);
 
-		if (topic == "app-startup") {
-			os.addObserver(this, "final-ui-startup", false);
-			//os.addObserver(this, "quit-application", false);
-		} else if (topic == "final-ui-startup") {
-		    ML.importMod("model/account.js");
-		}
-	}
-
+            if (topic == "app-startup") {
+                os.addObserver(this, "final-ui-startup", false);
+                //os.addObserver(this, "quit-application", false);
+            } else if (topic == "final-ui-startup") {
+                ML.importMod("model/account.js");
+        }
+    }
 };
 
 function MLP() {
@@ -107,7 +106,7 @@ MLP.prototype =
         }
 //dump("+ + + + + + + + + + + + + + + + +".substr(0,2*this.parents.length)+script+"\n");
 
-    	var scope = { };
+        var scope = { };
         this.parents.push([scope, [], []]);
 
         for (i = 0; i < this.paths.length; i++) {
