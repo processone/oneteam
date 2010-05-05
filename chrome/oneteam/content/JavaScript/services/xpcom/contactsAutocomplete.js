@@ -24,10 +24,20 @@ _DECL_(ContactsAutoComplete).prototype =
 
         res.setSearchString(searchString);
 
-        for (var contact in account.contactsSearchIterator(searchString, null,
-                                                           null, function(a, b) {
-                                                                return a.cmp(b);
-                                                           }))
+        var skip = {}
+        if (searchParam) {
+            searchParam = searchParam.split("\n");
+            for (var i = 0; i < searchParam.length; i++)
+                skip[searchParam[i]] = 1;
+        }
+
+        for (var contact in account.contactsSearchIterator(searchString,
+                    function(c, s) {
+                         return !(c.jid.normalizedJID in s);
+                    }, skip,
+                    function(a, b) {
+                         return a.cmp(b);
+                    }))
         {
             if (first)
                 res.setSearchResult(res.RESULT_SUCCESS);
