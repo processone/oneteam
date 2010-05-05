@@ -23,7 +23,10 @@ _DECL_(ContainerView).prototype =
 
     onItemAdded: function(item)
     {
-        var idx = bsearch(this.items, item, this.itemComparator);
+        if (!this._itemComparatorClosure)
+            this._itemComparatorClosure = new Callback(this.itemComparator, this);
+
+        var idx = bsearch(this.items, item, this._itemComparatorClosure);
 
         this.items.splice(idx, 0, item);
 
