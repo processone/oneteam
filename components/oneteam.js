@@ -197,6 +197,7 @@ var ML = new MLP();
 ML.importMod("exceptions.js");
 ML.importMod("services/xpcom/compatibilityLayer.js")
 ML.importMod("services/xpcom/utils.js")
+ML.importMod("services/xpcom/contactsAutocomplete.js")
 // #ifdef XPI
 ML.importMod("services/xpcom/contentDispatcher.js");
 // #endif
@@ -208,7 +209,7 @@ function init(win) {
     ML.importMod("services/xpcom/browserUIUpdater.js");
 }
 
-var components = [OneTeamLoader
+var components = [OneTeamLoader, ContactsAutoComplete
 // #ifdef XPI
                   , OneTeamContentDispatcher
 // #endif

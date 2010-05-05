@@ -22,13 +22,6 @@ tabpanels {
   display: none
 }
 
-richlistbox {
-  -moz-appearance: none !important;
-  margin: 4px;
-  padding: 0;
-  border: 1px solid #aeaeae;
-}
-
 /* Toolbar icons */
 #adduser-button {
   list-style-image: url(imgs/adduser.png);

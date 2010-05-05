@@ -141,6 +141,29 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             yield x;
     },
 
+    contactsSearchIterator: function(searchTerm, predicate, token, sortFun)
+    {
+        var terms = searchTerm.toLowerCase().match(/\S+/g);
+
+        nextContact:
+        for (var x in iteratorEx(this.contacts, sortFun, predicate, token)) {
+            for each (var t in terms) {
+                var match = false;
+
+                for each (var m in [x.visibleName, x.jid.toUserString()])
+                    if (m.toLowerCase().indexOf(t) >= 0) {
+                        match = true;
+                        break;
+                    }
+
+                if (!match)
+                    continue nextContact;
+            }
+
+            yield x;
+        }
+    },
+
     _onGroupAdded: function(group)
     {
         this.groups.push(group);

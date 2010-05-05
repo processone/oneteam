@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://oneteam/skin/main/contacts-autocomplete.css" type="text/css"?>
+
+<overlay id="contact-autocomplete-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <popupset>
+    <panel id="oneteam-contacts-autocomplete-popup" type="autocomplete-richlistbox" noautofocus="true"/>
+  </popupset>
+</overlay>

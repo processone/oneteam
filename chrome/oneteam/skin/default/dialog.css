@@ -20,7 +20,3 @@ row {
 hbox.entry > *:last-child {
   -moz-box-flex: 1;
 }
-
-richlistitem:nth-child(2n+1):not([selected=true]) {
-  background-color: -moz-oddtreerow;
-}

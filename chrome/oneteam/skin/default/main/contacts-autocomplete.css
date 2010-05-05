@@ -1,0 +1,9 @@
+#oneteam-contacts-autocomplete-popup {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+#oneteam-contacts-autocomplete-popup .ac-comment {
+  font-size: 1.2em
+}

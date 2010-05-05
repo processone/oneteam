@@ -1,4 +1,4 @@
-richlistitem:nth-child(2n+1):not([selected=true]) {
+.conference-view > richlistitem:nth-child(2n+1):not([selected=true]) {
   background: #cfcfcf !important;
 }
 
