@@ -79,7 +79,7 @@ _DECL_(DeltaReplayer).prototype =
     lastNode: null,
 
     replayOp: function(op) {
-        var node, idx;
+        var node, idx, afterSpace, beforeSpace;
 
         this._internalOp = true;
         //dump(op+"\n");
@@ -104,15 +104,13 @@ _DECL_(DeltaReplayer).prototype =
                 else
                     range.setEndAfter(node);
 
-                dump("DEL: "+range+"\n");
-
                 range.deleteContents();
                 range.detach();
             }
         else {
             var range = this.root.ownerDocument.createRange();
 
-            [node, idx] = this._findNode(op.start, true);
+            [node, idx, afterSpace, beforeSpace] = this._findNode(op.start, true);
             if (node.nodeType == node.TEXT_NODE) {
                 range.setStart(node, idx);
                 range.setEnd(node, idx);
@@ -123,8 +121,15 @@ _DECL_(DeltaReplayer).prototype =
 
             if (op.type == op.TAG)
                 range.insertNode(this.root.ownerDocument.createElementNS(HTMLNS, op.data));
-            else
-                range.insertNode(this.root.ownerDocument.createTextNode(op.data));
+            else {
+                var text = op.data;
+                text = text.replace(/\s{2,}/g, function(a){
+                    return a.substr(1).replace(/\s/g, "\xa0")+" "
+                });
+                if (beforeSpace && /\s$/.test(text))
+                    text = text.substr(0, text.length-1)+"\xa0";
+                range.insertNode(this.root.ownerDocument.createTextNode(text));
+            }
         }
         this._internalOp = false;
     },
@@ -148,49 +153,120 @@ _DECL_(DeltaReplayer).prototype =
         }
     },
 
-    _findNode: function(position, atEnd) {
-        var pos = 0, newPos;
-        var node = this.root;
+    _processTree: function(node, fun, state) {
+        this.st = state;
+        top:
+        while (node && node != this.root) {
+            if (fun.call(this, node, state, true))
+                break;
 
-        if (this.lastPosition < position) {
-            pos = this.lastPosition;
-            node = this.lastNode;
+            if (node.nodeType == node.ELEMENT_NODE)
+                if (node.firstChild) {
+                    node = node.firstChild;
+                    continue;
+                } else if (fun.call(this, node, state, false))
+                    break top;
+
+            while (1) {
+                if (node.nextSibling)
+                    break;
+                node = node.parentNode;
+                if (!node || node == node.root || fun.call(this, node, state, false))
+                    break top;
+            }
+
+            node = node.nextSibling;
         }
+    },
 
-        while (1) {
-            newPos = pos;
+    _normalizeText: function(text, prevText) {
+        try{
+        if (/[^\S\xa0]$/.test(prevText))
+            text = text.replace(/^[^\S\xa0]+/, "");
+        return text.replace(/[^\S\xa0]+/g, " ").replace(/\xa0/g, " ");
+        }catch(ex){dump(dumpStack()); throw ex}
+    },
 
-            if (node.nodeType == node.TEXT_NODE) {
-                newPos += node.nodeValue.length;
-            } else if (node.nodeType == node.ELEMENT_NODE) {
-                if (node.localName.toLowerCase() == "br")
-                    newPos += 2
+    _calculatePosition: function(node, state, firstVisit) {
+        if (!firstVisit)
+            return false;
+
+        state.prevPos = state.position;
+        state.prevNode = node;
+
+        if (node.nodeType == node.ELEMENT_NODE) {
+            if (node.localName.toLowerCase() == "br" && node != this.root.lastChild) {
+                if (state.after) {
+                    state.beforeSpace = false;
+                    return true;
+                }
+                state.position += 2;
+                state.gatheredText = "";
+                state.afterSpace = true;
+
+                if (state.endPosition < state.position ||
+                    state.atEnd && state.endPosition == state.position)
+                {
+                    state.node = node;
+                    state.offset = state.position - state.endPosition - 2;
+                    state.after = true;
+                }
             }
+        } else {
+            if (state.after) {
+                if (!node.nodeValue.length)
+                    return false;
 
-            if (newPos > position || (atEnd && newPos == position)) {
-                dump("FN SUCESS: "+pos+", "+position+", "+node.nodeName+", "+node.nodeValue+"\n");
-                return [node, position - pos];
+                state.beforeSpace = /[^\S\xa0]/.test(node.nodeValue);
+
+                return true;
             }
+            var text = this._normalizeText(node.nodeValue, state.gatheredText);
+            var oldPos = state.position;
 
-            this.lastNode = node;
-            this.lastPosition = pos;
+            state.position += text.length;
 
-            pos = newPos;
+            if (state.endPosition < state.position ||
+                state.atEnd && state.endPosition == state.position)
+            {
+                var _this = this;;
 
-            if (node.nodeType == node.ELEMENT_NODE && node.firstChild)
-                node = node.firstChild;
-            else {
-                while (node != this.root && !node.nextSibling)
-                    node = node.parentNode;
+                state.node = node;
+                state.offset = bsearchEx(node.nodeValue, 0, node.nodeValue.length-1,
+                                         state.endPosition - oldPos, function(a,b,i) {
+                                            return a - _this._normalizeText(b.substr(0, i), state.gatheredText).length;
+                                         });
 
-                if (node == this.root) {
-                    dump("FN FAIL: "+pos+", "+position+"\n");
-                    return [null, -1];
+                state.afterSpace = /[^\S\xa0]/.test(state.offset == 0 ?
+                    state.gatheredText[state.gatheredText.length-1] :
+                    node.nodeValue[state.offset-1]);
+
+                if (state.offset > node.nodeValue.length-1) {
+                    state.after = true;
+                    return false;
+                } else {
+                    state.beforeSpace = /[^\S\xa0]/.test(node.nodeValue[state.offset]);
                 }
 
-                node = node.nextSibling;
+                return true;
             }
+            state.gatheredText = text.substr(0, text.length-1);
         }
+
+        return false;
+    },
+
+    _findNode: function(position, atEnd) {
+        state = {
+            endNode: null,
+            endPosition: position,
+            position: 0,
+            atEnd: atEnd,
+            gatheredText: ""
+        };
+        this._processTree(this.root.firstChild, this._calculatePosition, state);
+
+        return [state.node, state.offset, state.afterSpace, state.beforeSpace];
     }
 }
 
@@ -323,7 +399,7 @@ _DECL_(DeltaTracker).prototype =
                 }
             }
 
-            if (this.log[p].start < op.start)
+            if (p < this.log.length && this.log[p].start < op.start)
                 break;
 
             if (this.log[p] == prevOp) {
@@ -342,14 +418,14 @@ _DECL_(DeltaTracker).prototype =
     _batchStart: function() {
         if (this._internalOp)
             return;
-        xdump("[ "+this+" ] + [ ");
+        xdump("[ "+this.toString()+" ] + [ ");
     },
 
     _batchEnd: function() {
         if (this._internalOp)
             return;
 
-        xdump("] => [ "+this+" ]\n");
+        xdump("] => [ "+this.toString()+" ]\n");
 
         if (this._notificationCallback)
             this._notificationCallback(this);
@@ -425,7 +501,7 @@ _DECL_(DeltaTracker).prototype =
     },
 
     toString: function() {
-        return this.log.join(", ");
+        return this.log.join(" ");
     }
 }
 
@@ -448,107 +524,92 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
 
     DidCreateNode: function(tag, node, parent, position, res) {
         xdump("DCN\n")
-        if (tag.toLowerCase() == "br") {
-            var pos = this._nodePosition(node, -1);
-            this._addToLog(new EditOp(pos, pos+2, EditOp.INSERT,
-                                EditOp.TAG, "br"));
-        }
-    },
 
-    _insertHelper: function(node, pos) {
-        if (node.nodeType == node.TEXT_NODE) {
-            this._addToLog(new EditOp(pos, pos+node.nodeValue.length, EditOp.INSERT,
-                                EditOp.TEXT, node.nodeValue));
-            return pos+node.nodeValue.length;
-        }
-        if (node.nodeType == node.ELEMENT_NODE) {
-            if (node.localName.toLowerCase() == "br") {
-                this._addToLog(new EditOp(pos, pos+2, EditOp.INSERT,
-                                    EditOp.TAG, "br"));
-                return pos + 2;
-            }
-            for (var i = 0; i < node.childNodes.length; i++)
-                pos = this._insertHelper(node.childNodes[i], pos);
-        }
-        return pos;
+        var state = {
+            lines: [],
+            gatheredText: "",
+            startNode: node.firstChild || node,
+            startOffset: 0,
+            endNode: node,
+            endOffset: -1
+        };
+
+        this._processTree(this.root.firstChild, this._extractText, state);
+
+        this._addToLogFromState(state, EditOp.INSERT, false, "DCN");
     },
 
     DidInsertNode: function(node, parent, position, res) {
-        xdump("DIN\n")
-        var pos = this._nodePosition(node, position);
-        this._insertHelper(node, pos);
-    },
+        xdump("DIN: "+node+", "+parent+", "+position+", "+res+"\n")
 
-    _deleteHelper: function(node, pos) {
-        if (node.nodeType == node.TEXT_NODE) {
-            this._addToLog(new EditOp(pos, pos+node.nodeValue.length, EditOp.DELETE,
-                                EditOp.TEXT, node.nodeValue), "WDN");
-            return;
-        }
-        if (node.nodeType == node.ELEMENT_NODE) {
-            if (node.localName.toLowerCase() == "br") {
-                this._addToLog(new EditOp(pos, pos+2, EditOp.DELETE,
-                                    EditOp.TAG, "br"));
-                return;
-            }
-            for (var i = 0; i < node.childNodes.length; i++)
-                pos = this._deleteHelper(node.childNodes[i], pos);
-        }
+        var state = {
+            lines: [],
+            gatheredText: "",
+            startNode: node.firstChild || node,
+            startOffset: 0,
+            endNode: node,
+            endOffset: -1,
+            trace: true
+        };
+
+        this._processTree(this.root.firstChild, this._extractText, state);
+
+        this._addToLogFromState(state, EditOp.INSERT, false, "DIN");
     },
 
     WillDeleteNode: function(node) {
         xdump("WDN\n")
-        var pos = this._nodePosition(node, -1);
-        this._deleteHelper(node, pos);
+
+        var state = {
+            lines: [],
+            gatheredText: "",
+            startNode: node.firstChild || node,
+            startOffset: 0,
+            endNode: node,
+            endOffset: -1
+        };
+
+        this._processTree(this.root.firstChild, this._extractText, state);
+
+        this._addToLogFromState(state, EditOp.DELETE, false, "WDN");
     },
 
     DidInsertText: function(node, offset, string, res) {
-        xdump("DIT\n")
-        var pos = this._nodePosition(node, -1);
-        this._addToLog(new EditOp(pos+offset, pos+offset+string.length, EditOp.INSERT,
-                            EditOp.TEXT, string));
+        xdump("DIT: "+offset+", "+string.length+", "+uneval(string)+"\n")
+
+        var state = {
+            lines: [],
+            gatheredText: "",
+            startNode: node,
+            startOffset: offset,
+            endNode: node,
+            endOffset: offset+string.length
+        };
+
+        this._processTree(this.root.firstChild, this._extractText, state);
+
+        this._addToLogFromState(state, EditOp.INSERT, false, "DIT");
     },
 
     WillDeleteText: function(node, offset, length, res) {
-        xdump("WDT\n")
-        var pos = this._nodePosition(node, -1);
-        this._addToLog(new EditOp(pos+offset, pos+offset+length, EditOp.DELETE,
-                            EditOp.TEXT, node.nodeValue.substr(offset, length)), "WDT");
-    },
+        xdump("WDT: "+offset+", "+length+", "+uneval(node.nodeValue.substr(offset, length))+"\n")
+        var state = {
+            lines: [],
+            gatheredText: "",
+            startNode: node,
+            startOffset: offset,
+            endNode: node,
+            endOffset: offset+length
+        };
 
-    _deleteSelectionHelper: function(node, offset, pos, endNode, endOffset) {
-        while (node && node != this.root) {
-            if (node.nodeType == node.TEXT_NODE) {
-                var val = node.nodeValue;
-                if (node == endNode)
-                    val = val.substr(0, endOffset);
-                if (offset)
-                    val = val.substr(offset);
+        this._processTree(this.root.firstChild, this._extractText, state);
 
-                this._combineOp(new EditOp(pos, pos+val.length, EditOp.DELETE,
-                                           EditOp.TEXT, val, "SEL"));
-            } else if (node.nodeType == node.ELEMENT_NODE) {
-                if (node.localName.toLowerCase() == "br") {
-                    this._combineOp(new EditOp(pos, pos+2, EditOp.DELETE,
-                                               EditOp.TAG, "br"));
-                }
-            }
-
-            offset = 0;
-
-            if (node == endNode)
-                return;
-
-            while (node != endNode && node != this.root && !node.nextSibling)
-                node = node.parentNode;
-
-            if (node != endNode)
-                node = node.nextSibling;
-        }
+        this._addToLogFromState(state, EditOp.DELETE, false, "WDT");
     },
 
     WillDeleteSelection: function(selection) {
         xdump("WDS\n")
+        this._batchStart();
         for (var i = 0; i < selection.rangeCount; i++) {
             var range = selection.getRangeAt(i);
             var startContainer = range.startContainer;
@@ -560,46 +621,119 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
                 startContainer = startContainer.childNodes[startOffset];
                 startOffset = 0;
             }
-            var pos = this._nodePosition(startContainer, -1) + startOffset;
-
 
             if (endContainer.nodeType == endContainer.ELEMENT_NODE) {
                 endContainer = endContainer.childNodes[endOffset];
                 endOffset = 0;
             }
 
+            var state = {
+                lines: [],
+                gatheredText: "",
+                startNode: startContainer,
+                startOffset: startOffset,
+                endNode: endContainer,
+                endOffset: endOffset
+            };
+
+            this._processTree(this.root.firstChild, this._extractText, state)
+
+            this._addToLogFromState(state, EditOp.DELETE, true, "WDS");
+        }
+        this._batchEnd();
+    },
+
+    _addToLogFromState: function(state, op, inBatch, x) {
+        var pos = state.startPos;
+        this.sta = state;
+
+        state.lines.push(state.gatheredText);
+
+        // TODO fixup trailing br
+
+        if (!inBatch)
             this._batchStart();
 
-            this._deleteSelectionHelper(startContainer, startOffset,
-                                        pos, endContainer, endOffset);
-
-            this._batchEnd();
-        }
-    },
-
-    _treeSize: function(node) {
-        if (node.nodeType == node.TEXT_NODE)
-            return node.nodeValue.length;
-        if (node.nodeType == node.ELEMENT_NODE) {
-            var size = node.localName.toLowerCase() == "br" ? 2 : 0;
-            for (var i = 0; i < node.childNodes.length; i++)
-                size += this._treeSize(node.childNodes[i]);
-            return size;
-        }
-        return 0;
-    },
-
-    _nodePosition: function(node, index) {
-        var pos = 0;
-
-        while (node && node != this.root) {
-            while (node.previousSibling) {
-                node = node.previousSibling;
-                pos += this._treeSize(node);
+        for (var i = 0; i < state.lines.length; i++) {
+            if (i > 0) {
+                this._combineOp(new EditOp(pos, pos+2, op, EditOp.TAG, "br", x));
+                if (op == EditOp.INSERT)
+                    pos += 2;
             }
-            node = node.parentNode;
+
+            var line = state.lines[i];
+
+            if (line.length) {
+                this._combineOp(new EditOp(pos, pos+line.length, op, EditOp.TEXT, line, x));
+                if (op == EditOp.INSERT)
+                    pos += line.length;
+            }
         }
-        return pos;
+
+        if (!inBatch)
+            this._batchEnd();
+    },
+
+    _extractText: function(node, state, firstVisit) {
+        if (!firstVisit)
+            return node == state.endNode;
+
+        if (node.nodeType == node.ELEMENT_NODE) {
+            if (node == state.startNode) {
+                state.lines.push(state.gatheredText);
+                state.startPos = state.lines.join("12").length;
+                state.preLines = state.lines;
+                state.lines = [];
+                state.gatheredText = "";
+                state.rawGatheredText = "";
+            }
+
+            if (node.localName.toLowerCase() == "br") {
+                if (node != this.root.lastChild) {
+                    state.lines.push(state.gatheredText);
+                    state.gatheredText = "";
+                } else if (node == state.startNode && node.previousSibling &&
+                           node.previousSibling.nodeType == node.ELEMENT_NODE &&
+                           node.previousSibling.localName.toLowerCase() == "br")
+                {
+                    state.startPos -= 2;
+                    state.lines.push("");
+                }
+            }
+        } else {
+            var text = node.nodeValue;
+
+            if (state.endNode == node && state.endOffset >= 0)
+                text = text.substr(0, state.endOffset);
+
+            state.ltn = node;
+
+            if (node == state.startNode) {
+                var rawPreText = text.substr(0, state.startOffset);
+                var preText = this._normalizeText(rawPreText, state.rawGatheredText);
+
+                state.lines.push(state.gatheredText+preText);
+                state.startPos = state.lines.join("12").length;
+
+                state.preLines = state.lines;
+
+                state.lines = [];
+                state.gatheredText = "";
+                state.rawGatheredText = "";
+
+                text = this._normalizeText(text.substr(state.startOffset), rawPreText);
+            } else
+                text = this._normalizeText(text, state.rawGatheredText);
+
+            state.gatheredText += text;
+            state.rawGatheredText = node.nodeValue[node.nodeValue.length-1];
+        }
+
+        return node == state.endNode && (!firstVisit || node.nodeType == node.TEXT_NODE);
+    },
+
+    toString: function() {
+        return this.log.join(" ");
     },
 
     WillCreateNode: function() {xdump("WCN\n")},
