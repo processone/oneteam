@@ -7,7 +7,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "recoverSetters", "perlSplit", "evalInWindow",
                         "enumerateMatchingProps", "report", "Animator",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
-                        "createRangeForSubstring", "escapeRe"];
+                        "createRangeForSubstring", "escapeRe", "bsearchEx"];
 
 ML.importMod("roles.js");
 
@@ -676,10 +676,16 @@ function sanitizeDOM(dom, filter) {
 }
 
 function bsearch(array, value, comparatorFun, toLower) {
-    var a = 0, b = array.length-1, mid, val;
+    return bsearchEx(array, 0, array.length-1, value, function(a,b,i) {
+        return comparatorFun(a, b[i]);
+    }, toLower);
+}
+
+function bsearchEx(container, start, end, value, comparatorFun, toLower) {
+    var a = start, b = end, mid, val;
     while (a <= b) {
         mid = (a+b)>>1;
-        val = comparatorFun(value, array[mid]);
+        val = comparatorFun(value, container, mid);
         if (val == 0) {
             a = mid;
             break;
@@ -690,7 +696,7 @@ function bsearch(array, value, comparatorFun, toLower) {
             a = mid+1;
     }
     if (toLower)
-        if (a >= array.length || comparatorFun(value, array[a]) != 0)
+        if (a >= end || comparatorFun(value, container, a) != 0)
             return a-1;
     return a;
 }
