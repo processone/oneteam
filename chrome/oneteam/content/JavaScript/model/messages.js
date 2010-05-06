@@ -671,7 +671,7 @@ _DECL_(Message).prototype =
 
         if (!this._html || this._formatedHtmlEpoch != Message.prototype.epoch) {
             if (!this.html)
-                this._html = this._processUrls(this.text);
+                this._html = this._processUrls(this.text, {});
             else {
                 this._html = this.html;
                 if (!this.contact.representsMe &&
@@ -943,14 +943,18 @@ _DECL_(Message).prototype =
         var re = /(?:((?:http|https|ftp):\/\/\S+?)|(www\.\S+?)|(mailto:\S+@\S+?)|(\S+@\S+?))([,.;]?\s|$)/g;
         var match, res = "", last = 0;
 
+        flags.firstFragment = true;
         while ((match = re.exec(str))) {
             res += this._processSmiles(str.substring(last, match.index), flags);
+            flags.firstFragment = false;
+
             res += "<a href='"+
                 xmlEscape(match[1]||match[3]||
                           (match[2] ? "http://"+match[2] : "mailto:"+match[4]))+
                  "'>"+xmlEscape(match[1]||match[2]||match[3]||match[4])+"</a>"+match[5];
             last = re.lastIndex;
         }
+        flags.lastFragment = true;
         return res + this._processSmiles(str.substring(last), flags);
     },
 
@@ -967,20 +971,28 @@ _DECL_(Message).prototype =
         if (flags && flags.skipNL)
             return xmlEscape(str);
 
-        var re = /(^[ \t]+)|\n([ \t]*)|([\t ]{2,}|\t)/g;
         var match, res = "", last = 0;
+        var re = flags.firstFragment ?
+                flags.lastFragment ?
+                    /\n([ \t]*)|(^[ \t]+)|([ \t]+)(?=\n)|([\t ]{2,}|\t)|([ \t]+$)/g :
+                    /\n([ \t]*)|(^[ \t]+)|([ \t]+)(?=\n)|([\t ]{2,}|\t)/g :
+                flags.lastFragment ?
+                    /\n([ \t]*)|([ \t]+)(?=\n)|([\t ]{2,}|\t)|([ \t]+$)/g :
+                    /\n([ \t]*)|([ \t]+)(?=\n)|([\t ]{2,}|\t)/g;
 
         while ((match = re.exec(str))) {
             res += xmlEscape(str.substring(last, match.index));
-            if (!match[1] && !match[3])
+            if (!match[2] && !match[3] && !match[4] && !match[5])
                 res += "<br/>"
 
-            var spaces = match[1] || match[2] || match[3];
+            var spaces = match[1] || match[2] || match[3] || match[4] || match[5];
             if (spaces)
                 res += spaces.replace(/\t/g, "        ").replace(/ /g, "&nbsp;");
             last = re.lastIndex;
         }
-        return res + xmlEscape(str.substring(last));
+        str = str.substring(last);
+
+        return res + xmlEscape(str);
     }
 }
 

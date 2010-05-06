@@ -120,9 +120,9 @@ _DECL_(StylesRegistry, null, Model).prototype =
             (forNewMessage ? "font-style: italic;" : "");
     },
 
-    processSmiles: function(str, nextFilter)
+    processSmiles: function(str, nextFilter, flags)
     {
-        return this.defaultSmilesSet.processSmiles(str, nextFilter);
+        return this.defaultSmilesSet.processSmiles(str, nextFilter, flags);
     },
 
     _registerIconSetFromUrl: function(url, notify)
@@ -245,24 +245,31 @@ _DECL_(SmilesIconStyle, IconStyle).prototype =
         head.appendChild(tag);
     },
 
-    processSmiles: function(str, nextFilter)
+    processSmiles: function(str, nextFilter, flags)
     {
         if (!str)
             return "";
 
         var match, res = "", last = 0;
+        var lastFragment = flags.lastFragment;
+
+        flags.lastFragment = false;
 
         while ((match = this.regExp.exec(str))) {
             if (match.index != last && !/\s/.test(str[match.index-1]))
                 continue;
 
-            res += nextFilter(str.substring(last, match.index));
+            res += nextFilter(str.substring(last, match.index), flags);
+            flags.firstFragment = false;
+
             res += "<span class='"+this.revMap[match[0]].cssStyle+"' "+
                 "title='"+xmlEscape(match[0])+"'>"+xmlEscape(match[0])+"</span>";
 
             last = this.regExp.lastIndex;
         }
-        return res + nextFilter(str.substring(last));
+        flags.lastFragment = lastFragment;
+
+        return res + nextFilter(str.substring(last), flags);
     }
 }
 
