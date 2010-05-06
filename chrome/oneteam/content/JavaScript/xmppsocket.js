@@ -58,12 +58,14 @@ _DECL_(XMPPSocket).prototype =
         var pps = Components.classes["@mozilla.org/network/protocol-proxy-service;1"].
             getService(Components.interfaces.nsIProtocolProxyService);
         this.log("XMPPSocket.doConnect (1)");
+
         var proxyInfo;
-        if (0) {
-        var proxyUri = ioSrv.newURI((this.ssl == "ssl" ? "https://" : "http://")+this.host,
-                                    null, null);
-        proxyInfo = pps.resolve(proxyUri, pps.RESOLVE_NON_BLOCKING);
-        }
+
+        try {
+            var proxyUri = ioSrv.newURI((this.ssl == "ssl" ? "https://" : "http://")+this.host,
+                                        null, null);
+            proxyInfo = pps.resolve(proxyUri, pps.RESOLVE_NON_BLOCKING);
+        } catch (ex) {}
 
         this.log("XMPPSocket.doConnect (2)");
         var mainThread = Components.classes["@mozilla.org/event-queue-service;1"] ?
