@@ -16,6 +16,7 @@ _DECL_(XMPPSocket).prototype =
     tlsProblemHandled: {},
 
     debug: false,
+    timingTrace: false,
 
     log: function(a) {
         if (this.debug && window.account)
@@ -93,6 +94,7 @@ _DECL_(XMPPSocket).prototype =
         this.log("XMPPSocket.doConnect (7)");
         tee.init(this, {
             listener: this.listener,
+            _this: this,
 
             close: function() {
 
@@ -101,6 +103,12 @@ _DECL_(XMPPSocket).prototype =
 
             },
             write: function(buf, count) {
+                if (this._this.timingTrace) {
+                    if (!this._this.last)
+                        this._this.last = Date.now();
+                    dump("R: "+(Date.now() - this._this.last)/1000+" - "+buf.substr(0, count)+"\n");
+                    this._this.last = Date.now();
+                }
                 this.listener._receivedData(buf.substr(0, count));
                 return count;
             },
@@ -132,6 +140,12 @@ _DECL_(XMPPSocket).prototype =
     },
 
     send: function(data) {
+        if (this.timingTrace) {
+            if (!this.last)
+                this.last = Date.now();
+            dump("S: "+(Date.now() - this.last)/1000+" - "+data+"\n");
+            this.last = Date.now();
+        }
         try {
             data = this.converter.encode(data);
             this.bos.writeBytes(data, data.length);
@@ -297,6 +311,12 @@ _DECL_(XMPPSocket).prototype =
 
     onTransportStatus: function(transport, status, progress, progressMax)
     {
+        if (this.timingTrace) {
+            if (!this.last)
+                this.last = Date.now();
+            dump("STATUS: "+(Date.now() - this.last)/1000+" - "+status+"\n");
+        }
+
         this.log("XMPPSocket.onTransportStatus ("+status+")");
         if (status != transport.STATUS_CONNECTING_TO)
             return;
