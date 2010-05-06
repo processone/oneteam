@@ -145,7 +145,7 @@
 
         break;
       case "string":
-        value = topLevel ? '"'+indent(value)+'"' : xmlEscape(uneval(value));
+        value = topLevel ? indent(uneval(value)) : xmlEscape(uneval(value));
         return "<span class='value-string'>"+value+"</span>";
       case "number":
         return "<span class='value-number'>"+xmlEscape(uneval(value))+"</span>";
