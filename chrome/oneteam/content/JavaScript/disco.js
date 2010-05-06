@@ -209,7 +209,7 @@ _DECL_(DiscoCacheEntry).prototype =
     {
         var val = account.cache.getValue("caps3-"+this.node);
         if (val) {
-            this.discoItem = val;
+            this.discoInfo = val;
             account.cache.bumpExpirationDate("caps3-"+this.node,
                                              new Date(Date.now()+30*24*60*60*1000));
         }
