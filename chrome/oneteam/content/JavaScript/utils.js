@@ -313,6 +313,9 @@ function Callback(fun, obj) {
 
     var cb = new Function("", "return arguments.callee.apply(this, arguments)");
     cb.apply = function(_this, _args) {
+        if (this._coalesceTime && this._coalesceTimeout)
+            return null;
+
         var args = this._args.slice();
 
         this._callArgs = this._callArgs ? this._callArgs.length == 0 ?
@@ -323,6 +326,16 @@ function Callback(fun, obj) {
             a.unshift(this._callArgs[i][0], 0);
             args.splice.apply(args, a);
         }
+
+        if (this._coalesceTime) {
+            this._coalesceTimeout = setTimeout(function(_this, fun, obj, args) {
+                _this._coalesceTimeout = null;
+                fun.apply(obj, args);
+            }, this._coalesceTime, this, this._fun, this._obj, args);
+
+            return null;
+        }
+
         return this._fun.apply(this._obj, args);
     }
     cb._fun = fun;
@@ -335,7 +348,7 @@ function Callback(fun, obj) {
         this._args.push.apply(this._args, Array.slice(array, start,
                                                       stop == null ? Infinity : stop));
         return this;
-    }
+    };
     cb.fromCall = function(start, stop) {
         if (!this._callArgs || start < 0) {
             delete this._callArgs;
@@ -344,6 +357,10 @@ function Callback(fun, obj) {
         this._callArgs.push([this._args.length,  start || 0, stop == null ? Infinity : stop]);
         return this;
     };
+    cb.coalesce = function(time) {
+        this._coalesceTime = time;
+        return this;
+    }
     return cb;
 }
 
