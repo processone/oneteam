@@ -1405,7 +1405,6 @@
           }, false);
 
           doc.addEventListener("DOMSubtreeModified", function() {
-            dump("DSM\n");
             me._counter.value = me._domToStr(me._input.contentDocument.body).
               replace(/\n$/,"").length;
             if (me._toolbar)
@@ -1421,7 +1420,6 @@
 
           for each (var event in "keydown keyup mousedown mouseup dragdrop".split(" ")) {
             doc.addEventListener(event, function(event) {
-            dump("LL"+event.type+"\n");
               me._fixupThreadMarker();
 
               if (me._toolbar)
@@ -1986,7 +1984,6 @@
         var me = this;
 
         this.addEventListener("keypress", function(ev) {
-            dump("KPX\n");
             var switchTab = 0;
 
             if ((ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ||
