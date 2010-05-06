@@ -65,7 +65,7 @@ _DECL_(DiscoCacheEntry).prototype =
         return ret;
     },
 
-    requestDiscoItems: function(forceUpdate, callback, discoItem)
+    requestDiscoItems: function(forceUpdate, callback, discoItem, cacheable)
     {
         if (!callback)
             return this.discoItems;
@@ -78,6 +78,8 @@ _DECL_(DiscoCacheEntry).prototype =
                 if (this.node)
                     iq.getQuery().setAttribute("node", this.node);
                 account.connection.send(iq, function(pkt, _this) { _this._gotDiscoItems(pkt) }, this);
+                if (cacheable)
+                    this.cacheableInherit = cacheable;
                 this.discoItemsCallbacks = [[callback, discoItem]];
             } else
                 this.discoItemsCallbacks.push([callback, discoItem]);
@@ -288,7 +290,8 @@ _DECL_(DiscoCacheEntry).prototype =
         for (var i = 0; i < items.length; i++)
             this.discoItems.push(new DiscoItem(items[i].getAttribute("jid"),
                                                items[i].getAttribute("name"),
-                                               items[i].getAttribute("node")));
+                                               items[i].getAttribute("node"),
+                                               this.cacheableInherit));
 
         for (var i = 0; i < this.discoItemsCallbacks.length; i++) {
             var [callback, discoInfo] = this.discoItemsCallbacks[i];
@@ -413,9 +416,9 @@ _DECL_(DiscoItem, null, Model).prototype =
         return this._discoCacheEntry.requestDiscoInfo(null, forceUpdate, callback, this);
     },
 
-    getDiscoItems: function(forceUpdate, callback)
+    getDiscoItems: function(forceUpdate, callback, cacheable)
     {
-        return this._discoCacheEntry.requestDiscoItems(forceUpdate, callback, this);
+        return this._discoCacheEntry.requestDiscoItems(forceUpdate, callback, this, cacheable);
     },
 
     getDiscoItemsByCategory: function(category, type, forceUpdate, callback)
