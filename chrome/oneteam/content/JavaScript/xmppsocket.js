@@ -151,7 +151,7 @@ _DECL_(XMPPSocket).prototype =
                 _this.tlsProblemHandled[_this.domain] = true;
                 _this.reconnect = true;
                 _this.disconnect();
-            }, 1000, this);
+            }, 3000, this);
         }
     },
 
