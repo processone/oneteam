@@ -59,7 +59,7 @@ chatpane[hasRoster=true] contactinfo .background {
 }
 
 splitter, .roster-container {
-	margin: 4px 0 3px 0;
+  margin: 4px 0 3px 0;
 }
 
 .roster-container {
