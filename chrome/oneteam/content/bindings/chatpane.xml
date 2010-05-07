@@ -760,8 +760,7 @@
               this._msgList.push(msg);
               this._msgElList.push(msgEl);
 
-              var im = doc.createElement("img");
-              im.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
+              var im = doc.createElement("div");
 
               im.setAttribute("class", "message-action edit-message");
               e.insertBefore(im, e.firstChild);
@@ -780,13 +779,15 @@
               }
 
               if (xReplyTo || xMessageId) {
-                var im = doc.createElement("img");
-                im.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
+                var im = doc.createElement("div");
+
+                im.setAttribute("class", "message-action thread-marker" +
+                                (msg.xMessageId ? " thread-marker-reply" : ""));
 
                 var handler = {
                   _this: this,
                   handleEvent: function(event) {
-                    if (event.target.src.indexOf("resource://") == 0)
+                    if (event.target.getAttribute("in-thread") != "true")
                       return;
                     if (event.type == "mouseover") {
                       if (!this._inside) {
@@ -801,9 +802,6 @@
                 }
                 im.addEventListener("mouseover", handler, false);
                 im.addEventListener("mouseout", handler, false);
-
-                im.setAttribute("class", "message-action" +
-                                (msg.xMessageId ? " thread-marker-reply" : ""));
 
                 e.insertBefore(im, e.firstChild);
 
@@ -834,12 +832,15 @@
       <method name="editMessage">
         <parameter name="msgEl"/>
         <body><![CDATA[
-          if (this._editMessageHandler)
+          if (this._editMessageHandler) {
             this.stopEditingMessage();
+            return;
+          }
 
           var msg = this._msgList[this._msgElList.indexOf(msgEl)];
 
           msgEl = msgEl.lastChild.lastChild;
+          msgEl.previousSibling.setAttribute("edited", "true");
 
           this._editMessageHandler = {
             msgEl: msgEl,
@@ -893,6 +894,8 @@
 
           var msgEl = this._editMessageHandler.msgEl;
 
+          msgEl.previousSibling.removeAttribute("edited");
+
           msgEl.contentEditable = false;
           msgEl.removeEventListener("keypress", this._editMessageHandler, true);
           msgEl.removeEventListener("keydown", this._editMessageHandler, true);
@@ -929,18 +932,24 @@
           }
 
           if (!msgToken) {
-            for (var token in thread.iterator())
-              token[1].lastChild.firstChild.src = thread.image;
-          } else
-            msgToken[1].lastChild.firstChild.src = thread.image;
+            for (var token in thread.iterator()) {
+              token[1].lastChild.firstChild.style.backgroundImage = "url("+thread.image+")";
+              token[1].lastChild.firstChild.setAttribute("in-thread", "true");
+            }
+          } else {
+            msgToken[1].lastChild.firstChild.style.backgroundImage = "url("+thread.image+")";
+            msgToken[1].lastChild.firstChild.setAttribute("in-thread", "true");
+          }
         ]]></body>
       </method>
 
       <method name="_onThreadDestroyed">
         <parameter name="thread"/>
         <body><![CDATA[
-          for (var token in thread.iterator())
-            token[1].lastChild.firstChild.src = "resource://oneteam-skin/chatpane/imgs/add-thread.png";
+          for (var token in thread.iterator()) {
+            token[1].lastChild.firstChild.style.backgroundImage = "";
+            token[1].lastChild.firstChild.removeAttribute("in-thread");
+          }
         ]]></body>
       </method>
 

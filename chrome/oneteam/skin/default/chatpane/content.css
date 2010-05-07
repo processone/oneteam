@@ -104,10 +104,21 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
 }
 
 .message-action {
+    width: 18px;
+    height: 14px;
     display: none;
     position: absolute;
     left: 1px;
     bottom: 0.4em;
+    background: transparent center center no-repeat;
+}
+
+.thread-marker-reply {
+    background-image: url(imgs/add-thread.png);
+}
+
+.edit-message {
+    background-image: url(imgs/chat-edit.png);
 }
 
 .thread-marker-reply,
@@ -116,10 +127,15 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
     cursor: pointer;
 }
 
+.edit-message[edited=true] {
+    background-image: url(imgs/chat-edit-active.png);
+}
+
 .message > span.body:hover > .message-action,
-.message-action:not([src="resource://oneteam-skin/chatpane/imgs/add-thread.png"])
+.thread-marker[in-thread=true],
+.edit-message[edited=true]
 {
-    display: inline;
+    display: block;
 }
 
 .systemMessage {
