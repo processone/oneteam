@@ -78,6 +78,17 @@ _DECL_(EditOp).prototype =
         return new EditOp(this.start, this.end, this.op, this.type, this.data, x);
     },
 
+    reverse: function() {
+        this.op = this.op == this.INSERT ? this.DELETE : this.INSERT;
+
+        return this;
+    },
+
+    reverseCopy: function(x) {
+        return new EditOp(this.start, this.end, this.op == this.INSERT ?
+                          this.DELETE : this.INSERT, this.type, this.data, x);
+    },
+
     subOp: function(newStart, newEnd, x) {
         return new EditOp(newStart, newEnd, this.op, this.type, this.data.substr(newStart-this.start, newEnd-newStart), x);
     },
@@ -157,9 +168,13 @@ _DECL_(DeltaReplayer).prototype =
     },
 
     replayOps: function(ops) {
+        var diff = 0;
         this.lastPosition = Infinity;
-        for (var i = 0; i < ops.length; i++)
+        for (var i = 0; i < ops.length; i++) {
             this.replayOp(ops[i]);
+            diff += ops[i].diff;
+        }
+        return diff;
     },
 
     replayOpsReverse: function(ops) {
@@ -456,17 +471,33 @@ _DECL_(DeltaTracker).prototype =
             this._notificationCallback(this);
     },
 
-    _addToLog: function(op) {
+    _addToLog: function(op, shiftFirst) {
         this._batchStart();
         if (op.shiftCopy || typeof(op) == "string")
-            this._combineOp(op);
+            this._combineOp(op, null, shiftFirst);
         else
             for (var i = 0; i < op.length; i++)
-                this._combineOp(op[i]);
+                this._combineOp(op[i], null, shiftFirst);
         this._batchEnd();
     },
 
-    rebase: function(l1, l2, merge) {
+    rebase: function(l1) {
+        var dt = new DeltaTracker()
+
+        dt._batchStart();
+        for (var i = l1.length-1; i >= 0; i--)
+            dt._combineOp(l1[i].reverse());
+        for (var i = 0; i < this.log.length; i++)
+            dt._combineOp(this.log[i]);
+        dt._batchEnd();
+
+        this.log = dt.log;
+
+        if (this._notificationCallback)
+            this._notificationCallback(this);
+    },
+
+    merge: function(l1, l2) {
         var diff1 = 0, diff2 = 0;
         var li1 = 0, li2 = 0;
         var res1 = [], res2 = [];
@@ -499,13 +530,6 @@ _DECL_(DeltaTracker).prototype =
                     li2++;
                     continue;
                 }
-            if (merge && s1 == s2 && e1 == e2 && op1.op == op2.op &&
-                op1.type == op2.type && op1.data == op2.data)
-            {
-                li1++;
-                li2++;
-                continue;
-            }
 
             if (s1 > s2 || (s1 == s2 && op2.op == op2.INSERT)) {
                 res1.push(op2.shiftCopy(-diff1+diff2, "COPY1"));
