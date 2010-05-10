@@ -79,6 +79,14 @@ body[hide-not-marked=true] .message[ends-selected-chunk=true]
     display: none;
 }
 
+.participant {
+    border: 1px solid #ccc;
+    -moz-border-radius: 3px;
+    display: inline;
+    float: right;
+    margin: 0, 2px;
+}
+
 .message[starts-chunk=true] > img,
 body[hide-not-marked=true] .message[starts-selected-chunk=true] > img
 {

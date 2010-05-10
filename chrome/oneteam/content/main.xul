@@ -446,6 +446,7 @@
                 <menupopup/>
               </menu>
               <menuseparator/>
+              <menuitem label="_('View _Wavelets...')" oncommand="window.top.wavesThread.openChatTab()"/>
               <menuitem label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
               <menuitem label="_('_Server Commands...')" command="cmd_adhoc"/>
               <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"/>

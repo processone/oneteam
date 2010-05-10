@@ -329,6 +329,15 @@
             var doc = this._output.contentDocument;
             var me = this;
 
+            this._output.contentDocument.addEventListener("msgclick", function(event) {
+              var target = event.target;
+              me.tg=target;
+              var idx = me._msgElList.indexOf(target);
+              dump("msgclick: "+target+", "+idx+"\n");
+              if (idx >= 0 && "onMsgClick" in me.model)
+                me.model.onMsgClick(me._msgList[idx]);
+            }, false);
+
             this._output.contentDocument.addEventListener("contactdblclick", function(event) {
               var target = event.target;
               if (target && target.contact)
@@ -397,18 +406,20 @@
 
           if (arg && arg.modified) {
             for (var i = 0; i < arg.modified.length; i++) {
-              var msgEl = this._msgElList[this._msgList.indexOf(arg.modified[i][0])];
+              var msg = arg.modified[i][0];
+              var msgEl = this._msgElList[this._msgList.indexOf(msg)];
+
               if (msgEl) {
                 msgEl = msgEl.lastChild.lastChild;
 
                 if (this._deltaTracker && this._deltaTracker.root == msgEl)
                 {
                   var [l1, l2] = this._deltaTracker.rebase(arg.modified[i][1], this._deltaTracker.log);
-                  this._deltaTracker.replayOps(l1);
+                  msg.blipLength += this._deltaTracker.replayOps(l1);
                   this._deltaTracker.log = l2;
                 } else {
                   var replayer = new DeltaReplayer(msgEl);
-                  replayer.replayOps(arg.modified[i][1]);
+                  msg.blipLength += replayer.replayOps(arg.modified[i][1]);
                 }
               }
             }
@@ -703,7 +714,7 @@
               msgEl.setAttribute("starts-chunk", "true");
             }
 
-            if (msg.contact) {
+            if (msg.contact && !msg.participants) {
               var e = doc.createElement("img");
               e.setAttribute("class", "avatar")
               e.setAttribute("src", msg.contact.avatar ||
@@ -716,31 +727,47 @@
             h.setAttribute("class", "header");
             msgEl.appendChild(h);
 
-            var e = doc.createElement("span");
-            e.setAttribute("class", "to-copy-paste");
-            e.appendChild(doc.createTextNode("["));
-            h.appendChild(e);
+            msgEl.setAttribute("onclick", "var ev = document.createEvent('Events');"+
+                          "ev.initEvent('msgclick', true, false);"+
+                          "this.dispatchEvent(ev)");
 
-            e = doc.createElement("span");
-            e.setAttribute("class", "date");
-            e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
-            h.appendChild(e);
+            if (msg.participants) {
+              for (var j = 0; j < msg.participants.length; j++) {
+                var e = doc.createElement("img");
+                e.setAttribute("src", msg.participants[j].avatar ||
+                               "resource://oneteam-skin/avatar/imgs/default-avatar.png");
+                e.setAttribute("class", "participant");
+                e.setAttribute("title", msg.participants[j].visibleName);
+                e.setAttribute("width", "18");
+                h.appendChild(e);
+              }
+            } else {
+              var e = doc.createElement("span");
+              e.setAttribute("class", "to-copy-paste");
+              e.appendChild(doc.createTextNode("["));
+              h.appendChild(e);
 
-            e = doc.createElement("span");
-            e.setAttribute("class", "to-copy-paste");
-            e.appendChild(doc.createTextNode("] "));
-            h.appendChild(e);
-
-            if (!msg.isSystemMessage) {
               e = doc.createElement("span");
-              e.setAttribute("class", "author");
-              e.appendChild(doc.createTextNode(msg.nick));
+              e.setAttribute("class", "date");
+              e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
               h.appendChild(e);
 
               e = doc.createElement("span");
               e.setAttribute("class", "to-copy-paste");
-              e.appendChild(doc.createTextNode(": "));
+              e.appendChild(doc.createTextNode("] "));
               h.appendChild(e);
+
+              if (!msg.isSystemMessage) {
+                e = doc.createElement("span");
+                e.setAttribute("class", "author");
+                e.appendChild(doc.createTextNode(msg.nick));
+                h.appendChild(e);
+
+                e = doc.createElement("span");
+                e.setAttribute("class", "to-copy-paste");
+                e.appendChild(doc.createTextNode(": "));
+                h.appendChild(e);
+              }
             }
 
             e = doc.createElement("span");
@@ -756,10 +783,10 @@
             beforeMsg = msg;
             beforeMsgEl = msgEl;
 
-            if (this.model.allowsModifications) {
-              this._msgList.push(msg);
-              this._msgElList.push(msgEl);
+            this._msgList.push(msg);
+            this._msgElList.push(msgEl);
 
+            if (this.model.allowsModifications) {
               var im = doc.createElement("div");
 
               im.setAttribute("class", "message-action edit-message");

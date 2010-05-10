@@ -2,6 +2,14 @@ var EXPORTED_SYMBOLS = ["EditOp", "EditorDeltaTracker", "DeltaTracker",
                         "DeltaReplayer"];
 
 function EditOp(start, end, op, type, data, x) {
+    if (typeof(start) == "string") {
+        match = start.match(/([+-])([Tt])?(\d+)(?:,)?(.+)/);
+        op = match[1] == "+" ? EditOp.INSERT : EditOp.DELETE;
+        type = match[2] ? EditOp.TAG : EditOp.TEXT;
+        data = match[4];
+        start = +match[3];
+        end = start + data.length;
+    }
     this.start = start;
     this.end = end;
     this.op = op;
@@ -26,6 +34,20 @@ _DECL_(EditOp).prototype =
         return (this.op == this.INSERT ? "+" : "-")+
             (this.type == this.TEXT ? "[" : "T[")+this.start+", "+this.end+", "+this.data+"]"+
             (this.x ? "<"+this.x+">" : "");
+    },
+
+    cutFromStart: function(length) {
+        if (op == op.INSERT)
+            this.start += length;
+        else
+            this.end -= length;
+
+        this.data.substr(length);
+    },
+
+    cutFromEnd: function(length) {
+        this.data.substr(0, this.length-length);
+        this.end -= length;
     },
 
     split: function(pos, x) {
@@ -277,6 +299,9 @@ function DeltaTracker(notificationCallback) {
 _DECL_(DeltaTracker).prototype =
 {
     _combineOp: function(op, start) {
+        if (typeof(op) == "string")
+            op = new EditOp(op);
+
         if (this._internalOp || op.length == 0)
             return;
 
@@ -433,7 +458,7 @@ _DECL_(DeltaTracker).prototype =
 
     _addToLog: function(op) {
         this._batchStart();
-        if (op.shiftCopy)
+        if (op.shiftCopy || typeof(op) == "string")
             this._combineOp(op);
         else
             for (var i = 0; i < op.length; i++)
@@ -498,6 +523,13 @@ _DECL_(DeltaTracker).prototype =
         while (li2 < l2.length)
             res1.push(l2[li2++].shiftCopy(-diff1+diff2));
         return [res1, res2];
+    },
+
+    clone: function() {
+        var res = new DeltaTracker();
+        for (var i = 0; i < this.log.length; i++)
+            res.log[i] = this.log[i].clone();
+        return res;
     },
 
     toString: function() {
@@ -648,8 +680,6 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
         this.sta = state;
 
         state.lines.push(state.gatheredText);
-
-        // TODO fixup trailing br
 
         if (!inBatch)
             this._batchStart();
