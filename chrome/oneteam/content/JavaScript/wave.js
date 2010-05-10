@@ -144,7 +144,10 @@ _DECL_(DeltaReplayer).prototype =
             var range = this.root.ownerDocument.createRange();
 
             [node, idx, afterSpace, beforeSpace] = this._findNode(op.start, true);
-            if (node.nodeType == node.TEXT_NODE) {
+            if (!node) {
+                range.setStart(this.root, 0);
+                range.setEnd(this.root, 0);
+            } else if (node.nodeType == node.TEXT_NODE) {
                 range.setStart(node, idx);
                 range.setEnd(node, idx);
             } else {
