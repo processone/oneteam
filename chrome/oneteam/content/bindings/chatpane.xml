@@ -900,6 +900,9 @@
 
           msgEl.contentEditable = true;
 
+          if (msgEl.lastChild.nodeName.toLowerCase() != "br")
+            msgEl.appendChild(msgEl.ownerDocument.createElement("br"));
+
           setTimeout(function(msgEl){try{msgEl.focus()}catch(ex){alert(ex)}}, 100, msgEl);
 
           var callback = this.model.msgModified ?
