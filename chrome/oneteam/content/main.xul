@@ -524,8 +524,6 @@
         </hbox>
       </vbox>
       <hbox id="login-actions-box">
-        <button flex="1" id="login-add-account" crop="end" label="_('New Account')"
-               oncommand='window.open("account.xul", "Startup settings", "chrome,centerscreen,dialog,resizable");'/>
         <button flex="1" id="login-settings" crop="end" label="_('Startup Settings')"
                oncommand="account.showPrefs();"/>
       </hbox>
