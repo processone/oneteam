@@ -333,7 +333,7 @@
               var target = event.target;
               me.tg=target;
               var idx = me._msgElList.indexOf(target);
-              dump("msgclick: "+target+", "+idx+"\n");
+
               if (idx >= 0 && "onMsgClick" in me.model)
                 me.model.onMsgClick(me._msgList[idx]);
             }, false);
@@ -727,9 +727,10 @@
             h.setAttribute("class", "header");
             msgEl.appendChild(h);
 
-            msgEl.setAttribute("onclick", "var ev = document.createEvent('Events');"+
-                          "ev.initEvent('msgclick', true, false);"+
-                          "this.dispatchEvent(ev)");
+            if ("onMsgClick" in this.model)
+              msgEl.setAttribute("onclick", "var ev = document.createEvent('Events');"+
+                            "ev.initEvent('msgclick', true, false);"+
+                            "this.dispatchEvent(ev)");
 
             if (msg.participants) {
               for (var j = 0; j < msg.participants.length; j++) {

@@ -84,7 +84,7 @@ body[hide-not-marked=true] .message[ends-selected-chunk=true]
     -moz-border-radius: 3px;
     display: inline;
     float: right;
-    margin: 0, 2px;
+    margin: 0 2px;
 }
 
 .message[starts-chunk=true] > img,
