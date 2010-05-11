@@ -581,7 +581,7 @@
           }
 
           var scrollToBottom = scrEl.scrollTop + scrEl.clientHeight >= scrEl.scrollHeight - 8 ||
-            this._scrollToBottomAnimation.running;
+            (this._scrollToBottomAnimation && this._scrollToBottomAnimation.running);
 
           this._appendTimeout = null;
 
