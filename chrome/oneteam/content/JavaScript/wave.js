@@ -577,6 +577,14 @@ function EditorDeltaTracker(editor, notificationCallback, root)
 
 _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
 {
+    replayOps: function(ops) {
+        var [l1, l2] = this.merge(ops, this.log);
+        var diff = DeltaReplayer.prototype.replayOps.ccall(this, l1);
+        this.log = l2;
+
+        return diff;
+    },
+
     destroy: function() {
         this.editor.removeEditActionListener(this);
     },

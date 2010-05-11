@@ -411,15 +411,10 @@
               if (msgEl) {
                 msgEl = msgEl.lastChild.lastChild;
 
-                if (this._deltaTracker && this._deltaTracker.root == msgEl)
-                {
-                  var [l1, l2] = this._deltaTracker.merge(arg.modified[i][1], this._deltaTracker.log);
-                  msg.blipLength += this._deltaTracker.replayOps(l1);
-                  this._deltaTracker.log = l2;
-                } else {
-                  var replayer = new DeltaReplayer(msgEl);
-                  msg.blipLength += replayer.replayOps(arg.modified[i][1]);
-                }
+                var replayer = this._deltaTracker && this._deltaTracker.root == msgEl ?
+                  this._deltaTracker : new DeltaReplayer(msgEl);
+
+                msg.blipLength += replayer.replayOps(arg.modified[i][1]);
               }
             }
           }
