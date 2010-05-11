@@ -78,7 +78,7 @@ function Account()
         var logins = lm.findLogins({}, "xmpp://"+host, null, host);
         for (var i = 0; i < logins.length; i++)
             if (logins[i].username == user) {
-                this.connectionInfo.pass = logins[0].password;
+                this.connectionInfo.pass = logins[i].password;
                 this.modelUpdated("connectionInfo");
                 break;
             }
