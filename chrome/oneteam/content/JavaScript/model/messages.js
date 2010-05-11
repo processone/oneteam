@@ -4,6 +4,7 @@ var EXPORTED_SYMBOLS = ["ContactInfo", "MessagesRouter", "MessagesThread",
 ML.importMod("roles.js");
 ML.importMod("modeltypes.js");
 ML.importMod("dateutils.js");
+ML.importMod("views/chattabs.js");
 
 function ContactInfo(jid, visibleName, representsMe)
 {
