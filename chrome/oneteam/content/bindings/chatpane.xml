@@ -1775,6 +1775,8 @@
           <xul:menuseparator/>
           <xul:menuitem id="charCounter" label="_('Show characters counter')" type="checkbox"
                         oncommand="this.parentNode.parentNode.parentNode.showCounter = !this.checked"/>
+          <xul:menuitem id="sendWaveLog" label="_('Send wave log to prefiks')"
+                        oncommand="this.parentNode.parentNode.parentNode._model.sendWaveLog()"/>
         </xul:menupopup>
       </xul:toolbarbutton>
       <xul:toolbarseparator/>
