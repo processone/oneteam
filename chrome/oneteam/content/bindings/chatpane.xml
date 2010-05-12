@@ -410,11 +410,15 @@
 
               if (msgEl) {
                 msgEl = msgEl.lastChild.lastChild;
+                if (arg.modified[i].length == 2) {
+                  var replayer = this._deltaTracker && this._deltaTracker.root == msgEl ?
+                    this._deltaTracker : new DeltaReplayer(msgEl);
+                  this.lastReplayer = replayer;
 
-                var replayer = this._deltaTracker && this._deltaTracker.root == msgEl ?
-                  this._deltaTracker : new DeltaReplayer(msgEl);
-
-                msg.blipLength += replayer.replayOps(arg.modified[i][1]);
+                  msg.blipLength += replayer.replayOps(arg.modified[i][1]);
+                } else {
+                  msgEl.innerHTML = xmlEscape(arg.modified[i][2]);
+                }
               }
             }
           }
