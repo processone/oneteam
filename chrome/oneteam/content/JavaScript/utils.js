@@ -820,8 +820,10 @@ function iteratorEx(container, sortFun, predicateFun, token) {
     var containerIsArray = container instanceof Array;
     if (sortFun || containerIsArray) {
         var array = containerIsArray ?
-            (predicateFun ? container.filter(predicateFun) : container) :
-            [x for each (x in container) if (!predicateFun || predicateFun(x, token))];
+            (predicateFun ? container.filter(function(v){return predicateFun(v, token)}) :
+                            container) :
+            (predicateFun ? [x for each (x in container) if (predicateFun(x, token))] :
+                            [x for each (x in container)]);
 
         if (sortFun)
             array = typeof(sortFun) == "function" ? array.sort(sortFun) : array.sort();
