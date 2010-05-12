@@ -79,6 +79,13 @@ body[hide-not-marked=true] .message[ends-selected-chunk=true]
     display: none;
 }
 
+div.message.selectable:hover {
+    -moz-border-top-colors: #C0CBDB #A6BADB #7ea1dc;
+    -moz-border-bottom-colors: #C0CBDB #A6BADB #7ea1dc;
+    -moz-border-left-colors: #C0CBDB #A6BADB #7ea1dc;
+    -moz-border-right-colors: #C0CBDB #A6BADB #7ea1dc;
+}
+
 .participant {
     border: 1px solid #ccc;
     -moz-border-radius: 3px;
