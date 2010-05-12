@@ -654,8 +654,10 @@ _DECL_(Message).prototype =
     },
 
     getClasses: function(neverArchived) {
-        var res = this.isSystemMessage ? ["systemMessage"] : [];
+        var res = "extraClasses" in this ? this.extraClasses.slice() : [];
 
+        if (this.isSystemMessage)
+            res.push("systemMessage");
         if (this.text.indexOf("/me ") == 0)
             res.push("meMessage");
         if (this.offline)
