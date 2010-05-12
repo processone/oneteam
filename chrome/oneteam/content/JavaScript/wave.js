@@ -164,7 +164,14 @@ _DECL_(DeltaReplayer).prototype =
                 });
                 if (beforeSpace && /\s$/.test(text))
                     text = text.substr(0, text.length-1)+"\xa0";
-                range.insertNode(this.root.ownerDocument.createTextNode(text));
+
+                if (afterSpace && /^\s/.test(text))
+                    text = "\xa0"+text.substr(1);
+
+                if (range.startContainer.nodeType == range.startContainer.TEXT_NODE) {
+                    range.startContainer.replaceData(range.startOffset, 0, text);
+                } else
+                    range.insertNode(this.root.ownerDocument.createTextNode(text));
             }
         }
         this._internalOp = false;
@@ -228,8 +235,11 @@ _DECL_(DeltaReplayer).prototype =
     },
 
     _calculatePosition: function(node, state, firstVisit) {
-        if (!firstVisit)
-            return false;
+        if (!firstVisit) {
+            if (state.after)
+                state.beforeSpace = false;
+            return true;
+        }
 
         state.prevPos = state.position;
         state.prevNode = node;
@@ -241,7 +251,7 @@ _DECL_(DeltaReplayer).prototype =
                     return true;
                 }
                 state.position += 2;
-                state.gatheredText = "";
+                state.lastTextEnd = "";
                 state.afterSpace = true;
 
                 if (state.endPosition < state.position ||
@@ -261,7 +271,7 @@ _DECL_(DeltaReplayer).prototype =
 
                 return true;
             }
-            var text = this._normalizeText(node.nodeValue, state.gatheredText);
+            var text = this._normalizeText(node.nodeValue, state.lastTextEnd);
             var oldPos = state.position;
 
             state.position += text.length;
@@ -269,16 +279,16 @@ _DECL_(DeltaReplayer).prototype =
             if (state.endPosition < state.position ||
                 state.atEnd && state.endPosition == state.position)
             {
-                var _this = this;;
+                var _this = this;
 
                 state.node = node;
                 state.offset = bsearchEx(node.nodeValue, 0, node.nodeValue.length-1,
                                          state.endPosition - oldPos, function(a,b,i) {
-                                            return a - _this._normalizeText(b.substr(0, i), state.gatheredText).length;
+                                            return a - _this._normalizeText(b.substr(0, i), state.lastTextEnd).length;
                                          });
 
                 state.afterSpace = /[^\S\xa0]/.test(state.offset == 0 ?
-                    state.gatheredText[state.gatheredText.length-1] :
+                    state.lastTextEnd :
                     node.nodeValue[state.offset-1]);
 
                 if (state.offset > node.nodeValue.length-1) {
@@ -290,19 +300,19 @@ _DECL_(DeltaReplayer).prototype =
 
                 return true;
             }
-            state.gatheredText = text.substr(0, text.length-1);
+            state.lastTextEnd = text.substr(text.length-1);
         }
 
         return false;
     },
 
     _findNode: function(position, atEnd) {
-        state = {
+        var state = {
             endNode: null,
             endPosition: position,
             position: 0,
             atEnd: atEnd,
-            gatheredText: ""
+            lastTextEnd: ""
         };
         this._processTree(this.root.firstChild, this._calculatePosition, state);
 
