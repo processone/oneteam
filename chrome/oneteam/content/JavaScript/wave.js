@@ -36,18 +36,13 @@ _DECL_(EditOp).prototype =
             (this.x ? "<"+this.x+">" : "");
     },
 
-    cutFromStart: function(length) {
-        if (op == op.INSERT)
-            this.start += length;
-        else
-            this.end -= length;
+    cut: function(start, end) {
+        this.data = this.data.substr(0, start-this.start) +
+            this.data.substr(end-this.start);
 
-        this.data = this.data.substr(length);
-    },
+        this.end -= end-start;
 
-    cutFromEnd: function(length) {
-        this.data = this.data.substr(0, this.length-length);
-        this.end -= length;
+        return this;
     },
 
     split: function(pos, x) {
@@ -91,6 +86,21 @@ _DECL_(EditOp).prototype =
 
     subOp: function(newStart, newEnd, x) {
         return new EditOp(newStart, newEnd, this.op, this.type, this.data.substr(newStart-this.start, newEnd-newStart), x);
+    },
+
+    merge: function(op) {
+        this.data = this.data.substr(0, op.start - this.start)+op.data+
+            this.data.substr(op.start - this.start);
+        this.end += op.length;
+    },
+
+    intersect: function(op) {
+    },
+
+    insert: function(op) {
+        this.data = this.data.substr(0, op.start-this.start) + op.data +
+            this.data.substr(op.start-this.start);
+        this.end += op.length;
     },
 
     get length() {
@@ -338,169 +348,90 @@ _DECL_(DeltaTracker).prototype =
         if (start == null || start >= this.log.length)
             start = this.log.length-1;
 
-        var ops = []
-        while (1) {
-            for (var p = start; p >= 0; p--) {
-                var prevOp = this.log[p];
+        for (var p = start; p >= 0; p--) {
+            var prevOp = this.log[p];
 
-                if (op.type == op.TEXT && prevOp.type == op.TEXT) {
-                    if (op.op == op.INSERT) {
-                        if (prevOp.op == op.INSERT) {
+            if (op.type == op.TEXT) {
+                if (prevOp.type == prevOp.TEXT) {
+                    if (prevOp.op == prevOp.INSERT) {
+                        if (op.op == op.INSERT) {
                             if (op.start >= prevOp.start && op.start <= prevOp.end) {
-                                prevOp.end += op.end-op.start;
-                                prevOp.data = prevOp.data.substr(0, op.start-prevOp.start) +
-                                op.data + prevOp.data.substr(op.start-prevOp.start);
-                                op = null;
-                                break;
+                                prevOp.insert(op);
+                                return;
+                            }
+                        } else if (op.start < prevOp.end && op.end > prevOp.start) {
+                            var s = Math.max(op.start, prevOp.start);
+                            var e = Math.min(op.end, prevOp.end);
+
+                            op.cut(s,e);
+                            prevOp.cut(s,e);
+
+                            if (prevOp.length == 0)
+                                this.log.splice(p, 1);
+                            if (op.length == 0)
+                                return;
+                        }
+                    } else { //prevOp.op == prevOp.DELETE
+                        if (op.op == op.DELETE) {
+                            if (prevOp.start >= op.start && prevOp.start <= op.end) {
+                                op.insert(prevOp)
+                                this.log.splice(p, 1);
                             }
                         } else {
-                            if (op.start == prevOp.start) {
+                            if (prevOp.start == op.start) {
                                 var minLen = Math.min(op.data.length, prevOp.data.length);
                                 for (var i = 0; i < minLen; i++)
                                     if (op.data[i] != prevOp.data[i])
                                         break;
-                                op.start += i;
-                                op.data = op.data.substr(i);
-                                prevOp.start += i;
-                                prevOp.data = prevOp.data.substr(i);
+
+                                if (i) {
+                                    op.cut(op.start, op.start+i).shift(i);
+                                    prevOp.cut(prevOp.start, prevOp.start+i).shift(i);
+                                }
 
                                 minLen = Math.min(op.data.length, prevOp.data.length);
                                 for (var i = 0; i < minLen; i++)
                                     if (op.data[op.data.length-i-1] != prevOp.data[prevOp.data.length-i-1])
                                         break;
-                                op.end -= i;
-                                op.data = op.data.substr(0, op.data.length-i);
-                                prevOp.end -= i;
-                                prevOp.data = prevOp.data.substr(0, prevOp.data.length-i);
 
-                                if (prevOp.start == prevOp.end)
-                                    this.log.splice(p, 1);
-                                if (op.start == op.end) {
-                                    op = null;
-                                    break;
+                                if (i) {
+                                    op.cut(op.end-i, op.end);
+                                    prevOp.cut(prevOp.end-i, prevOp.end);
                                 }
-                            } else if (op.start == prevOp.end) {
-                                for (var i = 1; i <= prevOp.length && i <= op.length; i++)
-                                    if (prevOp.data[prevOp.data.length-i] != op.data[op.data.length-i])
-                                        break;
-                                prevOp.cutFromEnd(i-1);
+
                                 if (prevOp.length == 0)
                                     this.log.splice(p, 1);
 
-                                op.shift(-i+1);
-                                op.cutFromEnd(i-1);
-                                if (op.length == 0) {
-                                    op = null;
-                                    break;
-                                }
+                                if (op.length == 0)
+                                    return;
                             }
                         }
-                    } else {
-                        if (prevOp.op == op.INSERT) {
-                            if (op.start < prevOp.end && op.end > prevOp.start) {
-                                var [ps, pe, pd] = [prevOp.start, prevOp.end, prevOp.data];
-                                var flags = 0;
-
-                                if (op.start > prevOp.start) {
-                                    prevOp.data = prevOp.data.substr(0, op.start-prevOp.start);
-                                    prevOp.end = op.start;
-                                    flags |= 1;
-                                } else {
-                                    this.log.splice(p, 1);
-
-                                    if (op.start < prevOp.start) {
-                                        prevOp.op = op.DELETE;
-                                        prevOp.data = op.data.substr(0, prevOp.start-op.start);
-                                        prevOp.end = prevOp.start;
-                                        prevOp.start = op.start;
-
-                                        this._combineOp(prevOp, p);
-                                    }
-                                }
-
-                                if (op.end < pe) {
-                                    op.op = op.INSERT;
-                                    op.data = pd.substr(op.end-ps);
-                                    var len = op.end - op.start;
-                                    op.start = op.end - len;
-                                    op.end = pe - len;
-                                    flags |= 2;
-                                } else if (op.end > pe) {
-                                    op.data = op.data.substr(pe-op.start);
-                                    op.start = pe - (pe-op.start);
-                                    op.end -= pe-op.start;
-                                } else {
-                                    op = null;
-                                    break;
-                                }
-                                if (flags == 3) {
-                                    p++;
-                                    continue;
-                                }
-                            } else if (prevOp.end == op.start) {
-                                for (var i = 1; i <= prevOp.length && i <= op.length; i++)
-                                    if (prevOp.data[prevOp.data.length-i] != op.data[op.data.length-i])
-                                        break;
-                                prevOp.cutFromEnd(i-1);
-                                if (prevOp.length == 0)
-                                    this.log.splice(p, 1);
-
-                                op.shift(-i+1);
-                                op.cutFromEnd(i-1);
-                                if (op.length == 0) {
-                                    op = null;
-                                    break;
-                                }
-                            }
-                        } else {
-                            if (op.start == prevOp.start) {
-                                prevOp.data += op.data;
-                                prevOp.end += op.end-op.start;
-                                op = null;
-                                break;
-                            } else if (op.end == prevOp.start) {
-                                op.end = prevOp.end;
-                                op.data += prevOp.data;
-                                this.log.splice(p, 1);
-                            }
-                        }
-                    }
-                } else if (op.type == op.TAG && prevOp.type == op.TAG) {
-                    if (op.start == prevOp.start && op.op != prevOp.op) {
-                        this.log.splice(p, 1);
-                        p--;
-                        op = null;
-                        break;
-                    }
-                } else if (op.type == op.TAG && prevOp.type == op.TEXT) {
-                    if (op.op == op.INSERT && prevOp.op == op.INSERT &&
-                        op.start > prevOp.start && op.start < prevOp.end)
-                    {
-                        this.log.splice(p+1, 0, prevOp.split(op.start).shift(2));
-                        break;
                     }
                 }
-
-                if (this.log[p] == prevOp) {
-                    if (prevOp.start+op.diff < op.start ||
-                        (op.op == op.INSERT && prevOp.start <= op.start))
-                        break;
-
-                    prevOp.shift(op.diff);
+            } else { // op.type == op.TAG
+                if (prevOp.type == prevOp.TEXT) {
+                    if (op.op == op.INSERT && prevOp.op == prevOp.INSERT &&
+                        op.start > prevOp.start && op.start < prevOp.end)
+                    {
+                        this.log.splice(p+1, 0, op, prevOp.split(op.start).shift(2));
+                        return;
+                    }
+                } else {
+                    if (op.start == prevOp.start && op.op != prevOp.op) {
+                        this.log.splice(p, 1);
+                        return;
+                    }
                 }
             }
 
-            if (op)
-                this.log.splice(p+1, 0, op);
+            if (this.log[p] == prevOp) {
+                if (prevOp.start+op.diff < op.start)
+                    break;
 
-            ops.push(op)
-
-            if (ops.indexOf(this.log[this.log.length-1]) < 0) {
-                op = this.log.splice(this.log.length-1, 1)[0];
-                start = this.log.length-1;
-            } else
-                break;
+                prevOp.shift(op.diff);
+            }
         }
+        this.log.splice(p+1, 0, op);
     },
 
     _batchStart: function() {
