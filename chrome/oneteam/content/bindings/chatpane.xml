@@ -774,7 +774,7 @@
 
             var e2 = doc.createElement("div");
             e.appendChild(e2);
-            e2.innerHTML = msg.formatedHtml;
+            e2.innerHTML = msg.formatedHtml || "<br/>";
 
             msg.markAsSeen();
             msgEl.appendChild(e);
@@ -899,7 +899,7 @@
 
           msgEl.contentEditable = true;
 
-          if (msgEl.lastChild.nodeName.toLowerCase() != "br")
+          if (!msgEl.lastChild || msgEl.lastChild.nodeName.toLowerCase() != "br")
             msgEl.appendChild(msgEl.ownerDocument.createElement("br"));
 
           setTimeout(function(msgEl){try{msgEl.focus()}catch(ex){alert(ex)}}, 100, msgEl);
