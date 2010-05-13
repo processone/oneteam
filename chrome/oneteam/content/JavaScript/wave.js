@@ -338,134 +338,169 @@ _DECL_(DeltaTracker).prototype =
         if (start == null || start >= this.log.length)
             start = this.log.length-1;
 
-        for (var p = start; p >= 0; p--) {
-            var prevOp = this.log[p];
+        var ops = []
+        while (1) {
+            for (var p = start; p >= 0; p--) {
+                var prevOp = this.log[p];
 
-            if (op.type == op.TEXT && prevOp.type == op.TEXT) {
-                if (op.op == op.INSERT) {
-                    if (prevOp.op == op.INSERT) {
-                        if (op.start >= prevOp.start && op.start <= prevOp.end) {
-                            prevOp.end += op.end-op.start;
-                            prevOp.data = prevOp.data.substr(0, op.start-prevOp.start) +
-                            op.data + prevOp.data.substr(op.start-prevOp.start);
-                            op = null;
-                            break;
-                        }
-                    } else {
-                        if (op.start == prevOp.start) {
-                            var minLen = Math.min(op.data.length, prevOp.data.length);
-                            for (var i = 0; i < minLen; i++)
-                                if (op.data[i] != prevOp.data[i])
-                                    break;
-                            op.start += i;
-                            op.data = op.data.substr(i);
-                            prevOp.start += i;
-                            prevOp.data = prevOp.data.substr(i);
-
-                            minLen = Math.min(op.data.length, prevOp.data.length);
-                            for (var i = 0; i < minLen; i++)
-                                if (op.data[op.data.length-i-1] != prevOp.data[prevOp.data.length-i-1])
-                                    break;
-                            op.end -= i;
-                            op.data = op.data.substr(0, op.data.length-i);
-                            prevOp.end -= i;
-                            prevOp.data = prevOp.data.substr(0, prevOp.data.length-i);
-
-                            if (prevOp.start == prevOp.end)
-                                this.log.splice(p, 1);
-                            if (op.start == op.end) {
+                if (op.type == op.TEXT && prevOp.type == op.TEXT) {
+                    if (op.op == op.INSERT) {
+                        if (prevOp.op == op.INSERT) {
+                            if (op.start >= prevOp.start && op.start <= prevOp.end) {
+                                prevOp.end += op.end-op.start;
+                                prevOp.data = prevOp.data.substr(0, op.start-prevOp.start) +
+                                op.data + prevOp.data.substr(op.start-prevOp.start);
                                 op = null;
                                 break;
                             }
-                        }
-                    }
-                } else {
-                    if (prevOp.op == op.INSERT) {
-                        if (op.start < prevOp.end && op.end > prevOp.start) {
-                            var [ps, pe, pd] = [prevOp.start, prevOp.end, prevOp.data];
-                            var flags = 0;
+                        } else {
+                            if (op.start == prevOp.start) {
+                                var minLen = Math.min(op.data.length, prevOp.data.length);
+                                for (var i = 0; i < minLen; i++)
+                                    if (op.data[i] != prevOp.data[i])
+                                        break;
+                                op.start += i;
+                                op.data = op.data.substr(i);
+                                prevOp.start += i;
+                                prevOp.data = prevOp.data.substr(i);
 
-                            if (op.start > prevOp.start) {
-                                prevOp.data = prevOp.data.substr(0, op.start-prevOp.start);
-                                prevOp.end = op.start;
-                                flags = 1;
-                            } else {
-                                this.log.splice(p, 1);
+                                minLen = Math.min(op.data.length, prevOp.data.length);
+                                for (var i = 0; i < minLen; i++)
+                                    if (op.data[op.data.length-i-1] != prevOp.data[prevOp.data.length-i-1])
+                                        break;
+                                op.end -= i;
+                                op.data = op.data.substr(0, op.data.length-i);
+                                prevOp.end -= i;
+                                prevOp.data = prevOp.data.substr(0, prevOp.data.length-i);
 
-                                if (op.start < prevOp.start) {
-                                    prevOp.op = op.DELETE;
-                                    prevOp.data = op.data.substr(0, prevOp.start-op.start);
-                                    prevOp.end = prevOp.start;
-                                    prevOp.start = op.start;
+                                if (prevOp.start == prevOp.end)
+                                    this.log.splice(p, 1);
+                                if (op.start == op.end) {
+                                    op = null;
+                                    break;
+                                }
+                            } else if (op.start == prevOp.end) {
+                                for (var i = 1; i <= prevOp.length && i <= op.length; i++)
+                                    if (prevOp.data[prevOp.data.length-i] != op.data[op.data.length-i])
+                                        break;
+                                prevOp.cutFromEnd(i-1);
+                                if (prevOp.length == 0)
+                                    this.log.splice(p, 1);
 
-                                    this._combineOp(prevOp, p);
+                                op.shift(-i+1);
+                                op.cutFromEnd(i-1);
+                                if (op.length == 0) {
+                                    op = null;
+                                    break;
                                 }
                             }
-
-                            if (op.end < pe) {
-                                op.op = op.INSERT;
-                                op.data = pd.substr(op.end-ps);
-                                var len = op.end - op.start;
-                                op.start = op.end - len;
-                                op.end = pe - len;
-                                flags |= 2;
-                            } else if (op.end > pe) {
-                                op.data = op.data.substr(pe-op.start);
-                                op.start = pe - (pe-op.start);
-                                op.end -= pe-op.start;
-                            } else {
-                                op = null;
-                                break;
-                            }
-                            if (flags == 3 || flags == 0) {
-                                p++;
-                                continue;
-                            }
                         }
                     } else {
-                        if (op.start == prevOp.start) {
-                            prevOp.data += op.data;
-                            prevOp.end += op.end-op.start;
-                            op = null;
-                            break;
-                        } else if (op.end == prevOp.start) {
-                            prevOp.start = op.start;
-                            prevOp.data = op.data + prevOp.data;
-                            op = null;
-                            break;
+                        if (prevOp.op == op.INSERT) {
+                            if (op.start < prevOp.end && op.end > prevOp.start) {
+                                var [ps, pe, pd] = [prevOp.start, prevOp.end, prevOp.data];
+                                var flags = 0;
+
+                                if (op.start > prevOp.start) {
+                                    prevOp.data = prevOp.data.substr(0, op.start-prevOp.start);
+                                    prevOp.end = op.start;
+                                    flags |= 1;
+                                } else {
+                                    this.log.splice(p, 1);
+
+                                    if (op.start < prevOp.start) {
+                                        prevOp.op = op.DELETE;
+                                        prevOp.data = op.data.substr(0, prevOp.start-op.start);
+                                        prevOp.end = prevOp.start;
+                                        prevOp.start = op.start;
+
+                                        this._combineOp(prevOp, p);
+                                    }
+                                }
+
+                                if (op.end < pe) {
+                                    op.op = op.INSERT;
+                                    op.data = pd.substr(op.end-ps);
+                                    var len = op.end - op.start;
+                                    op.start = op.end - len;
+                                    op.end = pe - len;
+                                    flags |= 2;
+                                } else if (op.end > pe) {
+                                    op.data = op.data.substr(pe-op.start);
+                                    op.start = pe - (pe-op.start);
+                                    op.end -= pe-op.start;
+                                } else {
+                                    op = null;
+                                    break;
+                                }
+                                if (flags == 3) {
+                                    p++;
+                                    continue;
+                                }
+                            } else if (prevOp.end == op.start) {
+                                for (var i = 1; i <= prevOp.length && i <= op.length; i++)
+                                    if (prevOp.data[prevOp.data.length-i] != op.data[op.data.length-i])
+                                        break;
+                                prevOp.cutFromEnd(i-1);
+                                if (prevOp.length == 0)
+                                    this.log.splice(p, 1);
+
+                                op.shift(-i+1);
+                                op.cutFromEnd(i-1);
+                                if (op.length == 0) {
+                                    op = null;
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (op.start == prevOp.start) {
+                                prevOp.data += op.data;
+                                prevOp.end += op.end-op.start;
+                                op = null;
+                                break;
+                            } else if (op.end == prevOp.start) {
+                                op.end = prevOp.end;
+                                op.data += prevOp.data;
+                                this.log.splice(p, 1);
+                            }
                         }
                     }
+                } else if (op.type == op.TAG && prevOp.type == op.TAG) {
+                    if (op.start == prevOp.start && op.op != prevOp.op) {
+                        this.log.splice(p, 1);
+                        p--;
+                        op = null;
+                        break;
+                    }
+                } else if (op.type == op.TAG && prevOp.type == op.TEXT) {
+                    if (op.op == op.INSERT && prevOp.op == op.INSERT &&
+                        op.start > prevOp.start && op.start < prevOp.end)
+                    {
+                        this.log.splice(p+1, 0, prevOp.split(op.start).shift(2));
+                        break;
+                    }
                 }
-            } else if (op.type == op.TAG && prevOp.type == op.TAG) {
-                if (op.start == prevOp.start && op.op != prevOp.op) {
-                    this.log.splice(p, 1);
-                    p--;
-                    op = null;
-                    break;
-                }
-            } else if (op.type == op.TAG && prevOp.type == op.TEXT) {
-                if (op.op == op.INSERT && prevOp.op == op.INSERT &&
-                    op.start > prevOp.start && op.start < prevOp.end)
-                {
-                    this.log.splice(p+1, 0, prevOp.split(op.start).shift(2));
-                    break;
+
+                if (this.log[p] == prevOp) {
+                    if (prevOp.start+op.diff < op.start ||
+                        (op.op == op.INSERT && prevOp.start <= op.start))
+                        break;
+
+                    prevOp.shift(op.diff);
                 }
             }
 
-            if (p < this.log.length && this.log[p].start < op.start)
+            if (op)
+                this.log.splice(p+1, 0, op);
+
+            ops.push(op)
+
+            if (ops.indexOf(this.log[this.log.length-1]) < 0) {
+                op = this.log.splice(this.log.length-1, 1)[0];
+                start = this.log.length-1;
+            } else
                 break;
-
-            if (this.log[p] == prevOp) {
-                if (prevOp.start+op.diff < op.start)
-                    break;
-
-                prevOp.shift(op.diff);
-            }
         }
-        if (op)
-            this.log.splice(p+1, 0, op);
-        else if (this.log.length > p+1)
-            this._combineOp(this.log.splice(p+1, 1)[0], p);
     },
 
     _batchStart: function() {
@@ -484,13 +519,13 @@ _DECL_(DeltaTracker).prototype =
             this._notificationCallback(this);
     },
 
-    _addToLog: function(op, shiftFirst) {
+    _addToLog: function(op) {
         this._batchStart();
         if (op.shiftCopy || typeof(op) == "string")
-            this._combineOp(op, null, shiftFirst);
+            this._combineOp(op);
         else
             for (var i = 0; i < op.length; i++)
-                this._combineOp(op[i], null, shiftFirst);
+                this._combineOp(op[i]);
         this._batchEnd();
     },
 
