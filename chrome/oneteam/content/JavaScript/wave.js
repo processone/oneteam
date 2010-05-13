@@ -42,11 +42,11 @@ _DECL_(EditOp).prototype =
         else
             this.end -= length;
 
-        this.data.substr(length);
+        this.data = this.data.substr(length);
     },
 
     cutFromEnd: function(length) {
-        this.data.substr(0, this.length-length);
+        this.data = this.data.substr(0, this.length-length);
         this.end -= length;
     },
 
