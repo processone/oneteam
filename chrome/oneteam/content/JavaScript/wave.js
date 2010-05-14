@@ -3,7 +3,7 @@ var EXPORTED_SYMBOLS = ["EditOp", "EditorDeltaTracker", "DeltaTracker",
 
 function EditOp(start, end, op, type, data, x) {
     if (typeof(start) == "string") {
-        match = start.match(/([+-])([Tt])?(\d+)(?:,)?(.+)/);
+        var match = start.match(/([+-])([Tt])?(\d+)(?:,)?(.+)/);
         op = match[1] == "+" ? EditOp.INSERT : EditOp.DELETE;
         type = match[2] ? EditOp.TAG : EditOp.TEXT;
         data = match[4];
