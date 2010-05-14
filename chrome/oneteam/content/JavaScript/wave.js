@@ -236,7 +236,10 @@ _DECL_(DeltaReplayer).prototype =
         }
     },
 
-    _normalizeText: function(text, prevText) {
+    _normalizeText: function(text, prevText, inPre) {
+        if (inPre)
+            return text.replace(/\n/g, "").replace(/\s/g, " ");
+
         if (/[^\S\xa0]$/.test(prevText))
             text = text.replace(/^[^\S\xa0]+/, "");
         return text.replace(/[^\S\xa0]+/g, " ").replace(/\xa0/g, " ");
@@ -738,8 +741,14 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
     },
 
     _extractText: function(node, state, firstVisit) {
-        if (!firstVisit)
+        if (!("inPre" in state))
+            state.inPre = 0;
+
+        if (!firstVisit) {
+            if (node.nodeType == node.ELEMENT_NODE && node.localName.toLowerCase() == "pre")
+                state.inPre--;
             return node == state.endNode;
+        }
 
         if (node.nodeType == node.ELEMENT_NODE) {
             if (node == state.startNode) {
@@ -752,7 +761,7 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
             }
 
             if (node.localName.toLowerCase() == "br") {
-                if (node != this.root.lastChild) {
+                if (!this._isLastElement(node)) {
                     state.lines.push(state.gatheredText);
                     state.gatheredText = "";
                 } else if (node == state.startNode && node.previousSibling &&
@@ -762,18 +771,17 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
                     state.startPos -= 2;
                     state.lines.push("");
                 }
-            }
+            } else if (node.localName.toLowerCase() == "pre")
+                state.inPre++;
         } else {
             var text = node.nodeValue;
 
             if (state.endNode == node && state.endOffset >= 0)
                 text = text.substr(0, state.endOffset);
 
-            state.ltn = node;
-
             if (node == state.startNode) {
                 var rawPreText = text.substr(0, state.startOffset);
-                var preText = this._normalizeText(rawPreText, state.rawGatheredText);
+                var preText = this._normalizeText(rawPreText, state.rawGatheredText, state.inPre);
 
                 state.lines.push(state.gatheredText+preText);
                 state.startPos = state.lines.join("12").length;
@@ -784,9 +792,9 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
                 state.gatheredText = "";
                 state.rawGatheredText = "";
 
-                text = this._normalizeText(text.substr(state.startOffset), rawPreText);
+                text = this._normalizeText(text.substr(state.startOffset), rawPreText, state.inPre);
             } else
-                text = this._normalizeText(text, state.rawGatheredText);
+                text = this._normalizeText(text, state.rawGatheredText, state.inPre);
 
             state.gatheredText += text;
             state.rawGatheredText = node.nodeValue[node.nodeValue.length-1];
