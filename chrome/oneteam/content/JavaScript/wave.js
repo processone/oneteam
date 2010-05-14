@@ -248,7 +248,7 @@ _DECL_(DeltaReplayer).prototype =
         if (!firstVisit) {
             if (state.after)
                 state.beforeSpace = false;
-            return true;
+            return false;
         }
 
         state.prevPos = state.position;
