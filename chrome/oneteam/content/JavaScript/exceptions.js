@@ -23,7 +23,7 @@ function dumpStack(stackFrame, indent, skipFrames)
                 continue;
             var m = tmp[i].lastIndexOf("@");
             var fun = tmp[i].slice(0, m);
-            if (fun[0] == "(")
+            if (!fun.length || fun[0] == "(")
                 fun = "anonymous"+fun;
             stacktrace += indent+fun+" at "+tmp[i].slice(m+1)+"\n";
         }
