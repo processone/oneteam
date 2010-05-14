@@ -242,6 +242,20 @@ _DECL_(DeltaReplayer).prototype =
         return text.replace(/[^\S\xa0]+/g, " ").replace(/\xa0/g, " ");
     },
 
+    _isLastElement: function(node) {
+        while (node != this.root) {
+            if (node.nextSibling)
+                break;
+
+            if (node.parentNode == this.root)
+                return true;
+
+            node = node.parentNode;
+        }
+
+        return false;
+    },
+
     _calculatePosition: function(node, state, firstVisit) {
         if (!firstVisit) {
             if (state.after)
@@ -253,7 +267,7 @@ _DECL_(DeltaReplayer).prototype =
         state.prevNode = node;
 
         if (node.nodeType == node.ELEMENT_NODE) {
-            if (node.localName.toLowerCase() == "br" && node != this.root.lastChild) {
+            if (node.localName.toLowerCase() == "br" && !this._isLastElement(node)) {
                 if (state.after) {
                     state.beforeSpace = false;
                     return true;
