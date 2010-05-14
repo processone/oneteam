@@ -863,12 +863,16 @@
       <method name="editMessage">
         <parameter name="msgEl"/>
         <body><![CDATA[
-          if (this._editMessageHandler) {
-            this.stopEditingMessage();
-            return;
-          }
-
           var msg = this._msgList[this._msgElList.indexOf(msgEl)];
+
+          if (this._editMessageHandler) {
+            var editedMsg = this._editMessageHandler.msg;
+
+            this.stopEditingMessage();
+
+            if (editedMsg == msg)
+              return;
+          }
 
           msgEl = msgEl.lastChild.lastChild;
           msgEl.previousSibling.setAttribute("edited", "true");
