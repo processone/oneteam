@@ -460,29 +460,34 @@
           }
 
           var rule = doc.styleSheets[1].cssRules[0];
-          rule.style.cssText = "opacity: 0.3";
+          if (!this._model || this._model.styleUnseen)
+            rule.style.cssText = "opacity: 0.3";
 
           if (this._unseenMarker)
             return;
 
           this._unseenMarker = this.addMarker(this._firstNotSeenMsg, "black",
             _("Click to scroll to first non-seen message"), null, function(token, el) {
-              el.removeMarker(token);
-              el._unseenMarker = null;
-              el._firstNotSeenMsg = null;
-              Animator.animateCssRule({
-                rule: rule,
-                style: "opacity",
-                stopCallback: function(token) {
-                  token.rule.style.opacity = "";
-                  el._markMessagesAsSeen();
-                  if (el._model)
-                    el._model.visible = true;
-                }
-              }, 0.3, 1);
-            }, function(token, el) {
-              if (el._model)
-                el._model.visible = true;
+                el.removeMarker(token);
+                el._unseenMarker = null;
+                el._firstNotSeenMsg = null;
+
+                if (!el._model || el._model.styleUnseen)
+                  Animator.animateCssRule({
+                    rule: rule,
+                    style: "opacity",
+                    stopCallback: function(token) {
+                      token.rule.style.opacity = "";
+                      el._markMessagesAsSeen();
+                      if (el._model)
+                        el._model.visible = true;
+                    }
+                  }, 0.3, 1);
+                else
+                  el._model.visible = true;
+              }, function(token, el) {
+                if (el._model)
+                  el._model.visible = true;
             });
         ]]></body>
       </method>

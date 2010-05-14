@@ -305,6 +305,7 @@ _DECL_(MessagesThread, Model).prototype =
     isFromArchive: false,
     peerChatState: null,
     allowsModifications: false,
+    styleUnseen: true,
     _visible: false,
     _handleChatState: null,
     _handleXThreads: null,
