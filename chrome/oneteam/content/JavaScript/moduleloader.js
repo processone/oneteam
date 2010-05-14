@@ -10,8 +10,8 @@ function MLP(scope) {
         getService(Components.interfaces.mozIJSSubScriptLoader);
     this.loadedscripts = {};
     this.gs = gs.wrappedJSObject;
-    this.scope = scope || this.__parent__;
-    var i, tmp = this.gs.__parent__;
+    this.scope = scope || this._findGlobal(this);
+    var i, tmp = this._findGlobal(this.gs);
 
     tmp.init(window);
 }
@@ -24,6 +24,13 @@ MLP.prototype =
      * @public
      */
     paths: ["chrome://oneteam/content/JavaScript"],
+
+    _findGlobal: function(obj) {
+        if ("getGlobalForObject" in Components.utils)
+            return Components.utils.getGlobalForObject(obj);
+
+        return obj.__parent__;
+    },
 
     /**
      * Loads script. Throws exception if script can't be loaded.
@@ -63,7 +70,7 @@ MLP.prototype =
             }
         }
         try {
-            this.gs.__parent__.ML.importModEx(script, asPrivate, this.scope, everything);
+            this._findGlobal(this.gs).ML.importModEx(script, asPrivate, this.scope, everything);
             return;
         } catch (ex) {
             alert(ex);

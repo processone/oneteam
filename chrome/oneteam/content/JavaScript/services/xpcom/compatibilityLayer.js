@@ -206,7 +206,7 @@ var navigator = {
 }
 
 {
-    let global = this.__parent__;
+    let global = getGlobalObjectFor(this);
     let di = Components.classesByID["{3a9cd622-264d-11d4-ba06-0060b0fc76dd}"].
         createInstance(Components.interfaces.nsIDOMDOMImplementation);
 

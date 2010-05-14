@@ -949,8 +949,8 @@ function enumerateMatchingProps(value, pattern) {
         for (var i in value)
             t(i);
 
-        value = value.__proto__;
-    } while (value !== null)
+        value = "__proto__" in value ? value.__proto__ : undefined;
+    } while (value != null)
 
     return [[res[i], i] for (i in res)].sort(function(a,b) {
         return a[0] > b[0] ? 1 : a[0] < b[0] ? -1 : 0;

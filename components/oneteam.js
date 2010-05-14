@@ -32,9 +32,16 @@ OneTeamLoader.prototype = {
     }
 };
 
+function getGlobalObjectFor(obj) {
+    if ("getGlobalForObject" in Components.utils)
+        return Components.utils.getGlobalForObject(obj);
+
+    return obj.__parent__;
+}
+
 function MLP() {
     this.loadedscripts = {};
-    this.parents = [[this.__parent__, [], []]];
+    this.parents = [[getGlobalObjectFor(this), [], []]];
 
     this.loader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"].
         getService(Components.interfaces.mozIJSSubScriptLoader);
@@ -54,10 +61,11 @@ MLP.prototype =
         this.importMod(script, false, everything);
 
         var i, tmp = this.loadedscripts[script][0], tmp2;
+        var global = getGlobalObjectFor(this);
 
         for (i = 0; i < tmp.length; i++)
             if ((tmp2 = tmp[i].split(/\./)).length > 1) {
-                var st = scope[tmp2[0]], ss = this.__parent__[tmp2[0]];
+                var st = scope[tmp2[0]], ss = global[tmp2[0]];
                 for (var j = 1; st && j < tmp2.length-1; j++) {
                     ss = ss[tmp2[j]]
                     st = st[tmp2[j]]
@@ -65,7 +73,7 @@ MLP.prototype =
                 if (st)
                     st[tmp2[tmp2.length-1]] = ss[tmp2[tmp2.length-1]];
             } else
-                scope[tmp[i]] = this.__parent__[tmp[i]];
+                scope[tmp[i]] = global[tmp[i]];
 
         tmp = this.loadedscripts[script][1];
 
@@ -73,7 +81,7 @@ MLP.prototype =
             if (tmp[i]) {
                 var vars = tmp[i].split(/\.prototype\./);
                 scope[vars[0]].prototype[vars[1]] =
-                    this.__parent__[vars[0]].prototype[vars[1]];
+                    global[vars[0]].prototype[vars[1]];
             }
     },
 
