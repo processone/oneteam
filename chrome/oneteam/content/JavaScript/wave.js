@@ -120,6 +120,7 @@ _DECL_(DeltaReplayer).prototype =
     _internalOp: false,
     lastPosition: Infinity,
     lastNode: null,
+    normalizeSpaces: true,
 
     replayOp: function(op) {
         var node, idx, afterSpace, beforeSpace;
@@ -237,7 +238,7 @@ _DECL_(DeltaReplayer).prototype =
     },
 
     _normalizeText: function(text, prevText, inPre) {
-        if (inPre)
+        if (inPre || !this.normalizeSpaces)
             return text.replace(/\n/g, "").replace(/\s/g, " ");
 
         if (/[^\S\xa0]$/.test(prevText))
@@ -558,6 +559,13 @@ _DECL_(DeltaTracker).prototype =
 function EditorDeltaTracker(editor, notificationCallback, root)
 {
     this.editor = editor;
+
+    try {
+        editor.QueryInterface(Components.interfaces.nsIPlaintextEditor);
+        this.normalizeSpaces = false;
+    } catch (ex) {
+
+    }
 
     DeltaTracker.call(this, notificationCallback);
     DeltaReplayer.call(this, root || editor && editor.rootElement);
