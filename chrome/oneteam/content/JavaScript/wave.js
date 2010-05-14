@@ -237,11 +237,9 @@ _DECL_(DeltaReplayer).prototype =
     },
 
     _normalizeText: function(text, prevText) {
-        try{
         if (/[^\S\xa0]$/.test(prevText))
             text = text.replace(/^[^\S\xa0]+/, "");
         return text.replace(/[^\S\xa0]+/g, " ").replace(/\xa0/g, " ");
-        }catch(ex){dump(dumpStack()); throw ex}
     },
 
     _calculatePosition: function(node, state, firstVisit) {
