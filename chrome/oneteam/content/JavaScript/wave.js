@@ -229,7 +229,7 @@ _DECL_(DeltaReplayer).prototype =
                 if (node.nextSibling)
                     break;
                 node = node.parentNode;
-                if (!node || node == node.root || fun.call(this, node, state, false))
+                if (!node || node == this.root || fun.call(this, node, state, false))
                     break top;
             }
 
