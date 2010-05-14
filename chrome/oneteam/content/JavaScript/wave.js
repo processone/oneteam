@@ -437,7 +437,7 @@ _DECL_(DeltaTracker).prototype =
             }
 
             if (this.log[p] == prevOp) {
-                if (prevOp.start+op.diff < op.start)
+                if (prevOp.start+op.diff < op.start || op.start > prevOp.start)
                     break;
 
                 prevOp.shift(op.diff);
@@ -580,10 +580,15 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
     DidCreateNode: function(tag, node, parent, position, res) {
         xdump("DCN\n")
 
+        var startNode = node;
+
+        if (node.previousSibling && this._isLastElement(node.previousSibling))
+            startNode = node.previousSibling;
+
         var state = {
             lines: [],
             gatheredText: "",
-            startNode: node.firstChild || node,
+            startNode: startNode.firstChild || startNode,
             startOffset: 0,
             endNode: node,
             endOffset: -1
@@ -597,10 +602,15 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
     DidInsertNode: function(node, parent, position, res) {
         xdump("DIN: "+node+", "+parent+", "+position+", "+res+"\n")
 
+        var startNode = node;
+
+        if (node.previousSibling && this._isLastElement(node))
+            startNode = node.previousSibling;
+
         var state = {
             lines: [],
             gatheredText: "",
-            startNode: node.firstChild || node,
+            startNode: startNode.firstChild || startNode,
             startOffset: 0,
             endNode: node,
             endOffset: -1,
