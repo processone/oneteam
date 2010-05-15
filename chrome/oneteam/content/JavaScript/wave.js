@@ -166,9 +166,11 @@ _DECL_(DeltaReplayer).prototype =
                 range.setEndAfter(node);
             }
 
-            if (op.type == op.TAG)
-                range.insertNode(this.root.ownerDocument.createElementNS(HTMLNS, op.data));
-            else {
+            if (op.type == op.TAG) {
+                var tag = this.root.ownerDocument.createElementNS(HTMLNS, op.data);
+                range.insertNode(tag);
+                this._fixupNextNodeSpaces(tag);
+            } else {
                 var text = op.data;
                 text = text.replace(/\s{2,}/g, function(a){
                     return a.substr(1).replace(/\s/g, "\xa0")+" "
@@ -211,19 +213,20 @@ _DECL_(DeltaReplayer).prototype =
         }
     },
 
-    _processTree: function(node, fun, state) {
-        this.st = state;
+    _processTree: function(node, fun, state, startFromNext) {
         top:
         while (node && node != this.root) {
-            if (fun.call(this, node, state, true))
+            if (!startFromNext && fun.call(this, node, state, true))
                 break;
 
             if (node.nodeType == node.ELEMENT_NODE)
                 if (node.firstChild) {
                     node = node.firstChild;
                     continue;
-                } else if (fun.call(this, node, state, false))
+                } else if (!startFromNext && fun.call(this, node, state, false))
                     break top;
+
+            startFromNext = false;
 
             while (1) {
                 if (node.nextSibling)
@@ -244,6 +247,27 @@ _DECL_(DeltaReplayer).prototype =
         if (/[^\S\xa0]$/.test(prevText))
             text = text.replace(/^[^\S\xa0]+/, "");
         return text.replace(/[^\S\xa0]+/g, " ").replace(/\xa0/g, " ");
+    },
+
+    _fixupNextNodeSpaces: function(node) {
+        this._processTree(node, function(node, state, firstVisit) {
+            if (!firstVisit)
+                return false;
+
+            if (node.nodeType == node.TEXT_NODE) {
+                if (node.nodeValue.length) {
+                    var match = /^\s/.exec(node.nodeValue);
+                    if (match) {
+                        var text = match[0].replace(/\s/g, "\xa0").replace(/\s\s$/, "\xa0 ");
+                        node.replaceData(0, text.length, text);
+                    }
+                    return true;
+                }
+            } else if (node.localName.toLowerCase() == "br")
+                return true;
+
+            return false;
+        }, null, true);
     },
 
     _isLastElement: function(node) {
