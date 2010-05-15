@@ -242,7 +242,7 @@ var META = {
         var fun = function() {
             var [name, parent] = lookupForParentMethod(this, arguments.callee);
 
-            if (!parent && this.__proto__[name])
+            if (this.__proto__[name] && (!parent || this.__proto__[name] != arguments.callee))
                 parent = "this.__proto__["+uneval(name)+"]";
 
             this[name] = parent ?
