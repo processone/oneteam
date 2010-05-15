@@ -89,6 +89,14 @@
           var height = this.boxObject.height;
           var url = this._imageObj.src;
 
+          var cs = this.ownerDocument.defaultView.getComputedStyle(this, "");
+
+          width -= (parseInt(cs.marginLeft)||0) + (parseInt(cs.marginRight)||0) +
+            (parseInt(cs.borderLeftWidth)||0) + (parseInt(cs.borderRightWidth)||0);
+
+          height -= (parseInt(cs.marginTop)||0) + (parseInt(cs.marginBottom)||0) +
+            (parseInt(cs.borderTopWidth)||0) + (parseInt(cs.borderBottomWidth)||0);
+
           if (account.cache.getValue("avatarEpoch") < 1) {
             account.cache.setValue("avatarEpoch", 1);
 
