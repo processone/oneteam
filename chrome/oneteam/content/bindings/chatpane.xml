@@ -880,6 +880,7 @@
           this._editMessageHandler = {
             msgEl: msgEl,
             msg: msg,
+            _this: this,
             model: this.model,
             timeout: function(_this) {
               _this._timeout = null;
