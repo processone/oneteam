@@ -893,6 +893,15 @@
                 }
                 dump(ev.type+": "+ev.prevValue+", "+ev.newValue+", "+ev.target.nodeName+", "+ev.target.textContent+"\n");
               }
+
+              if (ev.type == "keypress")
+                if (ev.keyCode == KeyEvent.DOM_VK_RETURN &&
+                    "onEnterAction" in this.model &&
+                    this.model.onEnterAction(ev.shiftKey, this._this))
+                  {
+                    ev.preventDefault();
+                  }
+
               if (ev.type.indexOf("DOM") == 0 && "elementModified" in this.model)
                 this.model.elementModified(this.msgEl, ev);
               ev.stopPropagation();
