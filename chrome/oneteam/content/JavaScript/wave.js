@@ -568,10 +568,22 @@ _DECL_(DeltaTracker).prototype =
         return [res1, res2];
     },
 
+    cloneLog: function(log) {
+        var newLog = [];
+
+        if (!log)
+            log = this.log;
+
+        for (var i = 0; i < log.length; i++)
+            newLog[i] = log[i].clone();
+
+        return newLog;
+    },
+
     clone: function() {
         var res = new DeltaTracker();
-        for (var i = 0; i < this.log.length; i++)
-            res.log[i] = this.log[i].clone();
+        res.log = this.cloneLog();
+
         return res;
     },
 
