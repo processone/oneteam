@@ -952,6 +952,7 @@
           msgEl.removeEventListener("DOMAttrModified", this._editMessageHandler, false);
           msgEl.removeEventListener("DOMCharacterDataModified", this._editMessageHandler, false);*/
           this._editMessageHandler = null;
+          msgEl.blur();
         ]]></body>
       </method>
 
