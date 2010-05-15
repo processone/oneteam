@@ -716,6 +716,7 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
             var startOffset = range.startOffset;
             var endContainer = range.endContainer;
             var endOffset = range.endOffset;
+            var skipEndNode = false;
 
             if (startContainer.nodeType == startContainer.ELEMENT_NODE) {
                 startContainer = startContainer.childNodes[startOffset];
@@ -725,6 +726,7 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
             if (endContainer.nodeType == endContainer.ELEMENT_NODE) {
                 endContainer = endContainer.childNodes[endOffset];
                 endOffset = 0;
+                skipEndNode = true;
             }
 
             var state = {
@@ -733,7 +735,8 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
                 startNode: startContainer,
                 startOffset: startOffset,
                 endNode: endContainer,
-                endOffset: endOffset
+                endOffset: endOffset,
+                skipEndNode: skipEndNode
             };
 
             this._processTree(this.root.firstChild, this._extractText, state)
@@ -793,15 +796,17 @@ _DECL_(EditorDeltaTracker, null, DeltaTracker, DeltaReplayer).prototype =
             }
 
             if (node.localName.toLowerCase() == "br") {
-                if (!this._isLastElement(node)) {
-                    state.lines.push(state.gatheredText);
-                    state.gatheredText = "";
-                } else if (node == state.startNode && node.previousSibling &&
-                           node.previousSibling.nodeType == node.ELEMENT_NODE &&
-                           node.previousSibling.localName.toLowerCase() == "br")
-                {
-                    state.startPos -= 2;
-                    state.lines.push("");
+                if (node != state.endNode || !state.skipEndNode) {
+                    if (!this._isLastElement(node)) {
+                        state.lines.push(state.gatheredText);
+                        state.gatheredText = "";
+                    } else if (node == state.startNode && node.previousSibling &&
+                               node.previousSibling.nodeType == node.ELEMENT_NODE &&
+                               node.previousSibling.localName.toLowerCase() == "br")
+                    {
+                        state.startPos -= 2;
+                        state.lines.push("");
+                    }
                 }
             } else if (node.localName.toLowerCase() == "pre")
                 state.inPre++;
