@@ -1,6 +1,26 @@
 <overlay id="roster-context-menus" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="text/javascript;version=1.7"><![CDATA[
     var menuModel;
+    var menuModelEl;
+
+    var contextMenuUpdaters = {};
+    function updateContextMenu(menu, event) {
+      if (!findMenuModel(menu, event))
+        return;
+
+      var updaters = menu.id in contextMenuUpdaters ?
+        contextMenuUpdaters[menu.id] : [];
+
+      for (var i = 0; i < updaters.length; i++)
+        updaters[i].call(null, menu, event);
+    }
+
+    function addContextMenuUpdater(id, fun) {
+      if (!(id in contextMenuUpdaters))
+        contextMenuUpdaters[id] = [];
+
+      contextMenuUpdaters[id].push(fun);
+    }
 
     function findMenuModel(menu, event) {
       if (event.target != menu)
@@ -26,6 +46,7 @@
         return false;
 
       menuModel = el.menuModel;
+      menuModelEl = el;
 
       return true;
     }
@@ -58,9 +79,6 @@
     }
 
     function updateContactContextMenu(menu, event) {
-      if (!findMenuModel(menu, event))
-        return;
-
       var cs = document.getElementById("contact-chat-single");
       var cm = document.getElementById("contact-chat-multi");
       var im = document.getElementById("contact-invite");
@@ -110,6 +128,7 @@
       document.getElementById("contact-authorization-disallow").
         setAttribute("disabled", !menuModel.canSeeMe);
     }
+    addContextMenuUpdater("contact-contextmenu", updateContactContextMenu)
 
     function updateGroupContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
@@ -124,6 +143,7 @@
         remove.removeAttribute("hidden");
       }
     }
+    addContextMenuUpdater("groups-contextmenu", updateGroupContextMenu)
 
     function updateResourceContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
@@ -145,6 +165,7 @@
 
       ah.hidden = !menuModel.hasDiscoFeature("http://jabber.org/protocol/commands");
     }
+    addContextMenuUpdater("resource-contextmenu", updateResourceContextMenu)
 
     function updateConferenceMemberContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
@@ -175,6 +196,7 @@
         el.setAttribute("checked", confMemb.role == role);
       }
     }
+    addContextMenuUpdater("conferencemember-contextmenu", updateConferenceMemberContextMenu)
 
     function updateConferenceContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
@@ -187,17 +209,20 @@
       configuration.previousSibling.hidden = permissions.hidden =
         !menuModel.iAmAdmin;
     }
+    addContextMenuUpdater("conference-contextmenu", updateConferenceContextMenu)
 
-    function updateGatewayMemberContextMenu(menu, event) {
+    function updateGatewayContextMenu(menu, event) {
       if (!findMenuModel(menu, event))
         return;
 
       document.getElementById("gateway-login").disabled = !!menuModel.activeResource;
       document.getElementById("gateway-logout").disabled = !menuModel.activeResource;
     }
+    addContextMenuUpdater("gateway-contextmenu", updateGatewayContextMenu)
   ]]></script>
+
   <popupset>
-    <popup id="contact-contextmenu" onpopupshowing="updateContactContextMenu(this, event)">
+    <popup id="contact-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="contact-chat-single" label="_('Send Message...')"
           oncommand="menuModel.onOpenChat()"/>
       <menu id="contact-chat-multi" label="_('Send Message...')" hidden="true">
@@ -243,12 +268,12 @@
         oncommand="menuModel.onSendFile()"/>
     </popup>
 
-    <popup id="group-contextmenu" onpopupshowing="updateGroupContextMenu(this, event)">
+    <popup id="group-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem label="_('Rename...')" id="group-rename" oncommand="menuModel.onRename()"/>
       <menuitem label="_('Remove...')" id="group-remove" oncommand="menuModel.onRemove()"/>
     </popup>
 
-    <popup id="resource-contextmenu" onpopupshowing="updateResourceContextMenu(this, event)">
+    <popup id="resource-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem label="_('Send Message...')" oncommand="menuModel.onOpenChat()"/>
       <menuitem id="resource-call" label="_('Voice Call...')" oncommand="menuModel.onJingleCall()"/>
       <menu id="resource-invite" label="_('Invite To')" hidden="true">
@@ -265,7 +290,7 @@
         oncommand="menuModel.onSendFile()"/>
     </popup>
 
-    <popup id="conference-contextmenu" onpopupshowing="updateConferenceContextMenu(this, event)">
+    <popup id="conference-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="conference-invite" label="_('Invite Users To This Room...')"
           oncommand="menuModel.onInvite()"/>
       <menuitem id="conference-changeNick" label="_('Change Nick...')"
@@ -295,7 +320,7 @@
           oncommand="menuModel.exitRoom()"/>
     </popup>
 
-    <popup id="conferencemember-contextmenu" onpopupshowing="updateConferenceMemberContextMenu(this, event)">
+    <popup id="conferencemember-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="conferencemember-chat-single" label="_('Send Message...')"
           oncommand="menuModel.onOpenChat()"/>
 
@@ -349,7 +374,7 @@
         oncommand="menuModel.onSendFile()"/>
     </popup>
 
-    <popup id="gateway-contextmenu" onpopupshowing="updateGatewayMemberContextMenu(this, event)">
+    <popup id="gateway-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="gateway-chat-single" label="_('Send Message...')"
           oncommand="menuModel.onOpenChat()"/>
 
@@ -372,7 +397,9 @@
       <menuitem label="_('Remove...')"
         oncommand="menuModel.onRemove()"/>
     </popup>
-    <popup id="inputContext" onpopuphidden="spellcheck.onHiddenSuggestionsMenu(this);" onpopupshowing="spellcheck.onShowSuggestionsMenu(this);">
+
+    <popup id="inputContext" onpopuphidden="spellcheck.onHiddenSuggestionsMenu(this);"
+           onpopupshowing="spellcheck.onShowSuggestionsMenu(this);">
       <menuitem id="spellCheckNoSuggestions" label="_('No Suggestions')" disabled="true"/>
       <menuseparator id="suggestions-separator"/>
       <menuitem id="menu_undo_cm"   label="_('Undo')"   accesskey=""   command="cmd_undo"/>
