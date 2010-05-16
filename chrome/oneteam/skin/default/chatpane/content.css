@@ -173,6 +173,10 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
     color: #565;
 }
 
+.modified > .body {
+    font-weight: bold;
+}
+
 .directed > .body {
     color: #911;
 }

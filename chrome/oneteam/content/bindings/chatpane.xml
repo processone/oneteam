@@ -409,15 +409,54 @@
               var msgEl = this._msgElList[this._msgList.indexOf(msg)];
 
               if (msgEl) {
-                msgEl = msgEl.lastChild.lastChild;
-                if (arg.modified[i].length == 2) {
-                  var replayer = this._deltaTracker && this._deltaTracker.root == msgEl ?
-                    this._deltaTracker : new DeltaReplayer(msgEl);
-                  this.lastReplayer = replayer;
+                var op = arg.modified[i][1];
+                var msgElBody = msgEl.lastChild.lastChild;
 
-                  msg.blipLength += replayer.replayOps(arg.modified[i][1]);
-                } else {
-                  msgEl.innerHTML = xmlEscape(arg.modified[i][2]);
+                if ("delta" in op) {
+                  var replayer = this._deltaTracker && this._deltaTracker.root == msgElBody ?
+                    this._deltaTracker : new DeltaReplayer(msgElBody);
+                  this.lastReplayer = replayer;
+                  msg.blipLength += replayer.replayOps(op.delta);
+                }
+                if ("body" in op) {
+                  msgElBody.innerHTML = xmlEscape(op.body);
+                }
+                if ("addedParticipants" in op) {
+                  var h = msgEl.firstChild;
+                  var p = op.addedParticipants;
+
+                  for (var j = 0; j < p.length; j++) {
+                    var e = doc.createElement("img");
+                    e.setAttribute("src", p[j].avatar ||
+                                   "resource://oneteam-skin/avatar/imgs/default-avatar.png");
+                    e.setAttribute("class", "participant");
+                    e.setAttribute("title", p[j].visibleName);
+                    e.setAttribute("width", "18");
+                    e.contact = p[j];
+                    h.appendChild(e);
+                  }
+                }
+                if ("removedParticipants" in op) {
+                  var h = msgEl.firstChild;
+                  var p = op.addedParticipants;
+
+                  for (var j = 0; j < h.childNodes.length; j++) {
+                    if (p.indexOf(h.childNodes[j].contact) >= 0)
+                      h.removeChild(h.childNodes[j--]);
+                  }
+                }
+                if ("moveBefore" in op) {
+                  var node, cn = msgEl.parentNode.childNodes;
+
+                  for (var j = 0; j < cn.length; j++)
+                    if (op.moveBefore(this._msgList[this._msgElList.indexOf(cn[j])])) {
+                      node = cn[j];
+                      break;
+                    }
+                  msgEl.parentNode.insertBefore(msgEl, node);
+                }
+                if ("classes" in op) {
+                  msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
                 }
               }
             }
@@ -743,6 +782,7 @@
                 e.setAttribute("class", "participant");
                 e.setAttribute("title", msg.participants[j].visibleName);
                 e.setAttribute("width", "18");
+                e.contact = msg.participants[j];
                 h.appendChild(e);
               }
             } else {
