@@ -806,7 +806,34 @@
                             "ev.initEvent('msgclick', true, false);"+
                             "this.dispatchEvent(ev)");
 
+            var e = doc.createElement("span");
+            e.setAttribute("class", "to-copy-paste");
+            e.appendChild(doc.createTextNode("["));
+            h.appendChild(e);
+
+            e = doc.createElement("span");
+            e.setAttribute("class", "date");
+            e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
+            h.appendChild(e);
+
+            e = doc.createElement("span");
+            e.setAttribute("class", "to-copy-paste");
+            e.appendChild(doc.createTextNode("] "));
+            h.appendChild(e);
+
+            if (!msg.isSystemMessage && !msg.participants) {
+              e = doc.createElement("span");
+              e.setAttribute("class", "author");
+              e.appendChild(doc.createTextNode(msg.nick));
+              h.appendChild(e);
+
+              e = doc.createElement("span");
+              e.setAttribute("class", "to-copy-paste");
+              e.appendChild(doc.createTextNode(": "));
+              h.appendChild(e);
+            }
             if (msg.participants) {
+              h.setAttribute("withParticipants", "true")
               for (var j = 0; j < msg.participants.length; j++) {
                 var e = doc.createElement("img");
                 e.setAttribute("src", msg.participants[j].avatar ||
@@ -815,33 +842,6 @@
                 e.setAttribute("title", msg.participants[j].visibleName);
                 e.setAttribute("width", "18");
                 e.contact = msg.participants[j];
-                h.appendChild(e);
-              }
-            } else {
-              var e = doc.createElement("span");
-              e.setAttribute("class", "to-copy-paste");
-              e.appendChild(doc.createTextNode("["));
-              h.appendChild(e);
-
-              e = doc.createElement("span");
-              e.setAttribute("class", "date");
-              e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
-              h.appendChild(e);
-
-              e = doc.createElement("span");
-              e.setAttribute("class", "to-copy-paste");
-              e.appendChild(doc.createTextNode("] "));
-              h.appendChild(e);
-
-              if (!msg.isSystemMessage) {
-                e = doc.createElement("span");
-                e.setAttribute("class", "author");
-                e.appendChild(doc.createTextNode(msg.nick));
-                h.appendChild(e);
-
-                e = doc.createElement("span");
-                e.setAttribute("class", "to-copy-paste");
-                e.appendChild(doc.createTextNode(": "));
                 h.appendChild(e);
               }
             }

@@ -90,7 +90,7 @@ div.message.selectable:hover {
     border: 1px solid #ccc;
     -moz-border-radius: 3px;
     display: inline;
-    float: right;
+    float: left;
     margin: 0 2px;
 }
 
@@ -116,6 +116,10 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
     display: none;
     margin-top: 2px;
     margin-left: 24px;
+}
+
+.header[withParticipants="true"] {
+    margin-left: 0px;
 }
 
 .message-action {
