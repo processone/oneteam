@@ -1970,6 +1970,8 @@
         <xul:hbox flex="1">
           <xul:vbox flex="1">
             <xul:contactinfo class="noCounter" id="contactInfo">
+              <xul:textbox id="search-field" type="search" hidden="true"
+                           timeout="50" emptytext="_('Search')"/>
               <xul:hbox id="thread-picker" flex="1000" hidden="true">
                 <xul:deck flex="1">
                   <xul:hbox align="center" pack="end">
@@ -2049,6 +2051,8 @@
             }
           }
 
+          this._searchField.hidden = !val || !("refineSearch" in val);
+
           this._roster.parentNode.hidden = this._roster.parentNode.previousSibling.hidden =
             !hasRoster;
 
@@ -2072,6 +2076,7 @@
         this._threadPicker = document.getAnonymousElementByAttribute(this, "id", "thread-picker");
         this._threadPickerContainer = document.getAnonymousElementByAttribute(this, "id", "thread-picker-container");
         this._threadPickerMenulist = document.getAnonymousElementByAttribute(this, "id", "thread-picker-menulist");
+        this._searchField = document.getAnonymousElementByAttribute(this, "id", "search-field");
 
         this._bookmarkStar._controller = this;
 
@@ -2401,6 +2406,8 @@
 
           var doc = this._output._output.contentDocument;
           doc.body.scrollTop = doc.body.scrollHeight;
+        } else if (event.target != this._searchField) {
+          this.model.refineSearch(this._searchField.value);
         }
       ]]></handler>
 

@@ -177,6 +177,10 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
     font-weight: bold;
 }
 
+.filtered-out {
+    display: none;
+}
+
 .directed > .body {
     color: #911;
 }
