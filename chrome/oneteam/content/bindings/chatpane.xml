@@ -430,6 +430,7 @@
                     for (var k = 0; k < h.childNodes.length; k++)
                       if (h.childNodes[k].contact == p[j])
                         continue mainAddLoop;
+
                     var e = h.ownerDocument.createElement("img");
                     e.setAttribute("src", p[j].avatar ||
                                    "resource://oneteam-skin/avatar/imgs/default-avatar.png");
@@ -461,6 +462,10 @@
                 }
                 if ("classes" in op) {
                   msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
+                }
+                if ("date" in op) {
+                  msgEl.getElementsByClassName("date")[0].textContent =
+                    readableTimestamp(msg.time);
                 }
               }
             }
