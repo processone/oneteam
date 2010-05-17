@@ -465,6 +465,17 @@
               }
             }
           }
+          if (arg && arg.removed) {
+            for (var i = 0; i < arg.removed.length; i++) {
+              var idx = this._msgList.indexOf(arg.removed[i]);
+              if (idx >= 0) {
+                var msgEl = this._msgElList[idx];
+                this._msgList.splice(idx, 1);
+                this._msgElList.splice(idx, 1);
+                msgEl.parentNode.removeChild(msgEl);
+              }
+            }
+          }
 
           if (!this._msgs) {
             [this.archivedMsgToken, this._msgs, this._hasMoreArchivedMessages] =
