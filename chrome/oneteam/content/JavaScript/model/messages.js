@@ -675,7 +675,7 @@ _DECL_(Message).prototype =
 
         if (!this._html || this._formatedHtmlEpoch != Message.prototype.epoch) {
             if (!this.html)
-                this._html = this._processUrls(this.text, {});
+                this._html = this._processUrls(this.text, this.formatFlags || {});
             else {
                 this._html = this.html;
                 if (!this.contact.representsMe &&
