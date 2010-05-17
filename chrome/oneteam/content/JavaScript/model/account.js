@@ -510,9 +510,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (!key)
             key = "autogen"+(++this._uniqEventId);
 
-        jid = new JID(jid);
+        var contact;
 
-        var contact = this.getOrCreateContact(jid.shortJID, true, null, []);
+        if (jid instanceof Contact)
+            contact = jid;
+        else {
+            jid = new JID(jid);
+            contact = this.getOrCreateContact(jid.shortJID, true, null, []);
+        }
+
         contact.addEvent({
             type: type,
             msg: msg,
