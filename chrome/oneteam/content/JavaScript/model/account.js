@@ -694,6 +694,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         this.myJID = new JID(account.connection.fulljid);
         this.jid = new JID(this.myJID.domain);
+        this.sessionID = b64_sha1(this.myJID.normalizedJID);
 
         if (this.connection.serverCaps)
             this.updateCapsInfo(this.connection.serverCaps);
