@@ -100,6 +100,7 @@ splitter.roster-splitter {
   -moz-border-left-colors: #c7c7c7 #bababa;
   border-bottom-width: 0;
   border-top-width: 0;
+  -min-width: 0;
 }
 
 #thread-picker {
