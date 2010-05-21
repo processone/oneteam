@@ -1001,7 +1001,7 @@
           setTimeout(function(msgEl){try{msgEl.focus()}catch(ex){alert(ex)}}, 100, msgEl);
 
           var callback = this.model.msgModified ?
-            new Callback(this.model.msgModified, this.model).addArgs(msg).fromCall().coalesce(100) :
+            new Callback(this.model.msgModified, this.model).addArgs(msg).fromCall() :
             null;
 
           return this._deltaTracker = new EditorDeltaTracker(this.editor, callback,
