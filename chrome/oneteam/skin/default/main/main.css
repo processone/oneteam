@@ -248,6 +248,14 @@ tabpanels {
   list-style-image: url(imgs/gatewayicons/twitter-connected.png);
 }
 
+.gateway-toolbarbutton[gateway-type="apple"] {
+  list-style-image: url(imgs/gatewayicons/apple.png);
+}
+
+.gateway-toolbarbutton[gateway-type="apple"][checked="true"] {
+  list-style-image: url(imgs/gatewayicons/apple-connected.png);
+}
+
 .gateway-toolbarbutton[gateway-type="gwave"] {
   list-style-image: url(imgs/gatewayicons/gwave.png);
 }
