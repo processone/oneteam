@@ -11,7 +11,6 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   onload="onLoad()" onunload="onUnload()"
-  width="500" height="600"
   buttonlabelaccept="_('Add')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   ondialogaccept="return addContact()">
@@ -157,10 +156,8 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Add Contact')"/>
-
   <vbox hidden="true">
-    <hbox align="center">
+    <hbox align="center" pack="center">
       <label value="_('Network:')"/>
       <menulist id="protocol" oncommand="changeProto(this.selectedItem.model)">
         <menupopup>
@@ -176,7 +173,7 @@
       <grid>
         <columns>
           <column/>
-          <column flex="1"/>
+          <column/>
         </columns>
         <rows>
           <row id="gateway-entry" hidden="true">
@@ -185,33 +182,51 @@
           </row>
           <description class="field-desc" hidden="true"/>
 
-          <row id="jabber-entry">
-            <label value="_('Jabber ID:')" control="jid"/>
-            <textbox id="jid"/>
-          </row>
-          <description class="field-desc">_('Enter Jabber ID of the contact you want to add.
-            (ex.: foo@jabber.org)')</description>
+          <vbox align="center" pack="center">
+            <row id="jabber-entry">
+              <label value="_('Jabber ID:')" control="jid"/>
+              <textbox id="jid"/>
+            </row>
+            <description class="field-desc">_('For example: john@talkr.im')</description>
+          </vbox>
 
           <spacer/>
-
-          <row>
-            <label value="_('Nickname:')" control="nick"/>
-            <textbox id="nick"/>
-          </row>
-          <description class="field-desc">_("Enter contact's nickname which will be displayed
-            in roster window.")</description>
+          <vbox align="center" pack="center">
+            <row align="center" pack="center">
+              <label value="_('Nickname:')" control="nick"/>
+              <textbox id="nick"/>
+            </row>
+            <description class="field-desc">_("This alias is used in the roster")</description>
+          </vbox>
         </rows>
       </grid>
 
+      <separator class="groove"/>
+      
       <spacer/>
+      
+      <hbox flex="1">
+        <vbox flex="1">
+          <label value="_('Groups:')" control="groups"/>
+          <groupselector id="groups" rows="4"/>
+        </vbox>
 
-      <label value="_('Groups:')" control="groups"/>
-      <groupselector id="groups" rows="4"/>
-
+      <separator orient="vertical" class="groove"/>
+      
+        <vbox flex="1">
+          <hbox align="center">
+            <label value="_('Reason:')" />
+            <spacer/>
+            <description class="field-desc">_('(Optional)')</description>
+          </hbox>
+          <textbox id="reason" multiline="true" rows="3"/>
+        </vbox>
+      </hbox>
+      
       <spacer/>
-
-      <label value="_('Reason (Optional)')" />
-      <textbox id="reason" multiline="true" rows="2"/>
+      
+      <separator class="groove"/>
+      
     </vbox>
     <vbox>
       <description>

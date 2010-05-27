@@ -14,13 +14,15 @@
 
     <content>
       <xul:vbox flex="1">
+        <xul:listbox id="groups-listbox" xbl:inherits="disabled,rows">
+        </xul:listbox>
+        <xul:spacer/>
+        <xul:description class="field-desc">_('Create a group:')</xul:description>
         <xul:hbox flex="1">
           <xul:textbox id="name-textbox" flex="1" xbl:inherits="disabled"/>
           <xul:button class="add-button" id="add-button" xbl:inherits="disabled"
             oncommand="this.parentNode.parentNode.parentNode.onAddGroup()"/>
         </xul:hbox>
-        <xul:listbox id="groups-listbox" xbl:inherits="disabled,rows">
-        </xul:listbox>
       </xul:vbox>
     </content>
 
