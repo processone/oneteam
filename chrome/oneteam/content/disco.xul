@@ -56,7 +56,7 @@
        "chrome://oneteam/skin/main/imgs/gatewayicons/gwave-connected.png"],
       [{category: "collaboration", type: "google-wave"},
        _("Wave Server"),
-       "chrome://oneteam/skin/main/imgs/gatewayicons/gwave-connected.png"],
+       "chrome://oneteam/skin/main/imgs/gatewayicons/google-wave-connected.png"],
       [{category: "gateway"},
        _("{1,capitalize} Gateway"),
        "chrome://oneteam/skin/main/imgs/gatewayicons/generic-connected.png"],
