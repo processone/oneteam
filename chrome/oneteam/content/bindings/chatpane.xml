@@ -1286,7 +1286,7 @@
 
       <method name="_updateState">
         <body><![CDATA[
-        if (!this._textbox)
+        if (!this._textbox || this._textbox._disabled)
           return;
 
         var doc = this._textbox._input.contentDocument;
@@ -1411,6 +1411,22 @@
         ]]></setter>
       </property>
 
+      <property name="disabled" onget="return !!this._disabled">
+        <setter><![CDATA[
+          if (this._initialized && !this.disabled != !val) {
+            this._input.contentDocument.body.setAttribute("disabled", !!val);
+            if (val)
+              this._disableInput();
+            else
+              this._enableInput();
+          }
+
+          this.parentNode.setAttribute("disabled", !!val);
+
+          this._disabled = val;
+        ]]></setter>
+      </property>
+
       <constructor><![CDATA[
         var me = this;
         this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
@@ -1429,26 +1445,27 @@
         this._historyPosition = 0;
       ]]></constructor>
 
-      <method name="_init">
+      <method name="_disableInput">
+        <body><![CDATA[
+          var doc = this._input.contentDocument;
+          var win = this._input.contentWindow;
+
+          doc.designMode = "off";
+
+          for each (var event in ("mousedown paste keypress resize DOMSubtreeModified "+
+                                  "keydown keyup mouseup dragdrop").split(" "))
+          {
+            if (("_on"+event) in this)
+              doc.removeEventListener(event, this["_on"+event], false);
+          }
+        ]]></body>
+      </method>
+
+      <method name="_enableInput">
         <body><![CDATA[
           var me = this;
           var doc = this._input.contentDocument;
           var win = this._input.contentWindow;
-
-          this._initialized = true;
-
-          var link = doc.createElement("link");
-// #ifdef XULAPP
-          link.setAttribute("href", "chrome://oneteam/skin/chatpane/content.css");
-/* #else
-          link.setAttribute("href",
-            document.location.href.replace(/content\/.*?$/, "skin/chatpane/content.css"));
-// #endif */
-          link.setAttribute("rel", "stylesheet");
-          doc.getElementsByTagName("HEAD")[0].appendChild(link);
-
-          if (this._toolbar)
-            doc.body.setAttribute("hasSendButton", "true");
 
           doc.designMode = "on";
 
@@ -1459,12 +1476,17 @@
           } catch (ex) {
           }
 
-          doc.addEventListener("mousedown", function(event) {
+          doc.addEventListener("mousedown", this._onmousedown = function(event) {
+            me._fixupThreadMarker();
+
+            if (me._toolbar)
+              me._toolbar._updateState(event);
+
             if (event.button == 0 && event.pageX >= event.target.ownerDocument.body.clientWidth-42)
               me._doSend(true);
           }, false);
 
-          doc.addEventListener("paste", function(event) {
+          doc.addEventListener("paste", this._onpaste = function(event) {
             var body = me._input.contentDocument.body;
             setTimeout(sanitizeDOM, 0, body, function(el) {
               return el == body || el.nodeName.toLowerCase() == "br" ||
@@ -1473,10 +1495,11 @@
             });
           }, false);
 
-          doc.addEventListener("keypress", function(event) {
-            dump("OKP\n");
+          doc.addEventListener("keypress", this._onkeypress = function(event) {
           //alert("r: "+String.fromCharCode(event.charCode)+", "+event.keyCode+", "+event.altKey+", "+event.metaKey+", "+event.shiftKey);
             event.stopPropagation();
+            if (me._disabled)
+              return false;
             if (event.keyCode == KeyEvent.DOM_VK_TAB && !event.ctrlKey) {
               event.preventDefault();
 
@@ -1532,14 +1555,14 @@
             return true;
           }, true);
 
-          window.addEventListener("resize", function(ev) {
+          window.addEventListener("resize", this._onresize = function(ev) {
             if (ev.target == window)
               try {
                 me.maybeResize()
               } catch(ex){}
           }, false);
 
-          doc.addEventListener("DOMSubtreeModified", function() {
+          doc.addEventListener("DOMSubtreeModified", this._onDOMSubtreeModified = function() {
             me._counter.value = me._domToStr(me._input.contentDocument.body).
               replace(/\n$/,"").length;
             if (me._toolbar)
@@ -1554,7 +1577,7 @@
           }, false);
 
           for each (var event in "keydown keyup mousedown mouseup dragdrop".split(" ")) {
-            doc.addEventListener(event, function(event) {
+            doc.addEventListener(event, this["_on"+event] = function(event) {
               me._fixupThreadMarker();
 
               if (me._toolbar)
@@ -1566,7 +1589,38 @@
 
           this.maybeResize()
 
+          if (this._toolbar)
+            this._toolbar._updateState();
+
           doc = win = null;
+        ]]></body>
+      </method>
+
+      <method name="_init">
+        <body><![CDATA[
+          var me = this;
+          var doc = this._input.contentDocument;
+          var win = this._input.contentWindow;
+
+          this._initialized = true;
+
+          var link = doc.createElement("link");
+// #ifdef XULAPP
+          link.setAttribute("href", "chrome://oneteam/skin/chatpane/content.css");
+/* #else
+          link.setAttribute("href",
+            document.location.href.replace(/content\/.*?$/, "skin/chatpane/content.css"));
+// #endif */
+          link.setAttribute("rel", "stylesheet");
+          doc.getElementsByTagName("HEAD")[0].appendChild(link);
+
+          if (this._toolbar)
+            doc.body.setAttribute("hasSendButton", "true");
+
+          if (this.disabled)
+            doc.body.setAttribute("disabled", true);
+          else
+            this._enableInput();
         ]]></body>
       </method>
 
@@ -1695,6 +1749,9 @@
       <method name="_doSend">
         <parameter name="withEnter"/>
         <body><![CDATA[
+          if (this._disabled)
+            return false;
+
           var value = this._send(withEnter);
 
           if (value == null)
@@ -2428,7 +2485,7 @@
 
           var doc = this._output._output.contentDocument;
           doc.body.scrollTop = doc.body.scrollHeight;
-        } else if (event.target != this._searchField) {
+        } else if (event.target == this._searchField) {
           this.model.refineSearch(this._searchField.value);
         }
       ]]></handler>

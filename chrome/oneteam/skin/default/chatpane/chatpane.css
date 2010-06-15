@@ -18,16 +18,8 @@
   padding: 1px;
 }
 
-#send {
-  background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
-  -moz-border-radius: 2px;
-  margin: 2px 0;
-  width: 38px;
-  -moz-binding: url(chrome://global/content/bindings/toolbarbutton.xml#toolbarbutton-image);
-}
-
-#send:hover {
-  background-color: #cbea00;
+#input-container[disabled=true] {
+  background: #c7c7c7 !important;
 }
 
 .marker-arrow {

@@ -32,6 +32,11 @@ body[hasSendButton=true]:after {
     width: 38px;
 }
 
+body[hasSendButton=true][disabled=true]:after {
+    -moz-border-image: none;
+    background: transparent;
+}
+
 .mainContainer {
     margin-bottom: 2px;
 }
