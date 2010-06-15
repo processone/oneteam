@@ -49,12 +49,12 @@
         else if (name == "chat.general.iconset"){
           var iconsContainer = document.getElementById("iconsSet");
           if(iconsContainer)
-            iconsContainer.selectItem(value);  
+            iconsContainer.selectItem(value);
         }
         else if (name == "chat.general.smilesset"){
           var smilesContainer = document.getElementById("smilesSet");
           if(smilesContainer)
-            smilesContainer.selectItem(value);  
+            smilesContainer.selectItem(value);
         }
         else if (name == "chat.connection.type"){
           var el = document.getElementById("protocol");
@@ -74,7 +74,7 @@
           if (prevType == "native") {
             if (el.value != "native" && port.value == portVal)
               port.value = 5280
-          } else if (el.value == "native"  && port.value == "5280")
+          } else if (el.value == "native" && port.value == "5280")
             port.value = portVal;
 
           if (el.value == "http-bind")
@@ -105,7 +105,7 @@
       if(smilesset)
         smilesContainer.selectItem(document.getElementById('iconSet-'+smilesset));
     }
-    
+
     function onUnload() {
       //tofix
       prefObserver.uninit();
@@ -149,7 +149,7 @@
   <toolbox id="mainToolbox">
     <menubar id="macMenuBar"/>
   </toolbox>
-  
+
   <prefpane id="general" label="_('General')">
     <preferences id="general-preferences">
       <preference id="showavatars" name="chat.general.showavatars" type="bool"/>
@@ -169,7 +169,7 @@
     <checkbox label="_('Show the system tray icon.')"
               preference="systray"/>
   </prefpane>
-  
+
   <prefpane id="connection" label="_('Connection')">
     <preferences id="connection-preferences">
       <preference id="host" name="chat.connection.host" type="string"/>
@@ -180,6 +180,7 @@
       <preference id="ssl" name="chat.connection.ssl" type="bool"/>
       <preference id="base" name="chat.connection.base" type="string"/>
       <preference id="autoconnect" name="chat.connection.autoconnect" type="bool"/>
+      <preference id="reconnect" name="chat.connection.reconnect" type="bool"/>
     </preferences>
     <grid flex="1">
       <columns>
@@ -213,19 +214,20 @@
             </menupopup>
           </menulist>
         </row>
-          <checkbox label="_('SSL Connection')" preference="ssl" id="ssl-checkbox"/>
+        <checkbox label="_('SSL Connection')" preference="ssl" id="ssl-checkbox"/>
         <row>
           <label value="_('HTTP Base:')"/>
           <textbox id="http-base" preference="base"/>
         </row>
         <checkbox label="_('Automatically connect at startup')" preference="autoconnect"/>
+        <checkbox label="_('Reconnect after loosing connection')" preference="reconnect"/>
       </rows>
     </grid>
   </prefpane>
 <!--
   todo = switch etc avec observers
 -->
-  
+
   <prefpane id="status" label="_('Status')">
     <preferences id="status-preferences">
       <preference id="autoaway" name="chat.status.autoaway" type="bool"/>
@@ -263,7 +265,7 @@
       </rows>
     </grid>
   </prefpane>
-  
+
   <prefpane id="appearance" label="_('Appearance')">
     <preferences id="appearance-preferences">
       <preference id="usegatewayicons" name="chat.general.usegatewayicons" type="bool"/>

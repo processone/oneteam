@@ -43,88 +43,24 @@ tabpanels {
   list-style-image: url(imgs/toggleoffline.png);
 }
 
-/* Login pane */
-#login-box {
-  overflow: hidden;
-  background: #000431 url(imgs/background.png) 0% 0%;
-  background-repeat: no-repeat;
+/* Login box */
+#login-info-box {
+  background: #E0DC76;
+  border: 1px solid black;
+  margin: 0.2em;
+  padding: 0.5em;
 }
 
-#login-entries-box {
-  border: 1px solid #003e67;
-  margin: 150px 10px 0 10px;
-  padding: 2em;
-  background: #00244e;
-  color: white;
+.throbber {
+  list-style-image: url(chrome://global/skin/icons/loading_16.png);
 }
 
-#login-pass-box {
-  padding-top: 1em;
+#login-error-box {
+  color: red;
 }
 
-#login-signin {
-  margin-top: 1em;
-  -moz-appearance: none;
-  border: 1px solid #a7d000;
-  border-bottom-color: #678100;
-  border-right-color: #678100;
-  background: #91b400;
-  padding: 0.6em 2em;
-  color: white;
-  font-weight: bold;
-}
-
-#login-signin:hover {
-  background: #a6cc00;
-}
-
-#login-signin:hover:active {
-  background: #a6cc00;
-  border: 1px solid #a7d000;
-  border-top-color: #678100;
-  border-left-color: #678100;
-}
-
-#login-signin[disabled=true] {
-  color: #aaa;
-}
-
-#login-box spacer {
-  -moz-box-flex: 1;
-}
-
-#login-actions-box {
-  -moz-box-pack: center;
-  margin-top: 4em;
-}
-
-#login-actions-box > button {
-  -moz-appearance: none;
-  border: 1px solid #003e67;
-  margin: 0 5px;
-  padding: 0.5em 0;
-  background: #00244e;
-  color: white;
-}
-
-#login-actions-box > button:first-child {
-  margin-left: 10px;
-}
-
-#login-actions-box > button:last-child {
-  margin-right: 10px;
-}
-
-#login-settings-box > label {
-  color: white !important;
-}
-
-#login-add-account {
-  list-style-image: url(imgs/addaccount.png);
-}
-
-#login-settings {
-  list-style-image: url(imgs/settings.png);
+#login-error-box > image {
+  list-style-image: url(../verifier/imgs/invalid-icon.png);
 }
 
 /* Presence box */

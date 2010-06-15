@@ -83,6 +83,8 @@ function Account()
                 break;
             }
     }
+
+    setTimeout(function(t){t._restoreContactsFromCache()}, 0, this);
 }
 
 _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
@@ -467,7 +469,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         var namePart;
         if ((namePart = name.replace(/^chat\.connection\./, "")) != name) {
             if (!(namePart in {host: 1, base: 1, user:1, port: 1, type: 1,
-                         domain: 1, autoconnect: 1, autoreconnect: 1}))
+                         domain: 1, autoconnect: 1, reconnect: 1}))
                 return;
 
             if (namePart == "user")
@@ -643,6 +645,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.connecting = true;
 
+        this.connectionErrorMessage = null;
+
         this.modelUpdated("connection");
         this.modelUpdated("connecting");
         account.connection.connect(args);
@@ -668,6 +672,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         iq.setType("set")
 
         var presence = this.userPresence || this.currentPresence;
+        this.userDisconnect = true;
 
         if (!presence.show == "unavailable") {
             var query = iq.setQuery("jabber:iq:private");
@@ -696,6 +701,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.jid = new JID(this.myJID.domain);
         this.sessionID = b64_sha1(""+this.myJID.normalizedJID);
 
+        this.reconnectStep = 0;
+
         if (this.connection.serverCaps)
             this.updateCapsInfo(this.connection.serverCaps);
 
@@ -714,7 +721,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.connected = true;
         this.connectedAt = new Date();
-
 
         if (this.mucMode) {
             this._initialRosterFetch(null, this);
@@ -845,20 +851,59 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("connecting");
     },
 
+    _restoreContactsFromCache: function() {
+        var [user, host] = this.getConnectionCreds();
+        var myJID = new JID(user, host);
+
+        var contactsToRemove = {};
+        for (var c in this.contactsIterator())
+            contactsToRemove[c.jid.normalizedJID] = 1;
+
+        var contacts = this.cache.getValue("roster-"+myJID.shortJID) || [];
+        for (var i = 0; i < contacts.length; i++) {
+            var c = contacts[i];
+            var jid = new JID(c.jid);
+            var normalizedJID = jid.normalizedJID;
+
+            delete contactsToRemove[normalizedJID];
+
+            if (normalizedJID in this.allContacts) {
+                var groups = [];
+                var groupsHash = {};
+
+                for (var j = 0; j < c.groups.length; j++) {
+                    var group = this.getOrCreateGroup(c.groups[j]);
+                    groups.push(group);
+                    groupsHash[c.groups[j]] = group;
+                }
+
+                if (groups.length == 0) {
+                    groups.push(this.defaultGroup);
+                    groupsHash[""] = this.defaultGroup;
+                }
+
+                var data = [jid, c.name, c.subscription, c.subscriptionAsk,
+                            groups, groupsHash];
+                this.allContacts[normalizedJID]._updateFromData(data);
+            } else
+                new Contact(jid, c.name, c.groups.length ?
+                                c.groups : [this.defaultGroup],
+                            c.subscription, c.subscriptionAsk);
+        }
+
+        for (var j in contactsToRemove) {
+            var c = _this.allContacts[j];
+            c._updateFromData([null, c.name, "remove", false, [], {}]);
+        }
+    },
+
     _initialRosterFetch: function(pkt, _this)
     {
         if (pkt)
             if (pkt.getNode().childNodes.length)
-                _this.onIQ(pkt);
-            else {
-                contacts = _this.cache.getValue("roster-"+_this.myJID.shortJID) || [];
-                for (var i = 0; i < contacts.length; i++) {
-                    c = contacts[i];
-                    new Contact(c.jid, c.name, c.groups.length ?
-                                    c.groups : [_this.defaultGroup],
-                                c.subscription, c.subscriptionAsk);
-                }
-            }
+                _this.onRosterIQ(pkt, true);
+            else
+                _this._restoreContactsFromCache()
 
         _this._initConnectionStep(1);
     },
@@ -878,22 +923,59 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.avatarHash = this.avatar = null;
         this.avatarRetrieved = false;
         this._initConnectionState = 0;
+        this.reconnectStep = 0;
+    },
+
+    _reconnectTimeoutFun: function(token) {
+        if (token.time == 0) {
+            token.model.connect();
+            token.model.reconnectMessage = null;
+        } else {
+            token.model.reconnectMessage =
+                _("Reconnecting in {0} {0, plurals, second,seconds}", token.time);
+            token.time--;
+            token.model._reconnectTimeout = setTimeout(arguments.callee, 1000, token)
+        }
+        token.model.modelUpdated("reconnectMessage");
+    },
+
+    reconnect: function() {
+        if (this.reconnectStep >= 5)
+            return;
+
+        this.reconnectStep++;
+
+        this._reconnectTimeoutFun({
+            time: this.reconnectStep*5,
+            model: this
+        });
+    },
+
+    abortReconnect: function() {
+        if (this._reconnectTimeout) {
+            clearTimeout(this._reconnectTimeout);
+            delete this._reconnectTimeout;
+
+            this.reconnectStep = 0;
+            this.userDisconnect = false;
+
+            this.reconnectMessage = null;
+            this.modelUpdated("reconnectMessage");
+        }
     },
 
     onDisconnect: function()
     {
-        // If "disconnect" event is received before "connect", it
-        // means that we attempted connection but did not manage
-        // to.
-        if(!this.connected)
-            report("user", "error", "Error during connection. (Wrong username or password?)");
+        var userDisconnect = this.userDisconnect;
 
         this.connected = false;
         this.connecting = false;
         this.connectionInitialized = false;
+        this.userDisconnect = false;
+
         account.connection = {
             send: function() {},
-            disconnect: function() {},
+            disconnect: function() {account.abortReconnect()},
             registerHandler: function() {},
             unregisterHandler: function() {}
         };
@@ -903,9 +985,26 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.modelUpdated("connecting");
         this.modelUpdated("connectionInitialized");
 
+        for each (c in this.contacts)
+            for each (r in c.resourcesIterator())
+                r._remove();
+
+        for each (c in this.myResources)
+            c.resources[0]._remove();
+
+        for (var i = 0; i < this.conferences.length; i++)
+            this.conferences[i]._exitRoomCleanup(true)
+
+        var gateways = [gateway for each (gateway in this.gateways)];
+        this.gateways = {};
+
+        this.modelUpdated("gateways", {removed: gateways});
+
+        this.avatarRetrieved = false;
+        this._initConnectionState = 0;
+/*
         var groups = this.groups;
         var conferences = this.conferences;
-        var gateways = [gateway for each (gateway in this.gateways)];
         var contacts = [contact for each (contact in this.contacts)];
         var resources = [resource for each (resource in this.resources)];
 
@@ -913,18 +1012,21 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.modelUpdated("groups", {removed: groups});
         this.modelUpdated("conferences", {removed: conferences});
-        this.modelUpdated("gateways", {removed: gateways});
         this.modelUpdated("contacts", {removed: contacts});
         this.modelUpdated("resources", {removed: resources});
-
+*/
         this.bookmarks._clean();
         servicesManager._clean();
 
         cleanDiscoCache();
-
+/*
         for (var i = 0; i < groups.length; i++)
             if (groups[i].builtinGroup)
                 groups[i]._clean();
+*/
+
+        if (!userDisconnect && this.connectionInfo.reconnect)
+            this.reconnect();
     },
 
     onPresence: function(packet)
@@ -1019,9 +1121,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         }
     },
 
-    onIQ: function(packet)
+    onRosterIQ: function(packet, initialRoster)
     {
         var query = packet.getNode().childNodes;
+        var contactsToRemove = {};
 
         for (var i = 0; i < query.length; i++)
             if (query[i].nodeType == 1) {
@@ -1031,17 +1134,18 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (!query.nodeType)
             return;
 
-        if (query.namespaceURI != "jabber:iq:roster") {
-            servicesManager.dispatchIQ(packet, query);
-            return;
-        }
+        if (initialRoster)
+            for (var c in this.contactsIterator())
+                contactsToRemove[c.jid.normalizedJID] = 1;
 
         var items = query.getElementsByTagNameNS("jabber:iq:roster", "item");
         for (i = 0; i < items.length; i++) {
             var jid = items[i].getAttribute("jid");
             var normalizedJID = new JID(jid).normalizedJID;
 
-            if (this.allContacts[normalizedJID]) {
+            delete contactsToRemove[normalizedJID];
+
+            if (normalizedJID in this.allContacts) {
                 var contact = this.allContacts[normalizedJID];
                 contact._updateFromServer(items[i]);
 
@@ -1051,6 +1155,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 }
             } else
                 new Contact(items[i]);
+        }
+
+        for (var j in contactsToRemove) {
+            var c = this.allContacts[j];
+            c._updateFromData([null, c.name, "remove", false, [], {}]);
         }
 
         var contacts = [];
@@ -1066,6 +1175,24 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.cache.setValue("roster-"+this.myJID.shortJID, contacts);
         this.cache.setValue("rosterVersion-"+this.myJID.shortJID,
                             query.getAttribute("ver") || "");
+    },
+
+    onIQ: function(packet)
+    {
+        var query = packet.getNode().childNodes;
+
+        for (var i = 0; i < query.length; i++)
+            if (query[i].nodeType == 1) {
+                query = query[i];
+                break;
+            }
+        if (!query.nodeType)
+            return;
+
+        if (query.namespaceURI == "jabber:iq:roster")
+            this.onRosterIQ(packet);
+        else
+            servicesManager.dispatchIQ(packet, query);
     },
 
     onMessage: function(packet)
@@ -1090,20 +1217,22 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     onStatusChanged: function(error) {
         switch(error) {
             case 'session-terminate-conflict':
-            report('user', 'error', 'Conflict (same account/resource signed in from another client)');
-            break;
+                this.userDisconnect = true;
+                this.connectionErrorMessage = _('Conflict (same account/resource signed in from another client)');
+                break;
         }
     },
 
     onError: function(error)
     {
-        if (!this.connected) {
-            report('user', 'error', 'Invalid response from server (server down or misconfigured)');
-
-            // Hack to preven error message in onDisconnect
-            this.connected = true;
+        if (error.getAttribute("code") == "401") {
+            this.userDisconnect = true;
+            this.connectionErrorMessage = _('Invalid username or password');
+        } else {
+            this.connectionErrorMessage = _('Invalid response from server');
             this.onDisconnect();
         }
+
         var text = error.getElementsByTagName("text")[0];
         text = text ? text.textContent : "";
         var stanza = error.getElementsByTagNameNS(NS_STANZAS, "*")[0]

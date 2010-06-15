@@ -137,10 +137,16 @@ _DECL_(Conference, Contact).prototype =
         this._exitRoomCleanup();
     },
 
-    _exitRoomCleanup: function()
+    _exitRoomCleanup: function(fromDisconnect)
     {
         if (this._cpToken) {
-            account._onConferenceRemoved(this);
+            if (fromDisconnect) {
+                var conference = this;
+                OnModelStateCall(account, "connectionInitialized", IsTrue, function() {
+                    conference.backgroundJoinRoom();
+                });
+            } else
+                account._onConferenceRemoved(this);
             this._cpToken.unregisterFromAll();
             this._cpToken = null;
         }

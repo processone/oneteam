@@ -208,7 +208,11 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         account.connection.send(iq, callback);
     },
 
-    _updateFromServer: function(node)
+    _updateFromServer: function(node) {
+        this._updateFromData(this._parseNode(node, true));
+    },
+
+    _updateFromData: function(data)
     {
         var groups, groupsHash;
         var canSeeHim = this.canSeeHim;
@@ -216,10 +220,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         var oldState = { name: this.name, subscription: this.subscription,
             subscriptionAsk: this.subscriptionAsk, visibleName: this.visibleName};
 
-        [,this.name, this.subscription, this.subscriptionAsk, groups, groupsHash] =
-            this._parseNode(node, true);
+        [,this.name, this.subscription, this.subscriptionAsk, groups, groupsHash] = data;
 
-        this.name = this.name;
         this.visibleName = this.name || this.jid.node || this.jid.toUserString();
         delete this._inRoster;
 
