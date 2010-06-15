@@ -2128,6 +2128,8 @@
                                                               "bookmarks", this._regToken)
               this._onBookmarksUpdated();
             }
+            this._regToken = account.registerView(this._onConnect, this,
+                                                  "connected", this._regToken);
           }
 
           this._searchField.hidden = !val || !("refineSearch" in val);
@@ -2163,6 +2165,8 @@
         this._input._send = new Callback(this._send, this);
         this._input._preMaybeResize = new Callback(this._preMaybeResize, this);
         this._input._postMaybeResize = new Callback(this._postMaybeResize, this);
+
+        this._input.disabled = !account.connected;
 
         this._output._threadsChangedFun = new Callback(this._onThreadsChanged, this);
 
@@ -2294,6 +2298,12 @@
             account.onManageBookmarks(this._model.contact.jid);
           else
             this._model.contact.onBookmark();
+        ]]></body>
+      </method>
+
+      <method name="_onConnect">
+        <body><![CDATA[
+          this._input.disabled = !account.connected;
         ]]></body>
       </method>
 
