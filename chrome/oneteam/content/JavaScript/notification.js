@@ -146,7 +146,7 @@ _DECL_(NotificationScheme).prototype =
     onPresenceChange: function(resource, oldPresence, newPresence, callback) {
         var signed, provider;
         var time = resource instanceof ConferenceMember ?
-            model.contact.joinedAt : account.connectedAt;
+            resource.contact.joinedAt : account.connectedAt;
 
         if (!time || (Date.now()-time < 5*1024) || newPresence.priority < 0)
             return this._nopCanceler;
