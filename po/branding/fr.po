@@ -1,0 +1,32 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: OneTeam 1.0\n"
+"POT-Creation-Date: 2010-06-16 15:02+0200\n"
+"PO-Revision-Date: 2010-06-16 16:56+0100\n"
+"Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n==1 ? 0 : 1;\n"
+
+#: ../chrome/oneteam/content/about.xul:8
+msgid "OneTeam"
+msgstr "OneTeam"
+
+#: ../chrome/oneteam/content/about.xul:19
+msgid "http://www.process-one.net/en/oneteam/"
+msgstr "http://www.process-one.net/en/oneteam/"
+
+#: ../chrome/oneteam/content/about.xul:43
+msgid "OneTeam Instant Messenging Client"
+msgstr "Client de messagerie instantanée OneTeam"
+
+#: ../chrome/oneteam/content/about.xul:47
+msgid "Created by ProcessOne"
+msgstr "Créé par ProcessOne"
+
+#: ../chrome/oneteam/content/about.xul:48
+msgid "www.process-one.net"
+msgstr "www.process-one.net"
+
