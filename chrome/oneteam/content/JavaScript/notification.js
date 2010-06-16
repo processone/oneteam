@@ -293,6 +293,9 @@ _DECL_(NotificationScheme).prototype =
         var pureMucMessage = gcMessage && !msg.isDirectedMessage;
         var provider;
 
+        if (msg.isSystemMessage)
+            return this._nopCanceler;
+
         if (gcMessage) {
             if (!pureMucMessage)
                 provider = this.findProvider("mucDirectedMessage", resource);
