@@ -152,12 +152,12 @@ VCard.prototype =
     },
 
     _emailToHtml: function(email) {
-        return [40, phone.HOME ?
-                    phone.WORK ? _("home, work") : _("home") :
-                    phone.WORK ? _("work") : _("phone"),
-                phone.PREF && this.EMAIL.length > 1 ?
-                    _xml("<a href='mailto:{0}'><b>{0}</b></a>", phone.USERID) :
-                    _xml("<a href='mailto:{0}'>{0}</a>", phone.USERID)];
+        return [40, email.HOME ?
+                    email.WORK ? _("home, work") : _("home") :
+                    email.WORK ? _("work") : _("phone"),
+                email.PREF && this.EMAIL.length > 1 ?
+                    _xml("<a href='mailto:{0}'><b>{0}</b></a>", email.USERID) :
+                    _xml("<a href='mailto:{0}'>{0}</a>", email.USERID)];
     },
 
     toHtml: function() {
