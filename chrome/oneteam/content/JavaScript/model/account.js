@@ -1058,8 +1058,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         case "subscribed":
         case "unsubscribe":
         case "unsubscribed":
-            this.notificationScheme.show("subscription", packet.getType(),
-                                         this.allContacts[sender.normalizedJID.shortJID] || sender);
+            this.notificationScheme.onSubscription(this.getOrCreateContact(sender.shortJID),
+                                                   packet.getType() == "subscribed");
             return;
         case "unavailable":
             if (!this.resources[sender.normalizedJID])

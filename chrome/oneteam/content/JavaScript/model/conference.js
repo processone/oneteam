@@ -483,7 +483,7 @@ _DECL_(Conference, Contact).prototype =
 
         if (this._checkForSubject(packet, this.jid) && packet.getBody()) {
             var message = new Message(packet, null, this, 4);
-            account.notificationScheme.show("message", "next", message, this);
+            account.notificationScheme.onMessage(this, msg, false);
             this.routeMessage(message);
         }
     },
@@ -513,7 +513,7 @@ _DECL_(Conference, Contact).prototype =
         this.subject = subject;
 
         if (!pkt.getBody() || (new JID(pkt.getFrom())).resource)
-            account.notificationScheme.show("muc", "subjectChange", this, jid);
+            account.notificationScheme.onSubjectChange(this, subject);
         else if (this.chatPane && !this.chatPane.closed)
             this.chatPane.thread.addMessage(new Message(pkt.getBody(), null, this, 4));
 
@@ -669,7 +669,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             this.modelUpdated("name");
             this.modelUpdated("visibleName");
 
-            account.notificationScheme.show("muc", "nickChange", this, oldJID);
+            account.notificationScheme.onNickChange(this, oldJID.resources);
             return;
         }
 
@@ -704,7 +704,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
                 getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "decline")[0];
             if (decline) {
                 var reason = decline.getElementsByTagName("reason")[0];
-                account.notificationScheme.show("invitation", "decline", this.contact, reason,
+                account.notificationScheme.onInvitationDeclined(this.contact, reason,
                                                 decline.getAttribute("from"));
                 return;
             }

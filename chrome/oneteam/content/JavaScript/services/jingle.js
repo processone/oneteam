@@ -806,8 +806,7 @@ _DECL_(JingleService).prototype =
                 this.resource.onJingleCall(this.session);
             }, {canceler: canceler, resource: resource, session: js});
 
-            canceler.add = account.notificationScheme.show("jingleCall", null,
-                                                           resource, callback);
+            canceler.add = account.notificationScheme.onJingleCall(resource, callback);
             canceler.add = account.addEvent(js.to, "jinglecall",
                                             _xml("<b>{0}</b> want to initiate call with you",
                                                  account.getContactOrResourceName(js.to)),

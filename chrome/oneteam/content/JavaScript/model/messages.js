@@ -458,8 +458,7 @@ _DECL_(MessagesThread, Model).prototype =
 
         if (!msg.isMucMessage || msg.isDirectedMessage)
             msg._canceler.add = account.notificationScheme.
-                show("message", firstMessage ? "first" : "next", msg,
-                     msg.contact, callback);
+                onMessage(msg.contact, msg, firstMessage, callback);
 
         if (!this._visible && !msg.isSystemMessage &&
             (!msg.isMucMessage || msg.isDirectedMessage))

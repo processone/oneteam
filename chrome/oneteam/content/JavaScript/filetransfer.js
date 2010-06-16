@@ -99,9 +99,9 @@ _DECL_(FileTransferService, null, Model).prototype =
                                         _xml("<b>{0}</b> want to send you file",
                                              pkt.getFrom()),
                                         callback);
-        canceler.add = account.notificationScheme.show("filetransfer", "request",
-                                                       pkt.getFrom(), file.@name,
-                                                       callback);
+        canceler.add = account.notificationScheme.
+            onFileTransfer(account.getOrCreateContact(sender.shortJID),
+                           file.@name.toString(), callback);
 
         return null;
    }
@@ -316,7 +316,7 @@ _DECL_(FileTransfer, null, Model).prototype =
         var contact = this.jid.resource ? account.getOrCreateResource(this.jid) :
             account.getOrCreateContact(this.jid);
 
-        account.notificationScheme.show("filetransfer", "rejected", contact, file);
+        account.notificationScheme.onFileTransferRejected(contact, file)
     },
 
     onTransferFailure: function()
@@ -335,7 +335,7 @@ _DECL_(FileTransfer, null, Model).prototype =
         var contact = this.jid.resource ? account.getOrCreateResource(this.jid) :
             account.getOrCreateContact(this.jid);
 
-        account.notificationScheme.show("filetransfer", "accepted", contact, file);
+        account.notificationScheme.onFileTransferAccepted(contact, file)
     },
 
     onTransferCompleted: function()

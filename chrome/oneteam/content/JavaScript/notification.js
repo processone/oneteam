@@ -1,156 +1,18 @@
 var EXPORTED_SYMBOLS = ["NotificationScheme"];
 
-function NotificationScheme()
-{
-    this._top = Infinity;
-    this._wins = [];
-}
+var notificationAlerts = {
+    _top: Infinity,
+    _wins: [],
 
-_DECL_(NotificationScheme).prototype =
-{
-    _nopCanceler: {
-        cancel: function() {}
-    },
-
-    show: function(kind, type, model, extra, extra2)
-    {
-        if (kind == "resource") {
-            var signed;
-
-            this._showInChatPane(_("{0} is now {1}", model.visibleName,
-                                   type.toString(true, true)),
-                                 model, false, true);
-
-            if (type.show != "unavailable" && extra.show == "unavailable")
-                signed = true;
-            else if (type.show == "unavailable" && extra.show != "unavailable")
-                signed = false;
-
-            if (signed == null)
-                return this._nopCanceler;
-
-            var time = model instanceof ConferenceMember ?
-                model.contact.joinedAt : account.connectedAt;
-
-            if (!time || (Date.now()-time < 5*1024))
-                return this._nopCanceler;
-
-            if (model instanceof ConferenceMember)
-                this._showInChatPane(signed ? _("{0} has joined this room", model) :
-                                              _("{0} has left this room", model),
-                                     model, true, false);
-            else {
-                if (type.priority < 0)
-                    return this._nopCanceler;
-
-                model = model.contact || model;
-                if (!this._showNotifications(model))
-                    return this._nopCanceler;
-
-                var numResources = 0;
-                for (var i = 0; i < model.resources.length; i++)
-                    if (+model.resources[i].presence.priority >= 0)
-                        numResources++;
-
-                if (numResources > 1 || (numResources == 1 && !signed))
-                    return this._nopCanceler;
-
-                soundsPlayer.playSound(signed ? "connected" : "disconnected");
-                return this._showAlert(signed ?
-                    _xml("<b>{0}</b> signed in", model.visibleName) :
-                    _xml("<b>{0}</b> signed out", model.visibleName),
-                    xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
-                    model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
-                    null, signed ? "fadein" : "fadeout");
-            }
-        } else if (kind == "subscription") {
-            model = model.contact || model;
-            var msg = type == "subscribed" ?
-                _xml("<b>{0}</b> authorized you to see his/her status", model.visibleName) :
-                _("<b>{0}</b> doesn't authorized you to see his/her status", model.visibleName);
-
-            this._showAlert(msg, xmlEscape(model.visibleName)+"<br/>"+xmlEscape(model.jid.toUserString()),
-                            model.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
-        } else if (kind == "muc") {
-            if (type == "nickChange")
-                this._showInChatPane(_("{0} changed nick to {1}", extra.resource, model.jid.resource),
-                                     model, true, true);
-            else if (type == "subjectChange")
-                this._showInChatPane(_("{0} changed subject to {1}", extra.resource, model.subject),
-                                     model, true, false);
-        } else if (kind == "message") {
-            if (!this._showNotifications(extra) || model.isSystemMessage)
-                return this._nopCanceler;
-
-            var gcMessage = extra instanceof ConferenceMember;
-            var pureMucMessage = gcMessage && !model.isDirectedMessage;
-            if (!pureMucMessage)
-                soundsPlayer.playSound(gcMessage ? "message2" : "message1");
-
-            if (pureMucMessage || (!gcMessage && type != "first"))
-                return this._nopCanceler;
-
-            var text = model.text.replace(/[ \t]+/g, " ")+" ";
-            text = text.replace(/([^\n]{1,58}|\S{58,})\s+/g, function(x, a) {
-                    return a.length > 59 ? a.substr(0, 55)+"...\n" : a+"\n"});
-            text = text.replace(/\s+$/, "").split(/\n/).slice(0, 8).
-                map(xmlEscape).join("<br/>");
-
-            return this._showAlert(type == "first" ?
-                                   _("New message from <b>{0}</b>", xmlEscape(extra.visibleName)) :
-                                   _("Message from <b>{0}</b>", xmlEscape(extra.visibleName)),
-                                   text, "chrome://oneteam/skin/main/imgs/msgicon.png", extra2);
-        } else if (kind == "jingleCall") {
-            return this._showAlert(_("Call request received"),
-                                   _xml("User <b>{0}</b> want to initiate call with you",
-                                        model.visibleName),
-                                   "chrome://oneteam/skin/main/imgs/callicon.png", extra);
-        } else if (kind == "filetransfer") {
-            if (type == "request")
-                return this._showAlert(_("File transfer request"),
-                                       _xml("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
-                                         model, extra),
-                                       "chrome://oneteam/skin/main/imgs/fticon.png", extra2);
-            else if (type == "rejected")
-                this._showInChatPane(_xml("{0} doesn't want to receive your file '{1}'",
-                                       model.visibleName, extra),
-                                     model, false, true);
-            else if (type == "accepted")
-                this._showInChatPane(_xml("{0} accepted your file '{1}'",
-                                       model.visibleName, extra),
-                                     model, false, true);
-        }
-        return this._nopCanceler;
-    },
-
-    _showNotifications: function(contact)
-    {
-        return !account.currentPresence.profile || account.currentPresence.profile.inheritsPresence(contact);
-    },
-
-    _showInChatPane: function(msg, contact, showInMUC, showInPersonal)
-    {
-        var msgObj;
-
-        if (showInMUC) {
-            var c = contact instanceof Conference ? contact :
-                (contact instanceof ConferenceMember &&
-                    contact.contact.myResource != contact) ?
-                    contact.contact : null;
-            if (c)
-                c.showSystemMessage(msgObj = new Message(msg, null, c, 4));
-        }
-
-        if (showInPersonal && !(contact instanceof Conference))
-            contact.showSystemMessage(msgObj || new Message(msg, null, contact, 4));
-    },
-
-// #ifdef XULAPP
     _fixMsgForAS: function(str) {
         return str.replace(/<b>/g, "").replace(/<\/b>/g, "").replace(/<br\/>/g, " - ");
     },
 
-    _showAlert: function(title, msg, icon, clickHandler, animation)
+    _nopCanceler: {
+        cancel: function() {}
+    },
+
+    showAlert: function(title, msg, icon, clickHandler, animation)
     {
         if (this._alertSvc == null) {
             if (navigator.platform.indexOf("Mac") >= 0 ||
@@ -169,20 +31,19 @@ _DECL_(NotificationScheme).prototype =
         if (this._alertSvc) {
             try {
                 this._alertSvc.showAlertNotification(icon,
-                                                     this._fixMsgForAS(title),
-                                                     this._fixMsgForAS(msg),
-                                                     false, null, {
-                                                        ch: clickHandler,
-                                                        win: findCallerWindow(),
-                                                        observe: function(s, t, d) {
-                                                            if (t != "alertclickcallback")
-                                                                return;
-                                                            if (this.win)
-                                                                this.win.focus();
-                                                            if (this.ch)
-                                                                this.ch.call();
-                                                        }
-                                                     });
+                        this._fixMsgForAS(title), this._fixMsgForAS(msg),
+                        false, null, {
+                            ch: clickHandler,
+                            win: findCallerWindow(),
+                            observe: function(s, t, d) {
+                                if (t != "alertclickcallback")
+                                    return;
+                                if (this.win)
+                                    this.win.focus();
+                                if (this.ch)
+                                    this.ch.call();
+                            }
+                        });
                 return this._nopCanceler;
             } catch (ex) { }
         }
@@ -225,23 +86,339 @@ _DECL_(NotificationScheme).prototype =
             win.moveTo(_left - win.outerWidth, this._top);
         }
     }
-/* #else
-    _clickHandlers: {},
-    _clickHandlersIdx: 0,
-    _showAlert: function(title, msg, icon, clickHandler)
-    {
-        if (icon.indexOf("..") == 0)
-            icon = document.location.href.replace(/content\/.*?$/, "content/"+icon);
+};
 
-        try {
-            otNotifications.showMessage(title, msg, icon, "var s=account.notificationScheme;"+
-                "var h=s["+this._clickHandlersIdx+"];"+
-                "delete s["+this._clickHandlersIdx+"];"+
-                "h.call();");
-            _clickHandlers[this._clickHandlersIdx] = clickHandler;
-        } catch(ex) {}
+function NotificationProvider(showInChatpane, showInMucChatpane, showAlert, soundSample) {
+    this.showInChatpane = showInChatpane;
+    this.showInMucChatpane = showInMucChatpane;
+    this.showAlert = showAlert;
+    this.soundSample = soundSample;
+}
+
+_DECL_(NotificationProvider).prototype = {
+    show: function(chatpaneMessage, alertTitle, alertMsg, alertIcon, alertAnim, callback) {
+        if (this.soundSample)
+            soundsPlayer.playSound(this.soundSample);
+
+        if (this.showInChatpane || this.showInMucChatpane)
+            this._showInChatPane(chatpaneMessage);
+
+        if (this.showAlert)
+            return notificationAlerts.showAlert(alertTitle, alertMsg, alertIcon, callback, alertAnim);
+
+        return notificationAlerts._nopCanceler;
+    },
+
+    _showInChatPane: function(msg)
+    {
+        var msgObj;
+
+        if (this.showInMucChatpane) {
+            var c = this.contact instanceof Conference ? this.contact :
+                (this.contact instanceof ConferenceMember &&
+                    this.contact.contact.myResource != this.contact) ?
+                    this.contact.contact : null;
+            if (c)
+                c.showSystemMessage(msgObj = new Message(msg, null, c, 4));
+        }
+
+        if (this.showInChatpane && !(this.contact instanceof Conference))
+            this.contact.showSystemMessage(msgObj || new Message(msg, null, this.contact, 4));
+    },
+
+    getWrapperFor: function(contact) {
+        return {
+            __proto__: this,
+            contact: contact
+        };
+    }
+}
+
+function NotificationScheme()
+{
+    this.providers = {}
+}
+
+_DECL_(NotificationScheme).prototype =
+{
+    _nopCanceler: notificationAlerts._nopCanceler,
+
+    onPresenceChange: function(resource, oldPresence, newPresence, callback) {
+        var signed, provider;
+        var time = resource instanceof ConferenceMember ?
+            model.contact.joinedAt : account.connectedAt;
+
+        if (!time || (Date.now()-time < 5*1024) || newPresence.priority < 0)
+            return this._nopCanceler;
+
+        if (newPresence.show != "unavailable" && oldPresence.show == "unavailable") {
+            if (resource instanceof ConferenceMember) {
+                var provider = this.findProvider("mucSignIn", resource);
+                if (provider) {
+                    return provider.show(_("{0} has joined this room", resource),
+                                         _xml("<b>{0}</b> has joined room {1}",
+                                              resource.name, resource.contact.name),
+                                         _xml("{0}<br/>{1}", resource.name,
+                                              (resource.realJID||resource.jid).toUserString()),
+                                         resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                         "fadein", callback);
+                }
+            } else {
+                var contact = resource.contact;
+                var numResources = 0;
+                for (var i = 0; i < contact.resources.length; i++)
+                    if (+contact.resources[i].presence.priority >= 0)
+                        numResources++;
+
+                dump("NRSI: "+numResources+"\n")
+
+                if (numResources == 1) {
+                    var provider = this.findProvider("signIn", resource);
+                    if (provider) {
+                        return provider.show(_("{0} signed in", resource.visibleName),
+                                             _xml("<b>{0}<b> signed in", resource.visibleName),
+                                             _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
+                                             resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                             "fadein", callback);
+                    }
+                }
+            }
+        }
+        else if (newPresence.show == "unavailable" && oldPresence.show != "unavailable") {
+            if (resource instanceof ConferenceMember) {
+                var provider = this.findProvider("mucSignOut", resource);
+                if (provider) {
+                    return provider.show(_("{0} has left this room", resource),
+                                         _xml("<b>{0}</b> has left room {1}",
+                                              resource.name, resource.contact.name),
+                                         _xml("{0}<br/>{1}", resource.name,
+                                              (resource.realJID||resource.jid).toUserString),
+                                         resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                         "fadeout", callback);
+                }
+            } else {
+                var contact = resource.contact
+                var numResources = 0;
+                for (var i = 0; i < contact.resources.length; i++)
+                    if (+contact.resources[i].presence.priority >= 0)
+                        numResources++;
+
+                dump("NRSO: "+numResources+"\n")
+                if (numResources == 0) {
+                    var provider = this.findProvider("signOut", resource);
+                    if (provider) {
+                        return provider.show(_("{0} signed out", resource.visibleName),
+                                             _xml("<b>{0}<b> signed out", resource.visibleName),
+                                             _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
+                                             resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                             "fadeout", callback);
+                    }
+                }
+            }
+        }
+        if (resource instanceof ConferenceMember) {
+            var provider = this.findProvider("mucPresence", resource);
+            if (provider)
+                return provider.show(_("{0} is now {1}", resource,
+                                       newPresence.toString(true, true)),
+                                     _xml("<b>{0}<b> from {1} is now {2}", resource.name,
+                                          resource.contact.name,
+                                          newPresence.toString(true, true)),
+                                     _xml("{0}<br/>{1}", resource.name,
+                                          (resource.realJID||resource.jid).toUserString),
+                                     resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                     null, callback);
+        } else {
+            var provider = this.findProvider("presence", resource);
+            if (provider)
+                return provider.show(_("{0} is now {1}", resource.visibleName,
+                                       newPresence.toString(true, true)),
+                                     _xml("<b>{0}<b> is now {1}", resource.visibleName,
+                                          newPresence.toString(true, true)),
+                                     _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
+                                     resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                     null, callback);
+        }
 
         return this._nopCanceler;
+    },
+
+    onSubscription: function(contact, subscribed, callback) {
+        var provider = this.findProvider("subscription", contact);
+        if (!provider)
+            return this._nopCanceler;
+
+        if (subscribed)
+            return provider.show(_("{0} authorized you to see his/her status", contact.visibleName),
+                                 _xml("<b>{0}</b> authorized you to see his/her status", contact.visibleName),
+                                 _xml("{0}<br/>{1}", contact.visibleName, contact.jid.toUserString()),
+                                 contact.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                 null, callback);
+        else
+            return provider.show(_("{0} doesn't authorized you to see his/her status", contact.visibleName),
+                                 _xml("<b>{0}</b> doesn't authorized you to see his/her status", contact.visibleName),
+                                 _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
+                                 contact.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                                 null, callback);
+    },
+
+    onNickChange: function(resource, oldNick, callback) {
+        var provider = this.findProvider("nickChange", resource);
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("{0} changed nick to {1}", oldNick, resource.jid.resource),
+                             _xml("<b>{0}</b> from {1} changed nick to <b>{2}</b>",
+                                  oldNick, resource.contact.name, resource.jid.resource),
+                             _xml("{0}<br/>{1}", resource.visibleName,
+                                  (resource.realJID||resource.jid).toUserString()),
+                             resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                             null, callback);
+    },
+
+    onSubjectChange: function(resource, newSubject, callback) {
+        var provider = this.findProvider("subjectChange", resource);
+        if (!provider)
+            return this._nopCanceler;
+
+
+        return provider.show(_("{0} changed subject to {1}", resource.name, newSubject),
+                             _("{0} from {1} changed subject to {2}",
+                               resource.name, resource.contact.name, newSubject),
+                             _xml("{0}<br/>{1}", resource.visibleName,
+                                  (resource.realJID||resource.jid).toUserString()),
+                             resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
+                             null, callback);
+    },
+
+    onMessage: function(resource, msg, firstMessage, callback) {
+        var gcMessage = resource instanceof ConferenceMember;
+        var pureMucMessage = gcMessage && !msg.isDirectedMessage;
+        var provider;
+
+        if (gcMessage) {
+            if (!pureMucMessage)
+                provider = this.findProvider("mucDirectedMessage", resource);
+            if (!provider)
+                provider = this.findProvider("mucMessage", resource);
+        } else {
+            if (firstMessage)
+                provider = this.findProvider("firstMessage", resource);
+            if (!provider)
+                provider = this.findProvider("message", resource);
+        }
+
+        if (!provider)
+            return this._nopCanceler;
+
+        var text = msg.text.replace(/[ \t]+/g, " ")+" ";
+        text = text.replace(/([^\n]{1,58}|\S{58,})\s+/g, function(x, a) {
+                return a.length > 59 ? a.substr(0, 55)+"...\n" : a+"\n"});
+        text = text.replace(/\s+$/, "").split(/\n/).slice(0, 8).
+            map(xmlEscape).join("<br/>");
+
+        return provider.show(null, firstMessage ?
+                                _xml("New message from <b>{0}</b>", resource.visibleName) :
+                                _xml("Message from <b>{0}</b>", resource.visibleName),
+                             text,
+                             "chrome://oneteam/skin/main/imgs/msgicon.png",
+                             null, callback);
+    },
+
+    onJingleCall: function(resource, callback) {
+        var provider = this.findProvider("jingleCall", resource);
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("{0} requests a call", resource.visibleName),
+                             _("Call request received"),
+                             _xml("User <b>{0}</b> want to initiate call with you",
+                                  resource.visibleName),
+                             "chrome://oneteam/skin/main/imgs/callicon.png",
+                             null, callback);
+    },
+
+    onFileTransferRequest: function(resource, fileName, callback) {
+        var provider = this.findProvider("fileTransfer", resource);
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("{0} want to send file \"{1}\"", resource.visibleName,
+                               fileName),
+                             _("File transfer request"),
+                             _xml("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
+                                  resource.visibleName, fileName),
+                             "chrome://oneteam/skin/main/imgs/fticon.png",
+                             null, callback);
+    },
+
+    onFileTransferRejected: function(resource, fileName, callback) {
+        var provider = this.findProvider("fileTransferRejected", resource);
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("{0} doesn't want to receive your file \"{1}\"", resource.visibleName,
+                               fileName),
+                             _("File transfer aborted"),
+                             _xml("User <b>{0}</b> doesn't want to receive your <b>\"{1}\"</b> file",
+                                  resource.visibleName, fileName),
+                             "chrome://oneteam/skin/main/imgs/fticon.png",
+                             null, callback);
+    },
+
+    onFileTransferAccepted: function(resource, fileName, callback) {
+        var provider = this.findProvider("fileTransferAccepted", resource);
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("{0} accepted your file \"{1}\"", resource.visibleName,
+                               fileName),
+                             _("File transfer accepted"),
+                             _xml("User <b>{0}</b> accepted your <b>\"{1}\"</b> file",
+                                  resource.visibleName, fileName),
+                             "chrome://oneteam/skin/main/imgs/fticon.png",
+                             null, callback);
+    },
+
+    onInvitationDeclined: function(resources, reason) {
+        return this._nopCanceler;
+    },
+
+    defaultProviders: {
+        "signIn": new NotificationProvider(true, false, true, "connected"),
+        "signOut": new NotificationProvider(true, false, true, "disconnected"),
+        "mucSignIn": new NotificationProvider(true, true, false, null),
+        "mucSignOut": new NotificationProvider(true, true, false, null),
+        "presence": new NotificationProvider(true, false, false, null),
+        "mucPresence": new NotificationProvider(false, false, false, null),
+        "nickChange": new NotificationProvider(false, true, false, null),
+        "subjectChange": new NotificationProvider(false, true, false, null),
+        "subscription": new NotificationProvider(false, false, true, null),
+        "message": new NotificationProvider(false, false, false, "message2"),
+        "firstMessage": new NotificationProvider(false, false, true, "message1"),
+        "mucMessage": new NotificationProvider(false, false, false, null),
+        "mucDirectedMessage": new NotificationProvider(false, false, true, "message2"),
+        "jingleCall": new NotificationProvider(true, false, true, null),
+        "fileTransfer": new NotificationProvider(true, false, true, null),
+        "fileTransferAccepted": new NotificationProvider(true, false, false, null),
+        "fileTransferRejected": new NotificationProvider(true, false, false, null),
+        "invitationDeclined": new NotificationProvider(true, false, false, null)
+    },
+
+    findProvider: function(scope, content) {
+        var id = scope+"-"+content.jid.normalizedJID.shortJID;
+        for each (var id in [scope+"-"+content.jid.normalizedJID.shortJID, scope]) {
+            if (this.providers[id])
+                return this.providers[id].getWrapperFor(content);
+            var data = account.cache.getValue("notifications-"+id);
+            if (data)
+                return (this.providers[id] = new NotificationProvider(data)).
+                    getWrapperFor(content);
+        }
+
+        if (scope in this.defaultProviders)
+            return this.defaultProviders[scope].getWrapperFor(content);
+
+        return null;
     }
-// #endif */
 }
