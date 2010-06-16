@@ -173,9 +173,9 @@ _DECL_(NotificationScheme).prototype =
                 if (numResources == 1) {
                     var provider = this.findProvider("signIn", resource);
                     if (provider) {
-                        return provider.show(_("{0} signed in", resource.visibleName),
-                                             _xml("<b>{0}<b> signed in", resource.visibleName),
-                                             _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
+                        return provider.show(_("{0} signed in", contact.visibleName),
+                                             _xml("<b>{0}<b> signed in", contact.visibleName),
+                                             _xml("{0}<br/>{1}", contact.visibleName, contact.jid.toUserString()),
                                              resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
                                              "fadein", callback);
                     }
@@ -204,9 +204,9 @@ _DECL_(NotificationScheme).prototype =
                 if (numResources == 0) {
                     var provider = this.findProvider("signOut", resource);
                     if (provider) {
-                        return provider.show(_("{0} signed out", resource.visibleName),
-                                             _xml("<b>{0}<b> signed out", resource.visibleName),
-                                             _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
+                        return provider.show(_("{0} signed out", contact.visibleName),
+                                             _xml("<b>{0}<b> signed out", contact.visibleName),
+                                             _xml("{0}<br/>{1}", contact.visibleName, contact.jid.toUserString()),
                                              resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
                                              "fadeout", callback);
                     }
