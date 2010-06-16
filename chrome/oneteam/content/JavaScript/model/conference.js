@@ -407,6 +407,7 @@ _DECL_(Conference, Contact).prototype =
             new JoinCommand(),
             new KickCommand(this),
             new BanCommand(this),
+            new WhoisMucCommand(this),
             //new CommandCompletionEngine("/msg", [new NickCompletionEngine(this)]),
         ]);
     },

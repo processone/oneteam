@@ -4,7 +4,7 @@ var EXPORTED_SYMBOLS = ["DataCompletionEngine", "CommandCompletionEngine",
                         "JoinCommand", "InviteCommand", "InviteByMailCommand",
                         "InviteToCommand", "NickCommand", "TopicCommand",
                         "LeaveCommand", "KickCommand", "BanCommand",
-                        "CallCommand"];
+                        "CallCommand", "WhoisCommand", "WhoisMucCommand"];
 
 function DataCompletionEngine()
 {
@@ -511,5 +511,47 @@ _DECL_(CallCommand, CommandCompletionEngine).prototype =
     doCommand: function(nick, reason)
     {
         this.contact.onJingleCall();
+    }
+}
+
+function WhoisCommand(contact)
+{
+    this.contact = contact;
+    CommandCompletionEngine.call(this, "/whois", []);
+}
+
+_DECL_(WhoisCommand, CommandCompletionEngine).prototype =
+{
+    get disabled()
+    {
+        return false;
+    },
+
+    doCommand: function(nick, reason)
+    {
+        this.contact.showVCard();
+    }
+}
+
+function WhoisMucCommand(conference)
+{
+    this.conference = conference;
+    CommandCompletionEngine.call(this, "/whois",
+                                 [new NickCompletionEngine(conference)]);
+}
+
+_DECL_(WhoisMucCommand, CommandCompletionEngine).prototype =
+{
+    get disabled()
+    {
+        return false;
+    },
+
+    doCommand: function(nick, reason)
+    {
+        var contact = account.resources[this.conference.jid.
+                                        createFullJID(nick).normalizedJID];
+        if (contact)
+            contact.showVCard();
     }
 }
