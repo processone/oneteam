@@ -3,7 +3,8 @@ var EXPORTED_SYMBOLS = ["DataCompletionEngine", "CommandCompletionEngine",
                         "ConferenceCompletionEngine", "NickCompletionEngine",
                         "JoinCommand", "InviteCommand", "InviteByMailCommand",
                         "InviteToCommand", "NickCommand", "TopicCommand",
-                        "LeaveCommand", "KickCommand", "BanCommand"];
+                        "LeaveCommand", "KickCommand", "BanCommand",
+                        "CallCommand"];
 
 function DataCompletionEngine()
 {
@@ -491,5 +492,24 @@ _DECL_(BanCommand, CommandCompletionEngine).prototype =
                                         createFullJID(nick).normalizedJID];
         if (contact)
             contact.ban(reason || null);
+    }
+}
+
+function CallCommand(contact)
+{
+    this.contact = contact;
+    CommandCompletionEngine.call(this, "/call", []);
+}
+
+_DECL_(CallCommand, CommandCompletionEngine).prototype =
+{
+    get disabled()
+    {
+        return !this.contact.jingleResource;
+    },
+
+    doCommand: function(nick, reason)
+    {
+        this.contact.onJingleCall();
     }
 }

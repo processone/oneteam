@@ -686,7 +686,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         return new CompletionEngine([
             new CommandCompletionEngine("/me", []),
             new JoinCommand(),
-            new InviteToCommand(this)
+            new InviteToCommand(this),
+            new CallCommand(this)
         ]);
     },
 
