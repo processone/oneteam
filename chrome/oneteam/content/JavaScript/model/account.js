@@ -14,6 +14,7 @@ ML.importMod("model/roster.js");
 ML.importMod("model/conference.js");
 ML.importMod("model/gateway.js");
 ML.importMod("model/messages.js");
+ML.importMod("model/vcard.js");
 ML.importMod("history.js");
 ML.importMod("styles.js");
 ML.importMod("notification.js");
@@ -331,8 +332,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         vCardDataAccessor.prototype._handleVCard.call(this, pkt, value);
 
-        var nickname = account.getVCard() &&
-            account.getVCard().getNode().getElementsByTagName("NICKNAME")[0];
+        var nickname = account.getVCard() && account.getVCard().NICKNAME;
         nickname = (nickname && nickname.textContent) || account.myJID.node;
 
         if (nickname != this.myResource.nickname) {

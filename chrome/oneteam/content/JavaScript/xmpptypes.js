@@ -251,7 +251,7 @@ _DECL_(XMPPDataAccessorBase).prototype =
 
         for (var i = 0 ; i < stateObj.callbacks.length; i++)
             try {
-                stateObj.callbacks[i](stateObj.value);
+                stateObj.callbacks[i](pkt, stateObj.value);
             } catch (ex) { report("developer", "error", ex, stateObj.callbacks[i]) }
 
         stateObj.callbacks = [];
@@ -283,7 +283,8 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
     getVCard: function(forceUpdate, callback)
     {
         return this._fetchXMPPData("_vCardAccessorState", this._generateVCardPkt,
-                                   null, this._handleVCard, forceUpdate, callback);
+                                   this._createVCardObj, this._handleVCard,
+                                   forceUpdate, callback);
     },
 
     _retrieveAvatar: function(avatarHash) {
@@ -379,5 +380,10 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
         iq.appendNode("vCard", {xmlns: "vcard-temp"});
 
         return iq;
+    },
+
+    _createVCardObj: function(pkt) {
+        var node = pkt.getNode().getElementsByTagName("vCard")[0]
+        return node ? new VCard(node) : null;
     }
 }

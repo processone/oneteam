@@ -1,0 +1,22 @@
+.name {
+  font-size: 1.8em;
+  font-weight: bold;
+}
+.name + * {
+  margin-top: 1em;
+}
+
+.name + .organisation {
+  margin-top: auto;
+}
+
+tr {
+  margin: 0.6em;
+}
+
+tr td:first-child:not(:last-child) {
+  vertical-align: text-top;
+  text-align: right;
+  font-weight: bold;
+  color: #666;
+}
