@@ -170,8 +170,6 @@ _DECL_(NotificationScheme).prototype =
                     if (+contact.resources[i].presence.priority >= 0)
                         numResources++;
 
-                dump("NRSI: "+numResources+"\n")
-
                 if (numResources == 1) {
                     var provider = this.findProvider("signIn", resource);
                     if (provider) {
@@ -203,7 +201,6 @@ _DECL_(NotificationScheme).prototype =
                     if (+contact.resources[i].presence.priority >= 0)
                         numResources++;
 
-                dump("NRSO: "+numResources+"\n")
                 if (numResources == 0) {
                     var provider = this.findProvider("signOut", resource);
                     if (provider) {
