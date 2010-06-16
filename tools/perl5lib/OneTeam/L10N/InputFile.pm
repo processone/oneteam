@@ -61,12 +61,12 @@ $str_re = qr/
     '
         (?:
             [^'\\] | \\.
-        )+
+        )*
     ' |
     "
         (?:
             [^"\\] | \\.
-        )+
+        )*
     "/x;
 
 $brackets_re = qr/
@@ -90,7 +90,7 @@ $brackets_re = qr/
             (??{$str_re}) |
             (??{$brackets_re})
         )*
-    \}
+    \} |
 /x;
 
 $nextarg_re = qr/
@@ -103,6 +103,7 @@ $nextarg_re = qr/
                 (?:
                     (?> [^,()"'\[\]{}]+ )
                     $brackets_re ?
+                    $str_re ?
                 ) +
             )
         ) \s*
