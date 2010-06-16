@@ -86,7 +86,7 @@
       <row align="center">
         <label value="_('Nickname:')" control="nick"/>
         <textbox id="nick" type="verifiable" regex="."
-                 errortext="_('Nick name can\'t be empty')"/>
+                 errortext="_('Nickname can\'t be empty')"/>
       </row>
 
       <row align="center">

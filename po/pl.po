@@ -324,7 +324,7 @@ msgstr "Przyłącza do pokoju konferencji"
 
 #: ../chrome/oneteam/content/muc.xul:359
 #, fuzzy
-msgid "Nick Name:"
+msgid "Nickname:"
 msgstr "_Nick:"
 
 #: ../chrome/oneteam/content/muc.xul:364
@@ -455,7 +455,7 @@ msgstr "<%s>: użyto nazwy \"%s\" po raz drugi"
 #: ../chrome/oneteam/content/vcard.xul:187
 #: ../chrome/oneteam/content/vcardEdit.xul:294
 #, fuzzy
-msgid "Nick Name"
+msgid "Nickname"
 msgstr "_Nick:"
 
 #: ../chrome/oneteam/content/vcard.xul:191
@@ -782,7 +782,7 @@ msgstr ""
 #: ../chrome/oneteam/content/bookmarkRoom.xul:89
 #: ../chrome/oneteam/content/manageBookmarks.xul:209
 #, fuzzy
-msgid "Nick name can't be empty"
+msgid "Nickname can't be empty"
 msgstr "Nazwa sesji nie może być pusta"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:103

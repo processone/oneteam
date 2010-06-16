@@ -107,7 +107,7 @@
       <row align="center">
         <label value="Nickname:" control="nick"/>
         <textbox type="verifiable" id="nick" regex="."
-                 errortext="Nick name can't be empty"/>
+                 errortext="Nickname can't be empty"/>
       </row>
 
       <row align="center">

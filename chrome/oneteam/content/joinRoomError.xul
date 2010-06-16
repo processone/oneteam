@@ -80,7 +80,7 @@
     <hbox class="entry" style="margin-top: 1em">
       <label value="New Nick:"/>
       <textbox type="verifiable" id="nick" regex="^[^/]+$"
-               errortext="Nick name can't be empty and can't contain '/' character"/>
+               errortext="Nickname can't be empty and can't contain '/' character"/>
     </hbox>
 
     <hbox class="entry" style="margin-top: 1em">

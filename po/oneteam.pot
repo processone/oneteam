@@ -270,7 +270,7 @@ msgid "Chat Room:"
 msgstr ""
 
 #: ../chrome/oneteam/content/muc.xul:359
-msgid "Nick Name:"
+msgid "Nickname:"
 msgstr ""
 
 #: ../chrome/oneteam/content/muc.xul:364
@@ -371,7 +371,7 @@ msgid "Second Name"
 msgstr ""
 
 #: ../chrome/oneteam/content/vcardEdit.xul:294
-msgid "Nick Name"
+msgid "Nickname"
 msgstr ""
 
 #: ../chrome/oneteam/content/vcardEdit.xul:298
@@ -620,7 +620,7 @@ msgstr ""
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:89
 #: ../chrome/oneteam/content/manageBookmarks.xul:207
-msgid "Nick name can't be empty"
+msgid "Nickname can't be empty"
 msgstr ""
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:103

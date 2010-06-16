@@ -204,7 +204,7 @@
 
           <row>
             <label value="_('Nickname:')" control="nick"/>
-            <textbox id="nick" type="verifiable" regex="." errortext="_('Nick name can\'t be empty')"/>
+            <textbox id="nick" type="verifiable" regex="." errortext="_('Nickname can\'t be empty')"/>
           </row>
 
           <spacer/>

@@ -315,7 +315,7 @@ msgid "Chat Room:"
 msgstr "Chat Ruum:"
 
 #: ../chrome/oneteam/content/muc.xul:363
-msgid "Nick Name:"
+msgid "Nickname:"
 msgstr "Neeck Namea:"
 
 #: ../chrome/oneteam/content/muc.xul:368
@@ -428,7 +428,7 @@ msgstr "Secund Namea"
 
 #: ../chrome/oneteam/content/vcard.xul:176
 #: ../chrome/oneteam/content/vcardEdit.xul:283
-msgid "Nick Name"
+msgid "Nickname"
 msgstr "Neeck Namea"
 
 #: ../chrome/oneteam/content/vcard.xul:180
@@ -708,7 +708,7 @@ msgstr "Ruum namea cun't bea impty und cun\\'t cuntaeen uny off [\"&\\'/:<>@] or
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:79
 #: ../chrome/oneteam/content/manageBookmarks.xul:194
-msgid "Nick name can't be empty"
+msgid "Nickname can't be empty"
 msgstr "Neeck namea cun't bea impty"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:93

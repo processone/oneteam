@@ -272,7 +272,7 @@ msgid "Chat Room:"
 msgstr "Salon de discussion :"
 
 #: ../chrome/oneteam/content/muc.xul:359
-msgid "Nick Name:"
+msgid "Nickname:"
 msgstr "Surnom :"
 
 #: ../chrome/oneteam/content/muc.xul:364
@@ -373,7 +373,7 @@ msgid "Second Name"
 msgstr "Nom secondaire"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:294
-msgid "Nick Name"
+msgid "Nickname"
 msgstr "Surnom"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:298
@@ -622,7 +622,7 @@ msgstr "Le nom du salon ne peut être vide et ne peut contenir aucune des caract
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:89
 #: ../chrome/oneteam/content/manageBookmarks.xul:207
-msgid "Nick name can't be empty"
+msgid "Nickname can't be empty"
 msgstr "Le surnom ne peut être vide"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:103

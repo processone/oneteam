@@ -291,7 +291,7 @@
                 <row>
                   <label value="_('Second Name')" control="secondName"/>
                   <textbox id="secondName"/>
-                  <label value="_('Nick Name')" control="nickName"/>
+                  <label value="_('Nickname')" control="nickName"/>
                   <textbox id="nickName"/>
                 </row>
                 <row>
