@@ -189,8 +189,8 @@ msgid "XML Console"
 msgstr "XML Cunsulea"
 
 #: ../chrome/oneteam/content/console.xul:17
-msgid "Input - Output Jabber"
-msgstr "Eenpoot - Oootpoot Jabber"
+msgid "Input - Output XMPP"
+msgstr "Eenpoot - Oootpoot XMPP"
 
 #: ../chrome/oneteam/content/console.xul:23
 msgid "Clear"
@@ -230,8 +230,8 @@ msgid "Network:"
 msgstr "Netvurk:"
 
 #: ../chrome/oneteam/content/addContact.xul:157
-msgid "Jabber"
-msgstr "Jabber"
+msgid "XMPP"
+msgstr "XMPP"
 
 #: ../chrome/oneteam/content/addContact.xul:179
 msgid "Jabber ID:"

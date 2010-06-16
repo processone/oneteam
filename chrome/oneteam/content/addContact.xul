@@ -161,7 +161,7 @@
       <label value="_('Network:')"/>
       <menulist id="protocol" oncommand="changeProto(this.selectedItem.model)">
         <menupopup>
-          <menuitem label="_('Jabber')"/>
+          <menuitem label="_('XMPP')"/>
         </menupopup>
       </menulist>
     </hbox>

@@ -165,7 +165,7 @@ msgid "XML Console"
 msgstr ""
 
 #: ../chrome/oneteam/content/console.xul:28
-msgid "Input - Output Jabber"
+msgid "Input - Output XMPP"
 msgstr ""
 
 #: ../chrome/oneteam/content/console.xul:34
@@ -205,7 +205,7 @@ msgid "Network:"
 msgstr ""
 
 #: ../chrome/oneteam/content/addContact.xul:164
-msgid "Jabber"
+msgid "XMPP"
 msgstr ""
 
 #: ../chrome/oneteam/content/addContact.xul:187

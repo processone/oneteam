@@ -25,7 +25,7 @@
 
   <vbox flex="1">
     <hbox pack="center">
-        <label value="_('Input - Output Jabber')" style="font-weight: bold;"/>
+        <label value="_('Input - Output XMPP')" style="font-weight: bold;"/>
     </hbox>
     <html:iframe id="textconsole" flex="1"/>
     <spacer height="10"/>
