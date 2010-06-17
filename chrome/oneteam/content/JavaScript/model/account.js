@@ -1136,7 +1136,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (initialRoster)
             for (var c in this.contactsIterator())
-                contactsToRemove[c.jid.normalizedJID] = 1;
+                contactsToRemove[c.jid.normalizedJID] = c;
 
         var items = query.getElementsByTagNameNS("jabber:iq:roster", "item");
         for (i = 0; i < items.length; i++) {
@@ -1157,8 +1157,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 new Contact(items[i]);
         }
 
-        for (var j in contactsToRemove) {
-            var c = this.allContacts[j];
+        for each (var c in contactsToRemove) {
             c._updateFromData([null, c.name, "remove", false, [], {}]);
         }
 
