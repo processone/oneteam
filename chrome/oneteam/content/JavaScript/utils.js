@@ -787,7 +787,9 @@ function generateRandomName(length)
 
 function generateUniqueId()
 {
-    return "uid"+(arguments.callee.value = arguments.callee.value+1 || 0);
+    var f = arguments.callee;
+
+    return "uid"+(f.value = "value" in f ? f.value+1 : 0);
 }
 
 function perlSplit(str, split, limit) {
