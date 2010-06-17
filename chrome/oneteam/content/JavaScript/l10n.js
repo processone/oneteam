@@ -105,7 +105,7 @@ var l10nFormatService = {
 
 //#ifdef XULAPP
 function _ (id) {
-    if (id.search(/^p([A-Z][a-zA-Z]*)?\d*$/) != 0) {
+    if (id != "plural.forms" && id.search(/^p([A-Z][a-zA-Z]*)?\d*$/) != 0) {
         id = id.replace(/^\$\$\w+\$\$:\s*/, "");
 
         if (arguments.length == 1)

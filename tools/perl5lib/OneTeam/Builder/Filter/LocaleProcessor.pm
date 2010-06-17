@@ -242,7 +242,7 @@ sub get_locale_files_content {
         }
     }
 
-    my $plurals = "plural.forms = \"".($po_file ? $po_file->plural_forms : "n==1?0:1")."\"\n";
+    my $plurals = "plural.forms = ".($po_file ? $po_file->plural_forms : "n==1?0:1")."\n";
     return (join("\n", $plurals, sort(@props)), join("\n", sort(@dtd)));
 }
 
