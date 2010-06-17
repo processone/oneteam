@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
 "POT-Creation-Date: 2010-06-16 15:02+0200\n"
-"PO-Revision-Date: 2010-06-17 16:56+0100\n"
+"PO-Revision-Date: 2010-06-17 17:10+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
 "MIME-Version: 1.0\n"
@@ -152,11 +152,11 @@ msgstr "Message de statut"
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:324
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:378
 msgid "Send Message..."
-msgstr "Envoyer message..."
+msgstr "Envoyer un message..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:241
 msgid "Remove Contact..."
-msgstr "Effacer contact..."
+msgstr "Supprimer ce contact..."
 
 #: ../chrome/oneteam/content/muc.xul:448
 msgid "Information..."
@@ -492,7 +492,7 @@ msgstr "_Actions"
 
 #: ../chrome/oneteam/content/main.xul:484
 msgid "_Add Contact..."
-msgstr "_Ajouter Contact..."
+msgstr "_Ajouter un contact..."
 
 #: ../chrome/oneteam/content/main.xul:488
 msgid "Join Chat Room..."
@@ -583,7 +583,7 @@ msgstr "Éxecuter la commande..."
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:371
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:392
 msgid "Show History..."
-msgstr "Voire l'historique..."
+msgstr "Voir l'historique..."
 
 #: ../chrome/oneteam/content/addContact.xul:142
 msgid "Gateway can't convert ID into Jabber ID"
@@ -906,9 +906,8 @@ msgid "Transfering..."
 msgstr "Transfert..."
 
 #: ../chrome/oneteam/content/JavaScript/views/gateway.js:34
-#, fuzzy
 msgid "Register in '{0} ({1})'"
-msgstr "Enregistrer en '{0} ({1})'"
+msgstr "S'enregistrer sur '{0} ({1})'"
 
 #: ../chrome/oneteam/content/JavaScript/views/gateway.js:141
 msgid "Click to disconnect from {0} ({1})"
