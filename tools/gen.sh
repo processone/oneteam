@@ -53,7 +53,7 @@ function build () {
             ($patch = $_) =~ s/(-mac)?\.mar$/-$maxversion$1-partial.mar/;
             ($patchfile = $patch) =~ s!.*/!!;
 
-            system("tools/make-partial-mar.pl", $files[-1], $_, $patch, "mars-info.txt",
+            system("tools/make-partial-mar.pl", $files[/-mac/ ? -2 : -1], $_, $patch, "mars-info.txt",
                    $version, "https://download.process-one.net/oneteam/$ARGV[0]/$patchfile", /-mac/ ? 1 : 0);
         }
     ' $2
