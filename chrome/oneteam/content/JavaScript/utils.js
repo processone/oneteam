@@ -713,7 +713,7 @@ function bsearchEx(container, start, end, value, comparatorFun, toLower) {
             a = mid+1;
     }
     if (toLower)
-        if (a >= end || comparatorFun(value, container, a) != 0)
+        if (a > end || comparatorFun(value, container, a) != 0)
             return a-1;
     return a;
 }
