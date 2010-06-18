@@ -53,7 +53,7 @@ has 'strings' => (
 
         my %strings;
 
-        open(my $fh, "<", $self->path) or return { };
+        open(my $fh, "<:encoding(utf8)", $self->path) or return { };
 
         my (@comments, %flags, @locations, $msgid, $msgstr, $phase, $plural_forms);
 

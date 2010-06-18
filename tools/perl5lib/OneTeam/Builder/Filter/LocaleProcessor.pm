@@ -201,7 +201,7 @@ sub get_string_ref {
         $self->{string_refs}->{$s} = 1;
         $self->{strings}->{$hash} = [$inp_str, $s, 0];
     }
-    my $has_accesskey = $inp_str->accesskey_pos > 0 && $str =~ /_\w/;
+    my $has_accesskey = $inp_str->accesskey_pos > 0 && $str =~ /_\p{IsAlnum}/;
 
     $str = $self->{strings}->{$hash};
     $str->[2] |= ($inp_str->js_code ? 1 : 2) | ($has_accesskey ? 4 : 0);
@@ -235,7 +235,7 @@ sub get_locale_files_content {
             my $accesskey;
             my $str = $_->[0]->_resolve($po_file, 1);
             if ($_->[2] & 4) {
-                $str =~ s/_(\w)/$1/;
+                $str =~ s/_(\p{IsAlnum})/$1/;
                 push @dtd, "<!ENTITY e$_->[1].key \"$1\">";
             }
             push @dtd, "<!ENTITY e$_->[1] \"".escape_dtd($str)."\">";
