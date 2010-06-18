@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
 "POT-Creation-Date: 2010-06-16 15:02+0200\n"
-"PO-Revision-Date: 2010-06-17 17:10+0100\n"
+"PO-Revision-Date: 2010-06-18 10:35+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
 "MIME-Version: 1.0\n"
@@ -115,7 +115,7 @@ msgstr "Mot de passe"
 
 #: ../chrome/oneteam/content/main.xul:583
 msgid "Sign In"
-msgstr "S'indentifier"
+msgstr "S'identifier"
 
 #: ../chrome/oneteam/content/main.xul:486
 msgid "_Join Chat Room"
@@ -242,7 +242,7 @@ msgstr "Marquer"
 #: ../chrome/oneteam/content/bookmarkRoom.xul:105
 #: ../chrome/oneteam/content/manageBookmarks.xul:184
 msgid "Bookmark with that name already exists"
-msgstr "Un marque-age portant ce nom existe déjà"
+msgstr "Un marque-page portant ce nom existe déjà"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:75
 #: ../chrome/oneteam/content/manageBookmarks.xul:190
@@ -327,7 +327,7 @@ msgstr "Le surnom ne peut être vide"
 #: ../chrome/oneteam/content/vcardEdit.xul:258
 #: ../chrome/oneteam/content/vcardEdit.xul:9
 msgid "My vCard"
-msgstr "Ma vCard"
+msgstr "Ma carte de visite"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:13
 msgid "Ok"
@@ -679,22 +679,20 @@ msgid "New Room"
 msgstr "Nouveau salon"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:118
-#, fuzzy
 msgid ""
 "Entered informations are invalid.\\n"
 "Do you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
 msgstr ""
 "Les informations entrées sont invalides.\\n"
-"Do you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
+"Souhaitez-vous oublier les informations entrées et restaurer les valeurs précédentes (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:119
-#, fuzzy
 msgid ""
 "Entered informations are invalid.\\n"
 "Do you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
 msgstr ""
 "Les informations entrées sont invalides.\\n"
-"Do you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
+"Souhaitez-vous oublier ce marque-page (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:165
 msgid "New"
@@ -703,7 +701,7 @@ msgstr "Nouveau"
 #: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:126
 #: ../chrome/oneteam/content/manageBookmarks.xul:166
 msgid "Remove"
-msgstr "Enlever"
+msgstr "Supprimer"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:221
 msgid "Always join this room at startup"
@@ -1013,7 +1011,7 @@ msgstr "Éditer le contact..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:247
 msgid "Authorization"
-msgstr "Authorisation"
+msgstr "Autorisation"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:249
 msgid "Ask To See Him"
@@ -1454,7 +1452,7 @@ msgstr "N'a pas été vérifié par une autorité reconnue"
 
 #: ../chrome/oneteam/content/JavaScript/xmppsocket.js:351
 msgid "Belongs to different domain"
-msgstr "Apprtient à un domaine différent"
+msgstr "Appartient à un domaine différent"
 
 #: ../chrome/oneteam/content/JavaScript/xmppsocket.js:355
 msgid "Has been expired"
@@ -1478,7 +1476,7 @@ msgstr "Toujours passer ce dialogue"
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:182
 msgid "{0}/sec"
-msgstr "{0}/sec"
+msgstr "{0}/s"
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:183
 msgid "Unknown time remaining"
@@ -1979,7 +1977,7 @@ msgstr "{5} {4}<br/>{2} {1} {3}<br/>{0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:141
 msgid "voice"
-msgstr "Voix"
+msgstr "voix"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:141
 msgid "fax"
