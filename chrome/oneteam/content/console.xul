@@ -42,29 +42,29 @@
     <textbox id="texttemplates" multiline="true"
              style="color: #FF6600; padding: 0 10px;" flex="1"/>
 
-    <checkbox id="intoinput" label="Inject into input stream"/>
+    <checkbox id="intoinput" label="_('Inject into input stream')"/>
 
     <hbox pack="center">
-      <menulist label="IQ  ">
+      <menulist label="_('IQ')">
         <menupopup flex="1">
-          <menuitem label="IQ" oncommand="writeXMLIQ();"/>
-          <menuitem label="Time IQ" oncommand="writeXMLIQTime();"/>
-          <menuitem label="Version IQ" oncommand="writeXMLIQVersion();"/>
-          <menuitem label="Last IQ" oncommand="writeXMLIQLast();"/>
+          <menuitem label="_('IQ')" oncommand="writeXMLIQ();"/>
+          <menuitem label="_('Time IQ')" oncommand="writeXMLIQTime();"/>
+          <menuitem label="_('Version IQ')" oncommand="writeXMLIQVersion();"/>
+          <menuitem label="_('Last IQ')" oncommand="writeXMLIQLast();"/>
         </menupopup>
       </menulist>
-      <menulist label="Presence  ">
+      <menulist label="_('Presence')">
         <menupopup flex="1">
-          <menuitem label="Presence" oncommand="writeXMLPresence();"/>
-          <menuitem label="Available" oncommand="writeXMLPresenceA();"/>
-          <menuitem label="Unavailable" oncommand="writeXMLPresenceU();"/>
+          <menuitem label="_('Presence')" oncommand="writeXMLPresence();"/>
+          <menuitem label="_('Available')" oncommand="writeXMLPresenceA();"/>
+          <menuitem label="_('Unavailable')" oncommand="writeXMLPresenceU();"/>
         </menupopup>
       </menulist>
-      <menulist label="Message  ">
+      <menulist label="_('Message')">
         <menupopup flex="1">
-          <menuitem label="Message" oncommand="writeXMLMessage();"/>
-          <menuitem label="Chat" oncommand="writeXMLMessageChat();"/>
-          <menuitem label="Headline" oncommand="writeXMLMessageHeadline();"/>
+          <menuitem label="_('Message')" oncommand="writeXMLMessage();"/>
+          <menuitem label="_('Chat')" oncommand="writeXMLMessageChat();"/>
+          <menuitem label="_('Headline')" oncommand="writeXMLMessageHeadline();"/>
         </menupopup>
       </menulist>
       <button label="_('Send')" oncommand="sendToServer();"/>
