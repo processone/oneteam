@@ -309,7 +309,12 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
 
         if (!avatar && (avatarHash || avatarHash == null)) {
             this.avatarHash = avatarHash;
-            this.getVCard(true, function(){});
+
+            var _this = this;
+            OnModelStateCall(account, "connectionInitialized", IsTrue, function() {
+                _this.getVCard(true, function(){});
+            });
+
             return false;
         }
 
