@@ -85,6 +85,10 @@ function Account()
             }
     }
 
+    var [user, host] = this.getConnectionCreds();
+    if (user && host)
+        this.myJID = new JID(user, host);
+
     setTimeout(function(t){t._restoreContactsFromCache()}, 0, this);
 }
 
@@ -852,14 +856,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     },
 
     _restoreContactsFromCache: function() {
-        var [user, host] = this.getConnectionCreds();
-        var myJID = new JID(user, host);
-
         var contactsToRemove = {};
         for (var c in this.contactsIterator())
             contactsToRemove[c.jid.normalizedJID] = 1;
 
-        var contacts = this.cache.getValue("roster-"+myJID.shortJID) || [];
+        var contacts = this.cache.getValue("roster-"+this.myJID.normalizedJID.shortJID) || [];
         for (var i = 0; i < contacts.length; i++) {
             var c = contacts[i];
             var jid = new JID(c.jid);

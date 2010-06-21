@@ -17,7 +17,7 @@
           xbl:inherits="value=label,disabled" flex="1" crop="end"/>
       </xul:hbox>
       <xul:vbox flex="1" anonid="container" context="" class="settingsContainer"
-        xbl:inherits="align">
+        xbl:inherits="align" hidden="true">
         <children/>
       </xul:vbox>
     </content>

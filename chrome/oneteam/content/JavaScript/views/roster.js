@@ -80,7 +80,10 @@ function GroupView(model, parentView)
     this.contacts = [];
 
     this.node = this.doc.createElementNS(XULNS, "expander");
-    this.node.setAttribute("open", "true");
+    this.node.setAttribute("open", this.model.name ?
+                                account.cache.getValue("groupExpand-"+this.model.name) != "false" :
+                                true);
+    this.node.setAttribute("onexpand", "this.view.onExpand(val)")
 
     this.node.setAttribute("context", "group-contextmenu");
     this.node.setAttribute("class", "group-view");
@@ -136,6 +139,12 @@ _DECL_(GroupView, null, ContainerView).prototype =
                                this.model.availContacts == 0);
 
         this.node.setAttribute("label", name);
+    },
+
+    onExpand: function(value)
+    {
+        if (this.model.name)
+            account.cache.setValue("groupExpand-"+this.model.name, !!value);
     },
 
     onModelUpdated: function(model, type, data)
