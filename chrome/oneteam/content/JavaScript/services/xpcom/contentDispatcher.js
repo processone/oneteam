@@ -57,10 +57,10 @@ OneTeamContentDispatcher.prototype = {
         if (!this._hasCleanupAttached) {
             var win = arguments.callee.caller;
 
-            while (win && !(win.__proto__.__parent__ instanceof Components.interfaces.nsIDOMWindow))
+            while (win && !(getGlobalObjectFor(win.__proto__) instanceof Components.interfaces.nsIDOMWindow))
                 win = win.caller;
 
-            win = win && win.__proto__.__parent__;
+            win = win && getGlobalObjectFor(win.__proto__);
 
             if (win) {
                 win.addEventListener("unload", {

@@ -36,11 +36,12 @@
             break;
           }
 
+      var p;
       while (el && !el.menuModel)
         if (el.parentNode)
           el = el.parentNode;
         else
-          el = el.__parent__ && el.__parent__.frameElement;
+          el = el.defaultView && el.defaultView.frameElement;
 
       if (!el)
         return false;
