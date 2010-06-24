@@ -941,7 +941,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     },
 
     reconnect: function() {
-        if (this.reconnectStep >= 5)
+        if (this.reconnectStep >= 5 || this._reconnectTimeout)
             return;
 
         this.reconnectStep++;
