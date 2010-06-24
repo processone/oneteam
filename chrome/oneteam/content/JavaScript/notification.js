@@ -254,7 +254,7 @@ _DECL_(NotificationScheme).prototype =
         else
             return provider.show(_("{0} doesn't authorized you to see his/her status", contact.visibleName),
                                  _xml("<b>{0}</b> doesn't authorized you to see his/her status", contact.visibleName),
-                                 _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
+                                 _xml("{0}<br/>{1}", contact.visibleName, contact.jid.toUserString()),
                                  contact.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
                                  null, callback);
     },
