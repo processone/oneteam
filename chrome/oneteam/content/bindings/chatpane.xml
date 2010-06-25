@@ -1787,7 +1787,7 @@
           this._blinkAnimation = Animator.animateStyle({
             element: this,
             style: "outlineColor",
-            stopValue: "",
+            stopValue: "transparent",
           }, "parent.transparent", "borderTopColor", "parent.transparent");
         ]]></body>
       </method>
