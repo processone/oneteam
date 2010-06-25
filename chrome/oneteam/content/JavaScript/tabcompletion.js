@@ -162,12 +162,13 @@ _DECL_(CommandCompletionEngine).prototype =
         if (!this.doCommand)
             return false;
 
-        if (str.indexOf(this.command+" ") != 0)
+        if (str == this.command ? this.argsCompletionEngList.length > 0 :
+                                  str.indexOf(this.command+" ") != 0)
             return false;
 
         str = str.substr(this.command.length+1);
-        var args = [];
 
+        var args = [];
         for (var i = 0; i < this.argsCompletionEngList.length; i++) {
             var res = this.argsCompletionEngList[i].extractData(str);
             args.push(res[0]);
