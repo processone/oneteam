@@ -6,7 +6,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:vcardEdit" title="_('My vCard')"
+<dialog id="oneteam" windowtype="ot:vcardEdit" title="_('My vCard')"
   width="800" height="640"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -255,7 +255,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('My vCard')"/>
+  <dialog id="oneteam"header title="_('My vCard')"/>
 
   <spacer style="height: 0.6em"/>
 

@@ -9,7 +9,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<wizard windowtype="ot:adhoc" title="_('Ad-Hoc Commands')"
+<wizard id="oneteam" windowtype="ot:adhoc" title="_('Ad-Hoc Commands')"
     onwizardfinish="return true" onwizardcancel="return onWizardCancel()"
     onwizardnext="return onWizardNext()" onwizardback="return onWizardBack()"
     persist="width height" width="600" height="500"
@@ -210,7 +210,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <wizardpage onpageshow="sessionid=null" pageid="first">
+  <wizard id="oneteam"page onpageshow="sessionid=null" pageid="first">
     <deck id="main-deck">
       <vbox>
         <label value="_('Requesting remote commands descriptions')"/>
@@ -227,7 +227,7 @@
     </deck>
   </wizardpage>
 
-  <wizardpage pageid="page1">
+  <wizard id="oneteam"page pageid="page1">
     <deck>
       <vbox>
         <label value="_('Requesting command form')"/>

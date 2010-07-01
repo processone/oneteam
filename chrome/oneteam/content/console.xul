@@ -6,7 +6,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<window title="_('XML Console')" width="640" height="550"
+<window id="oneteam" title="_('XML Console')" width="640" height="550"
     onload="onLoad()" onunload="onClose()" windowtype="ot:console"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

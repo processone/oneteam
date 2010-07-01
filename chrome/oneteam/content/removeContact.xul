@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:removeContact" title="_('Remove Contact')"
+<dialog id="oneteam" windowtype="ot:removeContact" title="_('Remove Contact')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="400" height="200"
   buttonlabelaccept="Remove" buttonlabelcancel="_('Cancel')"

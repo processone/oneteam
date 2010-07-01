@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:bookmarkRoom" title="_('Bookmark Room')"
+<dialog id="oneteam" windowtype="ot:bookmarkRoom" title="_('Bookmark Room')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="300" height="400"
@@ -63,7 +63,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Bookmark Room')"/>
+  <dialog id="oneteam"header title="_('Bookmark Room')"/>
 
   <grid>
     <columns>

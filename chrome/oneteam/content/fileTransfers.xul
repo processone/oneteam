@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<window windowtype="ot:fileTransfers" title="_('File Transfers')"
+<window id="oneteam" windowtype="ot:fileTransfers" title="_('File Transfers')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="700" height="400"
   onload="onLoad()" onunload="onUnload()">

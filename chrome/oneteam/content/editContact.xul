@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:editContact" title="_('Edit Contact')"
+<dialog id="oneteam" windowtype="ot:editContact" title="_('Edit Contact')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="350" height="400"
@@ -39,7 +39,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Edit Contact')"/>
+  <dialog id="oneteam"header title="_('Edit Contact')"/>
 
   <spacer/>
 

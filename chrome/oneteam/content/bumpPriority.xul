@@ -6,7 +6,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:bumpPriority" title="_('Another client active')"
+<dialog id="oneteam" windowtype="ot:bumpPriority" title="_('Another client active')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="200" onload="onLoad();"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"

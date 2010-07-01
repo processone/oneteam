@@ -5,7 +5,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:subscribe" title="_('Subscription Request')"
+<dialog id="oneteam" windowtype="ot:subscribe" title="_('Subscription Request')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="600" height="250"
@@ -50,7 +50,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="Subscription Request"/>
+  <dialog id="oneteam"header title="Subscription Request"/>
 
   <vbox flex="1">
     <description id="contactInfo">_('You got subscription request from:')

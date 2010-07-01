@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:fileTransferRequest" title="_('File Transfer Request')"
+<dialog id="oneteam" windowtype="ot:fileTransferRequest" title="_('File Transfer Request')"
   width="600" height="300"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -69,7 +69,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('File Transfer Request')"/>
+  <dialog id="oneteam"header title="_('File Transfer Request')"/>
 
   <description><span id="msg" xmlns="http://www.w3.org/1999/xhtml"/></description>
   <spacer/>

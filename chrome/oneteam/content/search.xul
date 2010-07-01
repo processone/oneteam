@@ -9,7 +9,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<wizard windowtype="ot:search" title="_('Search')"
+<wizard id="oneteam" windowtype="ot:search" title="_('Search')"
     onwizardfinish="return true"
     onwizardnext="return onWizardNext()"
     persist="width height" width="600" height="500"
@@ -188,7 +188,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <wizardpage pageid="form">
+  <wizard id="oneteam"page pageid="form">
     <deck id="formDeck" flex="1">
       <vbox>
         <label value="_('Requesting search form')"/>
@@ -201,7 +201,7 @@
     </deck>
   </wizardpage>
 
-  <wizardpage pageid="results" onpageshow="this.firstChild.selectedIndex = 0">
+  <wizard id="oneteam"page pageid="results" onpageshow="this.firstChild.selectedIndex = 0">
     <deck id="resultsDeck" flex="1">
       <vbox>
         <label value="_('Requesting search results')"/>

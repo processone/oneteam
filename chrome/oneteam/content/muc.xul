@@ -4,7 +4,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/main/main.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
-<window title="OneTeam MUC"
+<window id="oneteam" title="OneTeam MUC"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
     persist="width height" width="170" height="450"
     xmlns:html="http://www.w3.org/1999/xhtml"

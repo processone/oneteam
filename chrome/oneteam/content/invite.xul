@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog windowtype="ot:invite" title="_('Invite Users')"
+<dialog id="oneteam" windowtype="ot:invite" title="_('Invite Users')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="400" height="450"
@@ -49,7 +49,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader id="header" title="_('Invite Users')"/>
+  <dialog id="oneteam"header id="header" title="_('Invite Users')"/>
 
   <label value="_('Users:')" control="contacts"/>
   <contactselector id="contacts" rows="6"/>

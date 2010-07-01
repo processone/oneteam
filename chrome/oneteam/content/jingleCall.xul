@@ -8,7 +8,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<window windowtype="ot:jingleCall" title="_('Jingle Call')"
+<window id="oneteam" windowtype="ot:jingleCall" title="_('Jingle Call')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="400" height="300" onload="onLoad()" onunload="onUnload()">
