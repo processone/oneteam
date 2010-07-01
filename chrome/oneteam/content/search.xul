@@ -9,7 +9,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<wizard id="search" windowtype="ot:search" title="_('Search')"
+<wizard windowtype="ot:search" title="_('Search')"
     onwizardfinish="return true"
     onwizardnext="return onWizardNext()"
     persist="width height" width="600" height="500"

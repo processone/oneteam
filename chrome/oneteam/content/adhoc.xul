@@ -9,7 +9,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<wizard id="adhoc" windowtype="ot:adhoc" title="_('Ad-Hoc Commands')"
+<wizard windowtype="ot:adhoc" title="_('Ad-Hoc Commands')"
     onwizardfinish="return true" onwizardcancel="return onWizardCancel()"
     onwizardnext="return onWizardNext()" onwizardback="return onWizardBack()"
     persist="width height" width="600" height="500"

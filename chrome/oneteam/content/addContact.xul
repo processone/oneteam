@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="addContact" windowtype="ot:addContact" title="_('Add Contact')"
+<dialog windowtype="ot:addContact" title="_('Add Contact')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   onload="onLoad()" onunload="onUnload()"

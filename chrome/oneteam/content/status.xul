@@ -5,7 +5,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="status" windowtype="ot:status" title="_('Status Message')" orient="vertical"
+<dialog windowtype="ot:status" title="_('Status Message')" orient="vertical"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="400" height="300"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"

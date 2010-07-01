@@ -8,7 +8,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="registerService" windowtype="ot:registerService" title="Service Registration"
+<dialog windowtype="ot:registerService" title="Service Registration"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
   buttonlabelaccept="_('Register')" buttonlabelcancel="_('Cancel')"

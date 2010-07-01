@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="renameGroup" windowtype="ot:renameGroup" title="Change Group Name"
+<dialog windowtype="ot:renameGroup" title="Change Group Name"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="150"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"

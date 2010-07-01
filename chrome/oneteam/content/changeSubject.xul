@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="changeSubject" windowtype="ot:changeSubject" title="_('Change Conference Subject')"
+<dialog windowtype="ot:changeSubject" title="_('Change Conference Subject')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="200"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"

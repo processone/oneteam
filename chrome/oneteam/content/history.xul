@@ -6,7 +6,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<window id="ot:history" title="_('History Manager')" width="640" height="550"
+<window title="_('History Manager')" width="640" height="550"
     onload="onLoad()" onunload="onUnload()" persist="width height" windowtype="ot:history"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 

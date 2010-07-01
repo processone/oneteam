@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="invitation" windowtype="ot:invitation" title="Invitation to a conference"
+<dialog windowtype="ot:invitation" title="Invitation to a conference"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="600" height="200"

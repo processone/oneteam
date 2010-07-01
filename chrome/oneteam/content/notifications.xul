@@ -4,7 +4,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/notifications/notifications.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
-<window id="ot:popupnotification" windowtype="ot:notification" onload="onLoad()"
+<window windowtype="ot:notification" onload="onLoad()"
   onunload="service._updatePositions(window, true)"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">

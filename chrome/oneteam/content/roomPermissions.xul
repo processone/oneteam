@@ -8,7 +8,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="roomPermissions" windowtype="ot:roomPermissions" title="Edit Permissions"
+<dialog windowtype="ot:roomPermissions" title="Edit Permissions"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
