@@ -192,6 +192,8 @@
         this.rosterView.hideOffline = document.getElementById("cmd_toggleShowOffline").
           getAttribute("checked") == "true";
 
+        this.updatePresenceIcon();
+
         this.onConnecting();
 
         if (account.connected) {
