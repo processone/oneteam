@@ -7,3 +7,14 @@ Released under:
 See files under the root directory:
 MPL1.1
 GPLv2
+
+Libraries:
+* JSJaC: MPL 1.1 + GPL 2 + LGPL 2.1
+* libnice: MPL 1.1 + LGPL 2.1
+* SRTP: BSD-style
+* speex: revised-BSD
+* ilbc: non-commercial
+
+Artwork:
+* FamFamFam Silk Icons: Creative Commons Attribution License 2.5 or 3.0
+* WooFunction Web Icon Set: GNU GPL
