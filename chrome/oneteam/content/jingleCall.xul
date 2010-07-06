@@ -20,6 +20,7 @@
     var resource = window.arguments[0];
     var session = window.arguments[1];
     var acceptButton, rejectButton, endButton, stateLabel;
+    var stateDeck, buttonsDeck, contactInfo, timerLabel
     var token;
 
     function onLoad() {
