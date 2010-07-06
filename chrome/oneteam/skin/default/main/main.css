@@ -45,8 +45,9 @@ tabpanels {
 
 /* Login box */
 #login-info-box {
-  background: #E0DC76;
-  border: 1px solid black;
+  background: #c7c7c7;
+  border: 1px solid c7c7c7;
+  -moz-border-radius: 3px;
   margin: 0.2em;
   padding: 0.5em;
 }
