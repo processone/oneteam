@@ -13,7 +13,7 @@ my $config_stamp;
 my $moz_version;
 my @skip_dirs;
 
-Getopt::Long::Configure(qw(pass_through));
+Getopt::Long::Configure(qw(pass_through require_order));
 GetOptions(
     "root-dir=s" => \$root_dir,
     "tools-dir=s" => \$tools_dir,
