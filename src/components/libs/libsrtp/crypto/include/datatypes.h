@@ -9,7 +9,7 @@
 
 /*
  *	
- * Copyright (c) 2001-2005, Cisco Systems, Inc.
+ * Copyright (c) 2001-2006, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@
 #include <stdarg.h>
 
 #ifndef SRTP_KERNEL
-# include <stdio.h>
+//# include <stdio.h>
 # include <string.h>
 # include <time.h>
 # ifdef HAVE_NETINET_IN_H
@@ -62,6 +62,7 @@
 #  include <winsock2.h>
 # endif
 #endif
+
 
 /* if DATATYPES_USE_MACROS is defined, then little functions are macros */
 #define DATATYPES_USE_MACROS  
@@ -313,7 +314,7 @@ v128_right_shift(v128_t *x, int index);
 
 
 #ifdef DATATYPES_USE_MACROS  /* little functions are really macros */
-
+   
 #define v128_set_to_zero(z)       _v128_set_to_zero(z)
 #define v128_copy(z, x)           _v128_copy(z, x)
 #define v128_xor(z, x, y)         _v128_xor(z, x, y)
@@ -392,7 +393,7 @@ octet_string_set_to_zero(uint8_t *s, int len);
 # define be64_to_cpu(x)	bswap_64((x))
 #else
 
-# ifdef HAVE_X86
+#if defined(__GNUC__) && defined(HAVE_X86)
 /* Fall back. */
 static inline uint32_t be32_to_cpu(uint32_t v) {
    /* optimized for x86. */
@@ -414,7 +415,7 @@ static inline uint64_t be64_to_cpu(uint64_t v) {
    v = make64(htonl(low32(v)),htonl(high32(v)));
 # else
    /* use the native 64-bit math */
-   v= (be32_to_cpu(v >> 32)) | (((uint64_t)be32_to_cpu((uint32_t)v)) << 32);
+   v= (uint64_t)((be32_to_cpu((uint32_t)(v >> 32))) | (((uint64_t)be32_to_cpu((uint32_t)v)) << 32));
 # endif
    return v;
 }

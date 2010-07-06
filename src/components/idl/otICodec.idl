@@ -1,5 +1,4 @@
 #include "nsISupports.idl"
-#include "otIPipeline.idl"
 
 interface otICodecService;
 interface otISource;

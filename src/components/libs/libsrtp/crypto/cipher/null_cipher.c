@@ -10,7 +10,7 @@
 
 /*
  *	
- * Copyright (c) 2001-2005, Cisco Systems, Inc.
+ * Copyright (c) 2001-2006, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -61,7 +61,7 @@ null_cipher_alloc(cipher_t **c, int key_len) {
 	      "allocating cipher with key length %d", key_len);
 
   /* allocate memory a cipher of type null_cipher */
-  pointer = crypto_alloc(sizeof(null_cipher_ctx_t) + sizeof(cipher_t));
+  pointer = (uint8_t*)crypto_alloc(sizeof(null_cipher_ctx_t) + sizeof(cipher_t));
   if (pointer == NULL)
     return err_status_alloc_fail;
 

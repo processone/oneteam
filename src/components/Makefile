@@ -4,7 +4,9 @@ ifeq "$(RECURSIVE_CONFIGURE)$(filter $(conf_mk),$(wildcard  $(conf_mk)*))" "$(co
 -include "$(conf_mk)"
 endif
 
-LIBTOOLIZE_ARGS=--root-dir=. --tools-dir=$(ottdir) --skip-dir=libs/libnice --skip-dir=libs/libspeex --skip-dir=libs/libsrtp
+LIBTOOLIZE_ARGS=--root-dir=. --tools-dir=$(ottdir) \
+	--skip-dir=$(ottdir)/../libs/libspeex --skip-dir=$(ottdir)/../libs/libnice \
+	--skip-dir=$(ottdir)/../libs/libsrtp --skip-dir=$(ottdir)/../libs/extra
 
 .PHONE: all libtoolize
 

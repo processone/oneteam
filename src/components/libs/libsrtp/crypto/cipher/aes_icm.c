@@ -9,7 +9,7 @@
 
 /*
  *	
- * Copyright (c) 2001-2005, Cisco Systems, Inc.
+ * Copyright (c) 2001-2006, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -98,18 +98,20 @@ aes_icm_alloc_ismacryp(cipher_t **c, int key_len, int forIsmacryp) {
   debug_print(mod_aes_icm, 
             "allocating cipher with key length %d", key_len);
 
-  // Ismacryp, for example, uses 16 byte key + 8 byte 
-  // salt  so this function is called with key_len = 24.
-  // The check for key_len = 30 does not apply. Our usage
-  // of aes functions with key_len = values other than 30
-  // has not broken anything. Don't know what would be the
-  // effect of skipping this check for srtp in general.
+  /*
+   * Ismacryp, for example, uses 16 byte key + 8 byte 
+   * salt  so this function is called with key_len = 24.
+   * The check for key_len = 30 does not apply. Our usage
+   * of aes functions with key_len = values other than 30
+   * has not broken anything. Don't know what would be the
+   * effect of skipping this check for srtp in general.
+   */
   if (!forIsmacryp && key_len != 30)
     return err_status_bad_param;
 
   /* allocate memory a cipher of type aes_icm */
   tmp = (sizeof(aes_icm_ctx_t) + sizeof(cipher_t));
-  pointer = crypto_alloc(tmp);
+  pointer = (uint8_t*)crypto_alloc(tmp);
   if (pointer == NULL) 
     return err_status_alloc_fail;
 
@@ -256,7 +258,7 @@ aes_icm_set_octet(aes_icm_ctx_t *c,
 
 err_status_t
 aes_icm_set_iv(aes_icm_ctx_t *c, void *iv) {
-  v128_t *nonce = iv;
+  v128_t *nonce = (v128_t *) iv;
 
   debug_print(mod_aes_icm, 
 	      "setting iv: %s", v128_hex_string(nonce)); 
@@ -329,7 +331,7 @@ aes_icm_encrypt_ismacryp(aes_icm_ctx_t *c,
               unsigned char *buf, unsigned int *enc_len, 
               int forIsmacryp) {
   unsigned int bytes_to_encr = *enc_len;
-  int i;
+  unsigned int i;
   uint32_t *b;
 
   /* check that there's enough segment left but not for ismacryp*/
@@ -338,7 +340,7 @@ aes_icm_encrypt_ismacryp(aes_icm_ctx_t *c,
 
  debug_print(mod_aes_icm, "block index: %d", 
            htons(c->counter.v16[7]));
-  if (bytes_to_encr <= c->bytes_in_buffer) {
+  if (bytes_to_encr <= (unsigned int)c->bytes_in_buffer) {
     
     /* deal with odd case of small bytes_to_encr */
     for (i = (sizeof(v128_t) - c->bytes_in_buffer);

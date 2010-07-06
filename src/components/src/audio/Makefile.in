@@ -31,6 +31,13 @@ ifdef OT_HAS_MAC_AUDIO
 		$(NULL)
 endif
 
+ifdef OT_HAS_WIN_AUDIO
+	OT_EXTRA_SRCS += \
+		otWinAudio.cpp \
+		otWinAudioStream.cpp \
+		$(NULL)
+endif
+
 CPPSRCS= \
 	otAudioFilter.cpp \
 	$(OT_EXTRA_SRCS) \

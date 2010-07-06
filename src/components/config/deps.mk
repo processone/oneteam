@@ -30,7 +30,18 @@ ifeq "$(MOZ_WIDGET_TOOLKIT)" "windows"
 		$(otdir)/src/systray/$(LIB_PREFIX)ot_systray_s.$(LIB_SUFFIX) \
 		$(otdir)/src/dns/$(LIB_PREFIX)ot_dns_s.$(LIB_SUFFIX) \
 		$(NULL)
-	OT_EXTRA_SHARED_OS_LIBS += shell32.lib dnsapi.lib
+	OT_EXTRA_SHARED_OS_LIBS += shell32.lib dnsapi.lib iphlpapi.lib ws2_32.lib ole32.lib
+	OT_HAS_WIN_AUDIO=1
+	OS_CXXFLAGS += -DOT_HAS_WIN_AUDIO
+	OT_EXTRA_SHARED_LIBS += $(otdir)/src/audio/$(LIB_PREFIX)ot_audio_s.$(LIB_SUFFIX)
+	OS_CXXFLAGS += -I$(otdir)/libs/libglib/include/glib-2.0 \
+		-I$(otdir)/libs/libglib/lib/glib-2.0/include
+	OT_LDOPTS += \
+		$(otdir)/libs/extra/glib/glib/glib-2.24s.lib \
+		$(otdir)/libs/extra/glib/gobject/gobject-2.24s.lib \
+		$(otdir)/libs/extra/glib/gthread/gthread-2.24s.lib \
+		$(otdir)/libs/extra/intl/intl.lib \
+		$(NULL)
 endif
 
 ifeq "$(MOZ_WIDGET_TOOLKIT)" "cocoa"
@@ -62,11 +73,10 @@ OT_EXTRA_SHARED_LIBS += \
 	$(NULL)
 
 OT_LDOPTS += \
-	$(otdir)/libs/libnice/nice/.libs/$(LIB_PREFIX)nice.$(LIB_SUFFIX) \
-	$(otdir)/libs/libspeex/libspeex/.libs/$(LIB_PREFIX)speex.$(LIB_SUFFIX) \
-	$(otdir)/libs/libspeex/libspeex/.libs/$(LIB_PREFIX)speexdsp.$(LIB_SUFFIX) \
+	$(otdir)/libs/libnice/build/$(LIB_PREFIX)nice.$(LIB_SUFFIX) \
+	$(otdir)/libs/libspeex/build/$(LIB_PREFIX)speex.$(LIB_SUFFIX) \
+	$(otdir)/libs/libspeex/build/$(LIB_PREFIX)speexdsp.$(LIB_SUFFIX) \
 	$(otdir)/libs/libilbc/$(LIB_PREFIX)ilbc.$(LIB_SUFFIX) \
-	$(otdir)/libs/libsrtp/$(LIB_PREFIX)srtp.$(LIB_SUFFIX) \
 	$(NULL)
 
 ifdef MOZ_DEBUG

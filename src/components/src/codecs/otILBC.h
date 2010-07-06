@@ -3,6 +3,7 @@
 
 #include "nsCOMPtr.h"
 #include "otICodec.h"
+#include "otIPipeline.h"
 #include "iLBC_define.h"
 
 #define OT_ILBC_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otILBC)

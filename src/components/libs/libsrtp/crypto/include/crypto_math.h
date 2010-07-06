@@ -1,5 +1,5 @@
 /*
- * crypto_math.h
+ * math.h
  *
  * crypto math operations and data types
  *
@@ -8,7 +8,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2005 Cisco Systems, Inc.
+ * Copyright (c) 2001-2006 Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -42,8 +42,8 @@
  *
  */
 
-#ifndef CRYPTO_MATH_H
-#define CRYPTO_MATH_H
+#ifndef MATH_H
+#define MATH_H
 
 #include "datatypes.h"
 
@@ -267,7 +267,7 @@ bitvector_print_hex(const bitvector_t *v, FILE *stream);
 int
 bitvector_set_from_hex(bitvector_t *v, char *string);
 
-#endif /* CRYPTO_MATH_H */
+#endif /* MATH_H */
 
 
 

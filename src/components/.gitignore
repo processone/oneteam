@@ -3,6 +3,9 @@ Makefile
 *.so
 *.xpt
 *.dll
+*.obj
+*.lib
+*.bak
 *.dylib
 __.SYMDEF SORTED
 .deps

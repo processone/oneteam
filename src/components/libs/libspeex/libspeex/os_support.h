@@ -45,6 +45,10 @@
 #include "os_support_custom.h"
 #endif
 
+#ifdef WIN32
+#define inline _inline
+#endif
+
 /** Speex wrapper for calloc. To do your own dynamic allocation, all you need to do is replace this function, speex_realloc and speex_free 
     NOTE: speex_alloc needs to CLEAR THE MEMORY */
 #ifndef OVERRIDE_SPEEX_ALLOC
@@ -163,6 +167,13 @@ static inline void print_vec(float *vec, int len, char *name)
       printf (" %f", vec[i]);
    printf ("\n");
 }
+#endif
+
+#undef EXPORT
+#define EXPORT
+
+#ifndef M_PI
+#define M_PI           3.14159265358979323846  /* pi */
 #endif
 
 #endif

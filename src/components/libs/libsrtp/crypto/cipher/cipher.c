@@ -10,7 +10,7 @@
 
 /*
  *	
- * Copyright (c) 2001-2005, Cisco Systems, Inc.
+ * Copyright (c) 2001-2006, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -283,7 +283,7 @@ cipher_type_self_test(const cipher_type_t *ct) {
 		octet_string_hex_string(buffer, length));
 
     /* copy plaintext into second buffer */
-    for (i=0; i < length; i++)
+    for (i=0; (unsigned int)i < length; i++)
       buffer2[i] = buffer[i];
     
     /* choose a key at random */
@@ -383,7 +383,7 @@ cipher_bits_per_second(cipher_t *c, int octets_in_buffer, int num_trials) {
   unsigned char *enc_buf;
   unsigned int len = octets_in_buffer;
 
-  enc_buf = crypto_alloc(octets_in_buffer);
+  enc_buf = (unsigned char*) crypto_alloc(octets_in_buffer);
   if (enc_buf == NULL)
     return 0;  /* indicate bad parameters by returning null */
   

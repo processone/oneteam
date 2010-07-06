@@ -83,7 +83,7 @@ stat_test_runs(uint8_t *data) {
   uint16_t gaps[6] = { 0, 0, 0, 0, 0, 0 };
   uint16_t lo_value[6] = { 2315, 1114, 527, 240, 103, 103 };
   uint16_t hi_value[6] = { 2685, 1386, 723, 384, 209, 209 };
-  int16_t  state = 0;
+  int state = 0;
   uint16_t mask;
   int i;
   
@@ -208,7 +208,7 @@ stat_test_rand_source(rand_source_func_t get_rand_bytes) {
   uint16_t gaps[6] = { 0, 0, 0, 0, 0, 0 };
   uint16_t lo_value[6] = { 2315, 1114, 527, 240, 103, 103 };
   uint16_t hi_value[6] = { 2685, 1386, 723, 384, 209, 209 };
-  int16_t  state = 0;
+  int state = 0;
   uint16_t mask;
   
   /* counters for monobit, poker, and runs tests are initialized above */
@@ -352,7 +352,7 @@ stat_test_rand_source(rand_source_func_t get_rand_bytes) {
 
 err_status_t
 stat_test_rand_source_with_repetition(rand_source_func_t source, unsigned num_trials) {
-  int i;
+  unsigned int i;
   err_status_t err = err_status_algo_fail;
 
   for (i=0; i < num_trials; i++) {

@@ -8,7 +8,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2005 Cisco Systems, Inc.
+ * Copyright (c) 2001-2006 Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ typedef enum {
 } key_event_t;
 
 err_status_t
-key_limit_set(key_limit_t key, xtd_seq_num_t s);
+key_limit_set(key_limit_t key, const xtd_seq_num_t s);
 
 err_status_t
 key_limit_clone(key_limit_t original, key_limit_t *new_key);

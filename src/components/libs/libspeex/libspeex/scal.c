@@ -46,11 +46,11 @@ The algorithm implemented here is described in:
 
 #include "speex/speex_echo.h"
 #include "vorbis_psy.h"
-#include "arch.h"
-#include "os_support.h"
 #include "smallft.h"
 #include <math.h>
 #include <stdlib.h>
+#include "arch.h"
+#include "os_support.h"
 
 #define ALLPASS_ORDER 20
 

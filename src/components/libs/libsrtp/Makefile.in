@@ -25,6 +25,8 @@ runtest: build_table_apps test
 	test/srtp_driver$(EXE) -v >/dev/null
 	test/roc_driver$(EXE) -v >/dev/null
 	test/replay_driver$(EXE) -v >/dev/null
+	test/dtls_srtp_driver$(EXE) >/dev/null
+	cd test; ./rtpw_test.sh >/dev/null	
 	@echo "libsrtp test applications passed."
 	$(MAKE) -C crypto runtest
 
@@ -97,7 +99,7 @@ cryptobj =  $(ciphers) $(hashes) $(math) $(stat) $(kernel) $(replay)
 
 # libsrtp.a (implements srtp processing)
 
-srtpobj = srtp/srtp.o 
+srtpobj = srtp/srtp.o srtp/ekt.o
 
 libsrtp.a: $(srtpobj) $(cryptobj) $(gdoi)
 	ar cr libsrtp.a $^
@@ -122,11 +124,21 @@ crypto_testapp = crypto/test/aes_calc$(EXE) crypto/test/cipher_driver$(EXE) \
 	crypto/test/stat_driver$(EXE)
 
 testapp = $(crypto_testapp) test/srtp_driver$(EXE) test/replay_driver$(EXE) \
-	  test/roc_driver$(EXE) test/rdbx_driver$(EXE) test/rtpw$(EXE)
+	  test/roc_driver$(EXE) test/rdbx_driver$(EXE) test/rtpw$(EXE) \
+	  test/dtls_srtp_driver$(EXE)
 
 $(testapp): libsrtp.a
 
-test/rtpw$(EXE): test/rtpw.c test/rtp.c
+test/rtpw$(EXE): test/rtpw.c test/rtp.c test/getopt_s.c
+	$(COMPILE) $(LDFLAGS) -o $@ $^ $(LIBS) $(SRTPLIB)
+
+test/srtp_driver$(EXE): test/srtp_driver.c test/getopt_s.c
+	$(COMPILE) $(LDFLAGS) -o $@ $^ $(LIBS) $(SRTPLIB)
+
+test/rdbx_driver$(EXE): test/rdbx_driver.c test/getopt_s.c
+	$(COMPILE) $(LDFLAGS) -o $@ $^ $(LIBS) $(SRTPLIB)
+
+test/dtls_srtp_driver$(EXE): test/dtls_srtp_driver.c test/getopt_s.c
 	$(COMPILE) $(LDFLAGS) -o $@ $^ $(LIBS) $(SRTPLIB)
 
 test: $(testapp)
@@ -191,7 +203,7 @@ uninstall:
 	rm -rf $(DESTDIR)$(libdir)/libsrtp.a
 
 clean:
-	rm -rf $(cryptobj) $(srtpobj) $(cryptomath) $(table_apps) TAGS \
+	rm -rf $(cryptobj) $(srtpobj) $(cryptomath) TAGS \
         libcryptomath.a libsrtp.a core *.core test/core
 	for a in * */* */*/*; do			\
               if [ -f "$$a~" ] ; then rm -f $$a~; fi;	\

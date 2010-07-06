@@ -24,6 +24,10 @@
 #include "otOSXBadge.h"
 #endif
 
+#ifdef OT_HAS_WIN_AUDIO
+#include "otWinAudio.h"
+#endif
+
 OT_IDLE_DEFINE_FACTORY
 OT_SYSTRAY_DEFINE_FACTORY
 OT_DNS_DEFINE_FACTORY
@@ -43,6 +47,10 @@ OT_MAC_AUDIO_DEFINE_FACTORY
 
 #ifdef OT_HAS_OSXBADGE
 OT_OSXBADGE_DEFINE_FACTORY
+#endif
+
+#ifdef OT_HAS_WIN_AUDIO
+OT_WIN_AUDIO_DEFINE_FACTORY
 #endif
 
 static const nsModuleComponentInfo components[] =
@@ -85,6 +93,13 @@ static const nsModuleComponentInfo components[] =
     OT_OSXBADGE_CID,
     OT_OSXBADGE_CONTRACTID,
     OT_OSXBADGE_FACTORY },
+#endif
+#ifdef OT_HAS_WIN_AUDIO
+  {
+    "Windows audio",
+    OT_WIN_AUDIO_CID,
+    OT_WIN_AUDIO_CONTRACTID,
+    OT_WIN_AUDIO_FACTORY },
 #endif
   { "ICE services",
     OT_ICE_CID,

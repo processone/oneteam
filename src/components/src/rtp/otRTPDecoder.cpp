@@ -2,6 +2,7 @@
 #include "otDebug.h"
 #include "otCodecInfo.h"
 #include "srtp.h"
+#include "srtp_priv.h"
 #include "speex/speex.h"
 #include "speex/speex_jitter.h"
 
@@ -126,9 +127,34 @@ otRTPDecoder::AcceptData(const char* data, PRInt32 len)
     jitter_buffer_put(mBuffer, &packet);
 
     PR_Unlock(mLock);
-/*    if (jitter_buffer_put)
-    nsCOMPtr<otIAudioOutputDevice> audioOutput = do_QueryInterface(mTarget);*/
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otRTPDecoder::SkipData(PRInt16 frames)
+{
+  JitterBufferPacket packet;
+  char body[2048];
+  spx_int32_t offset;
+
+  PR_Lock(mLock);
+
+  while (frames > 0) {
+    packet.data = body;
+    packet.len = sizeof(body);
+
+    //DEBUG_DUMP_N(("DeliverDataInt %d %d %d", requiredFrames, maxFrames, bufferedFrames, mPrebuf));
+
+    jitter_buffer_get(mBuffer, &packet, 0, &offset);
+
+    jitter_buffer_tick(mBuffer);
+
+    frames--;
+  }
+
+  PR_Unlock(mLock);
 
   return NS_OK;
 }
@@ -141,7 +167,8 @@ otRTPDecoder::DeliverData(PRInt16 requiredFrames, PRInt16 maxFrames)
   PRInt32 bufferedFrames;
   spx_int32_t offset;
 
-    PR_Lock(mLock);
+  PR_Lock(mLock);
+
   jitter_buffer_ctl(mBuffer, JITTER_BUFFER_GET_AVAILABLE_COUNT, &bufferedFrames);
 
   DEBUG_DUMP_N(("otRTPDecoder::DeliverData %d %d %d %d", requiredFrames, maxFrames, bufferedFrames, mPrebuf));
@@ -152,7 +179,7 @@ otRTPDecoder::DeliverData(PRInt16 requiredFrames, PRInt16 maxFrames)
 
     //DEBUG_DUMP_N(("DeliverDataInt %d %d %d", requiredFrames, maxFrames, bufferedFrames, mPrebuf));
 
-    if (jitter_buffer_get(mBuffer, &packet, 0, &offset) == JITTER_BUFFER_OK)
+    if (jitter_buffer_get(mBuffer, &packet, mFrameSize/2, &offset) == JITTER_BUFFER_OK)
       mTarget->AcceptData(packet.data, packet.len);
     else
       mTarget->AcceptData(NULL, 0);
@@ -163,7 +190,8 @@ otRTPDecoder::DeliverData(PRInt16 requiredFrames, PRInt16 maxFrames)
     maxFrames--;
     requiredFrames--;
   }
-    PR_Unlock(mLock);
+
+  PR_Unlock(mLock);
 
   return NS_OK;
 }

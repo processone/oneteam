@@ -8,7 +8,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2005, Cisco Systems, Inc.
+ * Copyright (c) 2001-2006, Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -47,9 +47,9 @@
 #include <time.h>     /* for clock()           */
 #include <stdlib.h>   /* for malloc(), free()  */
 #include <stdio.h>    /* for print(), fflush() */
-#include <unistd.h>   /* for getopt()          */
+#include "getopt_s.h" /* for local getopt()    */
 
-#include "srtp.h"
+#include "srtp_priv.h"
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
@@ -151,7 +151,9 @@ main (int argc, char *argv[]) {
    * structure srtp_hdr_t correctly
    */
   if (sizeof(srtp_hdr_t) != 12) {
-    printf("error: srtp_hdr_t has incorrect size\n");
+     printf("error: srtp_hdr_t has incorrect size"
+	    "(size is %ld bytes, expected 12)\n", 
+	    sizeof(srtp_hdr_t));
     exit(1);
   }
 
@@ -172,7 +174,7 @@ main (int argc, char *argv[]) {
 
   /* process input arguments */
   while (1) {
-    q = getopt(argc, argv, "trcvld:");
+    q = getopt_s(argc, argv, "trcvld:");
     if (q == -1) 
       break;
     switch (q) {
@@ -192,9 +194,9 @@ main (int argc, char *argv[]) {
       do_list_mods = 1;
       break;
     case 'd':
-      status = crypto_kernel_set_debug_module(optarg, 1);
+      status = crypto_kernel_set_debug_module(optarg_s, 1);
       if (status) {
-        printf("error: set debug module (%s) failed\n", optarg);
+        printf("error: set debug module (%s) failed\n", optarg_s);
         exit(1);
       }  
       break;
@@ -343,6 +345,12 @@ main (int argc, char *argv[]) {
     printf("G.729\t\t%d\t\t\t%e\n", 20, 
            (double) mips * (20 * 8) /
 	   srtp_bits_per_second(20, &policy) / .02 );
+    printf("Wideband\t%d\t\t\t%e\n", 320, 
+           (double) mips * (320 * 8) /
+	   srtp_bits_per_second(320, &policy) / .01 );
+    printf("Wideband\t%d\t\t\t%e\n", 640, 
+           (double) mips * (640 * 8) /
+	   srtp_bits_per_second(640, &policy) / .02 );
   }
 
   return 0;  
@@ -371,7 +379,7 @@ srtp_create_test_packet(int pkt_octet_len, uint32_t ssrc) {
   int bytes_in_hdr = 12;
 
   /* allocate memory for test packet */
-  hdr = malloc(pkt_octet_len + bytes_in_hdr
+  hdr = (srtp_hdr_t*) malloc(pkt_octet_len + bytes_in_hdr
 	       + SRTP_MAX_TRAILER_LEN + 4);
   if (!hdr)
     return NULL;
@@ -669,7 +677,7 @@ srtp_test(const srtp_policy_t *policy) {
    * we always copy the policy into the rcvr_policy, since otherwise
    * the compiler would fret about the constness of the policy
    */
-  rcvr_policy = malloc(sizeof(srtp_policy_t));
+  rcvr_policy = (srtp_policy_t*) malloc(sizeof(srtp_policy_t));
   if (rcvr_policy == NULL)
     return err_status_alloc_fail;
   memcpy(rcvr_policy, policy, sizeof(srtp_policy_t));
@@ -868,7 +876,7 @@ srtcp_test(const srtp_policy_t *policy) {
    * we always copy the policy into the rcvr_policy, since otherwise
    * the compiler would fret about the constness of the policy
    */
-  rcvr_policy = malloc(sizeof(srtp_policy_t));
+  rcvr_policy = (srtp_policy_t*) malloc(sizeof(srtp_policy_t));
   if (rcvr_policy == NULL)
     return err_status_alloc_fail;
   memcpy(rcvr_policy, policy, sizeof(srtp_policy_t));
@@ -1226,7 +1234,7 @@ srtp_create_big_policy(srtp_policy_t **list) {
    */
   tmp = NULL;
   while (policy_array[i] != NULL) {
-    p = malloc(sizeof(srtp_policy_t));
+    p  = (srtp_policy_t*) malloc(sizeof(srtp_policy_t));
     if (p == NULL)
       return err_status_bad_param;
     memcpy(p, policy_array[i], sizeof(srtp_policy_t));
@@ -1319,6 +1327,7 @@ const srtp_policy_t default_policy = {
     sec_serv_conf_and_auth  /* security services flag      */
   },
   test_key,
+  NULL,        /* indicates that EKT is not in use */
   NULL
 };
 
@@ -1341,6 +1350,7 @@ const srtp_policy_t aes_tmmh_policy = {
     sec_serv_conf_and_auth  /* security services flag      */
   },
   test_key,
+  NULL,        /* indicates that EKT is not in use */
   NULL
 };
 
@@ -1363,6 +1373,7 @@ const srtp_policy_t tmmh_only_policy = {
     sec_serv_auth           /* security services flag      */
   },
   test_key,
+  NULL,        /* indicates that EKT is not in use */
   NULL
 };
 
@@ -1385,6 +1396,7 @@ const srtp_policy_t aes_only_policy = {
     sec_serv_conf           /* security services flag      */
   },
   test_key,
+  NULL,        /* indicates that EKT is not in use */
   NULL
 };
 
@@ -1407,6 +1419,7 @@ const srtp_policy_t hmac_only_policy = {
     sec_serv_auth           /* security services flag      */
   },
   test_key,
+  NULL,        /* indicates that EKT is not in use */
   NULL
 };
 
@@ -1429,6 +1442,44 @@ const srtp_policy_t null_policy = {
     sec_serv_none           /* security services flag      */  
   },
   test_key,
+  NULL,        /* indicates that EKT is not in use */
+  NULL
+};
+
+uint8_t ekt_test_key[16] = {
+  0x77, 0x26, 0x9d, 0xac, 0x16, 0xa3, 0x28, 0xca, 
+  0x8e, 0xc9, 0x68, 0x4b, 0xcc, 0xc4, 0xd2, 0x1b
+};
+
+#include "ekt.h"
+
+ekt_policy_ctx_t ekt_test_policy = {
+  0xa5a5,                   /* SPI */
+  EKT_CIPHER_AES_128_ECB,
+  ekt_test_key,
+  NULL
+};
+
+const srtp_policy_t hmac_only_with_ekt_policy = {
+  { ssrc_any_outbound, 0 },     /* SSRC                        */
+  {
+    NULL_CIPHER,            /* cipher type                 */
+    0,                      /* cipher key length in octets */
+    HMAC_SHA1,              /* authentication func type    */
+    20,                     /* auth key length in octets   */
+    4,                      /* auth tag length in octets   */
+    sec_serv_auth           /* security services flag      */
+  },  
+  {
+    NULL_CIPHER,            /* cipher type                 */
+    0,                      /* cipher key length in octets */
+    HMAC_SHA1,              /* authentication func type    */
+    20,                     /* auth key length in octets   */
+    4,                      /* auth tag length in octets   */
+    sec_serv_auth           /* security services flag      */
+  },
+  test_key,
+  &ekt_test_policy,        /* indicates that EKT is not in use */
   NULL
 };
 
@@ -1457,6 +1508,7 @@ policy_array[] = {
 #endif
   &default_policy,
   &null_policy,
+  &hmac_only_with_ekt_policy,
   NULL
 };
 

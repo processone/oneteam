@@ -8,7 +8,7 @@
  */
 /*
  *	
- * Copyright (c) 2001-2005 Cisco Systems, Inc.
+ * Copyright (c) 2001-2006 Cisco Systems, Inc.
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -186,10 +186,13 @@ v32_dot_product(v32_t a, v32_t b) {
 }
 
 /*
- * MAX_PRINT_STRING_LEN is defined in datatypes.h
+ * _bit_string returns a NULL-terminated character string suitable for
+ * printing
  */
 
-static char bit_string[MAX_PRINT_STRING_LEN];
+#define MAX_STRING_LENGTH 1024
+
+char bit_string[MAX_STRING_LENGTH];
 
 char *
 octet_bit_string(uint8_t x) {
@@ -296,8 +299,8 @@ octet_string_hex_string(const void *str, int length) {
   length *= 2;
 
   /* truncate string if it would be too long */
-  if (length > MAX_PRINT_STRING_LEN)
-    length = MAX_PRINT_STRING_LEN-1;
+  if (length > MAX_STRING_LENGTH)
+    length = MAX_STRING_LENGTH-1;
   
   for (i=0; i < length; i+=2) {
     bit_string[i]   = nibble_to_hex_char(*s >> 4);

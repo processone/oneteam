@@ -86,7 +86,7 @@ build_files_for_another_moz_version: \
 
 override AUTOCONF_TOOLS=$(ottdir)/libtoolize.pl --root-dir=$(otdir) --tools-dir=$(ottdir) \
 	--skip-dir=$(ottdir)/../libs/libspeex --skip-dir=$(ottdir)/../libs/libnice \
-	--skip-dir=$(ottdir)/../libs/libsrtp --
+	--skip-dir=$(ottdir)/../libs/libsrtp --skip-dir=$(ottdir)/../libs/extra --
 
 debug-build:
 	$(MAKE) all MOZ_DEBUG=1 STRIP=echo

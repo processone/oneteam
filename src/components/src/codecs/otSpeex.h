@@ -3,6 +3,7 @@
 
 #include "nsCOMPtr.h"
 #include "otICodec.h"
+#include "otIPipeline.h"
 
 #define OT_SPEEX_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otSpeex)
 #define OT_SPEEX_FACTORY otSpeexConstructor

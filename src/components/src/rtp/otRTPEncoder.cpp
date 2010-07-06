@@ -1,6 +1,7 @@
 #include "otRTP.h"
 #include "otDebug.h"
 #include "srtp.h"
+#include "srtp_priv.h"
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(otRTPEncoder, otITarget, otISource)
 

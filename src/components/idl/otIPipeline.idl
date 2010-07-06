@@ -25,5 +25,6 @@ interface otISource: nsISupports
 interface otIBufferedSource: otISource
 {
   void deliverData(in short requiredFrames, in short maxFrames);
+  void skipData(in short frames);
   void bufferManagerSet(in otITarget target);
 };

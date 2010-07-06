@@ -46,8 +46,6 @@
 
 #define MAX_IN_SAMPLES 640
 
-
-
 EXPORT void *speex_encoder_init(const SpeexMode *mode)
 {
    return mode->enc_init(mode);
