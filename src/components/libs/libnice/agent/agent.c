@@ -2133,7 +2133,11 @@ agent_attach_stream_component_socket (NiceAgent *agent,
   if (!component->ctx)
     return;
 
+#ifdef G_OS_WIN32
+  io = g_io_channel_win32_new_socket (socket->fileno);
+#else
   io = g_io_channel_unix_new (socket->fileno);
+#endif
   /* note: without G_IO_ERR the glib mainloop goes into
    *       busyloop if errors are encountered */
   source = g_io_create_watch (io, G_IO_IN | G_IO_ERR);
