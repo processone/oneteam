@@ -188,7 +188,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <wizard id="oneteam"page pageid="form">
+  <wizardpage pageid="form">
     <deck id="formDeck" flex="1">
       <vbox>
         <label value="_('Requesting search form')"/>
@@ -201,7 +201,7 @@
     </deck>
   </wizardpage>
 
-  <wizard id="oneteam"page pageid="results" onpageshow="this.firstChild.selectedIndex = 0">
+  <wizardpage pageid="results" onpageshow="this.firstChild.selectedIndex = 0">
     <deck id="resultsDeck" flex="1">
       <vbox>
         <label value="_('Requesting search results')"/>

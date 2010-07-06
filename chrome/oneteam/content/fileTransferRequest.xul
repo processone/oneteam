@@ -69,7 +69,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="_('File Transfer Request')"/>
+  <dialogheader title="_('File Transfer Request')"/>
 
   <description><span id="msg" xmlns="http://www.w3.org/1999/xhtml"/></description>
   <spacer/>

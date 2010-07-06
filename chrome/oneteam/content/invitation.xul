@@ -56,7 +56,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="Invitation to a conference"/>
+  <dialogheader title="Invitation to a conference"/>
 
   <description><span id="msg" xmlns="http://www.w3.org/1999/xhtml"/></description>
   <spacer/>

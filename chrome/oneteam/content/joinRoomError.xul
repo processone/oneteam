@@ -69,7 +69,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="Joining Room Error"/>
+  <dialogheader title="Joining Room Error"/>
 
   <vbox flex="1">
     <description id="errorInfo">Error ocured during joining room:

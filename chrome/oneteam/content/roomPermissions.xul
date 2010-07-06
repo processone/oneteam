@@ -88,7 +88,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="Edit Permissions"/>
+  <dialogheader title="Edit Permissions"/>
 
   <spacer/>
 

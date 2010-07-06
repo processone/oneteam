@@ -48,7 +48,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="_('Contact vCard')"/>
+  <dialogheader title="_('Contact vCard')"/>
 
   <spacer style="height: 0.3em"/>
 

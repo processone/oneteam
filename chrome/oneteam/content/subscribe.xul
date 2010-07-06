@@ -50,7 +50,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="Subscription Request"/>
+  <dialogheader title="Subscription Request"/>
 
   <vbox flex="1">
     <description id="contactInfo">_('You got subscription request from:')

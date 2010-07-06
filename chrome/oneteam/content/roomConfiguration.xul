@@ -48,7 +48,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="Room Configuration"/>
+  <dialogheader title="Room Configuration"/>
 
   <spacer/>
 

@@ -36,7 +36,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="Change Conference Subject"/>
+  <dialogheader title="Change Conference Subject"/>
 
   <hbox class="entry">
     <description value="_('New Subject:')"/>

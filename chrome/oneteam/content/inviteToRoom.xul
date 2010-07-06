@@ -47,7 +47,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header id="header" title="Invite to room"/>
+  <dialogheader id="header" title="Invite to room"/>
 
   <label value="_('Rooms:')" control="rooms"/>
   <listbox id="rooms" onselect="document.documentElement.getButton('accept').disabled = this.selectedCount == 0"/>

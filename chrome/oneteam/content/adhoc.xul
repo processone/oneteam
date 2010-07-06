@@ -210,7 +210,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <wizard id="oneteam"page onpageshow="sessionid=null" pageid="first">
+  <wizardpage onpageshow="sessionid=null" pageid="first">
     <deck id="main-deck">
       <vbox>
         <label value="_('Requesting remote commands descriptions')"/>
@@ -227,7 +227,7 @@
     </deck>
   </wizardpage>
 
-  <wizard id="oneteam"page pageid="page1">
+  <wizardpage pageid="page1">
     <deck>
       <vbox>
         <label value="_('Requesting command form')"/>

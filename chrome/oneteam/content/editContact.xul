@@ -39,7 +39,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="_('Edit Contact')"/>
+  <dialogheader title="_('Edit Contact')"/>
 
   <spacer/>
 

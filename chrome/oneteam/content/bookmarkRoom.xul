@@ -63,7 +63,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="_('Bookmark Room')"/>
+  <dialogheader title="_('Bookmark Room')"/>
 
   <grid>
     <columns>

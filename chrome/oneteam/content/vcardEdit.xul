@@ -255,7 +255,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="_('My vCard')"/>
+  <dialogheader title="_('My vCard')"/>
 
   <spacer style="height: 0.6em"/>
 

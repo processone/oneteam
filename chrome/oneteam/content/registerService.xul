@@ -70,7 +70,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialog id="oneteam"header title="_('Registering in Service')"/>
+  <dialogheader title="_('Registering in Service')"/>
 
   <spacer/>
 
