@@ -893,7 +893,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         }
 
         for (var j in contactsToRemove) {
-            var c = _this.allContacts[j];
+            var c = this.allContacts[j];
             c._updateFromData([null, c.name, "remove", false, [], {}]);
         }
     },
