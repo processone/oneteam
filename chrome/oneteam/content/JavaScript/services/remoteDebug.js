@@ -291,12 +291,12 @@ var remoteDebug = {
             while (e.hasMoreElements()) {
                 win = e.getNext();
                 win = win.document.getElementById("sidebar")._contentWindow;
-                if (win && win.document.documentElement.getAttribure("windowtype") == "ot:main")
+                if (win && win.document.documentElement.getAttribute("windowtype") == "ot:main")
                     break;
             }
         }
 
-        if (!win || win.document.documentElement.getAttribure("windowtype") != "ot:main")
+        if (!win || win.document.documentElement.getAttribute("windowtype") != "ot:main")
             win = window;
 
         var expr = query.text().toString();
