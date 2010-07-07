@@ -89,6 +89,9 @@ var notificationAlerts = {
 };
 
 function NotificationProvider(showInChatpane, showInMucChatpane, showAlert, soundSample) {
+    if (typeof(showInChatpane) == "object")
+        [showInChatpane, showInMucChatpane, showAlert, soundSample] = showInChatpane;
+
     this.showInChatpane = showInChatpane;
     this.showInMucChatpane = showInMucChatpane;
     this.showAlert = showAlert;
@@ -384,6 +387,32 @@ _DECL_(NotificationScheme).prototype =
         return this._nopCanceler;
     },
 
+    onReconnect: function(callback) {
+        var provider = this.findProvider("reconnect");
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("Connection with server lost"),
+                             _("Lost connection with server"),
+                             _xml("OneTeam will try to connect again to server"),
+                             "chrome://oneteam/skin/main/imgs/disconnecticon.png",
+                             null, callback);
+    },
+
+    onDisconnect: function(reconnectTried, callback) {
+        var provider = this.findProvider("disconnect");
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("Connection with server lost"),
+                             _("Lost connection with server"),
+                             reconnectTried ?
+                                _xml("Reconnecting was not successfull, please try to connect manually") :
+                                _xml("Please try to connect manually"),
+                             "chrome://oneteam/skin/main/imgs/disconnecticon.png",
+                             null, callback);
+    },
+
     defaultProviders: {
         "signIn": new NotificationProvider(true, false, true, "connected"),
         "signOut": new NotificationProvider(true, false, true, "disconnected"),
@@ -402,12 +431,16 @@ _DECL_(NotificationScheme).prototype =
         "fileTransfer": new NotificationProvider(true, false, true, null),
         "fileTransferAccepted": new NotificationProvider(true, false, false, null),
         "fileTransferRejected": new NotificationProvider(true, false, false, null),
-        "invitationDeclined": new NotificationProvider(true, false, false, null)
+        "invitationDeclined": new NotificationProvider(true, false, false, null),
+        "disconnect": new NotificationProvider(false, false, true, null),
+        "reconnect": new NotificationProvider(false, false, false, null)
     },
 
     findProvider: function(scope, content) {
-        var id = scope+"-"+content.jid.normalizedJID.shortJID;
-        for each (var id in [scope+"-"+content.jid.normalizedJID.shortJID, scope]) {
+        var scopes = content ?
+            [scope+"-"+content.jid.normalizedJID.shortJID, scope] : [scope];
+
+        for each (var id in scopes) {
             if (this.providers[id])
                 return this.providers[id].getWrapperFor(content);
             var data = account.cache.getValue("notifications-"+id);

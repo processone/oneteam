@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2010-06-18 11:56+0200\n"
+"POT-Creation-Date: 2010-07-07 14:49+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -74,93 +74,93 @@ msgstr "Komunikat stanu"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:106
 #: ../chrome/oneteam/content/console.xul:59
-#: ../chrome/oneteam/content/main.xul:600
+#: ../chrome/oneteam/content/main.xul:611
 #: ../chrome/oneteam/content/status.xul:86
 msgid "Available"
 msgstr "Dostępny"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:107
-#: ../chrome/oneteam/content/main.xul:602
+#: ../chrome/oneteam/content/main.xul:613
 #: ../chrome/oneteam/content/status.xul:88
 msgid "Available for chat"
 msgstr "Chciałby pogadać"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:108
-#: ../chrome/oneteam/content/main.xul:604
+#: ../chrome/oneteam/content/main.xul:615
 #: ../chrome/oneteam/content/status.xul:90
 msgid "Busy"
 msgstr "Zajęty"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:109
-#: ../chrome/oneteam/content/main.xul:606
+#: ../chrome/oneteam/content/main.xul:617
 #: ../chrome/oneteam/content/status.xul:91
 #, fuzzy
 msgid "Away"
 msgstr "Zajęty"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:110
-#: ../chrome/oneteam/content/main.xul:608
+#: ../chrome/oneteam/content/main.xul:619
 #: ../chrome/oneteam/content/status.xul:92
 msgid "Not available"
 msgstr "Niedostępne"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:112
-#: ../chrome/oneteam/content/main.xul:610
+#: ../chrome/oneteam/content/main.xul:621
 #: ../chrome/oneteam/content/status.xul:93
 msgid "Invisible"
 msgstr "Niewidoczny"
 
-#: ../chrome/oneteam/content/main.xul:563
+#: ../chrome/oneteam/content/main.xul:574
 msgid "Username"
 msgstr "Użytkownik"
 
-#: ../chrome/oneteam/content/main.xul:567
+#: ../chrome/oneteam/content/main.xul:578
 msgid "Password"
 msgstr "Hasło"
 
-#: ../chrome/oneteam/content/main.xul:574
+#: ../chrome/oneteam/content/main.xul:585
 msgid "Sign In"
 msgstr "Połącz"
 
-#: ../chrome/oneteam/content/main.xul:477
+#: ../chrome/oneteam/content/main.xul:488
 msgid "_Join Chat Room"
 msgstr "Dołącz do _konferencji"
 
-#: ../chrome/oneteam/content/main.xul:485
+#: ../chrome/oneteam/content/main.xul:496
 msgid "_Gateways"
 msgstr "_Bramki"
 
-#: ../chrome/oneteam/content/main.xul:495
+#: ../chrome/oneteam/content/main.xul:506
 msgid "Disconnect"
 msgstr "Rozłącz"
 
-#: ../chrome/oneteam/content/main.xul:497
+#: ../chrome/oneteam/content/main.xul:508
 msgid "_Quit"
 msgstr "_Wyjdź"
 
-#: ../chrome/oneteam/content/main.xul:524
+#: ../chrome/oneteam/content/main.xul:535
 msgid "_Documentation"
 msgstr "_Dokumentacja"
 
-#: ../chrome/oneteam/content/main.xul:525
+#: ../chrome/oneteam/content/main.xul:536
 msgid "_Report Bug"
 msgstr "Zgłoś _błąd"
 
-#: ../chrome/oneteam/content/main.xul:613
+#: ../chrome/oneteam/content/main.xul:624
 msgid "Status message"
 msgstr "Komunikat stanu"
 
 #: ../chrome/oneteam/content/muc.xul:403
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:226
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:228
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:277
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:324
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:378
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:227
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:229
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:278
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:325
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:379
 #, fuzzy
 msgid "Send Message..."
 msgstr "Wysyłanie wiadomości"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:241
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:242
 #, fuzzy
 msgid "Remove Contact..."
 msgstr "Usunięcie kontaktu"
@@ -514,7 +514,7 @@ msgstr "Dział"
 msgid "Position"
 msgstr "Stanowisko"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:350
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:351
 #: ../chrome/oneteam/content/vcardEdit.xul:378
 #, fuzzy
 msgid "Role"
@@ -548,132 +548,132 @@ msgstr "Brak dostępnej wiadomości dnia (MOTD)"
 msgid "Requesting command form"
 msgstr "Różne małe formy"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:967
-#: ../chrome/oneteam/content/JavaScript/views/roster.js:631
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:105
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:120
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:95
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:977
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:640
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:106
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:121
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:96
 msgid "{0} ({1})"
 msgstr "{0} ({1})"
 
-#: ../chrome/oneteam/content/main.xul:473
+#: ../chrome/oneteam/content/main.xul:484
 #, fuzzy
 msgid "_Actions"
 msgstr "_Działania"
 
-#: ../chrome/oneteam/content/main.xul:475
+#: ../chrome/oneteam/content/main.xul:486
 #, fuzzy
 msgid "_Add Contact..."
 msgstr "_Dodaj kontakt..."
 
-#: ../chrome/oneteam/content/main.xul:479
+#: ../chrome/oneteam/content/main.xul:490
 #, fuzzy
 msgid "Join Chat Room..."
 msgstr "Przyłącza do pokoju konferencji"
 
-#: ../chrome/oneteam/content/main.xul:482
+#: ../chrome/oneteam/content/main.xul:493
 #, fuzzy
 msgid "_Manage Bookmarks..."
 msgstr "Menedżer &zakładek..."
 
-#: ../chrome/oneteam/content/main.xul:491
+#: ../chrome/oneteam/content/main.xul:502
 #, fuzzy
 msgid "_Server Commands..."
 msgstr "Wysyłanie komend..."
 
-#: ../chrome/oneteam/content/main.xul:492
+#: ../chrome/oneteam/content/main.xul:503
 #, fuzzy
 msgid "_History Manager..."
 msgstr "Menadżer historii formularzy"
 
-#: ../chrome/oneteam/content/main.xul:493
+#: ../chrome/oneteam/content/main.xul:504
 #, fuzzy
 msgid "File _Transfers..."
 msgstr "Transmisja plików"
 
-#: ../chrome/oneteam/content/main.xul:501
+#: ../chrome/oneteam/content/main.xul:512
 #, fuzzy
 msgid "_View"
 msgstr "_Widok"
 
-#: ../chrome/oneteam/content/main.xul:503
+#: ../chrome/oneteam/content/main.xul:514
 #, fuzzy
 msgid "Show _Actions Toolbar"
 msgstr "_Pasek narzędziowy formatowania"
 
-#: ../chrome/oneteam/content/main.xul:506
+#: ../chrome/oneteam/content/main.xul:517
 #, fuzzy
 msgid "Hide _Offline Contacts"
 msgstr "_Wyświetlanie listy poza siecią"
 
-#: ../chrome/oneteam/content/main.xul:510
+#: ../chrome/oneteam/content/main.xul:521
 #, fuzzy
 msgid "_Config"
 msgstr "ŚCIEŻKA-KONFIGURACJI"
 
-#: ../chrome/oneteam/content/main.xul:512
+#: ../chrome/oneteam/content/main.xul:523
 #, fuzzy
 msgid "_Edit personal info..."
 msgstr "Zmień ustawienia obszaru..."
 
-#: ../chrome/oneteam/content/main.xul:513
+#: ../chrome/oneteam/content/main.xul:524
 #, fuzzy
 msgid "_Change password..."
 msgstr "Zmień hasło"
 
-#: ../chrome/oneteam/content/main.xul:519
+#: ../chrome/oneteam/content/main.xul:530
 #, fuzzy
 msgid "_Preferences..."
 msgstr "P_referencje..."
 
-#: ../chrome/oneteam/content/main.xul:522
+#: ../chrome/oneteam/content/main.xul:533
 #, fuzzy
 msgid "_Help"
 msgstr "Po_moc"
 
-#: ../chrome/oneteam/content/main.xul:526
+#: ../chrome/oneteam/content/main.xul:537
 #, fuzzy
 msgid "XML _Console..."
 msgstr "Sygnał konsoli"
 
-#: ../chrome/oneteam/content/main.xul:536
+#: ../chrome/oneteam/content/main.xul:547
 #, fuzzy
 msgid "About..."
 msgstr "O programie..."
 
-#: ../chrome/oneteam/content/main.xul:456
+#: ../chrome/oneteam/content/main.xul:467
 #, fuzzy
 msgid "Add new contact"
 msgstr "Dodaj nowy element"
 
-#: ../chrome/oneteam/content/main.xul:458
+#: ../chrome/oneteam/content/main.xul:469
 #, fuzzy
 msgid "Join group chat room"
 msgstr "Gossip - Dołączanie do rozmowy grupowej"
 
-#: ../chrome/oneteam/content/main.xul:461
+#: ../chrome/oneteam/content/main.xul:472
 #, fuzzy
 msgid "Toggle offline contacts visibility"
 msgstr "Klawisz skrótu przełączający widoczność paska menu"
 
-#: ../chrome/oneteam/content/main.xul:465
+#: ../chrome/oneteam/content/main.xul:476
 #: ../chrome/oneteam/content/preferences.xul:10
 #, fuzzy
 msgid "Preferences"
 msgstr "Preferencje"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:261
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:262
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:286
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:263
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:287
 #, fuzzy
 msgid "Execute Command..."
 msgstr "wykonaj polecenie"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:265
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:287
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:314
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:371
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:392
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:266
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:288
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:315
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:372
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:393
 #, fuzzy
 msgid "Show History..."
 msgstr "Pokaż okno dialogowe historii formularzy"
@@ -745,13 +745,13 @@ msgid "File Transfer Request"
 msgstr "Przyjąć prośbę przesłania pliku od %s?"
 
 #: ../chrome/oneteam/content/fileTransferRequest.xul:14
-#: ../chrome/oneteam/content/jingleCall.xul:140
+#: ../chrome/oneteam/content/jingleCall.xul:141
 #, fuzzy
 msgid "Accept"
 msgstr "Akceptuj"
 
 #: ../chrome/oneteam/content/fileTransferRequest.xul:14
-#: ../chrome/oneteam/content/jingleCall.xul:141
+#: ../chrome/oneteam/content/jingleCall.xul:142
 #, fuzzy
 msgid "Reject"
 msgstr "Odrzuć"
@@ -761,7 +761,7 @@ msgstr "Odrzuć"
 msgid "<b>{0}</b> wants to send you file"
 msgstr "%s prosi o wysłanie pliku"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:875
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:885
 #: ../chrome/oneteam/content/fileTransferRequest.xul:46
 #, fuzzy
 msgid "Select a File"
@@ -963,31 +963,31 @@ msgstr "Wyszukiwanie użytkownika wg adresu e-mail"
 msgid "Toggle smiles visibility/select smile"
 msgstr "Przełącz wyświetlanie uśmieszków/wybierz uśmieszek"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:219
-#: ../chrome/oneteam/content/JavaScript/notification.js:231
+#: ../chrome/oneteam/content/JavaScript/notification.js:222
+#: ../chrome/oneteam/content/JavaScript/notification.js:234
 #, fuzzy
 msgid "{0} is now {1}"
 msgstr "%s nazywa się teraz %s"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:158
+#: ../chrome/oneteam/content/JavaScript/notification.js:161
 #, fuzzy
 msgid "{0} has joined this room"
 msgstr "Data ważności tego klucza upłynęła!"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:189
+#: ../chrome/oneteam/content/JavaScript/notification.js:192
 #, fuzzy
 msgid "{0} has left this room"
 msgstr "Data ważności tego klucza upłynęła!"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:267
+#: ../chrome/oneteam/content/JavaScript/notification.js:270
 msgid "{0} changed nick to {1}"
 msgstr "{0} zmienił pseudonim na {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:282
+#: ../chrome/oneteam/content/JavaScript/notification.js:285
 msgid "{0} changed subject to {1}"
 msgstr "{0} zmienił temat na {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:321
+#: ../chrome/oneteam/content/JavaScript/notification.js:324
 #, fuzzy
 msgid "New message from <b>{0}</b>"
 msgstr "Nowa wiadomość od %s"
@@ -1075,21 +1075,21 @@ msgstr ""
 "Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n\\nAby dołączyć do tej "
 "konferencji kliknij ten link:\\n{2}\\n"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:966
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:976
 msgid "{0}/{1}"
 msgstr "{0}/{1}"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:53
+#: ../chrome/oneteam/content/JavaScript/model/account.js:54
 #, fuzzy
 msgid "Contacts"
 msgstr "Kontakty"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:54
+#: ../chrome/oneteam/content/JavaScript/model/account.js:55
 #, fuzzy
 msgid "Not in roster"
 msgstr "Poza biurem"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:56
+#: ../chrome/oneteam/content/JavaScript/model/account.js:57
 #, fuzzy
 msgid "My other resources"
 msgstr "Brak dodatkowych strumieni"
@@ -1099,7 +1099,7 @@ msgstr "Brak dodatkowych strumieni"
 msgid "You have been invited to room <b>{0}</b> by <b>{1}</b>"
 msgstr "Zostałeś zaproszony do konferencji <b>{0}</b> przez <b>{1}</b>"
 
-#: ../chrome/oneteam/content/main.xul:571
+#: ../chrome/oneteam/content/main.xul:582
 #, fuzzy
 msgid "Remember password"
 msgstr "Zapamiętanie hasła"
@@ -1127,176 +1127,176 @@ msgstr "Usunięcie kontaktu"
 msgid "Do you want to remove this contact from your roster?"
 msgstr "Czy chcesz usunąć ten kontakt z listy kontaktów?"
 
-#: ../chrome/oneteam/content/main.xul:490
+#: ../chrome/oneteam/content/main.xul:501
 #, fuzzy
 msgid "Service _Discovery"
 msgstr "Usługa niedostępna"
 
-#: ../chrome/oneteam/content/main.xul:528
+#: ../chrome/oneteam/content/main.xul:539
 #, fuzzy
 msgid "JavaScript Console..."
 msgstr "&Konsola JavaScript"
 
-#: ../chrome/oneteam/content/main.xul:529
+#: ../chrome/oneteam/content/main.xul:540
 #, fuzzy
 msgid "Commands Console..."
 msgstr "Sygnał konsoli"
 
-#: ../chrome/oneteam/content/main.xul:533
+#: ../chrome/oneteam/content/main.xul:544
 #, fuzzy
 msgid "Check for Updates..."
 msgstr "Sprawdzaj, czy strona została zaktualizowana:"
 
-#: ../chrome/oneteam/content/main.xul:463
+#: ../chrome/oneteam/content/main.xul:474
 #, fuzzy
 msgid "Show service discovery"
 msgstr "Usługa tymczasowo niedostępna"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:235
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:279
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:236
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:280
 #, fuzzy
 msgid "Invite To"
 msgstr "Nie można zaprosić użytkownika (%s)."
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:242
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:243
 #, fuzzy
 msgid "Change Nickname..."
 msgstr "Nie można zmienić pseudonimu"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:243
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:244
 #, fuzzy
 msgid "Edit Contact..."
 msgstr "Modyfikacja danych kontaktu"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:247
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:248
 #, fuzzy
 msgid "Authorization"
 msgstr "Przerwana autoryzacja"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:249
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:250
 #, fuzzy
 msgid "Ask To See Him"
 msgstr "Podgrupa - ENTER wyświetla listę"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:251
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:252
 #, fuzzy
 msgid "Authorize To See Me"
 msgstr "Zezwolenie wszystkim użytkownikom na kontakt"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:253
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:254
 #, fuzzy
 msgid "Cancel Authorization"
 msgstr "Przerwana autoryzacja"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:260
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:285
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:312
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:369
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:390
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:261
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:286
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:313
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:370
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:391
 #, fuzzy
 msgid "Show vCard..."
 msgstr "Znajdź vCard..."
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:267
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:289
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:373
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:268
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:290
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:374
 #, fuzzy
 msgid "Send File..."
 msgstr "Przesyłanie plików"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:294
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:295
 #, fuzzy
 msgid "Invite Users To This Room..."
 msgstr "invite &lt;użytkownik&gt; [pokój]:  Zaprasza użytkownika do pokoju."
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:296
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:297
 #, fuzzy
 msgid "Change Nick..."
 msgstr "Nie można zmienić pseudonimu"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:298
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:299
 #, fuzzy
 msgid "Change Subject..."
 msgstr "Temat _zakodowany URL:"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:300
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:301
 #, fuzzy
 msgid "Bookmark..."
 msgstr "Zakładka"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:305
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:306
 #, fuzzy
 msgid "Configure..."
 msgstr "Konfiguruj"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:307
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:308
 #, fuzzy
 msgid "Edit Permissions..."
 msgstr "Uprawnienia (Ósemkowo)"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:319
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:320
 #, fuzzy
 msgid "Leave Conference"
 msgstr "Konferencja GrupWise %d"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:329
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:330
 msgid "Kick..."
 msgstr "Wyrzuć..."
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:331
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:332
 #, fuzzy
 msgid "Ban..."
 msgstr "Lista zablokowanych"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:333
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:334
 #, fuzzy
 msgid "Affiliation"
 msgstr "Przynależność"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:336
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:337
 #, fuzzy
 msgid "Owner"
 msgstr "Właściciel"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:339
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:340
 msgid "Administrator"
 msgstr "Administrator"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:342
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:343
 #, fuzzy
 msgid "Member"
 msgstr "Zapisany od"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:345
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:362
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:346
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:363
 #, fuzzy
 msgid "None"
 msgstr "Brak"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:353
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:354
 msgid "Moderator"
 msgstr "Moderator"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:356
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:357
 msgid "Participant"
 msgstr "Członek"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:359
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:360
 msgid "Visitor"
 msgstr "Wizytujący"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:383
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:384
 #, fuzzy
 msgid "Login"
 msgstr "Logowanie"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:385
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:386
 #, fuzzy
 msgid "Logout"
 msgstr "Anuluj zakończenie sesji"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:273
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:397
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:274
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:398
 #, fuzzy
 msgid "Remove..."
 msgstr "Usuń"
@@ -1309,7 +1309,7 @@ msgstr "Menadżer historii formularzy"
 #: ../chrome/oneteam/content/bindings/chatpane.xml:2053
 #: ../chrome/oneteam/content/disco.xul:75
 #: ../chrome/oneteam/content/history.xul:155
-#: ../chrome/oneteam/content/main.xul:621
+#: ../chrome/oneteam/content/main.xul:632
 #: ../chrome/oneteam/content/search.xul:12
 #, fuzzy
 msgid "Search"
@@ -1672,20 +1672,20 @@ msgstr "Różne"
 msgid "Text:"
 msgstr "Tekst"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:250
+#: ../chrome/oneteam/content/JavaScript/notification.js:253
 msgid "<b>{0}</b> authorized you to see his/her status"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:256
+#: ../chrome/oneteam/content/JavaScript/notification.js:259
 msgid "<b>{0}</b> doesn't authorized you to see his/her status"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:348
+#: ../chrome/oneteam/content/JavaScript/notification.js:351
 #, fuzzy
 msgid "File transfer request"
 msgstr "Przyjąć prośbę przesłania pliku od %s?"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:349
+#: ../chrome/oneteam/content/JavaScript/notification.js:352
 #, fuzzy
 msgid "User <b>{0}</b> want to send you <b>\"{1}\\\"</b> file"
 msgstr "%s prosi o wysłanie pliku"
@@ -1741,25 +1741,25 @@ msgstr "Lista odtwarzania (pozostała {0} godzina)"
 msgid "{0} remaining"
 msgstr "Pozostało"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:55
+#: ../chrome/oneteam/content/JavaScript/utils.js:60
 #, fuzzy
 msgid "{0} bytes"
 msgstr "Bajty"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:77
+#: ../chrome/oneteam/content/JavaScript/utils.js:82
 #, fuzzy
 msgid "{0} {0, plurals, second, seconds}"
 msgstr "/Odtwarzanie/Cofnij o 5 sek"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:71
+#: ../chrome/oneteam/content/JavaScript/utils.js:76
 msgid "{0} {0, plurals, day, days}, {1} {1, plurals, hour, hours}"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:73
+#: ../chrome/oneteam/content/JavaScript/utils.js:78
 msgid "{0} {0, plurals, hour, hours}, {1} {1, plurals, minute, minutes}"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:75
+#: ../chrome/oneteam/content/JavaScript/utils.js:80
 msgid "{0} {0, plurals, minute, minutes}, {1} {1, plurals, second, seconds}"
 msgstr ""
 
@@ -1793,12 +1793,12 @@ msgid ""
 "Conference server can't be contacted or room reached maximum number of users"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:1000
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1010
 #, fuzzy
 msgid "(Anonymous)"
 msgstr "osoba anonimowa"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1051
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1081
 #, fuzzy
 msgid "You got subscription request from <b>{0}</b>"
 msgstr "%s: Otrzymano kod operacji REQUEST od zabronionego komputera %s"
@@ -1838,64 +1838,64 @@ msgstr "Nie można ustawić komunikatu niedostępności AIM."
 msgid "Jingle Call"
 msgstr "Wywołanie funkcji"
 
-#: ../chrome/oneteam/content/jingleCall.xul:68
-#: ../chrome/oneteam/content/jingleCall.xul:81
+#: ../chrome/oneteam/content/jingleCall.xul:69
+#: ../chrome/oneteam/content/jingleCall.xul:82
 #, fuzzy
 msgid "Call Ended"
 msgstr "Wywołanie funkcji"
 
-#: ../chrome/oneteam/content/jingleCall.xul:72
+#: ../chrome/oneteam/content/jingleCall.xul:73
 #, fuzzy
 msgid "Call Rejected"
 msgstr "Połączenie odrzucone"
 
-#: ../chrome/oneteam/content/jingleCall.xul:75
+#: ../chrome/oneteam/content/jingleCall.xul:76
 #, fuzzy
 msgid "Caller Busy"
 msgstr "Serwer zajęty"
 
-#: ../chrome/oneteam/content/jingleCall.xul:78
+#: ../chrome/oneteam/content/jingleCall.xul:79
 #, fuzzy
 msgid "Connection Error"
 msgstr "Błąd połączenia"
 
-#: ../chrome/oneteam/content/jingleCall.xul:94
+#: ../chrome/oneteam/content/jingleCall.xul:95
 #, fuzzy
 msgid "Incomming Call"
 msgstr "Wywołanie funkcji"
 
-#: ../chrome/oneteam/content/jingleCall.xul:98
+#: ../chrome/oneteam/content/jingleCall.xul:99
 #, fuzzy
 msgid "Waiting for Accept"
 msgstr "Oczekiwanie na odpowiedź..."
 
-#: ../chrome/oneteam/content/jingleCall.xul:102
-#: ../chrome/oneteam/content/main.xul:581
+#: ../chrome/oneteam/content/jingleCall.xul:103
+#: ../chrome/oneteam/content/main.xul:592
 #: ../chrome/oneteam/content/main.xul:95
 msgid "Connecting"
 msgstr "Łączenie"
 
-#: ../chrome/oneteam/content/jingleCall.xul:131
+#: ../chrome/oneteam/content/jingleCall.xul:132
 #, fuzzy
 msgid "Active Call"
 msgstr "Wywołanie funkcji"
 
-#: ../chrome/oneteam/content/jingleCall.xul:144
+#: ../chrome/oneteam/content/jingleCall.xul:145
 #, fuzzy
 msgid "End Call"
 msgstr "Powód zakończenia połączenia"
 
-#: ../chrome/oneteam/content/main.xul:328
+#: ../chrome/oneteam/content/main.xul:331
 #, fuzzy
 msgid "Quit prompt"
 msgstr "Napis zachęty"
 
-#: ../chrome/oneteam/content/main.xul:328
+#: ../chrome/oneteam/content/main.xul:331
 #, fuzzy
 msgid "You are connected, do you really want to quit?"
 msgstr " Czy na pewno chcesz zakończyć Midnight Commandera? "
 
-#: ../chrome/oneteam/content/main.xul:516
+#: ../chrome/oneteam/content/main.xul:527
 #, fuzzy
 msgid "Add-ons..."
 msgstr "/Rozmowa/Dodaj..."
@@ -1959,21 +1959,21 @@ msgstr "%s (wątek)"
 msgid "BOOKMARK"
 msgstr "Zakładka"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:322
+#: ../chrome/oneteam/content/JavaScript/notification.js:325
 #, fuzzy
 msgid "Message from <b>{0}</b>"
 msgstr "Wiadomość od %s"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:334
+#: ../chrome/oneteam/content/JavaScript/notification.js:337
 #, fuzzy
 msgid "Call request received"
 msgstr "Otrzymano żądanie zakończenia"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:335
+#: ../chrome/oneteam/content/JavaScript/notification.js:338
 msgid "User <b>{0}</b> want to initiate call with you"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/views/roster.js:132
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:135
 msgid "{0} ({1}/{2})"
 msgstr ""
 
@@ -1989,7 +1989,7 @@ msgstr ""
 msgid "<b>{0}</b> want to initiate call with you"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:55
+#: ../chrome/oneteam/content/JavaScript/model/account.js:56
 #, fuzzy
 msgid "My events"
 msgstr "Zdarzenia dźwiękowe"
@@ -2006,47 +2006,47 @@ msgstr ""
 msgid "Your nick name is already used, try another nick"
 msgstr ""
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:231
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:232
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:278
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:233
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:279
 #, fuzzy
 msgid "Voice Call..."
 msgstr "Wywołanie funkcji"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:272
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:273
 msgid "Rename..."
 msgstr "Zmień nazwę..."
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:403
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:404
 #, fuzzy
 msgid "No Suggestions"
 msgstr "<i>(brak sugestii)</i>"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:405
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:406
 msgid "Undo"
 msgstr "Cofnij"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:406
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:407
 msgid "Redo"
 msgstr "Ponów"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:409
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:410
 msgid "Cut"
 msgstr "Wytnij"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:410
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:411
 msgid "Copy"
 msgstr "Skopiuj"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:411
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:412
 msgid "Paste"
 msgstr "Wklej"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:412
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:413
 msgid "Delete"
 msgstr "Usuń"
 
-#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:414
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:415
 msgid "Select All"
 msgstr "Zaznacz wszystkie"
 
@@ -2089,11 +2089,11 @@ msgstr ""
 msgid "Reconnect after loosing connection"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:489
+#: ../chrome/oneteam/content/main.xul:500
 msgid "Wave _Inbox..."
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:584
+#: ../chrome/oneteam/content/main.xul:595
 #, fuzzy
 msgid "Stop Connecting"
 msgstr "Łączenie"
@@ -2143,130 +2143,130 @@ msgstr ""
 msgid "Create a group:"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:159
+#: ../chrome/oneteam/content/JavaScript/notification.js:162
 #, fuzzy
 msgid "<b>{0}</b> has joined room {1}"
 msgstr "%s wylogowany."
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:161
-#: ../chrome/oneteam/content/JavaScript/notification.js:178
-#: ../chrome/oneteam/content/JavaScript/notification.js:192
-#: ../chrome/oneteam/content/JavaScript/notification.js:209
-#: ../chrome/oneteam/content/JavaScript/notification.js:224
-#: ../chrome/oneteam/content/JavaScript/notification.js:235
-#: ../chrome/oneteam/content/JavaScript/notification.js:251
-#: ../chrome/oneteam/content/JavaScript/notification.js:257
-#: ../chrome/oneteam/content/JavaScript/notification.js:270
-#: ../chrome/oneteam/content/JavaScript/notification.js:285
+#: ../chrome/oneteam/content/JavaScript/notification.js:164
+#: ../chrome/oneteam/content/JavaScript/notification.js:181
+#: ../chrome/oneteam/content/JavaScript/notification.js:195
+#: ../chrome/oneteam/content/JavaScript/notification.js:212
+#: ../chrome/oneteam/content/JavaScript/notification.js:227
+#: ../chrome/oneteam/content/JavaScript/notification.js:238
+#: ../chrome/oneteam/content/JavaScript/notification.js:254
+#: ../chrome/oneteam/content/JavaScript/notification.js:260
+#: ../chrome/oneteam/content/JavaScript/notification.js:273
+#: ../chrome/oneteam/content/JavaScript/notification.js:288
 msgid "{0}<br/>{1}"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:176
+#: ../chrome/oneteam/content/JavaScript/notification.js:179
 #, fuzzy
 msgid "{0} signed in"
 msgstr "Połączony <b>{0}</b> "
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:177
+#: ../chrome/oneteam/content/JavaScript/notification.js:180
 #, fuzzy
 msgid "<b>{0}<b> signed in"
 msgstr "Połączony <b>{0}</b> "
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:190
+#: ../chrome/oneteam/content/JavaScript/notification.js:193
 #, fuzzy
 msgid "<b>{0}</b> has left room {1}"
 msgstr "Data ważności tego klucza upłynęła!"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:207
+#: ../chrome/oneteam/content/JavaScript/notification.js:210
 #, fuzzy
 msgid "{0} signed out"
 msgstr "%s wylogowany."
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:208
+#: ../chrome/oneteam/content/JavaScript/notification.js:211
 #, fuzzy
 msgid "<b>{0}<b> signed out"
 msgstr "%s wylogowany."
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:221
+#: ../chrome/oneteam/content/JavaScript/notification.js:224
 #, fuzzy
 msgid "<b>{0}<b> from {1} is now {2}"
 msgstr "%s nazywa się teraz %s"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:233
+#: ../chrome/oneteam/content/JavaScript/notification.js:236
 #, fuzzy
 msgid "<b>{0}<b> is now {1}"
 msgstr "%s nazywa się teraz %s"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:249
+#: ../chrome/oneteam/content/JavaScript/notification.js:252
 msgid "{0} authorized you to see his/her status"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:255
+#: ../chrome/oneteam/content/JavaScript/notification.js:258
 msgid "{0} doesn't authorized you to see his/her status"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:268
+#: ../chrome/oneteam/content/JavaScript/notification.js:271
 #, fuzzy
 msgid "<b>{0}</b> from {1} changed nick to <b>{2}</b>"
 msgstr "{0} zmienił pseudonim na {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:283
+#: ../chrome/oneteam/content/JavaScript/notification.js:286
 #, fuzzy
 msgid "{0} from {1} changed subject to {2}"
 msgstr "{0} zmienił temat na {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:333
+#: ../chrome/oneteam/content/JavaScript/notification.js:336
 msgid "{0} requests a call"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:346
+#: ../chrome/oneteam/content/JavaScript/notification.js:349
 #, fuzzy
 msgid "{0} want to send file \"{1}\\\""
 msgstr "%s prosi o wysłanie pliku"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:360
+#: ../chrome/oneteam/content/JavaScript/notification.js:363
 #, fuzzy
 msgid "{0} doesn't want to receive your file \"{1}\\\""
 msgstr "Plik z wizytówką (VCard)"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:362
+#: ../chrome/oneteam/content/JavaScript/notification.js:365
 #, fuzzy
 msgid "File transfer aborted"
 msgstr "Przyjąć prośbę przesłania pliku od %s?"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:363
+#: ../chrome/oneteam/content/JavaScript/notification.js:366
 #, fuzzy
 msgid "User <b>{0}</b> doesn't want to receive your <b>\"{1}\\\"</b> file"
 msgstr "%s prosi o wysłanie pliku"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:374
+#: ../chrome/oneteam/content/JavaScript/notification.js:377
 #, fuzzy
 msgid "{0} accepted your file \"{1}\\\""
 msgstr "Plik z wizytówką (VCard)"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:376
+#: ../chrome/oneteam/content/JavaScript/notification.js:379
 #, fuzzy
 msgid "File transfer accepted"
 msgstr "Przyjąć prośbę przesłania pliku od %s?"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:377
+#: ../chrome/oneteam/content/JavaScript/notification.js:380
 #, fuzzy
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr "%s prosi o wysłanie pliku"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:935
+#: ../chrome/oneteam/content/JavaScript/model/account.js:949
 #, fuzzy
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr "/Odtwarzanie/Cofnij o 5 sek"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1220
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1250
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1229
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1259
 msgid "Invalid username or password"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1231
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1261
 msgid "Invalid response from server"
 msgstr ""
 
@@ -2402,6 +2402,29 @@ msgstr "Konferencje"
 
 #: ../chrome/oneteam/content/console.xul:67
 msgid "Headline"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:395
+#: ../chrome/oneteam/content/JavaScript/notification.js:407
+#, fuzzy
+msgid "Connection with server lost"
+msgstr "Błąd połączenia"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:396
+#: ../chrome/oneteam/content/JavaScript/notification.js:408
+msgid "Lost connection with server"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:397
+msgid "OneTeam will try to connect again to server"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:410
+msgid "Reconnecting was not successfull, please try to connect manually"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:411
+msgid "Please try to connect manually"
 msgstr ""
 
 #~ msgid "Startup Settings"

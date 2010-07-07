@@ -930,7 +930,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     _reconnectTimeoutFun: function(token) {
         if (token.time == 0) {
             token.model.connect();
-            token.model.reconnectMessage = null;
+            delete token.model._reconnectTimeout;
         } else {
             token.model.reconnectMessage =
                 _("Reconnecting in {0} {0, plurals, second,seconds}", token.time);
@@ -941,8 +941,18 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     },
 
     reconnect: function() {
-        if (this.reconnectStep >= 5 || this._reconnectTimeout)
+        if (this._reconnectTimeout)
             return;
+
+        if (this.reconnectStep >= 4) {
+            delete this._reconnectTimeout;
+            this.reconnectStep = 0;
+            this.notificationScheme.onDisconnect(true);
+            return;
+        }
+
+        if (this.reconnectStep == 0)
+            this.notificationScheme.onReconnect();
 
         this.reconnectStep++;
 
@@ -1026,8 +1036,12 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 groups[i]._clean();
 */
 
-        if (!userDisconnect && this.connectionInfo.reconnect)
-            this.reconnect();
+        if (!userDisconnect) {
+            if (this.connectionInfo.reconnect)
+                this.reconnect();
+            else
+                this.notificationScheme.onDisconnect(false);
+        }
     },
 
     onPresence: function(packet)
