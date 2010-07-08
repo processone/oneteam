@@ -90,7 +90,7 @@ _DECL_(ServicesManager).prototype =
         if (nodes == null || nodes.length == 0)
             nodes = [""];
 
-        for (i = 0; i < nodes.length; i++) {
+        for (var i = 0; i < nodes.length; i++) {
             if (this._identities[nodes[i]])
                 this._identities[nodes[i]].push(identity);
             else
@@ -107,7 +107,7 @@ _DECL_(ServicesManager).prototype =
         if (identity)
             this.publishDiscoIdentity(nodes, identity);
 
-        for (i = 0; i < nodes.length; i++) {
+        for (var i = 0; i < nodes.length; i++) {
             if (this._nodes[nodes[i]])
                 this._nodes[nodes[i]].push(ns);
             else

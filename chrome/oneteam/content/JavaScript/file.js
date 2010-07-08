@@ -576,7 +576,7 @@ _DECL_(File, Reader).prototype =
         this.setCharset(charset);
 
         if (typeof perms == "undefined")
-            perms = 0644;
+            perms = parseInt(644, 8);
 
         this.__inputStream = this.__outputStream = null;
 
@@ -702,7 +702,7 @@ _DECL_(File, Reader).prototype =
      * Creates new directory.
      *
      * @tparam  int  perms  Unix permisions bits for new directory. By
-     *   defaulr value of 0755 will be used. <em>(optional)</em>
+     *   default value of 0755 will be used. <em>(optional)</em>
      *
      * @throws  IOError  Thrown on any IO error.
      *
@@ -711,7 +711,7 @@ _DECL_(File, Reader).prototype =
     createDirectory: function(perms)
     {
         try {
-            this.file.create(1, perms == null ? 0755 : perms);
+            this.file.create(1, perms == null ? parseInt(755, 8) : perms);
         } catch (ex) {
             throw new IOError("File.remove: Unable to create directory", ex);
         }

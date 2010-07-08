@@ -95,7 +95,7 @@ function JSJaCCookie(name,value,secs)
   this.getValue = function() {
     return this.value;
   };
- 
+
   /**
    * Sets the value of this cookie
    * @param {String} value The value for this cookie
@@ -106,6 +106,8 @@ function JSJaCCookie(name,value,secs)
     this.value = value;
     return this;
   };
+
+  return this;
 }
 
 /**

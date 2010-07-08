@@ -70,6 +70,8 @@ function STANZA_ERROR(code, type, cond) {
   this.code = code;
   this.type = type;
   this.cond = cond;
+
+  return this;
 }
 
 var ERR_BAD_REQUEST =
