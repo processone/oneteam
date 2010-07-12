@@ -1918,7 +1918,7 @@
       <xul:toolbarbutton id="jingleCall" oncommand="this.parentNode._model.onJingleCall()"
                          tooltiptext="_('Jingle call')"/>
       <xul:toolbarbutton id="extraCmds" tooltiptext="_('Additional commands')" type="menu">
-        <xul:menupopup onpopupshowing="this.parentNode.parentNode._syncMenu()">
+        <xul:menupopup id="extraCmds-popup" onpopupshowing="this.parentNode.parentNode._syncMenu()">
           <xul:menuitem label="_('Invite to group chat room')"
                         onmenushowing="this.hidden = contact instanceof ConferenceMember ||
                                        contact instanceof Conference;
@@ -1933,8 +1933,6 @@
           <xul:menuseparator/>
           <xul:menuitem id="charCounter" label="_('Show characters counter')" type="checkbox"
                         oncommand="this.parentNode.parentNode.parentNode.showCounter = !this.checked"/>
-          <xul:menuitem id="sendWaveLog" label="_('Send wave log to prefiks')"
-                        oncommand="this.parentNode.parentNode.parentNode._model.sendWaveLog()"/>
         </xul:menupopup>
       </xul:toolbarbutton>
       <xul:toolbarseparator/>

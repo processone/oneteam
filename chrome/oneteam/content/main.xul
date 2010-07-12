@@ -488,8 +488,7 @@
                 <menupopup/>
               </menu>
               <menuseparator/>
-              <menuitem label="_('Wave _Inbox...')" oncommand="window.top.wavesThread.openChatTab()"/>
-              <menuitem label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
+              <menuitem id="disco-menuitem" label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
               <menuitem label="_('_Server Commands...')" command="cmd_adhoc"/>
               <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"/>
               <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"/>
