@@ -74,7 +74,7 @@ sub _prepare_files {
     dircopy(catdir($self->{outputdir}, "defaults"), catdir($tmppfxdir, 'defaults'),
             $self->{outputdir}, $self->_disabled_prefs);
     dircopy(catdir($self->{outputdir}, "components"), catdir($tmppfxdir, 'components'));
-    dircopy('platform', catdir($tmppfxdir, 'platform'), $self->_platform_files_to_skip);
+    dircopy('platform', catdir($tmppfxdir, 'platform'), '', $self->_platform_files_to_skip);
 }
 
 sub _generate_install_rdf {
