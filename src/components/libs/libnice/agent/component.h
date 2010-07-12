@@ -1,9 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2006, 2007 Collabora Ltd.
- *  Contact: Dafydd Harries
- * (C) 2006, 2007 Nokia Corporation. All rights reserved.
+ * (C) 2006-2010 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2006-2010 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -23,6 +23,7 @@
  *
  * Contributors:
  *   Dafydd Harries, Collabora Ltd.
+ *   Youness Alaoui, Collabora Ltd.
  *   Kai Vehmanen, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -41,21 +42,26 @@
 
 #include <glib.h>
 
+typedef struct _Component Component;
+
 #include "agent.h"
 #include "candidate.h"
 #include "stun/stunagent.h"
 #include "stun/usages/timer.h"
+#include "pseudotcp.h"
+#include "stream.h"
+#include "socket.h"
 
 G_BEGIN_DECLS
 
 
-/* (ICE §4.1.1.1, ID-19) ""For RTP-based media streams, the RTP itself has a component
+/* (ICE §4.1.1.1, ID-19)
+ * ""For RTP-based media streams, the RTP itself has a component
  * ID of 1, and RTCP a component ID of 2.  If an agent is using RTCP it MUST
  * obtain a candidate for it.  If an agent is using both RTP and RTCP, it
  * would end up with 2*K host candidates if an agent has K interfaces.""
  */
 
-typedef struct _Component Component;
 typedef struct _CandidatePair CandidatePair;
 typedef struct _CandidatePairKeepalive CandidatePairKeepalive;
 typedef struct _IncomingCheck IncomingCheck;
@@ -89,6 +95,12 @@ struct _IncomingCheck
   uint16_t username_len;
 };
 
+typedef struct {
+  NiceAgent *agent;
+  Stream *stream;
+  Component *component;
+} TcpUserData;
+
 struct _Component
 {
   NiceComponentType type;
@@ -107,12 +119,14 @@ struct _Component
   gpointer data;                    /**< data passed to the io function */
   GMainContext *ctx;                /**< context for data callbacks for this
                                        component */
+  PseudoTcpSocket *tcp;
+  GSource* tcp_clock;
+  TcpUserData *tcp_data;
+  gboolean tcp_readable;
 };
 
 Component *
-component_new (
-  G_GNUC_UNUSED
-  guint component_id);
+component_new (guint component_id);
 
 void
 component_free (Component *cmp);

@@ -1,7 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2007 Nokia Corporation. All rights reserved.
+ * (C) 2008-2009 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2007-2009 Nokia Corporation. All rights reserved.
  *  Contact: Rémi Denis-Courmont
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -20,6 +22,7 @@
  * Corporation. All Rights Reserved.
  *
  * Contributors:
+ *   Youness Alaoui, Collabora Ltd.
  *   Rémi Denis-Courmont, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -324,6 +327,7 @@ static int stun_err_dequeue (int fd)
   errno = saved_errno;
   return ret;
 #else
+  (void) fd;
   return 0;
 #endif
 }
@@ -390,7 +394,7 @@ static int stun_trans_fd (const StunTransport *tr)
 }
 
 
-/**
+/*
  * Waits for a response or timeout to occur.
  *
  * @return ETIMEDOUT if the transaction has timed out, or 0 if an incoming
@@ -517,11 +521,11 @@ StunUsageBindReturn stun_usage_bind_run (const struct sockaddr *srv,
       } else if (bind_ret ==  STUN_USAGE_BIND_RETURN_INVALID) {
         ret = STUN_USAGE_TRANS_RETURN_RETRY;
       } else {
-        return bind_ret;
+        break;
       }
     }
   }
   while (ret == STUN_USAGE_TRANS_RETURN_RETRY);
 
-  return STUN_USAGE_BIND_RETURN_SUCCESS;
+  return bind_ret;
 }

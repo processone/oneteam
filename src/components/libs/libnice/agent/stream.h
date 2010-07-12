@@ -1,10 +1,11 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2006, 2007 Collabora Ltd.
- *  Contact: Dafydd Harries
- * (C) 2006, 2007 Nokia Corporation. All rights reserved.
+ * (C) 2006-2010 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2006-2010 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
+
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -23,6 +24,7 @@
  *
  * Contributors:
  *   Dafydd Harries, Collabora Ltd.
+ *   Youness Alaoui, Collabora Ltd.
  *
  * Alternatively, the contents of this file may be used under the terms of the
  * the GNU Lesser General Public License Version 2.1 (the "LGPL"), in which
@@ -39,6 +41,8 @@
 #define _NICE_STREAM_H
 
 #include <glib.h>
+
+typedef struct _Stream Stream;
 
 #include "component.h"
 #include "random.h"
@@ -68,8 +72,6 @@ typedef enum
 } NiceCheckListState;
 
 
-typedef struct _Stream Stream;
-
 struct _Stream
 {
   guint id;
@@ -85,6 +87,7 @@ struct _Stream
   gboolean gathering;
   gint tos;
 };
+
 
 Stream *
 stream_new (guint n_components);

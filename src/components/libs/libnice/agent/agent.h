@@ -1,9 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2006, 2007 Collabora Ltd.
- *  Contact: Dafydd Harries
- * (C) 2006, 2007 Nokia Corporation. All rights reserved.
+ * (C) 2006-2010 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2006-2010 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -23,6 +23,7 @@
  *
  * Contributors:
  *   Dafydd Harries, Collabora Ltd.
+ *   Youness Alaoui, Collabora Ltd.
  *   Kai Vehmanen, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -60,7 +61,7 @@
    GSList *lcands = NULL;
 
    // Create a nice agent
-   NiceAgent *agent = nice_agent_new (NULL, NICE_COMPATIBILITY_DRAFT19);
+   NiceAgent *agent = nice_agent_new (NULL, NICE_COMPATIBILITY_RFC5245);
 
    // Connect the signals
    g_signal_connect (G_OBJECT (agent), "candidate-gathering-done",
@@ -207,23 +208,29 @@ typedef enum
 
 /**
  * NiceCompatibility:
- * @NICE_COMPATIBILITY_DRAFT19: Use compatibility for ICE Draft 19 specs
+ * @NICE_COMPATIBILITY_RFC5245: Use compatibility with the RFC5245 ICE specs
  * @NICE_COMPATIBILITY_GOOGLE: Use compatibility for Google Talk specs
  * @NICE_COMPATIBILITY_MSN: Use compatibility for MSN Messenger specs
  * @NICE_COMPATIBILITY_WLM2009: Use compatibility with Windows Live Messenger
  * 2009
+ * @NICE_COMPATIBILITY_DRAFT19: Use compatibility for ICE Draft 19 specs
  * @NICE_COMPATIBILITY_LAST: Dummy last compatibility mode
  *
  * An enum to specify which compatible specifications the #NiceAgent should use.
  * Use with nice_agent_new()
+ *
+ * <warning>@NICE_COMPATIBILITY_DRAFT19 is deprecated and should not be used
+ * in newly-written code. It is kept for compatibility reasons and
+ * represents the same compatibility as @NICE_COMPATIBILITY_RFC5245 </warning>
  */
 typedef enum
 {
-  NICE_COMPATIBILITY_DRAFT19 = 0,
+  NICE_COMPATIBILITY_RFC5245 = 0,
   NICE_COMPATIBILITY_GOOGLE,
   NICE_COMPATIBILITY_MSN,
   NICE_COMPATIBILITY_WLM2009,
-  NICE_COMPATIBILITY_LAST = NICE_COMPATIBILITY_WLM2009
+  NICE_COMPATIBILITY_DRAFT19 = NICE_COMPATIBILITY_RFC5245,
+  NICE_COMPATIBILITY_LAST = NICE_COMPATIBILITY_WLM2009,
 } NiceCompatibility;
 
 /**
@@ -236,13 +243,15 @@ typedef enum
  * An enum to specify which proxy type to use for relaying.
  * Note that the proxies will only be used with TCP TURN relaying.
  * <para> See also: #NiceAgent:proxy-type </para>
+ *
+ * Since: 0.0.4
  */
 typedef enum
 {
   NICE_PROXY_TYPE_NONE = 0,
   NICE_PROXY_TYPE_SOCKS5,
   NICE_PROXY_TYPE_HTTP,
-  NICE_PROXY_TYPE_LAST = NICE_PROXY_TYPE_HTTP
+  NICE_PROXY_TYPE_LAST = NICE_PROXY_TYPE_HTTP,
 } NiceProxyType;
 
 
@@ -277,14 +286,38 @@ typedef void (*NiceAgentRecvFunc) (
 NiceAgent *
 nice_agent_new (GMainContext *ctx, NiceCompatibility compat);
 
+
+/**
+ * nice_agent_new_reliable:
+ * @ctx: The Glib Mainloop Context to use for timers
+ * @compat: The compatibility mode of the agent
+ *
+ * Create a new #NiceAgent in reliable mode, which uses #PseudoTcpSocket to
+ * assure reliability of the messages.
+ * The returned object must be freed with g_object_unref()
+ * <para> See also: #NiceAgent::reliable-transport-writable </para>
+ *
+ * Since: 0.0.11
+ *
+ * Returns: The new agent GObject
+ */
+NiceAgent *
+nice_agent_new_reliable (GMainContext *ctx, NiceCompatibility compat);
+
 /**
  * nice_agent_add_local_address:
  * @agent: The #NiceAgent Object
  * @addr: The address to listen to
  * If the port is 0, then a random port will be chosen by the system
  *
- * Add a local address from which to derive local host candidates
+ * Add a local address from which to derive local host candidates for
+ * candidate gathering.
+ * <para>
+ * Since 0.0.5, if this method is not called, libnice will automatically
+ * discover the local addresses available
+ * </para>
  *
+ * See also: nice_agent_gather_candidates()
  * Returns: %TRUE on success, %FALSE on fatal (memory allocation) errors
  */
 gboolean
@@ -352,13 +385,15 @@ gboolean nice_agent_set_relay_info(
  * Start the candidate gathering process.
  * Once done, #NiceAgent::candidate-gathering-done is called for the stream
  *
+ * See also: nice_agent_add_local_address()
  <note>
    <para>
     Local addresses can be previously set with nice_agent_add_local_address()
   </para>
   <para>
-    If no local address was previously added, then the nice agent will
-    automatically detect the local address using nice_interfaces_get_local_ips()
+    Since 0.0.5, If no local address was previously added, then the nice agent
+    will automatically detect the local address using
+    nice_interfaces_get_local_ips()
    </para>
  </note>
  */
@@ -488,7 +523,7 @@ nice_agent_send (
      The caller owns the returned GSList as well as the candidates contained
      within it.
      To get full results, the client should wait for the
-     #NiceAgent::candidates-gathering-done signal.
+     #NiceAgent::candidate-gathering-done signal.
    </para>
  </note>
  *
@@ -629,6 +664,7 @@ nice_agent_set_selected_remote_candidate (
  *
  * Sets the IP_TOS and/or IPV6_TCLASS field on the stream's sockets' options
  *
+ * Since: 0.0.9
  */
 void nice_agent_set_stream_tos (
   NiceAgent *agent,
@@ -645,8 +681,9 @@ void nice_agent_set_stream_tos (
  * This function will set the value of the SOFTWARE attribute to be added to
  * STUN requests, responses and error responses sent during connectivity checks.
  * <para>
- * The SOFTWARE attribute will only be added in the #NICE_COMPATIBILITY_DRAFT19
+ * The SOFTWARE attribute will only be added in the #NICE_COMPATIBILITY_RFC5245
  * and #NICE_COMPATIBILITY_WLM2009 compatibility modes.
+ *
  * </para>
  * <note>
      <para>
@@ -659,16 +696,12 @@ void nice_agent_set_stream_tos (
      </para>
    </note>
  *
+ * Since: 0.0.10
+ *
  */
 void nice_agent_set_software (NiceAgent *agent, const gchar *software);
-
-NiceCandidate *
-discovery_add_jn_relay_candidate (
-  NiceAgent *agent,
-  guint stream_id,
-  guint component_id,
-  NiceAddress *relay_remote_port);
 
 G_END_DECLS
 
 #endif /* _AGENT_H */
+

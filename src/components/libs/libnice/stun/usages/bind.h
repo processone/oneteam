@@ -1,7 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2007 Nokia Corporation. All rights reserved.
+ * (C) 2008-2009 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2007-2009 Nokia Corporation. All rights reserved.
  *  Contact: Rémi Denis-Courmont
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -20,6 +22,7 @@
  * Corporation. All Rights Reserved.
  *
  * Contributors:
+ *   Youness Alaoui, Collabora Ltd.
  *   Rémi Denis-Courmont, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -146,8 +149,8 @@ size_t stun_usage_bind_keepalive (StunAgent *agent, StunMessage *msg,
  * @addrlen: The length of @addr
  *
  * This is a convenience function that will do a synchronous Binding request to
- * a server and wait for its answer. It will use the #StunUsageTrans and
- * #StunUsageTimer usages to send the request and handle the response.
+ * a server and wait for its answer. It will create the socket transports and
+ * use the #StunTimer usage to send the request and handle the response.
  * Returns: A #StunUsageBindReturn.
  * Possible return values are #STUN_USAGE_BIND_RETURN_SUCCESS,
  * #STUN_USAGE_BIND_RETURN_ERROR and #STUN_USAGE_BIND_RETURN_TIMEOUT

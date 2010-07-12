@@ -1,9 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2006, 2007 Collabora Ltd.
- *  Contact: Dafydd Harries
- * (C) 2006, 2007 Nokia Corporation. All rights reserved.
+ * (C) 2006-2009 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2006-2009 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -23,6 +23,7 @@
  *
  * Contributors:
  *   Dafydd Harries, Collabora Ltd.
+ *   Youness Alaoui, Collabora Ltd.
  *   Kai Vehmanen, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -53,9 +54,7 @@
 #include "agent-priv.h"
 
 Component *
-component_new (
-  G_GNUC_UNUSED
-  guint id)
+component_new (guint id)
 {
   Component *component;
 
@@ -63,6 +62,8 @@ component_new (
   component->id = id;
   component->state = NICE_COMPONENT_STATE_DISCONNECTED;
   component->restart_candidate = NULL;
+  component->tcp = NULL;
+
   return component;
 }
 
@@ -122,6 +123,21 @@ component_free (Component *cmp)
     g_source_destroy (cmp->selected_pair.keepalive.tick_source);
     g_source_unref (cmp->selected_pair.keepalive.tick_source);
     cmp->selected_pair.keepalive.tick_source = NULL;
+  }
+
+  if (cmp->tcp_clock) {
+    g_source_destroy (cmp->tcp_clock);
+    g_source_unref (cmp->tcp_clock);
+    cmp->tcp_clock = NULL;
+  }
+  if (cmp->tcp) {
+    pseudo_tcp_socket_close (cmp->tcp, TRUE);
+    g_object_unref (cmp->tcp);
+    cmp->tcp = NULL;
+  }
+  if (cmp->tcp_data != NULL) {
+    g_slice_free (TcpUserData, cmp->tcp_data);
+    cmp->tcp_data = NULL;
   }
 
   g_slice_free (Component, cmp);
@@ -213,8 +229,9 @@ void component_update_selected_pair (Component *component, const CandidatePair *
 {
   g_assert (component);
   g_assert (pair);
-  nice_debug ("setting SELECTED PAIR for component %u: %s:%s (prio:%lu).", 
-	   component->id, pair->local->foundation, pair->remote->foundation, (long unsigned)pair->priority);
+  nice_debug ("setting SELECTED PAIR for component %u: %s:%s (prio:%"
+      G_GUINT64_FORMAT ").", component->id, pair->local->foundation,
+      pair->remote->foundation, pair->priority);
 
   if (component->selected_pair.keepalive.tick_source != NULL) {
     g_source_destroy (component->selected_pair.keepalive.tick_source);

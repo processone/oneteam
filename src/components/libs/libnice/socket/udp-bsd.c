@@ -1,9 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2006, 2007 Collabora Ltd.
- *  Contact: Dafydd Harries
- * (C) 2006, 2007 Nokia Corporation. All rights reserved.
+ * (C) 2006-2009 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2006-2009 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -23,8 +23,7 @@
  *
  * Contributors:
  *   Dafydd Harries, Collabora Ltd.
- *   Rémi Denis-Courmont, Nokia
- *   Kai Vehmanen
+ *   Youness Alaoui, Collabora Ltd.
  *
  * Alternatively, the contents of this file may be used under the terms of the
  * the GNU Lesser General Public License Version 2.1 (the "LGPL"), in which
@@ -159,6 +158,15 @@ socket_recv (NiceSocket *sock, NiceAddress *from, guint len, gchar *buf)
 
   recvd = recvfrom (sock->fileno, buf, len, 0, (struct sockaddr *) &sa,
       &from_len);
+
+  if (recvd < 0) {
+#ifdef G_OS_WIN32
+    if (WSAGetLastError () == WSAEWOULDBLOCK)
+#else
+    if (errno == EAGAIN || errno == EWOULDBLOCK)
+#endif
+      return 0;
+  }
 
   if (recvd > 0)
     nice_address_set_from_sockaddr (from, (struct sockaddr *)&sa);

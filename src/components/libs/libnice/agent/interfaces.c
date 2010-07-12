@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006 Youness Alaoui <kakaroto@kakaroto.homelinux.net>
  * Copyright (C) 2007 Collabora, Nokia
+ *  Contact: Youness Alaoui
  * Copyright (C) 2008 Haakon Sporsheim <haakon.sporsheim@tandberg.com>
  * @author: Youness Alaoui <kakaroto@kakaroto.homelinux.net>
  *
@@ -39,6 +40,7 @@
 #include <sys/types.h>
 
 #include <sys/socket.h>
+#include <netinet/in.h>
 
 #ifdef HAVE_GETIFADDRS
  #include <ifaddrs.h>
@@ -294,7 +296,7 @@ nice_interfaces_get_ip_for_interface (gchar *interface_name)
 
   ifr.ifr_addr.sa_family = AF_INET;
   memset (ifr.ifr_name, 0, sizeof (ifr.ifr_name));
-  strncpy (ifr.ifr_name, interface_name, sizeof (ifr.ifr_name)-1);
+  g_strlcpy (ifr.ifr_name, interface_name, sizeof (ifr.ifr_name));
 
   if ((sockfd = socket (AF_INET, SOCK_DGRAM, IPPROTO_IP)) < 0) {
     nice_debug ("Error : Cannot open socket to retreive interface list");

@@ -1,9 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2006, 2007 Collabora Ltd.
- *  Contact: Dafydd Harries
- * (C) 2006, 2007 Nokia Corporation. All rights reserved.
+ * (C) 2006-2009 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2006-2009 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -23,6 +23,7 @@
  *
  * Contributors:
  *   Dafydd Harries, Collabora Ltd.
+ *   Youness Alaoui, Collabora Ltd.
  *   Kai Vehmanen, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -53,8 +54,8 @@
 #include "component.h"
 
 /* (ICE 4.1.1 "Gathering Candidates") ""Every candidate is a transport
- * address. It also has a type and a base. Three types are defined and
- * gathered by this specification - host candidates, server reflexive
+ * address. It also has a type and a base. Three types are defined and 
+ * gathered by this specification - host candidates, server reflexive 
  * candidates, and relayed candidates."" (ID-19) */
 
 NICEAPI_EXPORT NiceCandidate *
@@ -92,7 +93,6 @@ nice_candidate_jingle_priority (NiceCandidate *candidate)
     case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE: return 900;
     case NICE_CANDIDATE_TYPE_PEER_REFLEXIVE:   return 900;
     case NICE_CANDIDATE_TYPE_RELAYED:          return 500;
-    case NICE_CANDIDATE_TYPE_JN_RELAYED:       return 500;
     }
 
   /* appease GCC */
@@ -108,7 +108,6 @@ nice_candidate_msn_priority (NiceCandidate *candidate)
     case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE: return 550;
     case NICE_CANDIDATE_TYPE_PEER_REFLEXIVE:   return 550;
     case NICE_CANDIDATE_TYPE_RELAYED:          return 450;
-    case NICE_CANDIDATE_TYPE_JN_RELAYED:       return 450;
     }
 
   /* appease GCC */
@@ -118,7 +117,7 @@ nice_candidate_msn_priority (NiceCandidate *candidate)
 
 /*
  * ICE 4.1.2.1. "Recommended Formula" (ID-19):
- * returns number between 1 and 0x7effffff
+ * returns number between 1 and 0x7effffff 
  */
 guint32
 nice_candidate_ice_priority_full (
@@ -150,8 +149,6 @@ nice_candidate_ice_priority (const NiceCandidate *candidate)
     case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE:
       type_preference = NICE_CANDIDATE_TYPE_PREF_SERVER_REFLEXIVE; break;
     case NICE_CANDIDATE_TYPE_RELAYED:
-      type_preference = NICE_CANDIDATE_TYPE_PREF_RELAYED; break;
-    case NICE_CANDIDATE_TYPE_JN_RELAYED:
       type_preference = NICE_CANDIDATE_TYPE_PREF_RELAYED; break;
     }
 

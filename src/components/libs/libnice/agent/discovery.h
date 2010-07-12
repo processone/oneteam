@@ -1,7 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2007 Nokia Corporation. All rights reserved.
+ * (C) 2008-2009 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2007-2009 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -20,6 +22,7 @@
  * Corporation. All Rights Reserved.
  *
  * Contributors:
+ *   Youness Alaoui, Collabora Ltd.
  *   Kai Vehmanen, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -111,15 +114,6 @@ discovery_add_relay_candidate (
   NiceSocket *base_socket,
   TurnServer *turn);
 
-/*
-NiceCandidate *
-discovery_add_jn_relay_candidate (
-  NiceAgent *agent,
-  guint stream_id,
-  guint component_id,
-  NiceAddress *relay_local_port,
-  NiceAddress *relay_remote_port);
-*/
 NiceCandidate* 
 discovery_add_server_reflexive_candidate (
   NiceAgent *agent,

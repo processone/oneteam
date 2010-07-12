@@ -2,6 +2,7 @@
  * This file is part of the Nice GLib ICE library.
  *
  * (C) 2008 Collabora Ltd.
+ *  Contact: Youness Alaoui
  * (C) 2008 Nokia Corporation. All rights reserved.
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -40,23 +41,37 @@
 /**
  * SECTION:debug
  * @short_description: Debug messages utility functions
- * @stability: More flags are to come and a better API to
- * enable/disable each flag should be added. Unstable
+ * @stability: Unstable
  *
- * Libnice can output a lot of information when debug messages are enabled.
+ * <para>Libnice can output a lot of information when debug messages are enabled.
  * This can significantly help track down problems and/or understand what
- * it's doing.
- * You can enable/disable the debug messages by calling nice_debug_enable()
+ * it's doing.</para>
+ *
+ * <para>You can enable/disable the debug messages by calling nice_debug_enable()
  * or nice_debug_disable() and choosing whether you want only ICE debug messages
- * or also stun debug messages.
- * By default, the debug messages are disabled, unless the environment variable
- * NICE_DEBUG is set, in which case, it must contain a comma separated list of
- * flags specifying which debug to enable. The flags can be "nice", "stun",
- * or "all" to enable all debug messages.
+ * or also stun debug messages.</para>
+ *
+ * <para>By default, the debug messages are disabled, unless the environment
+ * variable NICE_DEBUG is set, in which case, it must contain a comma separated
+ * list of flags specifying which debug to enable.</para>
+ * <para> The currently available flags are "nice", "stun", "pseudotcp",
+ * "pseudotcp-verbose" or "all" to enable all debug messages.</para>
+ * <para> If the 'pseudotcp' flag is enabled, then 'pseudotcp-verbose' gets
+ * automatically disabled. This is to allow the use of the 'all' flag without
+ * having verbose messages from pseudotcp. You can enable verbose debug messages
+ * from the pseudotcp layer by specifying 'pseudotcp-verbose' without the
+ * 'pseudotcp' flag.</para>
+ *
+ *
+ * <para>This API is unstable and is subject to change at any time...
+ * More flags are to come and a better API to enable/disable each flag
+ * should be added.</para>
  */
 
 
 #include <glib.h>
+
+G_BEGIN_DECLS
 
 /**
  * nice_debug_init:
@@ -83,6 +98,8 @@ void nice_debug_enable (gboolean with_stun);
 void nice_debug_disable (gboolean with_stun);
 
 void nice_debug (const char *fmt, ...);
+
+G_END_DECLS
 
 #endif /* _DEBUG_H */
 

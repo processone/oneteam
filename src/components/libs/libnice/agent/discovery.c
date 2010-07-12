@@ -1,7 +1,9 @@
 /*
  * This file is part of the Nice GLib ICE library.
  *
- * (C) 2007 Nokia Corporation. All rights reserved.
+ * (C) 2008-2009 Collabora Ltd.
+ *  Contact: Youness Alaoui
+ * (C) 2007-2009 Nokia Corporation. All rights reserved.
  *  Contact: Kai Vehmanen
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -20,6 +22,7 @@
  * Corporation. All Rights Reserved.
  *
  * Contributors:
+ *   Youness Alaoui, Collabora Ltd.
  *   Kai Vehmanen, Nokia
  *
  * Alternatively, the contents of this file may be used under the terms of the
@@ -213,7 +216,7 @@ void refresh_free (NiceAgent *agent)
 
 /*
  * Prunes the list of discovery processes for items related
- * to stream 'stream_id'.
+ * to stream 'stream_id'. 
  *
  * @return TRUE on success, FALSE on a fatal error
  */
@@ -253,7 +256,7 @@ static gboolean priv_add_local_candidate_pruned (Component *component, NiceCandi
 
   for (i = component->local_candidates; i ; i = i->next) {
     NiceCandidate *c = i->data;
-
+    
     if (nice_address_equal (&c->base_addr, &candidate->base_addr) &&
 	nice_address_equal (&c->addr, &candidate->addr)) {
       nice_debug ("Candidate %p (component-id %u) redundant, ignoring.", candidate, component->id);
@@ -330,7 +333,8 @@ static void priv_assign_foundation (NiceAgent *agent, NiceCandidate *candidate)
 	   *       time is supported, so there is no need to check
 	   *       for candidates that would otherwise share the
 	   *       foundation, but have different STUN/TURN servers */
-	  memcpy (candidate->foundation, n->foundation, NICE_CANDIDATE_MAX_FOUNDATION);
+	  g_strlcpy (candidate->foundation, n->foundation,
+              NICE_CANDIDATE_MAX_FOUNDATION);
           if (n->username) {
             g_free (candidate->username);
             candidate->username = g_strdup (n->username);
@@ -345,7 +349,8 @@ static void priv_assign_foundation (NiceAgent *agent, NiceCandidate *candidate)
     }
   }
 
-  g_snprintf (candidate->foundation, NICE_CANDIDATE_MAX_FOUNDATION, "%u", agent->next_candidate_id++);
+  g_snprintf (candidate->foundation, NICE_CANDIDATE_MAX_FOUNDATION,
+      "%u", agent->next_candidate_id++);
 }
 
 static void priv_assign_remote_foundation (NiceAgent *agent, NiceCandidate *candidate)
@@ -380,7 +385,8 @@ static void priv_assign_remote_foundation (NiceAgent *agent, NiceCandidate *cand
 	   *       time is supported, so there is no need to check
 	   *       for candidates that would otherwise share the
 	   *       foundation, but have different STUN/TURN servers */
-	  memcpy (candidate->foundation, n->foundation, NICE_CANDIDATE_MAX_FOUNDATION);
+	  g_strlcpy (candidate->foundation, n->foundation,
+              NICE_CANDIDATE_MAX_FOUNDATION);
           if (n->username) {
             g_free (candidate->username);
             candidate->username = g_strdup (n->username);
@@ -587,7 +593,7 @@ discovery_add_server_reflexive_candidate (
  *
  * @return pointer to the created candidate, or NULL on error
  */
-NiceCandidate*
+NiceCandidate* 
 discovery_add_relay_candidate (
   NiceAgent *agent,
   guint stream_id,
@@ -672,97 +678,12 @@ discovery_add_relay_candidate (
 }
 
 /*
- * Creates a server reflexive candidate for 'component_id' of stream
- * 'stream_id'.
- *
- * @return pointer to the created candidate, or NULL on error
- */
-NiceCandidate*
-discovery_add_jn_relay_candidate (
-  NiceAgent *agent,
-  guint stream_id,
-  guint component_id,
-  NiceAddress *relay_remote_address)
-{
-  NiceCandidate *candidate;
-  Component *component;
-  Stream *stream;
-  NiceSocket *udp_socket = NULL;
-  gboolean errors = FALSE;
-	NiceAddress address;
-
-  if (!agent_find_component (agent, stream_id, component_id, &stream, &component))
-    return NULL;
-
-  candidate = nice_candidate_new (NICE_CANDIDATE_TYPE_JN_RELAYED);
-  if (candidate) {
-    candidate->stream_id = stream_id;
-    candidate->component_id = component_id;
-    candidate->addr = *relay_remote_address;
-    candidate->base_addr = *relay_remote_address;
-    if (agent->compatibility == NICE_COMPATIBILITY_GOOGLE) {
-      candidate->priority = nice_candidate_jingle_priority (candidate);
-    } else if (agent->compatibility == NICE_COMPATIBILITY_MSN)  {
-      candidate->priority = nice_candidate_msn_priority (candidate);
-    } else {
-      candidate->priority = nice_candidate_ice_priority (candidate);
-    }
-
-    priv_generate_candidate_credentials (agent, candidate);
-    priv_assign_foundation (agent, candidate);
-
-		nice_address_set_ipv4(&address, 0);
-      /* note: candidate username and password are left NULL as stream
-	 level ufrag/password are used */
-    udp_socket = nice_udp_bsd_socket_new (&address);
-    if (udp_socket) {
-      gboolean result;
-
-      _priv_set_socket_tos (agent, udp_socket, stream->tos);
-      agent_attach_stream_component_socket (agent, stream,
-          component, udp_socket);
-
-      candidate->sockptr = udp_socket;
-
-      result = priv_add_local_candidate_pruned (component, candidate);
-
-      if (result == TRUE) {
-        GSList *modified_list = g_slist_append (component->sockets, udp_socket);
-        if (modified_list) {
-          /* success: store a pointer to the sockaddr */
-          component->sockets = modified_list;
-          agent_signal_new_candidate (agent, candidate);
-        } else { /* error: list memory allocation */
-          candidate = NULL; /* note: candidate already owned by component */
-        }
-      } else {
-        /* error: memory allocation, or duplicate candidates */
-        errors = TRUE;
-      }
-    } else {
-      /* error: socket new */
-      errors = TRUE;
-    }
-  }
-
-  /* clean up after errors */
-  if (errors) {
-    if (candidate)
-      nice_candidate_free (candidate), candidate = NULL;
-    if (udp_socket)
-      nice_socket_free (udp_socket);
-  }
-
-  return candidate;
-}
-
-/*
  * Creates a peer reflexive candidate for 'component_id' of stream
  * 'stream_id'.
  *
  * @return pointer to the created candidate, or NULL on error
  */
-NiceCandidate*
+NiceCandidate* 
 discovery_add_peer_reflexive_candidate (
   NiceAgent *agent,
   guint stream_id,
@@ -928,7 +849,7 @@ NiceCandidate *discovery_learn_remote_peer_reflexive_candidate (
 
 
     candidate->sockptr = NULL; /* not stored for remote candidates */
-    /* note: candidate username and password are left NULL as stream
+    /* note: candidate username and password are left NULL as stream 
              level ufrag/password are used */
 
     modified_list = g_slist_append (component->remote_candidates,
@@ -945,9 +866,9 @@ NiceCandidate *discovery_learn_remote_peer_reflexive_candidate (
   return candidate;
 }
 
-/*
+/* 
  * Timer callback that handles scheduling new candidate discovery
- * processes (paced by the Ta timer), and handles running of the
+ * processes (paced by the Ta timer), and handles running of the 
  * existing discovery processes.
  *
  * This function is designed for the g_timeout_add() interface.
@@ -1165,7 +1086,7 @@ void discovery_schedule (NiceAgent *agent)
   g_assert (agent->discovery_list != NULL);
 
   if (agent->discovery_unsched_items > 0) {
-
+    
     if (agent->discovery_timer_source == NULL) {
       /* step: run first iteration immediately */
       gboolean res = priv_discovery_tick_unlocked (agent);

@@ -2,8 +2,8 @@
  * This file is part of the Nice GLib ICE library.
  *
  * (C) 2008 Collabora Ltd.
- * (C) 2008 Nokia Corporation
  *  Contact: Youness Alaoui
+ * (C) 2008 Nokia Corporation
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -21,10 +21,7 @@
  * Corporation. All Rights Reserved.
  *
  * Contributors:
- *   Dafydd Harries, Collabora Ltd.
  *   Youness Alaoui, Collabora Ltd.
- *   Rémi Denis-Courmont, Nokia
- *   Kai Vehmanen
  *
  * Alternatively, the contents of this file may be used under the terms of the
  * the GNU Lesser General Public License Version 2.1 (the "LGPL"), in which
@@ -183,10 +180,8 @@ socket_close (NiceSocket *sock)
   }
   g_list_free (priv->channels);
 
-  for (i = priv->pending_bindings; i; i = i->next) {
-    ChannelBinding *b = i->data;
-    g_free (b);
-  }
+  g_list_foreach (priv->pending_bindings, (GFunc) nice_address_free,
+      NULL);
   g_list_free (priv->pending_bindings);
 
   if (priv->tick_source != NULL) {
@@ -613,13 +608,14 @@ priv_retransmissions_tick_unlocked (TurnPriv *priv)
           /* Time out */
           StunTransactionId id;
 
+          stun_message_id (&priv->current_binding_msg->message, id);
+          stun_agent_forget_transaction (&priv->agent, id);
+
           g_free (priv->current_binding);
           priv->current_binding = NULL;
           g_free (priv->current_binding_msg);
           priv->current_binding_msg = NULL;
 
-          stun_message_id (&priv->current_binding_msg->message, id);
-          stun_agent_forget_transaction (&priv->agent, id);
 
           priv_process_pending_bindings (priv);
           break;
