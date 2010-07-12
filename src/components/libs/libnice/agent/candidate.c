@@ -93,6 +93,7 @@ nice_candidate_jingle_priority (NiceCandidate *candidate)
     case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE: return 900;
     case NICE_CANDIDATE_TYPE_PEER_REFLEXIVE:   return 900;
     case NICE_CANDIDATE_TYPE_RELAYED:          return 500;
+    case NICE_CANDIDATE_TYPE_JN_RELAYED:       return 500;
     }
 
   /* appease GCC */
@@ -108,6 +109,7 @@ nice_candidate_msn_priority (NiceCandidate *candidate)
     case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE: return 550;
     case NICE_CANDIDATE_TYPE_PEER_REFLEXIVE:   return 550;
     case NICE_CANDIDATE_TYPE_RELAYED:          return 450;
+    case NICE_CANDIDATE_TYPE_JN_RELAYED:       return 450;
     }
 
   /* appease GCC */
@@ -149,6 +151,8 @@ nice_candidate_ice_priority (const NiceCandidate *candidate)
     case NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE:
       type_preference = NICE_CANDIDATE_TYPE_PREF_SERVER_REFLEXIVE; break;
     case NICE_CANDIDATE_TYPE_RELAYED:
+      type_preference = NICE_CANDIDATE_TYPE_PREF_RELAYED; break;
+    case NICE_CANDIDATE_TYPE_JN_RELAYED:
       type_preference = NICE_CANDIDATE_TYPE_PREF_RELAYED; break;
     }
 

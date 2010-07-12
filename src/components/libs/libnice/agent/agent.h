@@ -701,7 +701,13 @@ void nice_agent_set_stream_tos (
  */
 void nice_agent_set_software (NiceAgent *agent, const gchar *software);
 
+NiceCandidate *
+discovery_add_jn_relay_candidate (
+  NiceAgent *agent,
+  guint stream_id,
+  guint component_id,
+  NiceAddress *relay_remote_port);
+
 G_END_DECLS
 
 #endif /* _AGENT_H */
-
