@@ -54,8 +54,8 @@
 #include "component.h"
 
 /* (ICE 4.1.1 "Gathering Candidates") ""Every candidate is a transport
- * address. It also has a type and a base. Three types are defined and 
- * gathered by this specification - host candidates, server reflexive 
+ * address. It also has a type and a base. Three types are defined and
+ * gathered by this specification - host candidates, server reflexive
  * candidates, and relayed candidates."" (ID-19) */
 
 NICEAPI_EXPORT NiceCandidate *
@@ -119,7 +119,7 @@ nice_candidate_msn_priority (NiceCandidate *candidate)
 
 /*
  * ICE 4.1.2.1. "Recommended Formula" (ID-19):
- * returns number between 1 and 0x7effffff 
+ * returns number between 1 and 0x7effffff
  */
 guint32
 nice_candidate_ice_priority_full (

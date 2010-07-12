@@ -216,7 +216,7 @@ void refresh_free (NiceAgent *agent)
 
 /*
  * Prunes the list of discovery processes for items related
- * to stream 'stream_id'. 
+ * to stream 'stream_id'.
  *
  * @return TRUE on success, FALSE on a fatal error
  */
@@ -256,7 +256,7 @@ static gboolean priv_add_local_candidate_pruned (Component *component, NiceCandi
 
   for (i = component->local_candidates; i ; i = i->next) {
     NiceCandidate *c = i->data;
-    
+
     if (nice_address_equal (&c->base_addr, &candidate->base_addr) &&
 	nice_address_equal (&c->addr, &candidate->addr)) {
       nice_debug ("Candidate %p (component-id %u) redundant, ignoring.", candidate, component->id);
@@ -593,7 +593,7 @@ discovery_add_server_reflexive_candidate (
  *
  * @return pointer to the created candidate, or NULL on error
  */
-NiceCandidate* 
+NiceCandidate*
 discovery_add_relay_candidate (
   NiceAgent *agent,
   guint stream_id,
@@ -768,7 +768,7 @@ discovery_add_jn_relay_candidate (
  *
  * @return pointer to the created candidate, or NULL on error
  */
-NiceCandidate* 
+NiceCandidate*
 discovery_add_peer_reflexive_candidate (
   NiceAgent *agent,
   guint stream_id,
@@ -934,7 +934,7 @@ NiceCandidate *discovery_learn_remote_peer_reflexive_candidate (
 
 
     candidate->sockptr = NULL; /* not stored for remote candidates */
-    /* note: candidate username and password are left NULL as stream 
+    /* note: candidate username and password are left NULL as stream
              level ufrag/password are used */
 
     modified_list = g_slist_append (component->remote_candidates,
@@ -951,9 +951,9 @@ NiceCandidate *discovery_learn_remote_peer_reflexive_candidate (
   return candidate;
 }
 
-/* 
+/*
  * Timer callback that handles scheduling new candidate discovery
- * processes (paced by the Ta timer), and handles running of the 
+ * processes (paced by the Ta timer), and handles running of the
  * existing discovery processes.
  *
  * This function is designed for the g_timeout_add() interface.
@@ -1171,7 +1171,7 @@ void discovery_schedule (NiceAgent *agent)
   g_assert (agent->discovery_list != NULL);
 
   if (agent->discovery_unsched_items > 0) {
-    
+
     if (agent->discovery_timer_source == NULL) {
       /* step: run first iteration immediately */
       gboolean res = priv_discovery_tick_unlocked (agent);

@@ -97,7 +97,7 @@ typedef enum
  */
 typedef enum
 {
-  NICE_CANDIDATE_TRANSPORT_UDP,
+  NICE_CANDIDATE_TRANSPORT_UDP
 } NiceCandidateTransport;
 
 /**
@@ -232,4 +232,3 @@ nice_candidate_pair_priority (guint32 o_prio, guint32 a_prio);
 G_END_DECLS
 
 #endif /* _CANDIDATE_H */
-
