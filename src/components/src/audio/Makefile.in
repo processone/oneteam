@@ -45,6 +45,7 @@ CPPSRCS= \
 
 LOCAL_INCLUDES+= \
 	-I$(otdir)/libs/libspeex/include \
+	-I$(otdir)/libs/libspeex/build \
 	-I$(otdir)/src/codecs \
 	$(NULL)
 FORCE_STATIC_LIB = 1

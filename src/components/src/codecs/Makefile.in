@@ -30,6 +30,7 @@ CPPSRCS= \
 
 LOCAL_INCLUDES+= \
 	-I$(otdir)/libs/libspeex/include \
+	-I$(otdir)/libs/libspeex/build \
 	-I$(otdir)/libs/libilbc \
 	$(NULL)
 
