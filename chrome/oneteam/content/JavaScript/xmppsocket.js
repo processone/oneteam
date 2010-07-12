@@ -14,6 +14,7 @@ function XMPPSocket(listener, host, port, ssl, domain, authhost)
 _DECL_(XMPPSocket).prototype =
 {
     tlsProblemHandled: {},
+    disconnected: false,
 
     debug: false,
     timingTrace: false,
@@ -44,6 +45,10 @@ _DECL_(XMPPSocket).prototype =
 
     onLookupComplete: function(request, response) {
         this.log("XMPPSocket.onLookupComplete");
+
+        if (this.disconnected)
+            return;
+
         if (response && response.hasMore())
             [this.host, this.port] = response.getNextAddrAsString().split(":");
 
@@ -183,12 +188,20 @@ _DECL_(XMPPSocket).prototype =
     },
 
     disconnect: function() {
+        this.disconnected = true;
+
         if (this.is)
-            this.is.close();
+            try{
+                this.is.close();
+            } catch (ex) {}
         if (this.bos)
-            this.bos.close();
+            try{
+                this.bos.close();
+            } catch (ex) {}
         if (this.transport)
-            this.transport.close(0);
+            try{
+                this.transport.close(0);
+            } catch (ex) {}
         if (this._pingInterval)
             window.clearInterval(this._pingInterval);
 
