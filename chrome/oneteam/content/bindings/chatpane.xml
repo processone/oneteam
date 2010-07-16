@@ -2493,7 +2493,7 @@
 
           var doc = this._output._output.contentDocument;
           doc.body.scrollTop = doc.body.scrollHeight;
-        } else if (event.target == this._searchField) {
+        } else if (event.originalTarget == this._searchField) {
           this.model.refineSearch(this._searchField.value);
         }
       ]]></handler>
