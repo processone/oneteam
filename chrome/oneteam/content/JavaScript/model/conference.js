@@ -483,8 +483,9 @@ _DECL_(Conference, Contact).prototype =
             return;
 
         if (this._checkForSubject(packet, this.jid) && packet.getBody()) {
+            var resource = this.getOrCreateResource(packet.getFrom());
             var message = new Message(packet, null, this, 4);
-            account.notificationScheme.onMessage(this, msg, false);
+            account.notificationScheme.onMessage(resource, message, false);
             this.routeMessage(message);
         }
     },
@@ -513,9 +514,10 @@ _DECL_(Conference, Contact).prototype =
 
         this.subject = subject;
 
-        if (!pkt.getBody() || (new JID(pkt.getFrom())).resource)
-            account.notificationScheme.onSubjectChange(this, subject);
-        else if (this.chatPane && !this.chatPane.closed)
+        if (!pkt.getBody() || (new JID(pkt.getFrom())).resource) {
+            var resource = this.getOrCreateResource(pkt.getFrom());
+            account.notificationScheme.onSubjectChange(resource, subject);
+        } else if (this.chatPane && !this.chatPane.closed)
             this.chatPane.thread.addMessage(new Message(pkt.getBody(), null, this, 4));
 
         this.modelUpdated("subject");

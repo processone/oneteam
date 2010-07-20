@@ -336,6 +336,18 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
             yield x;
     },
 
+    getOrCreateResource: function(resource) {
+        var jid = typeof(resouce) != "string" || resource.indexOf("@") >= 0 ?
+            new JID(resource) : this.jid.createFullJID(resource);
+        var nJid = jid.normalizedJID;
+
+        for (var r in this.resourcesIterator(function(a,b) {
+                return a.jid.normalizedJID == b}, nJid))
+            return r;
+
+        return this.createResource(jid);
+    },
+
     sendMessage: function(msg)
     {
         var message = new JSJaCMessage();
