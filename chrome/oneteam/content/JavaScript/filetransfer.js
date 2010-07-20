@@ -100,8 +100,8 @@ _DECL_(FileTransferService, null, Model).prototype =
                                              pkt.getFrom()),
                                         callback);
         canceler.add = account.notificationScheme.
-            onFileTransfer(account.getOrCreateContact(sender.shortJID),
-                           file.@name.toString(), callback);
+            onFileTransferRequest(account.getOrCreateContact(sender.shortJID),
+                                  file.@name.toString(), callback);
 
         return null;
    }
