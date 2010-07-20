@@ -111,6 +111,7 @@ function FileTransfer(offerID, jid, streamID, size, file, description)
 {
     this.jid = jid;
     this.offerID = offerID;
+    this.weAreSender = !!offerID;
     this.state = "waiting";
     this.sent = size == null ? null : 0;
     this.size = size;
@@ -330,6 +331,9 @@ _DECL_(FileTransfer, null, Model).prototype =
         this._startTime = Date.now();
         this.state = "started";
         this.modelUpdated("state");
+
+        if (this.weAreSender)
+            return;
 
         var file = this.file.path.match(/[^\/\\]+$/)[0];
         var contact = this.jid.resource ? account.getOrCreateResource(this.jid) :
