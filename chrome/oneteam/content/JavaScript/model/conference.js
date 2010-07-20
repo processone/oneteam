@@ -670,7 +670,7 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
             this.modelUpdated("name");
             this.modelUpdated("visibleName");
 
-            account.notificationScheme.onNickChange(this, oldJID.resources);
+            account.notificationScheme.onNickChange(this, oldJID.resource);
             return;
         }
 
