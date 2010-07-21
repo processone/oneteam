@@ -151,7 +151,7 @@ _DECL_(NotificationScheme).prototype =
         var time = resource instanceof ConferenceMember ?
             resource.contact.joinedAt : account.connectedAt;
 
-        if (!time || (Date.now()-time < 5*1024) || newPresence.priority < 0)
+        if (!time || (Date.now()-time < 20*1024) || newPresence.priority < 0)
             return this._nopCanceler;
 
         if (newPresence.show != "unavailable" && oldPresence.show == "unavailable") {
