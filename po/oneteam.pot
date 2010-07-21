@@ -1835,7 +1835,7 @@ msgid "{0} signed in"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:180
-msgid "<b>{0}<b> signed in"
+msgid "<b>{0}</b> signed in"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:193
@@ -1847,15 +1847,15 @@ msgid "{0} signed out"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:211
-msgid "<b>{0}<b> signed out"
+msgid "<b>{0}</b> signed out"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:224
-msgid "<b>{0}<b> from {1} is now {2}"
+msgid "<b>{0}</b> from {1} is now {2}"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:236
-msgid "<b>{0}<b> is now {1}"
+msgid "<b>{0}</b> is now {1}"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:252
@@ -1879,7 +1879,7 @@ msgid "{0} requests a call"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:349
-msgid "{0} want to send file \"{1}\\\""
+msgid "{0} want to send you file \"{1}\\\""
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:363

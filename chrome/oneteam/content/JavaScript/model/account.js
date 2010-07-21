@@ -862,34 +862,38 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         var contacts = this.cache.getValue("roster-"+this.myJID.normalizedJID.shortJID) || [];
         for (var i = 0; i < contacts.length; i++) {
-            var c = contacts[i];
-            var jid = new JID(c.jid);
-            var normalizedJID = jid.normalizedJID;
+            try {
+                var c = contacts[i];
+                var jid = new JID(c.jid);
+                var normalizedJID = jid.normalizedJID;
 
-            delete contactsToRemove[normalizedJID];
+                delete contactsToRemove[normalizedJID];
 
-            if (normalizedJID in this.allContacts) {
-                var groups = [];
-                var groupsHash = {};
+                if (normalizedJID in this.allContacts) {
+                    var groups = [];
+                    var groupsHash = {};
 
-                for (var j = 0; j < c.groups.length; j++) {
-                    var group = this.getOrCreateGroup(c.groups[j]);
-                    groups.push(group);
-                    groupsHash[c.groups[j]] = group;
-                }
+                    for (var j = 0; j < c.groups.length; j++) {
+                        var group = this.getOrCreateGroup(c.groups[j]);
+                        groups.push(group);
+                        groupsHash[c.groups[j]] = group;
+                    }
 
-                if (groups.length == 0) {
-                    groups.push(this.defaultGroup);
-                    groupsHash[""] = this.defaultGroup;
-                }
+                    if (groups.length == 0) {
+                        groups.push(this.defaultGroup);
+                        groupsHash[""] = this.defaultGroup;
+                    }
 
-                var data = [jid, c.name, c.subscription, c.subscriptionAsk,
-                            groups, groupsHash];
-                this.allContacts[normalizedJID]._updateFromData(data);
-            } else
-                new Contact(jid, c.name, c.groups.length ?
-                                c.groups : [this.defaultGroup],
-                            c.subscription, c.subscriptionAsk);
+                    var data = [jid, c.name, c.subscription, c.subscriptionAsk,
+                                groups, groupsHash];
+                    this.allContacts[normalizedJID]._updateFromData(data);
+                } else
+                    new Contact(jid, c.name, c.groups.length ?
+                                    c.groups : [this.defaultGroup],
+                                c.subscription, c.subscriptionAsk);
+            } catch(ex) {
+                report("developer", "error", ex);
+            }
         }
 
         for (var j in contactsToRemove) {

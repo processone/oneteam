@@ -177,7 +177,7 @@ _DECL_(NotificationScheme).prototype =
                     var provider = this.findProvider("signIn", resource);
                     if (provider) {
                         return provider.show(_("{0} signed in", contact.visibleName),
-                                             _xml("<b>{0}<b> signed in", contact.visibleName),
+                                             _xml("<b>{0}</b> signed in", contact.visibleName),
                                              _xml("{0}<br/>{1}", contact.visibleName, contact.jid.toUserString()),
                                              resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
                                              "fadein", callback);
@@ -208,7 +208,7 @@ _DECL_(NotificationScheme).prototype =
                     var provider = this.findProvider("signOut", resource);
                     if (provider) {
                         return provider.show(_("{0} signed out", contact.visibleName),
-                                             _xml("<b>{0}<b> signed out", contact.visibleName),
+                                             _xml("<b>{0}</b> signed out", contact.visibleName),
                                              _xml("{0}<br/>{1}", contact.visibleName, contact.jid.toUserString()),
                                              resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
                                              "fadeout", callback);
@@ -221,7 +221,7 @@ _DECL_(NotificationScheme).prototype =
             if (provider)
                 return provider.show(_("{0} is now {1}", resource,
                                        newPresence.toString(true, true)),
-                                     _xml("<b>{0}<b> from {1} is now {2}", resource.name,
+                                     _xml("<b>{0}</b> from {1} is now {2}", resource.name,
                                           resource.contact.name,
                                           newPresence.toString(true, true)),
                                      _xml("{0}<br/>{1}", resource.name,
@@ -233,7 +233,7 @@ _DECL_(NotificationScheme).prototype =
             if (provider)
                 return provider.show(_("{0} is now {1}", resource.visibleName,
                                        newPresence.toString(true, true)),
-                                     _xml("<b>{0}<b> is now {1}", resource.visibleName,
+                                     _xml("<b>{0}</b> is now {1}", resource.visibleName,
                                           newPresence.toString(true, true)),
                                      _xml("{0}<br/>{1}", resource.visibleName, resource.jid.toUserString()),
                                      resource.avatar || "chrome://oneteam/skin/avatar/imgs/default-avatar.png",
