@@ -20,3 +20,8 @@ tr td:first-child:not(:last-child) {
   font-weight: bold;
   color: #666;
 }
+
+#details {
+  overflow: auto;
+  -moz-user-select: text;
+}

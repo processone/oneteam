@@ -63,7 +63,7 @@
       </tabs>
       <tabpanels flex="1">
         <tabpanel orient="vertical">
-          <description id="details" flex="1" style="overflow: auto"><html:div/></description>
+          <description id="details" flex="1"><html:div/></description>
         </tabpanel>
         <tabpanel>
         </tabpanel>
