@@ -14,8 +14,8 @@ tabpanels {
   overflow: auto;
 }
 
-#contacts-list[hideOffline=true] .group-view[onlyOfflineContacts=true]:not([showOffline=true]),
-#contacts-list[hideOffline=true] .group-view:not([showOffline=true]) .contact-view[offlineContact=true],
+#contacts-list[hideOffline=true][connected=true] .group-view[onlyOfflineContacts=true]:not([showOffline=true]),
+#contacts-list[hideOffline=true][connected=true] .group-view:not([showOffline=true]) .contact-view[offlineContact=true],
 .group-view[onlyNonMatchingContacts=true],
 .contact-view[nonMatchingContact=true]
 {

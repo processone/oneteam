@@ -70,6 +70,7 @@
       onConnect: function()
       {
         document.getElementById("actions-toolbar").hidden = !account.connected;
+        document.getElementById("contacts-list").setAttribute("connected", !!account.connected);
 
         if (!account.connected)
           selectLoginDeck(0);
