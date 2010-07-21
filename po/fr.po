@@ -1855,8 +1855,8 @@ msgid "{0} signed in"
 msgstr "{0} s'est connecté(e)"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:180
-msgid "<b>{0}<b> signed in"
-msgstr "<b>{0}<b> s'est connecté(e)"
+msgid "<b>{0}</b> signed in"
+msgstr "<b>{0}</b> s'est connecté(e)"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:193
 msgid "<b>{0}</b> has left room {1}"
@@ -1867,16 +1867,16 @@ msgid "{0} signed out"
 msgstr "{0} s'est déconnecté(e)"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:211
-msgid "<b>{0}<b> signed out"
-msgstr "<b>{0}<b> s'est déconnecté(e)"
+msgid "<b>{0}</b> signed out"
+msgstr "<b>{0}</b> s'est déconnecté(e)"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:224
-msgid "<b>{0}<b> from {1} is now {2}"
-msgstr "<b>{0}<b> de {1} est désormais {2}"
+msgid "<b>{0}</b> from {1} is now {2}"
+msgstr "<b>{0}</b> de {1} est désormais {2}"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:236
-msgid "<b>{0}<b> is now {1}"
-msgstr "<b>{0}<b> est désormais {1}"
+msgid "<b>{0}</b> is now {1}"
+msgstr "<b>{0}</b> est désormais {1}"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:252
 msgid "{0} authorized you to see his/her status"
@@ -1899,7 +1899,7 @@ msgid "{0} requests a call"
 msgstr "{0} demande un appel"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:349
-msgid "{0} want to send file \"{1}\\\""
+msgid "{0} want to send you file \"{1}\\\""
 msgstr "{0} souhaite envoyer un ficher \"{1}\\\""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:363
