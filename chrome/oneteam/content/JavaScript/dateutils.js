@@ -139,8 +139,8 @@ function iso8601TimestampToDate(string)
 
 function readableTimestamp(date)
 {
-    const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday",
-                    "Thursday", "Friday", "Saturday"];
+    const dayMap = [_("Sunday"), _("Monday"), _("Tuesday"), _("Wednesday"),
+                    _("Thursday"), _("Friday"), _("Saturday")];
 
     var now = new Date();
     var d1 = new Date(now), d2 = new Date(date);
@@ -152,7 +152,7 @@ function readableTimestamp(date)
     if (days == 0)
         return formatDate(date, null, "none", "short");
     if (days == 1)
-        return "Yesterday "+formatDate(date, null, "none", "short");
+        return _("Yesterday {0}", formatDate(date, null, "none", "short"));
     if (days > 1 && days < 6)
         return dayMap[date.getDay()] + " "+formatDate(date, null, "none", "short");
 

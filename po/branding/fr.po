@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2010-07-07 14:49+0200\n"
+"POT-Creation-Date: 2010-07-21 17:44+0200\n"
 "PO-Revision-Date: 2010-06-16 16:56+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

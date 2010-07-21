@@ -174,11 +174,11 @@ VCard.prototype =
             list.push([1, null, xmlEscape(text), "organisation"])
         }
         if ("NICKNAME" in this)
-            list.push([10, "nickname", xmlEscape(this.NICKNAME)])
+            list.push([10, _("nickname"), xmlEscape(this.NICKNAME)])
         if ("BDAY" in this)
-            list.push([11, "birthday", xmlEscape(this.BDAY)])
+            list.push([11, _("birthday"), xmlEscape(this.BDAY)])
         if ("URL" in this)
-            list.push([12, "url", _xml("<a href='{0}'>{0}</a>", this.URL)])
+            list.push([12, _("url"), _xml("<a href='{0}'>{0}</a>", this.URL)])
 
         if ("ADR" in this)
             for (var i = 0; i < this.ADR.length; i++)
