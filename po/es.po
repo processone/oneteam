@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "POT-Creation-Date: 2010-07-07 14:49+0200\n"
-"PO-Revision-Date: 2010-07-21 14:47+0200\n"
+"PO-Revision-Date: 2010-07-22 02:32+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -178,42 +178,39 @@ msgstr "Limpiar"
 
 #: ../chrome/oneteam/content/console.xul:39
 msgid "XML Packet Templates"
-msgstr ""
+msgstr "Plantillas de Paquetes XML"
 
 #: ../chrome/oneteam/content/console.xul:70
-#, fuzzy
 msgid "Send"
-msgstr "domingo"
+msgstr "Enviar"
 
 #: ../chrome/oneteam/content/addContact.xul:10
 msgid "Add Contact"
-msgstr ""
+msgstr "Añadir Contacto"
 
 #: ../chrome/oneteam/content/addContact.xul:14
-#, fuzzy
 msgid "Add"
-msgstr "Añadir nuevo"
+msgstr "Añadir"
 
 #: ../chrome/oneteam/content/addContact.xul:102
 msgid "ID:"
-msgstr ""
+msgstr "ID:"
 
 #: ../chrome/oneteam/content/addContact.xul:124
-#, fuzzy
 msgid "Please enter correct Jabber ID"
-msgstr "Los Jabber ID reales pueden verlos"
+msgstr "Por favor indica el Jabber ID correcto"
 
 #: ../chrome/oneteam/content/addContact.xul:128
 msgid "Contact with this Jabber ID already exists"
-msgstr ""
+msgstr "Ya existe un contacto con este Jabber ID"
 
 #: ../chrome/oneteam/content/addContact.xul:161
 msgid "Network:"
-msgstr ""
+msgstr "Red:"
 
 #: ../chrome/oneteam/content/addContact.xul:164
 msgid "XMPP"
-msgstr ""
+msgstr "XMPP"
 
 #: ../chrome/oneteam/content/addContact.xul:187
 #, fuzzy
@@ -225,44 +222,41 @@ msgstr "Jabber ID"
 #: ../chrome/oneteam/content/editContact.xul:47
 #: ../chrome/oneteam/content/manageBookmarks.xul:206
 #: ../chrome/oneteam/content/muc.xul:359
-#, fuzzy
 msgid "Nickname:"
-msgstr "Apodo"
+msgstr "Apodo:"
 
 #: ../chrome/oneteam/content/addContact.xul:210
 #: ../chrome/oneteam/content/editContact.xul:53
-#, fuzzy
 msgid "Groups:"
-msgstr "Grupos"
+msgstr "Grupos:"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:9
 msgid "Another client active"
-msgstr ""
+msgstr "Otro cliente activo"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:10
 #: ../chrome/oneteam/content/bookmarkRoom.xul:66
 msgid "Bookmark Room"
-msgstr ""
+msgstr "Añadir Sala a Marcadores"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:14
 msgid "Bookmark"
-msgstr ""
+msgstr "Añadir a Marcadores"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:105
 #: ../chrome/oneteam/content/manageBookmarks.xul:184
 msgid "Bookmark with that name already exists"
-msgstr ""
+msgstr "Ya tienes guardada en marcadores una sala con este nombre"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:75
 #: ../chrome/oneteam/content/manageBookmarks.xul:190
 msgid "Room:"
-msgstr ""
+msgstr "Sala:"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:82
 #: ../chrome/oneteam/content/manageBookmarks.xul:199
-#, fuzzy
 msgid "Server:"
-msgstr "Servidor ~b"
+msgstr "Servidor:"
 
 #: ../chrome/oneteam/content/bindings/forms.xml:26
 #: ../chrome/oneteam/content/bookmarkRoom.xul:93
@@ -278,88 +272,85 @@ msgid "Name:"
 msgstr "Nombre:"
 
 #: ../chrome/oneteam/content/muc.xul:355
-#, fuzzy
 msgid "Chat Room:"
-msgstr "Salas de charla"
+msgstr "Salas de charla:"
 
 #: ../chrome/oneteam/content/muc.xul:364
 msgid "Enter Chat"
-msgstr ""
+msgstr "Entrar en la Sala"
 
 #: ../chrome/oneteam/content/editContact.xul:10
 #: ../chrome/oneteam/content/editContact.xul:42
 msgid "Edit Contact"
-msgstr ""
+msgstr "Editar Contacto"
 
 #: ../chrome/oneteam/content/editContact.xul:14
 msgid "Change"
-msgstr ""
+msgstr "Cambiar"
 
 #: ../chrome/oneteam/content/about.xul:8
 msgid "About {0}"
-msgstr ""
+msgstr "Acerca de {0}"
 
 #: ../chrome/oneteam/content/about.xul:34
 msgid "Release {0} ({1})"
-msgstr ""
+msgstr "Liberar {0} ({1})"
 
 #: ../chrome/oneteam/content/changePassword.xul:10
 msgid "Change Password"
-msgstr "Cambiar contraseña"
+msgstr "Cambiar Contraseña"
 
 #: ../chrome/oneteam/content/changePassword.xul:53
-#, fuzzy
 msgid "New Password:"
-msgstr "Contraseña:"
+msgstr "Nueva Contraseña:"
 
 #: ../chrome/oneteam/content/changePassword.xul:59
-#, fuzzy
 msgid "Retype Password:"
-msgstr "Ver contraseña de usuario"
+msgstr "Escribe de nuevo la contraseña:"
 
 #: ../chrome/oneteam/content/fileTransfers.xul:10
 msgid "File Transfers"
-msgstr ""
+msgstr "Transferencias de Ficheros"
 
 #: ../chrome/oneteam/content/fileTransfers.xul:52
 msgid "Clean up"
-msgstr ""
+msgstr "Limpiar"
 
 #: ../chrome/oneteam/content/changePassword.xul:33
 msgid "Server does not allow password changes"
-msgstr ""
+msgstr "El servidor no permite cambiar la contraseña"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:89
 #: ../chrome/oneteam/content/changeNick.xul:42
 #: ../chrome/oneteam/content/manageBookmarks.xul:207
 msgid "Nickname can't be empty"
-msgstr ""
+msgstr "Debes indicar un apodo"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:258
 #: ../chrome/oneteam/content/vcardEdit.xul:9
 msgid "My vCard"
-msgstr ""
+msgstr "Mi vCard"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:13
 msgid "Ok"
-msgstr ""
+msgstr "Sí"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:248
 msgid "Can't read your avatar image data"
-msgstr ""
+msgstr "No se puede leer tu imagen de avatar"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:265
 msgid "Personal"
-msgstr ""
+msgstr "Personal"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:266
 msgid "Work"
-msgstr ""
+msgstr "Trabajo"
 
 #: ../chrome/oneteam/content/preferences.xul:269
 #: ../chrome/oneteam/content/vcardEdit.xul:267
 msgid "Appearance"
-msgstr ""
+msgstr "Apariencia"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:272
 msgid "Name"
@@ -367,23 +358,21 @@ msgstr "Nombre"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:276
 msgid "Name Details"
-msgstr ""
+msgstr "Detalles del Nombre"
 
 #: ../chrome/oneteam/content/search.xul:88
 #: ../chrome/oneteam/content/vcardEdit.xul:286
-#, fuzzy
 msgid "First Name"
-msgstr "Apellido"
+msgstr "Primer Nombre"
 
 #: ../chrome/oneteam/content/search.xul:91
 #: ../chrome/oneteam/content/vcardEdit.xul:288
-#, fuzzy
 msgid "Last Name"
-msgstr "Último año"
+msgstr "Apellido"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:292
 msgid "Second Name"
-msgstr ""
+msgstr "Segundo Nombre"
 
 #: ../chrome/oneteam/content/search.xul:94
 #: ../chrome/oneteam/content/vcardEdit.xul:294
@@ -392,48 +381,44 @@ msgstr "Apodo"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:298
 msgid "Prefix"
-msgstr ""
+msgstr "Prefijo"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:300
 msgid "Suffix"
-msgstr ""
+msgstr "Sufijo"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:315
 msgid "Homepage"
-msgstr ""
+msgstr "Página personal"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:317
 #: ../chrome/oneteam/content/vcardEdit.xul:382
-#, fuzzy
 msgid "E-Mail"
-msgstr "correo"
+msgstr "Correo electrónico"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:321
 msgid "Birthday"
-msgstr "Cumpleaños"
+msgstr "Fecha de nacimiento"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:323
 #: ../chrome/oneteam/content/vcardEdit.xul:384
-#, fuzzy
 msgid "Phone"
-msgstr "Pong"
+msgstr "Teléfono"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:329
 #: ../chrome/oneteam/content/vcardEdit.xul:390
-#, fuzzy
 msgid "Address"
-msgstr "Direcciones IP"
+msgstr "Dirección"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:339
 #: ../chrome/oneteam/content/vcardEdit.xul:400
-#, fuzzy
 msgid "Street"
-msgstr "Iniciar"
+msgstr "Calle"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:341
 #: ../chrome/oneteam/content/vcardEdit.xul:402
 msgid "ExtAdd"
-msgstr ""
+msgstr "ExtAdd"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:345
 #: ../chrome/oneteam/content/vcardEdit.xul:406
@@ -443,12 +428,12 @@ msgstr "Ciudad"
 #: ../chrome/oneteam/content/vcardEdit.xul:347
 #: ../chrome/oneteam/content/vcardEdit.xul:408
 msgid "Postal code"
-msgstr ""
+msgstr "Código Postal"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:351
 #: ../chrome/oneteam/content/vcardEdit.xul:412
 msgid "Region"
-msgstr ""
+msgstr "Región"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:353
 #: ../chrome/oneteam/content/vcardEdit.xul:414
@@ -456,28 +441,25 @@ msgid "Country"
 msgstr "País"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:370
-#, fuzzy
 msgid "Company"
-msgstr "Comandos"
+msgstr "Compañía"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:372
 msgid "Department"
-msgstr ""
+msgstr "Departamento"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:376
-#, fuzzy
 msgid "Position"
-msgstr "Subscripción"
+msgstr "Posición"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:351
 #: ../chrome/oneteam/content/vcardEdit.xul:378
-#, fuzzy
 msgid "Role"
-msgstr "Borrar"
+msgstr "Rol"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:423
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
 
 #: ../chrome/oneteam/content/adhoc.xul:12
 #, fuzzy
