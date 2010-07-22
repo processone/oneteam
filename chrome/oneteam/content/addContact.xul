@@ -120,19 +120,24 @@
       var reason = document.getElementById("reason").value;
 
       if (!contact) {
-        if (!~jid.search(/^([^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/)) {
-          alert(_("Please enter correct Jabber ID"));
-          return false;
-        }
-        if (account.contacts[jid]) {
-          alert(_("Contact with this Jabber ID already exists"));
-          return false;
-        }
         contact = account.getOrCreateContact(jid, false, nick, groups);
       } else
         contact.editContact(nick, groups);
 
       contact.subscribe(reason);
+      return true;
+    }
+
+    function checkJid(value, tb) {
+      if (value.search(/^([^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W](?:[\w-]*\w)?$/) != 0) {
+        tb.errortext = _("Please enter correct Jabber ID");
+        return false;
+      }
+      var jid = new JID(value);
+      if (jid.normalizedJID in account.contacts) {
+        tb.errortext = _("Contact with this Jabber ID already exists");
+        return false;
+      }
       return true;
     }
 
@@ -170,41 +175,48 @@
 
   <deck id="mode">
     <vbox>
-      <grid>
-        <columns>
-          <column/>
-          <column/>
-        </columns>
-        <rows>
-          <row id="gateway-entry" hidden="true">
-            <label control="gateway-id"/>
-            <textbox id="gateway-id"/>
-          </row>
-          <description class="field-desc" hidden="true"/>
+      <vbox align="center">
+        <grid>
+          <columns>
+            <column/>
+            <column/>
+          </columns>
+          <rows>
+            <row id="gateway-entry" hidden="true">
+              <label control="gateway-id"/>
+              <textbox id="gateway-id"/>
+            </row>
+            <row>
+              <spacer/>
+              <description class="field-desc" hidden="true"/>
+            </row>
 
-          <vbox align="center" pack="center">
             <row id="jabber-entry">
               <label value="_('Jabber ID:')" control="jid"/>
-              <textbox id="jid"/>
+              <textbox id="jid" type="verifiable" condition="checkJid(val, this)"/>
             </row>
-            <description class="field-desc">_('For example: john@talkr.im')</description>
-          </vbox>
+            <row>
+              <spacer/>
+              <description class="field-desc">_('For example: john@talkr.im')</description>
+            </row>
 
-          <spacer/>
-          <vbox align="center" pack="center">
-            <row align="center" pack="center">
+            <spacer/>
+            <row>
               <label value="_('Nickname:')" control="nick"/>
               <textbox id="nick"/>
             </row>
-            <description class="field-desc">_("This alias is used in the roster")</description>
-          </vbox>
-        </rows>
-      </grid>
+            <row>
+              <spacer/>
+              <description class="field-desc">_("This alias is used in the roster")</description>
+            </row>
+          </rows>
+        </grid>
+      </vbox>
 
       <separator class="groove"/>
-      
+
       <spacer/>
-      
+
       <hbox flex="1">
         <vbox flex="1">
           <label value="_('Groups:')" control="groups"/>
@@ -212,7 +224,7 @@
         </vbox>
 
       <separator orient="vertical" class="groove"/>
-      
+
         <vbox flex="1">
           <hbox align="center">
             <label value="_('Reason:')" />
@@ -222,11 +234,11 @@
           <textbox id="reason" multiline="true" rows="3"/>
         </vbox>
       </hbox>
-      
+
       <spacer/>
-      
+
       <separator class="groove"/>
-      
+
     </vbox>
     <vbox>
       <description>
@@ -236,7 +248,5 @@
     </vbox>
   </deck>
 
-  <spacer/>
   <progressmeter id="progressmeter" style="visibility: hidden" mode="undetermined"/>
-  <spacer/>
 </dialog>
