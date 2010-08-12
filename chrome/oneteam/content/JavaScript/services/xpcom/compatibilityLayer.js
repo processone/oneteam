@@ -75,14 +75,21 @@ function setTimeout(code, step) {
             createInstance(Components.interfaces.nsITimer),
         args: args,
         code: code,
+        id: timeoutsLastId,
         notify: function() {
+            clearTimeout(this.id);
             this.code.apply(null, this.args);
         }
     }
     handler.timer.initWithCallback(handler, step, 0);
 
-    return handler;
+    timeouts[timeoutsLastId] = handler;
+
+    return timeoutsLastId++;
 }
+
+var timeouts = {};
+var timeoutsLastId = 1;
 
 function setInterval(code, step) {
     var args;
@@ -103,17 +110,22 @@ function setInterval(code, step) {
     }
     handler.timer.initWithCallback(handler, step, 1);
 
-    return handler;
+    timeouts[timeoutsLastId] = handler;
+
+    return timeoutsLastId++;
 }
 
-function clearTimeout(handler)
+function clearTimeout(id)
 {
-    handler.timer.cancel();
+    if (id in timeouts) {
+        timeouts[id].timer.cancel();
+        delete timeouts[id];
+    }
 }
 
-function clearInterval(handler)
+function clearInterval(id)
 {
-    handler.timer.cancel();
+    clearTimeout(id);
 }
 
 function open(url, name, flags)
