@@ -84,8 +84,8 @@
             if (this._condition != this.condition) {
               this._condition = this.condition;
               try {
-                this._conditionFun = eval("var f; f=function(val){try{return !!("+
-                                          this._condition+")}catch(e){return false}}");
+                this._conditionFun = eval("(function(val){try{return !!("+
+                                          this._condition+")}catch(e){return false}})");
               } catch(e) {
                 this._conditionFun = function(){return false};
               }
