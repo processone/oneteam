@@ -38,7 +38,7 @@ _DECL_(Conference, Contact).prototype =
 
     _sendMucPresence: function(presence)
     {
-        var pkt = presence.generatePacket(this.myResourceJID);
+        var pkt = presence.generatePacket(this._myResourceJID || this.myResourceJID);
 
         if (presence.show != "unavailable") {
             var childrens = [];
