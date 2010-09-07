@@ -21,6 +21,12 @@ class otICEService : public otIICEService {
 
   nsCString mStunIP;
   unsigned long mStunPort;
+
+  nsCString mTurnIP;
+  unsigned long mTurnPort;
+  nsCString mTurnUsername;
+  nsCString mTurnPassword;
+
   PRPackedBool mGlibInitialized;
 };
 

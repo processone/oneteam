@@ -33,8 +33,20 @@ otICEService::SetStunServer(const nsACString & ip, PRUint32 port,
 }
 
 NS_IMETHODIMP
-otICEService::CreateSession(PRInt16 aMode,
-                            PRBool aInitiator,
+otICEService::SetTurnServer(const nsACString & ip, PRUint32 port,
+                            const nsACString & username,
+                            const nsACString & password)
+{
+  mTurnIP = ip;
+  mTurnPort = port;
+  mTurnUsername = username;
+  mTurnPassword = password;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+otICEService::CreateSession(PRInt16 aMode, PRBool aInitiator, PRBool aReliable,
                             otIICESessionCallbacks *aCallbacks,
                             otIICESession **_retval NS_OUTPARAM)
 {
@@ -52,8 +64,10 @@ otICEService::CreateSession(PRInt16 aMode,
 
   NS_ADDREF(sess);
 
-  nsresult res = sess->Init(aMode, aInitiator, aCallbacks,
-                            mStunIP.IsEmpty() ? nsnull : mStunIP.get(), mStunPort);
+  nsresult res = sess->Init(aMode, aInitiator, aReliable, aCallbacks,
+                            mStunIP.IsEmpty() ? nsnull : mStunIP.get(), mStunPort,
+                            mTurnIP.IsEmpty() ? nsnull: mTurnIP.get(), mTurnPort,
+                            mTurnUsername.get(), mTurnPassword.get());
 
   if (NS_SUCCEEDED(res))
     *_retval = sess;

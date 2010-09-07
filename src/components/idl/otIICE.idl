@@ -54,6 +54,8 @@ interface otIICEService : nsISupports
 
   void setStunServer(in ACString ip, in unsigned long port, in ACString username,
                      in ACString password);
+  void setTurnServer(in ACString ip, in unsigned long port, in ACString username,
+                     in ACString password);
 
   otIICESession createSession(in short mode, in boolean initiator,
                               in otIICESessionCallbacks callbacks);

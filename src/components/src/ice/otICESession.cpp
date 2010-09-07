@@ -47,8 +47,11 @@ otICESession::~otICESession()
 }
 
 nsresult
-otICESession::Init(int mode, PRBool initiator, otIICESessionCallbacks *callbacks,
-                   const char* stunServer, PRUint16 stunPort)
+otICESession::Init(int mode, PRBool initiator, PRBool reliable,
+                   otIICESessionCallbacks *callbacks,
+                   const char* stunServer, PRUint16 stunPort,
+                   const char* turnServer, PRUint16 turnPort,
+                   const char* turnUsername, const char* turnPassword)
 {
   NS_ENSURE_ARG(callbacks);
 
@@ -99,6 +102,15 @@ otICESession::Init(int mode, PRBool initiator, otIICESessionCallbacks *callbacks
 
   nice_agent_attach_recv(mAgent, mStreamID, NICE_COMPONENT_TYPE_RTCP, mMainContext,
                          &recvCallback, this);
+
+  if (turnServer) {
+    nice_agent_set_relay_info(mAgent, mStreamID, NICE_COMPONENT_TYPE_RTP,
+                              turnServer, turnPort, turnUsername, turnPassword,
+                              NICE_RELAY_TYPE_TURN_UDP);
+    nice_agent_set_relay_info(mAgent, mStreamID, NICE_COMPONENT_TYPE_RTCP,
+                              turnServer, turnPort, turnUsername, turnPassword,
+                              NICE_RELAY_TYPE_TURN_UDP);
+  }
 
   rv = pm->GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
                              NS_GET_IID(otIICESessionCallbacks),
