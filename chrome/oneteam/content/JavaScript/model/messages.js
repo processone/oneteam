@@ -671,7 +671,6 @@ _DECL_(Message).prototype =
     },
 
     get formatedHtml() {
-
         if (!this._html || this._formatedHtmlEpoch != Message.prototype.epoch) {
             if (!this.html)
                 this._html = this._processUrls(this.text, this.formatFlags || {});
@@ -683,10 +682,16 @@ _DECL_(Message).prototype =
                         "<div class='image-replacement' onclick=\"var ev = document.createEvent('Events');"+
                             "ev.initEvent('replacewithimage', true, false);"+
                             "this.dispatchEvent(ev)\" $1>" +
-                                "<div><div>"+xmlEscape(_("Click to load image"))+"</div></div>"+
+                                "<div><div>"+_xml("Click to load image")+"</div></div>"+
                                 "<label onclick='event.stopPropagation()'><input type='checkbox'/>"+
-                                xmlEscape(_("Always load images from that contact"))+"</label>"+
+                                _xml("Always load images from that contact")+"</label>"+
                             "</div>");
+            }
+
+            if (this.inlineCommands && !this._canceled) {
+                for (var i = 0; i < this.inlineCommands.length; i++)
+                    this._html += "<input type='button' class='inline-command' index='"+i+
+                        "' value='"+xmlEscape(this.inlineCommands[i].label)+"'/>";
             }
 
             if (this.text.indexOf("/me ") == 0)
@@ -696,6 +701,35 @@ _DECL_(Message).prototype =
         }
 
         return this._html;
+    },
+
+    addRepresentation: function(msgEl) {
+        if (!this.inlineCommands)
+            return;
+
+        this._msgEl = msgEl;
+
+        if (this._canceled)
+            this.cancel();
+    },
+
+    processInlineCommand: function(node, win) {
+        var cmd = this.inlineCommands[node.getAttribute("index")];
+        cmd.callback(win);
+    },
+
+    cancel: function ()
+    {
+        this._canceled = true;
+
+        if (!this._msgEl)
+            return;
+
+        var cmdNodes = this._msgEl.getElementsByClassName("inline-command");
+        for (var i = cmdNodes.length-1; i >= 0; i--)
+            cmdNodes[i].parentNode.removeChild(cmdNodes[i]);
+
+        delete this._msgEl;
     },
 
     msgDelivered: function()

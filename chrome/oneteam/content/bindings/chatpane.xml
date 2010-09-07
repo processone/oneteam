@@ -319,6 +319,8 @@
                 me._prependMessages();
               else if (event.target.className.indexOf("edit-message") >= 0)
                 me._editMessageClick(event.target);
+              else if (event.target.className.indexOf("inline-command") >= 0)
+                me._inlineCommandClick(event.target);
               else
                 linkEventsRedirector(event);
             }, true)
@@ -858,6 +860,8 @@
             e.appendChild(e2);
             e2.innerHTML = msg.formatedHtml || "<br/>";
 
+            msg.addRepresentation(msgEl);
+
             msg.markAsSeen();
             msgEl.appendChild(e);
 
@@ -1110,9 +1114,21 @@
       <method name="_editMessageClick">
         <parameter name="el"/>
         <body><![CDATA[
-          var msg = el.parentNode.parentNode;
+          var msgEl = el.parentNode.parentNode;
 
-          this.editMessage(msg);
+          this.editMessage(msgEl);
+        ]]></body>
+      </method>
+
+      <method name="_inlineCommandClick">
+        <parameter name="el"/>
+        <body><![CDATA[
+          var msgEl = el.parentNode.parentNode.parentNode;
+
+          var msg = this._msgList[this._msgElList.indexOf(msgEl)];
+
+          if (msg)
+            msg.processInlineCommand(el, window);
         ]]></body>
       </method>
 

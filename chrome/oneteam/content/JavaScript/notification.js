@@ -12,7 +12,7 @@ var notificationAlerts = {
         cancel: function() {}
     },
 
-    showAlert: function(title, msg, icon, clickHandler, animation)
+    showAlert: function(title, msg, icon, clickHandler, animation, canceler)
     {
         if (this._alertSvc == null) {
             if (navigator.platform.indexOf("Mac") >= 0 ||
@@ -44,24 +44,22 @@ var notificationAlerts = {
                                     this.ch.call();
                             }
                         });
-                return this._nopCanceler;
             } catch (ex) { }
         }
 
-        if (this._top < 150 || this._wins.length > 8)
-            return this._nopCanceler;
-        return {
-            win: window.openDialog("chrome://oneteam/content/notifications.xul",
-                                   "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
-                                   ",screenX="+window.screen.availWidth+
-                                   ",screenY="+window.screen.availHeight,
-                                   this, title, msg, icon, clickHandler, findCallerWindow(), animation),
-            cancel: function() {
-                try {
-                    this.win.close();
-                } catch (ex) { }
-            }
-        };
+        if (this._top > 150 && this._wins.length < 8)
+            canceler.add = {
+                win: window.openDialog("chrome://oneteam/content/notifications.xul",
+                                       "_blank", "chrome,dialog=yes,titlebar=no,popup=yes"+
+                                       ",screenX="+window.screen.availWidth+
+                                       ",screenY="+window.screen.availHeight,
+                                       this, title, msg, icon, clickHandler, findCallerWindow(), animation),
+                cancel: function() {
+                    try {
+                        this.win.close();
+                    } catch (ex) { }
+                }
+            };
     },
 
     _updatePositions: function(win, closing)
@@ -99,34 +97,62 @@ function NotificationProvider(showInChatpane, showInMucChatpane, showAlert, soun
 }
 
 _DECL_(NotificationProvider).prototype = {
-    show: function(chatpaneMessage, alertTitle, alertMsg, alertIcon, alertAnim, callback) {
+    show: function(chatpaneMessage, alertTitle, alertMsg, alertIcon, alertAnim,
+                   callback, inlineCommands)
+    {
+        NotificationProvider.prototype._canceler =
+            this._canceler || new NotificationsCanceler();
+
         if (this.soundSample)
             soundsPlayer.playSound(this.soundSample);
 
         if (this.showInChatpane || this.showInMucChatpane)
-            this._showInChatPane(chatpaneMessage);
+            this._showInChatPane(chatpaneMessage, inlineCommands, this._canceler);
 
         if (this.showAlert)
-            return notificationAlerts.showAlert(alertTitle, alertMsg, alertIcon, callback, alertAnim);
+            notificationAlerts.showAlert(alertTitle, alertMsg, alertIcon,
+                                         callback, alertAnim, this._canceler);
+
+        if (this._canceler.notifications.length) {
+            var canceler = this._canceler;
+
+            delete NotificationProvider.prototype._canceler;
+
+            return canceler;
+        }
 
         return notificationAlerts._nopCanceler;
     },
 
-    _showInChatPane: function(msg)
+    _genMessageObject: function(msg, contact, inlineCommands, canceler)
     {
-        var msgObj;
+        var newMsg = new Message(msg, null, contact, 4);
+        newMsg.inlineCommands = inlineCommands;
 
+        if (inlineCommands) {
+            newMsg.canceler = canceler;
+            canceler.add = newMsg;
+        }
+
+        return newMsg;
+    },
+
+    _showInChatPane: function(msg, inlineCommands, canceler)
+    {
         if (this.showInMucChatpane) {
             var c = this.contact instanceof Conference ? this.contact :
                 (this.contact instanceof ConferenceMember &&
                     this.contact.contact.myResource != this.contact) ?
                     this.contact.contact : null;
             if (c)
-                c.showSystemMessage(msgObj = new Message(msg, null, c, 4));
+                c.showSystemMessage(this._genMessageObject(msg, c, inlineCommands,
+                                                           canceler));
         }
 
         if (this.showInChatpane && !(this.contact instanceof Conference))
-            this.contact.showSystemMessage(msgObj || new Message(msg, null, this.contact, 4));
+            this.contact.showSystemMessage(this._genMessageObject(msg, this.contact,
+                                                                  inlineCommands,
+                                                                  canceler));
     },
 
     getWrapperFor: function(contact) {
@@ -184,8 +210,7 @@ _DECL_(NotificationScheme).prototype =
                     }
                 }
             }
-        }
-        else if (newPresence.show == "unavailable" && oldPresence.show != "unavailable") {
+        } else if (newPresence.show == "unavailable" && oldPresence.show != "unavailable") {
             if (resource instanceof ConferenceMember) {
                 var provider = this.findProvider("mucSignOut", resource);
                 if (provider) {
@@ -341,18 +366,18 @@ _DECL_(NotificationScheme).prototype =
                              null, callback);
     },
 
-    onFileTransferRequest: function(resource, fileName, callback) {
+    onFileTransferRequest: function(resource, fileName, callback, inlineCommands) {
         var provider = this.findProvider("fileTransfer", resource);
         if (!provider)
             return this._nopCanceler;
 
-        return provider.show(_("{0} want to send file \"{1}\"", resource.visibleName,
+        return provider.show(_("{0} want to send you file \"{1}\"", resource.visibleName,
                                fileName),
                              _("File transfer request"),
                              _xml("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
                                   resource.visibleName, fileName),
                              "chrome://oneteam/skin/main/imgs/fticon.png",
-                             null, callback);
+                             null, callback, inlineCommands);
     },
 
     onFileTransferRejected: function(resource, fileName, callback) {
