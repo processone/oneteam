@@ -700,7 +700,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
             new JoinCommand(),
             new InviteToCommand(this),
             new CallCommand(this),
-            new WhoisCommand(this)
+            new WhoisCommand(this),
+            new RemoteDebugCommand(this)
         ]);
     },
 

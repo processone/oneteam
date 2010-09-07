@@ -4,7 +4,8 @@ var EXPORTED_SYMBOLS = ["DataCompletionEngine", "CommandCompletionEngine",
                         "JoinCommand", "InviteCommand", "InviteByMailCommand",
                         "InviteToCommand", "NickCommand", "TopicCommand",
                         "LeaveCommand", "KickCommand", "BanCommand",
-                        "CallCommand", "WhoisCommand", "WhoisMucCommand"];
+                        "CallCommand", "WhoisCommand", "WhoisMucCommand",
+                        "RemoteDebugCommand"];
 
 function DataCompletionEngine()
 {
@@ -405,6 +406,25 @@ _DECL_(InviteToCommand, CommandCompletionEngine).prototype =
         jid = new JID(jid);
         var conference = account.getOrCreateConference(jid.shortJID);
         conference.invite(this.contact.jid, reason || null);
+    }
+}
+
+function RemoteDebugCommand(contact)
+{
+    this.contact = contact;
+    CommandCompletionEngine.call(this, "/remotedebug", []);
+}
+
+_DECL_(RemoteDebugCommand, CommandCompletionEngine).prototype =
+{
+    doCommand: function()
+    {
+        remoteDebug.allow(this.contact.jid);
+
+        var msg = new Message("Remote debugging enabled", null, null, 4)
+        msg.remoteDebugEnabled = true;
+
+        this.contact.sendMessage(msg)
     }
 }
 

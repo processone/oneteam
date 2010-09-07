@@ -566,6 +566,20 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
         if (!thread)
             thread = body.getThread();
 
+        var remoteDebug = body.getNode().
+            getElementsByTagNameNS("http://process-one.net/remote-debug", "enabled")[0];
+        if (remoteDebug) {
+            this.inlineCommands = [{
+                label: _("Open console"),
+                cancel: true,
+                from: body.getFrom(),
+                callback: function() {
+                    window.openDialogUniq("ot:command-"+this.from,
+                                          "chrome://oneteam/content/command.xul",
+                                          "chrome,dialog=no,all", this.from);
+                }
+            }]
+        }
         var xThread = body.getNode().
             getElementsByTagNameNS("http://process-one.net/threads", "x")[0];
         if (xThread) {
@@ -690,7 +704,7 @@ _DECL_(Message).prototype =
 
             if (this.inlineCommands && !this._canceled) {
                 for (var i = 0; i < this.inlineCommands.length; i++)
-                    this._html += "<input type='button' class='inline-command' index='"+i+
+                    this._html += " <input type='button' class='inline-command' index='"+i+
                         "' value='"+xmlEscape(this.inlineCommands[i].label)+"'/>";
             }
 
@@ -716,6 +730,9 @@ _DECL_(Message).prototype =
     processInlineCommand: function(node, win) {
         var cmd = this.inlineCommands[node.getAttribute("index")];
         cmd.callback(win);
+
+        if (cmd.cancel)
+            this.cancel();
     },
 
     cancel: function ()
@@ -770,6 +787,9 @@ _DECL_(Message).prototype =
             }
             pkt.getNode().appendChild(html);
         }
+
+        if (this.remoteDebugEnabled)
+            pkt.appendNode("enabled", {xmlns: "http://process-one.net/remote-debug"})
 
         if (this.xMessageId || this.xTwitterNick || (this.xReplyTo && this.xReplyTo.length)) {
             var childrens;
