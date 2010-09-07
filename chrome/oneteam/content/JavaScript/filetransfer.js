@@ -101,7 +101,29 @@ _DECL_(FileTransferService, null, Model).prototype =
                                         callback);
         canceler.add = account.notificationScheme.
             onFileTransferRequest(account.getOrCreateContact(sender.shortJID),
-                                  file.@name.toString(), callback);
+                    file.@name.toString(), callback,
+                    [{
+                        _ft: fileTransfer,
+                        _canceler: canceler,
+                        _name: file.@name.toString(),
+                        label: _("Accept"),
+                        callback: function(win) {
+                            var path = pickFile(_("Select a File"), true, "",
+                                                this._name, win);
+                            if (path) {
+                                this._ft.accept(path);
+                                this._canceler.cancel();
+                            }
+                        }
+                    }, {
+                        _ft: fileTransfer,
+                        _canceler: canceler,
+                        label: _("Reject"),
+                        callback: function() {
+                            this._ft.reject();
+                            this._canceler.cancel();
+                        }
+                    }]);
 
         return null;
    }
