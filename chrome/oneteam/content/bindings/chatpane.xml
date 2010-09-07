@@ -1652,8 +1652,7 @@
           var thread = this.thread;
           this._thread = null;
 
-          this._input.contentDocument.execCommand("selectAll", false, null);
-          this._input.contentDocument.execCommand("delete", false, null);
+          this._input.contentDocument.body.innerHTML = "<br>";
 
           if (thread)
             this.thread = thread;
