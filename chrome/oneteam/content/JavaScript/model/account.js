@@ -856,6 +856,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     },
 
     _restoreContactsFromCache: function() {
+        if (!this.myJID)
+            return;
+
         var contactsToRemove = {};
         for (var c in this.contactsIterator())
             contactsToRemove[c.jid.normalizedJID] = 1;
