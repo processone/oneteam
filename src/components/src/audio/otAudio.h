@@ -1,0 +1,31 @@
+#ifndef _otAUDIO_H_
+#define _otAUDIO_H_
+
+#ifdef OT_HAS_PULSE_AUDIO
+# include "otPulseAudio.h"
+# define OT_PULSE_AUDIO_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otPulseAudio) NS_DEFINE_NAMED_CID(OT_PULSE_AUDIO_CID);
+# define OT_PULSE_AUDIO_FACTORY otPulseAudioConstructor
+#else
+# define OT_PULSE_AUDIO_DEFINE_FACTORY
+# define OT_PULSE_AUDIO_FACTORY
+#endif
+
+#ifdef OT_HAS_MAC_AUDIO
+# include "otMacAudio.h"
+# define OT_MAC_AUDIO_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otMacAudio) NS_DEFINE_NAMED_CID(OT_MAC_AUDIO_CID);
+# define OT_MAC_AUDIO_FACTORY otMacAudioConstructor
+#else
+# define OT_MAC_AUDIO_DEFINE_FACTORY
+# define OT_MAC_AUDIO_FACTORY
+#endif
+
+#ifdef OT_HAS_WIN_AUDIO
+# include "otWinAudio.h"
+# define OT_WIN_AUDIO_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otWinAudio) NS_DEFINE_NAMED_CID(OT_WIN_AUDIO_CID);
+# define OT_WIN_AUDIO_FACTORY otWinAudioConstructor
+#else
+# define OT_WIN_AUDIO_DEFINE_FACTORY
+# define OT_WIN_AUDIO_FACTORY
+#endif
+
+#endif

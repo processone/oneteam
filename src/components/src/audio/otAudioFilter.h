@@ -17,30 +17,15 @@ public:
   void InputData(const char *data, PRUint32 len);
   void OutputData(const char *data, PRUint32 len);
 
-  nsrefcnt AddRef(void) {
-    NS_PRECONDITION(PRInt32(mRefCnt) >= 0, "illegal refcnt");
-    ++mRefCnt;
-    NS_LOG_ADDREF(this, mRefCnt, "otAudioFilter", sizeof(*this));
-
-    return mRefCnt;
-  }
-
-  nsrefcnt Release(void) {
-    NS_PRECONDITION(0 != mRefCnt, "dup release");
-    --mRefCnt;
-    NS_LOG_RELEASE(this, mRefCnt, "otAudioFilter");
-    if (mRefCnt == 0) {
-      mRefCnt = 1; /* stabilize */
-      NS_DELETEXPCOM(this);
-      return 0;
-    }
-    return mRefCnt;
-  }
+  NS_IMETHOD_(nsrefcnt) AddRef();
+  NS_IMETHOD_(nsrefcnt) Release();
 
 protected:
+  nsAutoRefCnt mRefCnt;
+  NS_DECL_OWNINGTHREAD
+
   SpeexPreprocessState *mPreprocessState;
   SpeexEchoState *mEchoState;
-  nsAutoRefCnt mRefCnt;
 
   char *mFrame;
   PRUint32 mFrameEnd;

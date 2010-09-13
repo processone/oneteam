@@ -23,9 +23,9 @@ class imgIContainer; /* forward declaration */
 
 
 /* starting interface:    imgIContainerObserver1_9_2 */
-#define IMGICONTAINEROBSERVER_IID_STR "e214c295-4b8e-4aa9-9907-45289e57295b"
+#define IMGICONTAINEROBSERVER1_9_2_IID_STR "e214c295-4b8e-4aa9-9907-45289e57295b"
 
-#define IMGICONTAINEROBSERVER_IID \
+#define IMGICONTAINEROBSERVER1_9_2_IID \
   {0xe214c295, 0x4b8e, 0x4aa9, \
     { 0x99, 0x07, 0x45, 0x28, 0x9e, 0x57, 0x29, 0x5b }}
 
@@ -38,25 +38,25 @@ class imgIContainer; /* forward declaration */
 class NS_NO_VTABLE NS_SCRIPTABLE imgIContainerObserver1_9_2 : public nsISupports {
  public: 
 
-  NS_DECLARE_STATIC_IID_ACCESSOR(IMGICONTAINEROBSERVER_IID)
+  NS_DECLARE_STATIC_IID_ACCESSOR(IMGICONTAINEROBSERVER1_9_2_IID)
 
   /* [noscript] void frameChanged (in imgIContainer aContainer, in nsIntRect aDirtyRect); */
   NS_IMETHOD FrameChanged(imgIContainer *aContainer, nsIntRect * aDirtyRect) = 0;
 
 };
 
-  NS_DEFINE_STATIC_IID_ACCESSOR(imgIContainerObserver1_9_2, IMGICONTAINEROBSERVER_IID)
+  NS_DEFINE_STATIC_IID_ACCESSOR(imgIContainerObserver1_9_2, IMGICONTAINEROBSERVER1_9_2_IID)
 
 /* Use this macro when declaring classes that implement this interface. */
-#define NS_DECL_IMGICONTAINEROBSERVER \
+#define NS_DECL_IMGICONTAINEROBSERVER1_9_2 \
   NS_IMETHOD FrameChanged(imgIContainer *aContainer, nsIntRect * aDirtyRect); 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object. */
-#define NS_FORWARD_IMGICONTAINEROBSERVER(_to) \
+#define NS_FORWARD_IMGICONTAINEROBSERVER1_9_2(_to) \
   NS_IMETHOD FrameChanged(imgIContainer *aContainer, nsIntRect * aDirtyRect) { return _to FrameChanged(aContainer, aDirtyRect); } 
 
 /* Use this macro to declare functions that forward the behavior of this interface to another object in a safe way. */
-#define NS_FORWARD_SAFE_IMGICONTAINEROBSERVER(_to) \
+#define NS_FORWARD_SAFE_IMGICONTAINEROBSERVER1_9_2(_to) \
   NS_IMETHOD FrameChanged(imgIContainer *aContainer, nsIntRect * aDirtyRect) { return !_to ? NS_ERROR_NULL_POINTER : _to->FrameChanged(aContainer, aDirtyRect); } 
 
 #if 0
@@ -67,7 +67,7 @@ class _MYCLASS_ : public imgIContainerObserver1_9_2
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_IMGICONTAINEROBSERVER
+  NS_DECL_IMGICONTAINEROBSERVER1_9_2
 
   _MYCLASS_();
 

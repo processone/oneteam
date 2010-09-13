@@ -6,7 +6,7 @@
 #include "otIRTP.h"
 #include "prlock.h"
 
-#define OT_RTP_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otRTP)
+#define OT_RTP_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otRTP) NS_DEFINE_NAMED_CID(OT_RTP_CID);
 #define OT_RTP_FACTORY otRTPConstructor
 
 typedef struct JitterBuffer_ JitterBuffer;

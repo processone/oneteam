@@ -82,8 +82,8 @@ sub process_makefile {
     for (@skip_dirs) {
         return if index ($File::Find::name, $_) == 0;
     }
-    libtoolize($File::Find::name, $config{'MOZILLA_SOURCE_'.$moz_version},
-        $config{'MOZILLA_OBJ_'.$moz_version}) if -f $_ && /\.in$/;
+    libtoolize($File::Find::name, $config{'MOZILLA_SOURCE'},
+        $config{'MOZILLA_OBJ'}) if -f $_ && /\.in$/;
 }
 
 sub configure_component {
@@ -112,4 +112,3 @@ $config_stamp = (stat($config_path))[9];
 read_config($config_path);
 $moz_version = (sort split /\s+/, $config{MOZILLA_VERSIONS})[-1];
 configure_component();
-

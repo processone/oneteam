@@ -2,13 +2,9 @@
 #define _otPULSEAUDIO_H_
 
 #include "nsCOMPtr.h"
-#include "nsCOMArray.h"
 #include "otIAudio.h"
 
 #include <pulse/pulseaudio.h>
-
-#define OT_PULSE_AUDIO_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otPulseAudio)
-#define OT_PULSE_AUDIO_FACTORY otPulseAudioConstructor
 
 #define OT_PULSE_AUDIO_CID \
 { /* e6d09357-5b39-4442-b640-85d46bdbd64f */ \

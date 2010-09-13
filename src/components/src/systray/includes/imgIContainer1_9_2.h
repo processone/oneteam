@@ -16,12 +16,12 @@
 #endif
 class imgIContainer1_9_2Observer; /* forward declaration */
 
-#include "gfxImageSurface.h"
+#include "gfxImageSurface1_9_2.h"
 #include "gfxContext.h"
 #include "gfxMatrix.h"
 #include "gfxRect.h"
 #include "gfxPattern.h"
-#include "gfxASurface.h"
+#include "gfxASurface1_9_2.h"
 #include "nsRect.h"
 
 /* starting interface:    imgIContainer1_9_2 */
@@ -81,7 +81,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE imgIContainer1_9_2 : public nsISupports {
    * and otherwise inspect the pixels of.
    */
   /* [noscript] gfxImageSurface copyCurrentFrame (); */
-  NS_IMETHOD CopyCurrentFrame(gfxImageSurface * *_retval NS_OUTPARAM) = 0;
+  NS_IMETHOD CopyCurrentFrame(gfxImageSurface1_9_2 * *_retval NS_OUTPARAM) = 0;
 
   /**
    * Create a new imgContainer that contains only a single frame, which itself

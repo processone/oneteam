@@ -19,7 +19,7 @@
 #define NS_NO_VTABLE
 #endif
 #include "nsRect.h"
-class imgIContainer; /* forward declaration */
+class imgIContainer1_9_2; /* forward declaration */
 
 class gfxIImageFrame1_9; /* forward declaration */
 

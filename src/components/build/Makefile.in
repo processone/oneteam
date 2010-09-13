@@ -33,6 +33,16 @@ CPPSRCS = \
 	otModule.cpp \
 	$(NULL)
 
+ifneq (,$(IS_GECKO2))
+CPPSRCS += \
+	GenericFactory.cpp \
+	GenericModule.cpp \
+	$(NULL)
+else
+EXTRA_DSO_LDOPTS += \
+	$(XPCOM_GLUE_LDOPTS)
+endif
+
 LOCAL_INCLUDES = \
 	-I$(otdir)/src/idle \
 	-I$(otdir)/src/systray \
@@ -52,19 +62,19 @@ SHARED_LIBRARY_LIBS += \
 
 OS_LIBS += $(OT_EXTRA_SHARED_OS_LIBS)
 
-ifdef GNU_LD2
+ifdef GNU_LD
 	EXTRA_DSO_LDOPTS += \
 	    -Wl,--as-needed -Wl,--gc-sections -Wl,--no-undefined \
 	    $(NULL)
 endif
 
 EXTRA_DSO_LDOPTS += \
-	$(XPCOM_GLUE_LDOPTS) \
-	$(XPCOM_FROZEN_LDOPTS) \
+	$(filter-out %mozalloc, $(XPCOM_STANDALONE_GLUE_LDOPTS)) \
+	$(filter-out %mozalloc, $(XPCOM_FROZEN_LDOPTS)) \
 	$(OT_LDOPTS) \
 	$(LIBS_DIR) \
 	$(EXTRA_DSO_LIBS) \
-	$(MOZ_COMPONENT_LIBS) \
+	$(filter-out %mozalloc, $(MOZ_COMPONENT_LIBS)) \
 	$(OT_EXTRA_DYN_LIBS) \
 	$(NULL)
 

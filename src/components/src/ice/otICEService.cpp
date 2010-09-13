@@ -46,7 +46,7 @@ otICEService::SetTurnServer(const nsACString & ip, PRUint32 port,
 }
 
 NS_IMETHODIMP
-otICEService::CreateSession(PRInt16 aMode, PRBool aInitiator, PRBool aReliable,
+otICEService::CreateSession(PRInt16 aMode, PRBool aInitiator,
                             otIICESessionCallbacks *aCallbacks,
                             otIICESession **_retval NS_OUTPARAM)
 {
@@ -64,7 +64,7 @@ otICEService::CreateSession(PRInt16 aMode, PRBool aInitiator, PRBool aReliable,
 
   NS_ADDREF(sess);
 
-  nsresult res = sess->Init(aMode, aInitiator, aReliable, aCallbacks,
+  nsresult res = sess->Init(aMode, aInitiator, aCallbacks,
                             mStunIP.IsEmpty() ? nsnull : mStunIP.get(), mStunPort,
                             mTurnIP.IsEmpty() ? nsnull: mTurnIP.get(), mTurnPort,
                             mTurnUsername.get(), mTurnPassword.get());

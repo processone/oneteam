@@ -6,9 +6,6 @@
 #include "otIAudio.h"
 #include "AudioToolbox/AudioToolbox.h"
 
-#define OT_MAC_AUDIO_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otMacAudio)
-#define OT_MAC_AUDIO_FACTORY otMacAudioConstructor
-
 #define OT_MAC_AUDIO_CID \
 { /* 9956283f-a9c3-4bb9-aea0-c339432a243d */ \
   0x9956283f, \

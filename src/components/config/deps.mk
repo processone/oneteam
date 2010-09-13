@@ -1,3 +1,8 @@
+OS_CFLAGS += -DMOZ_NO_MOZALLOC
+OS_CXXFLAGS += -DMOZ_NO_MOZALLOC
+
+STL_FLAGS =
+
 ifeq "$(MOZ_WIDGET_TOOLKIT)" "gtk2"
 	ifeq "$(shell pkg-config --exists libpulse && echo 1)" "1"
 		OT_HAS_PULSE_AUDIO=1

@@ -3,13 +3,13 @@
 
 #ifdef OT_HAS_SYSTRAY_UNIX
 #  include "otSystrayGtk2.h"
-#  define OT_SYSTRAY_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otSystrayGtk2)
+#  define OT_SYSTRAY_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otSystrayGtk2) NS_DEFINE_NAMED_CID(OT_SYSTRAY_CID);
 #  define OT_SYSTRAY_FACTORY otSystrayGtk2Constructor
 #  define OT_HAS_SYSTRAY 1
 #  else
 #    ifdef OT_HAS_SYSTRAY_WIN
 #      include "otSystrayWin.h"
-#      define OT_SYSTRAY_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otSystrayWin)
+#      define OT_SYSTRAY_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otSystrayWin) NS_DEFINE_NAMED_CID(OT_SYSTRAY_CID);
 #      define OT_SYSTRAY_FACTORY otSystrayWinConstructor
 #      define OT_HAS_SYSTRAY 1
 #    else
@@ -19,4 +19,3 @@
 #endif
 
 #endif
-

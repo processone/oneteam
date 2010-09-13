@@ -22,7 +22,7 @@ class otICESession : public otIICESession, public otITarget, public otISource {
 
   otICESession();
 
-  nsresult Init(int mode, PRBool initiator, PRBool reliable,
+  nsresult Init(int mode, PRBool initiator,
                 otIICESessionCallbacks *callbacks,
                 const char* stunServer, PRUint16 stunPort,
                 const char* turnServer, PRUint16 turnPort,

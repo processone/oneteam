@@ -5,7 +5,7 @@
 #include "otICodec.h"
 #include "otIPipeline.h"
 
-#define OT_SPEEX_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otSpeex)
+#define OT_SPEEX_DEFINE_FACTORY NS_GENERIC_FACTORY_CONSTRUCTOR(otSpeex) NS_DEFINE_NAMED_CID(OT_SPEEX_CID);
 #define OT_SPEEX_FACTORY otSpeexConstructor
 #define OT_SPEEX_CID \
 { /* 748adef2-9160-4dfd-afaa-3797b1181dfe */ \

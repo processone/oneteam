@@ -17,6 +17,9 @@ otAudioFilter::~otAudioFilter()
   FreeData();
 }
 
+NS_IMPL_ADDREF(otAudioFilter)
+NS_IMPL_RELEASE(otAudioFilter)
+
 nsresult
 otAudioFilter::Init(otICodecInfo *aCodecInfo)
 {

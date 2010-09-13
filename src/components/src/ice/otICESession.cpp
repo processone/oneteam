@@ -47,7 +47,7 @@ otICESession::~otICESession()
 }
 
 nsresult
-otICESession::Init(int mode, PRBool initiator, PRBool reliable,
+otICESession::Init(int mode, PRBool initiator,
                    otIICESessionCallbacks *callbacks,
                    const char* stunServer, PRUint16 stunPort,
                    const char* turnServer, PRUint16 turnPort,

@@ -8,6 +8,7 @@ class nsIFrame;
 #include "imgIContainer1_9_2.h"
 #include "imgIRequest.h"
 #include "nsIDOMHTMLImageElement.h"
+#include "nsIDOMHTMLImageElement1_9_2.h"
 #include "nsIDOMHTMLCanvasElement.h"
 #include "nsICanvasRenderingContextInternal.h"
 #include "otPr0nObserver.h"
@@ -27,9 +28,11 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
 
   if (!image)
     return NS_OK;
-  nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
 
-  if (!imgEl) {
+  nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
+  nsCOMPtr<nsIDOMHTMLImageElement_1_9_2> imgEl1_9_2 = do_QueryInterface(image);
+
+  if (!imgEl && !imgEl1_9_2) {
     nsCOMPtr<nsIDOMHTMLCanvasElement> canvasEl = do_QueryInterface(image);
     if (!canvasEl)
       return NS_ERROR_NOT_AVAILABLE;
@@ -74,49 +77,53 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
     return rv;
   }
 
-  nsCOMPtr<nsIImageLoadingContent1_9> loader1_9 = do_QueryInterface(imgEl);
+  if (imgEl1_9_2) {
+    nsCOMPtr<nsIImageLoadingContent1_9> loader1_9 = do_QueryInterface(imgEl1_9_2);
 
-  if (loader1_9) {
-    nsCOMPtr<imgIRequest1_9> imgRequest;
-    rv = loader1_9->GetRequest(nsIImageLoadingContent1_9::CURRENT_REQUEST,
-                               getter_AddRefs(imgRequest));
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (loader1_9) {
+      nsCOMPtr<imgIRequest1_9> imgRequest;
+      rv = loader1_9->GetRequest(nsIImageLoadingContent1_9::CURRENT_REQUEST,
+                                 getter_AddRefs(imgRequest));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    if (!imgRequest)
-      return NS_ERROR_NOT_AVAILABLE;
+      if (!imgRequest)
+        return NS_ERROR_NOT_AVAILABLE;
 
-    nsCOMPtr<imgIRequest1_9> imgRequestClone;
+      nsCOMPtr<imgIRequest1_9> imgRequestClone;
 
-    rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    mImgRequest = imgRequestClone;
+      mImgRequest = imgRequestClone;
 
-    return NS_OK;
-  }
+      return NS_OK;
+    }
 
-  nsCOMPtr<imgIDecoderObserver1_9_2> observer = do_QueryInterface(imgEl);
-  if (observer) {
-    nsCOMPtr<nsIImageLoadingContent1_9_2> loader = do_QueryInterface(imgEl);
-    if (!loader)
-      return NS_ERROR_NOT_AVAILABLE;
+    nsCOMPtr<imgIDecoderObserver1_9_2> observer = do_QueryInterface(imgEl1_9_2);
+    if (observer) {
+      nsCOMPtr<nsIImageLoadingContent1_9_2> loader = do_QueryInterface(imgEl1_9_2);
+      if (!loader)
+        return NS_ERROR_NOT_AVAILABLE;
 
-    nsCOMPtr<imgIRequest> imgRequest;
-    rv = loader->GetRequest(nsIImageLoadingContent1_9_2::CURRENT_REQUEST,
-                            getter_AddRefs(imgRequest));
-    NS_ENSURE_SUCCESS(rv, rv);
+      nsCOMPtr<imgIRequest> imgRequest;
+      rv = loader->GetRequest(nsIImageLoadingContent1_9_2::CURRENT_REQUEST,
+                              getter_AddRefs(imgRequest));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    if (!imgRequest)
-      return NS_ERROR_NOT_AVAILABLE;
+      if (!imgRequest)
+        return NS_ERROR_NOT_AVAILABLE;
 
-    nsCOMPtr<imgIRequest> imgRequestClone;
+      nsCOMPtr<imgIRequest> imgRequestClone;
 
-    rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = imgRequest->Clone(this, getter_AddRefs(imgRequestClone));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    mImgRequest = imgRequestClone;
+      mImgRequest = imgRequestClone;
 
-    return NS_OK;
+      return NS_OK;
+    }
+
+    return NS_ERROR_NOT_AVAILABLE;
   }
 
   nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
@@ -150,26 +157,43 @@ otPr0nObserver::AbortLoad()
   return NS_OK;
 }
 
+#if GECKO_VERSION >= 200
+NS_IMETHODIMP
+otPr0nObserver::FrameChanged(imgIContainer *aContainer,
+                             const nsIntRect *aDirtyRect)
+{
+  return FrameChanged(aContainer, (nsIntRect*)aDirtyRect);
+}
+#endif
+
 NS_IMETHODIMP
 otPr0nObserver::FrameChanged(imgIContainer *aContainer,
                              nsIntRect *aDirtyRect)
 {
   DEBUG_DUMP("otPr0nObserver::FrameChanged (entered)");
   nsresult rv;
-  nsRefPtr<gfxImageSurface> surface;
 
-  nsCOMPtr<imgIContainer1_9_2> container = do_QueryInterface(aContainer);
-  if (container) {
-    rv = container->CopyCurrentFrame(getter_AddRefs(surface));
-  } else
+  nsCOMPtr<imgIContainer1_9_2> container1_9_2 = do_QueryInterface(aContainer);
+  if (container1_9_2) {
+    gfxImageSurface1_9_2 *surface;
+    rv = container1_9_2->CopyCurrentFrame(&surface);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mListener->ProcessImageData(surface->Width(), surface->Height(),
+                                     surface->Data(), surface->Stride(),
+                                     surface->GetDataSize(), NULL, 0, 8,
+                                     PR_FALSE);
+    ((gfxImageSurface*)surface)->Release();
+  } else {
+#if GECKO_VERSION >= 200
+    nsRefPtr<gfxImageSurface> surface;
     rv = aContainer->CopyFrame(1, 0, getter_AddRefs(surface));
-
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mListener->ProcessImageData(surface->Width(), surface->Height(),
-                                   surface->Data(), surface->Stride(),
-                                   surface->GetDataSize(), NULL, 0, 8,
-                                   PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mListener->ProcessImageData(surface->Width(), surface->Height(),
+                                     surface->Data(), surface->Stride(),
+                                     surface->GetDataSize(), NULL, 0, 8,
+                                     PR_FALSE);
+#endif
+  }
 
   return rv;
 }
@@ -258,7 +282,7 @@ otPr0nObserver::OnStopFrame(imgIRequest *aRequest, PRUint32 aFrame)
   DEBUG_DUMP("otPr0nObserver::OnStopFrame (entered)");
   nsCOMPtr<imgIContainer> container;
   aRequest->GetImage(getter_AddRefs(container));
-  FrameChanged(container, nsnull);
+  FrameChanged(container, (nsIntRect*)nsnull);
   return NS_OK;
 }
 
@@ -291,12 +315,14 @@ otPr0nObserver::OnStopRequest(imgIRequest* aRequest, PRBool finish)
   return NS_OK;
 }
 
+#if GECKO_VERSION >= 200
 NS_IMETHODIMP
 otPr0nObserver::OnDiscard(imgIRequest *aRequest)
 {
   DEBUG_DUMP("otPr0nObserver::OnDiscard (entered)");
   return NS_OK;
 }
+#endif
 
 // imgIDecoderObserver1_9 methods
 

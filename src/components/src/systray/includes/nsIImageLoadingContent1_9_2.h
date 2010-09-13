@@ -24,9 +24,9 @@ class nsIURI; /* forward declaration */
 
 
 /* starting interface:    nsIImageLoadingContent1_9_2 */
-#define NS_IIMAGELOADINGCONTENT_IID_STR "e036857e-3417-4812-a5f2-89668a616781"
+#define NS_IIMAGELOADINGCONTENT1_9_2_IID_STR "e036857e-3417-4812-a5f2-89668a616781"
 
-#define NS_IIMAGELOADINGCONTENT_IID \
+#define NS_IIMAGELOADINGCONTENT1_9_2_IID \
   {0xe036857e, 0x3417, 0x4812, \
     { 0xa5, 0xf2, 0x89, 0x66, 0x8a, 0x61, 0x67, 0x81 }}
 
@@ -54,7 +54,7 @@ class nsIURI; /* forward declaration */
 class NS_NO_VTABLE NS_SCRIPTABLE nsIImageLoadingContent1_9_2 : public imgIDecoderObserver1_9_2 {
  public: 
 
-  NS_DECLARE_STATIC_IID_ACCESSOR(NS_IIMAGELOADINGCONTENT_IID)
+  NS_DECLARE_STATIC_IID_ACCESSOR(NS_IIMAGELOADINGCONTENT1_9_2_IID)
 
   /**
    * Request types.  Image loading content nodes attempt to do atomic
@@ -179,7 +179,7 @@ class NS_NO_VTABLE NS_SCRIPTABLE nsIImageLoadingContent1_9_2 : public imgIDecode
 
 };
 
-  NS_DEFINE_STATIC_IID_ACCESSOR(nsIImageLoadingContent1_9_2, NS_IIMAGELOADINGCONTENT_IID)
+  NS_DEFINE_STATIC_IID_ACCESSOR(nsIImageLoadingContent1_9_2, NS_IIMAGELOADINGCONTENT1_9_2_IID)
 
 /* Use this macro when declaring classes that implement this interface. */
 #define NS_DECL_NSIIMAGELOADINGCONTENT_1_9_2 \
