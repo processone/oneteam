@@ -53,7 +53,8 @@ sub get_buildid {
 
 my %mar_options = map{($_, $defs{$_})} grep { /^MAR_/} keys %defs;
 
-my $saver = exists $defs{DMG} ?
+my $saver =
+    exists $defs{DMG} ?
         new OneTeam::Builder::Filter::Saver::Dmg($topdir, \&get_version_str, \&get_buildid,
                                                  \%mar_options, $defs{XULRUNNER}) :
     exists $defs{XULAPP} ?
