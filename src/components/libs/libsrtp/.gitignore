@@ -21,3 +21,11 @@ test/replay_driver
 test/roc_driver
 test/rtpw
 test/srtp_driver
+config.h_win32vc7
+srtp.vcproj
+srtp7.sln
+srtp7.vcproj
+dtls_srtp_driver.c
+test/getopt_s.c
+test/rtpw_test.sh
+timing
