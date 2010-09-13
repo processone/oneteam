@@ -21,5 +21,6 @@
     <!-- -->
     <em:optionsURL>chrome://oneteam/content/preferences.xul</em:optionsURL>
     <em:homepageURL>http://oneteam.im/</em:homepageURL>
+    <em:unpack>true</em:unpack>
   </Description>
 </RDF:RDF>
