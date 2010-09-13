@@ -24,7 +24,9 @@
   ML.importMod("utils.js");
   ML.importMod("services/remoteDebug.js");
 
-  var input, remoteJID;
+  var [remoteJID] = window.arguments;
+
+  var input;
   var dumpValues = [];
 
   var console = {
