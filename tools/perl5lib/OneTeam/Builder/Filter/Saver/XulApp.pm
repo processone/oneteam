@@ -74,6 +74,13 @@ sub _generate_chrome_manifest {
 
     close $fh;
 
+    open($fh, ">>", catfile($tmppfxdir, 'chrome.manifest')) or
+        die "Unable to create file: $!";
+
+    print $fh "manifest chrome/chrome.manifest\n";
+    $self->_generate_components_manifest($fh);
+
+    close ($fh);
 }
 
 sub _prepare_files {
