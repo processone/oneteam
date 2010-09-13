@@ -47,6 +47,7 @@ sub finalize {
     my $chromedir = catdir($tmppfxdir, "chrome");
 
     mkpath([$chromedir], 0);
+
     $self->_prepare_files($tmpdir, $tmppfxdir, $chromedir);
     $self->_generate_install_rdf($tmpdir, $tmppfxdir);
     $self->_generate_update_rdf($tmpdir, $tmppfxdir);
@@ -75,6 +76,14 @@ sub _prepare_files {
             $self->{outputdir}, $self->_disabled_prefs);
     dircopy(catdir($self->{outputdir}, "components"), catdir($tmppfxdir, 'components'));
     dircopy('platform', catdir($tmppfxdir, 'platform'), '', $self->_platform_files_to_skip);
+
+    find({ wanted => sub {
+        my $path = $File::Find::name;
+        $path =~ s!\\!/!g;
+
+        $self->{platform_components}->{$2} = $1
+            if $path =~ m!(?:^|/)(platform/([^/]+)/components/.*)!;
+    }, no_chdir => 1}, 'platform');
 }
 
 sub _generate_install_rdf {
@@ -148,9 +157,23 @@ sub _generate_chrome_manifest {
         for @{$self->{locales}};
     print $fh "resource oneteam-skin chrome://oneteam/skin/\n";
     print $fh "resource oneteam-data chrome://oneteam/content/data/\n";
-    print $fh "overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browserOverlay.xul"
+    print $fh "overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browserOverlay.xul\n"
         if $self->_add_browser_overlays;
+    $self->_generate_components_manifest($fh) if $prefix;
     close($fh);
+}
+
+sub _generate_components_manifest {
+    my ($self, $fh) = @_;
+    print $fh "\ncomponent  {cbbda744-0deb-495e-8c1b-8054b7ba9b4b} components/oneteam.js\n";
+    print $fh "contract   \@oneteam.im/loader;1 {cbbda744-0deb-495e-8c1b-8054b7ba9b4b}\n";
+    print $fh "category   profile-after-change OneTeamLoader \@oneteam.im/loader;1\n";
+    print $fh "interfaces components/oneteam.xpt\n\n";
+
+    for (keys %{$self->{platform_components}}) {
+        my $path = $self->{platform_components}->{$_};
+        print $fh "binary-component $path ABI=$_\n";
+    }
 }
 
 sub _prefix {
