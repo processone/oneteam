@@ -454,29 +454,41 @@ _DECL_(Comparator).prototype =
     }
 }
 
-function NotificationsCanceler()
+function NotificationsCanceler(notifications)
 {
-    this.notifications = [];
+    this.notifications = notifications || [];
 }
 _DECL_(NotificationsCanceler).prototype =
 {
     set add(val) {
+        if (val instanceof NotificationsCanceler)
+            val.parentCanceler = this;
+
         if (!this.notifications)
             this.notifications = [val];
         else
             this.notifications.push(val)
     },
 
-    cancel: function() {
+    cancel: function(nested) {
+        if (!nested && this.parentCanceler) {
+            var parentCanceler = this.parentCanceler;
+
+            delete this.parentCanceler;
+
+            return parentCanceler.cancel();
+        }
+
         if (!this.notifications)
             return false;
 
         for (var i = 0; i < this.notifications.length; i++)
             if (typeof(this.notifications[i].cancel) == "function")
-                this.notifications[i].cancel()
+                this.notifications[i].cancel(true)
             else
                 account.removeEventsByKey(this.notifications[i]);
-        this.notifications = null;
+
+        delete this.notifications;
 
         return true;
     }
