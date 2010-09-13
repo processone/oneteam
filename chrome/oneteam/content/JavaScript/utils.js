@@ -732,9 +732,8 @@ function evalInWindow(expr, win, scope) {
             expr: expr
         };
 
-        val = eval("with(__CONSOLE_ARGS__.scope){(function(){"+
-                       "return eval(window.__CONSOLE_ARGS__.expr)}).call(window)}",
-                       win);
+        val = eval("with(win){with(win.__CONSOLE_ARGS__.scope){(function(){"+
+                       "return eval(expr)}).call(window)}}");
         return {result: val};
     } catch (ex) {
         return {exception: ex}
