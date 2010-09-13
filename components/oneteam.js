@@ -11,23 +11,18 @@ function OneTeamLoader() {
 
 OneTeamLoader.prototype = {
     classDescription:  "OneTeam Loader Service",
-    classID:           Components.ID("{cbbda744-0deb-495e-8c1b-8054b7ba9b4b}"),
+    classID:           Components.ID("cbbda744-0deb-495e-8c1b-8054b7ba9b4b"),
     contractID:        "@oneteam.im/loader;1",
-    _xpcom_categories: [{category: "app-startup", service: true}],
+    _xpcom_categories: [{category: "profile-after-change", service: true}],
 
-    QueryInterface: XPCOMUtils.generateQI(
-        [Components.interfaces.nsISupports,
-         Components.interfaces.nsIObserver]),
+    QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsIObserver]),
 
-        observe: function(subject, topic, data) {
-            var os = Components.classes["@mozilla.org/observer-service;1"].
-                getService(Components.interfaces.nsIObserverService);
+    observe: function(subject, topic, data) {
+        var os = Components.classes["@mozilla.org/observer-service;1"].
+            getService(Components.interfaces.nsIObserverService);
 
-            if (topic == "app-startup") {
-                os.addObserver(this, "final-ui-startup", false);
-                //os.addObserver(this, "quit-application", false);
-            } else if (topic == "final-ui-startup") {
-                ML.importMod("model/account.js");
+        if (topic == "profile-after-change") {
+            ML.importMod("model/account.js");
         }
     }
 };
@@ -222,6 +217,7 @@ var components = [OneTeamLoader, ContactsAutoComplete
 // #endif
 ];
 
-function NSGetModule(compMgr, fileSpec) {
-    return XPCOMUtils.generateModule(components);
-}
+if (XPCOMUtils.generateNSGetFactory)
+    var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
+else
+    var NSGetModule = XPCOMUtils.generateNSGetModule(components);
