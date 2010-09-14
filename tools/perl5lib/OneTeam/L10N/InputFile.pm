@@ -280,6 +280,8 @@ sub _report_error {
     die "$msg at ".$self->path.":$line";
 }
 
+__PACKAGE__->meta->make_immutable;
+
 package OneTeam::L10N::InputFile::String;
 
 use Moose;
@@ -440,5 +442,7 @@ sub _resolve {
 
     return (!$raw_value and $self->escape_xml) ? ::escape_xml($result) : $result;
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;

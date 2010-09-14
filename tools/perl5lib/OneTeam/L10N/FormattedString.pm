@@ -146,4 +146,6 @@ sub _parse_str {
     return @expr > 1 ? [@expr] : defined $expr[0] ? $expr[0] : "";
 }
 
+__PACKAGE__->meta->make_immutable;
+
 1;
