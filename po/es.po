@@ -1,0 +1,2084 @@
+# translation of es.po to
+# Badlop <badlop@process-one.net>, 2009.
+msgid ""
+msgstr ""
+"Project-Id-Version: es\n"
+"POT-Creation-Date: 2010-07-07 14:49+0200\n"
+"PO-Revision-Date: 2010-09-13 20:07+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Language: Spanish (castellano)\n"
+"X-Generator: KBabel 1.11.4\n"
+
+#: ../chrome/oneteam/content/about.xul:11
+#: ../chrome/oneteam/content/bumpPriority.xul:12
+#: ../chrome/oneteam/content/changeNick.xul:13
+#: ../chrome/oneteam/content/changePassword.xul:12
+#: ../chrome/oneteam/content/changeSubject.xul:13
+#: ../chrome/oneteam/content/rename.xul:12
+#: ../chrome/oneteam/content/renameGroup.xul:13
+#: ../chrome/oneteam/content/roomConfiguration.xul:14
+#: ../chrome/oneteam/content/roomPermissions.xul:14
+#: ../chrome/oneteam/content/status.xul:11
+#: ../chrome/oneteam/content/subscribe.xul:12
+#: ../chrome/oneteam/content/vcard.xul:14
+msgid "OK"
+msgstr "Aceptar"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:119
+#: ../chrome/oneteam/content/about.xul:11
+#: ../chrome/oneteam/content/addContact.xul:14
+#: ../chrome/oneteam/content/bookmarkRoom.xul:14
+#: ../chrome/oneteam/content/bumpPriority.xul:12
+#: ../chrome/oneteam/content/changeNick.xul:13
+#: ../chrome/oneteam/content/changePassword.xul:12
+#: ../chrome/oneteam/content/changeSubject.xul:13
+#: ../chrome/oneteam/content/editContact.xul:14
+#: ../chrome/oneteam/content/invite.xul:14
+#: ../chrome/oneteam/content/inviteByMail.xul:14
+#: ../chrome/oneteam/content/inviteToRoom.xul:14
+#: ../chrome/oneteam/content/joinRoom.xul:14
+#: ../chrome/oneteam/content/joinRoomError.xul:14
+#: ../chrome/oneteam/content/manageBookmarks.xul:14
+#: ../chrome/oneteam/content/registerService.xul:14
+#: ../chrome/oneteam/content/removeContact.xul:13
+#: ../chrome/oneteam/content/rename.xul:12
+#: ../chrome/oneteam/content/renameGroup.xul:13
+#: ../chrome/oneteam/content/roomConfiguration.xul:14
+#: ../chrome/oneteam/content/roomPermissions.xul:14
+#: ../chrome/oneteam/content/status.xul:11
+#: ../chrome/oneteam/content/subscribe.xul:12
+#: ../chrome/oneteam/content/subscribe.xul:74
+#: ../chrome/oneteam/content/vcardEdit.xul:13
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: ../chrome/oneteam/content/changeNick.xul:10
+msgid "Change Nick"
+msgstr "Cambiar Apodo"
+
+#: ../chrome/oneteam/content/changeNick.xul:41
+msgid "New Nick:"
+msgstr "Nuevo Apodo:"
+
+#: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
+msgid "Status Message"
+msgstr "Mensaje de Estado"
+
+#: ../chrome/oneteam/content/JavaScript/model/presence.js:106
+#: ../chrome/oneteam/content/console.xul:59
+#: ../chrome/oneteam/content/main.xul:611
+#: ../chrome/oneteam/content/status.xul:86
+msgid "Available"
+msgstr "Disponible"
+
+#: ../chrome/oneteam/content/JavaScript/model/presence.js:107
+#: ../chrome/oneteam/content/main.xul:613
+#: ../chrome/oneteam/content/status.xul:88
+msgid "Available for chat"
+msgstr "Disponible para charlar"
+
+#: ../chrome/oneteam/content/JavaScript/model/presence.js:108
+#: ../chrome/oneteam/content/main.xul:615
+#: ../chrome/oneteam/content/status.xul:90
+msgid "Busy"
+msgstr "Ocupado"
+
+#: ../chrome/oneteam/content/JavaScript/model/presence.js:109
+#: ../chrome/oneteam/content/main.xul:617
+#: ../chrome/oneteam/content/status.xul:91
+msgid "Away"
+msgstr "Ausente"
+
+#: ../chrome/oneteam/content/JavaScript/model/presence.js:110
+#: ../chrome/oneteam/content/main.xul:619
+#: ../chrome/oneteam/content/status.xul:92
+msgid "Not available"
+msgstr "No disponible"
+
+#: ../chrome/oneteam/content/JavaScript/model/presence.js:112
+#: ../chrome/oneteam/content/main.xul:621
+#: ../chrome/oneteam/content/status.xul:93
+msgid "Invisible"
+msgstr "Invisible"
+
+#: ../chrome/oneteam/content/main.xul:574
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: ../chrome/oneteam/content/main.xul:578
+msgid "Password"
+msgstr "Contraseña"
+
+#: ../chrome/oneteam/content/main.xul:585
+msgid "Sign In"
+msgstr "Conectar"
+
+#: ../chrome/oneteam/content/main.xul:488
+msgid "_Join Chat Room"
+msgstr "_Entrar en sala de charla"
+
+#: ../chrome/oneteam/content/main.xul:496
+msgid "_Gateways"
+msgstr "_Transportes"
+
+#: ../chrome/oneteam/content/main.xul:506
+msgid "Disconnect"
+msgstr "Desconectar"
+
+#: ../chrome/oneteam/content/main.xul:508
+msgid "_Quit"
+msgstr "_Quitar"
+
+#: ../chrome/oneteam/content/main.xul:535
+msgid "_Documentation"
+msgstr "_Documentación"
+
+#: ../chrome/oneteam/content/main.xul:536
+msgid "_Report Bug"
+msgstr "_Avisar de un error"
+
+#: ../chrome/oneteam/content/main.xul:624
+msgid "Status message"
+msgstr "Mensaje de estado"
+
+#: ../chrome/oneteam/content/muc.xul:403
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:227
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:229
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:278
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:325
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:379
+msgid "Send Message..."
+msgstr "Enviar Mensaje..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:242
+msgid "Remove Contact..."
+msgstr "Borrar Contacto..."
+
+#: ../chrome/oneteam/content/muc.xul:448
+msgid "Information..."
+msgstr "Información..."
+
+#: ../chrome/oneteam/content/console.xul:9
+msgid "XML Console"
+msgstr "Consola XML"
+
+#: ../chrome/oneteam/content/console.xul:28
+msgid "Input - Output XMPP"
+msgstr "Entrada - Salida de XMPP"
+
+#: ../chrome/oneteam/content/console.xul:34
+msgid "Clear"
+msgstr "Limpiar"
+
+#: ../chrome/oneteam/content/console.xul:39
+msgid "XML Packet Templates"
+msgstr "Plantillas de Paquetes XML"
+
+#: ../chrome/oneteam/content/console.xul:70
+msgid "Send"
+msgstr "Enviar"
+
+#: ../chrome/oneteam/content/addContact.xul:10
+msgid "Add Contact"
+msgstr "Añadir Contacto"
+
+#: ../chrome/oneteam/content/addContact.xul:14
+msgid "Add"
+msgstr "Añadir"
+
+#: ../chrome/oneteam/content/addContact.xul:102
+msgid "ID:"
+msgstr "ID:"
+
+#: ../chrome/oneteam/content/addContact.xul:124
+msgid "Please enter correct Jabber ID"
+msgstr "Por favor indica el Jabber ID correcto"
+
+#: ../chrome/oneteam/content/addContact.xul:128
+msgid "Contact with this Jabber ID already exists"
+msgstr "Ya existe un contacto con este Jabber ID"
+
+#: ../chrome/oneteam/content/addContact.xul:161
+msgid "Network:"
+msgstr "Red:"
+
+#: ../chrome/oneteam/content/addContact.xul:164
+msgid "XMPP"
+msgstr "XMPP"
+
+#: ../chrome/oneteam/content/addContact.xul:187
+msgid "Jabber ID:"
+msgstr "Jabber ID:"
+
+#: ../chrome/oneteam/content/addContact.xul:196
+#: ../chrome/oneteam/content/bookmarkRoom.xul:87
+#: ../chrome/oneteam/content/editContact.xul:47
+#: ../chrome/oneteam/content/manageBookmarks.xul:206
+#: ../chrome/oneteam/content/muc.xul:359
+msgid "Nickname:"
+msgstr "Apodo:"
+
+#: ../chrome/oneteam/content/addContact.xul:210
+#: ../chrome/oneteam/content/editContact.xul:53
+msgid "Groups:"
+msgstr "Grupos:"
+
+#: ../chrome/oneteam/content/bumpPriority.xul:9
+msgid "Another client active"
+msgstr "Otro cliente activo"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:10
+#: ../chrome/oneteam/content/bookmarkRoom.xul:66
+msgid "Bookmark Room"
+msgstr "Añadir Sala a Marcadores"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:14
+msgid "Bookmark"
+msgstr "Añadir a Marcadores"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:105
+#: ../chrome/oneteam/content/manageBookmarks.xul:184
+msgid "Bookmark with that name already exists"
+msgstr "Ya tienes guardada en marcadores una sala con este nombre"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:75
+#: ../chrome/oneteam/content/manageBookmarks.xul:190
+msgid "Room:"
+msgstr "Sala:"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:82
+#: ../chrome/oneteam/content/manageBookmarks.xul:199
+msgid "Server:"
+msgstr "Servidor:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:26
+#: ../chrome/oneteam/content/bookmarkRoom.xul:93
+#: ../chrome/oneteam/content/manageBookmarks.xul:213
+msgid "Password:"
+msgstr "Contraseña:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:30
+#: ../chrome/oneteam/content/bookmarkRoom.xul:100
+#: ../chrome/oneteam/content/fileTransferRequest.xul:83
+#: ../chrome/oneteam/content/manageBookmarks.xul:178
+msgid "Name:"
+msgstr "Nombre:"
+
+#: ../chrome/oneteam/content/muc.xul:355
+msgid "Chat Room:"
+msgstr "Salas de charla:"
+
+#: ../chrome/oneteam/content/muc.xul:364
+msgid "Enter Chat"
+msgstr "Entrar en la Sala"
+
+#: ../chrome/oneteam/content/editContact.xul:10
+#: ../chrome/oneteam/content/editContact.xul:42
+msgid "Edit Contact"
+msgstr "Editar Contacto"
+
+#: ../chrome/oneteam/content/editContact.xul:14
+msgid "Change"
+msgstr "Cambiar"
+
+#: ../chrome/oneteam/content/about.xul:8
+msgid "About {0}"
+msgstr "Acerca de {0}"
+
+#: ../chrome/oneteam/content/about.xul:34
+msgid "Release {0} ({1})"
+msgstr "Liberar {0} ({1})"
+
+#: ../chrome/oneteam/content/changePassword.xul:10
+msgid "Change Password"
+msgstr "Cambiar Contraseña"
+
+#: ../chrome/oneteam/content/changePassword.xul:53
+msgid "New Password:"
+msgstr "Nueva Contraseña:"
+
+#: ../chrome/oneteam/content/changePassword.xul:59
+msgid "Retype Password:"
+msgstr "Escribe de nuevo la contraseña:"
+
+#: ../chrome/oneteam/content/fileTransfers.xul:10
+msgid "File Transfers"
+msgstr "Transferencias de Ficheros"
+
+#: ../chrome/oneteam/content/fileTransfers.xul:52
+msgid "Clean up"
+msgstr "Limpiar"
+
+#: ../chrome/oneteam/content/changePassword.xul:33
+msgid "Server does not allow password changes"
+msgstr "El servidor no permite cambiar la contraseña"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:89
+#: ../chrome/oneteam/content/changeNick.xul:42
+#: ../chrome/oneteam/content/manageBookmarks.xul:207
+msgid "Nickname can't be empty"
+msgstr "Debes indicar un apodo"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:258
+#: ../chrome/oneteam/content/vcardEdit.xul:9
+msgid "My vCard"
+msgstr "Mi vCard"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:13
+msgid "Ok"
+msgstr "Sí"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:248
+msgid "Can't read your avatar image data"
+msgstr "No se puede leer tu imagen de avatar"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:265
+msgid "Personal"
+msgstr "Personal"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:266
+msgid "Work"
+msgstr "Trabajo"
+
+#: ../chrome/oneteam/content/preferences.xul:269
+#: ../chrome/oneteam/content/vcardEdit.xul:267
+msgid "Appearance"
+msgstr "Apariencia"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:272
+msgid "Name"
+msgstr "Nombre"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:276
+msgid "Name Details"
+msgstr "Detalles del Nombre"
+
+#: ../chrome/oneteam/content/search.xul:88
+#: ../chrome/oneteam/content/vcardEdit.xul:286
+msgid "First Name"
+msgstr "Primer Nombre"
+
+#: ../chrome/oneteam/content/search.xul:91
+#: ../chrome/oneteam/content/vcardEdit.xul:288
+msgid "Last Name"
+msgstr "Apellido"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:292
+msgid "Second Name"
+msgstr "Segundo Nombre"
+
+#: ../chrome/oneteam/content/search.xul:94
+#: ../chrome/oneteam/content/vcardEdit.xul:294
+msgid "Nickname"
+msgstr "Apodo"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:298
+msgid "Prefix"
+msgstr "Prefijo"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:300
+msgid "Suffix"
+msgstr "Sufijo"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:315
+msgid "Homepage"
+msgstr "Página personal"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:317
+#: ../chrome/oneteam/content/vcardEdit.xul:382
+msgid "E-Mail"
+msgstr "Correo electrónico"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:321
+msgid "Birthday"
+msgstr "Fecha de nacimiento"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:323
+#: ../chrome/oneteam/content/vcardEdit.xul:384
+msgid "Phone"
+msgstr "Teléfono"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:329
+#: ../chrome/oneteam/content/vcardEdit.xul:390
+msgid "Address"
+msgstr "Dirección"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:339
+#: ../chrome/oneteam/content/vcardEdit.xul:400
+msgid "Street"
+msgstr "Calle"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:341
+#: ../chrome/oneteam/content/vcardEdit.xul:402
+msgid "ExtAdd"
+msgstr "ExtAdd"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:345
+#: ../chrome/oneteam/content/vcardEdit.xul:406
+msgid "City"
+msgstr "Ciudad"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:347
+#: ../chrome/oneteam/content/vcardEdit.xul:408
+msgid "Postal code"
+msgstr "Código Postal"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:351
+#: ../chrome/oneteam/content/vcardEdit.xul:412
+msgid "Region"
+msgstr "Región"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:353
+#: ../chrome/oneteam/content/vcardEdit.xul:414
+msgid "Country"
+msgstr "País"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:370
+msgid "Company"
+msgstr "Compañía"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:372
+msgid "Department"
+msgstr "Departamento"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:376
+msgid "Position"
+msgstr "Posición"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:351
+#: ../chrome/oneteam/content/vcardEdit.xul:378
+msgid "Role"
+msgstr "Rol"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:423
+msgid "Avatar"
+msgstr "Avatar"
+
+#: ../chrome/oneteam/content/adhoc.xul:12
+msgid "Ad-Hoc Commands"
+msgstr "Comandos Ad Hoc"
+
+#: ../chrome/oneteam/content/adhoc.xul:216
+msgid "Requesting remote commands descriptions"
+msgstr "Solicitando descripciones de comandos remotos"
+
+#: ../chrome/oneteam/content/adhoc.xul:222
+msgid "List of available commands:"
+msgstr "Lista de comandos disponibles:"
+
+#: ../chrome/oneteam/content/adhoc.xul:225
+msgid "No commands available"
+msgstr "No hay comandos disponibles"
+
+#: ../chrome/oneteam/content/adhoc.xul:233
+msgid "Requesting command form"
+msgstr "Solicitando formulario de comandos"
+
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:977
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:640
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:106
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:121
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:96
+msgid "{0} ({1})"
+msgstr "{0} ({1})"
+
+#: ../chrome/oneteam/content/main.xul:484
+msgid "_Actions"
+msgstr "_Acciones"
+
+#: ../chrome/oneteam/content/main.xul:486
+msgid "_Add Contact..."
+msgstr "Añadir _Contacto..."
+
+#: ../chrome/oneteam/content/main.xul:490
+msgid "Join Chat Room..."
+msgstr "Entrar en Sala de Charla..."
+
+#: ../chrome/oneteam/content/main.xul:493
+msgid "_Manage Bookmarks..."
+msgstr "Administrar _Marcadores..."
+
+#: ../chrome/oneteam/content/main.xul:502
+msgid "_Server Commands..."
+msgstr "Comandos del _Servidor..."
+
+#: ../chrome/oneteam/content/main.xul:503
+msgid "_History Manager..."
+msgstr "Administrador del _Historial"
+
+#: ../chrome/oneteam/content/main.xul:504
+msgid "File _Transfers..."
+msgstr "_Transferencia de Ficheros..."
+
+#: ../chrome/oneteam/content/main.xul:512
+msgid "_View"
+msgstr "_Ver"
+
+#: ../chrome/oneteam/content/main.xul:514
+msgid "Show _Actions Toolbar"
+msgstr "Mostrar _Barra de Tareas de Acciones"
+
+#: ../chrome/oneteam/content/main.xul:517
+msgid "Hide _Offline Contacts"
+msgstr "Ocultar Contactos Desconectados"
+
+#: ../chrome/oneteam/content/main.xul:521
+msgid "_Config"
+msgstr "_Configuración"
+
+#: ../chrome/oneteam/content/main.xul:523
+msgid "_Edit personal info..."
+msgstr "_Editar información personal..."
+
+#: ../chrome/oneteam/content/main.xul:524
+msgid "_Change password..."
+msgstr "_Cambiar contraseña..."
+
+#: ../chrome/oneteam/content/main.xul:530
+msgid "_Preferences..."
+msgstr "_Preferencias..."
+
+#: ../chrome/oneteam/content/main.xul:533
+msgid "_Help"
+msgstr "_Ayuda"
+
+#: ../chrome/oneteam/content/main.xul:537
+msgid "XML _Console..."
+msgstr "Consola _XML..."
+
+#: ../chrome/oneteam/content/main.xul:547
+msgid "About..."
+msgstr "Acerca de..."
+
+#: ../chrome/oneteam/content/main.xul:467
+msgid "Add new contact"
+msgstr "Añadir nuevo contacto"
+
+#: ../chrome/oneteam/content/main.xul:469
+msgid "Join group chat room"
+msgstr "Entrar en sala de charla"
+
+#: ../chrome/oneteam/content/main.xul:472
+msgid "Toggle offline contacts visibility"
+msgstr "Cambiar visibilidad de contactos desconectados"
+
+#: ../chrome/oneteam/content/main.xul:476
+#: ../chrome/oneteam/content/preferences.xul:10
+msgid "Preferences"
+msgstr "Preferencias"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:262
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:263
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:287
+msgid "Execute Command..."
+msgstr "Ejecutar Comando..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:266
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:288
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:315
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:372
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:393
+msgid "Show History..."
+msgstr "Mostar Historial..."
+
+#: ../chrome/oneteam/content/addContact.xul:142
+msgid "Gateway can't convert ID into Jabber ID"
+msgstr "El transporte no puede convertir ID a Jabber ID"
+
+#: ../chrome/oneteam/content/invite.xul:14
+#: ../chrome/oneteam/content/inviteByMail.xul:14
+#: ../chrome/oneteam/content/inviteToRoom.xul:14
+msgid "Invite"
+msgstr "Invitar"
+
+#: ../chrome/oneteam/content/addContact.xul:218
+#: ../chrome/oneteam/content/invite.xul:59
+#: ../chrome/oneteam/content/inviteToRoom.xul:57
+msgid "Reason:"
+msgstr "Razón:"
+
+#: ../chrome/oneteam/content/inviteByMail.xul:10
+#: ../chrome/oneteam/content/inviteByMail.xul:51
+msgid "Invite users by mail"
+msgstr "Invitar a usuarios por correo"
+
+#: ../chrome/oneteam/content/invite.xul:33
+#: ../chrome/oneteam/content/inviteByMail.xul:29
+msgid "Invite users to room {0}"
+msgstr "Invitar a usuarios a la sala {0}"
+
+#: ../chrome/oneteam/content/inviteByMail.xul:53
+msgid "E-mails:"
+msgstr "Correos:"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:77
+#: ../chrome/oneteam/content/manageBookmarks.xul:192
+msgid ""
+"Room name can't be empty and can\\'t contain any of [\"&\\'/:<>@] or blank "
+"characters"
+msgstr "El nombre de la sala no puede estar vacío ni contener los caracteres [\"&\\'/:<>@] o caracteres blancos"
+
+#: ../chrome/oneteam/content/bookmarkRoom.xul:103
+#: ../chrome/oneteam/content/manageBookmarks.xul:181
+msgid "Bookmark name can't be empty"
+msgstr "El marcador no puede estar vacío"
+
+#: ../chrome/oneteam/content/changeSubject.xul:10
+msgid "Change Conference Subject"
+msgstr "Cambiar el Asunto de la Conferencia"
+
+#: ../chrome/oneteam/content/changeSubject.xul:42
+msgid "New Subject:"
+msgstr "Nuevo Asunto:"
+
+#: ../chrome/oneteam/content/fileTransferRequest.xul:10
+#: ../chrome/oneteam/content/fileTransferRequest.xul:72
+msgid "File Transfer Request"
+msgstr "Petición de Transferencia de Fichero"
+
+#: ../chrome/oneteam/content/fileTransferRequest.xul:14
+#: ../chrome/oneteam/content/jingleCall.xul:141
+msgid "Accept"
+msgstr "Aceptar"
+
+#: ../chrome/oneteam/content/fileTransferRequest.xul:14
+#: ../chrome/oneteam/content/jingleCall.xul:142
+msgid "Reject"
+msgstr "Rechazar"
+
+#: ../chrome/oneteam/content/fileTransferRequest.xul:28
+msgid "<b>{0}</b> wants to send you file"
+msgstr "<b>{0}</b> quiere enviarte un fichero"
+
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:885
+#: ../chrome/oneteam/content/fileTransferRequest.xul:46
+msgid "Select a File"
+msgstr "Seleccionar un FIchero"
+
+#: ../chrome/oneteam/content/fileTransferRequest.xul:87
+msgid "Size:"
+msgstr "Tamaño:"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:10
+msgid "Bookmark Manager"
+msgstr "Administrador de Marcadores"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:14
+msgid "Save"
+msgstr "Guardar"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:65
+msgid "New Room"
+msgstr "Nueva Sala"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:118
+msgid ""
+"Entered informations are invalid.\\nDo you want to forget entered "
+"informations and restore previous values (click \"Cancel\" if you want to "
+"correct values)?"
+msgstr "La información proporcionada no es válida.\\n¿Quieres borrar la información proporcionada y restaurar los valores anteriores? (Pulsa \"Cancelar\" si quieres corregiar valores)"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:119
+msgid ""
+"Entered informations are invalid.\\nDo you want to forget this bookmark "
+"(click \"Cancel\" if you want to correct values)?"
+msgstr "La información proporcionada no es válida.\\n¿Quieres borrar este marcador? (Pulsa \"Cancelar\" si quieres corregir los valores)"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:165
+msgid "New"
+msgstr "Nuevo"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:126
+#: ../chrome/oneteam/content/manageBookmarks.xul:166
+msgid "Remove"
+msgstr "Borrar"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:221
+msgid "Always join this room at startup"
+msgstr "Siempre entrar en esta sala al conectar"
+
+#: ../chrome/oneteam/content/preferences.xul:153
+msgid "General"
+msgstr "General"
+
+#: ../chrome/oneteam/content/preferences.xul:173
+msgid "Connection"
+msgstr "Conexión"
+
+#: ../chrome/oneteam/content/preferences.xul:231
+msgid "Status"
+msgstr "Estado"
+
+#: ../chrome/oneteam/content/preferences.xul:162
+msgid "Display avatars in roster"
+msgstr "Mostrar avatares en la lista de contactos"
+
+#: ../chrome/oneteam/content/preferences.xul:163
+msgid "Sort contacts by status"
+msgstr "Ordenar contactos por estado"
+
+#: ../chrome/oneteam/content/preferences.xul:164
+msgid "Play sounds"
+msgstr "Reproducir sonidos"
+
+#: ../chrome/oneteam/content/preferences.xul:192
+#: ../chrome/oneteam/content/preferences.xul:193
+msgid "Host:"
+msgstr "Dominio:"
+
+#: ../chrome/oneteam/content/preferences.xul:196
+#: ../chrome/oneteam/content/preferences.xul:197
+msgid "Port:"
+msgstr "Puerto:"
+
+#: ../chrome/oneteam/content/preferences.xul:200
+#: ../chrome/oneteam/content/preferences.xul:201
+msgid "Resource:"
+msgstr "Recurso:"
+
+#: ../chrome/oneteam/content/preferences.xul:204
+msgid "Priority:"
+msgstr "Prioridad:"
+
+#: ../chrome/oneteam/content/preferences.xul:219
+msgid "HTTP Base:"
+msgstr "Base HTTP:"
+
+#: ../chrome/oneteam/content/preferences.xul:273
+msgid "Default icon set:"
+msgstr "Conjunto de iconos por defecto:"
+
+#: ../chrome/oneteam/content/preferences.xul:275
+msgid "Use gateway specific icons"
+msgstr "Usar iconos específicos del transporte"
+
+#: ../chrome/oneteam/content/preferences.xul:277
+msgid "Default smiles set:"
+msgstr "Conjunto de smileys por defecto:"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1922
+#: ../chrome/oneteam/content/inviteToRoom.xul:10
+msgid "Invite to group chat room"
+msgstr "Invitar a sala de charla"
+
+#: ../chrome/oneteam/content/inviteToRoom.xul:28
+msgid "Invite {0} to group chat room"
+msgstr "Invitar {0} a sala de charla"
+
+#: ../chrome/oneteam/content/inviteToRoom.xul:52
+msgid "Rooms:"
+msgstr "Salas:"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1246
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1904
+msgid "Bold"
+msgstr "Negrita"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1247
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1905
+msgid "Italic"
+msgstr "Itálica"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1248
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1906
+msgid "Underline"
+msgstr "Subrayado"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1250
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1908
+msgid "Increase font size"
+msgstr "Aumentar tamaño de la fuente"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1251
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1909
+msgid "Decrease font size"
+msgstr "Reducir tamaño de la fuente"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1253
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1911
+msgid "Font color"
+msgstr "Color de la fuente"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1254
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1912
+msgid "Background color"
+msgstr "Color del fondo"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1917
+msgid "Send file"
+msgstr "Enviar fichero"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1927
+msgid "Invite contact"
+msgstr "Invitar a contacto"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1930
+msgid "Invite user by mail"
+msgstr "Invitar a usuario por correo"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1947
+msgid "Toggle smiles visibility/select smile"
+msgstr "Cambiar visibilidad de smileys/seleccionar smiley"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:222
+#: ../chrome/oneteam/content/JavaScript/notification.js:234
+msgid "{0} is now {1}"
+msgstr "{0} es ahora {1}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:161
+msgid "{0} has joined this room"
+msgstr "{0} ha entrado en esta sala"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:192
+msgid "{0} has left this room"
+msgstr "{0} ha salido de la sala"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:270
+msgid "{0} changed nick to {1}"
+msgstr "{0} ha cambiado el apodo a {1}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:285
+msgid "{0} changed subject to {1}"
+msgstr "{0} ha puesto el asunto {1}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:324
+msgid "New message from <b>{0}</b>"
+msgstr "Nuevo mensaje de <b>{0}</b>"
+
+#: ../chrome/oneteam/content/JavaScript/filetransfer.js:99
+msgid "<b>{0}</b> want to send you file"
+msgstr "<b>{0}</b> quiere enviarte un fichero"
+
+#: ../chrome/oneteam/content/JavaScript/views/conference.js:226
+msgid "Moderators ({0})"
+msgstr "Moderadores ({0})"
+
+#: ../chrome/oneteam/content/JavaScript/views/conference.js:229
+msgid "Participants ({0})"
+msgstr "Participantes ({0})"
+
+#: ../chrome/oneteam/content/JavaScript/views/conference.js:232
+msgid "Visitors ({0})"
+msgstr "Visitantes ({0})"
+
+#: ../chrome/oneteam/content/JavaScript/views/conference.js:235
+msgid "No Role Assigned ({0})"
+msgstr "Sin Rol Asignado ({0})"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:144
+msgid "Waiting for acceptance..."
+msgstr "Esperando aceptación..."
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:145
+msgid "Started..."
+msgstr "Iniciado..."
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:146
+msgid "Done"
+msgstr "Terminado"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:147
+msgid "Canceled"
+msgstr "Cancelado"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:148
+msgid "Failure"
+msgstr "Fallo"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:149
+msgid "Canceled by peer"
+msgstr "Cancelado por el otro"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:187
+msgid "Transfering..."
+msgstr "Transfiriendo..."
+
+#: ../chrome/oneteam/content/JavaScript/views/gateway.js:34
+msgid "Register in '{0} ({1})'"
+msgstr "Registrarse en '{0} ({1})'"
+
+#: ../chrome/oneteam/content/JavaScript/views/gateway.js:141
+msgid "Click to disconnect from {0} ({1})"
+msgstr "Pulsa para desconectar de {0} ({1})"
+
+#: ../chrome/oneteam/content/JavaScript/views/gateway.js:143
+msgid "Click to connect to {0} ({1})"
+msgstr "Pulsa para conectar a {0} ({1})"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:216
+msgid "Invitation into {0} conference"
+msgstr "Invitación a la sala {0}"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:218
+msgid ""
+"User *{0}* invited you to conference *{1}*.\\n\\nTo join this conference "
+"please click on this link:\\n{2}\\n"
+msgstr "El usuario*{0}* te ha invitado a la sala *{1}*.\\n\\nPara entrar en esa sala pulsa este enlace:\\n{2}\\n"
+
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:976
+msgid "{0}/{1}"
+msgstr "{0}/{1}"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:54
+msgid "Contacts"
+msgstr "Contactos"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:55
+msgid "Not in roster"
+msgstr "No está en la lista de contactos"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:57
+msgid "My other resources"
+msgstr "Mis otros recursos"
+
+#: ../chrome/oneteam/content/JavaScript/services/invitations.js:35
+#: ../chrome/oneteam/content/invitation.xul:28
+msgid "You have been invited to room <b>{0}</b> by <b>{1}</b>"
+msgstr "Has sido invitado a la sala <b>{0}</b> por <b>{1}</b>"
+
+#: ../chrome/oneteam/content/main.xul:582
+msgid "Remember password"
+msgstr "Recordar la contraseña"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:529
+msgid "Click to scroll to first non-seen message"
+msgstr "Pulsa para ir al primer mensaje no leído"
+
+#: ../chrome/oneteam/content/JavaScript/model/presence.js:111
+msgid "Offline"
+msgstr "Desconectado"
+
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:472
+msgid "You have new message from <b>{0}</b>"
+msgstr "Tienes un mensaje nuevo de <b>{0}</b>"
+
+#: ../chrome/oneteam/content/removeContact.xul:10
+msgid "Remove Contact"
+msgstr "Borrar contacto"
+
+#: ../chrome/oneteam/content/removeContact.xul:37
+msgid "Do you want to remove this contact from your roster?"
+msgstr "¿Quieres borrar a este contacto de tu lista?"
+
+#: ../chrome/oneteam/content/main.xul:501
+msgid "Service _Discovery"
+msgstr "_Descubridor de servicios"
+
+#: ../chrome/oneteam/content/main.xul:539
+msgid "JavaScript Console..."
+msgstr "Consola JavaScript..."
+
+#: ../chrome/oneteam/content/main.xul:540
+msgid "Commands Console..."
+msgstr "Consola de comandos..."
+
+#: ../chrome/oneteam/content/main.xul:544
+msgid "Check for Updates..."
+msgstr "Comprobar si hay actualizaciones..."
+
+#: ../chrome/oneteam/content/main.xul:474
+msgid "Show service discovery"
+msgstr "Mostrar el descubridor de servicios"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:236
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:280
+msgid "Invite To"
+msgstr "Invitar a"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:243
+msgid "Change Nickname..."
+msgstr "Cambiar apodo..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:244
+msgid "Edit Contact..."
+msgstr "Editar contacto..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:248
+msgid "Authorization"
+msgstr "Autorización"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:250
+msgid "Ask To See Him"
+msgstr "Solicitarle que puedas verle"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:252
+msgid "Authorize To See Me"
+msgstr "Autorizarle que pueda verte"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:254
+msgid "Cancel Authorization"
+msgstr "Cancelar autorización"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:261
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:286
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:313
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:370
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:391
+msgid "Show vCard..."
+msgstr "Mostrar vCard..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:268
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:290
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:374
+msgid "Send File..."
+msgstr "Enviar fichero..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:295
+msgid "Invite Users To This Room..."
+msgstr "Invitar a usuarios a esta sala..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:297
+msgid "Change Nick..."
+msgstr "Cambiar apodo..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:299
+msgid "Change Subject..."
+msgstr "Cambiar asunto..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:301
+msgid "Bookmark..."
+msgstr "Marcador..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:306
+msgid "Configure..."
+msgstr "Configurar..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:308
+msgid "Edit Permissions..."
+msgstr "Editar permisos..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:320
+msgid "Leave Conference"
+msgstr "Salir de la sala"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:330
+msgid "Kick..."
+msgstr "Expulsar..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:332
+msgid "Ban..."
+msgstr "Bloquear..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:334
+msgid "Affiliation"
+msgstr "Afiliación"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:337
+msgid "Owner"
+msgstr "Dueño"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:340
+msgid "Administrator"
+msgstr "Administrador"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:343
+msgid "Member"
+msgstr "Miembro"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:346
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:363
+msgid "None"
+msgstr "Nada"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:354
+msgid "Moderator"
+msgstr "Moderador"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:357
+msgid "Participant"
+msgstr "Participante"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:360
+msgid "Visitor"
+msgstr "Visitante"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:384
+msgid "Login"
+msgstr "Conectar"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:386
+msgid "Logout"
+msgstr "Desconectar"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:274
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:398
+msgid "Remove..."
+msgstr "Borrar..."
+
+#: ../chrome/oneteam/content/history.xul:9
+msgid "History Manager"
+msgstr "Administración de historial"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2053
+#: ../chrome/oneteam/content/disco.xul:75
+#: ../chrome/oneteam/content/history.xul:155
+#: ../chrome/oneteam/content/main.xul:632
+#: ../chrome/oneteam/content/search.xul:12
+msgid "Search"
+msgstr "Buscar"
+
+#: ../chrome/oneteam/content/chats.xul:14
+#: ../chrome/oneteam/content/history.xul:157
+msgid "Chats"
+msgstr "Charlas"
+
+#: ../chrome/oneteam/content/history.xul:158
+msgid "Conferences"
+msgstr "Salas de charla"
+
+#: ../chrome/oneteam/content/history.xul:165
+msgid "Search:"
+msgstr "Buscar:"
+
+#: ../chrome/oneteam/content/history.xul:172
+#: ../chrome/oneteam/content/history.xul:198
+msgid "Contact"
+msgstr "Contacto"
+
+#: ../chrome/oneteam/content/history.xul:174
+#: ../chrome/oneteam/content/history.xul:200
+#: ../chrome/oneteam/content/history.xul:226
+msgid "Date"
+msgstr "Fecha"
+
+#: ../chrome/oneteam/content/history.xul:224
+msgid "Conference"
+msgstr "Sala de charla"
+
+#: ../chrome/oneteam/content/disco.xul:70
+#: ../chrome/oneteam/content/registerService.xul:14
+msgid "Register"
+msgstr "Registrarse"
+
+#: ../chrome/oneteam/content/registerService.xul:73
+msgid "Registering in Service"
+msgstr "Registrándote en el servicio"
+
+#: ../chrome/oneteam/content/addContact.xul:233
+msgid ""
+"Before adding contacts from this network, you need to register in this "
+"network's gateway."
+msgstr "Antes de añadir contactos de esta red, has de registrarte en este transporte de la red."
+
+#: ../chrome/oneteam/content/addContact.xul:235
+msgid "Registration Gateway"
+msgstr "Registrarte en el transporte"
+
+#: ../chrome/oneteam/content/invite.xul:10
+#: ../chrome/oneteam/content/invite.xul:52
+msgid "Invite Users"
+msgstr "Invitar a usuarios"
+
+#: ../chrome/oneteam/content/invite.xul:54
+msgid "Users:"
+msgstr "Usuarios:"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:211
+msgid "Select avatar image"
+msgstr "Selecciona una imagen de avatar"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:429
+#: ../chrome/oneteam/content/vcardEdit.xul:438
+msgid "Add image..."
+msgstr "Añadir imagen..."
+
+#: ../chrome/oneteam/content/search.xul:97
+msgid "Email"
+msgstr "Correo"
+
+#: ../chrome/oneteam/content/search.xul:111
+msgid "JID"
+msgstr "JID"
+
+#: ../chrome/oneteam/content/search.xul:194
+msgid "Requesting search form"
+msgstr "Solicitando formulario de búsqueda"
+
+#: ../chrome/oneteam/content/search.xul:207
+msgid "Requesting search results"
+msgstr "Solicitando resultados de la búsqueda"
+
+#: ../chrome/oneteam/content/search.xul:226
+msgid "Searching returned no results."
+msgstr "La búsqueda no devolvió resultados."
+
+#: ../chrome/oneteam/content/search.xul:230
+msgid "Searching returned errors."
+msgstr "La búsqueda devolvió errores."
+
+#: ../chrome/oneteam/content/subscribe.xul:8
+msgid "Subscription Request"
+msgstr "Solicitud de subscripción"
+
+#: ../chrome/oneteam/content/subscribe.xul:56
+msgid "You got subscription request from:"
+msgstr "Has recibido una solicitud de subscripción de:"
+
+#: ../chrome/oneteam/content/subscribe.xul:61
+msgid "The user provided this reason for the request:"
+msgstr "El usuario proporcionó esta razón en la petición:"
+
+#: ../chrome/oneteam/content/subscribe.xul:67
+msgid "Extra Actions"
+msgstr "Acciones adicionales"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1915
+#: ../chrome/oneteam/content/subscribe.xul:69
+msgid "Show vCard"
+msgstr "Mostrar vCard"
+
+#: ../chrome/oneteam/content/subscribe.xul:70
+msgid "Open Chat"
+msgstr "Charlar"
+
+#: ../chrome/oneteam/content/subscribe.xul:73
+msgid "Deny Subscription"
+msgstr "Denegar subscripción"
+
+#: ../chrome/oneteam/content/subscribe.xul:75
+msgid "Subscribe"
+msgstr "Subscribir"
+
+#: ../chrome/oneteam/content/disco.xul:11
+msgid "Service Discovery"
+msgstr "Descubridor de servicios"
+
+#: ../chrome/oneteam/content/disco.xul:16
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:109
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:32
+#: ../chrome/oneteam/content/vcard.xul:14
+msgid "Close"
+msgstr "Cerrar"
+
+#: ../chrome/oneteam/content/disco.xul:25
+msgid "Server"
+msgstr "Servidor"
+
+#: ../chrome/oneteam/content/disco.xul:28
+msgid "Conference server"
+msgstr "Servicio de salas de charla"
+
+#: ../chrome/oneteam/content/disco.xul:31
+msgid "MSN Gateway"
+msgstr "Transport de MSN"
+
+#: ../chrome/oneteam/content/disco.xul:34
+msgid "AIM Gateway"
+msgstr "Transporte de AIM"
+
+#: ../chrome/oneteam/content/disco.xul:37
+msgid "Yahoo! Gateway"
+msgstr "Transporte de Yahoo!"
+
+#: ../chrome/oneteam/content/disco.xul:40
+msgid "ICQ Gateway"
+msgstr "Transporte de ICQ"
+
+#: ../chrome/oneteam/content/disco.xul:49
+msgid "GaduGadu Gateway"
+msgstr "Transporte de GaduGadu"
+
+#: ../chrome/oneteam/content/disco.xul:52
+msgid "XMPP Gateway"
+msgstr "Transporte de XMPP"
+
+#: ../chrome/oneteam/content/disco.xul:61
+msgid "{1,capitalize} Gateway"
+msgstr "Transporte de {1,capitalize}"
+
+#: ../chrome/oneteam/content/disco.xul:64
+msgid "Generic Service"
+msgstr "Servicio genérico"
+
+#: ../chrome/oneteam/content/disco.xul:87
+msgid "View vCard"
+msgstr "Ver vCard"
+
+#: ../chrome/oneteam/content/disco.xul:211
+msgid "More"
+msgstr "Más"
+
+#: ../chrome/oneteam/content/disco.xul:217
+msgid "Identities:"
+msgstr "Identidades:"
+
+#: ../chrome/oneteam/content/disco.xul:233
+msgid "Features:"
+msgstr "Características:"
+
+#: ../chrome/oneteam/content/rename.xul:9
+msgid "Change Nickname"
+msgstr "Cambiar apodo"
+
+#: ../chrome/oneteam/content/rename.xul:39
+msgid "New Nickname:"
+msgstr "Nuevo apodo:"
+
+#: ../chrome/oneteam/content/vcard.xul:10
+#: ../chrome/oneteam/content/vcard.xul:51
+msgid "Contact vCard"
+msgstr "vCard del contacto"
+
+#: ../chrome/oneteam/content/preferences.xul:165
+msgid "Notify about other clients with higher priority"
+msgstr "Notificar acerca de otros clientes tuyos con mayor prioridad"
+
+#: ../chrome/oneteam/content/preferences.xul:208
+msgid "Connection Method:"
+msgstr "Método de conexión:"
+
+#: ../chrome/oneteam/content/preferences.xul:217
+msgid "SSL Connection"
+msgstr "Conexión SSL"
+
+#: ../chrome/oneteam/content/preferences.xul:248
+msgid "Automatically set status to 'away\\' after"
+msgstr "Cambiar estado a Ausente automáticamente despues de"
+
+#: ../chrome/oneteam/content/preferences.xul:250
+#: ../chrome/oneteam/content/preferences.xul:259
+msgid "minutes idle"
+msgstr "minutos de inactividad"
+
+#: ../chrome/oneteam/content/preferences.xul:257
+msgid "Automatically set status to 'not available\\' after"
+msgstr "Cambiar estado a Desconectado automáticamente después de"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1920
+msgid "Additional commands"
+msgstr "Comandos adicionales"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1934
+msgid "Show characters counter"
+msgstr "Mostrar contador de caracteres"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:18
+msgid "Username:"
+msgstr "Nombre de usuario:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:182
+#: ../chrome/oneteam/content/bindings/forms.xml:22
+msgid "Nick:"
+msgstr "Apodo:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:174
+#: ../chrome/oneteam/content/bindings/forms.xml:34
+msgid "First Name:"
+msgstr "Nombre de pila:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:178
+#: ../chrome/oneteam/content/bindings/forms.xml:38
+msgid "Last Name:"
+msgstr "Apellido:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:186
+#: ../chrome/oneteam/content/bindings/forms.xml:42
+msgid "Email:"
+msgstr "Correo:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:46
+msgid "Address:"
+msgstr "Dirección:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:50
+msgid "City:"
+msgstr "Ciudad:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:54
+msgid "State:"
+msgstr "Estado:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:58
+msgid "ZIP:"
+msgstr "ZIP:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:62
+msgid "Phone:"
+msgstr "Teléfono:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:66
+msgid "URL:"
+msgstr "URL:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:70
+msgid "Date:"
+msgstr "Fecha:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:74
+msgid "Misc:"
+msgstr "Misc:"
+
+#: ../chrome/oneteam/content/bindings/forms.xml:78
+msgid "Text:"
+msgstr "Texto:"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:253
+msgid "<b>{0}</b> authorized you to see his/her status"
+msgstr "<b>{0}</b> te autorizó a ver su estado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:259
+msgid "<b>{0}</b> doesn't authorized you to see his/her status"
+msgstr "<b>{0}</b> no te autorizó a ver su estado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:351
+msgid "File transfer request"
+msgstr "Petición de transferencia de fichero"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:352
+msgid "User <b>{0}</b> want to send you <b>\"{1}\\\"</b> file"
+msgstr "El usuario <b>{0}</b> quiere enviarte un fichero <b>\"{1}\\\"</b>"
+
+#: ../chrome/oneteam/content/JavaScript/xmppsocket.js:347
+msgid "Hasn't been verified by recognized authority"
+msgstr "No ha sido verificado por una autoridad reconocida"
+
+#: ../chrome/oneteam/content/JavaScript/xmppsocket.js:351
+msgid "Belongs to different domain"
+msgstr "Pertenece a un dominio distinto"
+
+#: ../chrome/oneteam/content/JavaScript/xmppsocket.js:355
+msgid "Has been expired"
+msgstr "Ha expirado"
+
+#: ../chrome/oneteam/content/JavaScript/xmppsocket.js:360
+msgid "Invalid certificate"
+msgstr "Certificado no válido"
+
+#: ../chrome/oneteam/content/JavaScript/xmppsocket.js:361
+msgid "Certificate used by server is invalid because:"
+msgstr "El certificado usado por el servidor no es válido porque:"
+
+#: ../chrome/oneteam/content/JavaScript/xmppsocket.js:362
+msgid "Continue"
+msgstr "Continuar"
+
+#: ../chrome/oneteam/content/JavaScript/xmppsocket.js:363
+msgid "Always skip this dialog"
+msgstr "Saltar este diálogo siempre"
+
+#: ../chrome/oneteam/content/JavaScript/filetransfer.js:182
+msgid "{0}/sec"
+msgstr "{0}/seg"
+
+#: ../chrome/oneteam/content/JavaScript/filetransfer.js:183
+msgid "Unknown time remaining"
+msgstr "Tiempo restante desconocido"
+
+#: ../chrome/oneteam/content/JavaScript/filetransfer.js:184
+msgid "A few seconds remaining"
+msgstr "Faltan unos pocos segundos"
+
+#: ../chrome/oneteam/content/JavaScript/filetransfer.js:185
+msgid "{0} remaining"
+msgstr "Faltan {0}"
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:60
+msgid "{0} bytes"
+msgstr "{0} bytes"
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:82
+msgid "{0} {0, plurals, second, seconds}"
+msgstr "{0} {0, plurals, segundo, segundos}"
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:76
+msgid "{0} {0, plurals, day, days}, {1} {1, plurals, hour, hours}"
+msgstr "{0} {0, plurals, día, días}, {1} {1, plurals, hora, horas}"
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:78
+msgid "{0} {0, plurals, hour, hours}, {1} {1, plurals, minute, minutes}"
+msgstr "{0} {0, plurals, hora, horas}, {1} {1, plurals, minuto, minutos}"
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:80
+msgid "{0} {0, plurals, minute, minutes}, {1} {1, plurals, second, seconds}"
+msgstr "{0} {0, plurals, minuto, minutos}, {1} {1, plurals, segundo, segundos}"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:453
+msgid "This room requires password"
+msgstr "Esta sala requiere contraseña"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:454
+msgid "You are banned from this room"
+msgstr "Has sido bloqueado en esta sala"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:455
+msgid "This room doesn't exist"
+msgstr "La sala de conferencias no existe"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:456
+msgid "This room doesn't exist, and can be created only by administrator"
+msgstr "Esta sala no existe, y solo puede ser creada por un administrador"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:457
+msgid "This room can be accessed only by registered persons"
+msgstr "Esta sala solo puede ser accedida por usuarios registrados"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:458
+msgid "You are not member of this room"
+msgstr "No eres miembro de esta sala"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:460
+msgid "Conference server can't be contacted or room reached maximum number of users"
+msgstr "No se puede conectar al servicio de salas de charla o la sala ha llegado al límite máximo de usuarios conectados"
+
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1010
+msgid "(Anonymous)"
+msgstr "(Anónimo)"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1081
+msgid "You got subscription request from <b>{0}</b>"
+msgstr "Has recibido una petición de subsripción de <b>{0}</b>"
+
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:686
+msgid "Click to load image"
+msgstr "Pulsa para cargar la imagen"
+
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:688
+msgid "Always load images from that contact"
+msgstr "Siempre cargar las imágenes de este contacto"
+
+#: ../chrome/oneteam/content/preferences.xul:167
+msgid "Ask to quit"
+msgstr "Preguntar para salir"
+
+#: ../chrome/oneteam/content/preferences.xul:169
+msgid "Show the system tray icon."
+msgstr "Mostrar el icono en la bandeja del sistema."
+
+#: ../chrome/oneteam/content/preferences.xul:222
+msgid "Automatically connect at startup"
+msgstr "Conectar automáticamente al iniciarse"
+
+#: ../chrome/oneteam/content/preferences.xul:253
+#: ../chrome/oneteam/content/preferences.xul:262
+msgid "And set status message to:"
+msgstr "Y poner mensaje de estado a:"
+
+#: ../chrome/oneteam/content/jingleCall.xul:11
+msgid "Jingle Call"
+msgstr "Llamada Jingle"
+
+#: ../chrome/oneteam/content/jingleCall.xul:69
+#: ../chrome/oneteam/content/jingleCall.xul:82
+msgid "Call Ended"
+msgstr "La llamada terminó"
+
+#: ../chrome/oneteam/content/jingleCall.xul:73
+msgid "Call Rejected"
+msgstr "Llamada rechazada"
+
+#: ../chrome/oneteam/content/jingleCall.xul:76
+msgid "Caller Busy"
+msgstr "Llamante ocupado"
+
+#: ../chrome/oneteam/content/jingleCall.xul:79
+msgid "Connection Error"
+msgstr "Error de conexión"
+
+#: ../chrome/oneteam/content/jingleCall.xul:95
+msgid "Incomming Call"
+msgstr "Llamada entrante"
+
+#: ../chrome/oneteam/content/jingleCall.xul:99
+msgid "Waiting for Accept"
+msgstr "Esperanto para aceptar"
+
+#: ../chrome/oneteam/content/jingleCall.xul:103
+#: ../chrome/oneteam/content/main.xul:592
+#: ../chrome/oneteam/content/main.xul:95
+msgid "Connecting"
+msgstr "Conectando"
+
+#: ../chrome/oneteam/content/jingleCall.xul:132
+msgid "Active Call"
+msgstr "Llamada activa"
+
+#: ../chrome/oneteam/content/jingleCall.xul:145
+msgid "End Call"
+msgstr "Terminar llamada"
+
+#: ../chrome/oneteam/content/main.xul:331
+msgid "Quit prompt"
+msgstr "Cerrar"
+
+#: ../chrome/oneteam/content/main.xul:331
+msgid "You are connected, do you really want to quit?"
+msgstr "Estás conectado, ¿de verdad quieres cerrar?"
+
+#: ../chrome/oneteam/content/main.xul:527
+msgid "Add-ons..."
+msgstr "Añadidos..."
+
+#: ../chrome/oneteam/content/fileTransferRequest.xul:91
+msgid "Description:"
+msgstr "Descripción:"
+
+#: ../chrome/oneteam/content/bumpPriority.xul:44
+msgid "Ask me the next time."
+msgstr "Preguntarme la próxima vez."
+
+#: ../chrome/oneteam/content/disco.xul:55
+msgid "Google Wave Transport"
+msgstr "Transporte de Google Wave"
+
+#: ../chrome/oneteam/content/disco.xul:80
+msgid "Join room"
+msgstr "Entrar en la sala"
+
+#: ../chrome/oneteam/content/bindings/contactinfo.xml:248
+msgid "Active"
+msgstr "Activo"
+
+#: ../chrome/oneteam/content/bindings/contactinfo.xml:251
+msgid "Paused"
+msgstr "Pausado"
+
+#: ../chrome/oneteam/content/bindings/contactinfo.xml:254
+msgid "Composing"
+msgstr "Escribiendo"
+
+#: ../chrome/oneteam/content/bindings/contactinfo.xml:257
+msgid "Inactive"
+msgstr "Inactivo"
+
+#: ../chrome/oneteam/content/bindings/contactinfo.xml:260
+msgid "Gone"
+msgstr "Ausente"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1919
+msgid "Jingle call"
+msgstr "Llamada Jingle"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2057
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2061
+msgid "THREAD"
+msgstr "THREAD"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2074
+msgid "BOOKMARK"
+msgstr "BOOKMARK"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:325
+msgid "Message from <b>{0}</b>"
+msgstr "Mensaje de <b>{0}</b>"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:337
+msgid "Call request received"
+msgstr "Se ha recibido una petición de llamada"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:338
+msgid "User <b>{0}</b> want to initiate call with you"
+msgstr "El usuario <b>{0}</b> quiere iniciar una llamada contigo"
+
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:135
+msgid "{0} ({1}/{2})"
+msgstr "{0} ({1}/{2})"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:196
+msgid "{0} \\u2014 {1} of {2} ({3})"
+msgstr "{0} \\u2014 {1} of {2} ({3})"
+
+#: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:197
+msgid "{0} \\u2014 {1} of {2}"
+msgstr "{0} \\u2014 {1} of {2}"
+
+#: ../chrome/oneteam/content/JavaScript/services/jingle.js:811
+msgid "<b>{0}</b> want to initiate call with you"
+msgstr "<b>{0}</b> quiere iniciar una llamada contigo"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:56
+msgid "My events"
+msgstr "Mis eventos"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:118
+msgid "Joining to room <b>{0}</b> failed.<br/>Error message: <em>{1}</em>"
+msgstr "Fallo al entrar en la sala <b>{0}</b>.<br/>Mensaje de error: <em>{1}</em>"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:176
+msgid "Please join that room"
+msgstr "Por favor entra en esta sala"
+
+#: ../chrome/oneteam/content/JavaScript/model/conference.js:459
+msgid "Your nick name is already used, try another nick"
+msgstr "Ese apodo ya está siendo usado por otro ocupante, por favor inténtalo con otro apodo"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:232
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:233
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:279
+msgid "Voice Call..."
+msgstr "Llamada de voz..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:273
+msgid "Rename..."
+msgstr "Renombrar..."
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:404
+msgid "No Suggestions"
+msgstr "No hay sugerencias"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:406
+msgid "Undo"
+msgstr "Deshacer"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:407
+msgid "Redo"
+msgstr "Rehacer"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:410
+msgid "Cut"
+msgstr "Cortar"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:411
+msgid "Copy"
+msgstr "Copiar"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:412
+msgid "Paste"
+msgstr "Pegar"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:413
+msgid "Delete"
+msgstr "Eliminar"
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:415
+msgid "Select All"
+msgstr "Seleccionar todo"
+
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:135
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:52
+msgid "File"
+msgstr "Fichero"
+
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:112
+msgid "Close Tab"
+msgstr "Cerrar pestaña"
+
+#: ../chrome/oneteam/content/overlays/browserOverlay.xul:41
+#: ../chrome/oneteam/content/overlays/browserOverlay.xul:46
+msgid "OneTeam"
+msgstr "OneTeam"
+
+#: ../chrome/oneteam/content/bumpPriority.xul:40
+msgid ""
+"Another client is active on your account. Because it has higher priority "
+"that this client, messages usually will be routed to that client."
+msgstr "Otro cliente está conectado a tu cuenta. Como aquel tiene mayor prioridad que este cliente, los mensajes seguramente se enviarán a aquel cliente."
+
+#: ../chrome/oneteam/content/bumpPriority.xul:43
+msgid "Do you want to bump this client priority to make it your main client?"
+msgstr "¿Quieres aumentar la prioridad de este cliente para que así sea tu cliente más importante?"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:646
+msgid "Load more messages from history"
+msgstr "Cargar más mensajes del historial"
+
+#: ../chrome/oneteam/content/preferences.xul:223
+msgid "Reconnect after loosing connection"
+msgstr "Reconectar después de haber perdido la conexión"
+
+#: ../chrome/oneteam/content/main.xul:500
+msgid "Wave _Inbox..."
+msgstr "_Bandeja de entrada de Wave..."
+
+#: ../chrome/oneteam/content/main.xul:595
+msgid "Stop Connecting"
+msgstr "Detener la conexión"
+
+#: ../chrome/oneteam/content/vcard.xul:61
+msgid "Contact details"
+msgstr "Detalles del contacto"
+
+#: ../chrome/oneteam/content/vcard.xul:62
+msgid "Notifications"
+msgstr "Notificaciones"
+
+#: ../chrome/oneteam/content/addContact.xul:190
+msgid "For example: john@talkr.im"
+msgstr "Por ejemplo: john@talkr.im"
+
+#: ../chrome/oneteam/content/addContact.xul:199
+msgid "This alias is used in the roster"
+msgstr "Este alias está usado en la lista de contactos"
+
+#: ../chrome/oneteam/content/addContact.xul:220
+msgid "(Optional)"
+msgstr "(Opcional)"
+
+#: ../chrome/oneteam/content/disco.xul:43
+msgid "Twitter Gateway"
+msgstr "Transporte de Twitter"
+
+#: ../chrome/oneteam/content/disco.xul:46
+msgid "Apple Gateway"
+msgstr "Transporte de Apple"
+
+#: ../chrome/oneteam/content/disco.xul:58
+msgid "Wave Server"
+msgstr "Servidor de Wave"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1936
+msgid "Send wave log to prefiks"
+msgstr "Enviar log de Wave a Prefiks"
+
+#: ../chrome/oneteam/content/bindings/groupselector.xml:20
+msgid "Create a group:"
+msgstr "Crear un grupo:"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:162
+msgid "<b>{0}</b> has joined room {1}"
+msgstr "<b>{0}</b> ha entrado en la sala {1}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:164
+#: ../chrome/oneteam/content/JavaScript/notification.js:181
+#: ../chrome/oneteam/content/JavaScript/notification.js:195
+#: ../chrome/oneteam/content/JavaScript/notification.js:212
+#: ../chrome/oneteam/content/JavaScript/notification.js:227
+#: ../chrome/oneteam/content/JavaScript/notification.js:238
+#: ../chrome/oneteam/content/JavaScript/notification.js:254
+#: ../chrome/oneteam/content/JavaScript/notification.js:260
+#: ../chrome/oneteam/content/JavaScript/notification.js:273
+#: ../chrome/oneteam/content/JavaScript/notification.js:288
+msgid "{0}<br/>{1}"
+msgstr "{0}<br/>{1}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:179
+msgid "{0} signed in"
+msgstr "{0} ha conectado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:180
+msgid "<b>{0}<b> signed in"
+msgstr "<b>{0}<b> ha conectado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:193
+msgid "<b>{0}</b> has left room {1}"
+msgstr "<b>{0}</b> ha salido de la sala {1}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:210
+msgid "{0} signed out"
+msgstr "{0} ha desconectado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:211
+msgid "<b>{0}<b> signed out"
+msgstr "<b>{0}<b> ha desconectado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:224
+msgid "<b>{0}<b> from {1} is now {2}"
+msgstr "<b>{0}<b> de {1} es ahora {2}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:236
+msgid "<b>{0}<b> is now {1}"
+msgstr "<b>{0}<b> es ahora {1}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:252
+msgid "{0} authorized you to see his/her status"
+msgstr "{0} he ha autorizado a ver su estado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:258
+msgid "{0} doesn't authorized you to see his/her status"
+msgstr "{0} no te ha autorizado a ver su estado"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:271
+msgid "<b>{0}</b> from {1} changed nick to <b>{2}</b>"
+msgstr "<b>{0}</b> de {1} cambió su apodo a <b>{2}</b>"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:286
+msgid "{0} from {1} changed subject to {2}"
+msgstr "{0} de {1} cambió el asunto a {2}"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:336
+msgid "{0} requests a call"
+msgstr "{0} solicita una llamada"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:349
+msgid "{0} want to send file \"{1}\\\""
+msgstr "{0} quiere enviarte el fichero \"{1}\\\""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:363
+msgid "{0} doesn't want to receive your file \"{1}\\\""
+msgstr "{0} no quiere recibir tu fichero \"{1}\\\""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:365
+msgid "File transfer aborted"
+msgstr "Transferencia de fichero abortada"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:366
+msgid "User <b>{0}</b> doesn't want to receive your <b>\"{1}\\\"</b> file"
+msgstr "El usuario <b>{0}</b> no quiere recibir tu fichero <b>\"{1}\\\"</b>"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:377
+msgid "{0} accepted your file \"{1}\\\""
+msgstr "{0} ha aceptado tu fichero \"{1}\\\""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:379
+msgid "File transfer accepted"
+msgstr "Transferencia de fichero aceptada"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:380
+msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
+msgstr "El usuario <b>{0}</b> ha aceptado tu fichero <b>\"{1}\\\"</b>"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:949
+msgid "Reconnecting in {0} {0, plurals, second,seconds}"
+msgstr "Reconectando en {0} {0, plurals, segundo,segundos}"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1250
+msgid "Conflict (same account/resource signed in from another client)"
+msgstr "Conflicto (otro cliente está conectado a la misma cuenta y recurso)"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1259
+msgid "Invalid username or password"
+msgstr "El nombre de usuario o la contraseña no son válidos"
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1261
+msgid "Invalid response from server"
+msgstr "Respuesta del servidor no válida"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:133
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:147
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:156
+msgid "home, work"
+msgstr "casa, trabajo"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:133
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:147
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:156
+msgid "home"
+msgstr "casa"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:134
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:148
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:157
+msgid "work"
+msgstr "trabajo"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:134
+msgid "address"
+msgstr "dirección"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:135
+msgid "{5} {4}<br/>{2} {1} {3}<br/>{0}"
+msgstr "{5} {4}<br/>{2} {1} {3}<br/>{0}"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:141
+msgid "voice"
+msgstr "voz"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:141
+msgid "fax"
+msgstr "fax"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:142
+msgid "pager"
+msgstr "paginador"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:142
+msgid "messages"
+msgstr "mensajes"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:143
+msgid "cell"
+msgstr "móvil"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:148
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:157
+msgid "phone"
+msgstr "teléfono"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:150
+msgid "<b>{0}</b> {1}"
+msgstr "<b>{0}</b> {1}"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:151
+msgid "{0} {1}"
+msgstr "{0} {1}"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:159
+msgid "<a href='mailto:{0}'><b>{0}</b></a>"
+msgstr "<a href='mailto:{0}'><b>{0}</b></a>"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:160
+msgid "<a href='mailto:{0}'>{0}</a>"
+msgstr "<a href='mailto:{0}'>{0}</a>"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:169
+msgid "{0} {1} {2} {3} {4}"
+msgstr "{0} {1} {2} {3} {4}"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:181
+msgid "<a href='{0}'>{0}</a>"
+msgstr "<a href='{0}'>{0}</a>"
+
+#: ../chrome/oneteam/content/JavaScript/model/vcard.js:193
+msgid "notes"
+msgstr "anotaciones"
+
+#: ../chrome/oneteam/content/console.xul:45
+msgid "Inject into input stream"
+msgstr "Inyectar esto en la conexión"
+
+#: ../chrome/oneteam/content/console.xul:48
+#: ../chrome/oneteam/content/console.xul:50
+msgid "IQ"
+msgstr "IQ"
+
+#: ../chrome/oneteam/content/console.xul:51
+msgid "Time IQ"
+msgstr "IQ de tiempo"
+
+#: ../chrome/oneteam/content/console.xul:52
+msgid "Version IQ"
+msgstr "IQ de versión"
+
+#: ../chrome/oneteam/content/console.xul:53
+msgid "Last IQ"
+msgstr "IQ de última actividad"
+
+#: ../chrome/oneteam/content/console.xul:56
+#: ../chrome/oneteam/content/console.xul:58
+msgid "Presence"
+msgstr "Presencia"
+
+#: ../chrome/oneteam/content/console.xul:60
+msgid "Unavailable"
+msgstr "Desconectado"
+
+#: ../chrome/oneteam/content/console.xul:63
+#: ../chrome/oneteam/content/console.xul:65
+msgid "Message"
+msgstr "Mensaje"
+
+#: ../chrome/oneteam/content/console.xul:66
+msgid "Chat"
+msgstr "Charla"
+
+#: ../chrome/oneteam/content/console.xul:67
+msgid "Headline"
+msgstr "Cabecera"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:395
+#: ../chrome/oneteam/content/JavaScript/notification.js:407
+msgid "Connection with server lost"
+msgstr "Se ha perdido la conexión con el servidor"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:396
+#: ../chrome/oneteam/content/JavaScript/notification.js:408
+msgid "Lost connection with server"
+msgstr "Se ha perdido la conexión con el servidor"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:397
+msgid "OneTeam will try to connect again to server"
+msgstr "OneTeam intentará conectar de nuevo con el servidor"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:410
+msgid "Reconnecting was not successfull, please try to connect manually"
+msgstr "La reconexión no fue exitosa, puedes intentar a reconectar manualmente"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:411
+msgid "Please try to connect manually"
+msgstr "Por favor intenta reconectar manualmente"
+
