@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "POT-Creation-Date: 2010-09-15 10:47+0200\n"
-"PO-Revision-Date: 2010-09-14 13:40+0100\n"
-"Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
+"PO-Revision-Date: 2010-09-15 18:01+0200\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -1525,8 +1525,7 @@ msgid "You are not member of this room"
 msgstr "No eres miembro de esta sala"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:460
-msgid ""
-"Conference server can't be contacted or room reached maximum number of users"
+msgid "Conference server can't be contacted or room reached maximum number of users"
 msgstr ""
 "No se puede conectar al servicio de salas de charla o la sala ha llegado al "
 "límite máximo de usuarios conectados"
@@ -1702,8 +1701,7 @@ msgstr "Mis eventos"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:118
 msgid "Joining to room <b>{0}</b> failed.<br/>Error message: <em>{1}</em>"
-msgstr ""
-"Fallo al entrar en la sala <b>{0}</b>.<br/>Mensaje de error: <em>{1}</em>"
+msgstr "Fallo al entrar en la sala <b>{0}</b>.<br/>Mensaje de error: <em>{1}</em>"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:176
 msgid "Please join that room"
@@ -1850,7 +1848,6 @@ msgid "{0} signed in"
 msgstr "{0} ha conectado"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:206
-#, fuzzy
 msgid "<b>{0}</b> signed in"
 msgstr "<b>{0}<b> ha conectado"
 
@@ -1863,17 +1860,14 @@ msgid "{0} signed out"
 msgstr "{0} ha desconectado"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:236
-#, fuzzy
 msgid "<b>{0}</b> signed out"
 msgstr "<b>{0}<b> ha desconectado"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:249
-#, fuzzy
 msgid "<b>{0}</b> from {1} is now {2}"
 msgstr "<b>{0}<b> de {1} es ahora {2}"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:261
-#, fuzzy
 msgid "<b>{0}</b> is now {1}"
 msgstr "<b>{0}<b> es ahora {1}"
 
@@ -1898,7 +1892,6 @@ msgid "{0} requests a call"
 msgstr "{0} solicita una llamada"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:374
-#, fuzzy
 msgid "{0} want to send you file \"{1}\\\""
 msgstr "{0} quiere enviarte el fichero \"{1}\\\""
 
@@ -2084,79 +2077,57 @@ msgstr "Por favor intenta reconectar manualmente"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:142
 msgid "Sunday"
-msgstr ""
+msgstr "Domingo"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:142
 msgid "Monday"
-msgstr ""
+msgstr "Lunes"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:142
 msgid "Tuesday"
-msgstr ""
+msgstr "Martes"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:142
 msgid "Wednesday"
-msgstr ""
+msgstr "Miércoles"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:143
 msgid "Thursday"
-msgstr ""
+msgstr "Jueves"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:143
 msgid "Friday"
-msgstr ""
+msgstr "Viernes"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:143
 msgid "Saturday"
-msgstr ""
+msgstr "Sábado"
 
 #: ../chrome/oneteam/content/JavaScript/dateutils.js:155
 msgid "Yesterday {0}"
-msgstr ""
+msgstr "Ayer {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:177
-#, fuzzy
 msgid "nickname"
-msgstr "Apodo"
+msgstr "apodo"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:179
-#, fuzzy
 msgid "birthday"
-msgstr "Fecha de nacimiento"
+msgstr "fecha de nacimiento"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:181
 msgid "url"
-msgstr ""
+msgstr "url"
 
 #: ../chrome/oneteam/content/command.xul:10
-#, fuzzy
 msgid "{0} Commands Console"
-msgstr "Consola de comandos"
+msgstr "{0} Consola de comandos"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:422
-#, fuzzy
 msgid "{0} will try to connect again to server"
 msgstr "{0} intentará conectar de nuevo con el servidor"
 
 #: ../chrome/oneteam/content/JavaScript/model/messages.js:573
-#, fuzzy
 msgid "Open console"
-msgstr "Consola de comandos"
+msgstr "Abrir consola"
 
-#~ msgid "Information..."
-#~ msgstr "Información..."
-
-#~ msgid "Chat Room:"
-#~ msgstr "Salas de charla:"
-
-#~ msgid "Enter Chat"
-#~ msgstr "Entrar en la Sala"
-
-#~ msgid "OneTeam"
-#~ msgstr "OneTeam"
-
-#~ msgid "Wave _Inbox..."
-#~ msgstr "_Bandeja de entrada de Wave..."
-
-#~ msgid "Send wave log to prefiks"
-#~ msgstr "Enviar log de Wave a Prefiks"
