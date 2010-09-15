@@ -419,7 +419,7 @@ _DECL_(NotificationScheme).prototype =
 
         return provider.show(_("Connection with server lost"),
                              _("Lost connection with server"),
-                             _xml("OneTeam will try to connect again to server"),
+                             _xml("{0} will try to connect again to server", _("$$branding$$:OneTeam")),
                              "chrome://oneteam/skin/main/imgs/disconnecticon.png",
                              null, callback);
     },
