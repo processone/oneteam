@@ -189,6 +189,7 @@ _DECL_(GroupView, null, ContainerView).prototype =
                 element: this.node._container,
                 style:"background",
                 tick: 100,
+                time: 2000,
                 loop: true
             }, "transparent", "#ff6", "transparent");
     },

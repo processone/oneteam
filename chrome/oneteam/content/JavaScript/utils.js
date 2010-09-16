@@ -976,17 +976,21 @@ var Animator = {
 
     _tokenClass: {
         get running() {
-            return this.step < this.steps;
+            return this.curTime < this.time;
         },
 
         stop: function() {
-            if (this.step >= this.steps)
+            if (this.curTime >= this.time)
                 return;
 
-            this.step = this.steps;
+            this.curTime = this.time;
 
             if (this.timeout)
                 clearInterval(this.timeout);
+            else if (this._win) {
+                this._win.removeEventListener("MozBeforePaint", this, false);
+                delete this._win;
+            }
 
             try {
                 var stopValue = this.stopValue != null ?
@@ -1001,15 +1005,33 @@ var Animator = {
         },
 
         start: function() {
-            if (this.timeout)
+            if (this.timeout || this._win)
                 return;
 
-            if (this.step == 0)
-                this._doStep();
+            var win = this.element && this.element.ownerDocument.defaultView;
 
             this.paused = false;
 
-            this.timeout = setInterval(function(a){a._doStep()}, this.tick, this);
+            if (win && win.mozAnimationStartTime) {
+                this._win = win;
+                this._timeStart = win.mozAnimationStartTime;
+
+                win.addEventListener("MozBeforePaint", this, false);
+            } else {
+                this._timeStart = Date.now();
+                this.timeout = setInterval(function(a) {
+                    a.curTime = Date.now() - a._timeStart;
+                    a._doStep();
+                }, this.tick, this);
+            }
+
+            if (this.curTime == 0)
+                this._doStep();
+        },
+
+        handleEvent: function(ev) {
+            this.curTime = ev.timeStamp - this._timeStart;
+            this._doStep();
         },
 
         _init: function() {
@@ -1020,8 +1042,8 @@ var Animator = {
         },
 
         _doStep: function() {
-            if (this.step == this.steps) {
-                this.step = 0;
+            if (this.curTime >= this.time) {
+                this.curTime = 0;
 
                 if (!this.loop) {
                     this.stop();
@@ -1029,9 +1051,8 @@ var Animator = {
                 }
             }
 
-            var proportion = this.step*(this.values.length-1)/this.steps;
+            var proportion = this.curTime*(this.values.length-1)/this.time;
             var idx = Math.floor(proportion);
-            var val;
             proportion = proportion - idx;
 
             try {
@@ -1039,27 +1060,12 @@ var Animator = {
                                         proportion, this);
             } catch (ex) {
                 this.stop();
+                return;
             }
 
-            this.step++;
+            if (this._win)
+                this._win.mozRequestAnimationFrame();
         }
-    },
-
-    _animateDimensions: function(token) {
-        for (var i = 0; i < token.startValues.length; i++)
-            token.valueSetter(token.element, token.fields[i], token.startValues[i] +
-                              token.step*token.diffValues[i]/token.steps);
-
-        if (token.step == token.steps) {
-            token.timeout = null;
-            if (token.stopCallback)
-                token.stopCallback(token.element, token);
-            return null;
-        }
-        token.step++;
-        token.timeout = setTimeout(arguments.callee, token.tick, token);
-
-        return token;
     },
 
     _setColorProportionValue: function(v1, v2, proportion, token) {
@@ -1089,17 +1095,45 @@ var Animator = {
     },
 
     _createToken: function(data) {
-        return {
+        data.__proto__ = this._tokenClass;
+        var token = {
             __proto__: this._tokenClass,
             animator: this,
+            curTime: 0,
+            time: 400,
             tick: "tick" in data ? data.tick : 20,
-            step: 0,
-            steps: "steps" in data ? data.steps : 20,
             loop: "loop" in data ? data.loop : false,
             paused: "paused" in data ? data.paused : false,
             stopValue: "stopValue" in data ? data.stopValue : null,
             stopCallback: "stopCallback" in data ? data.stopCallback : null
         };
+
+        for (var i in data)
+            if (!(i in token))
+                token[i] = data[i];
+
+        return token;
+    },
+
+    animateDimensions: function(data) {
+        var values = [];
+
+        for (var i = 1; i < arguments.length; i++)
+            if (typeof(arguments[i]) == "number")
+                values.push([arguments[i]]);
+            else
+                values.push(arguments[i]);
+
+        if (values.length < 2)
+            return null;
+
+        var token = this._createToken(data);
+        token.values = values;
+        token.setProportionValue = this._setDimensionProportionValue;
+
+        token._init();
+
+        return token;
     },
 
     animateCssRule: function(data) {

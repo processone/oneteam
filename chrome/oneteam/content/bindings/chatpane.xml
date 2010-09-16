@@ -260,7 +260,7 @@
 
           this._scrollAnimation = Animator.animateScroll({
             element: el,
-            steps: 5,
+            time: 100,
           }, 0, el.scrollTop-el.clientHeight+16);
         ]]></body>
       </method>
@@ -274,7 +274,7 @@
 
           this._scrollAnimation = Animator.animateScroll({
             element: el,
-            steps: 5,
+            time: 100,
           }, 0, el.scrollTop+el.clientHeight+16);
         ]]></body>
       </method>
@@ -597,28 +597,26 @@
           // force relayout
           d1.clientHeight;
 
-          var token = Animator._createToken({
-              stopCallback: function(token) {
-                var el = token.element;
+          this._prependAnimation = Animator.animateDimensions({
+            element: d1,
+            numCalls: (numCalls||1) - 1,
+            chatpane: this,
 
-                while (el.firstChild.firstChild)
-                  el.parentNode.insertBefore(el.firstChild.firstChild, el);
-                el.parentNode.removeChild(el);
-                if (token.numCalls)
-                  token.chatpane._prependMessages(token.numCalls);
-              }
-          });
-          token.element = d1;
-          token.values = [[0], [d2.scrollHeight]];
-          token.setProportionValue = Animator._setDimensionProportionValue;
-          token.setValue = function(value, token) {
-            token.element.style.height = value[0]+"px";
-          };
-          token.numCalls = (numCalls||1) - 1;
-          token.chatpane = this;
-          token._init();
+            setValue: function(value, token) {
+              token.element.style.height = value[0]+"px";
+            },
 
-          this._prependAnimation = token;
+            stopCallback: function(token) {
+              var el = token.element;
+
+              while (el.firstChild.firstChild)
+                el.parentNode.insertBefore(el.firstChild.firstChild, el);
+              el.parentNode.removeChild(el);
+
+              if (token.numCalls)
+                token.chatpane._prependMessages(token.numCalls);
+            }
+          }, 0, d2.scrollHeight);
 
 //          this._content.insertBefore(fragment, this._firstMsgEl);
 
