@@ -43,10 +43,12 @@ _DECL_(BookmarksMenuView, null, ContainerView).prototype =
 
 function BookmarkMenuItemView(model, parentView)
 {
+    var doc = parentView.containerNode.ownerDocument;
+
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElementNS(XULNS, "menuitem");
+    this.node = doc.createElementNS(XULNS, "menuitem");
 
     this.node.setAttribute("class", "conference-bookmark-view");
     this.node.setAttribute("oncommand", "this.model.bookmarkNick ? this.model.backgroundJoinRoom() : this.model.onJoinRoom()");
