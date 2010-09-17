@@ -9,7 +9,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/rosterContextMenus.xul"?>
 
-<window id="oneteam" windowtype="ot:main" title="OneTeam" class="no-verifier"
+<window id="oneteam" windowtype="ot:main" title="_('$$branding$$:OneTeam')" class="no-verifier"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
     width="300" height="600"
     xmlns:html="http://www.w3.org/1999/xhtml"

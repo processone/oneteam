@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2010-07-21 17:44+0200\n"
+"POT-Creation-Date: 2010-09-15 10:47+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -12,7 +12,13 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
 
+#: ../chrome/oneteam/content/JavaScript/notification.js:422
 #: ../chrome/oneteam/content/about.xul:8
+#: ../chrome/oneteam/content/command.xul:10
+#: ../chrome/oneteam/content/main.xul:12
+#: ../chrome/oneteam/content/overlays/browserOverlay.xul:28
+#: ../chrome/oneteam/content/overlays/browserOverlay.xul:41
+#: ../chrome/oneteam/content/overlays/browserOverlay.xul:46
 msgid "OneTeam"
 msgstr "OneTeam"
 

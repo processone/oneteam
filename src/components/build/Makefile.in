@@ -69,7 +69,7 @@ ifdef GNU_LD
 endif
 
 EXTRA_DSO_LDOPTS += \
-	$(filter-out %mozalloc, $(XPCOM_STANDALONE_GLUE_LDOPTS)) \
+	$(LIBXUL_DIST)/lib/$(LIB_PREFIX)xpcomglue_s_nomozalloc.$(LIB_SUFFIX) \
 	$(filter-out %mozalloc, $(XPCOM_FROZEN_LDOPTS)) \
 	$(OT_LDOPTS) \
 	$(LIBS_DIR) \

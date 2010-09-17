@@ -237,6 +237,8 @@ sub write {
     close($fh);
 }
 
+__PACKAGE__->meta->make_immutable;
+
 package OneTeam::L10N::POFile::String;
 
 use Moose;
@@ -247,5 +249,7 @@ extends 'OneTeam::L10N::FormattedString';
 has 'comments' => (is => 'rw', isa => 'ArrayRef', default => sub { [] });
 has 'flags' => (is => 'rw', isa => 'HashRef', default => sub { {} });
 has 'translation' => (is => 'rw', isa => 'Maybe[OneTeam::L10N::FormattedString]');
+
+__PACKAGE__->meta->make_immutable;
 
 1;

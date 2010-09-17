@@ -25,7 +25,7 @@
 
   <statusbar id="status-bar">
     <tooltip id="oneteam-default-tooltip">
-      <label value="OneTeam"/>
+      <label value="_('$$branding$$:OneTeam')"/>
     </tooltip>
 
     <tooltip id="oneteam-messages-tooltip"/>
@@ -38,12 +38,12 @@
 
   <broadcasterset id="mainBroadcasterSet">
     <broadcaster id="showOneteam"
-                 label="_('OneTeam')"
+                 label="_('$$branding$$:OneTeam')"
                  autoCheck="false"
                  type="checkbox"
                  group="sidebar"
                  sidebarurl="chrome://oneteam/content/main.xul"
-                 sidebartitle="_('OneTeam')"
+                 sidebartitle="_('$$branding$$:OneTeam')"
                  oncommand="toggleSidebar('showOneteam');" />
   </broadcasterset>
 </overlay>
