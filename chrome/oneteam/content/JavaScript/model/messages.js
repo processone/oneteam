@@ -997,7 +997,7 @@ _DECL_(Message).prototype =
         if (!str)
             return "";
 
-        var re = /(?:((?:http|https|ftp):\/\/\S+?)|(www\.\S+?)|(mailto:\S+@\S+?)|(\S+@\S+?))([,.;]?\s|$)/g;
+        var re = /(?:((?:http|https|ftp):\/\/\S+?)|(www\.\S+?)|(mailto:\S+@\S+?)|(\S+@\S+?))([,.;]?\s|[>\)\]]|$)/g;
         var match, res = "", last = 0;
 
         flags.firstFragment = true;
