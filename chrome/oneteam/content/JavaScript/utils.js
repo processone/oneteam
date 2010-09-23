@@ -1100,7 +1100,7 @@ var Animator = {
             __proto__: this._tokenClass,
             animator: this,
             curTime: 0,
-            time: 400,
+            time: "time" in data ? data.time : 400,
             tick: "tick" in data ? data.tick : 20,
             loop: "loop" in data ? data.loop : false,
             paused: "paused" in data ? data.paused : false,
