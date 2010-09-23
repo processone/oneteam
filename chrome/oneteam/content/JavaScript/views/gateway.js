@@ -26,8 +26,10 @@ _DECL_(GatewaysMenuView, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
+        var doc = this.containerNode.ownerDocument;
+
         for (var i = 0; data.added && i < data.added.length; i++) {
-            var node = document.createElementNS(XULNS, "menuitem");
+            var node = doc.createElementNS(XULNS, "menuitem");
 
             node.setAttribute("class", "gateway-view");
             node.setAttribute("oncommand", "this.model.onRegister()");
@@ -114,7 +116,9 @@ function GatewayToolbarButton(model, parentView)
     this.model = model;
     this.parentView = parentView;
 
-    this.node = document.createElementNS(XULNS, "toolbarbutton");
+    var doc = parentView.containerNode.ownerDocument;
+
+    this.node = doc.createElementNS(XULNS, "toolbarbutton");
     this.node.setAttribute("class", "gateway-toolbarbutton");
     this.node.setAttribute("autoCheck", "false");
     this.node.setAttribute("oncommand", "this.checked ? this.model.logout() : this.model.login()")
