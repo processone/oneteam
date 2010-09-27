@@ -45,6 +45,8 @@ var notificationAlerts = {
                             }
                         });
             } catch (ex) { }
+
+	    return;
         }
 
         if (this._top > 150 && this._wins.length < 8)
