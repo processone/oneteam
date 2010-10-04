@@ -587,16 +587,17 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         var [user, host] = this.getConnectionCreds();
 
+        var base = this.connectionInfo.base.replace(/^\//, "").replace(/\/$/, "");
+
 // #ifdef XULAPP
         var domain = host;
-        var httpbase = "http://"+host+":"+
-            this.connectionInfo.port+"/"+this.connectionInfo.base+"/";
+        var httpbase = (this.connectionInfo.type == "https-bind" ? "https://" : "http://")+
+            host+":"+this.connectionInfo.port+"/"+base+"/";
 /* #else
         var domain = this.connectionInfo.domain || this.connectionInfo.host ||
             document.location.toString().replace(/(?:jar:)?\w+:\/\/([^:\/]+).*$/, "$1");
         var httpbase = document.location.toString().
-            replace(/(?:jar:)?(\w+:\/\/[^:\/]+(?::\d+)?\/).*$/, "$1")+
-            this.connectionInfo.base+"/";
+            replace(/(?:jar:)?(\w+:\/\/[^:\/]+(?::\d+)?\/).*$/, "$1")+base+"/";
 // #endif */
         var args = {
             httpbase: httpbase,
@@ -614,6 +615,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 break;
 // #endif
             case "http-bind":
+            case "https-bind":
                 account.connection = new JSJaCHttpBindingConnection(args);
                 break;
             default:
