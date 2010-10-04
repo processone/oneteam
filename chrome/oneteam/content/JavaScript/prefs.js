@@ -1,7 +1,12 @@
 var EXPORTED_SYMBOLS = ["prefManager"];
 
 function PrefManager() {
+    var ps = Components.classes["@mozilla.org/preferences-service;1"].
+                getService(Components.interfaces.nsIPrefService);
+
     this.srv = Components.classes["@mozilla.org/preferences;1"].getService(Components.interfaces.nsIPrefBranch2);
+    this.defaultSrv = ps.getDefaultBranch(null);
+
     this.callbacks = {};
 }
 
@@ -45,30 +50,39 @@ _DECL_(PrefManager).prototype =
         }
     },
 
-    getPref: function(name) {
-      try {
-        var type = this.srv.getPrefType(name);
-        var toto = type == this.srv.PREF_BOOL ? this.srv.getBoolPref(name) :
-          type == this.srv.PREF_INT ? this.srv.getIntPref(name) :
-          type == this.srv.PREF_STRING ? this.srv.getComplexValue(name, Components.interfaces.nsISupportsString).data :
-          null;
-        return toto;
-      } catch(ex) {
-          return null;
-      }
+    getPref: function(name, inDefaults) {
+        var srv = inDefaults ? this.defaultSrv : this.srv;
+
+        try {
+            var type = srv.getPrefType(name);
+            if (type == srv.PREF_BOOL)
+                return srv.getBoolPref(name);
+            if (type == srv.PREF_INT)
+                return srv.getIntPref(name);
+            if (type == srv.PREF_STRING)
+                return srv.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+
+        } catch(ex) {
+        }
+
+        return null;
     },
 
-    setPref: function(name, value) {
-      var valueType = typeof(value);
-      if(valueType == "boolean")
-        this.srv.setBoolPref(name, value);
-      if(valueType == "number")
-        this.srv.setIntPref(name, value);
-      if(valueType == "string"){
-        var str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
-        str.data = value;
-        this.srv.setComplexValue(name, Components.interfaces.nsISupportsString, str);
-      }
+    setPref: function(name, value, inDefaults) {
+        var valueType = typeof(value);
+
+        var srv = inDefaults ? this.defaultSrv : this.srv;
+
+        if (valueType == "boolean")
+            srv.setBoolPref(name, value);
+        else if (valueType == "number")
+            srv.setIntPref(name, value);
+        else if (valueType == "string") {
+            var str = Components.classes["@mozilla.org/supports-string;1"].
+            createInstance(Components.interfaces.nsISupportsString);
+            str.data = value;
+            srv.setComplexValue(name, Components.interfaces.nsISupportsString, str);
+        }
     },
 
     builtinPref: function(name)
