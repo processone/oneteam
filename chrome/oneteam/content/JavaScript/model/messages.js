@@ -997,7 +997,7 @@ _DECL_(Message).prototype =
         if (!str)
             return "";
 
-        var re = /(?:((?:http|https|ftp):\/\/\S+?)|(www\.\S+?)|(mailto:\S+@\S+?)|(\S+@\S+?))([,.;]?\s|[>\)\]]|$)/g;
+        var re = /(?:((?:http|https|ftp):\/\/\S+?)|(www\.\S+?)|(mailto:\S+@\S+?)|(\S+@\S+?))(?=[,.;]?\s|[>\)\]]|$)/g;
         var match, res = "", last = 0;
 
         flags.firstFragment = true;
@@ -1008,7 +1008,7 @@ _DECL_(Message).prototype =
             res += "<a href='"+
                 xmlEscape(match[1]||match[3]||
                           (match[2] ? "http://"+match[2] : "mailto:"+match[4]))+
-                 "'>"+xmlEscape(match[1]||match[2]||match[3]||match[4])+"</a>"+match[5];
+                 "'>"+xmlEscape(match[1]||match[2]||match[3]||match[4])+"</a>";
             last = re.lastIndex;
         }
         flags.lastFragment = true;
