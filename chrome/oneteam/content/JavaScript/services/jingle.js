@@ -405,6 +405,20 @@ _DECL_(JingleSession, null, Model).prototype =
             this.parseTranportCandidates(queryE4X);
 
             return {};
+        } else if (action == "content-remove") {
+            if (pkt.getType() != "set")
+                return null;
+
+            this._sessionTerminated("success");
+
+            return {
+                nextPacket: {
+                    id: null,
+                    to: this.to,
+                    type: "set",
+                    domBuilder: this.genSessionTerminate([["success"]])
+                }
+            };
         } else if (action == "session-accept") {
             if (pkt.getType() != "set")
                 return null;
