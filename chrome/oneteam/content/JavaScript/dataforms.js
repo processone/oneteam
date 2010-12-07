@@ -211,7 +211,7 @@ function generateXULFromDataForm(data, doc)
                 row.appendChild(el);
                 rows.appendChild(row);
                 break;
-            case "text-single":
+            default:
                 row = doc.createElementNS(XULNS, "row");
                 el = doc.createElementNS(XULNS, "label");
                 el.setAttribute("class", "data-form-field-label");
