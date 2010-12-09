@@ -589,15 +589,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     _onResourceUpdated: function(resource)
     {
-        var oldActiveResource = this.activeResource;
-        this.activeResource = findMax(this.resourcesIterator());
-
-        if (oldActiveResource != this.activeResource) {
-            this.modelUpdated("activeResource");
+        if (!this._checkForActiveResource(resource))
             this.modelUpdated("presence");
-        } else if (this.activeResource == resource) {
-            this.modelUpdated("presence");
-        }
 
         this._checkForJingleResource(resource);
     },
@@ -611,15 +604,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
         this.resources.push(resource);
 
-        if (!this.activeResource || this.activeResource.isLt(resource))
-            this.activeResource = resource;
-
-        this.modelUpdated("resources", {added: [resource]});
-        if (oldActiveResource != this.activeResource) {
-            this.modelUpdated("activeResource");
-            this.modelUpdated("presence");
-        }
-
+        this._checkForActiveResource(resource, {added: [resource]});
         this._checkForJingleResource(resource);
 
         if (notifyGroups && !this._notVisibleInRoster)
@@ -633,22 +618,33 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
         this.resources.splice(this.resources.indexOf(resource), 1);
 
-        if (this.resources.length == 0)
-            this.activeResource = null;
-        else if (this.activeResource == resource)
-            this.activeResource = findMax(this.resourcesIterator());
-
-        this.modelUpdated("resources", {removed: [resource]})
-        if (oldActiveResource != this.activeResource) {
-            this.modelUpdated("activeResource");
-            this.modelUpdated("presence");
-        }
-
+        this._checkForActiveResource(resource, {removed: [resource]});
         this._checkForJingleResource(resource);
 
         if (this.resources.length == 0 && !this._notVisibleInRoster)
             for (var g in this.groupsIterator())
                 g._onContactUpdated(this);
+    },
+
+    _checkForActiveResource: function(resource, resourcesModification) {
+        var oldActiveResource = this.activeResource;
+
+        if (this.activeResource == resource) {
+            this.activeResource = findMax(this.resourcesIterator(
+                function(r){return r.jingleResource}));
+        } else if (!this.activeResource || this.activeResource.isLt(resource))
+            this.activeResource = resource;
+
+        if (resourcesModification)
+            this.modelUpdated("resources", resourcesModification)
+
+        if (oldActiveResource != this.activeResource) {
+            this.modelUpdated("activeResource");
+            this.modelUpdated("presence");
+            return true
+        }
+
+        return false;
     },
 
     _checkForJingleResource: function(resource) {
@@ -657,10 +653,9 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         if (this.jingleResource == resource) {
             this.jingleResource = findMax(this.resourcesIterator(
                 function(r){return r.jingleResource}));
-        } else
-            if (resource.jingleResource &&
-                (!this.jingleResource || this.jingleResource.isLt(resource)))
-                this.jingleResource = resource;
+        } else if (resource.jingleResource &&
+                   (!this.jingleResource || this.jingleResource.isLt(resource)))
+            this.jingleResource = resource;
 
         if (oldJingleResource != this.jingleResource)
             this.modelUpdated("jingleResource");

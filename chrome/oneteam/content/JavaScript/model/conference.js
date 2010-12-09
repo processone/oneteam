@@ -498,6 +498,13 @@ _DECL_(Conference, Contact).prototype =
     {
     },
 
+    _checkForActiveResource: function(resource, resourcesModification) {
+        if (resourcesModification)
+            this.modelUpdated("resources", resourcesModification)
+
+        return true;
+    },
+
     _getRoomName: function()
     {
         this.getDiscoIdentities(true, function(conference, idents) {
