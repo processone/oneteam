@@ -708,8 +708,8 @@ _DECL_(Message).prototype =
                         "' value='"+xmlEscape(this.inlineCommands[i].label)+"'/>";
             }
 
-            if (this.text.indexOf("/me ") == 0)
-                this._html = this._html.replace(/\/me\s/, "<b>* "+xmlEscape(this.nick)+"</b> ");
+            if (this.text.search(/\n*\/me/) == 0)
+                this._html = this._html.replace(/\/me(\s|<)/, "<b>* "+xmlEscape(this.nick)+"</b>$1");
 
             this._formatedHtmlEpoch = Message.prototype.epoch
         }
