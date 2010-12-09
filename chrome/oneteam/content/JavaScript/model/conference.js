@@ -494,6 +494,10 @@ _DECL_(Conference, Contact).prototype =
     {
     },
 
+    _checkForJingleResource: function()
+    {
+    },
+
     _getRoomName: function()
     {
         this.getDiscoIdentities(true, function(conference, idents) {
