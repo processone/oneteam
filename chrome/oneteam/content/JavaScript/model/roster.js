@@ -630,8 +630,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         var oldActiveResource = this.activeResource;
 
         if (this.activeResource == resource) {
-            this.activeResource = findMax(this.resourcesIterator(
-                function(r){return r.jingleResource}));
+            this.activeResource = findMax(this.resourcesIterator());
         } else if (!this.activeResource || this.activeResource.isLt(resource))
             this.activeResource = resource;
 
