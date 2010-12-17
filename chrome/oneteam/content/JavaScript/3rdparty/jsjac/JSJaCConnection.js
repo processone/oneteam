@@ -783,6 +783,18 @@ JSJaCConnection.prototype._doSASLAuth = function() {
   return false;
 };
 
+JSJaCConnection.prototype._parseSASLChallenge = function(str) {
+    var r, kv = {};
+
+    while ((r = /(\w+)\s*=\s*("(?:[^\\"]*|\\.)*"|[^",]*?)(?:\s*,\s*|\s*$)/g.exec(str))) {
+        kv[r[1]] = r[2][0] == '"' ?
+          r[2].substr(1, r[2].length-2).replace(/\\(.)/g, "1") :
+          r[2];
+    }
+
+    return kv;
+}
+
 /**
  * @private
  */
@@ -794,14 +806,19 @@ JSJaCConnection.prototype._doSASLAuthDigestMd5S1 = function(el) {
   } else {
     var challenge = atob(el.firstChild.nodeValue);
     this.oDbg.log("got challenge: "+challenge,2);
-    this._nonce = challenge.substring(challenge.indexOf("nonce=")+7);
-    this._nonce = this._nonce.substring(0,this._nonce.indexOf("\""));
+    var kv = this._parseSASLChallenge(challenge);
+    this._nonce = kv.nonce;
     this.oDbg.log("nonce: "+this._nonce,2);
     if (this._nonce == '' || this._nonce.indexOf('\"') != -1) {
       this.oDbg.log("nonce not valid, aborting",1);
       this.disconnect();
       return;
     }
+    this._realm = kv.realm;
+    if (!this._realm)
+      this._realm = this.domain;
+
+    this.domain = this._realm;
 
     this._digest_uri = "xmpp/";
     //     if (typeof(this.host) != 'undefined' && this.host != '') {
@@ -816,7 +833,7 @@ JSJaCConnection.prototype._doSASLAuthDigestMd5S1 = function(el) {
 
     this._nc = '00000001';
 
-    var A1 = str_md5(toUtf8(this.username+':'+this.domain+':'+this.pass))+
+    var A1 = str_md5(toUtf8(this.username+':'+this._realm+':'+this.pass))+
     ':'+this._nonce+':'+this._cnonce;
 
     var A2 = 'AUTHENTICATE:'+this._digest_uri;
@@ -824,7 +841,7 @@ JSJaCConnection.prototype._doSASLAuthDigestMd5S1 = function(el) {
     var response = hex_md5(hex_md5(A1)+':'+this._nonce+':'+this._nc+':'+
                            this._cnonce+':auth:'+hex_md5(A2));
 
-    var rPlain = 'username="'+this.username+'",realm="'+this.domain+
+    var rPlain = 'username="'+this.username+'",realm="'+this._realm+
     '",nonce="'+this._nonce+'",cnonce="'+this._cnonce+'",nc="'+this._nc+
     '",qop=auth,digest-uri="'+this._digest_uri+'",response="'+response+
     '",charset=utf-8,algorithm=md5-sess';
@@ -854,10 +871,11 @@ JSJaCConnection.prototype._doSASLAuthDigestMd5S2 = function(el) {
   var response = atob(el.firstChild.nodeValue);
   this.oDbg.log("response: "+response,2);
 
-  var rspauth = response.substring(response.indexOf("rspauth=")+8);
+  var kv = this._parseSASLChallenge(response);
+  var rspauth = kv.rspauth;
   this.oDbg.log("rspauth: "+rspauth,2);
 
-  var A1 = str_md5(toUtf8(this.username+':'+this.domain+':'+this.pass))+
+  var A1 = str_md5(toUtf8(this.username+':'+this._realm+':'+this.pass))+
   ':'+this._nonce+':'+this._cnonce;
 
   var A2 = ':'+this._digest_uri;
@@ -916,6 +934,8 @@ JSJaCConnection.prototype._doXMPPSess = function(iq) {
 
   this.fulljid = iq.getChildVal("jid");
   this.jid = this.fulljid.substring(0,this.fulljid.lastIndexOf('/'));
+
+  this.oDbg.log("FullJID: "+this.fulljid);
 
   iq = new JSJaCIQ();
   iq.setIQ(this.domain,'set','sess_1');
