@@ -785,11 +785,12 @@ JSJaCConnection.prototype._doSASLAuth = function() {
 
 JSJaCConnection.prototype._parseSASLChallenge = function(str) {
     var r, kv = {};
+    var re = /(\w+)\s*=\s*("(?:[^\\"]*|\\.)*"|[^",]*?)(?:\s*,\s*|\s*$)/g;
 
-    while ((r = /(\w+)\s*=\s*("(?:[^\\"]*|\\.)*"|[^",]*?)(?:\s*,\s*|\s*$)/g.exec(str))) {
-        kv[r[1]] = r[2][0] == '"' ?
-          r[2].substr(1, r[2].length-2).replace(/\\(.)/g, "1") :
-          r[2];
+    while ((r = re.exec(str))) {
+      kv[r[1]] = r[2][0] == '"' ?
+        r[2].substr(1, r[2].length-2).replace(/\\(.)/g, "1") :
+        r[2];
     }
 
     return kv;
