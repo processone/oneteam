@@ -190,7 +190,8 @@
       <rows>
         <row>
           <label value="_('Host:')"/>
-          <textbox label="_('Host:')" preference="host"/>
+          <textbox type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"
+                   errortext="_('This is not valid hostname')" preference="host"/>
         </row>
         <row>
           <label value="_('Port:')"/>
@@ -198,7 +199,8 @@
         </row>
         <row>
           <label value="_('Resource:')"/>
-          <textbox label="_('Resource:')" preference="resource"/>
+          <textbox type="verifiable" regex="." errortext="_('Resource can not be empty')"
+                   preference="resource"/>
         </row>
         <row>
           <label value="_('Priority:')"/>
