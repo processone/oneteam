@@ -114,7 +114,7 @@ function openLink(uri)
 //#ifdef XPI
     var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
         getService(Components.interfaces.nsIWindowMediator);
-    browser = wm.getMostRecentWindow("navigator:browser");
+    var browser = wm.getMostRecentWindow("navigator:browser");
 
     if (browser) {
         browser.getBrowser().addTab(uri, null, null);
