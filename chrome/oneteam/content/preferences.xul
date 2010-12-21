@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/preferences/preferences.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
@@ -16,8 +17,8 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("prefs.js");
     ML.importMod("model/account.js");
-    var prevType;
-    prefObserver = {
+
+    var prefObserver = {
       init: function() {
         prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.status", true);
         prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.connection", true);
@@ -29,24 +30,7 @@
         prefManager.unregisterChangeCallback(this.onPrefChange, "chat.general");
       },
       onPrefChange: function(name, value) {
-        if (name == "chat.status.autoaway"){
-          var el = document.getElementById("autoAwayCheckbox");
-          el.nextSibling.disabled =
-          el.parentNode.nextSibling.childNodes[1].disabled = !value;
-        }
-        else if (name == "chat.status.autoxa"){
-          var el = document.getElementById("autoXACheckbox");
-          el.nextSibling.disabled =
-          el.parentNode.nextSibling.childNodes[1].disabled = !value;
-        }
-        else if (name == "chat.connection.ssl"){
-          var port = document.getElementById("port");
-          if (value && port.value == "5222")
-            port.value = 5223;
-          if (!value && port.value == "5223")
-            port.value = 5222;
-        }
-        else if (name == "chat.general.iconset"){
+        if (name == "chat.general.iconset"){
           var iconsContainer = document.getElementById("iconsSet");
           if(iconsContainer)
             iconsContainer.selectItem(value);
@@ -56,35 +40,59 @@
           if(smilesContainer)
             smilesContainer.selectItem(value);
         }
-        else if (name == "chat.connection.type"){
-          var el = document.getElementById("protocol");
-          el.parentNode.nextSibling.collapsed = el.value != "native";
-          el.parentNode.nextSibling.nextSibling.collapsed = el.value == "native";
-
-          if (!prevType) {
-            prevType = el.value;
-            return;
-          }
-
-          var port = document.getElementById("port");
-          var httpBase = document.getElementById("http-base");
-
-          var portVal = el.parentNode.nextSibling.checked ? "5223" : "5222"
-
-          if (prevType == "native") {
-            if (el.value != "native" && port.value == portVal)
-              port.value = 5280
-          } else if (el.value == "native" && port.value == "5280")
-            port.value = portVal;
-
-          if (el.value == "http-bind" || el.value == "https-bind")
-            httpBase.value = httpBase.value.replace(/http-poll/, "http-bind");
-          else if (el.value == "http-polling")
-            httpBase.value = httpBase.value.replace(/http-bind/, "http-poll");
-
-          prevType = el.value;
-        }
       }
+    }
+
+    function updateAway(el) {
+      el.nextSibling.disabled =
+      el.parentNode.nextSibling.childNodes[1].disabled = !el.checked;
+    }
+
+    function fieldChanged(el, newValue) {
+      if (newValue)
+        el.value = newValue;
+      document.documentElement.currentPane.userChangedValue(el);
+    }
+
+    function updateSSLField() {
+      var port = document.getElementById("portField");
+      var value = document.getElementById("sslField").checked;
+      var newValue;
+
+      if (value && port.value == "5222")
+        fieldChanged(port, 5223);
+      if (!value && port.value == "5223")
+        fieldChanged(port, 5222);
+    }
+
+    var prevType;
+    function updateConnectionFields() {
+      var el = document.getElementById("protocol");
+      el.parentNode.nextSibling.collapsed = el.value != "native";
+      el.parentNode.nextSibling.nextSibling.collapsed = el.value == "native";
+
+      if (!prevType) {
+        prevType = el.value;
+        return;
+      }
+
+      var port = document.getElementById("portField");
+      var httpBase = document.getElementById("http-base");
+
+      var portVal = el.parentNode.nextSibling.checked ? "5223" : "5222"
+
+      if (prevType == "native") {
+        if (el.value != "native" && port.value == portVal)
+          fieldChanged(port, 5280);
+      } else if (el.value == "native" && port.value == "5280")
+        fieldChanged(port, portVal);
+
+      if (el.value == "http-bind" || el.value == "https-bind")
+        fieldChanged(httpBase, httpBase.value.replace(/http-poll/, "http-bind"));
+      else if (el.value == "http-polling")
+        fieldChanged(httpBase, httpBase.value.replace(/http-bind/, "http-poll"));
+
+      prevType = el.value;
     }
 
     function onLoad() {
@@ -194,7 +202,7 @@
         </row>
         <row>
           <label value="_('Port:')"/>
-          <textbox label="_('Port:')" preference="port" type="number"/>
+          <textbox id="portField" label="_('Port:')" preference="port" type="number"/>
         </row>
         <row>
           <label value="_('Resource:')"/>
@@ -207,7 +215,7 @@
         </row>
         <row>
           <label value="_('Connection Method:')"/>
-          <menulist id="protocol" preference="type">
+          <menulist id="protocol" preference="type" onselect="updateConnectionFields()">
             <menupopup>
               <menuitem label="Native" value="native"/>
               <menuitem label="HTTP Bind" value="http-bind"/>
@@ -216,7 +224,8 @@
             </menupopup>
           </menulist>
         </row>
-        <checkbox label="_('SSL Connection')" preference="ssl" id="ssl-checkbox"/>
+        <checkbox id="sslField" label="_('Old Style SSL Encryption')" preference="ssl"
+                  oncommand="updateSSLField()"/>
         <row>
           <label value="_('HTTP Base:')"/>
           <textbox id="http-base" preference="base"/>
@@ -247,8 +256,9 @@
       </columns>
       <rows>
         <row>
-          <checkbox label="_('Automatically set status to \'away\' after')" id="autoAwayCheckbox" preference="autoaway"/>
-          <textbox preference="autoawaytime" size="3"/>
+          <checkbox label="_('Automatically set status to \'away\' after')" id="autoAwayCheckbox"
+                    oncommand="updateAway(this)" preference="autoaway"/>
+          <textbox preference="autoawaytime" type="number" size="3"/>
           <label value="_('minutes idle')"/>
         </row>
         <hbox class="entry">
@@ -256,8 +266,9 @@
           <textbox preference="autoawaystatus" flex="1"/>
         </hbox>
         <row>
-          <checkbox label="_('Automatically set status to \'not available\' after')" id="autoXACheckbox" preference="autoxa"/>
-          <textbox preference="autoxatime" size="3"/>
+          <checkbox label="_('Automatically set status to \'not available\' after')" id="autoXACheckbox"
+                    oncommand="updateAway(this)" preference="autoxa"/>
+          <textbox preference="autoxatime" type="number" size="3"/>
           <label value="_('minutes idle')"/>
         </row>
         <hbox class="entry">
