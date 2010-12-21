@@ -79,6 +79,7 @@
         <body><![CDATA[
           if (!this._verifier)
             return;
+
           if (this._timer != null) {
             clearTimeout(this._timer);
             this._timer = null;
@@ -120,6 +121,7 @@
               this._verifier.verificationFailed(this);
             else
               this._verifier.verificationSucceeded(this);
+
           this._image.hidden = !this._active;
           this._image.setAttribute("valid", this.isValid ? "true" : "false");
         ]]></body>
@@ -441,11 +443,12 @@
             <xul:button dlgtype="help" class="dialog-button" hidden="true"/>
             <xul:button dlgtype="disclosure" class="dialog-button" hidden="true"/>
           </xul:hbox>
+
+          <xul:hbox>
+            <children/>
+          </xul:hbox>
         </xul:verifier>
       </xul:verifier-error-box>
-      <xul:hbox>
-        <children/>
-      </xul:hbox>
     </content>
 
     <implementation>
@@ -478,7 +481,8 @@
       <method name="registerVerifiable">
         <parameter name="verifiable"/>
         <body><![CDATA[
-          this._verifier.registerVerifiable(verifiable);
+          if (this._verifier)
+            this._verifier.registerVerifiable(verifiable);
         ]]></body>
       </method>
 
