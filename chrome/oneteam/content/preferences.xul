@@ -159,7 +159,6 @@
       <preference id="ask_to_quit" name="chat.general.ask_to_quit" type="bool"/>
       <preference id="systray" name="chat.systray" type="bool"/>
     </preferences>
-    <checkbox label="_('Display avatars in roster')" preference="showavatars"/>
     <checkbox label="_('Sort contacts by status')" preference="sortbystatus"/>
     <checkbox label="_('Play sounds')" preference="sounds"/>
     <checkbox label="_('Notify about other clients with higher priority')"
