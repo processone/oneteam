@@ -100,6 +100,29 @@ dialog {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#dialog") !important;
 }
 
+prefwindow,
+prefwindow:root {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#prefwindow") !important;
+  -moz-box-orient: vertical
+}
+
+prefwindow .paneDeckContainer {
+  overflow: hidden;
+}
+
+prefpane .content-box {
+  overflow: hidden;
+}
+
+prefwindow[type="child"] > .paneDeckContainer {
+  overflow: -moz-hidden-unscrollable;
+}
+
+prefwindow[type="child"] > prefpane > .content-box {
+  -moz-box-flex: 1;
+  overflow: -moz-hidden-unscrollable;
+}
+
 window:not(.no-verifier) {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#window") !important;
 }

@@ -1,5 +1,12 @@
 <?xml version="1.0"?>
 
+<!DOCTYPE bindings [
+  <!ENTITY % preferencesDTD SYSTEM "chrome://global/locale/preferences.dtd">
+  %preferencesDTD;
+  <!ENTITY % globalKeysDTD SYSTEM "chrome://global/locale/globalKeys.dtd">
+  %globalKeysDTD;
+]>
+
 <bindings xmlns="http://www.mozilla.org/xbl"
   xmlns:xbl="http://www.mozilla.org/xbl"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -391,6 +398,129 @@
 
           return (value == null ? "delete this[" : "this[")+
             uneval(name) + (value == null ? "];" : "]="+value+";");
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+
+  <binding id="prefwindow" extends="chrome://global/content/bindings/preferences.xml#prefwindow">
+    <resources>
+      <stylesheet src="chrome://global/skin/preferences.css"/>
+    </resources>
+
+    <content dlgbuttons="accept,cancel" persist="lastSelected screenX screenY"
+             closebuttonlabel="&preferencesCloseButton.label;"
+             closebuttonaccesskey="&preferencesCloseButton.accesskey;"
+             role="dialog"
+             titleWin="&preferencesDefaultTitleWin.title;"
+             title="&preferencesDefaultTitleMac.title;">
+      <xul:verifier-error-box anonid="error-box" flex="1">
+        <xul:verifier flex="1" orient="vertical"
+            oninvalid="this.parentNode.parentNode.getButton('accept').disabled = true"
+            onvalid="this.parentNode.parentNode.getButton('accept').disabled = false">
+
+          <xul:windowdragbox orient="vertical">
+            <xul:radiogroup anonid="selector" orient="horizontal" class="paneSelector chromeclass-toolbar"
+                            role="listbox"/> <!-- Expose to accessibility APIs as a listbox -->
+          </xul:windowdragbox>
+
+          <xul:hbox flex="1" class="paneDeckContainer">
+            <xul:deck anonid="paneDeck" flex="1">
+              <children includes="prefpane"/>
+            </xul:deck>
+          </xul:hbox>
+
+          <xul:hbox class="dialog-button-box" anonid="buttons"
+                    xbl:inherits="pack=buttonpack,align=buttonalign,dir=buttondir,orient=buttonorient"
+                    pack="end">
+            <xul:button dlgtype="extra2" class="dialog-button" hidden="true"/>
+            <xul:spacer anonid="spacer" flex="1" hidden="true"/>
+            <xul:button dlgtype="accept" class="dialog-button" xbl:inherits="disabled=buttondisabledaccept"/>
+            <xul:button dlgtype="extra1" class="dialog-button" hidden="true"/>
+            <xul:button dlgtype="cancel" class="dialog-button"/>
+            <xul:button dlgtype="help" class="dialog-button" hidden="true"/>
+            <xul:button dlgtype="disclosure" class="dialog-button" hidden="true"/>
+          </xul:hbox>
+        </xul:verifier>
+      </xul:verifier-error-box>
+      <xul:hbox>
+        <children/>
+      </xul:hbox>
+    </content>
+
+    <implementation>
+      <property name="isValid" onget="return this._verifier.isValid" readonly="true"/>
+
+      <constructor><![CDATA[
+        if (/Win/.test(window.navigator.platform)) {
+          this.setAttribute("title", this.getAttribute("titleWin"));
+        }
+
+        if (/Mac|Linux/.test(window.navigator.platform)) {
+          var b = document.getAnonymousElementByAttribute(this, "anonid", "buttons");
+          b.removeAttribute("pack");
+          b.appendChild(b.childNodes[5]);
+          b.appendChild(b.childNodes[0]);
+          b.appendChild(b.childNodes[2]);
+          b.appendChild(b.childNodes[0]).removeAttribute("hidden");
+          b.appendChild(b.childNodes[1]);
+          b.appendChild(b.childNodes[0]);
+          try {
+            this.buttons = this.buttons;
+          } catch(ex){}
+        }
+
+        this._errorBox = document.getAnonymousElementByAttribute(this, "anonid", "error-box");
+        this._verifier = this._errorBox.firstChild;
+        this._verifier._childContainer = this;
+      ]]></constructor>
+
+      <method name="registerVerifiable">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.registerVerifiable(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="unregisterVerifiable">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.unregisterVerifiable(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="unregisterVerifiables">
+        <parameter name="tree"/>
+        <body><![CDATA[
+          this._verifier.unregisterVerifiables(tree);
+        ]]></body>
+      </method>
+
+      <method name="verificationSucceeded">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.verificationSucceeded(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="verificationFailed">
+        <parameter name="verifiable"/>
+        <body><![CDATA[
+          this._verifier.verificationFailed(verifiable);
+        ]]></body>
+      </method>
+
+      <method name="focusInvalidWidget">
+        <body><![CDATA[
+          this._verifier.focusInvalidWidget();
+        ]]></body>
+      </method>
+
+      <method name="_updateErrorBox">
+        <parameter name="textbox"/>
+        <parameter name="focus"/>
+        <body><![CDATA[
+          this._errorBox._updateErrorBox(textbox, focus);
         ]]></body>
       </method>
     </implementation>
