@@ -1,14 +1,1 @@
-Makefile
-*.o
-*.so
-*.xpt
-*.dll
-*.obj
-*.lib
-*.bak
-*.dylib
-__.SYMDEF SORTED
-.deps
-*.a
-_xpidlgen
 system_wrappers/

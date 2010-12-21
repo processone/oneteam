@@ -1,5 +1,0 @@
-MOZILLA_OBJ_1.9 = /home/prefiks/src/mozilla/trunk/obj-combined/xulrunner
-MOZILLA_SOURCE_1.9 = /home/prefiks/src/mozilla/trunk/mozilla
-MOZILLA_OBJ_1.8 = /home/prefiks/src/mozilla/branch1.8/optimized-build
-MOZILLA_SOURCE_1.8 = /home/prefiks/src/mozilla/branch1.8/mozilla
-MOZILLA_VERSIONS = 1.8 1.9

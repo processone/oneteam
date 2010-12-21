@@ -63,12 +63,24 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <glib.h>
+
 #include <stdlib.h>
+
+#ifdef G_OS_WIN32
+#include <winsock2.h>
+#define ECONNABORTED WSAECONNABORTED
+#define ENOTCONN WSAENOTCONN
+#define ECONNRESET WSAECONNRESET
+#define EWOULDBLOCK WSAEWOULDBLOCK
+#undef min
+#undef max
+#else
 #include <arpa/inet.h>
+#endif
+
 #include <errno.h>
 #include <string.h>
-
-#include <glib.h>
 
 #include "pseudotcp.h"
 
@@ -350,9 +362,13 @@ static void adjustMTU(PseudoTcpSocket *self);
 // The following logging is for detailed (packet-level) pseudotcp analysis only.
 static PseudoTcpDebugLevel debug_level = PSEUDO_TCP_DEBUG_NONE;
 
+#ifdef G_OS_WIN32
+#define DEBUG(level, ...) do {} while (0)
+#else
 #define DEBUG(level, fmt, ...) \
   if (debug_level >= level) \
     g_debug ("PseudoTcpSocket %p: " fmt, self, ## __VA_ARGS__)
+#endif
 
 void
 pseudo_tcp_set_debug_level (PseudoTcpDebugLevel level)
@@ -792,16 +808,16 @@ packet(PseudoTcpSocket *self, guint32 seq, guint8 flags,
 
   g_assert(HEADER_SIZE + len <= MAX_PACKET);
 
-  *((uint32_t *) buffer) = htonl(priv->conv);
-  *((uint32_t *) (buffer + 4)) = htonl(seq);
-  *((uint32_t *) (buffer + 8)) = htonl(priv->rcv_nxt);
+  *((guint32 *) buffer) = htonl(priv->conv);
+  *((guint32 *) (buffer + 4)) = htonl(seq);
+  *((guint32 *) (buffer + 8)) = htonl(priv->rcv_nxt);
   buffer[12] = 0;
   buffer[13] = flags;
-  *((uint16_t *) (buffer + 14)) = htons((uint16_t)priv->rcv_wnd);
+  *((guint16 *) (buffer + 14)) = htons((guint16)priv->rcv_wnd);
 
   // Timestamp computations
-  *((uint32_t *) (buffer + 16)) = htonl(now);
-  *((uint32_t *) (buffer + 20)) = htonl(priv->ts_recent);
+  *((guint32 *) (buffer + 16)) = htonl(now);
+  *((guint32 *) (buffer + 20)) = htonl(priv->ts_recent);
   priv->ts_lastack = priv->rcv_nxt;
 
   memcpy(buffer + HEADER_SIZE, data, len);
@@ -838,14 +854,14 @@ parse(PseudoTcpSocket *self, const guint8 * buffer, guint32 size)
   if (size < 12)
     return FALSE;
 
-  seg.conv = ntohl(*(uint32_t *)buffer);
-  seg.seq = ntohl(*(uint32_t *)(buffer + 4));
-  seg.ack = ntohl(*(uint32_t *)(buffer + 8));
+  seg.conv = ntohl(*(guint32 *)buffer);
+  seg.seq = ntohl(*(guint32 *)(buffer + 4));
+  seg.ack = ntohl(*(guint32 *)(buffer + 8));
   seg.flags = buffer[13];
-  seg.wnd = ntohs(*(uint16_t *)(buffer + 14));
+  seg.wnd = ntohs(*(guint16 *)(buffer + 14));
 
-  seg.tsval = ntohl(*(uint32_t *)(buffer + 16));
-  seg.tsecr = ntohl(*(uint32_t *)(buffer + 20));
+  seg.tsval = ntohl(*(guint32 *)(buffer + 16));
+  seg.tsecr = ntohl(*(guint32 *)(buffer + 20));
 
   seg.data = ((gchar *)buffer) + HEADER_SIZE;
   seg.len = size - HEADER_SIZE;
@@ -1137,10 +1153,12 @@ process(PseudoTcpSocket *self, Segment *seg)
           iter = priv->rlist;
         }
       } else {
-        DEBUG (PSEUDO_TCP_DEBUG_NORMAL, "Saving %d bytes (%d -> %d)",
-            seg->len, seg->seq, seg->seq + seg->len);
         GList *iter = NULL;
         RSegment *rseg = g_slice_new0 (RSegment);
+
+		DEBUG (PSEUDO_TCP_DEBUG_NORMAL, "Saving %d bytes (%d -> %d)",
+            seg->len, seg->seq, seg->seq + seg->len);
+
         rseg->seq = seg->seq;
         rseg->len = seg->len;
         iter = priv->rlist;

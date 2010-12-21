@@ -1,8 +1,9 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-PROJECT(Speex)
+PROJECT(libspeex)
 INCLUDE(CheckIncludeFile)
 INCLUDE(CheckTypeSize)
+INCLUDE(CheckCSourceCompiles)
 
 IF("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
@@ -10,6 +11,8 @@ ENDIF("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
 
 OPTION(FLOATING_POINT "Use floating version" ON)
 OPTION(USE_SMALLFT "Use SMALLFT" ON)
+
+MARK_AS_ADVANCED(FLOATING_POINT USE_SMALLFT)
 
 ADD_DEFINITIONS(-DHAVE_CONFIG_H)
 
@@ -33,10 +36,25 @@ IF(SIZEOF_LONG EQUAL 4)
     SET(32BIT_TYPE "long")
 ENDIF(SIZEOF_LONG EQUAL 4)
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/include/speex/speex_config_types.h.cmake ${CMAKE_BINARY_DIR}/speex_config_types.h)
+FOREACH(KEYWORD "inline" "__inline__" "__inline")
+    IF(NOT DEFINED C_INLINE_KEYWORD)
+        CHECK_C_SOURCE_COMPILES("
+            typedef int foo_t;
+            static ${KEYWORD} foo_t static_foo(){return 0;}
+            foo_t foo(){return 0;}
+            int main(int argc, char *argv[]){return 0;}"
+            C_HAS_${KEYWORD})
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/include ${CMAKE_BINARY_DIR})
+        IF(C_HAS_${KEYWORD})
+            SET(C_INLINE_KEYWORD "${KEYWORD}")
+        ENDIF(C_HAS_${KEYWORD})
+    ENDIF(NOT DEFINED C_INLINE_KEYWORD)
+ENDFOREACH(KEYWORD)
+
+CONFIGURE_FILE(config.h.cmake ${PROJECT_BINARY_DIR}/config.h)
+CONFIGURE_FILE(include/speex/speex_config_types.h.cmake ${PROJECT_BINARY_DIR}/speex_config_types.h)
+
+INCLUDE_DIRECTORIES(include ${PROJECT_BINARY_DIR})
 
 
 if(USE_SMALLFT)

@@ -51,6 +51,7 @@
 
 #ifdef G_OS_WIN32
 #include <winsock2.h>
+#define EWOULDBLOCK WSAEWOULDBLOCK
 #else
 #include <sys/socket.h>
 #include <netinet/in.h>

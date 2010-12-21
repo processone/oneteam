@@ -1,16 +1,8 @@
-#ifdef _WIN32
-#define EXPORT __declspec(dllexport)
+#if 0
 
-#elif __GNUC__
-#define EXPORT __attribute__ ((visibility("default")))
 
-#elif __sun
-#include <unistd.h>
-#define EXPORT __global
-
-#else
-#define EXPORT
 #endif
+#define EXPORT
 
 #cmakedefine FLOATING_POINT
 
@@ -40,13 +32,10 @@
 /* Enable SSE support */
 #cmakedefine _USE_SSE
 
-/* Define to empty if `const' does not conform to ANSI C. */
-#cmakedefine const
-
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
-#cmakedefine inline
+#define inline @C_INLINE_KEYWORD@
 #endif
 
 /* Define to the equivalent of the C99 'restrict' keyword, or to

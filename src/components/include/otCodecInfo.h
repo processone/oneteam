@@ -1,6 +1,7 @@
 #ifndef _otCODECINFO_H_
 #define _otCODECINFO_H_
 
+#include "nscore.h"
 #include "nsCOMPtr.h"
 #include "nsCOMArray.h"
 #include "otICodec.h"
