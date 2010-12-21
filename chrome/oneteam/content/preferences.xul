@@ -173,7 +173,7 @@
               preference="bumppriority"/>
     <checkbox label="_('Ask to quit')"
               preference="ask_to_quit"/>
-    <checkbox label="_('Show the system tray icon.')"
+    <checkbox label="_('Show icon in system tray')"
               preference="systray"/>
   </prefpane>
 
