@@ -213,6 +213,13 @@ check_cxx_compiler_flag(-fvisibility=hidden GCC_VISIBILITY_FLAG)
 
 IF(GCC_VISIBILITY_FLAG)
 
+IF(NOT EXISTS "${PROJECT_BINARY_DIR}/gcc_hidden.h")
+    FILE(WRITE "${PROJECT_BINARY_DIR}/gcc_hidden.h"
+"/* Begin all files as hidden visibility */
+#pragma GCC visibility push(hidden)
+")
+ENDIF(NOT EXISTS "${PROJECT_BINARY_DIR}/gcc_hidden.h")
+
 FOREACH(_header ${HIDE_SYMBOLS_SYSTEM_HEADERS})
     IF(NOT EXISTS "${PROJECT_BINARY_DIR}/system-headers/${_header}")
         GET_FILENAME_COMPONENT(_leading_path ${_header} PATH)
@@ -231,9 +238,7 @@ ENDFOREACH(_header)
 
 INCLUDE_DIRECTORIES("${PROJECT_BINARY_DIR}/system-headers/")
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include ${PROJECT_SOURCE_DIR}/include/gcc_hidden.h")
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -include ${PROJECT_SOURCE_DIR}/include/gcc_hidden.h")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -include ${PROJECT_BINARY_DIR}/gcc_hidden.h")
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -include ${PROJECT_BINARY_DIR}/gcc_hidden.h")
 
 ENDIF(GCC_VISIBILITY_FLAG)
-
-
