@@ -28,15 +28,15 @@ XPCOM_IDL_ADD_FILES(idl_INCLUDES oneteam.xpt
 INSTALL(FILES ${PROJECT_BINARY_DIR}/oneteam.xpt DESTINATION ${PROJECT_SOURCE_DIR}/../../components)
 
 IF(WIN32)
-    SET(GLIB_DIR "${PROJECT_SOURCE_DIR}/libs/extra/libglib")
+    SET(GLIB_DIR "${PROJECT_SOURCE_DIR}/libs/extra/libglib2")
     SET(GLIB_INCLUDE_DIRS "${GLIB_DIR}/include/glib-2.0" "${GLIB_DIR}/lib/glib-2.0/include")
     SET(GLIB_LIBRARIES glib-2.24s gobject-2.24s gthread-2.24s intl)
-    SET(GLIB_LIBRARY_DIRS "${GLIB_DIR}/lib")
+    SET(GLIB_STATIC_LIBRARY_DIRS "${GLIB_DIR}/lib")
     SET(GLIB_BIN_DIR "${GLIB_DIR}/bin/")
 ELSEIF(CMAKE_SYSTEM_NAME MATCHES "Darwin")
     SET(GLIB_DIR "/opt/local")
     SET(GLIB_INCLUDE_DIRS "${GLIB_DIR}/include/glib-2.0" "${GLIB_DIR}/lib/glib-2.0/include")
-    SET(GLIB_LIBRARY_DIRS "${GLIB_DIR}/lib")
+    SET(GLIB_STATIC_LIBRARY_DIRS "${GLIB_DIR}/lib")
     SET(GLIB_BIN_DIR "${GLIB_DIR}/bin/")
     SET(GLIB_LIBRARIES ${GLIB_DIR}/lib/libglib-2.0.a
 		       ${GLIB_DIR}/lib/libgobject-2.0.a
