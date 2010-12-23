@@ -1,40 +1,62 @@
-BUILDING
-========
-To build OneTeam you need to have Perl with those additional modules:
-  Sub::Name
+OneTeam
+-------
 
-You can create three targets:
-  xpi - ...
-  xulapp - archive which can be converted into XULRunner application, to
-    generate it call 'perl build.pl XULAPP 1' or 'make xulapp'.
-  webjar - JAR file with web version of OneTeam, generated with 
-    'perl build.pl' or 'make webjar'.
-  webdir - populates web/ directory with preprocessed files from chrome,
-    use 'perl build.pl NOJAR 1' or 'make webdir' to do that.
+OneTeam is XMPP/Jabber client useable as Firefox extension, or
+standalone Xulrunner application.
 
-Additionally you can pass additional argument 'DEBUG 1' to Perl line to
-create targets with additional debug code.
+Developing
+----------
 
-XULRUNNER APPLICATION
-=====================
-You need to install XULRunner first, you can download it from
-http://releases.mozilla.org/pub/mozilla.org/xulrunner/releases/
+Source directory has structure which allows it to be used directly as
+Firefox extension (by putting file named oneteam@oneteam.im containing
+path to source), or with small change (uncommenting line with
+toolkit.defaultChromeURI in defaults/preferences/non-build.js) as
+xulrunner application.
 
-You can install OneTeam with:
-  $ /path/to/xulrunner/xulrunner --install-app oneteam.xulapp /path/to/target/directory
-this will unpack xulapp and create launcher in target directory.
+Building packages
+-----------------
 
-You can also run OneTeam directly from source code:
-  $ /path/to/xulrunner/xulrunner application.ini
-but this run on not preprocessed files and this has some drawbacks (like all
-strings written in _('String') form).
+Building infrastructure is writen in Perl, and requires one non-standard
+module - Sub::Name.
 
-Firefox 3.0 gained ability to run XULRunner apps. Unfortunately it can't unpack
-the xulapp file itself, so you must do it manually:
-  $ unzip oneteam.xulapp -d /target/directory
-After that, xulapp can be invoked with
-  $ /path/to/firefox3/firefox -app /target/directory/application.ini
+It can be called directly by executing "perl build.pl <FLAGS>" or using
+targets defined in Makefile.
 
-DEPLOYING WEB VERSION
-=====================
-....
+Build script recognizes those flags:
+  XULAPP <any value>         - use this to generate xulrunner application
+  XPI <any value>            - generate firefox extension XPI package
+  DMG <any value>            - generate MacOS DMG archive
+  XULLRUNNER <path>          - path to xulrunner application, right now used 
+                               only by DMG target
+  DEBUG <any value>          - enable some additional debug infrastructure
+  NOJAR <any value>          - prevent from storing files in jar archive
+  UPDATE_URL <url>           - location used by firefox to looking for
+                               updates to extension
+  XPI_URL <url>              - location of .xpi file used in creation of
+                               update.rdf file
+  MAR_BASE_URL <url>         - location where .mar (xulapp update) files
+                               are accessible
+  MAR_UPDATE_URL <url>       - location of service handling update requests
+                               for xulrunner apps
+  MAR_UPDATE_CHANNEL <name>  - name of channel used in update process
+  MAR_FILE <filename>        - file name pattern used for naming generated
+                               .mar files
+
+Makefile has few targets which may be used as shortcuts for calling build.pl
+manually. Most usefull are 'xpi', 'xpidbg', 'xulapp' and 'xulappdbg'
+
+Compiling C code
+----------------
+
+To do that you will need tools listed for your platfrom from
+https://developer.mozilla.org/En/Developer_Guide/Build_Instructions
+under 'Build Prerequisites'. Additionally you will need to have
+cmake available in your system, and copy of xulrunner-sdk for your platform.
+
+Code for compilation lives in src/components, first step you should do is
+create directory somewhere which will hold build files. After that you should
+call 'cmake -D XPCOM_GECKO_SDK=<path to xulrunner sdk> <path to src/components>'
+and 'make' (or 'nmake' in case of windows). After successfull build calling
+'make install' or 'make install/strip' will copy newly compiled libraries
+into platform/ in OneTeam directory.
+
