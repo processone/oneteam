@@ -36,7 +36,7 @@ IF(WIN32)
 ELSEIF(CMAKE_SYSTEM_NAME MATCHES "Darwin")
     SET(GLIB_DIR "/opt/local")
     SET(GLIB_INCLUDE_DIRS "${GLIB_DIR}/include/glib-2.0" "${GLIB_DIR}/lib/glib-2.0/include")
-    SET(GLIB_STATIC_LIBRARY_DIRS "${GLIB_DIR}/lib")
+    SET(GLIB_STATIC_LIBRARY_DIRS "")
     SET(GLIB_BIN_DIR "${GLIB_DIR}/bin/")
     SET(GLIB_LIBRARIES ${GLIB_DIR}/lib/libglib-2.0.a
 		       ${GLIB_DIR}/lib/libgobject-2.0.a
