@@ -456,13 +456,14 @@ _DECL_(MessagesThread, Model).prototype =
             this.thread.openChatTab();
         }, msg);
 
-        if (!msg.isMucMessage || msg.isDirectedMessage)
+        var directedMessage = !msg.isMucMessage ||
+            (msg.isDirectedMessage && !msg.archived);
+
+        if (directedMessage)
             msg._canceler.add = account.notificationScheme.
                 onMessage(msg.contact, msg, firstMessage, callback);
 
-        if (!this._visible && !msg.isSystemMessage &&
-            (!msg.isMucMessage || msg.isDirectedMessage))
-        {
+        if (!this._visible && !msg.isSystemMessage && directedMessage) {
             this.unseenCount++;
             this.modelUpdated("unseenCount", {diff: 1});
         }
