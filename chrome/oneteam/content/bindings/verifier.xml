@@ -76,6 +76,7 @@
                 onset="this.inputField.value = val; this._checkCondition(); return val"/>
 
       <method name="_checkCondition">
+        <parameter name="secondChance"/>
         <body><![CDATA[
           if (!this._verifier)
             return;
@@ -115,6 +116,9 @@
           this._active = !!(this.boxObject.width > 0 && !this.inputField.disabled &&
             (this._condition || this._regex));
           this._valid = !!this._conditionFun(this.value);
+
+          if (this.boxObject.width == 0 && !secondChance)
+            this._timer = setTimeout(function(me){me._checkCondition(true)}, 100, this);
 
           if (this.isValid != wasValid)
             if (wasValid)
@@ -476,6 +480,11 @@
         this._errorBox = document.getAnonymousElementByAttribute(this, "anonid", "error-box");
         this._verifier = this._errorBox.firstChild;
         this._verifier._childContainer = this;
+        if (this._verifiables) {
+          for (var i = 0; i < this._verifiables.length; i++)
+            this._verifier.registerVerifiable(this._verifiables[i]);
+          delete this._verifiables;
+        }
       ]]></constructor>
 
       <method name="registerVerifiable">
@@ -483,13 +492,24 @@
         <body><![CDATA[
           if (this._verifier)
             this._verifier.registerVerifiable(verifiable);
+          else {
+            if (!this._verifiables)
+              this._verifiables = [];
+            this._verifiables.push(verifiable);
+          }
         ]]></body>
       </method>
 
       <method name="unregisterVerifiable">
         <parameter name="verifiable"/>
         <body><![CDATA[
-          this._verifier.unregisterVerifiable(verifiable);
+          if (this._verifier)
+            this._verifier.unregisterVerifiable(verifiable);
+          else {
+            var idx = this._verifiables ? this._verifiables.indexOf(verifiable) : -1;
+            if (idx >= 0)
+              this._verifiables.splice(idx, 1);
+          }
         ]]></body>
       </method>
 
