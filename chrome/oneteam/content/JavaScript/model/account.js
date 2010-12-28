@@ -673,14 +673,14 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (this.currentPresence.profile)
             privacyService.deactivate();
 
-        const ns = "oneteam:presence";
-        var iq = new JSJaCIQ();
-        iq.setType("set")
-
         var presence = this.userPresence || this.currentPresence;
         this.userDisconnect = true;
 
-        if (!presence.show == "unavailable") {
+        if (presence.show != "unavailable") {
+            var ns = "oneteam:presence";
+            var iq = new JSJaCIQ();
+            iq.setType("set")
+
             var query = iq.setQuery("jabber:iq:private");
             var node = query.appendChild(iq.getDoc().createElementNS(ns, "presence"));
             var node2 = iq.getDoc().createElementNS(ns, "saved");
