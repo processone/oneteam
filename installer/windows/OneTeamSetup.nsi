@@ -2,10 +2,12 @@
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
-;--------------------------------
-;Include Modern UI
+!define MULTIUSER_EXECUTIONLEVEL Highest
+!define MULTIUSER_MUI
+!define MULTIUSER_INSTALLMODE_COMMANDLINE
 
-  !include "MUI2.nsh"
+!include "MultiUser.nsh"
+!include "MUI2.nsh"
 
 ;--------------------------------
 ;General
@@ -36,6 +38,8 @@
 ;--------------------------------
 ;Pages
 
+  !insertmacro MULTIUSER_PAGE_INSTALLMODE
+
   !insertmacro MUI_PAGE_DIRECTORY
   
   ;Start Menu Folder Page Configuration
@@ -57,6 +61,14 @@
 
 ;--------------------------------
 ;Installer Sections
+
+Function .onInit
+  !insertmacro MULTIUSER_INIT
+FunctionEnd
+
+Function un.onInit
+  !insertmacro MULTIUSER_UNINIT
+FunctionEnd
 
 Section "OneTeam" SecDummy
 
