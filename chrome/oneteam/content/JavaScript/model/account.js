@@ -254,7 +254,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         else if (this.allConferences[normalizedJID.shortJID])
             return this.allConferences[normalizedJID.shortJID].createResource(jid);
 
-        return null;
+        return this.getOrCreateContact(jid.shortJID).createResource(jid);
     },
 
     getOrCreateConference: function(jid)
