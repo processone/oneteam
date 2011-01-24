@@ -517,6 +517,9 @@ _DECL_(JingleSession, null, Model).prototype =
 
         this._candidatesGathered = true;
         this._sendTransports();
+
+        if (!this.weAreInititator)
+            this.sendSessionInfo(["ringing", {xmlns: "urn:xmpp:jingle:apps:rtp:1:info"}]);
     },
 
     onCandidateSelected: function() {
@@ -540,6 +543,20 @@ _DECL_(JingleSession, null, Model).prototype =
         this.modelUpdated("state");
         this._sendTransports(true);
         this._startMediaSession();
+    },
+
+    sendSessionInfo: function(fragment) {
+        if (this.terminated)
+            return;
+
+        var jingle = this.genJingle("session-info");
+        jingle[2].push(fragment);
+
+        servicesManager.sendIq({
+            to: this.to,
+            type: "set",
+            domBuilder: jingle
+        });
     },
 
     terminateSession: function(reason) {
