@@ -141,6 +141,8 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     if (!this.jid.node)
         checkIfGateway(this);
 
+    this._checkForJingleResource();
+
     account.allContacts[this.jid.normalizedJID] = this;
     this.gateway = account.gateways[this.jid.normalizedJID.domain];
 }
@@ -503,7 +505,10 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     onJingleCall: function(session)
     {
-        if (this.jingleResource)
+        if (this.jingleResource == this)
+            openDialogUniq("ot:jinglCall", "chrome://oneteam/content/jingleCall.xul",
+                           "chrome,dialog", this, session);
+        else if (this.jingleResource)
             this.jingleResource.onJingleCall(session);
     },
 
@@ -649,12 +654,18 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     _checkForJingleResource: function(resource) {
         var oldJingleResource = this.jingleResource;
 
+        if (this.jingleResource == this)
+            this.jingleResource = null;
+
         if (this.jingleResource == resource) {
             this.jingleResource = findMax(this.resourcesIterator(
                 function(r){return r.jingleResource}));
-        } else if (resource.jingleResource &&
+        } else if (resource && resource.jingleResource &&
                    (!this.jingleResource || this.jingleResource.isLt(resource)))
             this.jingleResource = resource;
+
+        if (this.resources.length == 0)
+            this.jingleResource = this;
 
         if (oldJingleResource != this.jingleResource)
             this.modelUpdated("jingleResource");
