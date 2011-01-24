@@ -97,10 +97,15 @@
                                  i.presence.priority || 0);
                      });
 
-      var items = menuModel.jingleResource ?
-        [r for (r in menuModel.resourcesIterator(function(e) {
+      var items = [];
+      if (menuModel.jingleResource) {
+        items = [r for (r in menuModel.resourcesIterator(function(e) {
             return e.jingleResource
-          }))] : [];
+          }))];
+
+        if (items.length == 0)
+          items = [menuModel.jingleResource];
+      }
 
       updateMenuList(vcm, vc, items, "this.model.onJingleCall()", function(i) {
                         return _("{0} ({1})", i.jid.resource,
