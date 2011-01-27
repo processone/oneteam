@@ -174,6 +174,7 @@ _DECL_(NotificationProvider).prototype = {
 function NotificationScheme()
 {
     this.providers = {}
+    this._presenceTimeouts = {};
 }
 
 _DECL_(NotificationScheme).prototype =
@@ -181,12 +182,40 @@ _DECL_(NotificationScheme).prototype =
     _nopCanceler: notificationAlerts._nopCanceler,
 
     onPresenceChange: function(resource, oldPresence, newPresence, callback) {
-        var signed, provider;
         var time = resource instanceof ConferenceMember ?
             resource.contact.joinedAt : account.connectedAt;
 
         if (!time || (Date.now()-time < 20*1024) || newPresence.priority < 0)
             return this._nopCanceler;
+
+        var jid = resource.jid.normalizedJID.longJID;
+
+        if (newPresence.show == "unavailable") {
+            this._presenceTimeouts[jid] = setTimeout(function(_this, args) {
+                delete _this._presenceTimeouts[jid];
+                _this._onPresenceChange.apply(_this, args);
+            }, 1000, this, arguments);
+            return {
+                canceler: function() {
+                    clearTimeout(this._this._presenceTimeouts[this.jid]);
+                    delete this._this._presenceTimeouts[this.jid];
+                },
+                _this: this,
+                jid: jid
+            }
+        }
+
+        if (this._presenceTimeouts[jid]) {
+            clearTimeout(this._presenceTimeouts[jid]);
+            delete this._presenceTimeouts[jid];
+            return this._nopCanceler;
+        }
+
+        return this._onPresenceChange.apply(this, arguments);
+    },
+
+    _onPresenceChange: function(resource, oldPresence, newPresence, callback) {
+        var signed, provider;
 
         if (newPresence.show != "unavailable" && oldPresence.show == "unavailable") {
             if (resource instanceof ConferenceMember) {
