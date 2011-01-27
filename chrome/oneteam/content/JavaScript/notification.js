@@ -185,7 +185,7 @@ _DECL_(NotificationScheme).prototype =
         var time = resource instanceof ConferenceMember ?
             resource.contact.joinedAt : account.connectedAt;
 
-        if (!time || (Date.now()-time < 1*1024) || newPresence.priority < 0)
+        if (!time || (Date.now()-time < 20*1024) || newPresence.priority < 0)
             return this._nopCanceler;
 
         if (newPresence.show != "unavailable" && oldPresence.show == "unavailable") {
@@ -558,6 +558,7 @@ _DECL_(NotificationScheme).prototype =
                 cb.setAttribute("label", _("Use global settings"))
                 cb.setAttribute("checked", !!globalSetting);
                 rows.appendChild(cb);
+                cb.setAttribute("oncommand", "var cbs=this.parentNode.getElementsByTagName('checkbox'); for(var i = 1; i < 5; i++)cbs[i].disabled = this.checked");
             }
 
             var row = doc.createElementNS(XULNS, "row");
@@ -595,22 +596,21 @@ _DECL_(NotificationScheme).prototype =
 
     saveSettings: function(fragment) {
         var c = fragment.childNodes;
-        var cid = fragment.contentObj ? list.contentObj.jid.normalizedJID.shortJID : null;
+        var cid = fragment.contentObj ? fragment.contentObj.jid.normalizedJID.shortJID : null;
 
         for (var i = 0; i < c.length; i++) {
             var cbs = c[i].getElementsByTagNameNS(XULNS, "checkbox");
             var id = c[i].providerId;
-            var scope = id;
-            var dp = this.defaultProviders[id];
+            var dp = cid ? this.findProvider(id) : this.defaultProviders[id];
 
             if (cid) {
                 id = id + "-" + cid;
                 if (cbs[0].checked) {
                     account.cache.removeValue("notifications-"+id);
-                    delete this.providers[scope];
+                    delete this.providers[id];
                     continue;
                 }
-                cbs.shift();
+                cbs = Array.slice(cbs, 1);
             }
             var data = [cbs[0].checked, cbs[1].checked, cbs[2].checked,
                         dp.soundSample, cbs[3].checked];
@@ -623,7 +623,7 @@ _DECL_(NotificationScheme).prototype =
                 account.cache.removeValue("notifications-"+id);
             }
 
-            delete this.providers[scope];
+            delete this.providers[id];
         }
     },
 
@@ -661,6 +661,7 @@ _DECL_(NotificationScheme).prototype =
         }
 
         if (scope in this.defaultProviders) {
+            this.providers[scope] = this.defaultProviders[scope];
             provider = this.defaultProviders[scope].getWrapperFor(content);
             provider.globalSetting = true;
             return provider;

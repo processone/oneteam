@@ -2,6 +2,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/vcard/vcard.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/notifications/editor.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
@@ -26,6 +27,12 @@
       document.getElementById("info-box").model = window.arguments[0];
 
       fetchVCard(true);
+
+      var fragment = account.notificationScheme.generateSettings(window.arguments[0], document);
+      fragment.setAttribute("flex", "1");
+      var np = document.getElementById("notificationsPanel");
+
+      np.insertBefore(fragment, np.firstChild);
     }
 
     function fetchVCard(force) {
@@ -39,6 +46,10 @@
       document.getElementById("updateProgress").style.visibility = "hidden";
 
       details.firstChild.innerHTML = obj ? obj.toHtml() : "";
+    }
+
+    function saveNotificationsChanges() {
+      account.notificationScheme.saveSettings(document.getElementById("notificationsPanel").firstChild);
     }
   ]]></script>
 
@@ -65,7 +76,10 @@
         <tabpanel orient="vertical">
           <description id="details" flex="1"><html:div/></description>
         </tabpanel>
-        <tabpanel>
+        <tabpanel id="notificationsPanel" orient="vertical">
+          <hbox pack="end">
+            <button label="_('Save')" oncommand="saveNotificationsChanges()"/>
+          </hbox>
         </tabpanel>
       </tabpanels>
     </tabbox>

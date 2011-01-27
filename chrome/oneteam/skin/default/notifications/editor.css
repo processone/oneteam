@@ -1,0 +1,13 @@
+.notificationsOptions description {
+  font-weight: bold;
+}
+
+.notificationsOptions  grid {
+  margin-left: 2em;
+  visibility: collapse;
+}
+
+.notificationsOptions richlistitem[expanded=true] grid {
+  visibility: visible;
+}
+
