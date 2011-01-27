@@ -951,12 +951,15 @@ _DECL_(Message).prototype =
 
         } else if (dom.nodeType == dom.TEXT_NODE) {
             textContent = dom.nodeValue.replace(/\s/g, " ");
+
+            var textForXml = dom.nodeValue.replace(/[^\S\xa0]/g, " ");
+
             sanitizedContent = insideLink ?
-                this._processSmiles(textContent, {skipNL: true, skipSmiles: true}) :
-                this._processUrls(textContent, {skipNL: true, skipSmiles: true});
+                this._processSmiles(textForXml, {skipNL: true, skipSmiles: true}) :
+                this._processUrls(textForXml, {skipNL: true, skipSmiles: true});
             content = insideLink ?
-                this._processSmiles(textContent, {skipNL: true}) :
-                this._processUrls(textContent, {skipNL: true});
+                this._processSmiles(textForXml, {skipNL: true}) :
+                this._processUrls(textForXml, {skipNL: true});
             if (block || siblingIsBlock)
                 textContent = "\n"+textContent;
         }
