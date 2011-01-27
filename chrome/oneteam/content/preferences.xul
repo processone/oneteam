@@ -130,7 +130,8 @@
     }
 
     function initNotifications() {
-      var fragment = account.notificationScheme.generateSettings(null, document);
+      var fragment = account.notificationScheme.generateSettings(null, document,
+          document.documentElement.instantApply);
       document.getElementById("notifications").appendChild(fragment);
     }
 
