@@ -487,6 +487,25 @@
         }
       ]]></constructor>
 
+      <method name="_selectPane">
+        <parameter name="aPaneElement"/>
+        <body>
+        <![CDATA[
+          var wasInitialized = this._initialized;
+
+          this.__proto__.__proto__._selectPane.call(this, aPaneElement);
+
+          if (!wasInitialized && this._shouldAnimate && this.preferencePanes.length > 1) {
+            var targetHeight = parseInt(window.getComputedStyle(this._paneDeckContainer, "").height);
+            var verticalPadding = parseInt(window.getComputedStyle(aPaneElement, "").paddingTop);
+            verticalPadding += parseInt(window.getComputedStyle(aPaneElement, "").paddingBottom);
+
+            window.innerHeight -= targetHeight - aPaneElement.contentHeight - verticalPadding;
+          }
+        ]]>
+        </body>
+      </method>
+
       <method name="registerVerifiable">
         <parameter name="verifiable"/>
         <body><![CDATA[

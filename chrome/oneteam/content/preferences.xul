@@ -97,21 +97,30 @@
 
     function onLoad() {
       prefObserver.init();
+    }
+
+    function initAppearance() {
       var style = account.style;
 
       var iconsContainer = document.getElementById("iconsSet");
       for (var i = 0; i < style.statusIcons.length; i++)
         iconsContainer.appendChild(generateIconSetElement(style.statusIcons[i]));
+
       var iconsset = prefManager.getPref("chat.general.iconset");
-      if(iconsset)
-        iconsContainer.selectItem(document.getElementById('iconSet-'+iconsset));
+      if (iconsset)
+        setTimeout(function() {
+          iconsContainer.value = iconsset;
+        }, 100);
 
       var smilesContainer = document.getElementById("smilesSet");
       for (i = 0; i < style.smiles.length; i++)
         smilesContainer.appendChild(generateIconSetElement(style.smiles[i]));
+
       var smilesset = prefManager.getPref("chat.general.smilesset");
-      if(smilesset)
-        smilesContainer.selectItem(document.getElementById('iconSet-'+smilesset));
+      if (smilesset)
+        setTimeout(function() {
+          smilesContainer.value = smilesset;
+        }, 100);
     }
 
     function onUnload() {
@@ -235,9 +244,6 @@
       </rows>
     </grid>
   </prefpane>
-<!--
-  todo = switch etc avec observers
--->
 
   <prefpane id="status" label="_('Status')">
     <preferences id="status-preferences">
@@ -278,16 +284,21 @@
       </rows>
     </grid>
   </prefpane>
-
-  <prefpane id="appearance" label="_('Appearance')">
+  <prefpane id="appearance" label="_('Appearance')" onpaneload="initAppearance()">
     <preferences id="appearance-preferences">
       <preference id="usegatewayicons" name="chat.general.usegatewayicons" type="bool"/>
+      <preference id="iconset" name="chat.general.iconset" type="string"/>
+      <preference id="smilesset" name="chat.general.smilesset" type="string"/>
     </preferences>
     <label value="_('Default icon set:')"/>
-    <richlistbox id="iconsSet" onselect="iconsSetPref(event);"/>
+    <richlistbox id="iconsSet" preference="iconset"
+                 onsynctopreference="return this.value"
+                 onselect="this.parentNode.userChangedValue(this)"/>
     <checkbox label="_('Use gateway specific icons')" preference="usegatewayicons"/>
     <spacer/>
     <label value="_('Default smiles set:')"/>
-    <richlistbox id="smilesSet" onselect="smilesSetPref(event);"/>
+    <richlistbox id="smilesSet" preference="smilesset"
+                 onsynctopreference="return this.value"
+                 onselect="this.parentNode.userChangedValue(this)"/>
   </prefpane>
 </prefwindow>
