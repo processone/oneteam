@@ -41,3 +41,20 @@ radio[pane=appearance] {
 radio[pane=status] {
   -moz-image-region: rect( 0px, 192px, 32px, 160px )
 }
+
+radio[pane=notifications] {
+  -moz-image-region: rect( 0px, 192px, 32px, 160px )
+}
+
+.notificationsOptions description {
+  font-weight: bold;
+}
+
+.notificationsOptions  grid {
+  margin-left: 2em;
+  visibility: collapse;
+}
+
+.notificationsOptions richlistitem[expanded=true] grid {
+  visibility: visible;
+}

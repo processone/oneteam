@@ -11,6 +11,7 @@
             title="_('Preferences')"
             onload="onLoad()"
             onunload="onUnload()"
+            onbeforeaccept="onBeforeAccept()"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
@@ -99,6 +100,10 @@
       prefObserver.init();
     }
 
+    function onBeforeAccept() {
+      account.notificationScheme.saveSettings(document.getElementById("notifications").firstChild);
+    }
+
     function initAppearance() {
       var style = account.style;
 
@@ -123,8 +128,12 @@
         }, 100);
     }
 
+    function initNotifications() {
+      var fragment = account.notificationScheme.generateSettings(null, document);
+      document.getElementById("notifications").appendChild(fragment);
+    }
+
     function onUnload() {
-      //tofix
       prefObserver.uninit();
     }
 
@@ -301,4 +310,8 @@
                  onsynctopreference="return this.value"
                  onselect="this.parentNode.userChangedValue(this)"/>
   </prefpane>
+
+  <prefpane id="notifications" label="_('Notifications')" onpaneload="initNotifications()">
+  </prefpane>
+
 </prefwindow>

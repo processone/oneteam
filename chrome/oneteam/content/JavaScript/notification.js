@@ -46,7 +46,7 @@ var notificationAlerts = {
                         });
             } catch (ex) { }
 
-	    return;
+            return;
         }
 
         if (this._top > 150 && this._wins.length < 8)
@@ -88,14 +88,20 @@ var notificationAlerts = {
     }
 };
 
-function NotificationProvider(showInChatpane, showInMucChatpane, showAlert, soundSample) {
+function NotificationProvider(showInChatpane, showInMucChatpane, showAlert, soundSample, playSound,
+                              message, contactEvent)
+{
     if (typeof(showInChatpane) == "object")
-        [showInChatpane, showInMucChatpane, showAlert, soundSample] = showInChatpane;
+        [showInChatpane, showInMucChatpane, showAlert, soundSample,
+         playSound, message, contactEvent] = showInChatpane;
 
     this.showInChatpane = showInChatpane;
     this.showInMucChatpane = showInMucChatpane;
     this.showAlert = showAlert;
     this.soundSample = soundSample;
+    this.playSound = playSound;
+    this.message = message;
+    this.contactEvent = contactEvent;
 }
 
 _DECL_(NotificationProvider).prototype = {
@@ -105,7 +111,7 @@ _DECL_(NotificationProvider).prototype = {
         NotificationProvider.prototype._canceler =
             this._canceler || new NotificationsCanceler();
 
-        if (this.soundSample)
+        if (this.soundSample && this.playSound)
             soundsPlayer.playSound(this.soundSample);
 
         if (this.showInChatpane || this.showInMucChatpane)
@@ -179,7 +185,7 @@ _DECL_(NotificationScheme).prototype =
         var time = resource instanceof ConferenceMember ?
             resource.contact.joinedAt : account.connectedAt;
 
-        if (!time || (Date.now()-time < 20*1024) || newPresence.priority < 0)
+        if (!time || (Date.now()-time < 1*1024) || newPresence.priority < 0)
             return this._nopCanceler;
 
         if (newPresence.show != "unavailable" && oldPresence.show == "unavailable") {
@@ -441,43 +447,224 @@ _DECL_(NotificationScheme).prototype =
     },
 
     defaultProviders: {
-        "signIn": new NotificationProvider(true, false, true, "connected"),
-        "signOut": new NotificationProvider(true, false, true, "disconnected"),
-        "mucSignIn": new NotificationProvider(true, true, false, null),
-        "mucSignOut": new NotificationProvider(true, true, false, null),
-        "presence": new NotificationProvider(true, false, false, null),
-        "mucPresence": new NotificationProvider(false, false, false, null),
-        "nickChange": new NotificationProvider(false, true, false, null),
-        "subjectChange": new NotificationProvider(false, true, false, null),
-        "subscription": new NotificationProvider(false, false, true, null),
-        "message": new NotificationProvider(false, false, false, "message2"),
-        "firstMessage": new NotificationProvider(false, false, true, "message1"),
-        "mucMessage": new NotificationProvider(false, false, false, null),
-        "mucDirectedMessage": new NotificationProvider(false, false, true, "message2"),
-        "jingleCall": new NotificationProvider(true, false, true, null),
-        "fileTransfer": new NotificationProvider(true, false, true, null),
-        "fileTransferAccepted": new NotificationProvider(true, false, false, null),
-        "fileTransferRejected": new NotificationProvider(true, false, false, null),
-        "invitationDeclined": new NotificationProvider(true, false, false, null),
-        "disconnect": new NotificationProvider(false, false, true, null),
-        "reconnect": new NotificationProvider(false, false, false, null)
+        "signIn": new NotificationProvider(true, false, true, "connected", true,
+                                           _("Contact signed in"), true),
+        "signOut": new NotificationProvider(true, false, true, "disconnected", true,
+                                            _("Contact signed out"), true),
+        "mucSignIn": new NotificationProvider(true, true, false, "connected", false,
+                                              _("MUC participant signed in"), false),
+        "mucSignOut": new NotificationProvider(true, true, false, "disconnected", false,
+                                               _("MUC participant signed out"), false),
+        "presence": new NotificationProvider(true, false, false, "sent", false,
+                                             _("Contact changed presence"), true),
+        "mucPresence": new NotificationProvider(false, false, false, "sent", false,
+                                                _("MUC participant changed presence"), false),
+        "nickChange": new NotificationProvider(false, true, false, "sent", false,
+                                               _("MUC participant changed nick"), false),
+        "subjectChange": new NotificationProvider(false, true, false, "sent", false,
+                                                  _("MUC subject change"), false),
+        "subscription": new NotificationProvider(false, false, true, "sent", false,
+                                                 _("Subscription request received"), false),
+        "message": new NotificationProvider(false, false, false, "message2", true,
+                                            _("Message received"), true),
+        "firstMessage": new NotificationProvider(false, false, true, "message1", true,
+                                                 _("Message received (initial)"), true),
+        "mucMessage": new NotificationProvider(false, false, false, "message2", false,
+                                               _("MUC message received"), false),
+        "mucDirectedMessage": new NotificationProvider(false, false, true, "message2", true,
+                                                       _("MUC nick: message received"), false),
+        "jingleCall": new NotificationProvider(true, false, true, "sent", false,
+                                               _("Voice call request received"), true),
+        "fileTransfer": new NotificationProvider(true, false, true, "sent", false,
+                                                 _("File transfer request received"), true),
+        "fileTransferAccepted": new NotificationProvider(true, false, false, "sent", false,
+                                                         _("File transfer accepted"), true),
+        "fileTransferRejected": new NotificationProvider(true, false, false, "sent", false,
+                                                         _("File transfer rejected"), true),
+        "invitationDeclined": new NotificationProvider(true, false, false, "sent", false,
+                                                       _("MUC invitation declined"), true),
+        "disconnect": new NotificationProvider(false, false, true, "sent", false,
+                                               _("Connection to server lost"), false),
+        "reconnect": new NotificationProvider(false, false, false, "sent", false,
+                                              _("Reconnected to server"), false)
+    },
+
+    generateSettings: function(content, doc) {
+        var list = doc.createElementNS(XULNS, "richlistbox");
+        var providers = [];
+        var prevItem;
+
+        list.setAttribute("class", "notificationsOptions");
+        list.contentObj = content;
+        list.addEventListener("select", function() {
+            if (prevItem)
+                prevItem.setAttribute("expanded", false);
+            list.selectedItem.setAttribute("expanded", true);
+            prevItem = list.selectedItem;
+        }, false);
+
+        for (var i in this.defaultProviders)
+            providers.push([this.findProvider(i, content), i]);
+
+        providers = providers.sort(function(a, b) {
+            return a[0].message > b[0].message ? 1 : a[0].message < b[0].message ? -1 : 0
+        });
+
+        for (i = 0; i < providers.length; i++) {
+            var provider = providers[i][0];
+            if (content && !provider.contactEvent)
+                continue;
+
+            var item = doc.createElementNS(XULNS, "richlistitem");
+            list.appendChild(item);
+            item.providerId = providers[i][1];
+
+            if (!prevItem) {
+                prevItem = item;
+                item.setAttribute("expanded", true);
+            }
+
+            var vb = doc.createElementNS(XULNS, "vbox");
+            item.appendChild(vb);
+
+            var e = doc.createElementNS(XULNS, "description");
+            e.textContent = provider.message;
+            vb.appendChild(e);
+
+            var hb = doc.createElementNS(XULNS, "hbox");
+            vb.appendChild(hb);
+
+            var globalSetting = false, cb;
+
+            var grid = doc.createElementNS(XULNS, "grid")
+            e = doc.createElementNS(XULNS, "cols");
+            hb.appendChild(grid);
+
+            var e2 = doc.createElementNS(XULNS, "col");
+            e2.setAttribute("flex", "1");
+            e.appendChild(e2);
+
+            e2 = doc.createElementNS(XULNS, "col");
+            e2.setAttribute("flex", "1");
+            e.appendChild(e2);
+
+            var rows = doc.createElementNS(XULNS, "rows");
+            grid.appendChild(rows);
+
+            if (content) {
+                globalSetting = provider.globalSetting;
+
+                cb = doc.createElementNS(XULNS, "checkbox");
+                cb.setAttribute("label", _("Use global settings"))
+                cb.setAttribute("checked", !!globalSetting);
+                rows.appendChild(cb);
+            }
+
+            var row = doc.createElementNS(XULNS, "row");
+            rows.appendChild(row);
+
+            cb = doc.createElementNS(XULNS, "checkbox");
+            cb.setAttribute("label", _("Display message in chat pane"))
+            cb.setAttribute("checked", !!provider.showInChatpane);
+            cb.setAttribute("disabled", !!globalSetting);
+            row.appendChild(cb);
+
+            cb = doc.createElementNS(XULNS, "checkbox");
+            cb.setAttribute("label", _("Display message in MUC chat pane"))
+            cb.setAttribute("checked", !!provider.showInMucChatpane);
+            cb.setAttribute("disabled", !!globalSetting);
+            row.appendChild(cb);
+
+            row = doc.createElementNS(XULNS, "row");
+            rows.appendChild(row);
+
+            cb = doc.createElementNS(XULNS, "checkbox");
+            cb.setAttribute("label", _("Display notification bubble"))
+            cb.setAttribute("checked", !!provider.showAlert);
+            cb.setAttribute("disabled", !!globalSetting);
+            row.appendChild(cb);
+
+            cb = doc.createElementNS(XULNS, "checkbox");
+            cb.setAttribute("label", _("Play sound"))
+            cb.setAttribute("checked", !!provider.playSound);
+            cb.setAttribute("disabled", !!globalSetting);
+            row.appendChild(cb);
+        }
+        return list;
+    },
+
+    saveSettings: function(fragment) {
+        var c = fragment.childNodes;
+        var cid = fragment.contentObj ? list.contentObj.jid.normalizedJID.shortJID : null;
+
+        for (var i = 0; i < c.length; i++) {
+            var cbs = c[i].getElementsByTagNameNS(XULNS, "checkbox");
+            var id = c[i].providerId;
+            var scope = id;
+            var dp = this.defaultProviders[id];
+
+            if (cid) {
+                id = id + "-" + cid;
+                if (cbs[0].checked) {
+                    account.cache.removeValue("notifications-"+id);
+                    delete this.providers[scope];
+                    continue;
+                }
+                cbs.shift();
+            }
+            var data = [cbs[0].checked, cbs[1].checked, cbs[2].checked,
+                        dp.soundSample, cbs[3].checked];
+
+            if (data[0] != dp.showInChatpane || data[1] != dp.showInMucChatpane ||
+                data[2] != dp.showAlert || data[4] != dp.playSound)
+            {
+                account.cache.setValue("notifications-"+id, data);
+            } else {
+                account.cache.removeValue("notifications-"+id);
+            }
+
+            delete this.providers[scope];
+        }
     },
 
     findProvider: function(scope, content) {
         var scopes = content ?
             [scope+"-"+content.jid.normalizedJID.shortJID, scope] : [scope];
 
+        var provider;
+
         for each (var id in scopes) {
-            if (this.providers[id])
-                return this.providers[id].getWrapperFor(content);
+            if (this.providers[id]) {
+                provider = this.providers[id].getWrapperFor(content);
+                provider.globalSetting = id == scope;
+                return provider;
+            }
+
             var data = account.cache.getValue("notifications-"+id);
-            if (data)
-                return (this.providers[id] = new NotificationProvider(data)).
+            if (data) {
+                var dp = this.defaultProviders[scope];
+                if (data.length < 5)
+                    data[4] = !!data[3];
+
+                data[5] = dp.message;
+                data[6] = dp.contactEvent;
+
+                if (!data[3])
+                    data[3] = dp.soundSample;
+
+                provider = (this.providers[id] = new NotificationProvider(data)).
                     getWrapperFor(content);
+
+                provider.globalSetting = id == scope;
+                return provider;
+            }
         }
 
-        if (scope in this.defaultProviders)
-            return this.defaultProviders[scope].getWrapperFor(content);
+        if (scope in this.defaultProviders) {
+            provider = this.defaultProviders[scope].getWrapperFor(content);
+            provider.globalSetting = true;
+            return provider;
+        }
 
         return null;
     }
