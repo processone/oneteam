@@ -11,7 +11,7 @@
 
 <window id="oneteam" windowtype="ot:main" title="_('$$branding$$:OneTeam')" class="no-verifier"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
-    width="300" height="600"
+    width="300" height="600" persist="screenX screenY"
     xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -304,10 +304,10 @@
       globalRegToken.unregisterFromAll();
       setPresenceUpdater.destroy();
 
-      return;
+      //return;
       var width = self.outerWidth;
 
-      if (chatTabsController.tabCount) {
+      if (window.chatTabsController && chatTabsController.tabCount) {
         var splitter = document.getElementById("chats-splitter");
         var w = +splitter.previousSibling.getAttribute("width");
         splitter.setAttribute("rightWidth", self.outerWidth - w);
