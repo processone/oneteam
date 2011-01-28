@@ -386,7 +386,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     showPrefs: function()
     {
-        openDialogUniq("ot:preferences", "chrome://oneteam/content/preferences.xul", "chrome,centerscreen");
+        openDialogUniq("ot:preferences", "chrome://oneteam/content/preferences.xul", "chrome,centerscreen,toolbar");
     },
 
     showVCard: function()
