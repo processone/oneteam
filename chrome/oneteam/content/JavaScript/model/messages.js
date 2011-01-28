@@ -412,6 +412,16 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     addMessage: function(msg) {
+        this.threadID = msg.threadID;
+
+        if (this.peerChatState != msg.chatState) {
+            this.peerChatState = msg.chatState;
+            this.modelUpdated("peerChatState");
+        }
+
+        if (!msg.text)
+            return;
+
         var firstMessage  = !this._afterFirstMessage;
 
         if (msg.contact && !msg.contact.representsMe) {
@@ -427,16 +437,6 @@ _DECL_(MessagesThread, Model).prototype =
 
             this._sessionStarted = this._sessionStarted || msg.threadID;
         }
-
-        this.threadID = msg.threadID;
-
-        if (this.peerChatState != msg.chatState) {
-            this.peerChatState = msg.chatState;
-            this.modelUpdated("peerChatState");
-        }
-
-        if (!msg.text)
-            return;
 
         msg.thread = this;
         if (!msg.isSystemMessage)
@@ -525,13 +525,14 @@ _DECL_(MessagesThread, Model).prototype =
         this.contact._onChatPaneClosed(this.chatPane);
         this.chatState = "gone";
         this.chatPane = null;
-        this._afterFirstMessage = false;
-        this._afterFirstPeerMessage = false;
 
         this.visible = true;
 
         if (this._threadID && !this._afterFirstMessage)
             this.contact._onThreadDestroyed(this)
+
+        this._afterFirstMessage = false;
+        this._afterFirstPeerMessage = false;
     }
 }
 
