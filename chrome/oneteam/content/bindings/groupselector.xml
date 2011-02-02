@@ -73,7 +73,7 @@
             account = account.opener;
           if (account) {
             account = account.account;
-            for (group in account.groupsIterator(function(a){return a.name})) {
+            for (var group in account.groupsIterator(function(a){return a.name})) {
               var item = this._listbox.appendItem(group.visibleName, group.name);
               item.setAttribute("type", "checkbox");
             }
