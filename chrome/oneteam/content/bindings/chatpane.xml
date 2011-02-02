@@ -313,6 +313,8 @@
               account.style.smiles[i].attachStyles(this._output.contentDocument);
 
             this._output.contentDocument.addEventListener("click", function(event) {
+              if (event.button != 0)
+                return;
               if (event.target.className.indexOf("thread-marker-reply") >= 0)
                 me._threadMarkerClick(event.target)
               else if (event.target.className.indexOf("fetch-more") >= 0)
