@@ -699,11 +699,8 @@
                   break;
                 }
               try {
-              this._content.insertBefore(fragment.firstChild, node);
-              }catch (ex) {
-              dump("APPEND:"+i+", "+fragment.childNodes[i]+", "+node+"\n")
-
-              }
+                this._content.insertBefore(fragment.firstChild, node);
+              } catch (ex) { }
             }
             scrollToBottom = false;
           } else
@@ -965,15 +962,12 @@
             model: this.model,
             timeout: function(_this) {
               _this._timeout = null;
-              dump("SE\n");
             },
             handleEvent: function(ev) {
               if (ev.type.indexOf("DOM") == 0) {
                 if (!this._timeout) {
-                  dump("SS\n")
                   this._timeout = window.setTimeout(this.timeout, 0, this);
                 }
-                dump(ev.type+": "+ev.prevValue+", "+ev.newValue+", "+ev.target.nodeName+", "+ev.target.textContent+"\n");
               }
 
               if (ev.type == "keypress")
@@ -2239,7 +2233,6 @@
             return;
           }
           me._output._output.contentWindow.addEventListener("keypress", function(event) {
-            dump("RE\n");
             if (me._input._replayEvent(event, true)) {
               event.stopPropagation();
               event.preventDefault();
