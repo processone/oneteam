@@ -16,6 +16,7 @@ function Conference(jid)
     this.resources = [];
     this.groups = [];
     this.events = [];
+    this.newItem = true;
 
     this.convertFromContact();
 }
