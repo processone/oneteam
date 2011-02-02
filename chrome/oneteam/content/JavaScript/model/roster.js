@@ -433,12 +433,6 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
         this._updateRoster();
     },
 
-    onEditContact: function()
-    {
-        openDialogUniq("ot:editContact", "chrome://oneteam/content/editContact.xul",
-                       "chrome,dialog", this);
-    },
-
     editContact: function(newName, newGroups)
     {
         this._name = newName;

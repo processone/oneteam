@@ -217,7 +217,7 @@
           <spacer/>
         <hbox id="itemButtons">
           <spacer flex="1"/>
-          <button id="showVCard" label="Show VCard" oncommand="showVCard()" disabled="true"/>
+          <button id="showVCard" label="Show Contact Details" oncommand="showVCard()" disabled="true"/>
           <button id="addContact" label="Add Contact" oncommand="addContact()" disabled="true"/>
         </hbox>
       </vbox>

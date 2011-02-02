@@ -1921,7 +1921,7 @@
       <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor" tooltiptext="_('Background color')"/>
       <xul:toolbarseparator/>
       <xul:toolbarbutton id="vcardButton" oncommand="this.parentNode.model.showVCard()"
-                         tooltiptext="_('Show vCard')"/>
+                         tooltiptext="_('Show contact details')"/>
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
                          tooltiptext="_('Send file')"/>
       <xul:toolbarbutton id="jingleCall" oncommand="this.parentNode._model.onJingleCall()"

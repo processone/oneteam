@@ -8,7 +8,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="oneteam" windowtype="ot:vcard" title="_('Contact vCard')"
+<dialog id="oneteam" windowtype="ot:vcard" title="_('Contact Details')"
   width="800" height="600"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
@@ -20,24 +20,34 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("model/account.js");
 
+    var contact = window.arguments && window.arguments[0];
+
     function onLoad() {
-      if (!window.arguments)
+      if (!contact)
         return;
 
-      document.getElementById("info-box").model = window.arguments[0];
+      document.getElementById("info-box").model = contact;
 
       fetchVCard(true);
 
-      var fragment = account.notificationScheme.generateSettings(window.arguments[0], document);
+      var fragment = account.notificationScheme.generateSettings(contact, document);
       fragment.setAttribute("flex", "1");
       var np = document.getElementById("notificationsPanel");
 
       np.insertBefore(fragment, np.firstChild);
+
+      if (contact instanceof Resource || contact.newItem) {
+        document.getElementById("editorTab").hidden = true;
+        document.getElementById("editorPanel").hidden = true;
+      } else {
+        document.getElementById("nick").value = contact._name || contact.name || "";
+        document.getElementById("groups").choosenGroups = contact.groups;
+      }
     }
 
     function fetchVCard(force) {
       document.getElementById("updateProgress").style.visibility = "visible";
-      window.arguments[0].getVCard(force, fetchDone);
+      contact.getVCard(force, fetchDone);
     }
 
     function fetchDone(pkt, obj) {
@@ -45,11 +55,19 @@
 
       document.getElementById("updateProgress").style.visibility = "hidden";
 
-      details.firstChild.innerHTML = obj ? obj.toHtml() : "";
+      dump(obj && obj.toHtml()+"\n");
+
+      details.firstChild.innerHTML = obj ? obj.toHtml() :
+        "<div class='name'>"+xmlEscape(contact.visibleName)+"</div>";
     }
 
     function saveNotificationsChanges() {
       account.notificationScheme.saveSettings(document.getElementById("notificationsPanel").firstChild);
+    }
+
+    function saveContactChanges() {
+      contact.editContact(document.getElementById("nick").value,
+        document.getElementById("groups").choosenGroups);
     }
   ]]></script>
 
@@ -59,18 +77,15 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Contact vCard')"/>
-
-  <spacer style="height: 0.3em"/>
-
   <contactinfo id="info-box"/>
   <spacer style="height: 0.6em"/>
 
   <vbox flex="1">
     <tabbox flex="1" id="tabs">
       <tabs>
-        <tab label="_('Contact details')"/>
+        <tab label="_('Contact informations')"/>
         <tab label="_('Notifications')"/>
+        <tab id="editorTab" label="_('Contact editing')"/>
       </tabs>
       <tabpanels flex="1">
         <tabpanel orient="vertical">
@@ -79,6 +94,21 @@
         <tabpanel id="notificationsPanel" orient="vertical">
           <hbox pack="end">
             <button label="_('Save')" oncommand="saveNotificationsChanges()"/>
+          </hbox>
+        </tabpanel>
+        <tabpanel id="editorPanel" orient="vertical">
+          <hbox class="entry" flex="0">
+            <label value="_('Nickname:')" control="nick"/>
+            <textbox id="nick"/>
+          </hbox>
+
+          <spacer/>
+
+          <label value="_('Groups:')" control="groups"/>
+          <groupselector id="groups" rows="4"/>
+          <spacer flex="1"/>
+          <hbox pack="end">
+            <button label="_('Save')" oncommand="saveContactChanges()"/>
           </hbox>
         </tabpanel>
       </tabpanels>

@@ -21,6 +21,11 @@ tr td:first-child:not(:last-child) {
   color: #666;
 }
 
+.notes-header {
+  font-weight: bold;
+  color: #666;
+}
+
 #details {
   overflow: auto;
   -moz-user-select: text;
