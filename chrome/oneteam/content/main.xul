@@ -307,12 +307,12 @@
       //return;
       var width = self.outerWidth;
 
-      if (window.chatTabsController && chatTabsController.tabCount) {
+      /*if (window.chatTabsController && chatTabsController.tabCount) {
         var splitter = document.getElementById("chats-splitter");
         var w = +splitter.previousSibling.getAttribute("width");
         splitter.setAttribute("rightWidth", self.outerWidth - w);
         width = self.outerWidth - self.innerWidth + w;
-      }
+      }*/
 
       document.documentElement.setAttribute("width", width)
       document.documentElement.setAttribute("height", self.outerHeight)
