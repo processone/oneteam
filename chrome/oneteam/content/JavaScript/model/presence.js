@@ -6,7 +6,7 @@ ML.importMod("modeltypes.js");
 ML.importMod("prefs.js");
 //ML.importMod("l10n.js");
 
-function Presence(show, status, priority, profile)
+function Presence(show, status, priority, profile, last)
 {
     if (show instanceof JSJaCPresence) {
         var pkt = show, type = show.getType();
@@ -19,6 +19,14 @@ function Presence(show, status, priority, profile)
             this.show = "available";
         this.status = pkt.getStatus()
         this.priority = pkt.getPriority() || 0;
+
+        last = pkt.getChild("query", "jabber:iq:last");
+        if (last)
+            this.last = +last.getAttribute("seconds");
+
+        var stamp = pkt.getChild("delay", "urn:xmpp:delay")
+        if (stamp)
+            this.stamp = iso8601TimestampToDate(stamp.getAttribute("stamp"));
     } else {
         this.show = show;
         if (!this.show || !(this.show in this._showValues))
@@ -28,6 +36,7 @@ function Presence(show, status, priority, profile)
         this.priority = priority == null || isNaN(+priority) ?
             parseInt(this._priorityMap[this.show]*prefManager.getPref("chat.connection.priority")) :
             +priority;
+        this.last = last;
     }
 
     this.profile = profile;
@@ -36,13 +45,20 @@ function Presence(show, status, priority, profile)
 _DECL_(Presence, null, Comparator).prototype =
 {
     _showValues: {
-        available: 1,
-        chat: 1,
-        dnd: 1,
-        away: 1,
+        available: 5,
+        chat: 4,
+        dnd: 3,
+        away: 2,
         xa: 1,
         unavailable: 0,
         invisible: 0,
+        subscribe: 0,
+        subscribed: 0,
+        unsubscribe: 0,
+        unsubscribed: 0
+    },
+
+    _subscriptions: {
         subscribe: 0,
         subscribed: 0,
         unsubscribe: 0,
@@ -68,15 +84,14 @@ _DECL_(Presence, null, Comparator).prototype =
                 pkt.setPriority(presence.priority);
 
             if (account.avatarRetrieved) {
-                var photo = pkt.getNode().
-                    appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "x")).
-                    appendChild(pkt.getDoc().createElementNS("vcard-temp:x:update", "photo"));
-
-                if (account.avatarHash)
-                    photo.appendChild(pkt.getDoc().createTextNode(account.avatarHash));
+                pkt.appendNode("x", {xmlns: "vcard-temp:x:update"},
+                                [["photo", {}, account.avatarHash || ""]]);
             }
             servicesManager.appendCapsToPresence(pkt.getNode());
         }
+
+        if (presence.last)
+            pkt.appendNode("query", {xmlns: "jabber:iq:last", seconds: presence.last});
 
         if (presence.status)
             pkt.setStatus(presence.status);
@@ -100,6 +115,14 @@ _DECL_(Presence, null, Comparator).prototype =
                 return p.priority - this.priority;
 
         return show2num[this.show||"available"] - show2num[p.show||"available"];
+    },
+
+    get isSubscriptionPacket() {
+        return this.show in this._subscriptions;
+    },
+
+    get showAsNumber() {
+        return this._showValues[this.show] || 5;
     },
 
     statusToString: {

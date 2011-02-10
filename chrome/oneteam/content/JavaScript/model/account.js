@@ -119,6 +119,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             presence.profile.activate();
 
         account.connection.send(presence.generatePacket());
+        this.historyMgr.addPresence(this.myResource, presence);
 
         for (var i = 0; i < this._presenceObservers.length; i++)
             this._presenceObservers[i]._sendPresence(presence);
@@ -347,6 +348,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         if (!oldAvatarRetrieved || this.avatarHash != oldHash)
             this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
+    },
+
+    onShowPresences: function() {
+        chatTabsController.openTab(this.historyMgr.deliverPresencesThread());
     },
 
     onAddContact: function(contact)
@@ -1137,7 +1142,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 type = "away";
 
             if (type)
-                this.setPresence(type, this.autoAway[type].status);
+                this.setPresence(new Presence(type, this.autoAway[type].status,
+                                              null, null, data/1000));
         } else if (topic == "back") {
             if (!this.connected)
                 return;

@@ -107,7 +107,6 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
     }
 }
 
-// #ifdef XULAPP
 function HistoryManager()
 {
     CallbacksList.call(this, true);
@@ -137,7 +136,7 @@ function HistoryManager()
 
     var version = this.db.schemaVersion;
 
-    if (version > 2999)
+    if (version > 3999)
         throw new GenericError("Unrecognized HistoryManager database version");
 
     if (version == 0)
@@ -155,6 +154,14 @@ function HistoryManager()
                 CREATE TABLE message_replies (id INTEGER PRIMARY KEY,
                                               replies_to INTEGER NOT NULL);
 
+                CREATE TABLE presences (id INTEGER PRIMARY KEY,
+                                        jid_id INTEGER NOT NULL,
+                                        body_id INTEGER NOT NULL,
+                                        time INTEGER(64) NOT NULL,
+                                        type INTEGER NOT NULL);
+                CREATE TABLE presence_bodies (id INTEGER PRIMARY KEY,
+                                              body TEXT NOT NULL);
+
                 CREATE INDEX messages_by_jid_id ON messages (jid_id);
                 CREATE INDEX messages_by_thread_id_and_time ON messages (thread_id, time);
 
@@ -163,7 +170,11 @@ function HistoryManager()
 
                 CREATE UNIQUE INDEX jids_by_jid ON jids (jid);
 
-                PRAGMA user_version = 2001;
+                CREATE UNIQUE INDEX presence_bodies_on_body ON presence_bodies (body);
+                CREATE INDEX presences_on_time ON presences (time);
+                CREATE INDEX presences_on_jid_and_time ON presences (jid_id, time);
+
+                PRAGMA user_version = 3001;
             COMMIT TRANSACTION;
         </sql>.toString());
     else {
@@ -172,8 +183,26 @@ function HistoryManager()
                 BEGIN IMMEDIATE TRANSACTION;
                     CREATE TABLE message_replies (id INTEGER PRIMARY KEY,
                                                   replies_to INTEGER NOT NULL);
-
                     PRAGMA user_version = 2001;
+                COMMIT TRANSACTION;
+            </sql>.toString());
+        }
+        if (version < 3000) {
+            this.db.executeSimpleSQL(<sql>
+                BEGIN IMMEDIATE TRANSACTION;
+                    CREATE TABLE presences (id INTEGER PRIMARY KEY,
+                                            jid_id INTEGER NOT NULL,
+                                            body_id INTEGER NOT NULL,
+                                            time INTEGER(64) NOT NULL,
+                                            type INTEGER NOT NULL);
+                    CREATE TABLE presence_bodies (id INTEGER PRIMARY KEY,
+                                                  body TEXT NOT NULL);
+
+                    CREATE UNIQUE INDEX presence_bodies_on_body ON presence_bodies (body);
+                    CREATE INDEX presences_on_time ON presences (time);
+                    CREATE INDEX presences_on_jid_and_time ON presences (jid_id, time);
+
+                    PRAGMA user_version = 3001;
                 COMMIT TRANSACTION;
             </sql>.toString());
         }
@@ -211,6 +240,37 @@ function HistoryManager()
     this.findRepliesStmt = this.db.createStatement(<sql>
             SELECT replies_to FROM message_replies
                 WHERE id = ?1;
+        </sql>.toString());
+    this.addPresenceStmt = this.db.createStatement(<sql>
+            INSERT INTO presences (jid_id, body_id, time, type)
+                VALUES (?1, ?2, ?3, ?4)
+        </sql>.toString());
+    this.addPresenceBodyStmt = this.db.createStatement(<sql>
+            INSERT OR IGNORE INTO presence_bodies (body)
+                VALUES (?1)
+        </sql>.toString());
+    this.getLastPresenceBodyIdStmt = this.db.createStatement(<sql>
+            SELECT CASE changes()
+                WHEN 0 THEN (SELECT id FROM presence_bodies WHERE body=?1)
+                ELSE (SELECT last_insert_rowid())
+            END
+        </sql>.toString());
+    this.getLastPresenceBodyForContactStmt = this.db.createStatement(<sql>
+            SELECT body_id FROM presences
+                WHERE jid_id = ?1
+                ORDER BY time DESC
+                LIMIT 1;
+        </sql>.toString());
+
+    this.getPresencesStmt = this.db.createStatement(<sql>
+            SELECT J.jid, B.body, P.time FROM presences P, jids J, presence_bodies B
+                WHERE J.id = P.jid_id AND B.id = P.body_id AND P.time > ?1
+                ORDER BY time ASC;
+        </sql>.toString());
+    this.getPresencesForContactStmt = this.db.createStatement(<sql>
+            SELECT J.jid, B.body, P.time FROM presences P, jids J, presence_bodies B
+                WHERE J.id = P.jid_id AND B.id = P.body_id AND P.jid_id = ?1 AND P.time > ?2
+                ORDER BY time ASC;
         </sql>.toString());
 }
 
@@ -435,6 +495,66 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             }
     },
 
+    getPresenceBodyId: function(body) {
+        var stmt = this.addPresenceBodyStmt;
+        stmt.bindStringParameter(0, body);
+        stmt.execute();
+
+        stmt = this.getLastPresenceBodyIdStmt;
+        stmt.bindStringParameter(0, body);
+        if (stmt.executeStep()) {
+            var res = stmt.getInt64(0);
+            stmt.reset();
+
+            return res;
+        }
+        stmt.reset();
+
+        throw new Error ("Adding body failed");
+    },
+
+    deliverPresencesThread: function(observer, token)
+    {
+        return new PresenceUpdatesThread(account.myResource);
+    },
+
+    addPresence: function(contact, presence) {
+        if ((presence.last && (presence.show == "away" || presence.show == "xa")) ||
+            presence.isSubscriptionPacket || presence.status == "")
+            return;
+
+        var stamp = presence.stamp ? presence.stamp.getTime() : Date.now();
+
+        if (!this._jidIds)
+            this._loadJIDs();
+
+        var bodyId = this.getPresenceBodyId(presence.status);
+        var jidId = this._getJidId(contact.jid.shortJID);
+
+        var stmt = this.getLastPresenceBodyForContactStmt;
+        stmt.bindStringParameter(0, jidId);
+        if (stmt.executeStep()) {
+            var bodyIdLast = stmt.getInt64(0);
+            stmt.reset();
+
+            dump(bodyId+"<->"+bodyIdLast+"\n");
+
+            if (bodyIdLast == bodyId)
+                return;
+        }
+        stmt.reset();
+
+        stmt = this.addPresenceStmt;
+        stmt.bindInt32Parameter(0, jidId);
+        stmt.bindInt32Parameter(1, bodyId);
+        stmt.bindInt64Parameter(2, stamp);
+        stmt.bindInt32Parameter(3, presence.showAsNumber);
+        stmt.execute();
+
+        for (thread in this._iterateCallbacks("presences"))
+            thread.addPresence(contact, presence);
+    },
+
     getLastMessagesFromContact: function(contact, count, token) {
         var olderThan = Infinity;
 
@@ -552,224 +672,74 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
     }
 }
 
-/* #else
-function XEPArchiveThreadsRetriever(jid)
+function PresenceUpdatesThread(contact, threadID, time)
 {
-    this.jid = jid;
-    this.cache = [];
+    ArchivedMessagesThreadBase.call(this, contact, threadID, time);
 }
 
-_DECL_(XEPArchiveThreadsRetriever).prototype =
+_DECL_(PresenceUpdatesThread, ArchivedMessagesThreadBase).prototype =
 {
-    deliverData: function(observer)
+    _lastMessageTime: 0,
+
+    addPresence: function(contact, presence)
     {
-        observer._clear();
-        observer._startBatchUpdate();
-        for (var i = 0; i < this.cache.length; i++)
-            observer._addRecord(this.cache[i]);
-        observer._endBatchUpdate(false);
-        this.requestNextChunk();
+        var stamp = presence.stamp || new Date();
+
+        if (stamp.getTime() > this._lastMessageTime)
+            this._lastMessageTime = stamp.getTime();
+
+        var msg = new Message(presence.status, null, contact, 0, stamp, this);
+
+        ArchivedMessagesThreadBase.prototype.addMessage.call(this, msg);
     },
 
-    _deliverNewData: function(newThreadsCount, lastChunk, failed)
-    {
-        for (observer in account.historyMgr._iterateCallbacks("threads-"+this.jid)) {
-            observer._startBatchUpdate();
-            for (var i = newThreadsCount-1; i >= 0 ; i--)
-                observer._addRecord(this.cache[this.cache.length - i - 1]);
-            observer._endBatchUpdate(lastChunk);
-        }
-        if (lastChunk && !failed)
-            this.lastCheck = new Date();
-    },
-
-    requestNextChunk: function(rsm)
-    {
-        var pkt = new JSJaCIQ();
-        pkt.setIQ(account.jid, "get");
-
-        var query =
-            <list xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
-                   with={this.jid}>
-                <set xmlns='http://jabber.org/protocol/rsm'>
-                    <max>30</max>
-                    <before>{rsm || ""}</before>
-                </set>
-            </list>;
-
-        if (this.lastCheck)
-            query.@start = dateToISO8601Timestamp(this.lastCheck);
-
-        pkt.getNode().appendChild(E4XtoDOM(query, pkt.getDoc()));
-        account.connection.send(pkt, new Callback(this.processChunk, this));
-    },
-
-    processChunk: function(pkt)
-    {
-        if (pkt.getType() != "result") {
-            this._deliverNewData(0, true, true);
-            return;
-        }
-
-        for (var i = 0, query = pkt.getNode().childNodes;
-                i < query.length && query[i].nodeType != 1; i++)
-            ;
-
-        if (i >= query.length) {
-            this._deliverNewData(0, true, true);
-            return;
-        }
-
-        query = DOMtoE4X(query[i]);
-
-        var archNS = new Namespace("http://www.xmpp.org/extensions/xep-0136.html#ns");
-        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
-        var newThreadsCount = 0;
-
-        for each (thread in query.archNS::chat) {
-            this.cache.push(new XEPArchiveMessagesRetriever(thread.@with.toString(),
-                                                            thread.@start.toString()));
-            newThreadsCount++;
-        }
-
-        // XXXpfx: also handle old syntax - remove when mod_oneteam switches to new one.
-        for each (thread in query.archNS::store) {
-            this.cache.push(new XEPArchiveMessagesRetriever(thread.@with.toString(),
-                                                            thread.@start.toString()));
-            newThreadsCount++;
-        }
-
-        if (+query.rsmNS::first.@index > 0) {
-            this._deliverNewData(newThreadsCount, false)
-            this.requestNextChunk(query.rsmNS::first.text());
-        } else
-            this._deliverNewData(newThreadsCount, true)
-    }
-}
-
-function XEPArchiveMessagesRetriever(jid, stamp)
-{
-    ArchivedMessagesThreadBase.call(this, jid, null, iso8601TimestampToDate(stamp));
-
-    this.stamp = stamp;
-    this._messagesCount = 0;
-}
-
-_DECL_(XEPArchiveMessagesRetriever, ArchivedMessagesThreadBase).prototype =
-{
     getNewMessages: function()
     {
-        if (!this._messagesCount)
-            this.requestNextChunk();
-    },
+        var stmt = account.historyMgr.getPresencesStmt;
 
-    requestNextChunk: function(rsm)
-    {
-        var pkt = new JSJaCIQ();
-        pkt.setIQ(account.jid, "get");
+        stmt.bindInt64Parameter(0, this._lastMessageTime);
 
-        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
-        var query =
-            <retrieve xmlns='http://www.xmpp.org/extensions/xep-0136.html#ns'
-                    with={this.jid} start={this.stamp}>
-                <set xmlns='http://jabber.org/protocol/rsm'>
-                    <max>100</max>
-                </set>
-            </retrieve>;
+        this.startBatch();
 
-        if (rsm)
-            query.rsmNS::set.rsmNS::after = rsm;
-        if (this.lastCheck)
-            query.@start = dateToISO8601Timestamp(this.lastCheck);
+        while (stmt.executeStep()) {
+            try {
+                var jid = new JID(stmt.getString(0));
+                var contact = this._getContact(null, jid, false);
 
-        pkt.getNode().appendChild(E4XtoDOM(query, pkt.getDoc()));
-        account.connection.send(pkt, new Callback(this.processChunk, this));
-    },
+                this._lastMessageTime = stmt.getInt64(2);
 
-    processChunk: function(pkt)
-    {
-        if (pkt.getType() != "result")
-            return;
+                var msg = new Message(stmt.getString(1), null,
+                                      contact, 0,
+                                      new Date(this._lastMessageTime), this);
+                msg.archived = true;
 
-        for (var i = 0, query = pkt.getNode().childNodes;
-                i < query.length && query[i].nodeType != 1; i++)
-            ;
-        if (i >= query.length)
-            return;
-
-        query = DOMtoE4X(query[i]);
-
-        var archNS = new Namespace("http://www.xmpp.org/extensions/xep-0136.html#ns");
-        var rsmNS = new Namespace("http://jabber.org/protocol/rsm");
-
-        var startTime = iso8601TimestampToDate(query.@start.toString()).getTime();
-        var newMessagesCount = 0;
-
-        for each (msg in query.archNS::*) {
-            var representsMe = msg.localName() == "to";
-            var contact = this.getContact(msg.@name.toString(),
-                                          msg.@jid.toString() || (representsMe ?
-                                            account.myResource : this.jid),
-                                          representsMe);
-            this.addMessage(new Message(msg.archNS::body.text(), null, contact,
-                                        msg.@name.toString().length ? 1 : 0,
-                                        new Date(startTime + 1000*msg.@secs),
-                                        this));
-            newMessagesCount++;
+                this.addMessage(msg);
+            } catch (ex) { }
         }
-        this._messagesCount += newMessagesCount;
+        stmt.reset();
 
-        if (this._messagesCount < +query.rsmNS::count.text())
-            this.requestNextChunk(query.rsmNS::last.text());
+        this.endBatch();
+    },
+
+    PROP_VIEWS: {
+        "messages" : {
+            onStartWatching: function(_this, prop) {
+                if (!_this.watched) {
+                    _this.watched = true;
+                    _this.messages = _this.allMessages.concat([]);
+                    _this.getNewMessages();
+                    account.historyMgr._registerCallback(_this, null, "presences");
+                }
+            },
+
+            onStopWatching: function(_this, prop) {
+                _this.watched = false;
+                account.historyMgr._unregisterCallback(_this);
+            }
+        }
+    },
+
+    sendMessage: function(msg) {
+        account.setPresence("available", msg.text);
     }
 }
-
-function HistoryManager()
-{
-    CallbacksList.call(this, true);
-    this._threadsRetrv = {};
-    this._msgsRetrv = {}
-}
-
-_DECL_(HistoryManager, null, CallbacksList).prototype =
-{
-    canPerformSearches: false,
-
-    deliverContactsList: function(observer, token)
-    {
-        observer._startBatchUpdate();
-        for (var contact in account.contactsIterator())
-            observer._addRecord(contact);
-        observer._endBatchUpdate(true);
-        return this._registerCallback(observer, token, "contacts");
-    },
-
-    deliverConferencesList: function(observer, token)
-    {
-        observer._startBatchUpdate();
-        for (var i = 0; i < account.bookmarks.bookmarks.length; i++)
-            observer._addRecord(account.bookmarks.bookmarks[i]);
-        observer._endBatchUpdate(true);
-        return this._registerCallback(observer, token, "conferences");
-    },
-
-    deliverThreadsWithJid: function(observer, token, contact)
-    {
-        if (!this._threadsRetrv[contact.jid])
-            this._threadsRetrv[contact.jid] = new XEPArchiveThreadsRetriever(contact.jid);
-
-        this._threadsRetrv[contact.jid].deliverData(observer);
-        return this._registerCallback(observer, token, "threads-"+contact.jid);
-    },
-
-    deliverSearchResults: function(observer, token, searchPhrase)
-    {
-        return null;
-    },
-
-    addMessage: function(jid, type, flags, message, nick, time, thread, threadJid)
-    {
-        return null;
-    }
-}
-// #endif */

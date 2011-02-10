@@ -813,6 +813,9 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 this.updateCapsInfo(caps);
         }
 
+        if (!equal)
+            account.historyMgr.addPresence(this, this.presence);
+
         if (!dontNotifyViews && !equal)
             this.modelUpdated("presence");
 
@@ -988,6 +991,8 @@ function MyResource(account)
 {
     this.init();
     this.contact = this;
+
+    MessagesRouter.call(this);
 
     modelPropTracer(account, "avatar", this, null, true, function(m, p, a) {
         m.avatarHash = a.avatarHash;
