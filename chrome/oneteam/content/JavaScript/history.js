@@ -527,7 +527,7 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
     addPresence: function(contact, presence) {
         if ((presence.last && (presence.show == "away" || presence.show == "xa")) ||
             presence.isSubscriptionPacket || presence.status == null ||
-            /^\s*$/.test(presence.status))
+            /^\s*$/.test(presence.status) || contact instanceof ConferenceMember)
             return;
 
         var stamp = presence.stamp ? presence.stamp.getTime() : Date.now();
