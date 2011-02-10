@@ -43,6 +43,10 @@ tabpanels {
   list-style-image: url(imgs/toggleoffline.png);
 }
 
+#presencestab-button {
+  list-style-image: url(imgs/presencestab.png);
+}
+
 /* Login box */
 #login-info-box {
   background: #c7c7c7;

@@ -411,6 +411,7 @@
     <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
     <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
     <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
+    <command id="cmd_presences_tab" key="key_presences_tab" oncommand="account.onShowPresences()"/>
     <command id="cmd_adhoc" oncommand="account.onAdHocCommand()"/>
     <command id="cmd_disconnect" oncommand="account.disconnect()"/>
     <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
@@ -460,6 +461,8 @@
             command="cmd_addContact"/>
       <toolbarbutton id="joinroom-button" tooltiptext="_('Join group chat room')"
             command="cmd_joinRoom"/>
+      <toolbarbutton id="presencestab-button" tooltiptext="_('Presences archive')"
+            command="cmd_presences_tab"/>
       <toolbarseparator/>
       <toolbarbutton id="toggleshowoffline-button" tooltiptext="_('Toggle offline contacts visibility')"
             command="cmd_toggleShowOffline"/>
@@ -542,7 +545,8 @@
       </toolbaritem>
     </toolbar>
 
-    <toolbar id="actions-toolbar" class="toolbar-primary chromeclass-toolbar" defaultset="adduser-button,joinroom-button,toggleshowoffline-button,disco-button,editgroups-button,gateways-separator" hidden="true"/>
+    <toolbar id="actions-toolbar" class="toolbar-primary chromeclass-toolbar"
+             defaultset="adduser-button,presencestab-button,joinroom-button,toggleshowoffline-button,disco-button,editgroups-button,gateways-separator" hidden="true"/>
   </toolbox>
 
   <vbox id="main-box" flex="1">
