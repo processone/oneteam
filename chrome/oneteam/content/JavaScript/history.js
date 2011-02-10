@@ -544,8 +544,6 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             var bodyIdLast = stmt.getInt64(0);
             stmt.reset();
 
-            dump(bodyId+"<->"+bodyIdLast+"\n");
-
             if (bodyIdLast == bodyId)
                 return;
         }
