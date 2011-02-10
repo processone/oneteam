@@ -267,6 +267,12 @@ function HistoryManager()
                 WHERE J.id = P.jid_id AND B.id = P.body_id AND P.time > ?1
                 ORDER BY time ASC;
         </sql>.toString());
+    this.getOldPresencesStmt = this.db.createStatement(<sql>
+            SELECT J.jid, B.body, P.time FROM presences P, jids J, presence_bodies B
+                WHERE J.id = P.jid_id AND B.id = P.body_id AND P.time &lt; ?1
+                ORDER BY time DESC
+                LIMIT ?2;
+        </sql>.toString());
     this.getPresencesForContactStmt = this.db.createStatement(<sql>
             SELECT J.jid, B.body, P.time FROM presences P, jids J, presence_bodies B
                 WHERE J.id = P.jid_id AND B.id = P.body_id AND P.jid_id = ?1 AND P.time > ?2
@@ -726,8 +732,6 @@ _DECL_(PresenceUpdatesThread, ArchivedMessagesThreadBase).prototype =
             onStartWatching: function(_this, prop) {
                 if (!_this.watched) {
                     _this.watched = true;
-                    _this.messages = _this.allMessages.concat([]);
-                    _this.getNewMessages();
                     account.historyMgr._registerCallback(_this, null, "presences");
                 }
             },
@@ -737,6 +741,41 @@ _DECL_(PresenceUpdatesThread, ArchivedMessagesThreadBase).prototype =
                 account.historyMgr._unregisterCallback(_this);
             }
         }
+    },
+
+    getMessagesFromHistory: function(count, token) {
+        var stmt = account.historyMgr.getOldPresencesStmt;
+
+        count = count || 10;
+
+        stmt.bindInt64Parameter(0, token ? token : 9999999999999999);
+        stmt.bindInt64Parameter(1, count+1);
+
+        var msgs = [];
+
+        while (stmt.executeStep()) {
+            try {
+                var jid = new JID(stmt.getString(0));
+                var contact = this._getContact(null, jid, false);
+                token = stmt.getInt64(2);
+
+                var msg = new Message(stmt.getString(1), null,
+                                      contact, 0,
+                                      new Date(token), this);
+                msg.archived = true;
+                msgs.unshift(msg);
+
+            } catch (ex) { }
+        }
+        stmt.reset();
+
+        var haveMore = false
+        if (msgs.length > count) {
+            haveMore = true;
+            msgs.pop();
+        }
+
+        return [token, msgs, haveMore];
     },
 
     sendMessage: function(msg) {
