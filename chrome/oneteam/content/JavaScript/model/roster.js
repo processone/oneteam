@@ -1,5 +1,5 @@
 var EXPORTED_SYMBOLS = ["Group", "Contact", "Resource", "MyResourcesContact",
-                        "MyResource"];
+                        "MyResource", "PresencesContact"];
 
 ML.importMod("roles.js");
 ML.importMod("utils.js");
@@ -1026,5 +1026,43 @@ _DECL_(MyResource, Resource).prototype =
         this.nickname = nick;
         this.modelUpdated("visibleName");
         this.modelUpdated("name");
+    }
+}
+
+
+function PresencesContact()
+{
+    this.init();
+    this.contact = this;
+
+    MessagesRouter.call(this);
+
+    modelPropTracer(account, "avatar", this, null, true, function(m, p, a) {
+        m.avatarHash = a.avatarHash;
+    });
+    modelPropTracer(account, "currentPresence", this, "presence", true);
+}
+
+_DECL_(PresencesContact, Resource).prototype =
+{
+    representsMe: true,
+
+    onAvatarChange: function() {
+
+    },
+
+    get jid() {
+        return account.myJID;
+    },
+
+    get visibleName() {
+        return _("Statuses");
+    },
+
+    get name() {
+        return this.visibleName;
+    },
+
+    _updateNick: function(nick) {
     }
 }

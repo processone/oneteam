@@ -15,7 +15,6 @@ ML.importMod("model/conference.js");
 ML.importMod("model/gateway.js");
 ML.importMod("model/messages.js");
 ML.importMod("model/vcard.js");
-ML.importMod("history.js");
 ML.importMod("styles.js");
 ML.importMod("notification.js");
 ML.importMod("prefs.js");

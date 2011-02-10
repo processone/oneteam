@@ -521,7 +521,9 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
     deliverPresencesThread: function(observer, token)
     {
-        return new PresenceUpdatesThread(account.myResource);
+        if (!this._presencesContact)
+            this._presencesContact = new PresencesContact();
+        return new PresenceUpdatesThread(this._presencesContact);
     },
 
     addPresence: function(contact, presence) {
