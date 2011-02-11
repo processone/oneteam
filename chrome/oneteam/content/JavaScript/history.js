@@ -136,7 +136,7 @@ function HistoryManager()
 
     var version = this.db.schemaVersion;
 
-    if (version > 3999)
+    if (version > 4999)
         throw new GenericError("Unrecognized HistoryManager database version");
 
     if (version == 0)
@@ -160,7 +160,9 @@ function HistoryManager()
                                         time INTEGER(64) NOT NULL,
                                         type INTEGER NOT NULL);
                 CREATE TABLE presence_bodies (id INTEGER PRIMARY KEY,
-                                              body TEXT NOT NULL);
+                                              body TEXT NOT NULL,
+                                              count INTEGER NOT NULL,
+                                              autoset_count INTEGER NOT NULL);
 
                 CREATE INDEX messages_by_jid_id ON messages (jid_id);
                 CREATE INDEX messages_by_thread_id_and_time ON messages (thread_id, time);
@@ -174,7 +176,7 @@ function HistoryManager()
                 CREATE INDEX presences_on_time ON presences (time);
                 CREATE INDEX presences_on_jid_and_time ON presences (jid_id, time);
 
-                PRAGMA user_version = 3001;
+                PRAGMA user_version = 4001;
             COMMIT TRANSACTION;
         </sql>.toString());
     else {
@@ -203,6 +205,17 @@ function HistoryManager()
                     CREATE INDEX presences_on_jid_and_time ON presences (jid_id, time);
 
                     PRAGMA user_version = 3001;
+                COMMIT TRANSACTION;
+            </sql>.toString());
+        }
+        if (version < 4000) {
+            this.db.executeSimpleSQL(<sql>
+                BEGIN IMMEDIATE TRANSACTION;
+                    ALTER TABLE presence_bodies
+                        ADD COLUMN count INTEGER NOT NULL DEFAULT 0;
+                    ALTER TABLE presence_bodies
+                        ADD COLUMN autoset_count INTEGER NOT NULL DEFAULT 0;
+                    PRAGMA user_version = 4001;
                 COMMIT TRANSACTION;
             </sql>.toString());
         }
@@ -245,15 +258,18 @@ function HistoryManager()
             INSERT INTO presences (jid_id, body_id, time, type)
                 VALUES (?1, ?2, ?3, ?4)
         </sql>.toString());
-    this.addPresenceBodyStmt = this.db.createStatement(<sql>
-            INSERT OR IGNORE INTO presence_bodies (body)
-                VALUES (?1)
+    this.insertPresenceBodyStmt = this.db.createStatement(<sql>
+            INSERT OR ABORT INTO presence_bodies (body, count, autoset_count)
+                VALUES (?1, ?2, ?3)
         </sql>.toString());
-    this.getLastPresenceBodyIdStmt = this.db.createStatement(<sql>
-            SELECT CASE changes()
-                WHEN 0 THEN (SELECT id FROM presence_bodies WHERE body=?1)
-                ELSE (SELECT last_insert_rowid())
-            END
+    this.updatePresenceBodyStmt = this.db.createStatement(<sql>
+            UPDATE presence_bodies SET
+                count=(SELECT count+1 FROM presence_bodies WHERE id=?1),
+                autoset_count=(SELECT autoset_count+?2 FROM presence_bodies WHERE id=?1)
+                WHERE id=?1
+        </sql>.toString());
+    this.getPresenceBodyIdStmt = this.db.createStatement(<sql>
+            SELECT id FROM presence_bodies WHERE body=?1
         </sql>.toString());
     this.getLastPresenceBodyForContactStmt = this.db.createStatement(<sql>
             SELECT body_id FROM presences
@@ -269,7 +285,12 @@ function HistoryManager()
         </sql>.toString());
     this.getOldPresencesStmt = this.db.createStatement(<sql>
             SELECT J.jid, B.body, P.time FROM presences P, jids J, presence_bodies B
-                WHERE J.id = P.jid_id AND B.id = P.body_id AND P.time &lt; ?1
+                WHERE
+                    J.id = P.jid_id AND
+                    B.id = P.body_id AND
+                    P.time &lt; ?1 AND
+                    (B.autoset_count &lt; 5 OR
+                     B.autoset_count*10 &lt; B.count*8)
                 ORDER BY time DESC
                 LIMIT ?2;
         </sql>.toString());
@@ -501,22 +522,40 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             }
     },
 
-    getPresenceBodyId: function(body) {
-        var stmt = this.addPresenceBodyStmt;
-        stmt.bindStringParameter(0, body);
-        stmt.execute();
+    getPresenceBodyId: function(body, count, autoset) {
+        var bodyId, stmt;
 
-        stmt = this.getLastPresenceBodyIdStmt;
-        stmt.bindStringParameter(0, body);
-        if (stmt.executeStep()) {
-            var res = stmt.getInt64(0);
+        try {
+            stmt = this.insertPresenceBodyStmt;
+            stmt.bindStringParameter(0, body);
+            stmt.bindInt32Parameter(1, count ? 1 : 0);
+            stmt.bindInt32Parameter(2, (count && autoset) ? 1 : 0);
+            stmt.execute();
+
+            bodyId = this.db.lastInsertRowID;
+        } catch (ex) {
             stmt.reset();
 
-            return res;
-        }
-        stmt.reset();
+            stmt = this.getPresenceBodyIdStmt;
+            stmt.bindStringParameter(0, body);
 
-        throw new Error ("Adding body failed");
+            if (!stmt.executeStep()) {
+                stmt.reset();
+                throw new Error("Can't find presence body id: "+this.db.lastErrorString);
+            }
+
+            bodyId = stmt.getInt64(0);
+            stmt.reset();
+
+            if (count) {
+                var stmt = this.updatePresenceBodyStmt;
+                stmt.bindStringParameter(0, bodyId);
+                stmt.bindInt32Parameter(1, autoset ? 1 : 0);
+                stmt.execute();
+            }
+        }
+
+        return bodyId;
     },
 
     deliverPresencesThread: function(observer, token)
@@ -526,9 +565,9 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         return new PresenceUpdatesThread(this._presencesContact);
     },
 
-    addPresence: function(contact, presence) {
+    addPresence: function(contact, presence, prevPresence) {
         if ((presence.last && (presence.show == "away" || presence.show == "xa")) ||
-            presence.isSubscriptionPacket || presence.status == null ||
+            presence.isSubscription || presence.status == null ||
             /^\s*$/.test(presence.status) || contact instanceof ConferenceMember)
             return;
 
@@ -537,7 +576,11 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         if (!this._jidIds)
             this._loadJIDs();
 
-        var bodyId = this.getPresenceBodyId(presence.status);
+        var bodyId = this.getPresenceBodyId(presence.status,
+                                            prevPresence.show != "unavailable" &&
+                                                !prevPresence.isSubscription,
+                                            prevPresence.show != presence.show &&
+                                                prevPresence.status != presence.status);
         var jidId = this._getJidId(contact.jid.shortJID);
 
         var stmt = this.getLastPresenceBodyForContactStmt;
@@ -780,6 +823,6 @@ _DECL_(PresenceUpdatesThread, ArchivedMessagesThreadBase).prototype =
     },
 
     sendMessage: function(msg) {
-        account.setPresence("available", msg.text);
+        account.setPresence("available", msg.text, null, null, true);
     }
 }

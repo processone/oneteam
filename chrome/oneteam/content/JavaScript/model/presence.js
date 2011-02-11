@@ -117,7 +117,7 @@ _DECL_(Presence, null, Comparator).prototype =
         return show2num[this.show||"available"] - show2num[p.show||"available"];
     },
 
-    get isSubscriptionPacket() {
+    get isSubscription() {
         return this.show in this._subscriptions;
     },
 
@@ -125,7 +125,7 @@ _DECL_(Presence, null, Comparator).prototype =
         return this._showValues[this.show] || 5;
     },
 
-    statusToString: {
+    _showToString: {
         available: _("Available"),
         chat: _("Available for chat"),
         dnd: _("Busy"),
@@ -137,7 +137,7 @@ _DECL_(Presence, null, Comparator).prototype =
 
     toString: function(showStatus, lowerCase)
     {
-        var showStr = this.statusToString[this.show];
+        var showStr = this._showToString[this.show];
         if (lowerCase)
             showStr = showStr.toLowerCase();
 

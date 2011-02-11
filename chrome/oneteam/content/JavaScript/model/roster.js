@@ -814,7 +814,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         }
 
         if (!equal)
-            account.historyMgr.addPresence(this, this.presence);
+            account.historyMgr.addPresence(this, this.presence, oldPresence);
 
         if (!dontNotifyViews && !equal)
             this.modelUpdated("presence");
