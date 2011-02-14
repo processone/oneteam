@@ -356,7 +356,7 @@ _DECL_(JoinCommand, CommandCompletionEngine).prototype =
     doCommand: function(jid)
     {
         jid = new JID(jid);
-        var conf = account.getOrCreateConference(jid.shortJID);
+        var conf = account.getOrCreateConference(jid.getShortJID());
         conf.joinRoom(function(){}, jid.resource);
     }
 }
