@@ -290,7 +290,7 @@ function HistoryManager()
                     B.id = P.body_id AND
                     P.time &lt; ?1 AND
                     (B.autoset_count &lt; 5 OR
-                     B.autoset_count*10 &lt; B.count*8)
+                     B.autoset_count*10 &lt; B.count*9)
                 ORDER BY time DESC
                 LIMIT ?2;
         </sql>.toString());
