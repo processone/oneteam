@@ -1,5 +1,7 @@
 var EXPORTED_SYMBOLS = ["XMPPSocket"];
 
+ML.importMod("xmlparser.js");
+
 function XMPPSocket(listener, host, port, ssl, domain, authhost)
 {
     this.listener = listener;
@@ -94,43 +96,11 @@ _DECL_(XMPPSocket).prototype =
         this.log("XMPPSocket.doConnect (6)");
         this.transport.setEventSink(this, mainThread);
         this.is = this.transport.openInputStream(0, 0, 0);
-        var tee = Components.classes["@mozilla.org/network/stream-listener-tee;1"].
-            createInstance(Components.interfaces.nsIStreamListenerTee);
-        this.log("XMPPSocket.doConnect (7)");
-        tee.init(this, {
-            listener: this.listener,
-            _this: this,
 
-            close: function() {
-
-            },
-            flush: function() {
-
-            },
-            write: function(buf, count) {
-                if (this._this.timingTrace) {
-                    if (!this._this.last)
-                        this._this.last = Date.now();
-                    dump("R: "+(Date.now() - this._this.last)/1000+" - "+buf.substr(0, count)+"\n");
-                    this._this.last = Date.now();
-                }
-                this.listener._receivedData(buf.substr(0, count));
-                return count;
-            },
-
-            writeFrom: function(is, count) {
-                return count;
-            },
-
-            isNonBlocking: function() {
-                return false;
-            }
-        });
-        this.log("XMPPSocket.doConnect (8)");
         var pump = Components.classes['@mozilla.org/network/input-stream-pump;1'].
             createInstance(Components.interfaces.nsIInputStreamPump);
         pump.init(this.is, -1, -1, 0, 0, false);
-        pump.asyncRead(tee, null);
+        pump.asyncRead(this, null);
 
         this.log("XMPPSocket.doConnect (9)");
         this.os = this.transport.openOutputStream(1, 0, 0);
@@ -148,7 +118,6 @@ _DECL_(XMPPSocket).prototype =
         if (this.timingTrace) {
             if (!this.last)
                 this.last = Date.now();
-            dump("S: "+(Date.now() - this.last)/1000+" - "+data+"\n");
             this.last = Date.now();
         }
         try {
@@ -176,11 +145,8 @@ _DECL_(XMPPSocket).prototype =
 
     reset: function() {
         if (!this._afterReset) {
-            this.saxParser = Components.classes["@mozilla.org/saxparser/xmlreader;1"].
-                createInstance(Components.interfaces.nsISAXXMLReader);
-            this.saxParser.contentHandler = this;
-            this.saxParser.errorHandler = this;
-            this.saxParser.parseAsync(null);
+            this.saxParser = new OTXMLParser();
+            this.saxParser.handler = this;
 
             this.parent = null;
             this._afterReset = true;
@@ -190,6 +156,10 @@ _DECL_(XMPPSocket).prototype =
     disconnect: function() {
         this.disconnected = true;
 
+        if (this.sis)
+            try{
+                this.is.close();
+            } catch (ex) {}
         if (this.is)
             try{
                 this.is.close();
@@ -205,7 +175,7 @@ _DECL_(XMPPSocket).prototype =
         if (this._pingInterval)
             window.clearInterval(this._pingInterval);
 
-        this.is = this.os = this.bos = this.transport = null;
+        this.is = this.os = this.sis = this.bos = this.transport = null;
     },
 
     // nsISAXContentHandler
@@ -223,7 +193,7 @@ _DECL_(XMPPSocket).prototype =
     {
         var el = this.doc.createElementNS(ns, localName);
         for (var i = 0; i < attrs.length; i++)
-            el.setAttribute(attrs.getQName(i), attrs.getValue(i));
+            el.setAttributeNS(attrs[i][2], attrs[i][0], attrs[i][1]);
 
         if (ns == "http://etherx.jabber.org/streams" && qName == "stream:stream") {
             this.listener._handleInitialElement(el);
@@ -287,7 +257,6 @@ _DECL_(XMPPSocket).prototype =
     onStartRequest: function(request, context)
     {
         this.log("XMPPSocket.onStartRequest");
-        this.saxParser.onStartRequest.apply(this.saxParser, arguments);
     },
 
     onDataAvailable: function(request, context, is, offset, count)
@@ -298,10 +267,21 @@ _DECL_(XMPPSocket).prototype =
             this.tlsProblemHandled[this.domain] = false;
         }
 
-        if (this._afterReset)
-            this.saxParser.onStartRequest(request, context);
-        this.saxParser.onDataAvailable.apply(this.saxParser, arguments);
+        if (!this.sis) {
+            this.sis = Components.classes["@mozilla.org/scriptableinputstream;1"].
+                createInstance(Components.interfaces.nsIScriptableInputStream);
+            this.sis.init(is);
+        }
+        var data = this.sis.read(count);
 
+        if (this.timingTrace) {
+            if (!this.last)
+                this.last = Date.now();
+            dump("R: "+(Date.now() - this.last)/1000+" - "+data+"\n");
+            this.last = Date.now();
+        }
+
+        this.saxParser.parse(data);
     },
 
     onStopRequest: function(request, context, status)
@@ -315,9 +295,6 @@ _DECL_(XMPPSocket).prototype =
         }
 
         this.listener._handleDisconnect();
-        try {
-            this.saxParser.onStopRequest.apply(this.saxParser, arguments);
-        } catch(ex) { }
     },
 
     // EventSink
