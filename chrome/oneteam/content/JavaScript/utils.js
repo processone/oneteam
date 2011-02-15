@@ -7,7 +7,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "recoverSetters", "perlSplit", "evalInWindow",
                         "enumerateMatchingProps", "report", "Animator",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
-                        "createRangeForSubstring", "escapeRe", "bsearchEx"];
+                        "createRangeForSubstring", "escapeRe", "bsearchEx",
+                        "xmlUnescape"];
 
 ML.importMod("roles.js");
 
@@ -504,6 +505,18 @@ function xmlEscape(str)
         replace(/>/g,"&gt;").
         replace(/\'/g,"&apos;").
         replace(/\"/g,"&quot;");
+}
+
+function xmlUnescape(str)
+{
+    if (str == null)
+        return "";
+    return str.toString().
+        replace(/&lt;/g,"<").
+        replace(/&gt;/g,">").
+        replace(/&apos;/g,"'").
+        replace(/&quot;/g,"\"").
+        replace(/&amp;/g, "&");
 }
 
 function unescapeJS(str)

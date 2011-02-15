@@ -44,9 +44,9 @@ OTXMLParser.prototype = {
         if (this.charset) {
             this.converter.charset = this.charset;
             if (beg == 0)
-                return this.converter.ConvertToUnicode(data);
+                return this.converter.ConvertToUnicode(""+data);
             else
-                return this.converter.ConvertToUnicode(data.substring(beg));
+                return this.converter.ConvertToUnicode(""+data.substring(beg));
         }
         return data;
     },
@@ -486,7 +486,7 @@ OTXMLParser.prototype = {
             case 27:
                 switch (c) {
                 case 39:
-                    this._onAttribute(this.attrName, decodeEntity(this.attrValue));
+                    this._onAttribute(this.attrName, xmlUnescape(this.attrValue));
                     this.state = 19;
                     break;
                 case 60:
@@ -499,7 +499,7 @@ OTXMLParser.prototype = {
             case 28:
                 switch (c) {
                 case 34:
-                    this._onAttribute(this.attrName, decodeEntity(this.attrValue));
+                    this._onAttribute(this.attrName, xmlUnescape(this.attrValue));
                     this.state = 19;
                     break;
                 case 60:
@@ -513,7 +513,7 @@ OTXMLParser.prototype = {
                 switch (c) {
                 case 60:
                     if (this.data.length > 0) {
-                        this.handler.characters(decodeEntity(this.data));
+                        this.handler.characters(xmlUnescape(this.data));
                         this.data = "";
                     }
                     this.state = 30;
@@ -754,7 +754,7 @@ OTXMLParser.prototype = {
             case 51:
                 switch (c) {
                 case 39:
-                    this._onAttribute(this.attrName, decodeEntity(this.attrValue));
+                    this._onAttribute(this.attrName, xmlUnescape(this.attrValue));
                     this.state = 40;
                     break;
                 case 60:
@@ -767,7 +767,7 @@ OTXMLParser.prototype = {
             case 52:
                 switch (c) {
                 case 34:
-                    this._onAttribute(this.attrName, decodeEntity(this.attrValue));
+                    this._onAttribute(this.attrName, xmlUnescape(this.attrValue));
                     this.state = 40;
                     break;
                 case 60:
@@ -843,7 +843,7 @@ OTXMLParser.prototype = {
             }
         }
         if (this.data.length > 0) {
-            this.handler.characters(decodeEntity(this.data));
+            this.handler.characters(xmlUnescape(this.data));
             this.data = "";
         }
         if (this.cdata.length > 0) {
@@ -852,5 +852,3 @@ OTXMLParser.prototype = {
         }
     }
 }
-
-function decodeEntity(str) { return str };
