@@ -120,7 +120,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         account.connection.send(presence.generatePacket());
 
         if (userSet)
-            this.historyMgr.addPresence(this.myResource, presence);
+            this.historyMgr.addPresence(this.myResource, presence, this.currentPresence);
 
         for (var i = 0; i < this._presenceObservers.length; i++)
             this._presenceObservers[i]._sendPresence(presence);
