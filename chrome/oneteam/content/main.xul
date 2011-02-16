@@ -606,15 +606,15 @@
                     <menuitem id="setPresence-type-available" label="_('Available')"
                         selected="true" value="available" class="menuitem-iconic"/>
                     <menuitem id="setPresence-type-chat" label="_('Available for chat')"
-                        value="chat" class="menuitem-iconic"/>
+                        value="chat" class="menuitem-iconic-noaccel"/>
                     <menuitem id="setPresence-type-dnd" label="_('Busy')"
-                        value="dnd" class="menuitem-iconic"/>
+                        value="dnd" class="menuitem-iconic-noaccel"/>
                     <menuitem id="setPresence-type-away" label="_('Away')"
-                        value="away" class="menuitem-iconic"/>
+                        value="away" class="menuitem-iconic-noaccel"/>
                     <menuitem id="setPresence-type-xa" label="_('Not available')"
-                        value="xa" class="menuitem-iconic"/>
+                        value="xa" class="menuitem-iconic-noaccel"/>
                     <menuitem id="setPresence-type-invisible" label="_('Invisible')"
-                        value="invisible" class="menuitem-iconic"/>
+                        value="invisible" class="menuitem-iconic-noaccel"/>
                     <menuseparator/>
                     <menuitem id="setPresence-type-custom" label="_('Status message')"/>
                   </menupopup>

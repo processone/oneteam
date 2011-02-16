@@ -2346,7 +2346,7 @@
           var menuitem = document.createElementNS(XULNS, "menuitem");
           menuitem.setAttribute("label", "");
           menuitem.setAttribute("value", value);
-          menuitem.setAttribute("class", "menuitem-iconic");
+          menuitem.setAttribute("class", "menuitem-iconic-noaccel");
           menuitem.setAttribute("image", this._output._drawThreadMarker(label));
           this._threadPickerMenulist.firstChild.appendChild(menuitem);
 
