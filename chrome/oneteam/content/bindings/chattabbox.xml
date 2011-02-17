@@ -244,9 +244,7 @@
               break;
             }
 
-          try {
-            content._tab.controller._chatpane._output.visible = true;
-          } catch(ex) {};
+          content._tab.controller.onActivate();
 
           if (content._tab == this._selectedTab) {
             this._tabs.scrollToTab(null, 1);
@@ -261,9 +259,7 @@
             if (this._selectedTab.nextSibling)
               this._selectedTab.nextSibling.removeAttribute("afterselected");
 
-            try {
-              this._selectedTab.controller._chatpane._output.visible = false;
-            } catch(ex) {};
+            this._selectedTab.controller.onDeactivate();
           }
 
           this._selectedTab = content._tab;
@@ -398,6 +394,11 @@
         <body><![CDATA[
           this.closed = true;
 
+          if (this._activateTimer) {
+            clearTimeout(this._activateTimer);
+            delete this._activateTimer;
+          }
+
           if (this.thread)
             this.thread._onChatPaneClosed();
 
@@ -430,16 +431,43 @@
           this._tabbox._selectTab(this);
           delete this._inFocus;
 
-          try {
-            this._chatpane._output.visible = true;
-          } catch (ex) {}
-
-          this._updateChatState("active");
+          this.onActivate();
         ]]></body>
       </method>
 
       <method name="blured">
         <body><![CDATA[
+          this.onDeactivate();
+        ]]></body>
+      </method>
+
+      <method name="onActivate">
+        <body><![CDATA[
+          if (this.closed)
+            return;
+
+          try {
+            this._chatpane._output.visible = true;
+          } catch (ex) {}
+
+          if (!this._activateTimer) {
+            this._activateTimer = setTimeout(function(_this) {
+              delete _this._activateTimer;
+
+              if (!_this.closed)
+                _this._updateChatState("active");
+            }, 1000, this);
+          }
+        ]]></body>
+      </method>
+
+      <method name="onDeactivate">
+        <body><![CDATA[
+          if (this._activateTimer) {
+            clearTimeout(this._activateTimer);
+            delete this._activateTimer;
+          }
+
           if (this.closed)
             return;
 
