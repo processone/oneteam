@@ -398,13 +398,17 @@ _DECL_(ServicesManager).prototype =
         if (response.e4x)
             pkt.appendNode(response.e4x);
 
+        var type = pkt.getType();
+        var cb = type == "set" || type == "get" ? function(){} : null;
+
         if (response.nextPacket) {
-            account.connection.send(pkt);
+            account.connection.send(pkt, cb);
             this._sendResponse(response.nextPacket, packet, callback);
         } else if (callback)
             account.connection.send(pkt, this._parseResultCallback, callback);
-        else
-            account.connection.send(pkt);
+        else {
+            account.connection.send(pkt, cb);
+        }
     },
 
     _parseResultCallback: function(packet, callback)
