@@ -40,7 +40,7 @@ otSpeex::GetMedias(PRInt16 *firstFreePayloadId NS_INOUTPARAM,
     return NS_ERROR_OUT_OF_MEMORY;
 
   codecs[0] = new otCodecInfo(this, "speex", (*firstFreePayloadId)++, 8000,
-                              1, 20, 20, 1001, nsnull, 0);
+                              1, 20, 20, 1000, nsnull, 0);
   if (!codecs[0]) {
     nsMemory::Free(codecs);
     return NS_ERROR_OUT_OF_MEMORY;
@@ -48,7 +48,7 @@ otSpeex::GetMedias(PRInt16 *firstFreePayloadId NS_INOUTPARAM,
   NS_ADDREF(codecs[0]);
 
   codecs[1] = new otCodecInfo(this, "speex", (*firstFreePayloadId)++, 16000,
-                              1, 20, 20, 1000, nsnull, 0);
+                              1, 20, 20, 1001, nsnull, 0);
   if (!codecs[1]) {
     NS_RELEASE(codecs[0]);
     nsMemory::Free(codecs);
