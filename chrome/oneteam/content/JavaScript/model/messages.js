@@ -29,8 +29,7 @@ _DECL_(MessagesRouter).prototype =
         var thread;
 
         if (this.parentRouter) {
-            this.parentRouter.routeMessage(msg, this);
-            return;
+            return this.parentRouter.routeMessage(msg, this);
         }
 
         if (!contact)
@@ -73,6 +72,8 @@ _DECL_(MessagesRouter).prototype =
                 this.newThreads[contact.jid] = thread;
         }
         thread.addMessage(msg);
+
+        return thread;
     },
 
     _findUnusedTab: function(contact, thread)
