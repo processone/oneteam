@@ -1,6 +1,6 @@
 var EXPORTED_SYMBOLS = ["jingleService"];
 
-function JingleSession(to, sid) {
+function JingleSession(to, sid, dontRegister) {
     this.to = to;
     this.sid = sid || generateRandomName(8);
     this.weAreInititator = sid == null;
@@ -11,6 +11,9 @@ function JingleSession(to, sid) {
     this.state = "needAccept";
 
     this._remoteCandidates = [];
+
+    if (!dontRegister)
+        jingleService.registerSession(this);
 
     if (!sid) {
         this.state = "waitingForAccept"
@@ -639,13 +642,18 @@ _DECL_(JingleService).prototype =
 
     createSession: function(jid, callback) {
         var js = new JingleSession(jid, null, callback);
-        this._sessions[js.sid] = js;
 
         return js;
     },
 
-    unregisterSession: function(service) {
-        delete this._sessions[service.sid];
+    registerSession: function(session) {
+        this._sessions[session.sid] = session;
+        this.activeSession = session;
+    },
+
+    unregisterSession: function(session) {
+        delete this._sessions[session.sid];
+        delete this.activeSession;
     },
 
     _discoverStun: function(session, weAreInititator) {
@@ -854,8 +862,21 @@ _DECL_(JingleService).prototype =
             return 0;
 
         if (!this._sessions[queryE4X.@sid] && queryE4X.@action == "session-initiate") {
-            var js = new JingleSession(pkt.getFrom(), queryE4X.@sid.toString());
-            this._sessions[queryE4X.@sid] = js;
+            var hadActiveSessions = this.activeSession;
+            var js = new JingleSession(pkt.getFrom(), queryE4X.@sid.toString(), hadActiveSessions);
+
+            if (hadActiveSessions) {
+                this._onMissedCall(js.to);
+
+                return {
+                    nextPacket: {
+                        id: null,
+                        to: js.to,
+                        type: "set",
+                        domBuilder: js.genSessionTerminate([["busy"]])
+                    }
+                }
+            }
 
             var resource = account.getOrCreateResource(js.to);
             var canceler = new NotificationsCanceler();
