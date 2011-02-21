@@ -214,14 +214,11 @@
       }
     };
 
-    var soundsPlayer;
-
     function onLoad() {
       systrayInit();
       setPresenceUpdater.init();
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
-      soundsPlayer = document.getElementById("soundsplayer");
 
       var args = {};
       for each (var part in document.location.toString().replace(/.*?\?/, "").split("&")) {
@@ -633,7 +630,6 @@
     </hbox>
   </vbox>
   <otsystray id="systray" type="minimizer"/>
-  <soundsplayer id="soundsplayer"/>
   <vbox id="hiddenContainer" collapsed="true">
     <html:iframe id="hiddenFrame"/>
   </vbox>

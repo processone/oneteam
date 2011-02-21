@@ -25,8 +25,7 @@
             this._reallyHidden = true;
             this._hidden = this.getAttribute("hidden") == "true";
             this.icon = this.getAttribute("icon");
-            this._win = window.openDialog("chrome://oneteam/content/bindings/systrayhelper.xul",
-                                          "_blank", "chrome=yes,dialog=no,popup=yes");
+            this._win = getHiddenWindowHandle()
           } catch (ex) { this._systray = null }
         ]]>
       </constructor>
@@ -35,8 +34,6 @@
         <![CDATA[
           if (this._systray)
             this._systray.hide();
-          if (this._win)
-            this._win.close();
         ]]>
       </destructor>
 
