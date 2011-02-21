@@ -36,8 +36,15 @@
       if (!session)
         session = jingleService.createSession(resource.jid);
 
-      updateStateLabel();
-      token = session.registerView(updateStateLabel, null, "state");
+      if (session == "initiate") {
+        stateLabel.textContent = _("Missed call");
+        stateDeck.selectedIndex = 0;
+        buttonsDeck.selectedIndex = 2;
+        session = null;
+      } else {
+        updateStateLabel();
+        token = session.registerView(updateStateLabel, null, "state");
+      }
       contactInfo.model = resource;
     }
 
@@ -117,6 +124,17 @@
     function endCall() {
       session.terminateSession();
     }
+
+    function dropCall() {
+      window.close();
+    }
+
+    function initiateCall() {
+      session = jingleService.createSession(resource.jid);
+
+      updateStateLabel();
+      token = session.registerView(updateStateLabel, null, "state");
+    }
   ]]></script>
 
   <group id="macMenu"/>
@@ -138,11 +156,15 @@
     <spacer flex="1"/>
     <deck id="buttons-deck">
       <hbox pack="center">
-        <button id="accept" label="_('Accept')" oncommand="acceptCall()"/>
-        <button id="reject" label="_('Reject')" oncommand="rejectCall()"/>
+        <button id="accept" class="action green" label="_('Accept')" oncommand="acceptCall()"/>
+        <button id="reject" class="action red" label="_('Reject')" oncommand="rejectCall()"/>
       </hbox>
       <hbox pack="center">
-        <button id="end" label="_('End Call')" oncommand="endCall()"/>
+        <button id="end" class="action red" label="_('End Call')" oncommand="endCall()"/>
+      </hbox>
+      <hbox pack="center">
+        <button id="initiate" class="action green" label="_('Initiate New Call')" oncommand="initiateCall()"/>
+        <button id="end" class="action red" label="_('Drop Call')" oncommand="dropCall()"/>
       </hbox>
     </deck>
   </vbox>

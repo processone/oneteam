@@ -464,7 +464,6 @@ _DECL_(JingleSession, null, Model).prototype =
     },
 
     _sessionTerminated: function(reason) {
-        dump("TERMINATE\n");
         this.terminated = true;
 
         if (reason)
@@ -482,8 +481,8 @@ _DECL_(JingleSession, null, Model).prototype =
 
         this.iceSession = this.audioInput = null;
 
-        if (this._canceler)
-            this._canceler.cancel();
+        if (this._canceler && this._canceler.cancel())
+            jingleService._onMissedCall(this.to);
     },
 
     _onJingleNodesChannel: function(channel) {
@@ -818,6 +817,36 @@ _DECL_(JingleService).prototype =
             var [host, port] = response.getNextAddrAsString().split(":");
             this.addStunServer(host, port, null, null, request && request.info);
         }
+    },
+
+    _onMissedCall: function(from) {
+        var resource = account.getOrCreateResource(from);
+        var canceler = new NotificationsCanceler();
+
+        var callback = new Callback(function(){
+            if (!this.canceler.cancel())
+                return;
+
+            this.resource.onJingleCall("initiate");
+        }, {canceler: canceler, resource: resource});
+
+        canceler.add = account.notificationScheme.onMissedJingleCall(resource, callback,
+            [{
+                label: _("Initiate call"),
+                resource: resource,
+                _canceler: canceler,
+                callback: function() {
+                    if (!this._canceler.cancel())
+                        return;
+
+                    this.resource.onJingleCall();
+                }
+            }]);
+
+        canceler.add = account.addEvent(from, "missedjinglecall",
+                                        _xml("You missed call from <b>{0}</b>",
+                                             account.getContactOrResourceName(from)),
+                                        callback);
     },
 
     onPacket: function(pkt, queryE4X, query) {

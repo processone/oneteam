@@ -46,7 +46,9 @@ expander[open="true"] .expanderButton {
   background: no-repeat top right transparent;
 }
 
-.counter-box[event="jinglecall"] {
+.counter-box[event="jinglecall"],
+.counter-box[event="missedjinglecall"]
+{
   background-image: url(../chatpane/imgs/call.png);
 }
 

@@ -36,7 +36,7 @@ description, label {
   padding: 6px;
 }
 
-#accept, #reject, #end {
+.action {
   border: 1px solid white;
   -moz-appearance: none;
   color: white;
@@ -45,45 +45,43 @@ description, label {
   padding: 2px 8px;
 }
 
-#accept {
+.green {
   -moz-border-image: url(imgs/green-border-image.png) 2/2px repeat stretch;
   text-shadow: #560 0 0 4px;
 }
 
-#accept .button-icon {
+.green .button-icon {
   display: -moz-box;
   list-style-image: url(imgs/start.png);
 }
 
-#accept:hover {
+.green:hover {
   -moz-border-image: url(imgs/green-border-image-hover.png) 2/2px repeat stretch;
 }
 
-#accept:hover:active {
+.green:hover:active {
   -moz-border-image: url(imgs/green-border-image-pushed.png) 2/2px repeat stretch;
 }
 
-#reject, #end {
+.red {
   -moz-border-image: url(imgs/red-border-image.png) 2/2px repeat stretch;
   text-shadow: #500 0 0 4px;
 }
 
-#reject .button-icon, #end .button-icon {
+.red .button-icon {
   display: -moz-box;
   list-style-image: url(imgs/end.png);
 }
 
-#reject:hover, #end:hover {
+.red:hover {
   -moz-border-image: url(imgs/red-border-image-hover.png) 2/2px repeat stretch;
 }
 
-#reject:hover:active, #end:hover:active {
+.red:hover:active {
   -moz-border-image: url(imgs/red-border-image-pushed.png) 2/2px repeat stretch;
 }
 
-#accept[disabled=true], #reject[disabled=true], #end[disabled=true],
-#accept[disabled=true]:hover:active, #reject[disabled=true]:hover:active,
-#end[disabled=true]:hover:active {
+.action[disabled=true], .action:hover:active {
   text-shadow: #666 0 0 4px;
   -moz-border-image: url(imgs/border-image-disabled.png) 2/2px repeat stretch;
 }

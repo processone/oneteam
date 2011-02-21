@@ -403,6 +403,19 @@ _DECL_(NotificationScheme).prototype =
                              null, callback, inlineCommands);
     },
 
+    onMissedJingleCall: function(resource, callback, inlineCommands) {
+        var provider = this.findProvider("jingleCall", resource);
+        if (!provider)
+            return this._nopCanceler;
+
+        return provider.show(_("Missed call from {0}", resource.visibleName),
+                             _("Missed call"),
+                             _xml("You missed call from user <b>{0}</b>",
+                                  resource.visibleName),
+                             "chrome://oneteam/skin/main/imgs/callicon.png",
+                             null, callback, inlineCommands);
+    },
+
     onFileTransferRequest: function(resource, fileName, callback, inlineCommands) {
         var provider = this.findProvider("fileTransfer", resource);
         if (!provider)
@@ -504,6 +517,8 @@ _DECL_(NotificationScheme).prototype =
                                                        _("MUC nick: message received"), false),
         "jingleCall": new NotificationProvider(true, false, true, "sent", false,
                                                _("Voice call request received"), true),
+        "missedJingleCall": new NotificationProvider(true, false, true, "sent", false,
+                                                     _("Missed voice call"), true),
         "fileTransfer": new NotificationProvider(true, false, true, "sent", false,
                                                  _("File transfer request received"), true),
         "fileTransferAccepted": new NotificationProvider(true, false, false, "sent", false,
