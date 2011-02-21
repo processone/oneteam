@@ -16,12 +16,14 @@
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("model/account.js");
+    ML.importMod("services/xpcom/utils.js");
 
     var resource = window.arguments[0];
     var session = window.arguments[1];
     var acceptButton, rejectButton, endButton, stateLabel;
     var stateDeck, buttonsDeck, contactInfo, timerLabel
     var token;
+    var dialTone;
 
     function onLoad() {
       stateDeck = document.getElementById("state-deck");
@@ -54,6 +56,9 @@
       if (session)
         session.terminateSession();
       contactInfo.model = null;
+
+      if (dialTone)
+          dialTone.cancel();
     }
 
     var timerId, timerStart;
@@ -64,6 +69,8 @@
     }
 
     function updateStateLabel() {
+      var playSound = false;
+
       if (session.state == "terminated") {
         var msg;
 
@@ -103,13 +110,24 @@
         stateDeck.selectedIndex = 0;
         buttonsDeck.selectedIndex = 0;
       } else if (session.state == "waitingForAccept") {
+        playSound = true;
         stateLabel.textContent = _("Waiting for Accept");
         stateDeck.selectedIndex = 0;
         buttonsDeck.selectedIndex = 1;
       } else {
+        playSound = true;
         stateLabel.textContent = _("Connecting");
         stateDeck.selectedIndex = 0;
         buttonsDeck.selectedIndex = 1;
+      }
+
+      if (playSound) {
+        if (!dialTone)
+            dialTone = soundsPlayer.playSound("dialtone", Infinity);
+      } else {
+        if (dialTone)
+            dialTone.cancel();
+        dialTone = null;
       }
     }
 
