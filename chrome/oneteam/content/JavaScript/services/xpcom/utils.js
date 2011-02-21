@@ -65,7 +65,7 @@ var soundsPlayer = {
         }
 
         execInHiddenWindow(["playSound", canceler,
-                            "chrome://oneteam/content/data/sounds/"+type+".wav",
+                            "chrome://oneteam/content/data/sounds/"+type+".ogg",
                             loops]);
 
         return canceler;
