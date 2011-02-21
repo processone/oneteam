@@ -198,10 +198,10 @@ _DECL_(MessagesRouter).prototype =
 
     showSystemMessage: function(msg, contact)
     {
-        if (this.parentRouter) {
-            this.parentRouter.showSystemMessage(msg, this);
-            return;
-        }
+        if (this.parentRouter)
+            return this.parentRouter.showSystemMessage(msg, this);
+
+        var shown = false;
 
         if (!contact)
             contact = this;
@@ -211,8 +211,13 @@ _DECL_(MessagesRouter).prototype =
                 (this.chatPanes[i].thread.contact == contact ||
                  this.chatPanes[i].thread.contact == contact.contact ||
                  this.chatPanes[i].thread.contact == contact.activeResource))
+            {
                 this.chatPanes[i].thread.addMessage(msg);
+                shown = true;
+            }
         }
+
+        return shown;
     },
 
     recoverResourceThreads: function(resource)
