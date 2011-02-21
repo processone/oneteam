@@ -390,7 +390,7 @@ _DECL_(NotificationScheme).prototype =
                              null, callback);
     },
 
-    onJingleCall: function(resource, callback) {
+    onJingleCall: function(resource, callback, inlineCommands) {
         var provider = this.findProvider("jingleCall", resource);
         if (!provider)
             return this._nopCanceler;
@@ -400,7 +400,7 @@ _DECL_(NotificationScheme).prototype =
                              _xml("User <b>{0}</b> want to initiate call with you",
                                   resource.visibleName),
                              "chrome://oneteam/skin/main/imgs/callicon.png",
-                             null, callback);
+                             null, callback, inlineCommands);
     },
 
     onFileTransferRequest: function(resource, fileName, callback, inlineCommands) {
