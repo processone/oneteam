@@ -106,7 +106,9 @@ function openDialogUniq(type, url, flags)
         return window.openDialog.apply(window, args);
     }
 
-    win.focus();
+    if (!/\balwaysLowered\b/.exec(flags))
+        win.focus();
+
     return win;
 }
 

@@ -22,7 +22,7 @@ function findCallerWindow()
 
 function getHiddenWindowHandle() {
     return openDialogUniq("ot:hiddenWindow", "chrome://oneteam/content/hiddenWindow.xul",
-                          "chrome,dialog=no,popup")
+                          "chrome,dialog=no,popup,alwaysLowered")
 }
 
 var commands = []
