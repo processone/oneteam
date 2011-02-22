@@ -24,6 +24,7 @@
     ML.importMod("views/gateway.js");
     ML.importMod("views/conference.js");
     ML.importMod("views/chattabs.js");
+    ML.importMod("services/xpcom/utils.js");
 
     var loginProgress;
     var globalRegToken = new RegistrationToken();
