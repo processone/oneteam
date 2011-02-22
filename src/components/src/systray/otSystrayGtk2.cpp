@@ -8,14 +8,13 @@
 
 NS_IMPL_ISUPPORTS1(otSystrayGtk2, otISystray)
 
-otSystrayGtk2::otSystrayGtk2() : mPlug(0), mIcon(0), mTooltips(0)
+otSystrayGtk2::otSystrayGtk2() : mStatusIcon(0)
 {
 }
 
 otSystrayGtk2::~otSystrayGtk2()
 {
-  gtk_object_unref(GTK_OBJECT(mPlug));
-  gtk_object_unref(GTK_OBJECT(mIcon));
+  gtk_object_unref(GTK_OBJECT(mStatusIcon));
 }
 
 NS_IMETHODIMP
@@ -26,27 +25,10 @@ otSystrayGtk2::Init(otISystrayListener *listener)
   if (NS_FAILED(rv))
     return rv;
 
-  mPlug = gtk_plug_new(0);
-  mIcon = GTK_WIDGET(gtk_image_new());
-  mTooltips = gtk_tooltips_new();
+  mStatusIcon = gtk_status_icon_new();
 
-  gtk_widget_add_events(GTK_WIDGET(mPlug), GDK_PROPERTY_CHANGE_MASK |
-                        GDK_BUTTON_PRESS_MASK);
-  g_signal_connect_swapped(G_OBJECT(mPlug), "button-press-event",
+  g_signal_connect_swapped(G_OBJECT(mStatusIcon), "button-press-event",
                             G_CALLBACK(OnClick), (gpointer)this);
-  g_signal_connect_swapped(G_OBJECT(mPlug), "realize", G_CALLBACK(OnRealize),
-                           (gpointer)this);
-  g_signal_connect_swapped(G_OBJECT(mPlug), "unrealize", G_CALLBACK(OnUnrealize),
-                           (gpointer)this);
-  g_signal_connect(G_OBJECT(mPlug), "expose_event", G_CALLBACK(OnExpose), 0);
-
-  gtk_widget_set_app_paintable(mPlug, TRUE);
-  gtk_widget_set_double_buffered(mPlug, FALSE);
-
-  g_object_ref(G_OBJECT(mTooltips));
-  gtk_object_unref(GTK_OBJECT(mTooltips));
-
-  gtk_container_add (GTK_CONTAINER(mPlug), mIcon);
 
   return NS_OK;
 }
@@ -57,7 +39,7 @@ otSystrayGtk2::Hide()
   nsresult rv = otSystrayBase::Hide();
 
   if (NS_SUCCEEDED(rv))
-    gtk_widget_hide(mPlug);
+    gtk_status_icon_set_visible(mStatusIcon, FALSE);
 
   return rv;
 }
@@ -65,7 +47,7 @@ otSystrayGtk2::Hide()
 NS_IMETHODIMP
 otSystrayGtk2::SetTooltip(const nsAString &tooltip)
 {
-  gtk_tooltips_set_tip(mTooltips, mPlug, NS_ConvertUTF16toUTF8(tooltip).get(), NULL);
+  gtk_status_icon_set_tooltip(mStatusIcon, NS_ConvertUTF16toUTF8(tooltip).get());
 
   return otSystrayBase::SetTooltip(tooltip);
 }
@@ -154,12 +136,9 @@ otSystrayGtk2::ProcessImageData(PRInt32 width, PRInt32 height,
     }
   }
 
-  gtk_image_set_from_pixbuf(GTK_IMAGE(mIcon), pixbuf);
+  gtk_status_icon_set_from_pixbuf(mStatusIcon, pixbuf);
+  gtk_status_icon_set_visible(mStatusIcon, TRUE);
   g_object_unref(G_OBJECT(pixbuf));
-
-  gtk_widget_realize(mPlug);
-  gdk_window_set_back_pixmap(mPlug->window, NULL, TRUE);
-  gtk_widget_show_all(mPlug);
 
   return NS_OK;
 }
@@ -179,111 +158,3 @@ otSystrayGtk2::OnClick(otSystrayGtk2 *obj, GdkEventButton *ev)
 
   return PR_TRUE;
 }
-
-void
-otSystrayGtk2::OnRealize(otSystrayGtk2 *obj)
-{
-  DEBUG_DUMP("REALIZE");
-  gchar trayId[32];
-  GdkScreen *screen = gtk_widget_get_screen(obj->mPlug);
-
-  g_snprintf(trayId, sizeof(trayId), "_NET_SYSTEM_TRAY_S%d",
-             gdk_screen_get_number(screen));
-  obj->mAtomTrayId = gdk_atom_intern(trayId, FALSE);
-  obj->mAtomOpcode = gdk_atom_intern("_NET_SYSTEM_TRAY_OPCODE", FALSE);
-  obj->mAtomManager = gdk_atom_intern("MANAGER", FALSE);
-
-  obj->UpdateManager();
-
-  GdkWindow *root = gdk_screen_get_root_window(gtk_widget_get_screen(obj->mPlug));
-  gdk_window_add_filter(root, (GdkFilterFunc)EventFilter, obj);
-}
-
-void
-otSystrayGtk2::OnUnrealize(otSystrayGtk2 *obj)
-{
-  DEBUG_DUMP("UNREALIZE");
-  GdkWindow *root = gdk_screen_get_root_window(gtk_widget_get_screen(obj->mPlug));
-
-  gdk_window_remove_filter(root, (GdkFilterFunc)EventFilter, obj);
-  if (obj->mManagerWindow) {
-    gdk_window_remove_filter(obj->mManagerWindow, (GdkFilterFunc)EventFilter, obj);
-  }
-}
-gboolean
-otSystrayGtk2::OnExpose(GtkWidget *widget, GdkEventExpose *event, void*)
-{
-  DEBUG_DUMP("EXPOSE");
-  gdk_window_clear_area(widget->window, event->area.x, event->area.y,
-                        event->area.width, event->area.height);
-
-  return FALSE;
-}
-
-GdkFilterReturn
-otSystrayGtk2::EventFilter(GdkXEvent *xevent, GdkEvent *event,
-                           otSystrayGtk2 *obj)
-{
-  XEvent *xev = (XEvent*)xevent;
-
-  DEBUG_DUMP_N(("NEW EVENT %d %d %d", xev->xany.type, ClientMessage, DestroyNotify));
-  if (xev->xany.type == ClientMessage &&
-      xev->xclient.message_type == gdk_x11_atom_to_xatom(obj->mAtomManager) &&
-      xev->xclient.data.l[1] == gdk_x11_atom_to_xatom(obj->mAtomTrayId))
-  {
-    DEBUG_DUMP("NEW MANAGER");
-    obj->UpdateManager();
-  } else if (xev->xany.type == DestroyNotify &&
-             xev->xany.window == obj->mManagerNativeWindow)
-  {
-    DEBUG_DUMP("MANAGER DESTROYED");
-    gdk_window_remove_filter(obj->mManagerWindow, (GdkFilterFunc)EventFilter, obj);
-    obj->mManagerWindow = 0;
-    obj->mManagerNativeWindow = 0;
-    gtk_widget_realize(obj->mPlug);
-    obj->UpdateManager();
-  }
-
-  return GDK_FILTER_CONTINUE;
-}
-
-void
-otSystrayGtk2::UpdateManager()
-{
-  DEBUG_DUMP("UPDATE MANAGER");
-  GdkDisplay *display = gtk_widget_get_display(mPlug);
-
-  gdk_x11_display_grab(display);
-
-  mManagerNativeWindow =
-    (GdkNativeWindow)XGetSelectionOwner(GDK_DISPLAY_XDISPLAY(display),
-                                        gdk_x11_atom_to_xatom(mAtomTrayId));
-
-  if (mManagerNativeWindow)
-    XSelectInput(GDK_DISPLAY_XDISPLAY(display), mManagerNativeWindow,
-                 StructureNotifyMask);
-
-  gdk_x11_display_ungrab(display);
-
-  if (mManagerNativeWindow) {
-    mManagerWindow = gdk_window_lookup_for_display(display, mManagerNativeWindow);
-    gdk_window_add_filter(mManagerWindow, (GdkFilterFunc)EventFilter, this);
-    RegisterInManager();
-  }
-}
-
-void
-otSystrayGtk2::RegisterInManager()
-{
-  DEBUG_DUMP("REGISTER IN MANAGER");
-  GdkDisplay *display = gtk_widget_get_display(mPlug);
-
-  GdkEvent *ev = gdk_event_new(GDK_CLIENT_EVENT);
-  ev->client.message_type = mAtomOpcode;
-  ev->client.data_format = 32;
-  ev->client.data.l[0] = gdk_x11_get_server_time(mPlug->window);
-  ev->client.data.l[2] = gtk_plug_get_id(GTK_PLUG(mPlug));
-  gdk_event_send_client_message_for_display(display, ev, mManagerNativeWindow);
-  gdk_event_free(ev);
-}
-

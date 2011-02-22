@@ -18,30 +18,14 @@ private:
   ~otSystrayGtk2();
 protected:
   static PRBool OnClick(otSystrayGtk2 *obj, GdkEventButton *ev);
-  static void OnRealize(otSystrayGtk2 *obj);
-  static void OnUnrealize(otSystrayGtk2 *obj);
-  static gboolean OnExpose(GtkWidget *widget, GdkEventExpose *event, void*);
-  static GdkFilterReturn EventFilter(GdkXEvent *xevent, GdkEvent *event,
-                                     otSystrayGtk2 *obj);
 
   nsresult ProcessImageData(PRInt32 width, PRInt32 height,
                             PRUint8 *rgbData, PRUint32 rgbStride,
                             PRUint32 rgbLen, PRUint8 *alphaData,
                             PRUint32 alphaStride, PRUint32 alphaBits,
                             PRBool reversed);
-  void RegisterInManager();
-  void UpdateManager();
 
-  GtkWidget *mPlug;
-  GtkWidget *mIcon;
-  GdkWindow *mManagerWindow;
-  GdkNativeWindow mManagerNativeWindow;
-  GtkTooltips *mTooltips;
-
-  GdkAtom mAtomTrayId;
-  GdkAtom mAtomOpcode;
-  GdkAtom mAtomManager;
+  GtkStatusIcon *mStatusIcon;
 };
 
 #endif
-
