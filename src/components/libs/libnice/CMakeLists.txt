@@ -13,7 +13,7 @@ IF(UNIX)
 ENDIF(UNIX)
 
 IF(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    SET(GLIB_DIR "/opt/local")
+    SET(GLIB_DIR "/usr/local")
     SET(GLIB_INCLUDE_DIRS "${GLIB_DIR}/include/glib-2.0" "${GLIB_DIR}/lib/glib-2.0/include")
     SET(GLIB_STATIC_LIBRARY_DIRS "${GLIB_DIR}/lib")
     SET(GLIB_BIN_DIR "${GLIB_DIR}/bin/")
