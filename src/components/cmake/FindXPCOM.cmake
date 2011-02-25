@@ -46,6 +46,9 @@ IF(XPCOM_GECKO_SDK)
         SET(XPCOM_LIBRARIES xpcomglue_s_nomozalloc xpcom nspr4 xul)
     ENDIF(XPCOM_GECKO_VERSION LESS 200)
 
+    SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG -DPR_LOGGING")
+    SET(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG -DPR_LOGGING")
+
     IF(UNIX)
         SET(XPCOM_C_FLAGS "-fomit-frame-pointer -fshort-wchar -fno-exceptions -Wall -Wpointer-arith -Wcast-align -Wno-variadic-macros -Werror=return-type")
         SET(XPCOM_CXX_FLAGS "${XPCOM_C_FLAGS} -fno-rtti -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-invalid-offsetof -include ${XPCOM_INCLUDE_DIRS}/mozilla-config.h")
