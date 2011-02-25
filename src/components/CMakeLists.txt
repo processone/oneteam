@@ -55,7 +55,8 @@ IF(DEFINED XPCOM_MOZ_WIDGET_GTK2)
     SET(oneteam_extra_SRCS
         src/audio/otPulseAudio.cpp src/audio/otPulseAudioStream.cpp
         src/dns/otDNSUnix.cpp src/idle/otIdleUnix.cpp
-        src/systray/otSystrayGtk2.cpp)
+        src/systray/otSystrayGtk2.cpp
+        src/systray/otPr0nObserver.cpp src/systray/otSystrayBase.cpp)
 
     SET(oneteam_extra_LIBS
         ${GTK2_LIBRARIES} ${PULSE_LIBRARIES} Xss X11 resolv rt)
@@ -80,7 +81,8 @@ ELSEIF(WIN32)
     SET(oneteam_extra_SRCS
         src/audio/otWinAudio.cpp src/audio/otWinAudioStream.cpp
         src/dns/otDNSWin.cpp src/idle/otIdleWin.cpp
-        src/systray/otSystrayWin.cpp)
+        src/systray/otSystrayWin.cpp
+        src/systray/otPr0nObserver.cpp src/systray/otSystrayBase.cpp)
 
     SET(oneteam_extra_LIBS
         shell32.lib dnsapi.lib iphlpapi.lib ws2_32.lib ole32.lib winmm.lib)
@@ -117,7 +119,6 @@ ADD_LIBRARY(oneteam SHARED src/audio/otAudioFilter.cpp
     src/ice/otICEService.cpp src/ice/otICESession.cpp
     src/idle/otIdleBase.cpp src/jnrelay/otJNRelay.cpp src/rtp/otRTP.cpp
     src/rtp/otRTPDecoder.cpp src/rtp/otRTPEncoder.cpp
-    src/systray/otPr0nObserver.cpp src/systray/otSystrayBase.cpp
     build/otModule.cpp ${oneteam_extra_SRCS})
 
 INSTALL(TARGETS oneteam DESTINATION ${PROJECT_SOURCE_DIR}/../../platform/${XPCOM_ABI}/components)
