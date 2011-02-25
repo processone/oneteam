@@ -68,7 +68,7 @@ otRTPDecoder::AcceptData(const char* data, PRInt32 len)
   rtpPacket->header.ts = ntohl(rtpPacket->header.ts);
   rtpPacket->header.seq = ntohs(rtpPacket->header.seq);
 
-  DEBUG_DUMP_N(("RTPDecoder::AcceptData %d %d %u %u",len, rtpPacket->header.pt,
+  DEBUG_DUMP_N(("RTPDecoder::AcceptData len=%d pt=%d ts=%u seq=%u", len, rtpPacket->header.pt,
                 rtpPacket->header.ts, rtpPacket->header.seq));
   if (!mCodecInfo) {
     if (!mMedias.Get(rtpPacket->header.pt, getter_AddRefs(mCodecInfo)))
@@ -171,7 +171,8 @@ otRTPDecoder::DeliverData(PRInt16 requiredFrames, PRInt16 maxFrames)
 
   jitter_buffer_ctl(mBuffer, JITTER_BUFFER_GET_AVAILABLE_COUNT, &bufferedFrames);
 
-  DEBUG_DUMP_N(("otRTPDecoder::DeliverData %d %d %d %d", requiredFrames, maxFrames, bufferedFrames, mPrebuf));
+  DEBUG_DUMP_N(("otRTPDecoder::DeliverData requiredFrames=%d maxFrames=%d bufferedFrames=%d prebuf=%d",
+                requiredFrames, maxFrames, bufferedFrames, mPrebuf));
 
   while (requiredFrames > 0 || (bufferedFrames > 0 && maxFrames > 0)) {
     packet.data = body;
@@ -179,10 +180,13 @@ otRTPDecoder::DeliverData(PRInt16 requiredFrames, PRInt16 maxFrames)
 
     //DEBUG_DUMP_N(("DeliverDataInt %d %d %d", requiredFrames, maxFrames, bufferedFrames, mPrebuf));
 
-    if (jitter_buffer_get(mBuffer, &packet, mFrameSize/2, &offset) == JITTER_BUFFER_OK)
+    int res;
+    if ((res=jitter_buffer_get(mBuffer, &packet, mFrameSize/2, &offset)) == JITTER_BUFFER_OK)
       mTarget->AcceptData(packet.data, packet.len);
     else
       mTarget->AcceptData(NULL, 0);
+
+    //DEBUG_DUMP_N(("otRTPDecoder::DeliverData res=%d", res));
 
     jitter_buffer_tick(mBuffer);
 

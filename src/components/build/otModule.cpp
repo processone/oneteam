@@ -14,6 +14,7 @@
 #include "otRTP.h"
 #include "otSpeex.h"
 #include "otILBC.h"
+#include "otG711.h"
 #include "otJNRelay.h"
 #include "otAudio.h"
 #include "otOSXBadge.h"
@@ -24,6 +25,7 @@ OT_DNS_DEFINE_FACTORY
 OT_ICE_DEFINE_FACTORY
 OT_SPEEX_DEFINE_FACTORY
 OT_ILBC_DEFINE_FACTORY
+OT_G711_DEFINE_FACTORY
 OT_RTP_DEFINE_FACTORY
 OT_JNRELAY_DEFINE_FACTORY
 OT_PULSE_AUDIO_DEFINE_FACTORY
@@ -58,6 +60,7 @@ static const mozilla::Module::CIDEntry cids[] = {
   { &kOT_RTP_CID, true, NULL, OT_RTP_FACTORY },
   { &kOT_SPEEX_CID, true, NULL, OT_SPEEX_FACTORY },
   { &kOT_ILBC_CID, true, NULL, OT_ILBC_FACTORY },
+  { &kOT_G711_CID, true, NULL, OT_G711_FACTORY },
   { &kOT_JNRELAY_CID, true, NULL, OT_JNRELAY_FACTORY },
   { NULL }
 };
@@ -88,6 +91,7 @@ static const mozilla::Module::ContractIDEntry contractids[] = {
   { OT_RTP_CONTRACTID, &kOT_RTP_CID },
   { OT_SPEEX_CONTRACTID, &kOT_SPEEX_CID },
   { OT_ILBC_CONTRACTID, &kOT_ILBC_CID },
+  { OT_G711_CONTRACTID, &kOT_G711_CID },
   { OT_JNRELAY_CONTRACTID, &kOT_JNRELAY_CID },
   { NULL }
 };
@@ -161,6 +165,10 @@ static const nsModuleComponentInfo components[] =
     OT_RTP_CID,
     OT_RTP_CONTRACTID,
     OT_RTP_FACTORY },
+  { "G.711 codec services",
+    OT_G711_CID,
+    OT_G711_CONTRACTID,
+    OT_G711_FACTORY },
   { "Speex codec services",
     OT_SPEEX_CID,
     OT_SPEEX_CONTRACTID,

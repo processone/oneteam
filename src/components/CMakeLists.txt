@@ -108,6 +108,8 @@ ADD_DEFINITIONS(-DMOZILLA_CLIENT -DMOZ_NO_MOZALLOC -D_REENTRANT -DNDEBUG
 
 ADD_LIBRARY(oneteam SHARED src/audio/otAudioFilter.cpp
     src/codecs/otCodecInfo.cpp src/codecs/otILBC.cpp
+    src/codecs/g711.c src/codecs/otG711.cpp
+    src/codecs/otG711Decoder.cpp src/codecs/otG711Encoder.cpp
     src/codecs/otILBCDecoder.cpp src/codecs/otILBCEncoder.cpp
     src/codecs/otSpeex.cpp src/codecs/otSpeexDecoder.cpp
     src/codecs/otSpeexEncoder.cpp src/debug/otDebug.cpp
