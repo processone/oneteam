@@ -651,7 +651,7 @@ JSJaCMessage.prototype.getSubject = function() {
 JSJaCPacket.parseXmlString = function(node) {
     var dp = new DOMParser();
     return dp.parseFromString("<q xmlns='jabber:client'>"+node+"</q>", "text/xml").
-        firstChild.firstChild;
+        firstChild.childNodes;
 }
 
 /**
@@ -668,7 +668,7 @@ JSJaCPacket.parseXmlString = function(node) {
 JSJaCPacket.wrapNode = function(node) {
   var aNode;
   if (typeof(node) == "string")
-    node = JSJaCPacket.parseXmlString(node);
+    node = JSJaCPacket.parseXmlString(node)[0];
 
   switch (node.nodeName.toLowerCase()) {
   case 'presence':

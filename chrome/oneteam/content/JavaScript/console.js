@@ -121,15 +121,17 @@ function writeXMLMessageHeadline() {
 function sendToServer() {
     var str = inputEditor.value;
 
-    if (intoInput.checked) {
-        var node = JSJaCPacket.parseXmlString(str);
+    var nodes = JSJaCPacket.parseXmlString(str);
 
-        if (account.connection._handleElement)
-            account.connection._handleElement(node);
-        else
-            account.connection._inQ.push(node);
+    if (intoInput.checked) {
+        for (var i = 0; i < nodes.length; i++)
+            if (account.connection._handleElement)
+                account.connection._handleElement(nodes[i]);
+            else
+                account.connection._inQ.push(nodes[i]);
     } else
-        account.connection.send(JSJaCPacket.wrapNode(str));
+        for (var i = 0; i < nodes.length; i++)
+            account.connection.send(JSJaCPacket.wrapNode(nodes[i]));
 
     inputEditor.value = "";
 }
@@ -148,10 +150,10 @@ function prettyPrintDOM(dom, indent)
 
         if (dom.stanzaType == 2)
             return "<div class='tag'><div class='tag-end'>"+indentEl+"&lt;/<span class='tag-name'>"+
-		dom.nodeName+"</span>&gt;</div></div>";
+        dom.nodeName+"</span>&gt;</div></div>";
 
         ret = "<div class='tag'><div class='tag-start'>"+indentEl+"&lt;<span class='tag-name'>"+
-    	    dom.nodeName+"</span>";
+            dom.nodeName+"</span>";
 
         var i = dom.prefix ? "xmlns:"+dom.prefix : "xmlns";
         if (!dom.hasAttribute(i) &&
@@ -178,7 +180,7 @@ function prettyPrintDOM(dom, indent)
 
             if (dom.stanzaType != 1)
                 ret += "<div class='tag-end'>"+indentEl+"&lt;/<span class='tag-name'>"+
-        		    dom.nodeName+"</span>&gt;</div></div>";
+                    dom.nodeName+"</span>&gt;</div></div>";
         } else if (dom.stanzaType == 1)
             ret += "&gt;</div></div>";
         else
