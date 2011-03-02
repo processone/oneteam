@@ -661,6 +661,8 @@ _DECL_(JingleService).prototype =
             return true;
 
         if (!this._discoverStunCallback) {
+            if (this._discoverStunCallback == 0)
+                return true;
             this._discoverStunCallback = [session];
             this.discoverStun();
         } else
@@ -717,11 +719,13 @@ _DECL_(JingleService).prototype =
         }
 
         if (!this._stunDiscoInProgress && this._discoverStunCallback) {
-            for (var i = 0; i < this._discoverStunCallback.length; i++)
-                    if (this._discoverStunCallback[i])
-                        this._discoverStunCallback[i]._sessionInit();
+            var callbacks = this._discoverStunCallback;
+            this._discoverStunCallback = 0;
 
-            this._discoverStunCallback = null;
+            for (var i = 0; i < callbacks.length; i++)
+                    if (callbacks[i])
+                        callbacks[i]._sessionInit();
+
         }
     },
 
