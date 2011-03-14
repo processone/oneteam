@@ -57,7 +57,7 @@ OTXMLParser.prototype = {
                 this.error("INVALID_NAMESPACE_NAME");
             else if (value == this.nsStack["*xmlns"] ||
                       (res[1] == "xml" && value != this.nsStack["*xml"]))
-                this.error("INVALID_NAMESPACE_DECLARATION");
+                return;
 
             this.nsStack["*"+res[1]] = value;
         }
