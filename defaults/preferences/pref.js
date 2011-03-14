@@ -3,7 +3,7 @@ pref ("general.skins.selectedSkin", "classic/1.0");
 pref("chat.connection.priority", 5);
 pref("chat.connection.base", "http-poll");
 pref("chat.connection.resource", "OneTeam");
-pref("chat.connection.host", "process-one.net");
+pref("chat.connection.host", "talkr.im");
 pref("chat.connection.port", 5222);
 pref("chat.connection.type", "native");
 pref("chat.connection.ssl", false);
