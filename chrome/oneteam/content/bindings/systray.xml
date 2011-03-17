@@ -25,8 +25,7 @@
             this._reallyHidden = true;
             this._hidden = this.getAttribute("hidden") == "true";
             this.icon = this.getAttribute("icon");
-            this._win = getHiddenWindowHandle()
-          } catch (ex) { this._systray = null }
+          } catch (ex) { dump(ex+"\n");this._systray = null }
         ]]>
       </constructor>
 
@@ -116,7 +115,7 @@
         if (!this.childNodes.length)
           return;
 
-        this._win.showPopup(this.childNodes, event.screenX, event.screenY);
+        execInHiddenWindow("showPopup", this.childNodes, event.screenX, event.screenY]);
       ]]></handler>
     </handlers>
   </binding>

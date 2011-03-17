@@ -34,8 +34,9 @@ function getHiddenWindowCommands() {
     return cmds;
 }
 
-function execInHiddenWindow(arg) {
-    commands.push(arg);
+function execInHiddenWindow() {
+    for (var i = 0; i < arguments.length; i++)
+        commands.push(arguments[i]);
 
     var w = getHiddenWindowHandle();
 
@@ -43,30 +44,80 @@ function execInHiddenWindow(arg) {
         w.newCommands();
 }
 
+function getWindowHandle() {
+    var win, wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+        getService(Components.interfaces.nsIWindowMediator);
+    if ((win = wm.getMostRecentWindow("ot:main")))
+        return win;
+    if ((win = wm.getMostRecentWindow("navigator:browser")))
+        return win;
+
+    return null;
+}
+
+
 var soundsPlayer = {
     playSound: function(type, loops) {
         if (!prefManager.getPref("chat.general.sounds"))
             return {cancel: function() {}};
 
-        var canceler = {
-            cancel: function() {
-                if (this._canceler)
-                    this._canceler.cancel();
-                else
-                    this._cancel = true;
-            },
+        var win = getWindowHandle();
+        var src = "chrome://oneteam/content/data/sounds/"+type+".ogg";
 
-            result: function(canceler) {
-                if (this._cancel)
-                    canceler.cancel();
-                else
-                    this._canceler = canceler;
+        if (!win) {
+            var canceler = {
+                cancel: function() {
+                    if (this._canceler)
+                        this._canceler.cancel();
+                    else
+                        this._cancel = true;
+                },
+
+                result: function(canceler) {
+                    if (this._cancel)
+                        canceler.cancel();
+                    else
+                        this._canceler = canceler;
+                }
             }
+
+            execInHiddenWindow(["playSound", canceler, src, loops]);
+
+            return canceler;
         }
 
-        execInHiddenWindow(["playSound", canceler,
-                            "chrome://oneteam/content/data/sounds/"+type+".ogg",
-                            loops]);
+        var canceler = {
+          _player: new win.Audio(),
+
+          cancel: function() {
+            if (this._loops)
+              this._player.removeEventListener("ended", this, false);
+            this._loops = 0;
+
+            this._player.pause();
+            this._player.src = "";
+          },
+
+          handleEvent: function(ev) {
+            if (ev.type != "ended")
+              return;
+
+            if (--this._loops > 0)
+              this._player.play();
+            else
+              this.cancel();
+          }
+        }
+
+        canceler._player.src = src;
+
+        if (loops) {
+          canceler._loops = loops;
+          canceler._player.addEventListener("ended", canceler, false);
+        }
+
+        canceler._player.load();
+        canceler._player.play();
 
         return canceler;
     }
