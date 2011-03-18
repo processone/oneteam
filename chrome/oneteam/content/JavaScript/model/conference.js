@@ -35,6 +35,7 @@ _DECL_(Conference, Contact).prototype =
 
     convertFromContact: function() {
         account.allConferences[this.jid.normalizedJID] = this;
+        delete this.jingleResource;
     },
 
     _sendMucPresence: function(presence)
