@@ -56,6 +56,7 @@ JSJaCMozillaConnection.prototype = {
     this.fulljid = this.jid + '/' + this.resource;
     this.socket = new XMPPSocket(this, this.host, this.port, false, this.domain, this.authhost);
     this.socket.connect();
+    this._connecting = true;
   },
 
   _receivedData: function(data) {
@@ -171,11 +172,13 @@ JSJaCMozillaConnection.prototype = {
   },
 
   _onDisconnect: function() {
-    if (!this._connected)
+    if (!this._connected && !this._connecting)
       return;
 
     this.socket.disconnect();
     this._connected = false;
+    this._connecting = false;
+
     this._handleEvent('ondisconnect');
     this.oDbg.log("Disconnected.",1);
   },
@@ -183,11 +186,9 @@ JSJaCMozillaConnection.prototype = {
   disconnect: function() {
     this._setStatus('disconnecting');
 
-    if (!this.connected())
-      return;
-
     this.oDbg.log("Disconnecting",4);
-    this._sendRaw("</stream:stream>");
+    if (this.connected())
+      this._sendRaw("</stream:stream>");
 
     this._onDisconnect();
   },
