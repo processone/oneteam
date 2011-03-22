@@ -4,12 +4,16 @@ var Tracer = {
     start: function() {
         this._svc = Components.classes["@mozilla.org/js/jsd/debugger-service;1"].
             getService(Components.interfaces.jsdIDebuggerService);
-        this._svc.asyncOn(this);
+        if (this._svc.asyncOn)
+            this._svc.asyncOn(this);
+        else {
+            this._svc.on();
+            this.onDebuggerActivated();
+        }
         this._depth = 0;
     },
 
     onDebuggerActivated: function() {
-        dump("DA\n");
         this._svc.appendFilter({
             flags: 1,
             globalObject: null,
@@ -39,7 +43,6 @@ var Tracer = {
             endLine: 0
         });
         this._svc.functionHook = this;
-        dump("DA2\n");
     },
 
     onCall: function(frame, type) {
