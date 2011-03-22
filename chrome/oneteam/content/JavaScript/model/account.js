@@ -16,6 +16,7 @@ ML.importMod("model/gateway.js");
 ML.importMod("model/messages.js");
 ML.importMod("model/vcard.js");
 ML.importMod("styles.js");
+ML.importMod("trace.js");
 ML.importMod("notification.js");
 ML.importMod("prefs.js");
 ML.importMod("services/manager.js");
