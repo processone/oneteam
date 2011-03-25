@@ -2029,7 +2029,7 @@ msgstr "Non-disponible"
 #: ../chrome/oneteam/content/console.xul:63
 #: ../chrome/oneteam/content/console.xul:65
 msgid "Message"
-msgstr "Mmessages"
+msgstr "Messages"
 
 #: ../chrome/oneteam/content/console.xul:66
 msgid "Chat"
