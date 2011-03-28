@@ -170,8 +170,12 @@ sub _generate_components_manifest {
     print $fh "category   profile-after-change OneTeamLoader \@oneteam.im/loader;1\n";
     print $fh "interfaces components/oneteam.xpt\n\n";
 
+    my %skip;
+    @skip{$self->_platform_files_to_skip()} = ();
+
     for (keys %{$self->{platform_components}}) {
         my $path = $self->{platform_components}->{$_};
+        next if exists $skip{$path};
         print $fh "binary-component $path ABI=$_\n";
     }
 }
