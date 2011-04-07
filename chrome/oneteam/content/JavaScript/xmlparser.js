@@ -241,6 +241,7 @@ OTXMLParser.prototype = {
                     data = this.convertToUnicode(data, --i);
                     i = 0;
                     len = data.length;
+                    this.handler.startDocument();
                     this.state = 12;
                 }
                 break;
