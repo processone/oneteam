@@ -201,6 +201,7 @@ sub _create_mar_part {
 package OneTeam::Builder::Filter::Saver::XulApp::Flat;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy;
+use OneTeam::Utils;
 
 our @ISA;
 push @ISA, 'OneTeam::Builder::Filter::Saver::XulApp';
