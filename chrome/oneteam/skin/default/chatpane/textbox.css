@@ -82,3 +82,19 @@ toolbar[type="chatpane-commands"] {
 #spellingButton[disable="true"] {
   list-style-image: url(imgs/spellcheck-disabled.png);
 }
+
+/*Added by FX*/
+#inputBoxStack[type="editMode"] {
+  border: solid 2px #7ea1dc;
+  margin: -2px;
+}
+#editButton[type="cancel"] {
+  list-style-image: url(imgs/edit-enabled.png);
+}
+#editButton[type="edit"] {
+  list-style-image: url(imgs/edit-disabled.png);
+}
+#editButton[type="disabled"] {
+  list-style-image: url(imgs/edit-black-white.png);
+}
+/*/Added by FX*/
