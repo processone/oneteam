@@ -1,5 +1,5 @@
 var EXPORTED_SYMBOLS = ["tooltip", "removeTooltip", "highlightDiff",
-                        "innerHTML", "displayEditButton"];
+                        "displayEditButton"];
 
 
 function tooltip(htmlNode, xulNode, text) {
@@ -54,10 +54,10 @@ function highlightDiff (node1, node2) {
   // merges the content of span.edit into the parentNode, and remove span.edit
     var iterator = document.createNodeIterator(node, 1, {
         acceptNode: function(node) {
-          return /span/i.test(node.tagName) && node.className == "edit" ? 1 : 0;
+          return node.tagName.toUpperCase() == "SPAN" && node.className == "edit" ? 1 : 0;
         }
     }, true);
-    while (n = iterator.nextNode()) {
+    while (var n = iterator.nextNode()) {
       for (var i = 0; i < n.childNodes.length; i++)
         n.parentNode.insertBefore(n.childNodes[i], n);
       n.nodeValue = ""; // unexpectedly, n.parentNode.removeChild(n) doesn't work properly
@@ -71,7 +71,7 @@ function highlightDiff (node1, node2) {
     var iterator = document.createNodeIterator(node, 4, {
         acceptNode: function() {return 1;}
     }, true);
-    while (n = iterator.nextNode()) {
+    while (var n = iterator.nextNode()) {
       res = res.concat(n.textContent.split(pattern));
     }
     return res;
@@ -79,6 +79,7 @@ function highlightDiff (node1, node2) {
 
   function _diff (a1, a2) {
     var memo = []; // 2-dimensions tab to memoize results of lcs
+
     function lcs(x, y) {
       /* 0 <= x <= a1.length, 0 <= y <= a2.length
        * find out the longest common subsequence between a1.slice(0, x) and a2.slice(0, y)
@@ -93,9 +94,9 @@ function highlightDiff (node1, node2) {
         memo[x] = [];
       if (memo[x][y] == undefined) {
         if (x == 0)
-          memo[x][y] = { b1: "", b2: zero(y), w: 0 }
+          memo[x][y] = { b1: "", b2: (0).toFixed(y).substr(2), w: 0 }
         else if (y == 0)
-          memo[x][y] = { b1: zero(x), b2: "", w: 0 }
+          memo[x][y] = { b1: (0).toFixed(x).substr(2), b2: "", w: 0 }
         else if (a1[x-1] == a2[y-1]) {
           var m = lcs(x-1, y-1);
           memo[x][y] = { b1: m.b1 + "1", b2: m.b2 + "1", w:  m.w  + 1 };
@@ -110,16 +111,6 @@ function highlightDiff (node1, node2) {
       return memo[x][y];
     }
     
-    // return a string of length n containing only 0
-    var zeroMemo = ["", "0", "00", "000", "0000", "00000", "000000", "0000000"];
-    function zero(n) {
-      if (zeroMemo[n] == undefined) {
-        var z = zero(n >> 1);
-        zeroMemo[n] = z + z + (n & 1 ? "0" : "");
-      }
-      return zeroMemo[n];
-    }
-
     return lcs(a1.length, a2.length);
   }
 
@@ -130,7 +121,7 @@ function highlightDiff (node1, node2) {
         acceptNode: function() {return 1;}
     }, true);
     var i = 0, j, k;
-    while (n = iterator.nextNode()) {
+    while (var n = iterator.nextNode()) {
       var text = n.textContent.split(pattern);
       j = 0;
       k = 0;
@@ -162,27 +153,6 @@ function highlightDiff (node1, node2) {
   var diff = _diff(_split(node1), _split(node2));
   _unsplit(node1, diff.b1);
   _unsplit(node2, diff.b2);
-}
-
-function innerHTML(node, shift) {
-  if (shift == undefined) shift = "";
-  var res = "";
-  if (node.nodeType == 3) {
-    if (node.textContent)
-      res += shift + node.textContent + "\n";
-  } else if (node.nodeType == 1) {
-    var tag = node.tagName;
-    res += shift + "<" + tag;
-    if (node.className) res += ' class="' + node.className + '"';
-    if (node.childNodes && node.childNodes.length > 1) {
-      res += ">\n"
-      for (var i = 0; i < node.childNodes.length; i++) {
-        res += innerHTML(node.childNodes[i], shift + "  ");
-      }
-      res += shift + "</" + tag + ">\n";
-    } else { res += ">" + node.textContent + "</" + tag + ">\n"; }
-  }
-  return res;
 }
 
 

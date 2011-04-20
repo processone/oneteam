@@ -741,15 +741,17 @@
                 this._lastNickMessage[msg.nick] : null;
 
               if (lastMsg
-                  && (lastMsg.editCounter == undefined|| lastMsg.editCounter < 3) // Added by FX
-                  && (match = msg.text.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/)) &&
-              // [^\/]+ replaced with [^\/]* by FX in order to delete strings and whole messages
-                  (range = createRangeForSubstring(match[1], lastMsg[1].lastChild.lastChild)))
-              // a problem remains with createRangeForSubstring, when the first argument is 
-              // an empty string, and the second one an empty node (i.e. containing no text). FX
+                && (lastMsg.editCounter == undefined|| lastMsg.editCounter < 3)
+                && (
+                  // old edit format (s/bad/good/) kept as a fallback
+                  (match = msg.text.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/))
+                  && (range = createRangeForSubstring(match[1], lastMsg[1].lastChild.lastChild))
+                ) || (
+                  // new edit format implementing the XEP proposal 'Last message Correction'
+                  msg.replaceMessageId && msg.replaceMessageId == lastMsg[0].messageId
+                )
+              )
               {
-
-                // Added by FX
                 var editedMsg = lastMsg[1];
                 var body = editedMsg.lastChild;
 
@@ -764,18 +766,21 @@
                 } else
                   lastMsg.editCounter++;
 
-                var old = body.lastChild;
-                var next = old.cloneNode(true);
+                var old = body.lastChild, next;
+                if (match) {
+                  next = old.cloneNode(true);
+                  range = createRangeForSubstring(match[1], next);
+                  range.deleteContents();
+                  var e = doc.createTextNode(match[2]);
+                  range.insertNode(e);
+                  range.detach();
+                } else {
+                  next = doc.createElement("div");
+                  next.innerHTML = msg.formatedHtml || "<br/>";
+                  this._lastNickMessage[msg.nick][0] = msg;
+                }
                 next.time = readableTimestamp(msg.time);
                 body.editVersions.push(next);
-
-                // Inspired from Pawel's code
-                range = createRangeForSubstring(match[1], next);
-                range.deleteContents();
-                var e = doc.createTextNode(match[2]);
-                range.insertNode(e);
-                range.detach();
-                // /Inspired from Pawel's code
 
                 // finds out the differences between the initial message and the edited one,
                 // word by word, and put the different strings into span.edit
@@ -785,7 +790,6 @@
                 body.appendChild(next);
                 body.displayEditButton.reload();
                 
-                // Inspired from Pawel's code
                 if (!msg.archived) {
                   if (!this.visible && !this._visibleAnimations)
                     this._visibleAnimations = [];
@@ -805,32 +809,6 @@
                       this._visibleAnimations.push(animation);
                   }
                 }
-                // /Inspired from Pawel's code
-
-                // /Added by FX
-
-                /* Original Pawel's code
-                var e = lastMsg[1].ownerDocument.createElement("span");
-                range.deleteContents();
-                e.textContent = match[2];
-                range.insertNode(e);
-                range.detach();
-
-                if (msg.archived)
-                  continue;
-
-                var animation = Animator.animateStyle({
-                  element: e,
-                  style: "background",
-                  stopValue: "",
-                  paused: !this.visible
-                }, "#fd0", "parent.transparent");
-
-                if (!this.visible)
-                  if (this._visibleAnimations)
-                    this._visibleAnimations.push(animation)
-                  else
-                    this._visibleAnimations = [animation];*/
 
                 continue;
               }
@@ -918,23 +896,18 @@
             e = doc.createElement("span");
             e.setAttribute("class", "body");
 
-            // Added by FX
             // display the 'edit' button on the right of the message
-            if(msg.ofMine)
+            if (msg.isMine) {
               this._removeEditButton();
-            if (msg.canBeEdited) {
               im = doc.createElement("div");
               im.setAttribute("id", "editButton");
-              im.addEventListener("click", function(that) {
-                return function() {
-                  that.parentNode.parentNode.parentNode.parentNode.switchEditMode();
-                }
-              }(this), true);
+              im.addEventListener("click", new Callback (function() {
+                this.parentNode.parentNode.parentNode.parentNode.switchEditMode();
+              }, this), true);
               tooltip(im, this._output, 'Edit last message');
               this._editButton = im;
               e.appendChild(im);
             }
-            // /Added by FX
 
             var e2 = doc.createElement("div");
             e.appendChild(e2);
@@ -975,6 +948,8 @@
 
                 im.setAttribute("class", "message-action thread-marker" +
                                 (msg.xMessageId ? " thread-marker-reply" : ""));
+                tooltip(im, this._output,
+                  xReplyTo ? "Refer to this conversation" : "Refer to this message");
 
                 var handler = {
                   _this: this,
@@ -1021,12 +996,11 @@
         ]]></body>
       </method>
 
-      <!--Added by FX-->
       <method name="syncEditMode">
         <body><![CDATA[
           if (this._editButton) {
-            var chatpane = this.parentNode.parentNode.parentNode.parentNode,
-                messageDiv = this._editButton.parentNode.parentNode;
+            var chatpane = this.parentNode.parentNode.parentNode.parentNode;
+            var messageDiv = this._editButton.parentNode.parentNode;
             if (!chatpane.editModeAvailable) {
               messageDiv.removeAttribute("editing");
               this._removeEditButton();
@@ -1056,7 +1030,6 @@
           }
         ]]></body>
       </method>
-      <!--/Added by FX-->
 
       <method name="editMessage">
         <parameter name="msgEl"/>
@@ -1466,7 +1439,7 @@
     </resources>
 
     <content>
-      <xul:stack id="inputBoxStack" flex="1"><!--Modified by FX: class replaced by id-->
+      <xul:stack id="inputBoxStack" flex="1">
         <xul:hbox>
           <xul:spacer flex="1"/>
           <xul:label id="_counter" value="0"/>
@@ -1557,11 +1530,9 @@
         ]]></setter>
       </property>
 
-      <!--Added by FX-->
       <property name="lastMessage"
         onget = "return this._history.length ? this._history[this._history.length - 1] : null;"
         readonly="true"/>
-      <!--/Added by FX-->
 
       <constructor><![CDATA[
         var me = this;
@@ -1581,7 +1552,6 @@
         this._historyPosition = 0;
       ]]></constructor>
 
-      <!--Added by FX-->
       <method name="syncEditMode">
         <body><![CDATA[
           if (this.parentNode.parentNode.parentNode.editModeEnabled) {
@@ -1605,7 +1575,6 @@
           }
         ]]></body>
       </method>
-      <!--Added by FX-->
 
       <method name="_disableInput">
         <body><![CDATA[
@@ -1713,10 +1682,8 @@
               }
             }
 
-            //Added by FX
             if (String.fromCharCode(event.charCode) == 'e' && (event.ctrlKey || event.metaKey))
                 me.parentNode.parentNode.parentNode.switchEditMode();
-            // /Added by FX
 
             me._onUserType();
             return true;
@@ -1864,7 +1831,7 @@
 
           var replayEvent = this._input.contentDocument.createEvent("KeyboardEvent");
           replayEvent.initKeyEvent("keypress", event.bubbles, event.cancelable,
-                                textContentinput.contentWindow, event.ctrlKey,
+                                   this._input.contentWindow, event.ctrlKey,
                                    altKey, event.shiftKey, event.metaKey,
                                    event.keyCode, event.charCode);
 
@@ -1918,11 +1885,10 @@
           if (this._disabled)
             return false;
 
-          // Added by FX
-          var body = this._input.contentDocument.body,
-              chatpane = this.parentNode.parentNode.parentNode;
-          var editCounterBackup = chatpane.editCounter,
-              editModeAvailableBackup = chatpane.editModeAvailable;
+          var body = this._input.contentDocument.body;
+          var chatpane = this.parentNode.parentNode.parentNode;
+          var editCounterBackup = chatpane.editCounter;
+          var editModeAvailableBackup = chatpane.editModeAvailable;
 
           chatpane.editCounter = chatpane.editModeEnabled ? chatpane.editCounter + 1 : 0 ;
           /* editModeAvailable must be defined before the sending of the message,
@@ -1931,17 +1897,15 @@
           chatpane.editModeAvailable =
             body.innerHTML.replace(/<br\/?>$/gi, '') == body.textContent;
           // disables the edition if the last message contents formating
-          // /Added by FX
 
-          var value = this._send(withEnter);
+          var sentMessage = this._send(withEnter),
+            value = sentMessage.html;
 
           if (value == null) {
-            // Added by FX
             // the sending of the message failed !
             // we have to reset editCounter and editModeAvailable to their previous values
             chatpane.editCounter = editCounterBackup;
             chatpane.editModeAvailable = editModeAvailableBackup;
-            // /Added by FX
             return false;
           }
 
@@ -1949,26 +1913,23 @@
             if (!this._history.length || this._history[this._history.length-1] != value)
               this._history.push(value);
             this._historyPosition = this._history.length;
+            this.lastMessageId = sentMessage.messageId;
           }
 
           this.clear();
-          // Added by FX
           chatpane.editModeEnabled = false;
-          // /Added by FX
           this.focus();
 
           return true;
         ]]></body>
       </method>
 
-      <!--Comments Added by FX: this method is never called
-      <method name="_send">
+      <!--method name="_send">
         <parameter name="withEnter"/>
         <body><![CDATA[
           return withEnter ? null : this._input.value;
         ]]></body>
-      </method>
-      -->
+      </method-->
 
       <method name="_blink">
         <body><![CDATA[
@@ -2136,12 +2097,10 @@
       </xul:toolbarbutton>
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
-      <!--added by FX-->
       <xul:menuseparator/>
       <xul:toolbarbutton id="editButton" type="disabled" tooltiptext="_('Edit Last Message')"
                          oncommand="if (this.type != 'disabled')
                            this.parentNode.parentNode.parentNode.switchEditMode()"/>
-      <!--/added by FX-->
     </content>
 
     <implementation>
@@ -2198,7 +2157,6 @@
         recoverSetters(this);
       ]]></constructor>
 
-      <!--added by FX-->
       <method name="syncEditMode">
         <body><![CDATA[
           var button = document.getAnonymousElementByAttribute(this, "id", "editButton");
@@ -2209,7 +2167,6 @@
             button.type == "cancel" ? "_('Cancel Edition')" : "_('Edit Last Message')");
         ]]></body>
       </method>
-      <!--/added by FX-->
 
       <method name="_updateJingleState">
         <body><![CDATA[
@@ -2353,7 +2310,6 @@
         ]]></setter>
       </property>
 
-      <!--added by FX-->
       <property name="editModeAvailable" onget="return this._editModeAvailable">
         <setter><![CDATA[
           this._editModeAvailable = this.editCounter < 3 ? val : false;
@@ -2370,14 +2326,11 @@
           this._output.syncEditMode();
         ]]></setter>
       </property>
-      <!--/added by FX-->
 
       <constructor><![CDATA[
-        /*added by FX*/
         this.editCounter = 0;
         this._editModeAvailable = false;
         this._editModeEnabled = false;
-        /*/added by FX*/
         this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 
         this._input = document.getAnonymousElementByAttribute(this, "id", "input");
@@ -2469,13 +2422,11 @@
         }, 0, this);
       ]]></constructor>
 
-      <!--Added by FX-->
       <method name="switchEditMode">
         <body><![CDATA[
           this.editModeEnabled = this.editModeAvailable ? !this.editModeEnabled : false;
         ]]></body>
       </method>
-      <!--/Added by FX-->
 
       <method name="_attachFocusHandler">
         <parameter name="_this"/>
@@ -2686,6 +2637,8 @@
 
           if (~text.search(/\S/)) {
             if (!this.completionEngine || !this.completionEngine.execCommand(text)) {
+
+              // the following lines are a fallback for the thread feature
               var idx = text.indexOf(":");
               var nick = idx > 0 ? text.substr(0, idx) : "";
 
@@ -2694,6 +2647,7 @@
 
               if (msgId && !this._input.thread)
                 this._output._setInputReplyMsgId(msgId);
+              // end of the fallback
 
               var ev = document.createEvent("Events");
               ev.initEvent("chat-send", true, false);
@@ -2714,26 +2668,14 @@
               if (this._input.thread)
                 msg.xReplyTo = [this._input.msgId];
 
-              /*Added by FX*/
-              if (this.editModeEnabled) {
-                this._input.value = ("s/"+this._input.lastMessage+"/"+body.textContent+"/");
-                body = this._input.value;
-                var realMsg = new Message(null, body, myResource,
-                                    this._model.contact instanceof Conference ? 1 : 3,
-                                    null, this._model);
-                if (this._input.thread)
-                  msg.xReplyTo = [this._input.msgId];
-                this._model.sendMessage(realMsg);
+              msg.isMine = true;
+              msg.messageId = generateRandomName(12);
 
-              } else {
-                msg.ofMine = true;
-                if (this.editModeAvailable)
-                  msg.canBeEdited = true;
-              /*/Added by FX*/
-                this._model.sendMessage(msg);
-              }
+              if (this.editModeEnabled)
+                msg.replaceMessageId = this._input.lastMessageId;
 
-              return msg.html;
+              this._model.sendMessage(msg);
+              return msg;
             }
           }
           return "";

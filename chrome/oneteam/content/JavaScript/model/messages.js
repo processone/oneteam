@@ -608,6 +608,14 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
             [this.html, this.text, this.sanitizedHtml] =
                 this._processDOM(html.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0],
                                  false, "");
+
+        // Added by FX
+        if (body.getNode().hasAttribute("id")) 
+          this.messageId = body.getNode().getAttribute("id");
+        var replaceNode = body.getNode().getElementsByTagNameNS("urn:message:edit", "replace")[0];
+        if (replaceNode)
+          this.replaceMessageId = replaceNode.getAttribute("id");
+        // /Added by FX
     } else {
         if (body_html instanceof Node)
             [this.html, this.text, this.sanitizedHtml] = this._processDOM(body_html, false, "");
@@ -812,6 +820,15 @@ _DECL_(Message).prototype =
 
             pkt.appendNode("x", attrs, childrens);
         }
+
+        // Added by FX
+        pkt.getNode().setAttribute("id", this.messageId);
+        if (this.replaceMessageId)
+          pkt.appendNode("replace", {
+            xmlns: "urn:message:edit",
+            id: this.replaceMessageId
+          });
+        // /Added by FX
     },
 
     /*   tag name       can have childrens              keep only if has childrens
