@@ -1029,7 +1029,7 @@
         <body><![CDATA[
           if (this._input.lastMessage) {
             var body = this._input.lastMessage.msgEl.lastChild;
-            if (!this._editButton || body != this._editButton.parentNode()) {
+            if (!this._editButton || body != this._editButton.parentNode) {
               this._removeEditButton();
               var doc = this._output.contentDocument;
               var im = doc.createElement("div");
