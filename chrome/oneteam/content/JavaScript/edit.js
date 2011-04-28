@@ -1,5 +1,4 @@
-var EXPORTED_SYMBOLS = ["tooltip", "removeTooltip", "highlightDiff",
-                        "displayEditButton"];
+var EXPORTED_SYMBOLS = ["tooltip", "removeTooltip", "displayEditButton"];
 
 
 function tooltip(htmlNode, xulNode, text) {
@@ -54,13 +53,15 @@ function highlightDiff (node1, node2) {
   // merges the content of span.edit into the parentNode, and remove span.edit
     var iterator = document.createNodeIterator(node, 1, {
         acceptNode: function(node) {
-          return node.tagName.toUpperCase() == "SPAN" && node.className == "edit" ? 1 : 0;
+          return (node.tagName.toUpperCase() == "SPAN") && (node.className == "edit") ? 1 : 0;
         }
     }, true);
-    while (var n = iterator.nextNode()) {
+    var n;
+    while (n = iterator.nextNode()) {
       for (var i = 0; i < n.childNodes.length; i++)
         n.parentNode.insertBefore(n.childNodes[i], n);
-      n.nodeValue = ""; // unexpectedly, n.parentNode.removeChild(n) doesn't work properly
+      //n.nodeValue = ""; // unexpectedly, n.parentNode.removeChild(n) doesn't work properly
+      n.parentNode.removeChild(n);
     }
     node.normalize();
   }
@@ -71,7 +72,8 @@ function highlightDiff (node1, node2) {
     var iterator = document.createNodeIterator(node, 4, {
         acceptNode: function() {return 1;}
     }, true);
-    while (var n = iterator.nextNode()) {
+    var n;
+    while (n = iterator.nextNode()) {
       res = res.concat(n.textContent.split(pattern));
     }
     return res;
@@ -120,8 +122,8 @@ function highlightDiff (node1, node2) {
     var iterator = document.createNodeIterator(node, 4, {
         acceptNode: function() {return 1;}
     }, true);
-    var i = 0, j, k;
-    while (var n = iterator.nextNode()) {
+    var i = 0, j, k, n;
+    while (n = iterator.nextNode()) {
       var text = n.textContent.split(pattern);
       j = 0;
       k = 0;
@@ -156,8 +158,8 @@ function highlightDiff (node1, node2) {
 }
 
 
-function displayEditButton(body, xulNode) {
-  // xulNode is used only to affect the tooltips to a xul element
+function displayEditButton(body, originalMessage, xulNode) {
+  // xulNode is used only to attach the tooltips to a xul element
 
   function mytooltip(htmlNode, text) {
     tooltip(htmlNode, xulNode, text);
@@ -187,19 +189,19 @@ function displayEditButton(body, xulNode) {
     body.removeAttribute("displayEdit");
   }, true);
 
-  var i; // index in the array body.editVersions of the displayed version
+  var currentMsg = originalMessage;
+  var nbVersions;
 
   function _updateTooltip() {
-    var n = body.editVersions.length - 1;
     mytooltip(tooltipDiv,
-      n == 1 ? "This message has been edited once" :
-      n == 2 ? "This message has been edited twice" :
-               "This message has been edited " + n + " times"
+      nbVersions == 1 ? "This message has been edited once" :
+      nbVersions == 2 ? "This message has been edited twice" :
+                        "This message has been edited " + nbVersions + " times"
     );
   }
 
-  function _displayAnother(j) {
-    // display the jth version of the message instead of the ith
+  function _displayOtherVersion(msg) {
+    // display the version in msg of the message instead of that in currentMsg
 
     // the handles with doc.body.scrollTop just aims to keep the bottom of doc.body
     // at the same level, even if jth version's height <> ith version's height
@@ -211,47 +213,42 @@ function displayEditButton(body, xulNode) {
     var scrollHeightEnlarger = doc.createElement("div");
     scrollHeightEnlarger.setAttribute("style", "height: " + messageHeight + "px");
 
-    highlightDiff(body.editVersions[j], body.editVersions[i]);
+    highlightDiff(currentMsg.contentNode, msg.contentNode);
 
     // scrollHeightEnlarger is appended after highlightDiff, since highlightDiff may
-    // take time: the comlexity is O(n²) where n = number of words
+    // take time: the complexity is O(n²) where n = number of words
     doc.body.appendChild(scrollHeightEnlarger);
-    body.removeChild(body.editVersions[i]);
-    body.appendChild(body.editVersions[j]);
+    body.removeChild(currentMsg.contentNode);
+    body.appendChild(msg.contentNode);
 
     doc.body.scrollTop = doc.body.scrollHeight + scrollShift;
     doc.body.removeChild(scrollHeightEnlarger);
 
-    i = j;
+    currentMsg = msg;
     _updateButtons();
   }
 
-
   function _displayPrevious() {
-    _displayAnother(i-1);
+    _displayOtherVersion(currentMsg.previous);
   }
   function _displayNext() {
-    _displayAnother(i+1);
+    _displayOtherVersion(currentMsg.editMessage);
   }
 
   function _updateButtons() {
-    if (i > 0) {
+    if (currentMsg.editCounter && currentMsg.editCounter > 0) {
       previous.removeAttribute("disabled");
       previous.addEventListener("click", _displayPrevious, true);
-      mytooltip(previous,
-        i == 1 ? "See First Version" : ("See Previous Version" + ", " + body.editVersions[i-1].time)
-      );
+      mytooltip(previous, "See Previous Version, " + readableTimestamp(currentMsg.previous.time));
     } else {
       previous.setAttribute("disabled", true);
       previous.removeEventListener("click", _displayPrevious, true);
       mytooltip(previous, "This is the first version of the message");
     }
-    if (i < body.editVersions.length - 1) {
+    if (!currentMsg.editCounter || currentMsg.editCounter < nbVersions) {
       next.removeAttribute("disabled");
       next.addEventListener("click", _displayNext, true);
-      mytooltip(next,
-        ( i == body.editVersions.length - 2 ? "See Last Version" : "See Next Version" )
-        + ", " + body.editVersions[i+1].time);
+      mytooltip(next, "See Next Version, " + readableTimestamp(currentMsg.editMessage.time));
     } else {
       next.setAttribute("disabled", true);
       next.removeEventListener("click", _displayNext, true);
@@ -259,18 +256,23 @@ function displayEditButton(body, xulNode) {
     }
   }
 
-  button.reload = function() {
+  button.reload = function(msg) {
+    if (currentMsg == msg)
+      return;
+    nbVersions = msg.editCounter;
     if (tooltipDiv)
       _updateTooltip();
-    i = body.editVersions.length - 1;
+    _displayOtherVersion(msg);
     _updateButtons();
   }
 
   button.setTooltipDiv = function() {
-    tooltipDiv = doc.createElement("div");
-    tooltipDiv.setAttribute("class", "tooltipDiv");
+    if (!tooltipDiv) {
+      tooltipDiv = doc.createElement("div");
+      tooltipDiv.setAttribute("class", "tooltipDiv");
+      button.appendChild(tooltipDiv);
+    }
     _updateTooltip();
-    button.appendChild(tooltipDiv);
   }
 
   return button;

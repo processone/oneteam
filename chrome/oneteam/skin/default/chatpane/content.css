@@ -346,24 +346,20 @@ div.message:after {
   width: 14px;
   height: 14px;
   float: right;
-  background: url(imgs/edit-black-white.png) center center no-repeat;
+  background: url(imgs/edit-unavailable.png) center center no-repeat;
 }
 
 /* 2px blue border around message being edited */
 .message[editing] {
-    -moz-border-top-colors: #7ea1dc;
-    -moz-border-bottom-colors: #7ea1dc;
+    -moz-border-top-colors: #c1c1c1 #7ea1dc #7ea1dc;
+    -moz-border-bottom-colors: #c1c1c1 #7ea1dc #7ea1dc;
     -moz-border-left-colors: #c1c1c1 #7ea1dc #7ea1dc;
     -moz-border-right-colors: #c1c1c1 #7ea1dc #7ea1dc;
+}
+.message[editing]:not([starts-chunk]) {
+    -moz-border-top-colors: #7ea1dc;
     border-top-width: 2px;
-    border-bottom-width: 2px;
-}
-.message[editing] + .message:not([starts-chunk]) {
-    border-top-width: 0;
-}
-.message[editing][starts-chunk] {
-    border-top-width: 3px;
-    -moz-border-top-colors: #c1c1c1 #7ea1dc #7ea1dc;
+    padding-top: 0;
 }
 
 /* arrow in the 'send' button replaced with a pencil in edit mode */
@@ -380,7 +376,6 @@ content: "";
     background: #b3ce00 url(imgs/edit-send.png) center center no-repeat;
     padding: 0px;
     width: 38px;
-/*  background-src: url(imgs/edit-send.png);*/
 }
 
 span.body {

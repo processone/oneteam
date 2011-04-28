@@ -731,255 +731,248 @@
         <parameter name="afterMsgEl"/>
         <body><![CDATA[
           var fragment = doc.createDocumentFragment();
+          //var chatpane = this.parentNode.parentNode.parentNode.parentNode;
 
           for (var i = 0; i < msgs.length; i++) {
-            var msg = msgs[i];
-            var startsChunk;
+            var msg = msgs[i].clone();
 
-            if (!afterMsg) {
-              var match, range, lastMsg = msg.nick in this._lastNickMessage ?
-                this._lastNickMessage[msg.nick] : null;
-
-              if (lastMsg
-                && (lastMsg.editCounter == undefined|| lastMsg.editCounter < 3)
-                && (
-                  // old edit format (s/bad/good/) kept as a fallback
-                  (match = msg.text.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/))
-                  && (range = createRangeForSubstring(match[1], lastMsg[1].lastChild.lastChild))
-                ) || (
-                  // new edit format implementing the XEP proposal 'Last message Correction'
-                  msg.replaceMessageId && msg.replaceMessageId == lastMsg[0].messageId
-                )
-              )
-              {
-                var editedMsg = lastMsg[1];
-                var body = editedMsg.lastChild;
-
-                if (!lastMsg.editCounter) {
-                  lastMsg.editCounter = 1;
-                  body.editVersions = [];
-                  body.editVersions.push(body.lastChild);
-                  body.displayEditButton = displayEditButton(body, this._output);
-                  if (!this._editButton || this._editButton.parentNode != body)
-                    body.displayEditButton.setTooltipDiv();
-                  body.insertBefore(body.displayEditButton, body.childNodes[1]);
-                } else
-                  lastMsg.editCounter++;
-
-                var old = body.lastChild, next;
-                if (match) {
-                  next = old.cloneNode(true);
-                  range = createRangeForSubstring(match[1], next);
-                  range.deleteContents();
-                  var e = doc.createTextNode(match[2]);
-                  range.insertNode(e);
-                  range.detach();
+            var lastMsg = msg.nick in this._lastNickMessage ? this._lastNickMessage[msg.nick] : null;
+            var match, animRequired = false;
+            
+            if (!afterMsg
+                && (match = msg.text.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/))
+                && lastMsg && lastMsg.text.indexOf(match[1]) != -1
+            ) {
+              msg.isOldFormatEditMessage = true;
+              msg.text = lastMsg.text.replace(match[1], match[2]);
+              msg.html = lastMsg.html.replace(match[1], match[2]);
+              /*if (msg.isMine)
+                chatpane.editModeAvailable = false;*/
+            }
+            
+            if (!afterMsg && (msg.isEditMessage || msg.isOldFormatEditMessage)) {
+              if ((msg.replaceMessageId == lastMsg.messageId) || msg.isOldFormatEditMessage) {
+                msg.editCounter = lastMsg.editCounter ? lastMsg.editCounter+1 : 1;
+            
+                if (msg.editCounter <= 3) {
+                  lastMsg.editMessage = msg;
+                  animRequired = !msg.archived;
+                  msg = lastMsg;
                 } else {
-                  next = doc.createElement("div");
-                  next.innerHTML = msg.formatedHtml || "<br/>";
-                  this._lastNickMessage[msg.nick][0] = msg;
+                  msg.isOriginalMessage = true;
+                  msg.editCounter = 0;
+                  //the 4th edition of a message is displayed as a normal message,
+                  // for compatibility with other clients which allow more than 3 edits
                 }
-                next.time = readableTimestamp(msg.time);
-                body.editVersions.push(next);
-
-                // finds out the differences between the initial message and the edited one,
-                // word by word, and put the different strings into span.edit
-                highlightDiff(old, next);
-
-                body.removeChild(old);
-                body.appendChild(next);
-                body.displayEditButton.reload();
-                
-                if (!msg.archived) {
-                  if (!this.visible && !this._visibleAnimations)
-                    this._visibleAnimations = [];
-                  var iterator = doc.createNodeIterator(body.lastChild, 1, {
-                    acceptNode: function(node) {
-                      return /span/i.test(node.tagName) && node.className == "edit" ? 1 : 0;
-                    }
-                  }, true);
-                  while (n = iterator.nextNode()) {
-                    var animation = Animator.animateStyle({
-                        element: n,
-                        style: "background",
-                        stopValue: "",
-                        paused: !this.visible
-                      }, "#fd0", "parent.transparent");
-                    if (!this.visible)
-                      this._visibleAnimations.push(animation);
-                  }
-                }
-
-                continue;
+              } // an invalid editMessage (i.e. with invalid replaceMessageId) is ignored
+            } else
+              msg.isOriginalMessage = true;
+            
+            if (msg.isOriginalMessage && !msg.msgEl) {
+              var msgEl = doc.createElement("div");
+              msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
+              msgEl.setAttribute("not-seen", "true");
+  
+              if (msg.isSystemMessage || !beforeMsg ||
+                  beforeMsg.isSystemMessage ||
+                  beforeMsg.contactId != msg.contactId ||
+                  msg.dontGroup || beforeMsg.dontGroup ||
+                  msg.time - beforeMsg.time > 5*60*1000 ||
+                  (beforeMsg.offline && !msg.offline))
+              {
+                if (beforeMsgEl)
+                  beforeMsgEl.setAttribute("ends-chunk", "true");
+                msgEl.setAttribute("starts-chunk", "true");
               }
-            }
-
-            var msgEl = doc.createElement("div");
-            msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
-            msgEl.setAttribute("not-seen", "true");
-
-            fragment.appendChild(msgEl);
-
-            if (!afterMsg && !msg.isSystemMessage)
-              this._lastNickMessage[msg.nick] = [msg, msgEl];
-
-            if (msg.isSystemMessage || !beforeMsg ||
-                beforeMsg.isSystemMessage ||
-                beforeMsg.contactId != msg.contactId ||
-                msg.dontGroup || beforeMsg.dontGroup ||
-                msg.time - beforeMsg.time > 5*60*1000 ||
-                (beforeMsg.offline && !msg.offline))
-            {
-              if (beforeMsgEl)
-                beforeMsgEl.setAttribute("ends-chunk", "true");
-              msgEl.setAttribute("starts-chunk", "true");
-            }
-
-            if (msg.contact && !msg.participants) {
-              var e = doc.createElement("img");
-              e.setAttribute("class", "avatar")
-              e.setAttribute("src", msg.contact.avatar ||
-                             "resource://oneteam-skin/avatar/imgs/default-avatar.png");
-              e.setAttribute("width", "18")
-              msgEl.appendChild(e);
-            }
-
-            var h = doc.createElement("span");
-            h.setAttribute("class", "header");
-            msgEl.appendChild(h);
-
-            if ("onMsgClick" in this.model)
-              msgEl.setAttribute("onclick", "var ev = document.createEvent('Events');"+
-                            "ev.initEvent('msgclick', true, false);"+
-                            "this.dispatchEvent(ev)");
-
-            var e = doc.createElement("span");
-            e.setAttribute("class", "to-copy-paste");
-            e.appendChild(doc.createTextNode("["));
-            h.appendChild(e);
-
-            e = doc.createElement("span");
-            e.setAttribute("class", "date");
-            e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
-            h.appendChild(e);
-
-            e = doc.createElement("span");
-            e.setAttribute("class", "to-copy-paste");
-            e.appendChild(doc.createTextNode("] "));
-            h.appendChild(e);
-
-            if (!msg.isSystemMessage && !msg.participants) {
-              e = doc.createElement("span");
-              e.setAttribute("class", "author");
-              e.appendChild(doc.createTextNode(msg.nick));
+  
+              if (msg.contact && !msg.participants) {
+                var e = doc.createElement("img");
+                e.setAttribute("class", "avatar")
+                e.setAttribute("src", msg.contact.avatar ||
+                               "resource://oneteam-skin/avatar/imgs/default-avatar.png");
+                e.setAttribute("width", "18")
+                msgEl.appendChild(e);
+              }
+  
+              var h = doc.createElement("span");
+              h.setAttribute("class", "header");
+              msgEl.appendChild(h);
+  
+              if ("onMsgClick" in this.model)
+                msgEl.setAttribute("onclick", "var ev = document.createEvent('Events');"+
+                              "ev.initEvent('msgclick', true, false);"+
+                              "this.dispatchEvent(ev)");
+  
+              var e = doc.createElement("span");
+              e.setAttribute("class", "to-copy-paste");
+              e.appendChild(doc.createTextNode("["));
               h.appendChild(e);
-
+  
+              e = doc.createElement("span");
+              e.setAttribute("class", "date");
+              e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
+              h.appendChild(e);
+  
               e = doc.createElement("span");
               e.setAttribute("class", "to-copy-paste");
-              e.appendChild(doc.createTextNode(": "));
+              e.appendChild(doc.createTextNode("] "));
               h.appendChild(e);
-            }
-            if (msg.participants) {
-              h.setAttribute("withParticipants", "true")
-              for (var j = 0; j < msg.participants.length; j++) {
-                var e = doc.createElement("img");
-                e.setAttribute("src", msg.participants[j].avatar ||
-                               "resource://oneteam-skin/avatar/imgs/default-avatar.png");
-                e.setAttribute("class", "participant");
-                e.setAttribute("title", msg.participants[j].visibleName);
-                e.setAttribute("width", "18");
-                e.contact = msg.participants[j];
+  
+              if (!msg.isSystemMessage && !msg.participants) {
+                e = doc.createElement("span");
+                e.setAttribute("class", "author");
+                e.appendChild(doc.createTextNode(msg.nick));
+                h.appendChild(e);
+  
+                e = doc.createElement("span");
+                e.setAttribute("class", "to-copy-paste");
+                e.appendChild(doc.createTextNode(": "));
                 h.appendChild(e);
               }
-            }
-
-            e = doc.createElement("span");
-            e.setAttribute("class", "body");
-
-            // display the 'edit' button on the right of the message
-            if (msg.isMine) {
-              this._removeEditButton();
-              im = doc.createElement("div");
-              im.setAttribute("id", "editButton");
-              im.addEventListener("click", new Callback (function() {
-                this.parentNode.parentNode.parentNode.parentNode.switchEditMode();
-              }, this), true);
-              tooltip(im, this._output, 'Edit last message');
-              this._editButton = im;
-              e.appendChild(im);
-            }
-
-            var e2 = doc.createElement("div");
-            e.appendChild(e2);
-            e2.innerHTML = msg.formatedHtml || "<br/>";
-
-            msg.addRepresentation(msgEl);
-
-            msg.markAsSeen();
-            msgEl.appendChild(e);
-
-            beforeMsg = msg;
-            beforeMsgEl = msgEl;
-
-            this._msgList.push(msg);
-            this._msgElList.push(msgEl);
-
-            if (this.model.allowsModifications) {
-              var im = doc.createElement("div");
-
-              im.setAttribute("class", "message-action edit-message");
-              e.insertBefore(im, e.firstChild);
-            }
-
-            if (!msg.isSystemMessage) {
-              var xReplyTo = "xReplyTo" in msg ? msg.xReplyTo[0] : null;
-              var xMessageId = "xMessageId" in msg ? msg.xMessageId : null;
-
-              if (xMessageId) {
-                if (!afterMsg)
-                  this._lastNickMessageId[msg.nick] = xMessageId;
-
-                msgEl.twitterNick = msg.xTwitterNick;
-                msgEl.msgId = xMessageId;
+              if (msg.participants) {
+                h.setAttribute("withParticipants", "true")
+                for (var j = 0; j < msg.participants.length; j++) {
+                  var e = doc.createElement("img");
+                  e.setAttribute("src", msg.participants[j].avatar ||
+                                 "resource://oneteam-skin/avatar/imgs/default-avatar.png");
+                  e.setAttribute("class", "participant");
+                  e.setAttribute("title", msg.participants[j].visibleName);
+                  e.setAttribute("width", "18");
+                  e.contact = msg.participants[j];
+                  h.appendChild(e);
+                }
               }
-
-              if (xReplyTo || xMessageId) {
+  
+              e = doc.createElement("span");
+              e.setAttribute("class", "body");
+              msg.contentNode = doc.createElement("div");
+              msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
+              e.appendChild(msg.contentNode);
+  
+              msg.addRepresentation(msgEl);
+  
+              msg.markAsSeen();
+              msgEl.appendChild(e);
+  
+              beforeMsg = msg;
+              beforeMsgEl = msgEl;
+  
+              this._msgList.push(msg);
+              this._msgElList.push(msgEl);
+  
+              if (this.model.allowsModifications) {
                 var im = doc.createElement("div");
-
-                im.setAttribute("class", "message-action thread-marker" +
-                                (msg.xMessageId ? " thread-marker-reply" : ""));
-                tooltip(im, this._output,
-                  xReplyTo ? "Refer to this conversation" : "Refer to this message");
-
-                var handler = {
-                  _this: this,
-                  handleEvent: function(event) {
-                    if (event.target.getAttribute("in-thread") != "true")
-                      return;
-                    if (event.type == "mouseover") {
-                      if (!this._inside) {
-                        this._inside = true;
-                        this._this._onThreadMarkerOver(event.target);
+  
+                im.setAttribute("class", "message-action edit-message");
+                e.insertBefore(im, e.firstChild);
+              }
+  
+              if (!msg.isSystemMessage) {
+                var xReplyTo = "xReplyTo" in msg ? msg.xReplyTo[0] : null;
+                var xMessageId = "xMessageId" in msg ? msg.xMessageId : null;
+  
+                if (xMessageId) {
+                  if (!afterMsg)
+                    this._lastNickMessageId[msg.nick] = xMessageId;
+  
+                  msgEl.twitterNick = msg.xTwitterNick;
+                  msgEl.msgId = xMessageId;
+                }
+  
+                if (xReplyTo || xMessageId) {
+                  var im = doc.createElement("div");
+  
+                  im.setAttribute("class", "message-action thread-marker" +
+                                  (msg.xMessageId ? " thread-marker-reply" : ""));
+                  tooltip(im, this._output,
+                    xReplyTo ? "Refer to this conversation" : "Refer to this message");
+  
+                  var handler = {
+                    _this: this,
+                    handleEvent: function(event) {
+                      if (event.target.getAttribute("in-thread") != "true")
+                        return;
+                      if (event.type == "mouseover") {
+                        if (!this._inside) {
+                          this._inside = true;
+                          this._this._onThreadMarkerOver(event.target);
+                        }
+                      } else if (this._inside) {
+                        this._inside = false;
+                          this._this._onThreadMarkerOut(event.target);
                       }
-                    } else if (this._inside) {
-                      this._inside = false;
-                        this._this._onThreadMarkerOut(event.target);
                     }
                   }
+                  im.addEventListener("mouseover", handler, false);
+                  im.addEventListener("mouseout", handler, false);
+  
+                  e.insertBefore(im, e.firstChild);
+  
+                  this._threadingDriver.addMessage(msg, msgEl);
+  
+                  if (xMessageId && this._input && this._input.thread &&
+                      this._threadingDriver.msgIdMap[xMessageId][2] == this._input.thread)
+                    this._input.msgId = xMessageId;
                 }
-                im.addEventListener("mouseover", handler, false);
-                im.addEventListener("mouseout", handler, false);
+              }
+              msg.msgEl = msgEl;
+              fragment.appendChild(msg.msgEl);
+            }
 
-                e.insertBefore(im, e.firstChild);
-
-                this._threadingDriver.addMessage(msg, msgEl);
-
-                if (xMessageId && this._input && this._input.thread &&
-                    this._threadingDriver.msgIdMap[xMessageId][2] == this._input.thread)
-                  this._input.msgId = xMessageId;
+            if (msg.isOriginalMessage && msg.editMessage) {
+              var body = msg.msgEl.lastChild;
+              if (!msg.msgEl.displayEditButton) {
+                msg.msgEl.displayEditButton = displayEditButton(body, msg, this._output);
+                body.insertBefore(msg.msgEl.displayEditButton, body.childNodes[1]);
+              }
+              if (!this._editButton || this._editButton.parentNode != body)
+                msg.msgEl.displayEditButton.setTooltipDiv();
+            }
+            
+            while (msg.editMessage) {
+              msg.editMessage.msgEl = msg.msgEl;
+              msg.editMessage.previous = msg;
+              msg = msg.editMessage;
+              msg.contentNode = doc.createElement("div");
+              msg.contentNode.innerHTML = msg.formatedHtml || "<br/>"; 
+            } // now, msg is the last edit message, or the original message if not edited
+            if (msg.msgEl.displayEditButton)
+              msg.msgEl.displayEditButton.reload(msg);
+            
+            if (!afterMsg && !msg.isSystemMessage) {
+              this._lastNickMessage[msg.nick] = msg;
+              if (msg.contact.representsMe)
+                this._input.lastMessage = msg;
+            }
+            
+            if (animRequired) {
+              if (!this.visible && !this._visibleAnimations)
+                this._visibleAnimations = [];
+              var iterator = doc.createNodeIterator(msg.msgEl.lastChild.lastChild, 1, {
+                acceptNode: function(node) {
+                  return /span/i.test(node.tagName) && node.className == "edit" ? 1 : 0;
+                }
+              }, true);
+              while (n = iterator.nextNode()) {
+                var animation = Animator.animateStyle({
+                    element: n,
+                    style: "background",
+                    stopValue: "",
+                    paused: !this.visible
+                  }, "#fd0", "parent.transparent");
+                if (!this.visible)
+                  this._visibleAnimations.push(animation);
               }
             }
           }
+
+          var chatpane = this.parentNode.parentNode.parentNode.parentNode;
+          if (!afterMsg)
+            chatpane.editModeAvailable = 
+              this._input.lastMessage
+              && !this._input.lastMessage.isOldFormatEditMessage
+              && (this._input.lastMessage.isOriginalMessage 
+                  || this._input.lastMessage.editCounter < 3);
 
           if (afterMsg) {
             if (!msg.isSystemMessage && afterMsg.contactId == msg.contactId &&
@@ -998,24 +991,24 @@
 
       <method name="syncEditMode">
         <body><![CDATA[
-          if (this._editButton) {
-            var chatpane = this.parentNode.parentNode.parentNode.parentNode;
+          var chatpane = this.parentNode.parentNode.parentNode.parentNode;
+          if (chatpane.editModeAvailable) {
+            this._attachEditButton();
             var messageDiv = this._editButton.parentNode.parentNode;
-            if (!chatpane.editModeAvailable) {
-              messageDiv.removeAttribute("editing");
-              this._removeEditButton();
+            if (chatpane.editModeEnabled) {
+              this._editButton.setAttribute("editing", true);
+              tooltip(this._editButton, this._output, 'Cancel Edition');
+              messageDiv.setAttribute("editing", true);
             } else {
-              if (chatpane.editModeEnabled) {
-                this._editButton.setAttribute("editing", true);
-                tooltip(this._editButton, this._output, 'Cancel Edition');
-                messageDiv.setAttribute("editing", true);
-              } else {
-                this._editButton.removeAttribute("editing");
-                tooltip(this._editButton, this._output, 'Edit last message');
-                messageDiv.removeAttribute("editing");
-              }
+              this._editButton.removeAttribute("editing");
+              tooltip(this._editButton, this._output, 'Edit last message');
+              messageDiv.removeAttribute("editing");
             }
-          }
+          } else 
+            if (this._editButton) {
+              this._editButton.parentNode.parentNode.removeAttribute("editing");
+              this._removeEditButton();
+            }
         ]]></body>
       </method>
 
@@ -1024,9 +1017,29 @@
           if (this._editButton) {
             var msgBody = this._editButton.parentNode;
             msgBody.removeChild(this._editButton);
-            if (msgBody.displayEditButton)
-              msgBody.displayEditButton.setTooltipDiv();
+            if (msgBody.parentNode.displayEditButton)
+              msgBody.parentNode.displayEditButton.setTooltipDiv();
             delete this._editButton;
+          }
+        ]]></body>
+      </method>
+
+      <method name="_attachEditButton">
+        <body><![CDATA[
+          if (this._input.lastMessage) {
+            var body = this._input.lastMessage.msgEl.lastChild;
+            if (!this._editButton || body != this._editButton.parentNode()) {
+              this._removeEditButton();
+              var doc = this._output.contentDocument;
+              im = doc.createElement("div");
+              im.setAttribute("id", "editButton");
+              im.addEventListener("click", new Callback (function() {
+                this.parentNode.parentNode.parentNode.parentNode.switchEditMode();
+              }, this), true);
+              tooltip(im, this._output, 'Edit last message');
+              this._editButton = im;
+              body.appendChild(im);
+            }
           }
         ]]></body>
       </method>
@@ -1530,10 +1543,6 @@
         ]]></setter>
       </property>
 
-      <property name="lastMessage"
-        onget = "return this._history.length ? this._history[this._history.length - 1] : null;"
-        readonly="true"/>
-
       <constructor><![CDATA[
         var me = this;
         this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
@@ -1558,16 +1567,23 @@
             /* _currentMessage is the message the user has left while he corrects the last one
                he has sent: _currentMessage will be displayed again when the user will send
                the edited message, or cancel the edition */
-            this._currentMessage = this._input.contentDocument.body.innerHTML;
+            this._currentMessage = this.value.innerHTML;
             this.clear();
             this._input.parentNode.parentNode.setAttribute("type", "editMode");
             this._input.contentDocument.body.setAttribute("editMode", "true");
-            if (this.lastMessage)
-              this._input.contentDocument.body.innerHTML = this.lastMessage;
+            if (this.lastMessage) {
+              // the following line is experiential: else, if nothing was ever typed in the
+              // textbox, it is impossible to delete any char of the inserted string (in
+              // this case, this.lastMessage.html) until typing sthg. I can't explain why. FX
+              this._input.contentDocument.execCommand("insertHTML", false, "<br/>");
+
+              this.value = this.lastMessage.html;
+            }
           }
           else {
             if (this._currentMessage) {
-              this._input.contentDocument.body.innerHTML = this._currentMessage;
+              //this._input.contentDocument.body.innerHTML
+              this.value = this._currentMessage;
               delete this._currentMessage;
             }
             this._input.parentNode.parentNode.removeAttribute("type");
@@ -1885,39 +1901,20 @@
           if (this._disabled)
             return false;
 
-          var body = this._input.contentDocument.body;
-          var chatpane = this.parentNode.parentNode.parentNode;
-          var editCounterBackup = chatpane.editCounter;
-          var editModeAvailableBackup = chatpane.editModeAvailable;
-
-          chatpane.editCounter = chatpane.editModeEnabled ? chatpane.editCounter + 1 : 0 ;
-          /* editModeAvailable must be defined before the sending of the message,
-             to determine whether the message may be edited once it is sent; this
-             information is transmitted to the chatpane-view by the msg attribute "canBeEdited" */
-          chatpane.editModeAvailable =
-            body.innerHTML.replace(/<br\/?>$/gi, '') == body.textContent;
-          // disables the edition if the last message contents formating
-
           var sentMessage = this._send(withEnter),
             value = sentMessage.html;
 
-          if (value == null) {
-            // the sending of the message failed !
-            // we have to reset editCounter and editModeAvailable to their previous values
-            chatpane.editCounter = editCounterBackup;
-            chatpane.editModeAvailable = editModeAvailableBackup;
+          if (value == null)
             return false;
-          }
 
           if (value) {
             if (!this._history.length || this._history[this._history.length-1] != value)
               this._history.push(value);
             this._historyPosition = this._history.length;
-            this.lastMessageId = sentMessage.messageId;
           }
 
           this.clear();
-          chatpane.editModeEnabled = false;
+          this.parentNode.parentNode.parentNode.editModeEnabled = false;
           this.focus();
 
           return true;
@@ -2312,7 +2309,7 @@
 
       <property name="editModeAvailable" onget="return this._editModeAvailable">
         <setter><![CDATA[
-          this._editModeAvailable = this.editCounter < 3 ? val : false;
+          this._editModeAvailable = val; //this.editCounter < 3 ? val : false;
           this._chatpaneCommands.syncEditMode();
           this._output.syncEditMode();
         ]]></setter>
@@ -2329,8 +2326,10 @@
 
       <constructor><![CDATA[
         this.editCounter = 0;
-        this._editModeAvailable = false;
+        if (this._editModeAvailable == undefined)
+          this._editModeAvailable = false;
         this._editModeEnabled = false;
+
         this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 
         this._input = document.getAnonymousElementByAttribute(this, "id", "input");
@@ -2424,7 +2423,10 @@
 
       <method name="switchEditMode">
         <body><![CDATA[
-          this.editModeEnabled = this.editModeAvailable ? !this.editModeEnabled : false;
+          if (this.editModeEnabled)
+            this.editModeEnabled = false;
+          else if (this.editModeAvailable)
+            this.editModeEnabled = true;
         ]]></body>
       </method>
 
@@ -2668,13 +2670,13 @@
               if (this._input.thread)
                 msg.xReplyTo = [this._input.msgId];
 
-              msg.isMine = true;
-              msg.messageId = generateRandomName(12);
-
-              if (this.editModeEnabled)
-                msg.replaceMessageId = this._input.lastMessageId;
+              if (this.editModeEnabled) {
+                msg.type += 8;
+                msg.replaceMessageId = this._input.lastMessage.messageId;
+              }
 
               this._model.sendMessage(msg);
+
               return msg;
             }
           }

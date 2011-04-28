@@ -95,6 +95,6 @@ toolbar[type="chatpane-commands"] {
   list-style-image: url(imgs/edit-disabled.png);
 }
 #editButton[type="disabled"] {
-  list-style-image: url(imgs/edit-black-white.png);
+  list-style-image: url(imgs/edit-unavailable.png);
 }
 /*/Added by FX*/

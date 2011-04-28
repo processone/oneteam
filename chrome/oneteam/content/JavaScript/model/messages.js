@@ -507,6 +507,7 @@ _DECL_(MessagesThread, Model).prototype =
         if (this.peerHandlesChatState)
             msg.chatState = this._chatState;
 
+        //msg.messageId = generateRandomName(12);
         if (this.peerHandlesXThreads && !msg.xMessageId)
             msg.xMessageId = generateRandomName(8);
 
@@ -542,11 +543,12 @@ _DECL_(MessagesThread, Model).prototype =
     }
 }
 
-function Message(body, body_html, contact, type, time, thread, chatState, myNick)
+function Message(body, body_html, contact, type, time, thread, chatState, myNick, messageId)
 {
     this.contact = contact;
     this.type = type;
     this.myNick = myNick;
+    this.messageId = messageId ? messageId : generateRandomName(12);
 
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
@@ -613,8 +615,10 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
         if (body.getNode().hasAttribute("id")) 
           this.messageId = body.getNode().getAttribute("id");
         var replaceNode = body.getNode().getElementsByTagNameNS("urn:message:edit", "replace")[0];
-        if (replaceNode)
+        if (replaceNode) {
+          this.type += 8;
           this.replaceMessageId = replaceNode.getAttribute("id");
+        }
         // /Added by FX
     } else {
         if (body_html instanceof Node)
@@ -675,12 +679,20 @@ _DECL_(Message).prototype =
         return (this.type & 4) == 4;
     },
 
+    get isEditMessage() {
+        return (this.type & 8) == 8;
+    },
+
     get isDirectedMessage() {
         return this.myNick ? this.text.indexOf(this.myNick+":") == 0 : false;
     },
 
     get nick() {
         return this.isMucMessage ? this.contact.jid.resource : this.contact.visibleName;
+    },
+
+    get isMine() {
+        return this.contact.representsMe;
     },
 
     getClasses: function(neverArchived) {
@@ -1078,6 +1090,13 @@ _DECL_(Message).prototype =
         str = str.substring(last);
 
         return res + xmlEscape(str);
+    },
+
+    clone: function()
+    {
+        var F = function() {};
+        F.prototype = this;
+        return new F();
     }
 }
 
