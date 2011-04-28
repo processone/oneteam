@@ -953,6 +953,7 @@
                   return /span/i.test(node.tagName) && node.className == "edit" ? 1 : 0;
                 }
               }, true);
+              var n;
               while ((n = iterator.nextNode())) {
                 var animation = Animator.animateStyle({
                     element: n,
@@ -1031,7 +1032,7 @@
             if (!this._editButton || body != this._editButton.parentNode()) {
               this._removeEditButton();
               var doc = this._output.contentDocument;
-              im = doc.createElement("div");
+              var im = doc.createElement("div");
               im.setAttribute("id", "editButton");
               im.addEventListener("click", new Callback (function() {
                 this.parentNode.parentNode.parentNode.parentNode.switchEditMode();
