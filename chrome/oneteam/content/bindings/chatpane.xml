@@ -953,7 +953,7 @@
                   return /span/i.test(node.tagName) && node.className == "edit" ? 1 : 0;
                 }
               }, true);
-              while (n = iterator.nextNode()) {
+              while ((n = iterator.nextNode())) {
                 var animation = Animator.animateStyle({
                     element: n,
                     style: "background",
