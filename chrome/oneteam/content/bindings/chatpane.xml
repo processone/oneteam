@@ -2093,7 +2093,7 @@
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
       <xul:menuseparator/>
-      <xul:toolbarbutton id="editButton" type="disabled" tooltiptext="_('Edit Last Message')"
+      <xul:toolbarbutton id="editButton" type="disabled" tooltiptext="Edit Last Message"
                          oncommand="if (this.type != 'disabled')
                            this.parentNode.parentNode.parentNode.switchEditMode()"/>
     </content>
@@ -2159,7 +2159,7 @@
             !this.parentNode.parentNode.editModeAvailable ? "disabled" :
             this.parentNode.parentNode.editModeEnabled ? "cancel" : "edit";
           button.setAttribute("tooltiptext",
-            button.type == "cancel" ? "_('Cancel Edition')" : "_('Edit Last Message')");
+            button.type == "cancel" ? "Cancel Edition" : "Edit Last Message");
         ]]></body>
       </method>
 
@@ -2307,7 +2307,7 @@
 
       <property name="editModeAvailable" onget="return this._editModeAvailable">
         <setter><![CDATA[
-          this._editModeAvailable = val; //this.editCounter < 3 ? val : false;
+          this._editModeAvailable = val;
           this._chatpaneCommands.syncEditMode();
           this._output.syncEditMode();
         ]]></setter>
