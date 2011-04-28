@@ -57,7 +57,7 @@ function highlightDiff (node1, node2) {
         }
     }, true);
     var n;
-    while (n = iterator.nextNode()) {
+    while ((n = iterator.nextNode())) {
       for (var i = 0; i < n.childNodes.length; i++)
         n.parentNode.insertBefore(n.childNodes[i], n);
       //n.nodeValue = ""; // unexpectedly, n.parentNode.removeChild(n) doesn't work properly
@@ -73,7 +73,7 @@ function highlightDiff (node1, node2) {
         acceptNode: function() {return 1;}
     }, true);
     var n;
-    while (n = iterator.nextNode()) {
+    while ((n = iterator.nextNode())) {
       res = res.concat(n.textContent.split(pattern));
     }
     return res;
@@ -123,7 +123,7 @@ function highlightDiff (node1, node2) {
         acceptNode: function() {return 1;}
     }, true);
     var i = 0, j, k, n;
-    while (n = iterator.nextNode()) {
+    while ((n = iterator.nextNode())) {
       var text = n.textContent.split(pattern);
       j = 0;
       k = 0;

@@ -950,7 +950,8 @@
                   return /span/i.test(node.tagName) && node.className == "edit" ? 1 : 0;
                 }
               }, true);
-              while (n = iterator.nextNode()) {
+              var n;
+              while ((n = iterator.nextNode())) {
                 var animation = Animator.animateStyle({
                     element: n,
                     style: "background",
@@ -1025,10 +1026,10 @@
         <body><![CDATA[
           if (this._input.lastMessage) {
             var body = this._input.lastMessage.msgEl.lastChild;
-            if (!this._editButton || body != this._editButton.parentNode()) {
+            if (!this._editButton || body != this._editButton.parentNode) {
               this._removeEditButton();
               var doc = this._output.contentDocument;
-              im = doc.createElement("div");
+              var im = doc.createElement("div");
               im.setAttribute("id", "editButton");
               im.addEventListener("click", new Callback (function() {
                 this.parentNode.parentNode.parentNode.parentNode.switchEditMode();
