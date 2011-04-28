@@ -507,7 +507,6 @@ _DECL_(MessagesThread, Model).prototype =
         if (this.peerHandlesChatState)
             msg.chatState = this._chatState;
 
-        //msg.messageId = generateRandomName(12);
         if (this.peerHandlesXThreads && !msg.xMessageId)
             msg.xMessageId = generateRandomName(8);
 

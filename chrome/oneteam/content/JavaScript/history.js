@@ -166,10 +166,7 @@ function HistoryManager()
                                               autoset_count INTEGER NOT NULL);
 
                 CREATE INDEX messages_by_jid_id ON messages (jid_id);
-            // following index to retrieve the original message from an edit message when storing
                 CREATE INDEX messages_by_message_id ON messages (message_id);
-            // following index to retrieve the original message from an edit message
-            // when looking in the history
                 CREATE INDEX messages_by_edit_message ON messages (edited_by);
                 CREATE INDEX messages_by_thread_id_and_time ON messages (thread_id, time);
 

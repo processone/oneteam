@@ -731,7 +731,6 @@
         <parameter name="afterMsgEl"/>
         <body><![CDATA[
           var fragment = doc.createDocumentFragment();
-          //var chatpane = this.parentNode.parentNode.parentNode.parentNode;
 
           for (var i = 0; i < msgs.length; i++) {
             var msg = msgs[i].clone();
@@ -746,8 +745,6 @@
               msg.isOldFormatEditMessage = true;
               msg.text = lastMsg.text.replace(match[1], match[2]);
               msg.html = lastMsg.html.replace(match[1], match[2]);
-              /*if (msg.isMine)
-                chatpane.editModeAvailable = false;*/
             }
             
             if (!afterMsg && (msg.isEditMessage || msg.isOldFormatEditMessage)) {
@@ -2325,7 +2322,6 @@
       </property>
 
       <constructor><![CDATA[
-        this.editCounter = 0;
         if (this._editModeAvailable == undefined)
           this._editModeAvailable = false;
         this._editModeEnabled = false;
