@@ -760,13 +760,16 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
                 if ((stmt.getInt32(1) & 8) == 8)
                     continue; // to skip editMessages
                 var jid = new JID(stmt.getString(0));
+                var flags = stmt.getInt32(1);
+                var mucMessage = (flags&3) == 1;
                 var contact = this._getContact(stmt.getString(4), jid,
-                    this.contact.jid.normalizedJID == jid.normalizedJID);
+                    !mucMessage && this.contact.jid.normalizedJID.shortJID !=
+                                   jid.normalizedJID.shortJID);
 
                 this._lastMessageTime = stmt.getInt64(5);
 
                 var msg = new Message(stmt.getString(2), stmt.getString(3),
-                                      contact, stmt.getInt32(1),
+                                      contact, flags,
                                       new Date(this._lastMessageTime), this,
                                       null, null, stmt.getString(7));
                 msg.archived = true;
