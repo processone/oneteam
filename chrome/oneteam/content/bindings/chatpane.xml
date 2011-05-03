@@ -747,7 +747,7 @@
               msg.html = lastMsg.html.replace(match[1], match[2]);
             }
             
-            if (!afterMsg && (msg.isEditMessage || msg.isOldFormatEditMessage)) {
+            if (!afterMsg && (msg.replaceMessageId || msg.isOldFormatEditMessage)) {
               if ((msg.replaceMessageId == lastMsg.messageId) || msg.isOldFormatEditMessage) {
                 msg.editCounter = lastMsg.editCounter ? lastMsg.editCounter+1 : 1;
             
@@ -927,6 +927,8 @@
             }
             
             while (msg.editMessage) {
+              msg.editMessage.editCounter =
+                msg.editCounter ? msg.editCounter +1 : 1;
               msg.editMessage.msgEl = msg.msgEl;
               msg.editMessage.previous = msg;
               msg = msg.editMessage;
@@ -935,10 +937,10 @@
             } // now, msg is the last edit message, or the original message if not edited
             if (msg.msgEl.displayEditButton)
               msg.msgEl.displayEditButton.reload(msg);
-            
+ 
             if (!afterMsg && !msg.isSystemMessage) {
               this._lastNickMessage[msg.nick] = msg;
-              if (msg.contact.representsMe)
+              if (this._input && msg.contact.representsMe)
                 this._input.lastMessage = msg;
             }
             
@@ -964,9 +966,8 @@
             }
           }
 
-          var chatpane = this.parentNode.parentNode.parentNode.parentNode;
-          if (!afterMsg)
-            chatpane.editModeAvailable = 
+          if (this._input && !afterMsg) 
+            this.parentNode.parentNode.parentNode.parentNode.sthgToEdit = 
               this._input.lastMessage
               && !this._input.lastMessage.isOldFormatEditMessage
               && (this._input.lastMessage.isOriginalMessage 
@@ -1528,16 +1529,16 @@
       <property name="disabled" onget="return !!this._disabled">
         <setter><![CDATA[
           if (this._initialized && !this.disabled != !val) {
+            this._disabled = val;
             this._input.contentDocument.body.setAttribute("disabled", !!val);
             if (val)
               this._disableInput();
             else
               this._enableInput();
-          }
+          } else
+            this._disabled = val;
 
           this.parentNode.setAttribute("disabled", !!val);
-
-          this._disabled = val;
         ]]></setter>
       </property>
 
@@ -1603,6 +1604,9 @@
             if (("_on"+event) in this)
               doc.removeEventListener(event, this["_on"+event], false);
           }
+
+          delete this.lastMessage;
+          this.parentNode.parentNode.parentNode.sthgToEdit = false;
         ]]></body>
       </method>
 
@@ -1741,6 +1745,18 @@
             this._toolbar._updateState();
 
           doc = win = null;
+
+          var chatpane = this.parentNode.parentNode.parentNode;
+          for (var nick in this._output._lastNickMessage) {
+            if (this._output._lastNickMessage[nick].contact.representsMe) {
+              this.lastMessage = this._output._lastNickMessage[nick];
+              chatpane.sthgToEdit =
+                this.lastMessage
+                && !this.lastMessage.isOldFormatEditMessage
+                && (this.lastMessage.isOriginalMessage || this.lastMessage.editCounter < 3);    
+              break;
+            }
+          }
         ]]></body>
       </method>
 
@@ -2305,6 +2321,13 @@
         ]]></setter>
       </property>
 
+      <property name="sthgToEdit" onget="return this._sthgToEdit">
+        <setter><![CDATA[
+          this._sthgToEdit = !!val;
+          this.editModeAvailable = !!val && !this._input.disabled;
+        ]]></setter>
+      </property>
+
       <property name="editModeAvailable" onget="return this._editModeAvailable">
         <setter><![CDATA[
           this._editModeAvailable = val;
@@ -2323,9 +2346,7 @@
       </property>
 
       <constructor><![CDATA[
-        if (this._editModeAvailable == undefined)
-          this._editModeAvailable = false;
-        this._editModeEnabled = false;
+        this._sthgToEdit = this._editModeAvailable = this._editModeEnabled = false;
 
         this.sendOnEnter = this.getAttribute("sendonenter") != "false";
 

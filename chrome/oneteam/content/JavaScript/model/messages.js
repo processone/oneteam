@@ -547,7 +547,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
     this.contact = contact;
     this.type = type;
     this.myNick = myNick;
-    this.messageId = messageId ? messageId : generateRandomName(12);
+//    this.messageId = messageId ? messageId : generateRandomName(12);
 
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
@@ -613,11 +613,11 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
         // Added by FX
         if (body.getNode().hasAttribute("id")) 
           this.messageId = body.getNode().getAttribute("id");
-        var replaceNode = body.getNode().getElementsByTagNameNS("urn:message:edit", "replace")[0];
-        if (replaceNode) {
-          this.type += 8;
+        var replaceNode = body.getNode().getElementsByTagNameNS("http://process-one.net/edit", "replace")[0];
+        if (replaceNode)// {
+          //this.type += 8;
           this.replaceMessageId = replaceNode.getAttribute("id");
-        }
+        //}
         // /Added by FX
     } else {
         if (body_html instanceof Node)
@@ -629,6 +629,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
 
         this.time = time || new Date();
         this.chatState = chatState;
+        this.messageId = messageId ? messageId : generateRandomName(12);
     }
 
     if (thread instanceof MessagesThread)
@@ -678,9 +679,9 @@ _DECL_(Message).prototype =
         return (this.type & 4) == 4;
     },
 
-    get isEditMessage() {
+    /*get isEditMessage() {
         return (this.type & 8) == 8;
-    },
+    },*/
 
     get isDirectedMessage() {
         return this.myNick ? this.text.indexOf(this.myNick+":") == 0 : false;
@@ -688,10 +689,6 @@ _DECL_(Message).prototype =
 
     get nick() {
         return this.isMucMessage ? this.contact.jid.resource : this.contact.visibleName;
-    },
-
-    get isMine() {
-        return this.contact.representsMe;
     },
 
     getClasses: function(neverArchived) {
@@ -832,14 +829,12 @@ _DECL_(Message).prototype =
             pkt.appendNode("x", attrs, childrens);
         }
 
-        // Added by FX
         pkt.getNode().setAttribute("id", this.messageId);
         if (this.replaceMessageId)
           pkt.appendNode("replace", {
-            xmlns: "urn:message:edit",
+            xmlns: "http://process-one.net/edit",
             id: this.replaceMessageId
           });
-        // /Added by FX
     },
 
     /*   tag name       can have childrens              keep only if has childrens

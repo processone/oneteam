@@ -4,7 +4,8 @@ ML.importMod("roles.js");
 ML.importMod("model/messages.js");
 ML.importMod("utils.js");
 
-function ArchivedMessagesThreadBase(contact, threadID, time)
+function ArchivedMessagesThreadBase(contact, threadID, time, messagesById,
+                                    editMessagesByReplaceMessageId)
 {
     if (typeof(contact) == "string")
         contact = new JID(contact);
@@ -19,6 +20,10 @@ function ArchivedMessagesThreadBase(contact, threadID, time)
     this._msgIdMap = {};
     this._revMsgIdMap = {};
     this.allMessages = [];
+    if (messagesById)
+        this._messagesById = messagesById;
+    if (editMessagesByReplaceMessageId)
+        this._editMessagesByReplaceMessageId = editMessagesByReplaceMessageId;
 }
 
 _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
@@ -136,7 +141,7 @@ function HistoryManager()
 
     var version = this.db.schemaVersion;
 
-    if (version > 5999)
+    if (version > 6999)
         throw new GenericError("Unrecognized HistoryManager database version");
 
     if (version == 0)
@@ -147,7 +152,7 @@ function HistoryManager()
                                        body_html TEXT,
                                        nick TEXT NOT NULL, time INTEGER(64) NOT NULL,
                                        thread_id INTEGER NOT NULL,
-                                       message_id TEXT, edited_by INTEGER);
+                                       message_id TEXT, replace_message_id TEXT);
                 CREATE TABLE jids (id INTEGER PRIMARY KEY, jid TEXT UNIQUE NOT NULL);
                 CREATE TABLE threads (id INTEGER PRIMARY KEY, jid_id INTEGER NOT NULL,
                                       time INTEGER(64) NOT NULL, type INTEGER(8) NOT NULL);
@@ -167,7 +172,7 @@ function HistoryManager()
 
                 CREATE INDEX messages_by_jid_id ON messages (jid_id);
                 CREATE INDEX messages_by_message_id ON messages (message_id);
-                CREATE INDEX messages_by_edit_message ON messages (edited_by);
+                CREATE INDEX messages_on_replace_message_id ON messages (replace_message_id);
                 CREATE INDEX messages_by_thread_id_and_time ON messages (thread_id, time);
 
                 CREATE INDEX threads_by_jid_id_and_time ON threads (jid_id, time);
@@ -179,7 +184,7 @@ function HistoryManager()
                 CREATE INDEX presences_on_time ON presences (time);
                 CREATE INDEX presences_on_jid_and_time ON presences (jid_id, time);
 
-                PRAGMA user_version = 4001;
+                PRAGMA user_version = 6001;
             COMMIT TRANSACTION;
         </sql>.toString());
     else {
@@ -227,11 +232,18 @@ function HistoryManager()
                 BEGIN IMMEDIATE TRANSACTION;
                     ALTER TABLE messages
                         ADD COLUMN message_id TEXT;
-                    ALTER TABLE messages
-                        ADD COLUMN edited_by INTEGER;
                     CREATE INDEX messages_by_message_id ON messages (message_id);
-                    CREATE INDEX messages_by_edit_message ON messages (edited_by);
                     PRAGMA user_version = 5001;
+                COMMIT TRANSACTION;
+            </sql>.toString());
+        }
+        if (version < 6000) {
+            this.db.executeSimpleSQL(<sql>
+                BEGIN IMMEDIATE TRANSACTION;
+                    ALTER TABLE messages
+                        ADD COLUMN replace_message_id TEXT;
+                    CREATE INDEX messages_on_replace_message_id ON messages (replace_message_id);
+                    PRAGMA user_version = 6001;
                 COMMIT TRANSACTION;
             </sql>.toString());
         }
@@ -245,7 +257,7 @@ function HistoryManager()
         </sql>.toString());
     this.addMessageStmt = this.db.createStatement(<sql>
             INSERT INTO messages (jid_id, flags, body, body_html, nick, time, thread_id,
-                                  message_id, edited_by)
+                                  message_id, replace_message_id)
                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);
         </sql>.toString());
 
@@ -262,7 +274,7 @@ function HistoryManager()
         </sql>.toString());
     this.getThreadMessagesStmt = this.db.createStatement(<sql>
             SELECT J.jid, M.flags, body, body_html, nick, time, M.id, message_id,
-                   edited_by FROM messages M, jids J
+                   replace_message_id FROM messages M, jids J
                 WHERE thread_id = ?1 AND jid_id = J.id AND time > ?2 ORDER BY time ASC;
         </sql>.toString());
     this.addReplyStmt = this.db.createStatement(<sql>
@@ -318,14 +330,6 @@ function HistoryManager()
                 WHERE J.id = P.jid_id AND B.id = P.body_id AND P.jid_id = ?1 AND P.time > ?2
                 ORDER BY time ASC;
         </sql>.toString());
-    this.linkMessageToEditStmt = this.db.createStatement(<sql>
-            UPDATE messages SET edited_by = ?1 WHERE message_id = ?2;
-        </sql>.toString());
-    this.getEditMessageStmt = this.db.createStatement(<sql>
-            SELECT J.jid, M.flags, body, body_html, nick, time, M.id, message_id,
-                   edited_by FROM messages M, jids J
-                WHERE M.id = ?1 AND jid_id = J.id;
-        </sql>.toString());
     this.getLastMessageIdFromJid = this.db.createStatement(<sql>
             SELECT message_id FROM messages
                 WHERE jid_id = ?1 ORDER BY time DESC LIMIT 1;
@@ -339,6 +343,9 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
     _sessionThreads: [],
     _sessionArchivedThreads: [],
     _searchPhrases: [],
+    _messagesById: {},
+    _editMessagesByReplaceMessageId: {},
+
 
     _loadJIDs: function() {
         var jidsById = {};
@@ -536,19 +543,14 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         stmt.bindInt32Parameter(6, archivedThread.threadID);
         if (msg.messageId)
             stmt.bindStringParameter(7, msg.messageId);
+        if (msg.replaceMessageId)
+            stmt.bindStringParameter(8, msg.replaceMessageId);
         stmt.execute();
 
         rowId = this.db.lastInsertRowID;
         if (msg.xMessageId) {
             archivedThread._msgIdMap[msg.xMessageId] = rowId;
             archivedThread._revMsgIdMap[rowId] = msg.xMessageId;
-        }
-
-        if (msg.isEditMessage) {
-            stmt = this.linkMessageToEditStmt;
-            stmt.bindInt32Parameter(0, rowId);
-            stmt.bindStringParameter(1, msg.replaceMessageId);
-            stmt.execute();
         }
 
         var stmt = this.addReplyStmt;
@@ -704,36 +706,30 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
             var msg = lastThread.allMessages[token.lastIndex--];
 
-            if (msg && !msg.isSystemMessage && msg.time.getTime() < olderThan)
-                msgs.unshift(msg);
+            if (msg && !msg.isSystemMessage && msg.time.getTime() < olderThan) {
+                if (msg.replaceMessageId)
+                    if (this._messagesById[msg.replaceMessageId])
+                        this._messagesById[msg.replaceMessageId].editMessage = msg;
+                    else
+                        this._editMessagesByReplaceMessageId[msg.replaceMessageId] = msg;
+                else {
+                    msgs.unshift(msg);
+                    if (msg.messageId && this._editMessagesByReplaceMessageId[msg.messageId]) {
+                        msg.editMessage = this._editMessagesByReplaceMessageId[msg.messageId];
+                        delete this._editMessagesByReplaceMessageId[msg.messageId];
+                    }
+                }
+            }
         }
         return [token, msgs, token.lastIndex >= 0 || token.threads.length > 1];
-    },
-
-    _attachEditMessages: function(msg, editMessageId, editCounter) {
-        editCounter = editCounter ? editCounter+1 : 1;
-        var stmt = this.getEditMessageStmt;
-        stmt.bindInt64Parameter(0, editMessageId);
-        stmt.executeStep();
-        try {
-            msg.editMessage = new Message(stmt.getString(2), stmt.getString(3),
-                                          msg.contact, stmt.getInt32(1),
-                                          new Date(stmt.getInt64(5)), msg.thread,
-                                          null, null, stmt.getString(7));
-            msg.editMessage.editCounter = editCounter;
- 
-            var editedBy = stmt.getInt64(8);
-            stmt.reset();
-            if (editedBy)
-                this._attachEditMessages(msg.editMessage, editedBy, editCounter);
-        } catch (ex) {}
-        stmt.reset();
     }
 }
 
-function ArchivedMessagesThread(contact, threadID, time)
+function ArchivedMessagesThread(contact, threadID, time, messagesById,
+                                editMessagesByReplaceMessageId)
 {
-    ArchivedMessagesThreadBase.call(this, contact, threadID, time);
+    ArchivedMessagesThreadBase.call(this, contact, threadID, time, messagesById,
+                                    editMessagesByReplaceMessageId);
 }
 
 _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
@@ -757,8 +753,6 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
 
         while (stmt.executeStep()) {
             try {
-                if ((stmt.getInt32(1) & 8) == 8)
-                    continue; // to skip editMessages
                 var jid = new JID(stmt.getString(0));
                 var flags = stmt.getInt32(1);
                 var mucMessage = (flags&3) == 1;
@@ -774,9 +768,8 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
                                       null, null, stmt.getString(7));
                 msg.archived = true;
 
-                var editedBy = stmt.getInt64(8);
-                if (editedBy)
-                    account.historyMgr._attachEditMessages(msg, editedBy);
+                if (stmt.getString(8))
+                    msg.replaceMessageId = stmt.getString(8);
 
                 msg.xMessageId = generateRandomName(8);
                 this._msgIdMap[msg.xMessageId] = stmt.getInt64(6);
