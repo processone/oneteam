@@ -123,6 +123,7 @@ function highlightDiff (node1, node2) {
         acceptNode: function() {return 1;}
     }, true);
     var i = 0, j, k, n;
+
     while ((n = iterator.nextNode())) {
       var text = n.textContent.split(pattern);
       j = 0;
@@ -146,7 +147,7 @@ function highlightDiff (node1, node2) {
         }
       }
       i += text.length;
-      n.nodeValue = ""; //unexpectedly, n.parentNode.removeChild(n) doesn't work properly
+      n.parentNode.removeChild(n);
     }
   }
 
@@ -178,9 +179,7 @@ function displayEditButton(body, originalMessage, xulNode) {
   next.setAttribute("class", "nextMessage");
   button.appendChild(next);
 
-  var tooltipDiv; /* = doc.createElement("div");
-  tooltipDiv.setAttribute("class", "tooltipDiv");
-  button.appendChild(tooltipDiv);*/
+  var tooltipDiv;
 
   button.addEventListener("mouseover", function() {
     body.setAttribute("displayEdit", true);
@@ -194,9 +193,9 @@ function displayEditButton(body, originalMessage, xulNode) {
 
   function _updateTooltip() {
     mytooltip(tooltipDiv,
-      nbVersions == 1 ? "This message has been edited once" :
-      nbVersions == 2 ? "This message has been edited twice" :
-                        "This message has been edited " + nbVersions + " times"
+      nbVersions == 1 ? _("This message has been edited once") :
+      nbVersions == 2 ? _("This message has been edited twice") :
+                        _("This message has been edited {0} times", nbVersions)
     );
   }
 
@@ -239,20 +238,22 @@ function displayEditButton(body, originalMessage, xulNode) {
     if (currentMsg.editCounter && currentMsg.editCounter > 0) {
       previous.removeAttribute("disabled");
       previous.addEventListener("click", _displayPrevious, true);
-      mytooltip(previous, "See Previous Version, " + readableTimestamp(currentMsg.previous.time));
+      mytooltip(previous, _('See Previous Version') + ", "
+                          + readableTimestamp(currentMsg.previous.time));
     } else {
       previous.setAttribute("disabled", true);
       previous.removeEventListener("click", _displayPrevious, true);
-      mytooltip(previous, "This is the first version of the message");
+      mytooltip(previous, _('This is the first version of the message'));
     }
     if (!currentMsg.editCounter || currentMsg.editCounter < nbVersions) {
       next.removeAttribute("disabled");
       next.addEventListener("click", _displayNext, true);
-      mytooltip(next, "See Next Version, " + readableTimestamp(currentMsg.editMessage.time));
+      mytooltip(next, _('See Next Version') + ", "
+                      + readableTimestamp(currentMsg.editMessage.time));
     } else {
       next.setAttribute("disabled", true);
       next.removeEventListener("click", _displayNext, true);
-      mytooltip(next, "This is the last version of the message");
+      mytooltip(next, _('This is the last version of the message'));
     }
   }
 

@@ -882,7 +882,7 @@
                   im.setAttribute("class", "message-action thread-marker" +
                                   (msg.xMessageId ? " thread-marker-reply" : ""));
                   tooltip(im, this._output,
-                    xReplyTo ? "Refer to this conversation" : "Refer to this message");
+                    xReplyTo ? _("Refer to this Conversation") : _("Refer to this Message"));
   
                   var handler = {
                     _this: this,
@@ -996,11 +996,11 @@
             var messageDiv = this._editButton.parentNode.parentNode;
             if (chatpane.editModeEnabled) {
               this._editButton.setAttribute("editing", true);
-              tooltip(this._editButton, this._output, 'Cancel Edition');
+              tooltip(this._editButton, this._output, _("Cancel Edition"));
               messageDiv.setAttribute("editing", true);
             } else {
               this._editButton.removeAttribute("editing");
-              tooltip(this._editButton, this._output, 'Edit last message');
+              tooltip(this._editButton, this._output, _("Edit Last Message"));
               messageDiv.removeAttribute("editing");
             }
           } else 
@@ -1035,7 +1035,7 @@
               im.addEventListener("click", new Callback (function() {
                 this.parentNode.parentNode.parentNode.parentNode.switchEditMode();
               }, this), true);
-              tooltip(im, this._output, 'Edit last message');
+              tooltip(im, this._output, _("Edit Last Message"));
               this._editButton = im;
               body.appendChild(im);
             }
@@ -2109,7 +2109,7 @@
       <xul:toolbarbutton id="smilesList" type="smiles-list"
                          tooltiptext="_('Toggle smiles visibility/select smile')"/>
       <xul:menuseparator/>
-      <xul:toolbarbutton id="editButton" type="disabled" tooltiptext="Edit Last Message"
+      <xul:toolbarbutton id="editButton" type="disabled" tooltiptext="_('Edit Last Message')"
                          oncommand="if (this.type != 'disabled')
                            this.parentNode.parentNode.parentNode.switchEditMode()"/>
     </content>
@@ -2175,7 +2175,7 @@
             !this.parentNode.parentNode.editModeAvailable ? "disabled" :
             this.parentNode.parentNode.editModeEnabled ? "cancel" : "edit";
           button.setAttribute("tooltiptext",
-            button.type == "cancel" ? "Cancel Edition" : "Edit Last Message");
+            button.type == "cancel" ? _("Cancel Edition") : _("Edit Last Message"));
         ]]></body>
       </method>
 

@@ -712,12 +712,12 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
                         this._messagesById[msg.replaceMessageId].editMessage = msg;
                     else
                         this._editMessagesByReplaceMessageId[msg.replaceMessageId] = msg;
-                else {
+                else
                     msgs.unshift(msg);
-                    if (msg.messageId && this._editMessagesByReplaceMessageId[msg.messageId]) {
-                        msg.editMessage = this._editMessagesByReplaceMessageId[msg.messageId];
-                        delete this._editMessagesByReplaceMessageId[msg.messageId];
-                    }
+
+                if (msg.messageId && this._editMessagesByReplaceMessageId[msg.messageId]) {
+                    msg.editMessage = this._editMessagesByReplaceMessageId[msg.messageId];
+                    delete this._editMessagesByReplaceMessageId[msg.messageId];
                 }
             }
         }
