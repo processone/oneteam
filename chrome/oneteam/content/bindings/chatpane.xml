@@ -1851,8 +1851,8 @@
           if (this._disabled)
             return false;
 
-          var sentMessage = this._send(withEnter),
-            value = sentMessage.html;
+          var sentMessage = this._send(withEnter);
+          var value = sentMessage && sentMessage.html;
 
           if (value == null)
             return false;
