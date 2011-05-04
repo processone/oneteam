@@ -2204,7 +2204,8 @@
 
       <method name="_updateJingleState">
         <body><![CDATA[
-          this._jingleCall.hidden = !this.model || !this.model.jingleResource;
+          this._jingleCall.hidden = this._jingleCall.previousSibling.hidden =
+            !this.model || !this.model.jingleResource;
         ]]></body>
       </method>
 
