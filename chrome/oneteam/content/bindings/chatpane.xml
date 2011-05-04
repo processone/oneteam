@@ -1631,7 +1631,9 @@
             if (me._toolbar)
               me._toolbar._updateState(event);
 
-            if (event.button == 0 && event.pageX >= event.target.ownerDocument.body.clientWidth-42)
+            if (event.button == 0 &&
+                event.pageX >= event.target.ownerDocument.body.clientWidth-42 &&
+                event.pageX < event.target.ownerDocument.body.clientWidth)
               me._doSend(true);
           }, false);
 
