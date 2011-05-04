@@ -2075,12 +2075,12 @@
       <xul:toolbarbutton id="vcardButton" oncommand="this.parentNode.model.showVCard()"
                          tooltiptext="_('Show contact details')"/>
 
-      <xul:toolbarseparator/>
+      <xul:toolbarseparator id="sendFileSep"/>
 
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
                          tooltiptext="_('Send file')"/>
 
-      <xul:toolbarseparator/>
+      <xul:toolbarseparator id="jingleCallSep"/>
 
       <xul:toolbarbutton id="jingleCall" oncommand="this.parentNode._model.onJingleCall()"
                          tooltiptext="_('Jingle call')"/>
@@ -2156,7 +2156,7 @@
 
           this._updateJingleState();
 
-          this._sendFile.hidden = this._sendFile.previousSibling.hidden =
+          this._sendFile.hidden = this._sendFileSep.hidden =
             !val || typeof(socks5Service) == "undefined" ||
             !socks5Service.canSendTo(val.contact ? val : val.activeResource);
 
@@ -2185,7 +2185,9 @@
 
       <constructor><![CDATA[
         this._sendFile = document.getAnonymousElementByAttribute(this, "id", "sendFile");
+        this._sendFileSep = document.getAnonymousElementByAttribute(this, "id", "sendFileSep");
         this._jingleCall = document.getAnonymousElementByAttribute(this, "id", "jingleCall");
+        this._jingleCallSep = document.getAnonymousElementByAttribute(this, "id", "jingleCallSep");
         this._extraCmds = document.getAnonymousElementByAttribute(this, "id", "extraCmds");
 
         recoverSetters(this);
@@ -2204,7 +2206,7 @@
 
       <method name="_updateJingleState">
         <body><![CDATA[
-          this._jingleCall.hidden = this._jingleCall.previousSibling.hidden =
+          this._jingleCall.hidden = this._jingleCallSep.hidden =
             !this.model || !this.model.jingleResource;
         ]]></body>
       </method>
