@@ -28,6 +28,7 @@
     ML.importMod("dateutils.js");
     ML.importMod("colorutils.js");
     ML.importMod("views/conference.js");
+    ML.importMod("edit.js");
 
     function onLoad() {
       if (window.arguments)

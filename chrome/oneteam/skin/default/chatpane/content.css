@@ -50,8 +50,9 @@ body[hasSendButton=true][disabled=true]:after {
     -moz-border-bottom-colors: #c1c1c1 #bbbbbb #b3b3b3;
     -moz-border-left-colors: #c1c1c1 #bbbbbb #b3b3b3;
     -moz-border-right-colors: #c1c1c1 #bbbbbb #b3b3b3;
-    border-top-width: 0;
-    border-bottom-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 0;
+    /*width of border-top and border-bottom reversed by FX*/
 }
 
 body[hide-not-marked=true] .message {
@@ -117,7 +118,7 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
 }
 
 .header {
-  	color: #515151;
+    color: #515151;
     display: none;
     margin-top: 2px;
     margin-left: 24px;
@@ -214,8 +215,10 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
 .message > .body {
     position: relative;
     display: block;
-    padding: 3px 0px;
+    /*padding: 3px 0px;
     padding-left: 24px;
+    modified by FX because of the displayEditButton */
+    padding: 3px 34px 3px 24px;
 }
 
 .message[starts-chunk=true]::before {
@@ -292,4 +295,89 @@ body[marked-thread=true] .message[in-marked-thread=true] {
     pointer-events: none;
     z-index: 1000;
     background: url(imgs/vertical-gradient.png) top left repeat-x;
+}
+
+/*Added by FX*/
+div#editButton, .displayEditButton {
+  height: 14px;
+  position: absolute;
+  right: 1px;
+  bottom: 0.4em;
+}
+div#editButton {
+  width: 14px;
+  background: url(imgs/edit-disabled-14.png);
+  cursor: pointer;
+}
+div#editButton[editing] {
+  background: url(imgs/edit-enabled-14.png);
+}
+.displayEditButton {
+  width: 30px;
+}
+
+span.body[displayEdit] span.edit {
+  background: yellow;
+}
+
+/* for the 'displayEdit' and 'edit' button in the chatpane-view
+   not to overflow the message div, particularly when it is empty */
+div.message:after {
+  content: "";
+  display: block; 
+  clear: both;
+}
+
+.previousMessage, .nextMessage {
+  width: 8px;
+  height: 14px;
+  float: left;
+  cursor: pointer;
+}
+.previousMessage[disabled], .nextMessage[disabled] {
+  cursor: default;
+}
+.previousMessage           {background: url(imgs/previous.png);         }
+.previousMessage[disabled] {background: url(imgs/previous-disabled.png);}
+.nextMessage               {background: url(imgs/next.png);             }
+.nextMessage[disabled]     {background: url(imgs/next-disabled.png);    }
+
+.tooltipDiv {
+  width: 14px;
+  height: 14px;
+  float: right;
+  background: url(imgs/edit-unavailable-14.png) center center no-repeat;
+}
+
+/* 2px blue border around message being edited */
+.message[editing] {
+    -moz-border-top-colors: #c1c1c1 #7ea1dc #7ea1dc;
+    -moz-border-bottom-colors: #c1c1c1 #7ea1dc #7ea1dc;
+    -moz-border-left-colors: #c1c1c1 #7ea1dc #7ea1dc;
+    -moz-border-right-colors: #c1c1c1 #7ea1dc #7ea1dc;
+}
+.message[editing]:not([starts-chunk]) {
+    -moz-border-top-colors: #7ea1dc;
+    border-top-width: 2px;
+    padding-top: 0;
+}
+
+/* arrow in the 'send' button replaced with a pencil in edit mode */
+body[hasSendButton=true][editMode]:after {
+content: "";
+    float: right;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: 0px;
+    right: 0px;
+    -moz-border-image: url(imgs/send-border-image.png) 5/5px repeat repeat;
+    background: #b3ce00 url(imgs/edit-send.png) center center no-repeat;
+    padding: 0px;
+    width: 38px;
+}
+
+span.body {
+    min-height: 18px;
 }

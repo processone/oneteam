@@ -542,11 +542,12 @@ _DECL_(MessagesThread, Model).prototype =
     }
 }
 
-function Message(body, body_html, contact, type, time, thread, chatState, myNick)
+function Message(body, body_html, contact, type, time, thread, chatState, myNick, messageId)
 {
     this.contact = contact;
     this.type = type;
     this.myNick = myNick;
+//    this.messageId = messageId ? messageId : generateRandomName(12);
 
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
@@ -608,6 +609,16 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
             [this.html, this.text, this.sanitizedHtml] =
                 this._processDOM(html.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0],
                                  false, "");
+
+        // Added by FX
+        if (body.getNode().hasAttribute("id")) 
+          this.messageId = body.getNode().getAttribute("id");
+        var replaceNode = body.getNode().getElementsByTagNameNS("http://process-one.net/edit", "replace")[0];
+        if (replaceNode)// {
+          //this.type += 8;
+          this.replaceMessageId = replaceNode.getAttribute("id");
+        //}
+        // /Added by FX
     } else {
         if (body_html instanceof Node)
             [this.html, this.text, this.sanitizedHtml] = this._processDOM(body_html, false, "");
@@ -618,6 +629,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
 
         this.time = time || new Date();
         this.chatState = chatState;
+        this.messageId = messageId ? messageId : generateRandomName(12);
     }
 
     if (thread instanceof MessagesThread)
@@ -666,6 +678,10 @@ _DECL_(Message).prototype =
     get isSystemMessage() {
         return (this.type & 4) == 4;
     },
+
+    /*get isEditMessage() {
+        return (this.type & 8) == 8;
+    },*/
 
     get isDirectedMessage() {
         return this.myNick ? this.text.indexOf(this.myNick+":") == 0 : false;
@@ -812,6 +828,13 @@ _DECL_(Message).prototype =
 
             pkt.appendNode("x", attrs, childrens);
         }
+
+        pkt.getNode().setAttribute("id", this.messageId);
+        if (this.replaceMessageId)
+          pkt.appendNode("replace", {
+            xmlns: "http://process-one.net/edit",
+            id: this.replaceMessageId
+          });
     },
 
     /*   tag name       can have childrens              keep only if has childrens
@@ -1061,6 +1084,13 @@ _DECL_(Message).prototype =
         str = str.substring(last);
 
         return res + xmlEscape(str);
+    },
+
+    clone: function()
+    {
+        var F = function() {};
+        F.prototype = this;
+        return new F();
     }
 }
 

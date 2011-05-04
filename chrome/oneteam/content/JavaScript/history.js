@@ -4,7 +4,8 @@ ML.importMod("roles.js");
 ML.importMod("model/messages.js");
 ML.importMod("utils.js");
 
-function ArchivedMessagesThreadBase(contact, threadID, time)
+function ArchivedMessagesThreadBase(contact, threadID, time, messagesById,
+                                    editMessagesByReplaceMessageId)
 {
     if (typeof(contact) == "string")
         contact = new JID(contact);
@@ -19,6 +20,10 @@ function ArchivedMessagesThreadBase(contact, threadID, time)
     this._msgIdMap = {};
     this._revMsgIdMap = {};
     this.allMessages = [];
+    if (messagesById)
+        this._messagesById = messagesById;
+    if (editMessagesByReplaceMessageId)
+        this._editMessagesByReplaceMessageId = editMessagesByReplaceMessageId;
 }
 
 _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
@@ -65,7 +70,7 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
             var [msgId, replyTo] = [msg.xMessageId, msg.xReplyTo];
 
             msg = new Message(msg.text, msg.html, msg.contact, msg.type,
-                              msg.time, this, null, msg.myNick);
+                              msg.time, this, null, msg.myNick, msg.messageId);
             msg.archived = true;
 
             if (msgId)
@@ -136,7 +141,7 @@ function HistoryManager()
 
     var version = this.db.schemaVersion;
 
-    if (version > 4999)
+    if (version > 6999)
         throw new GenericError("Unrecognized HistoryManager database version");
 
     if (version == 0)
@@ -146,7 +151,8 @@ function HistoryManager()
                                        flags INTEGER NOT NULL, body TEXT NOT NULL,
                                        body_html TEXT,
                                        nick TEXT NOT NULL, time INTEGER(64) NOT NULL,
-                                       thread_id INTEGER NOT NULL);
+                                       thread_id INTEGER NOT NULL,
+                                       message_id TEXT, replace_message_id TEXT);
                 CREATE TABLE jids (id INTEGER PRIMARY KEY, jid TEXT UNIQUE NOT NULL);
                 CREATE TABLE threads (id INTEGER PRIMARY KEY, jid_id INTEGER NOT NULL,
                                       time INTEGER(64) NOT NULL, type INTEGER(8) NOT NULL);
@@ -165,6 +171,8 @@ function HistoryManager()
                                               autoset_count INTEGER NOT NULL);
 
                 CREATE INDEX messages_by_jid_id ON messages (jid_id);
+                CREATE INDEX messages_by_message_id ON messages (message_id);
+                CREATE INDEX messages_on_replace_message_id ON messages (replace_message_id);
                 CREATE INDEX messages_by_thread_id_and_time ON messages (thread_id, time);
 
                 CREATE INDEX threads_by_jid_id_and_time ON threads (jid_id, time);
@@ -176,7 +184,7 @@ function HistoryManager()
                 CREATE INDEX presences_on_time ON presences (time);
                 CREATE INDEX presences_on_jid_and_time ON presences (jid_id, time);
 
-                PRAGMA user_version = 4001;
+                PRAGMA user_version = 6001;
             COMMIT TRANSACTION;
         </sql>.toString());
     else {
@@ -219,6 +227,26 @@ function HistoryManager()
                 COMMIT TRANSACTION;
             </sql>.toString());
         }
+        if (version < 5000) {
+            this.db.executeSimpleSQL(<sql>
+                BEGIN IMMEDIATE TRANSACTION;
+                    ALTER TABLE messages
+                        ADD COLUMN message_id TEXT;
+                    CREATE INDEX messages_by_message_id ON messages (message_id);
+                    PRAGMA user_version = 5001;
+                COMMIT TRANSACTION;
+            </sql>.toString());
+        }
+        if (version < 6000) {
+            this.db.executeSimpleSQL(<sql>
+                BEGIN IMMEDIATE TRANSACTION;
+                    ALTER TABLE messages
+                        ADD COLUMN replace_message_id TEXT;
+                    CREATE INDEX messages_on_replace_message_id ON messages (replace_message_id);
+                    PRAGMA user_version = 6001;
+                COMMIT TRANSACTION;
+            </sql>.toString());
+        }
     }
 
     this.addJidStmt = this.db.createStatement(<sql>
@@ -228,9 +256,11 @@ function HistoryManager()
             INSERT INTO threads (jid_id, time, type) VALUES (?1, ?2, ?3);
         </sql>.toString());
     this.addMessageStmt = this.db.createStatement(<sql>
-            INSERT INTO messages (jid_id, flags, body, body_html, nick, time, thread_id)
-                VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+            INSERT INTO messages (jid_id, flags, body, body_html, nick, time, thread_id,
+                                  message_id, replace_message_id)
+                VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);
         </sql>.toString());
+
     this.getThreadsForJidIdsStmt = this.db.createStatement(<sql>
             SELECT DISTINCT T.id, J.jid, T.time FROM threads T, jids J
                 WHERE jid_id = ?1 AND jid_id = J.id
@@ -243,7 +273,8 @@ function HistoryManager()
                 ORDER BY T.time ASC;
         </sql>.toString());
     this.getThreadMessagesStmt = this.db.createStatement(<sql>
-            SELECT J.jid, M.flags, body, body_html, nick, time, M.id FROM messages M, jids J
+            SELECT J.jid, M.flags, body, body_html, nick, time, M.id, message_id,
+                   replace_message_id FROM messages M, jids J
                 WHERE thread_id = ?1 AND jid_id = J.id AND time > ?2 ORDER BY time ASC;
         </sql>.toString());
     this.addReplyStmt = this.db.createStatement(<sql>
@@ -299,6 +330,10 @@ function HistoryManager()
                 WHERE J.id = P.jid_id AND B.id = P.body_id AND P.jid_id = ?1 AND P.time > ?2
                 ORDER BY time ASC;
         </sql>.toString());
+    this.getLastMessageIdFromJid = this.db.createStatement(<sql>
+            SELECT message_id FROM messages
+                WHERE jid_id = ?1 ORDER BY time DESC LIMIT 1;
+        </sql>.toString());
 }
 
 _DECL_(HistoryManager, null, CallbacksList).prototype =
@@ -308,6 +343,9 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
     _sessionThreads: [],
     _sessionArchivedThreads: [],
     _searchPhrases: [],
+    _messagesById: {},
+    _editMessagesByReplaceMessageId: {},
+
 
     _loadJIDs: function() {
         var jidsById = {};
@@ -447,6 +485,17 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
     addMessage: function(msg)
     {
+        if (msg.isEditMessage) {
+            // check that the edited message is the last message from this contact
+            var stmt = this.getLastMessageIdFromJid;
+            stmt.bindInt32Parameter(0, this._getJidId(msg.contact.jid));
+            stmt.executeStep();
+            var lastMessageId = stmt.getString(0);
+            stmt.reset();
+            if (!lastMessageId || lastMessageId != msg.replaceMessageId)
+                return;
+        }
+
         var archivedThread, idx = this._sessionThreads.indexOf(msg.thread);
         if (idx < 0) {
             var stmt = this.addThreadStmt;
@@ -492,6 +541,10 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         stmt.bindStringParameter(4, msg.nick);
         stmt.bindInt64Parameter(5, msg.time.getTime());
         stmt.bindInt32Parameter(6, archivedThread.threadID);
+        if (msg.messageId)
+            stmt.bindStringParameter(7, msg.messageId);
+        if (msg.replaceMessageId)
+            stmt.bindStringParameter(8, msg.replaceMessageId);
         stmt.execute();
 
         rowId = this.db.lastInsertRowID;
@@ -653,16 +706,30 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
             var msg = lastThread.allMessages[token.lastIndex--];
 
-            if (!msg.isSystemMessage && msg.time.getTime() < olderThan)
-                msgs.unshift(msg);
+            if (msg && !msg.isSystemMessage && msg.time.getTime() < olderThan) {
+                if (msg.replaceMessageId)
+                    if (this._messagesById[msg.replaceMessageId])
+                        this._messagesById[msg.replaceMessageId].editMessage = msg;
+                    else
+                        this._editMessagesByReplaceMessageId[msg.replaceMessageId] = msg;
+                else
+                    msgs.unshift(msg);
+
+                if (msg.messageId && this._editMessagesByReplaceMessageId[msg.messageId]) {
+                    msg.editMessage = this._editMessagesByReplaceMessageId[msg.messageId];
+                    delete this._editMessagesByReplaceMessageId[msg.messageId];
+                }
+            }
         }
         return [token, msgs, token.lastIndex >= 0 || token.threads.length > 1];
     }
 }
 
-function ArchivedMessagesThread(contact, threadID, time)
+function ArchivedMessagesThread(contact, threadID, time, messagesById,
+                                editMessagesByReplaceMessageId)
 {
-    ArchivedMessagesThreadBase.call(this, contact, threadID, time);
+    ArchivedMessagesThreadBase.call(this, contact, threadID, time, messagesById,
+                                    editMessagesByReplaceMessageId);
 }
 
 _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
@@ -687,15 +754,22 @@ _DECL_(ArchivedMessagesThread, ArchivedMessagesThreadBase).prototype =
         while (stmt.executeStep()) {
             try {
                 var jid = new JID(stmt.getString(0));
+                var flags = stmt.getInt32(1);
+                var mucMessage = (flags&3) == 1;
                 var contact = this._getContact(stmt.getString(4), jid,
-                    this.contact.jid.normalizedJID == jid.normalizedJID);
+                    !mucMessage && this.contact.jid.normalizedJID.shortJID !=
+                                   jid.normalizedJID.shortJID);
 
                 this._lastMessageTime = stmt.getInt64(5);
 
                 var msg = new Message(stmt.getString(2), stmt.getString(3),
-                                      contact, stmt.getInt32(1),
-                                      new Date(this._lastMessageTime), this);
+                                      contact, flags,
+                                      new Date(this._lastMessageTime), this,
+                                      null, null, stmt.getString(7));
                 msg.archived = true;
+
+                if (stmt.getString(8))
+                    msg.replaceMessageId = stmt.getString(8);
 
                 msg.xMessageId = generateRandomName(8);
                 this._msgIdMap[msg.xMessageId] = stmt.getInt64(6);

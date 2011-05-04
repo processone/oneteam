@@ -16,6 +16,7 @@
     ML.importMod("treeview.js");
     ML.importMod("colorutils.js");
     ML.importMod("dateutils.js");
+    ML.importMod("edit.js");
 
     var contact = window.arguments && window.arguments[0];
 

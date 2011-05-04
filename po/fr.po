@@ -2113,6 +2113,54 @@ msgstr "{0} va essayer de se connecter à nouveau au serveur"
 msgid "Open console"
 msgstr "Ouvrir la console"
 
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1003
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1038
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2112
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2178
+msgid "Edit Last Message"
+msgstr "Corriger le dernier message"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:999
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2178
+msgid "Cancel Edition"
+msgstr "Annuler la correction"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:885
+msgid "Refer to this Message"
+msgstr "Répondre à ce message"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:885
+msgid "Refer to this Conversation"
+msgstr "Répondre à cette discussion"
+
+#: ../chrome/oneteam/content/JavaScript/edit.js:195
+msgid "This message has been edited once"
+msgstr "Ce message a été corrigé une fois"
+
+#: ../chrome/oneteam/content/JavaScript/edit.js:196
+msgid "This message has been edited twice"
+msgstr "Ce message a été corrigé deux fois"
+
+#: ../chrome/oneteam/content/JavaScript/edit.js:197
+msgid "This message has been edited {0} times"
+msgstr "Ce message a été corrigé {0} fois"
+
+#: ../chrome/oneteam/content/JavaScript/edit.js:240
+msgid "See Previous Version"
+msgstr "Version précédente"
+
+#: ../chrome/oneteam/content/JavaScript/edit.js:249
+msgid "See Next Version"
+msgstr "Version suivante"
+
+#: ../chrome/oneteam/content/JavaScript/edit.js:244
+msgid "This is the first version of the message"
+msgstr "Ceci est la première version du message"
+
+#: ../chrome/oneteam/content/JavaScript/edit.js:253
+msgid "This is the last version of the message"
+msgstr "Ceci est la dernière version du message"
+
 #~ msgid "Information..."
 #~ msgstr "Information..."
 
