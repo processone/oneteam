@@ -13,86 +13,110 @@
   /*height: 1.5em;*/
 }
 
-toolbar[type="chatpane-commands"] {
-  -moz-appearance: none !important;
-  background: #515151 !important;
-  -moz-border-radius: 2px;
-}
-
 #_counter {
   margin: 0 50px 0 0 !important;
   padding: 0 !important;
   color: #FFA4A2;
 }
 
+toolbar[type="chatpane-commands"] {
+  -moz-appearance: none !important;
+  background: #515151 !important;
+  -moz-border-radius: 2px;
+}
+
+toolbar[type="chatpane-commands"] toolbarseparator {
+  -moz-appearance: none !important;
+  padding: 0;
+  margin: 0 3px;
+  border: 0px solid transparent;
+  border-left: 1px solid #3d3d3d;
+  border-right: 1px solid #7d7d7d;
+}
+
+toolbar[type="chatpane-commands"] toolbarseparator.transparent {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+toolbar[type="chatpane-commands"] dropmarker {
+  -moz-appearance: none !important;
+  list-style-image: url(imgs/toolbar/dropmarker.png);
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
 #boldButton {
-    list-style-image: url(imgs/text-style-bold.png);
+    list-style-image: url(imgs/toolbar/text-style-bold.png);
 }
 
 #italicButton {
-    list-style-image: url(imgs/text-style-italic.png);
+    list-style-image: url(imgs/toolbar/text-style-italic.png);
 }
 
 #underlineButton {
-    list-style-image: url(imgs/text-style-underline.png);
+    list-style-image: url(imgs/toolbar/text-style-underline.png);
 }
 
 #smallerFontButton {
-    list-style-image: url(imgs/text-size-smaller.png);
+    list-style-image: url(imgs/toolbar/text-size-smaller.png);
 }
 
 #biggerFontButton {
-    list-style-image: url(imgs/text-size-bigger.png);
+    list-style-image: url(imgs/toolbar/text-size-bigger.png);
 }
 
 #fontColorButton {
   -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
-  list-style-image: url(imgs/text-font-color.png);
+  list-style-image: url(imgs/toolbar/text-font-color.png);
 }
 
 #fontBackgroundButton {
   -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
-  list-style-image: url(imgs/text-font-background.png);
+  list-style-image: url(imgs/toolbar/text-font-background.png);
 }
 
 #vcardButton {
-    list-style-image: url(imgs/vcard.png);
+    list-style-image: url(imgs/toolbar/vcard.png);
 }
 
 #sendFile {
-    list-style-image: url(imgs/send-file.png);
-}
-
-#jingleCall {
-    list-style-image: url(imgs/call.png);
+    list-style-image: url(imgs/toolbar/send-file.png);
 }
 
 #sendFile[disabled=true] {
-    list-style-image: url(imgs/send-file-disabled.png);
+    list-style-image: url(imgs/toolbar/send-file-inactive.png);
+}
+
+#jingleCall {
+    list-style-image: url(imgs/toolbar/call.png);
 }
 
 #extraCmds {
-    list-style-image: url(imgs/extra-cmds.png);
+    list-style-image: url(imgs/toolbar/extra-cmds.png);
 }
 
 #spellingButton {
-  list-style-image: url(imgs/spellcheck.png);
+  list-style-image: url(imgs/toolbar/spellcheck.png);
 }
 
 #spellingButton[disable="true"] {
-  list-style-image: url(imgs/spellcheck-disabled.png);
+  list-style-image: url(imgs/toolbar/spellcheck-inactive.png);
 }
 
 #inputBoxStack[type="editMode"] {
   border: solid 2px #7ea1dc;
   margin: -2px;
 }
+
 #editButton[type="cancel"] {
-  list-style-image: url(imgs/edit-enabled-16.png);
+  list-style-image: url(imgs/toolbar/edit-inactive.png);
 }
+
 #editButton[type="edit"] {
-  list-style-image: url(imgs/edit-disabled-16.png);
+  list-style-image: url(imgs/toolbar/edit.png);
 }
+
 #editButton[type="disabled"] {
-  list-style-image: url(imgs/edit-unavailable-16.png);
+  list-style-image: url(imgs/toolbar/edit-inactive.png);
 }

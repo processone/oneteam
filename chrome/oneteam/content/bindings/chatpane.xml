@@ -737,7 +737,7 @@
 
             var lastMsg = msg.nick in this._lastNickMessage ? this._lastNickMessage[msg.nick] : null;
             var match, animRequired = false;
-            
+
             if (!afterMsg
                 && (match = msg.text.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/))
                 && lastMsg && lastMsg.text.indexOf(match[1]) != -1
@@ -746,11 +746,11 @@
               msg.text = lastMsg.text.replace(match[1], match[2]);
               msg.html = lastMsg.html.replace(match[1], match[2]);
             }
-            
+
             if (!afterMsg && (msg.replaceMessageId || msg.isOldFormatEditMessage)) {
               if ((msg.replaceMessageId == lastMsg.messageId) || msg.isOldFormatEditMessage) {
                 msg.editCounter = lastMsg.editCounter ? lastMsg.editCounter+1 : 1;
-            
+
                 if (msg.editCounter <= 3) {
                   lastMsg.editMessage = msg;
                   animRequired = !msg.archived;
@@ -764,12 +764,12 @@
               } // an invalid editMessage (i.e. with invalid replaceMessageId) is ignored
             } else
               msg.isOriginalMessage = true;
-            
+
             if (msg.isOriginalMessage && !msg.msgEl) {
               var msgEl = doc.createElement("div");
               msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
               msgEl.setAttribute("not-seen", "true");
-  
+
               if (msg.isSystemMessage || !beforeMsg ||
                   beforeMsg.isSystemMessage ||
                   beforeMsg.contactId != msg.contactId ||
@@ -781,7 +781,7 @@
                   beforeMsgEl.setAttribute("ends-chunk", "true");
                 msgEl.setAttribute("starts-chunk", "true");
               }
-  
+
               if (msg.contact && !msg.participants) {
                 var e = doc.createElement("img");
                 e.setAttribute("class", "avatar")
@@ -790,37 +790,37 @@
                 e.setAttribute("width", "18")
                 msgEl.appendChild(e);
               }
-  
+
               var h = doc.createElement("span");
               h.setAttribute("class", "header");
               msgEl.appendChild(h);
-  
+
               if ("onMsgClick" in this.model)
                 msgEl.setAttribute("onclick", "var ev = document.createEvent('Events');"+
                               "ev.initEvent('msgclick', true, false);"+
                               "this.dispatchEvent(ev)");
-  
+
               var e = doc.createElement("span");
               e.setAttribute("class", "to-copy-paste");
               e.appendChild(doc.createTextNode("["));
               h.appendChild(e);
-  
+
               e = doc.createElement("span");
               e.setAttribute("class", "date");
               e.appendChild(doc.createTextNode(readableTimestamp(msg.time)));
               h.appendChild(e);
-  
+
               e = doc.createElement("span");
               e.setAttribute("class", "to-copy-paste");
               e.appendChild(doc.createTextNode("] "));
               h.appendChild(e);
-  
+
               if (!msg.isSystemMessage && !msg.participants) {
                 e = doc.createElement("span");
                 e.setAttribute("class", "author");
                 e.appendChild(doc.createTextNode(msg.nick));
                 h.appendChild(e);
-  
+
                 e = doc.createElement("span");
                 e.setAttribute("class", "to-copy-paste");
                 e.appendChild(doc.createTextNode(": "));
@@ -839,51 +839,51 @@
                   h.appendChild(e);
                 }
               }
-  
+
               e = doc.createElement("span");
               e.setAttribute("class", "body");
               msg.contentNode = doc.createElement("div");
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
               e.appendChild(msg.contentNode);
-  
+
               msg.addRepresentation(msgEl);
-  
+
               msg.markAsSeen();
               msgEl.appendChild(e);
-  
+
               beforeMsg = msg;
               beforeMsgEl = msgEl;
-  
+
               this._msgList.push(msg);
               this._msgElList.push(msgEl);
-  
+
               if (this.model.allowsModifications) {
                 var im = doc.createElement("div");
-  
+
                 im.setAttribute("class", "message-action edit-message");
                 e.insertBefore(im, e.firstChild);
               }
-  
+
               if (!msg.isSystemMessage) {
                 var xReplyTo = "xReplyTo" in msg ? msg.xReplyTo[0] : null;
                 var xMessageId = "xMessageId" in msg ? msg.xMessageId : null;
-  
+
                 if (xMessageId) {
                   if (!afterMsg)
                     this._lastNickMessageId[msg.nick] = xMessageId;
-  
+
                   msgEl.twitterNick = msg.xTwitterNick;
                   msgEl.msgId = xMessageId;
                 }
-  
+
                 if (xReplyTo || xMessageId) {
                   var im = doc.createElement("div");
-  
+
                   im.setAttribute("class", "message-action thread-marker" +
                                   (msg.xMessageId ? " thread-marker-reply" : ""));
                   tooltip(im, this._output,
                     xReplyTo ? _("Refer to this Conversation") : _("Refer to this Message"));
-  
+
                   var handler = {
                     _this: this,
                     handleEvent: function(event) {
@@ -902,11 +902,11 @@
                   }
                   im.addEventListener("mouseover", handler, false);
                   im.addEventListener("mouseout", handler, false);
-  
+
                   e.insertBefore(im, e.firstChild);
-  
+
                   this._threadingDriver.addMessage(msg, msgEl);
-  
+
                   if (xMessageId && this._input && this._input.thread &&
                       this._threadingDriver.msgIdMap[xMessageId][2] == this._input.thread)
                     this._input.msgId = xMessageId;
@@ -925,7 +925,7 @@
               if (!this._editButton || this._editButton.parentNode != body)
                 msg.msgEl.displayEditButton.setTooltipDiv();
             }
-            
+
             while (msg.editMessage) {
               msg.editMessage.editCounter =
                 msg.editCounter ? msg.editCounter +1 : 1;
@@ -933,17 +933,17 @@
               msg.editMessage.previous = msg;
               msg = msg.editMessage;
               msg.contentNode = doc.createElement("div");
-              msg.contentNode.innerHTML = msg.formatedHtml || "<br/>"; 
+              msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
             } // now, msg is the last edit message, or the original message if not edited
             if (msg.msgEl.displayEditButton)
               msg.msgEl.displayEditButton.reload(msg);
- 
+
             if (!afterMsg && !msg.isSystemMessage) {
               this._lastNickMessage[msg.nick] = msg;
               if (this._input && msg.contact.representsMe)
                 this._input.lastMessage = msg;
             }
-            
+
             if (animRequired) {
               if (!this.visible && !this._visibleAnimations)
                 this._visibleAnimations = [];
@@ -966,11 +966,11 @@
             }
           }
 
-          if (this._input && !afterMsg) 
-            this.parentNode.parentNode.parentNode.parentNode.sthgToEdit = 
+          if (this._input && !afterMsg)
+            this.parentNode.parentNode.parentNode.parentNode.sthgToEdit =
               this._input.lastMessage
               && !this._input.lastMessage.isOldFormatEditMessage
-              && (this._input.lastMessage.isOriginalMessage 
+              && (this._input.lastMessage.isOriginalMessage
                   || this._input.lastMessage.editCounter < 3);
 
           if (afterMsg) {
@@ -1003,7 +1003,7 @@
               tooltip(this._editButton, this._output, _("Edit Last Message"));
               messageDiv.removeAttribute("editing");
             }
-          } else 
+          } else
             if (this._editButton) {
               this._editButton.parentNode.parentNode.removeAttribute("editing");
               this._removeEditButton();
@@ -1753,7 +1753,7 @@
               chatpane.sthgToEdit =
                 this.lastMessage
                 && !this.lastMessage.isOldFormatEditMessage
-                && (this.lastMessage.isOriginalMessage || this.lastMessage.editCounter < 3);    
+                && (this.lastMessage.isOriginalMessage || this.lastMessage.editCounter < 3);
               break;
             }
           }
@@ -2066,22 +2066,32 @@
     </resources>
 
     <content tbalign="center">
-      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold" tooltiptext="_('Bold')"/>
-      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic" tooltiptext="_('Italic')"/>
-      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline" tooltiptext="_('Underline')"/>
+      <xul:toolbarbutton id="editButton" type="disabled" tooltiptext="_('Edit Last Message')"
+                         oncommand="if (this.type != 'disabled')
+                           this.parentNode.parentNode.parentNode.switchEditMode()"/>
+
       <xul:toolbarseparator/>
-      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize" tooltiptext="_('Increase font size')"/>
-      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize" tooltiptext="_('Decrease font size')"/>
-      <xul:toolbarseparator/>
-      <xul:toolbarbutton id="fontColorButton" cmd="foreColor" tooltiptext="_('Font color')"/>
-      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor" tooltiptext="_('Background color')"/>
-      <xul:toolbarseparator/>
+
       <xul:toolbarbutton id="vcardButton" oncommand="this.parentNode.model.showVCard()"
                          tooltiptext="_('Show contact details')"/>
+
+      <xul:toolbarseparator/>
+
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"
                          tooltiptext="_('Send file')"/>
+
+      <xul:toolbarseparator/>
+
       <xul:toolbarbutton id="jingleCall" oncommand="this.parentNode._model.onJingleCall()"
                          tooltiptext="_('Jingle call')"/>
+
+      <xul:toolbarseparator/>
+
+      <xul:toolbarbutton id="smilesList" type="smiles-list"
+                         tooltiptext="_('Toggle smiles visibility/select smile')"/>
+
+      <xul:toolbarseparator/>
+
       <xul:toolbarbutton id="extraCmds" tooltiptext="_('Additional commands')" type="menu">
         <xul:menupopup id="extraCmds-popup" onpopupshowing="this.parentNode.parentNode._syncMenu()">
           <xul:menuitem label="_('Invite to group chat room')"
@@ -2100,18 +2110,30 @@
                         oncommand="this.parentNode.parentNode.parentNode.showCounter = !this.checked"/>
         </xul:menupopup>
       </xul:toolbarbutton>
-      <xul:toolbarseparator/>
+
+      <xul:spacer flex="1"/>
+
       <xul:toolbarbutton id="spellingButton"
                      type="menu-button"
                      oncommand="spellcheck.toggle(this);">
         <xul:menupopup id="languageMenuList" onpopupshowing="spellcheck.onShowDictionariesMenu(this, event.target);"/>
       </xul:toolbarbutton>
-      <xul:toolbarbutton id="smilesList" type="smiles-list"
-                         tooltiptext="_('Toggle smiles visibility/select smile')"/>
-      <xul:menuseparator/>
-      <xul:toolbarbutton id="editButton" type="disabled" tooltiptext="_('Edit Last Message')"
-                         oncommand="if (this.type != 'disabled')
-                           this.parentNode.parentNode.parentNode.switchEditMode()"/>
+
+      <xul:toolbarseparator/>
+
+      <xul:toolbarbutton id="boldButton" type="checkbox" cmd="bold" tooltiptext="_('Bold')"/>
+      <xul:toolbarbutton id="italicButton" type="checkbox" cmd="italic" tooltiptext="_('Italic')"/>
+      <xul:toolbarbutton id="underlineButton" type="checkbox" cmd="underline" tooltiptext="_('Underline')"/>
+
+      <xul:toolbarseparator class="transparent"/>
+
+      <xul:toolbarbutton id="biggerFontButton" cmd="increaseFontSize" tooltiptext="_('Increase font size')"/>
+      <xul:toolbarbutton id="smallerFontButton" cmd="decreaseFontSize" tooltiptext="_('Decrease font size')"/>
+
+      <xul:toolbarseparator class="transparent"/>
+
+      <xul:toolbarbutton id="fontColorButton" cmd="foreColor" tooltiptext="_('Font color')"/>
+      <xul:toolbarbutton id="fontBackgroundButton" cmd="hiliteColor" tooltiptext="_('Background color')"/>
     </content>
 
     <implementation>
@@ -2134,7 +2156,8 @@
 
           this._updateJingleState();
 
-          this._sendFile.hidden = !val || typeof(socks5Service) == "undefined" ||
+          this._sendFile.hidden = this._sendFile.previousSibling.hidden =
+            !val || typeof(socks5Service) == "undefined" ||
             !socks5Service.canSendTo(val.contact ? val : val.activeResource);
 
           this._syncMenu();
