@@ -887,7 +887,7 @@
                   var handler = {
                     _this: this,
                     handleEvent: function(event) {
-                      if (event.target.getAttribute("in-thread") != "true")
+                      if (!event.target.hasAttribute("threadId"))
                         return;
                       if (event.type == "mouseover") {
                         if (!this._inside) {
@@ -1155,19 +1155,12 @@
             } else
               this._selectThread(this._selectedThread);
 
-          if (thread.invalidated) {
-            thread.image = this._drawThreadMarker(""+(thread.age+1));
-            thread.invalidated = false;
-          }
-
           if (!msgToken) {
             for (var token in thread.iterator()) {
-              token[1].lastChild.firstChild.style.backgroundImage = "url("+thread.image+")";
-              token[1].lastChild.firstChild.setAttribute("in-thread", "true");
+              token[1].lastChild.firstChild.setAttribute("threadId", thread.age+1);
             }
           } else {
-            msgToken[1].lastChild.firstChild.style.backgroundImage = "url("+thread.image+")";
-            msgToken[1].lastChild.firstChild.setAttribute("in-thread", "true");
+            msgToken[1].lastChild.firstChild.setAttribute("threadId", thread.age+1);
           }
         ]]></body>
       </method>
@@ -1176,8 +1169,7 @@
         <parameter name="thread"/>
         <body><![CDATA[
           for (var token in thread.iterator()) {
-            token[1].lastChild.firstChild.style.backgroundImage = "";
-            token[1].lastChild.firstChild.removeAttribute("in-thread");
+            token[1].lastChild.firstChild.removeAttribute("threadId");
           }
         ]]></body>
       </method>
@@ -1188,11 +1180,6 @@
           this._input.thread = null;
 
           var thread = this._threadingDriver.getThreadForMsgId(msgId);
-          if (thread.invalidated) {
-            thread.image = this._drawThreadMarker(""+(thread.age+1));
-            thread.invalidated = false;
-          }
-
           var msgEl = this._threadingDriver.msgIdMap[msgId][1];
 
           this._input.thread = thread;
@@ -1228,46 +1215,6 @@
 
           if (msg)
             msg.processInlineCommand(el, window);
-        ]]></body>
-      </method>
-
-      <method name="_drawThreadMarker">
-        <parameter name="label"/>
-        <parameter name="selected"/>
-        <body><![CDATA[
-          var cx;
-          var w, h = 14;
-
-          if (!this._canvas) {
-            this._canvas = document.createElementNS(HTMLNS, "canvas");
-            this._canvas.height = h;
-            cx = this._canvas.getContext("2d");
-          } else
-            cx = this._canvas.getContext("2d");
-
-          cx.font = "bold 12px Arial";
-          var tw = cx.mozMeasureText(label);
-          w = tw < 14 ? 18 : tw+4;
-
-          this._canvas.width = w;
-          var radius = 2;
-
-          cx.fillStyle = selected ? "#fff" : "#7ea1dc";
-          cx.beginPath();
-          cx.moveTo(0, radius);
-          cx.arc(radius, radius, radius, -Math.PI, -Math.PI/2, 0);
-          cx.arc(w-radius, radius, radius, -Math.PI/2, 0, 0);
-          cx.arc(w-radius, h-radius, radius, 0, Math.PI/2, 0);
-          cx.arc(radius, h-radius, radius, Math.PI/2, Math.PI, 0);
-          cx.fill();
-          cx.fillStyle = selected ? "#c7c7c7" : "#fff";
-          cx.save();
-          cx.translate((w-tw)/2, h-3);
-          cx.font = "bold 12px Arial";
-          cx.mozDrawText(label);
-          cx.restore();
-
-          return this._canvas.toDataURL();
         ]]></body>
       </method>
 
@@ -1505,24 +1452,11 @@
           this._thread = val;
 
           var doc = this._input.contentDocument;
-          var prevImg = doc.body.firstChild.localName == "img" &&
-              doc.body.firstChild.hasAttribute("thread-index") ?
-            doc.body.firstChild : null;
 
-          if (val) {
-            var img = doc.createElementNS(HTMLNS, "img");
-            img.setAttribute("src", val.image);
-            img.setAttribute("style", "padding-right: 2px");
-            img.setAttribute("thread-index", val.idx);
-
-            if (prevImg)
-              doc.body.replaceChild(img, prevImg);
-            else {
-              doc.body.insertBefore(img, doc.body.firstChild);
-              this._fixupThreadMarker();
-            }
-          } else if (prevImg)
-            prevImg.parentNode.removeChild(prevImg);
+          if (val)
+            doc.body.setAttribute("threadId", val.age+1);
+          else
+            doc.body.removeAttribute("threadId")
         ]]></setter>
       </property>
 
@@ -1626,8 +1560,6 @@
           }
 
           doc.addEventListener("mousedown", this._onmousedown = function(event) {
-            me._fixupThreadMarker();
-
             if (me._toolbar)
               me._toolbar._updateState(event);
 
@@ -1647,14 +1579,16 @@
           }, false);
 
           doc.addEventListener("keypress", this._onkeypress = function(event) {
-          //alert("r: "+String.fromCharCode(event.charCode)+", "+event.keyCode+", "+event.altKey+", "+event.metaKey+", "+event.shiftKey);
             event.stopPropagation();
+
             if (me._disabled)
               return false;
+
+            var doc = me._input.contentDocument;
+
             if (event.keyCode == KeyEvent.DOM_VK_TAB && !event.ctrlKey) {
               event.preventDefault();
 
-              var doc = me._input.contentDocument;
               var selection = me._input.contentWindow.getSelection();
               var range = doc.createRange();
 
@@ -1675,12 +1609,14 @@
               return false;
             }
 
+            var s;
+
             var upKey = event.keyCode == KeyEvent.DOM_VK_UP;
             if ((upKey || event.keyCode == KeyEvent.DOM_VK_DOWN) &&
                 !event.shiftKey && !event.altKey && !event.ctrlKey &&
                 !event.metaKey)
             {
-              var s =  me._input.contentWindow.getSelection();
+              s =  me._input.contentWindow.getSelection();
 
               if (s.anchorNode == s.focusNode && s.anchorOffset == s.focusOffset &&
                   me._handleHistoryKey(upKey))
@@ -1702,7 +1638,24 @@
               }
             }
 
-            if (String.fromCharCode(event.charCode) == 'e' && (event.ctrlKey || event.metaKey))
+            if (event.keyCode == KeyEvent.DOM_VK_BACK_SPACE && me._thread) {
+              if (!s)
+                s =  me._input.contentWindow.getSelection();
+
+              if (s.anchorNode == s.focusNode && s.anchorOffset == s.focusOffset && s.anchorOffset == 0) {
+                var n = s.anchorNode;
+
+                while (n != doc.body && !n.previousSiblings)
+                  n = n.parentNode;
+
+                if (n == doc.body)
+                  me.thread = null;
+              }
+              me._onUserType();
+              return false;
+            }
+
+            if (event.keyCode == KeyEvent.DOM_VK_E && (event.ctrlKey || event.metaKey))
                 me.parentNode.parentNode.parentNode.switchEditMode();
 
             me._onUserType();
@@ -1723,17 +1676,10 @@
               me._toolbar._updateState(event);
             me.maybeResize();
             me.modified = true;
-            if (me.thread) {
-              var f = me._input.contentDocument.body.firstChild;
-              if (f && (f.localName != "img" || !f.hasAttribute("thread-index")))
-                me.thread = null;
-            }
           }, false);
 
           for each (var event in "keydown keyup mousedown mouseup dragdrop".split(" ")) {
             doc.addEventListener(event, this["_on"+event] = function(event) {
-              me._fixupThreadMarker();
-
               if (me._toolbar)
                 me._toolbar._updateState(event);
             }, false);
@@ -1808,18 +1754,6 @@
             this.thread = thread;
 
           this.maybeResize();
-        ]]></body>
-      </method>
-
-      <method name="_fixupThreadMarker">
-        <body><![CDATA[
-          if (this.thread) {
-            var doc = this._input.contentDocument;
-            var selection = this._input.contentWindow.getSelection();
-
-            if (selection.anchorNode == doc.body && selection.anchorOffset == 0)
-              selection.collapse(doc.body, 1);
-          }
         ]]></body>
       </method>
 
@@ -2286,7 +2220,8 @@
 
         <xul:toolbar type="chatpane-commands"/>
         <xul:hbox id="input-container">
-          <xul:textbox type="resizable-richtext" id="input" class="input" flex="1" multiline="true" spellcheck="true" context="inputContext"/>
+          <xul:textbox type="resizable-richtext" id="input" class="input" flex="1"
+                       multiline="true" spellcheck="true" context="inputContext"/>
         </xul:hbox>
       </xul:vbox>
     </content>
@@ -2422,7 +2357,7 @@
             var switchTab = 0;
 
             if ((ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ||
-                 ev.keyCode == KeyEvent.DOM_VK_PAGE_DOWN))
+                 ev.keyCode == KeyEvent.DOM_VK_PAGE_DOWN)) {
               if (ev.shiftKey && !ev.altKey && !ev.ctrlKey && !ev.metaKey) {
                 ev.stopPropagation();
                 ev.preventDefault();
@@ -2436,8 +2371,7 @@
                 ev.preventDefault();
                 switchTab = ev.keyCode == KeyEvent.DOM_VK_PAGE_UP ? -1 : 1;
               }
-
-            if (ev.keyCode == KeyEvent.DOM_VK_TAB && !ev.altKey && !ev.metaKey &&
+            } else if (ev.keyCode == KeyEvent.DOM_VK_TAB && !ev.altKey && !ev.metaKey &&
                 ev.ctrlKey)
             {
               ev.stopPropagation();
@@ -2571,6 +2505,7 @@
         <body><![CDATA[
           var radio = document.createElementNS(XULNS, "radio");
           radio.setAttribute("value", value);
+          radio.setAttribute("label", label);
 
           if (!this._threadPickerContainer.childNodes.length)
             radio.setAttribute("selected", "true");
@@ -2578,10 +2513,9 @@
           this._threadPickerContainer.appendChild(radio);
 
           var menuitem = document.createElementNS(XULNS, "menuitem");
-          menuitem.setAttribute("label", "");
+          menuitem.setAttribute("label", label);
           menuitem.setAttribute("value", value);
-          menuitem.setAttribute("class", "menuitem-iconic-noaccel");
-          menuitem.setAttribute("image", this._output._drawThreadMarker(label));
+          menuitem.setAttribute("class", "menuitem-noaccel");
           this._threadPickerMenulist.firstChild.appendChild(menuitem);
 
           if (this._threadPickerMenulist.firstChild.childNodes.length == 1)
@@ -2593,11 +2527,6 @@
             return;
 
           this._maxThreads = value;
-
-          ss.insertRule('#thread-picker-container radio[value="'+value+'"] {'+
-                        'list-style-image: url("'+this._output._drawThreadMarker(label)+'");}', 0);
-          ss.insertRule('#thread-picker-container radio[value="'+value+'"][selected="true"] {'+
-                        'list-style-image: url("'+this._output._drawThreadMarker(label, true)+'");}', 0);
         ]]></body>
       </method>
 
