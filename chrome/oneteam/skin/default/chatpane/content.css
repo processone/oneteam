@@ -306,11 +306,11 @@ div#editButton, .displayEditButton {
 }
 div#editButton {
   width: 14px;
-  background: url(imgs/edit-disabled.png);
+  background: url(imgs/edit-disabled-14.png);
   cursor: pointer;
 }
 div#editButton[editing] {
-  background: url(imgs/edit-enabled.png);
+  background: url(imgs/edit-enabled-14.png);
 }
 .displayEditButton {
   width: 30px;
@@ -346,7 +346,7 @@ div.message:after {
   width: 14px;
   height: 14px;
   float: right;
-  background: url(imgs/edit-unavailable.png) center center no-repeat;
+  background: url(imgs/edit-unavailable-14.png) center center no-repeat;
 }
 
 /* 2px blue border around message being edited */
