@@ -511,6 +511,9 @@ _DECL_(MessagesThread, Model).prototype =
             msg.xMessageId = generateRandomName(8);
 
         msg.sendXhtmlIM = this.peerHandlesHtmlIM;
+        msg.forceXhtmlIM = !this._afterFirstOurMessage;
+
+        this._afterFirstOurMessage = true;
 
         if (!(this.contact instanceof Conference) && msg.text) {
             msg.queues.push(this);
@@ -538,6 +541,7 @@ _DECL_(MessagesThread, Model).prototype =
             this.contact._onThreadDestroyed(this)
 
         this._afterFirstMessage = false;
+        this._afterFirstOurMessage = false;
         this._afterFirstPeerMessage = false;
     }
 }
@@ -609,7 +613,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
                 this._processDOM(html.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0],
                                  false, "");
 
-        if (body.getNode().hasAttribute("id")) 
+        if (body.getNode().hasAttribute("id"))
           this.messageId = body.getNode().getAttribute("id");
         var replaceNode = body.getNode().getElementsByTagNameNS("http://process-one.net/edit", "replace")[0];
         if (replaceNode)
@@ -789,7 +793,9 @@ _DECL_(Message).prototype =
             return;
         pkt.setBody(this.text);
 
-        if (this.sendXhtmlIM && this.html) {
+        if (this.sendXhtmlIM && this.html &&
+            (this.forceXhtmlIM || this.html != this.text))
+        {
             var dp = new DOMParser();
             var doc = dp.parseFromString("<body xmlns='http://www.w3.org/1999/xhtml'>"+
                                          this.sanitizedHtml+"</body>", "text/xml")
