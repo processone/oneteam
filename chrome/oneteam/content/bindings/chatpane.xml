@@ -658,9 +658,11 @@
           if (!this._content) {
             this._content = doc.createElement("div");
             this._content.setAttribute("class", "mainContainer");
-            this._gradient = doc.createElement("div");
-            this._gradient.setAttribute("class", "gradient");
-            doc.body.appendChild(this._gradient);
+            if (!this._gradient) {
+              this._gradient = doc.createElement("div");
+              this._gradient.setAttribute("class", "gradient");
+              doc.body.appendChild(this._gradient);
+            }
             doc.body.appendChild(this._content);
           }
 
