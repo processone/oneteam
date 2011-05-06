@@ -1,0 +1,38 @@
+#contacts-list, #conferences-list {
+  -moz-appearance: none;
+  border: 1px solid #999;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  padding: 2px;
+}
+
+#contacts-threads, #conferences-threads, #search-container {
+  margin: 0;
+  padding: 0;
+  -moz-appearance: none;
+  border: 1px solid #999;
+}
+
+#search-field {
+  margin: 6px;
+}
+
+#search-container {
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  background: #c7c7c7;
+}
+
+#search-threads {
+  margin: 0;
+  padding: 0;
+  -moz-appearance: none;
+  border: none;
+}
+
+#contacts-view, #conferences-view, #search-view {
+  margin: 0;
+  padding: 0;
+  border: 1px solid #999;
+  -moz-border-radius: 0;
+}

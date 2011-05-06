@@ -105,7 +105,6 @@ _DECL_(ConferencesView, null, ContainerView).prototype =
         return a.model.cmp(b.model);
     },
 
-
     onModelUpdated: function(model, type, data)
     {
         for (var i = 0; data.added && i < data.added.length; i++)

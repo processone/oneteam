@@ -115,6 +115,10 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
 function HistoryManager()
 {
     CallbacksList.call(this, true);
+    this.init();
+
+    this.contacts = [];
+    this.conferences = [];
 
     var file = Components.classes["@mozilla.org/file/directory_service;1"].
         getService(Components.interfaces.nsIProperties).
@@ -336,7 +340,7 @@ function HistoryManager()
         </sql>.toString());
 }
 
-_DECL_(HistoryManager, null, CallbacksList).prototype =
+_DECL_(HistoryManager, null, CallbacksList, Model).prototype =
 {
     canPerformSearches: true,
     _archivedThreads: {},
@@ -351,8 +355,6 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
         var jidsById = {};
 
         this._jidIds = {};
-        this._contacts = [];
-        this._conferences = [];
 
         var stmt = this.db.createStatement("SELECT id, jid FROM jids");
         while (stmt.executeStep()) {
@@ -368,11 +370,17 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             var jid = jidsById[stmt.getInt32(0)];
             var type = stmt.getInt32(1);
             if  (type == 0)
-                this._contacts.push(account.getOrCreateContact(jid));
+                this.contacts.push(account.getOrCreateContact(jid));
             else
-                this._conferences.push(account.getOrCreateConference(jid));
+                this.conferences.push(account.getOrCreateConference(jid));
         }
         stmt.reset();
+
+        if (this.contacts.length)
+            this.modelUpdated("contacts", {added: this.contacts});
+
+        if (this.conferences.length)
+            this.modelUpdated("conferences", {added: this.contacts});
     },
 
     _getJidId: function(jid) {
@@ -404,12 +412,12 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
     deliverContactsList: function(observer, token)
     {
-        if (!this._contacts)
+        if (!this._jidIds)
             this._loadJIDs();
 
         observer._startBatchUpdate();
-        for (var i = 0; i < this._contacts.length; i++)
-            observer._addRecord(this._contacts[i]);
+        for (var i = 0; i < this.contacts.length; i++)
+            observer._addRecord(this.contacts[i]);
         observer._endBatchUpdate(true);
 
         return this._registerCallback(observer, token, "contacts");
@@ -417,12 +425,12 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
 
     deliverConferencesList: function(observer, token)
     {
-        if (!this._conferences)
+        if (!this._jidIds)
             this._loadJIDs();
 
         observer._startBatchUpdate();
-        for (var i = 0; i < this._conferences.length; i++)
-            observer._addRecord(this._conferences[i]);
+        for (var i = 0; i < this.conferences.length; i++)
+            observer._addRecord(this.conferences[i]);
         observer._endBatchUpdate(true);
 
         return this._registerCallback(observer, token, "conferences");
@@ -518,17 +526,21 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
                 observer._addRecord(archivedThread);
 
             if (msg.isMucMessage) {
-                if (this._conferences.indexOf(threadContact) < 0) {
-                    this._conferences.push(threadContact);
+                if (this.conferences.indexOf(threadContact) < 0) {
+                    this.conferences.push(threadContact);
 
                     for (observer in this._iterateCallbacks("conferences"))
                         observer._addRecord(threadContact);
+
+                    this.modelUpdated("conferences", {added: [threadContact]});
                 }
-            } else if (this._contacts.indexOf(threadContact) < 0) {
-                this._contacts.push(threadContact);
+            } else if (this.contacts.indexOf(threadContact) < 0) {
+                this.contacts.push(threadContact);
 
                 for (observer in this._iterateCallbacks("contacts"))
                     observer._addRecord(threadContact);
+
+                this.modelUpdated("contacts", {added: [threadContact]});
             }
         } else
             archivedThread = this._sessionArchivedThreads[idx];
@@ -722,7 +734,24 @@ _DECL_(HistoryManager, null, CallbacksList).prototype =
             }
         }
         return [token, msgs, token.lastIndex >= 0 || token.threads.length > 1];
+    },
+
+    PROP_VIEWS: {
+        "contacts" : {
+            onStartWatching: function(_this, prop) {
+                if (!_this._jidIds)
+                    _this._loadJIDs();
+            }
+        },
+
+        "conferences" : {
+            onStartWatching: function(_this, prop) {
+                if (!_this._jidIds)
+                    _this._loadJIDs();
+            }
+        }
     }
+
 }
 
 function ArchivedMessagesThread(contact, threadID, time, messagesById,
