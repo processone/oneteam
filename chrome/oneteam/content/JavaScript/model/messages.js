@@ -547,7 +547,6 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
     this.contact = contact;
     this.type = type;
     this.myNick = myNick;
-//    this.messageId = messageId ? messageId : generateRandomName(12);
 
     if (body instanceof JSJaCMessage) {
         this.text = body.getBody();
@@ -610,15 +609,11 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
                 this._processDOM(html.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0],
                                  false, "");
 
-        // Added by FX
         if (body.getNode().hasAttribute("id")) 
           this.messageId = body.getNode().getAttribute("id");
         var replaceNode = body.getNode().getElementsByTagNameNS("http://process-one.net/edit", "replace")[0];
-        if (replaceNode)// {
-          //this.type += 8;
+        if (replaceNode)
           this.replaceMessageId = replaceNode.getAttribute("id");
-        //}
-        // /Added by FX
     } else {
         if (body_html instanceof Node)
             [this.html, this.text, this.sanitizedHtml] = this._processDOM(body_html, false, "");
@@ -678,10 +673,6 @@ _DECL_(Message).prototype =
     get isSystemMessage() {
         return (this.type & 4) == 4;
     },
-
-    /*get isEditMessage() {
-        return (this.type & 8) == 8;
-    },*/
 
     get isDirectedMessage() {
         return this.myNick ? this.text.indexOf(this.myNick+":") == 0 : false;
