@@ -737,14 +737,15 @@
 
             var lastMsg = msg.nick in this._lastNickMessage ? this._lastNickMessage[msg.nick] : null;
             var match, animRequired = false;
-            
+
             if (!afterMsg
                 && (match = msg.text.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/))
                 && lastMsg && lastMsg.text.indexOf(match[1]) != -1
             ) {
               msg.isOldFormatEditMessage = true;
-              msg.text = lastMsg.text.replace(match[1], match[2]);
-              msg.html = lastMsg.html.replace(match[1], match[2]);
+              var matchHtml = msg.html.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/);
+              msg.text = lastMsg.text.replace(match[1]    , match[2]    );
+              msg.html = lastMsg.html.replace(matchHtml[1], matchHtml[2]);
             }
             
             if (!afterMsg && (msg.replaceMessageId || msg.isOldFormatEditMessage)) {
@@ -2688,10 +2689,8 @@
               if (this._input.thread)
                 msg.xReplyTo = [this._input.msgId];
 
-              if (this.editModeEnabled) {
-                msg.type += 8;
+              if (this.editModeEnabled)
                 msg.replaceMessageId = this._input.lastMessage.messageId;
-              }
 
               this._model.sendMessage(msg);
 
