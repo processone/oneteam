@@ -702,7 +702,8 @@ _DECL_(ContactsListView, null, ContainerView).prototype =
         if (typeof(model) == "string")
             return null;
         if (model instanceof Conference)
-            return "name"
+            return "name";
+
         return "visibleName";
     },
 
