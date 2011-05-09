@@ -61,59 +61,73 @@ _DECL_(Gateway, Contact).prototype =
     requestMapNameForm: function(callback, force)
     {
         if (force || !("_mapNameForm" in this)) {
-            var iq = new JSJaCIQ();
-            iq.setIQ(this.jid, "get");
-            iq.setQuery('jabber:iq:gateway');
-            account.connection.send(iq, new Callback(this._mapNameFormRecv, this).
-                     addArgs(callback).fromCall());
+            servicesManager.sendIq({
+                to: this.jid,
+                type: "get",
+                domBuilder: ["query", {xmlns: "jabber:iq:gateway"}]
+            }, new Callback(this._mapNameFormRecv, this).addArgs(callback).fromCall());
             return;
         }
         callback(this, this._mapNameForm || {});
     },
 
-    _mapNameFormRecv: function(callback, pkt)
+    _mapNameFormRecv: function(callback, pkt, queryE4X, query)
     {
         if (pkt.getType() != "result") {
-            this._mapNameForm = null;
+            this._mapNameForm = false;
             callback(this, {});
             return
         }
 
-        var ns = "jabber:iq:gateway";
-        var desc = pkt.getNode().getElementsByTagNameNS(ns, "desc")[0];
-        var prompt = pkt.getNode().getElementsByTagNameNS(ns, "prompt")[0];
+        var ns = new Namespace("jabber:iq:gateway");
+        var desc = queryE4X.ns::desc[0];
+        var prompt = queryE4X.ns::prompt[0];
 
         this._mapNameForm = {
-            desc: desc && desc.textContent,
-            prompt : prompt && prompt.textContent
+            desc: desc && desc.toString(),
+            prompt : prompt && prompt.toString()
         };
 
         callback(this, this._mapNameForm);
     },
 
-    mapName: function(payload, callback)
+    mapName: function(prompt, callback)
     {
+        if (this._mapNameForm == null) {
+            if (!this._mapNameQueue) {
+                this.requestMapNameForm(new Callback(this._performMapName, this));
+                this._mapNameQueue = [];
+            }
+            this._mapNameQueue.push([prompt, callback]);
+        }
         if (!this._mapNameForm) {
-            callback(payload.text().toString().replace(/@/g, "%")+"@"+this.jid);
-            return
+            callback(prompt.toString().replace(/@/g, "\\40")+"@"+this.jid);
+            return;
         }
 
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "set");
-        iq.setQuery('jabber:iq:gateway').
-            appendChild(E4XtoDOM(payload, iq.getDoc()));
-        account.connection.send(iq, new Callback(this._mapNameRecv, this).
-                     addArgs(callback).fromCall());
+        servicesManager.sendIq({
+            to: this.jid,
+            type: "set",
+            domBuilder: ["query", {xmlns: "jabber:iq:gateway"},
+                         [["prompt", {}, prompt]]]
+        }, new Callback(this._mapNameRecv, this).addArgs(callback).fromCall());
     },
 
-    _mapNameRecv: function(callback, payload, pkt)
+    _performMapName: function() {
+        for (var i = 0; i < this._mapNameQueue.length; i++)
+            this.mapName.apply(this, this._mapNameQueue[i]);
+    },
+
+    _mapNameRecv: function(callback, pkt, queryE4X, query)
     {
-        try {
-            if (pkt.getType() == "result") {
-                callback(pkt.getNode().getElementsByTagNameNS("jabber:iq:gateway", "jid")[0].textContent);
+        if (pkt.getType() == "result") {
+            var ns = new Namespace("jabber:iq:gateway");
+            var jid = queryE4X.ns::jid[0];
+            if (jid) {
+                callback(jid.toString())
                 return;
             }
-        } catch (ex) {};
+        }
 
         callback(null);
     }
