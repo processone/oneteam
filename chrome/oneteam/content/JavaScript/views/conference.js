@@ -105,7 +105,6 @@ _DECL_(ConferencesView, null, ContainerView).prototype =
         return a.model.cmp(b.model);
     },
 
-
     onModelUpdated: function(model, type, data)
     {
         for (var i = 0; data.added && i < data.added.length; i++)
@@ -169,6 +168,22 @@ function ConferenceView(model, containerNode, parentView)
 
     if (containerNode)
         this.show(containerNode, this.afterLastItemNode);
+
+    if (!this.parentView) {
+        this.invite = doc.createElementNS(XULNS, "textbox");
+        this.invite.view = this;
+        this.invite.setAttribute("class", "add-participant-view");
+        this.invite.setAttribute("type", "autocomplete");
+        this.invite.setAttribute("autocompletepopup", "oneteam-contacts-autocomplete-popup");
+        this.invite.setAttribute("autocompletesearch", "oneteam-contacts");
+        this.invite.setAttribute("completedefaultindex", "true");
+        this.invite.setAttribute("enablehistory", "true");
+        this.invite.setAttribute("emptytext", "Invite");
+        this.invite.setAttribute("ontextentered", "this.view.onInvite(this.value);this.value='';this.blur()");
+        this.invite.setAttribute("ontextreverted", "this.value='';this.blur();return true");
+
+        this.onItemAdded(this.invite);
+    }
 }
 
 _DECL_(ConferenceView, null, ContainerView).prototype =
@@ -185,6 +200,14 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
 
     itemComparator: function(a, b, m, s, e)
     {
+        if (a == this.invite)
+            if (b == this.invite)
+                return 0;
+            else
+                return 1;
+        else if (b == this.invite)
+            return -1;
+
         var role2num = {moderator: 0, participant: 1, visitor: 2, none: 3};
         var aVal = role2num[a.role ? a.role : a.model.role];
         var bVal = role2num[b.role ? b.role : b.model.role];
@@ -212,6 +235,19 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
             this.updateRoleNode(data.removed[i].role, -1)
             this.onItemRemoved(data.removed[i]);
         }
+
+        if (this.invite) {
+            var jids = [];
+            for (var i = 0; i < this.items.length; i++) {
+                if (this.items[i].model && this.items[i].model.realJID)
+                    jids.push(this.items[i].model.realJID.normalizedJID.shortJID);
+            }
+            this.invite.searchParam = jids.join("\n");
+        }
+    },
+
+    onInvite: function(jid) {
+        this.model.invite(jid);
     },
 
     updateRoleNode: function(role, count)

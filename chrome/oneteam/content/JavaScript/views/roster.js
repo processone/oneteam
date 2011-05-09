@@ -1,11 +1,14 @@
 var EXPORTED_SYMBOLS = ["RosterView", "ContactView", "GroupView",
-                        "PresenceProfilesView", "ContactTooltip"];
+                        "PresenceProfilesView", "ContactTooltip",
+                        "ContactsListView"];
 
-function RosterView(node)
+function RosterView(node, matchGroups, negativeMatch)
 {
     this.containerNode = node;
     this.items = [];
     this.model = account;
+    this.matchGroups = matchGroups || [];
+    this.negativeMatch = negativeMatch;
 
     this.onModelUpdated(null, "groups", {added: account.groups});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "groups");
@@ -60,10 +63,14 @@ _DECL_(RosterView, null, ContainerView).prototype =
     onModelUpdated: function(model, type, data)
     {
         for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new GroupView(data.added[i], this));
+            if (this.matchGroups.indexOf(data.added[i]) >= 0 ?
+                this.negativeMatch : !this.negativeMatch)
+                this.onItemAdded(new GroupView(data.added[i], this));
 
         for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+            if (this.matchGroups.indexOf(data.removed[i]) >= 0 ?
+                this.negativeMatch : !this.negativeMatch)
+                this.onItemRemoved(data.removed[i]);
     },
 
     destroy: function() {
@@ -656,6 +663,132 @@ _DECL_(ResourceTooltip).prototype =
     {
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
+    }
+}
+
+function ContactsListView(containerNode, model, field, flags)
+{
+    var doc = containerNode.ownerDocument;
+
+    this.model = model;
+    this.containerNode = containerNode;
+    this.items = [];
+    this.flags = flags;
+
+    this.node = doc.createElementNS(XULNS, "richlistitem");
+
+    this.node.setAttribute("class", "conference-view");
+    this.node.model = this.model;
+    this.node.menuModel = model;
+    this.node.view = this;
+
+    this.onModelUpdated(model, field, {added: model[field]})
+
+    this._token = this.model.registerView(this.onModelUpdated, this, field);
+}
+
+_DECL_(ContactsListView, null, ContainerView).prototype =
+{
+    containerNode: null,
+    afterLastItemNode: null,
+
+    _getItemName: function(model) {
+        var field = this._getItemNameField(model);
+
+        return field ? model[field] : model;
+    },
+
+    _getItemNameField: function(model) {
+        if (typeof(model) == "string")
+            return null;
+        if (model instanceof Conference)
+            return "name";
+
+        return "visibleName";
+    },
+
+    itemComparator: function(a, b, m, s, e)
+    {
+        var aVal = this._getItemName(a.model).toLowerCase();
+        var bVal = this._getItemName(b.model).toLowerCase();
+
+        return aVal.localeCompare(b.Val);
+    },
+
+    onModelUpdated: function(model, type, data)
+    {
+        for (var i = 0; data.added && i < data.added.length; i++) {
+            this.onItemAdded(new ContactsListItemView(data.added[i], this,
+                                                 this.node.ownerDocument,
+                                                 this.flags));
+        }
+
+        for (i = 0; data.removed && i < data.removed.length; i++) {
+            this.onItemRemoved(data.removed[i]);
+        }
+    },
+
+    destroy: function()
+    {
+        ContainerView.prototype.destroy.call(this);
+        this.model.unregisterView(this._token);
+    }
+}
+
+function ContactsListItemView(model, parentView, doc, flags)
+{
+    this.model = model;
+    this.parentView = parentView;
+
+    this.node = doc.createElementNS(XULNS, "richlistitem");
+    this.label = doc.createElementNS(XULNS, "label");
+    if (flags.displayAvatar) {
+        this.avatar = doc.createElementNS(XULNS, "avatar");
+        this.avatar.model = this.model;
+        this.avatar.setAttribute("showBlankAvatar", "true")
+        this.node.appendChild(this.avatar);
+    }
+
+    this.node.setAttribute("class", "conferencemember-view");
+    this.label.setAttribute("value", this.parentView._getItemName(model));
+    this.label.setAttribute("flex", "1");
+    this.label.setAttribute("crop", "end");
+
+    this.node.model = this.model;
+    this.node.menuModel = model;
+    this.node.view = this;
+
+    this.node.appendChild(this.label);
+
+    this._bundle = new RegsBundle(this);
+
+    var field = this.parentView._getItemNameField(model);
+    if (field)
+        this._bundle.register(this.model, this.onNameChange, field);
+}
+
+_DECL_(ContactsListItemView).prototype =
+{
+    onNameChange: function()
+    {
+        this.label.value = this.parentView._getItemName(model);
+        this.parentView.onItemUpdated(this);
+    },
+
+    show: function(rootNode, insertBefore)
+    {
+        rootNode.insertBefore(this.node, insertBefore);
+    },
+
+    destroy: function()
+    {
+        if (this.avatar)
+            this.avatar.model = null;
+
+        if (this.node.parentNode)
+            this.node.parentNode.removeChild(this.node);
+
+        this._bundle.unregister();
     }
 }
 
