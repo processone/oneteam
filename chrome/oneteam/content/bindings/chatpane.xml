@@ -102,7 +102,7 @@
 
         this._threadingDriver = new ReplyGroups(new Callback(this._onUpdateThreadsDisplay, this),
                                                 this._threadsChangedFun || function(){},
-                                                new Callback(this._onThreadDestroyed, this))
+                                                new Callback(this._onThreadDestroyed, this));
         this._lastNickMessageId = {};
         this._lastNickMessage = {};
 
@@ -881,9 +881,9 @@
                   var im = doc.createElement("div");
 
                   im.setAttribute("class", "message-action thread-marker" +
-                                  (msg.xMessageId ? " thread-marker-reply" : ""));
-                  tooltip(im, this._output,
-                    xReplyTo ? _("Refer to this Conversation") : _("Refer to this Message"));
+                    (xMessageId && this._input ? " thread-marker-reply" : ""));
+                  if (this._input)
+                    tooltip(im, this._output, _("Refer to this Message"));
 
                   var handler = {
                     _this: this,
@@ -1158,10 +1158,16 @@
 
           if (!msgToken) {
             for (var token in thread.iterator()) {
-              token[1].lastChild.firstChild.setAttribute("threadId", thread.age+1);
+              var marker = token[1].lastChild.firstChild;
+              marker.setAttribute("threadId", thread.age+1);
+              if (this._input)
+                tooltip(marker, this._output, _("Refer to this Conversation"));
             }
           } else {
-            msgToken[1].lastChild.firstChild.setAttribute("threadId", thread.age+1);
+            var marker = msgToken[1].lastChild.firstChild;
+            marker.setAttribute("threadId", thread.age+1);
+            if (this._input)
+              tooltip(marker, this._output, _("Refer to this Conversation"));
           }
         ]]></body>
       </method>
@@ -1170,7 +1176,10 @@
         <parameter name="thread"/>
         <body><![CDATA[
           for (var token in thread.iterator()) {
-            token[1].lastChild.firstChild.removeAttribute("threadId");
+              var marker = token[1].lastChild.firstChild;
+              marker.removeAttribute("threadId");
+              if (this._input)
+                tooltip(marker, this._output, _("Refer to this Message"));
           }
         ]]></body>
       </method>
@@ -1194,7 +1203,8 @@
       <method name="_threadMarkerClick">
         <parameter name="el"/>
         <body><![CDATA[
-          this._setInputReplyMsgId(el.parentNode.parentNode.msgId);
+          if (this._input && !this._input.disabled)
+            this._setInputReplyMsgId(el.parentNode.parentNode.msgId);
         ]]></body>
       </method>
 
@@ -1656,8 +1666,12 @@
               return false;
             }
 
-            if (event.keyCode == KeyEvent.DOM_VK_E && (event.ctrlKey || event.metaKey))
-                me.parentNode.parentNode.parentNode.switchEditMode();
+            if ((event.charCode == 69 || event.charCode == 101) // KeyEvent.DOM_VK_E == 69
+                 && !event.shiftKey && !event.metaKey && (
+                    (!event.altKey && event.ctrlKey) // unix/windows
+                     || event.cmdKey                 // apple
+               ))
+              me.parentNode.parentNode.parentNode.switchEditMode();
 
             me._onUserType();
             return true;
