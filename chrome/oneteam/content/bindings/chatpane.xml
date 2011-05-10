@@ -849,16 +849,7 @@
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
               e.appendChild(msg.contentNode);
 
-              msg.addRepresentation(msgEl);
-
-              msg.markAsSeen();
               msgEl.appendChild(e);
-
-              beforeMsg = msg;
-              beforeMsgEl = msgEl;
-
-              this._msgList.push(msg);
-              this._msgElList.push(msgEl);
 
               if (this.model.allowsModifications) {
                 var im = doc.createElement("div");
@@ -883,7 +874,9 @@
                   var im = doc.createElement("div");
 
                   im.setAttribute("class", "message-action thread-marker" +
-                    (xMessageId && this._input ? " thread-marker-reply" : ""));
+                    ( msg.archived != true // the threading feature is temporary disabled for
+                                    // archived message, until release of beta2
+                      && xMessageId && this._input ? " thread-marker-reply" : ""));
                   if (this._input)
                     tooltip(im, this._output, _("Refer to this Message"));
 
@@ -915,8 +908,18 @@
                     this._input.msgId = xMessageId;
                 }
               }
+
               msg.msgEl = msgEl;
-              fragment.appendChild(msg.msgEl);
+              fragment.appendChild(msgEl);
+
+              /*msg.addRepresentation(msgEl);
+              msg.markAsSeen(); // for wave companion extension*/
+
+              beforeMsg = msg;
+              beforeMsgEl = msgEl;
+
+              this._msgList.push(msg);
+              this._msgElList.push(msgEl);
             }
 
             if (msg.isOriginalMessage && msg.editMessage) {
@@ -1234,7 +1237,8 @@
       <method name="_onThreadMarkerOver">
         <parameter name="el"/>
         <body><![CDATA[
-          for (var token in this._threadingDriver.repliesIterator(el.parentNode.parentNode.msgId))
+          for (var token in this._threadingDriver
+                .getThreadForMsgId(el.parentNode.parentNode.msgId).iterator())
             token[1].setAttribute("in-marked-thread", "true");
 
           this._output.contentDocument.body.setAttribute("marked-thread", "true");
@@ -1245,7 +1249,8 @@
         <parameter name="el"/>
         <body><![CDATA[
           this._output.contentDocument.body.removeAttribute("marked-thread");
-          for (var token in this._threadingDriver.repliesIterator(el.parentNode.parentNode.msgId))
+          for (var token in this._threadingDriver
+                .getThreadForMsgId(el.parentNode.parentNode.msgId).iterator())
             token[1].removeAttribute("in-marked-thread");
         ]]></body>
       </method>

@@ -242,9 +242,6 @@ body[threadId]:before {
 .message > .body {
     position: relative;
     display: block;
-    /*padding: 3px 0px;
-    padding-left: 24px;
-    modified by FX because of the displayEditButton */
     padding: 3px 34px 3px 24px;
 }
 
@@ -324,7 +321,6 @@ body[marked-thread=true] .message[in-marked-thread=true] {
     background: url(imgs/vertical-gradient.png) top left repeat-x;
 }
 
-/*Added by FX*/
 div#editButton, .displayEditButton {
     height: 14px;
     position: absolute;
