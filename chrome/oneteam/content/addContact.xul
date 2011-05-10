@@ -114,7 +114,15 @@
                                _mapNameReady);
         return false;
       }
-      var jid = document.getElementById("jid").value;
+      var tb = document.getElementById("jid");
+      var jid = tb.value;
+      if (isKnownJid(jid)) {
+        tb.errortext = _("Contact with this Jabber ID already exists");
+        tb._checkCondition();
+        tb.focus();
+        return false;
+      }
+
       var nick = document.getElementById("nick").value;
       var groups = document.getElementById("groups").choosenGroups;
       var reason = document.getElementById("reason").value;
@@ -129,16 +137,16 @@
     }
 
     function checkJid(value, tb) {
-      if (value.search(/^([^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W](?:[\w-]*\w)?$/) != 0) {
-        tb.errortext = _("Please enter correct Jabber ID");
-        return false;
-      }
-      var jid = new JID(value);
-      if (jid.normalizedJID in account.contacts) {
-        tb.errortext = _("Contact with this Jabber ID already exists");
-        return false;
-      }
-      return true;
+      if (tb.errortext)
+        if (isKnownJid(value))
+          return false;
+        else
+          delete tb.errortext;
+      return !value.search(/^([^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W](?:[\w-]*\w)?$/);
+    }
+
+    function isKnownJid(jid) {
+      return !!jid && new JID(jid).normalizedJID in account.contacts;
     }
 
     function _mapNameReady(jid) {
