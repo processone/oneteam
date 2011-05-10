@@ -473,6 +473,7 @@
 
           try {
             this._chatpane._output.visible = false;
+            this._chatpane.blured();
           } catch (ex) {}
         ]]></body>
       </method>

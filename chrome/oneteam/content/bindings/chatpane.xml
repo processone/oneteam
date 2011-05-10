@@ -1756,7 +1756,19 @@
       <method name="focus">
         <body><![CDATA[
           if (this._input)
-            setTimeout(function(el){el.focus()}, 100, this._input.contentWindow);
+            this._focusTimer = setTimeout(function(el, _this) {
+              delete _this._focusTimer;
+              el.focus();
+            }, 100, this._input.contentWindow, this);
+        ]]></body>
+      </method>
+
+      <method name="blured">
+        <body><![CDATA[
+          if ("_focusTimer" in this) {
+            clearTimeout(this._focusTimer);
+            delete this._focusTimer;
+          }
         ]]></body>
       </method>
 
@@ -2501,6 +2513,12 @@
       <method name="focus">
         <body><![CDATA[
           this._input.focus();
+        ]]></body>
+      </method>
+
+      <method name="blured">
+        <body><![CDATA[
+          this._input.blured();
         ]]></body>
       </method>
 
