@@ -9,8 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Poedit-Language: Polish\n"
 "X-Poedit-Country: POLAND\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -567,8 +566,7 @@ msgstr "Wyświetl historię..."
 
 #: ../chrome/oneteam/content/addContact.xul:147
 msgid "Gateway can't convert ID into Jabber ID"
-msgstr ""
-"Bramka nie jest w stanie zamienić identyfikatora na identyfikator Jabbera"
+msgstr "Bramka nie jest w stanie zamienić identyfikatora na identyfikator Jabbera"
 
 #: ../chrome/oneteam/content/invite.xul:14
 #: ../chrome/oneteam/content/inviteByMail.xul:14
@@ -598,12 +596,8 @@ msgstr "E-mails:"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:77
 #: ../chrome/oneteam/content/manageBookmarks.xul:192
-msgid ""
-"Room name can't be empty and can\\'t contain any of [\"&\\'/:<>@] or blank "
-"characters"
-msgstr ""
-"Nazwa konferencji nie może być pusta, ani zawierać żadnego ze znaków [\"&"
-"\\'/:<>@] lub spacji"
+msgid "Room name can't be empty and can\\'t contain any of [\"&\\'/:<>@] or blank characters"
+msgstr "Nazwa konferencji nie może być pusta, ani zawierać żadnego ze znaków [\"&\\'/:<>@] lub spacji"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:103
 #: ../chrome/oneteam/content/manageBookmarks.xul:181
@@ -665,20 +659,19 @@ msgstr "Nowy pokój"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:118
 msgid ""
-"Entered informations are invalid.\\nDo you want to forget entered "
-"informations and restore previous values (click \"Cancel\" if you want to "
-"correct values)?"
+"Entered informations are invalid.\\n"
+"Do you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
 msgstr ""
-"Wprowadzone informacje nie są prawidłowe.\\nCzy chcesz przywrócić poprzednie "
-"wartości? (Kliknięcie na \"Anuluj\" zostawi obecne wartości)"
+"Wprowadzone informacje nie są prawidłowe.\\n"
+"Czy chcesz przywrócić poprzednie wartości? (Kliknięcie na \"Anuluj\" zostawi obecne wartości)"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:119
 msgid ""
-"Entered informations are invalid.\\nDo you want to forget this bookmark "
-"(click \"Cancel\" if you want to correct values)?"
+"Entered informations are invalid.\\n"
+"Do you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
 msgstr ""
-"Wprowadzone dane są nie prawidłwe.\\nCzy chcesz anulować dodawanie zakładki "
-"kliknij \"Anuluj\" jeśli chcesz poprawić wartości)?"
+"Wprowadzone dane są nie prawidłwe.\\n"
+"Czy chcesz anulować dodawanie zakładki kliknij \"Anuluj\" jeśli chcesz poprawić wartości)?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:165
 msgid "New"
@@ -901,11 +894,15 @@ msgstr "Zaproszenie do konferencji {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:221
 msgid ""
-"User *{0}* invited you to conference *{1}*.\\n\\nTo join this conference "
-"please click on this link:\\n{2}\\n"
+"User *{0}* invited you to conference *{1}*.\\n"
+"\\n"
+"To join this conference please click on this link:\\n"
+"{2}\\n"
 msgstr ""
-"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n\\nAby dołączyć do tej "
-"konferencji kliknij ten link:\\n{2}\\n"
+"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n"
+"\\n"
+"Aby dołączyć do tej konferencji kliknij ten link:\\n"
+"{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/roster.js:982
 msgid "{0}/{1}"
@@ -1132,11 +1129,8 @@ msgid "Registering in Service"
 msgstr "Rejestrowanie w serwisie"
 
 #: ../chrome/oneteam/content/addContact.xul:245
-msgid ""
-"Before adding contacts from this network, you need to register in this "
-"network's gateway."
-msgstr ""
-"Zanim dodasz kogoś z tej sieci, musisz zarejestrować się w bramce tej sieci."
+msgid "Before adding contacts from this network, you need to register in this network's gateway."
+msgstr "Zanim dodasz kogoś z tej sieci, musisz zarejestrować się w bramce tej sieci."
 
 #: ../chrome/oneteam/content/addContact.xul:247
 msgid "Registration Gateway"
@@ -1446,20 +1440,15 @@ msgstr "{0} {0, plurals, sekunda, sekundy, sekund}"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:72
 msgid "{0} {0, plurals, day, days}, {1} {1, plurals, hour, hours}"
-msgstr ""
-"{0} {0, plurals, dzień, dni, dni}, {1} {1, plurals, godzina, godziny, godzin}"
+msgstr "{0} {0, plurals, dzień, dni, dni}, {1} {1, plurals, godzina, godziny, godzin}"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:74
 msgid "{0} {0, plurals, hour, hours}, {1} {1, plurals, minute, minutes}"
-msgstr ""
-"{0} {0, plurals, godzina, godziny, godzin}, {1} {1, plurals, minuta, minuty, "
-"minut}"
+msgstr "{0} {0, plurals, godzina, godziny, godzin}, {1} {1, plurals, minuta, minuty, minut}"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:76
 msgid "{0} {0, plurals, minute, minutes}, {1} {1, plurals, second, seconds}"
-msgstr ""
-"{0} {0, plurals, minuta, minuty, minut}, {1} {1, plurals, sekunda, sekundy, "
-"sekund}"
+msgstr "{0} {0, plurals, minuta, minuty, minut}, {1} {1, plurals, sekunda, sekundy, sekund}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:456
 msgid "This room requires password"
@@ -1475,8 +1464,7 @@ msgstr "Ta konferencja nie istnieje"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:459
 msgid "This room doesn't exist, and can be created only by administrator"
-msgstr ""
-"Pokój nie istnieje, i może być utworzony wyłącznie przez administratora"
+msgstr "Pokój nie istnieje, i może być utworzony wyłącznie przez administratora"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:460
 msgid "This room can be accessed only by registered persons"
@@ -1487,11 +1475,8 @@ msgid "You are not member of this room"
 msgstr "Nie jesteś członkiem tego pokoju"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:463
-msgid ""
-"Conference server can't be contacted or room reached maximum number of users"
-msgstr ""
-"Nie można skomunikować się z serwerem konferencji, lub liczba osób w pokoju "
-"osiągnęła maksimum"
+msgid "Conference server can't be contacted or room reached maximum number of users"
+msgstr "Nie można skomunikować się z serwerem konferencji, lub liczba osób w pokoju osiągnęła maksimum"
 
 #: ../chrome/oneteam/content/JavaScript/model/roster.js:1018
 msgid "(Anonymous)"
@@ -2115,201 +2100,171 @@ msgid "This is the first version of the message"
 msgstr "This is the first version of the message"
 
 #: ../chrome/oneteam/content/subscribe.xul:69
-#, fuzzy
 msgid "Show Contact Details"
-msgstr "Szczegóły kontaktu"
+msgstr "Wyświetl szczegóły kontaktu"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:40
-#, fuzzy
-msgid ""
-"Another client is active on your account. Because it has higher priority "
-"that OneTeam Desktop, messages usually will be routed to that other client."
-msgstr ""
-"Inny program jest aktywny na Twoim koncie. Ponieważ ma on wyższy priorytet "
-"niż ten program, zwykle wiadomości będą kierowane do niego."
+msgid "Another client is active on your account. Because it has higher priority that OneTeam Desktop, messages usually will be routed to that other client."
+msgstr "Inny program jest aktywny na Twoim koncie. Ponieważ ma on wyższy priorytet niż OneTeam, zwykle wiadomości będą kierowane do niego."
 
 #: ../chrome/oneteam/content/bumpPriority.xul:43
-#, fuzzy
-msgid ""
-"Do you want to increase OneTeam Desktop priority to make it your main client?"
-msgstr ""
-"Czy chcesz zwiększyć priorytet tego programu by uczynić go głównym klientem?"
+msgid "Do you want to increase OneTeam Desktop priority to make it your main client?"
+msgstr "Czy chcesz zwiększyć priorytet programu OneTeam by uczynić go głównym klientem?"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:44
-#, fuzzy
 msgid "Ask me next time."
-msgstr "Nie pytaj mnie następnym razem."
+msgstr "Zapytaj mnie następnym razem."
 
 #: ../chrome/oneteam/content/main.xul:465
-#, fuzzy
 msgid "Presences archive"
-msgstr "Widoczność"
+msgstr "Historia statusów"
 
 #: ../chrome/oneteam/content/preferences.xul:196
-#, fuzzy
 msgid "Show icon in system tray"
-msgstr "Pokaż w zasobniku systemowym"
+msgstr "Pokaż ikonę w zasobniku systemowym"
 
 #: ../chrome/oneteam/content/preferences.xul:221
 msgid "This is not valid hostname"
-msgstr ""
+msgstr "To nie jest prawidłowy adres"
 
 #: ../chrome/oneteam/content/preferences.xul:229
-#, fuzzy
 msgid "Resource can not be empty"
-msgstr "Pseudonim nie może być pusty"
+msgstr "Zasób nie może być pusty"
 
 #: ../chrome/oneteam/content/preferences.xul:247
 msgid "Old Style SSL Encryption"
-msgstr ""
+msgstr "Szyfrowanie SSL (stara metoda)"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:412
 #: ../chrome/oneteam/content/jingleCall.xul:42
-#, fuzzy
 msgid "Missed call"
-msgstr "Połączenie jingle"
+msgstr "Nieodebrane połączenie"
 
 #: ../chrome/oneteam/content/jingleCall.xul:184
 msgid "Initiate New Call"
-msgstr ""
+msgstr "Rozpoczynanie połączenia głosowego"
 
 #: ../chrome/oneteam/content/jingleCall.xul:185
 msgid "Drop Call"
-msgstr ""
+msgstr "Odrzuć połączenie"
 
 #: ../chrome/oneteam/content/vcard.xul:11
-#, fuzzy
 msgid "Contact Details"
 msgstr "Szczegóły kontaktu"
 
 #: ../chrome/oneteam/content/vcard.xul:86
-#, fuzzy
 msgid "Contact informations"
-msgstr "Szczegóły kontaktu"
+msgstr "Dane kontaktu"
 
 #: ../chrome/oneteam/content/vcard.xul:88
-#, fuzzy
 msgid "Contact editing"
-msgstr "Szczegóły kontaktu"
+msgstr "Edycja kontaktu"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:411
-#, fuzzy
 msgid "Missed call from {0}"
-msgstr "Wiadomość od <b>{0}</b>"
+msgstr "Nieodebrane połączenie od <b>{0}</b>"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:413
-#, fuzzy
 msgid "You missed call from user <b>{0}</b>"
-msgstr "Masz nową wiadomość od <b>{0}</b>"
+msgstr "Nie odebrano połączenia od <b>{0}</b>"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:493
-#, fuzzy
 msgid "Contact signed in"
-msgstr "{0} zalogował się"
+msgstr "Kontakt zalogował się"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:495
-#, fuzzy
 msgid "Contact signed out"
-msgstr "{0} wylogował się"
+msgstr "Kontakt wylogował się"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:497
 msgid "MUC participant signed in"
-msgstr ""
+msgstr "Uczestnik konferencji zalogował się"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:499
 msgid "MUC participant signed out"
-msgstr ""
+msgstr "Uczestnik konferencji wylogował się"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:501
 msgid "Contact changed presence"
-msgstr ""
+msgstr "Zmiana statusu kontaktu"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:503
 msgid "MUC participant changed presence"
-msgstr ""
+msgstr "Zmiana statusu uczestnika konferencji"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:505
 msgid "MUC participant changed nick"
-msgstr ""
+msgstr "Zmiana pseudonimu uczestnika konferencji"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:507
 msgid "MUC subject change"
-msgstr ""
+msgstr "Zmiana tematu konferenci"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:509
-#, fuzzy
 msgid "Subscription request received"
-msgstr "Prośba o subskrypcję"
+msgstr "Otrzymano prośbę o subskrypcję"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:511
-#, fuzzy
 msgid "Message received"
-msgstr "Message"
+msgstr "Otrzymano wiadomość"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:513
 msgid "Message received (initial)"
-msgstr ""
+msgstr "Wiadomość otrzymana (początkowa)"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:515
-#, fuzzy
 msgid "MUC message received"
-msgstr "Prośba o połączenie głosowe"
+msgstr "Otrzymano wiadomość MUC"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:517
 msgid "MUC nick: message received"
-msgstr ""
+msgstr "Otrzymano skierowaną wiadomość w konferencji"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:519
-#, fuzzy
 msgid "Voice call request received"
-msgstr "Prośba o połączenie głosowe"
+msgstr "Otrzymano prośbę o połączenie głosowe"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:521
 msgid "Missed voice call"
-msgstr ""
+msgstr "Nieodebrane połączenie głosowe"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:523
-#, fuzzy
 msgid "File transfer request received"
-msgstr "Prośba o transfer pliku"
+msgstr "Otrzymano ofertę transferu pliku"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:527
-#, fuzzy
 msgid "File transfer rejected"
-msgstr "Prośba o transfer pliku"
+msgstr "Oferta transferu pliku odrzucona"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:529
 msgid "MUC invitation declined"
-msgstr ""
+msgstr "Odrzucono nasze zaproszenie do konferencji"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:531
-#, fuzzy
 msgid "Connection to server lost"
 msgstr "Utracono połączenie z serwerem"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:533
-#, fuzzy
 msgid "Reconnected to server"
-msgstr "Utracono połączenie z serwerem"
+msgstr "Ponownie połączono z serwerem"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:602
 msgid "Use global settings"
-msgstr ""
+msgstr "Użyj wartości globalnych"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:613
 msgid "Display message in chat pane"
-msgstr ""
+msgstr "Wyświetlaj w oknie wiadomości"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:621
 msgid "Display message in MUC chat pane"
-msgstr ""
+msgstr "Wyświetlaj w oknie wiadomości konferencji"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:632
 msgid "Display notification bubble"
-msgstr ""
+msgstr "Wyświetlaj powiadomienia"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:640
-#, fuzzy
 msgid "Play sound"
 msgstr "Odtwarzaj dźwięki"
 
@@ -2319,41 +2274,35 @@ msgstr "This is the last version of the message"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:847
 msgid "Initiate call"
-msgstr ""
+msgstr "Rozpocznij połączenie"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:859
-#, fuzzy
 msgid "You missed call from <b>{0}</b>"
-msgstr "Nowa wiadomość od <b>{0}</b>"
+msgstr "Nie odebrano połączenia od <b>{0}</b>"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:898
-#, fuzzy
 msgid "Accept call"
-msgstr "Akceptuj"
+msgstr "Akceptuj połączenie"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:909
-#, fuzzy
 msgid "Reject call"
-msgstr "Odrzuć"
+msgstr "Odrzuć połączenie"
 
 #: ../chrome/oneteam/content/JavaScript/model/roster.js:1059
-#, fuzzy
 msgid "Statuses"
-msgstr "Status"
+msgstr "Statusy"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:265
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:291
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:318
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:375
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:396
-#, fuzzy
 msgid "Show Details..."
-msgstr "Wyświetl historię..."
+msgstr "Wyświetl szczegóły..."
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:2041
-#, fuzzy
 msgid "Show contact details"
-msgstr "Szczegóły kontaktu"
+msgstr "Wyświetl szczegóły kontaktu"
 
 #~ msgid "Edit Contact"
 #~ msgstr "Edycja kontaktu"
