@@ -1240,21 +1240,22 @@ _DECL_(ReplyGroup).prototype =
     destroy: function() {
         if (!this.temp)
             return;
+
         this.groups.threadDestroyedFun(this);
 
         for (var i = 0; i < this.tokens.length; i++)
             this.tokens[i][2] = null;
 
+
         this.groups.age = this.age;
         var threads = this.groups.threadsByAge.splice(this.age, 10000);
 
-        this.age = -1;
-
-        for (i = 0; i < threads.length; i++) {
+        for (i = 1; i < threads.length; i++) {
             threads[i].invalidated = true;
-            threads[i].age = this.age++;
+            threads[i].age--;
             this.groups.threadsByAge[threads[i].age] = threads[i];
         }
+        this.age = -1;
         this.groups.groupsChangedFun();
     },
 

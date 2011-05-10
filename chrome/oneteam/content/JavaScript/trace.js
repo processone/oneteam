@@ -13,6 +13,11 @@ var Tracer = {
         this._depth = 0;
     },
 
+    stop: function() {
+        this._svc.off();
+        this._svc.clearFilters();
+    },
+
     onDebuggerActivated: function() {
         this._svc.appendFilter({
             flags: 1,
