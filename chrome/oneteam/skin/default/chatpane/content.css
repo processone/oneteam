@@ -176,6 +176,7 @@ body[threadId]:before,
     font: bold 12px Arial, sans-serif;
     text-align: center;
     -moz-user-select: none;
+    cursor: default;
 }
 
 body[threadId]:before {
