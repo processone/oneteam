@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2010-09-15 10:47+0200\n"
+"POT-Creation-Date: 2011-05-10 14:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Plural-Forms: nplurals=2; plural=n==1 ? 0 : 1;\n"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:422
+#: ../chrome/oneteam/content/JavaScript/notification.js:472
 #: ../chrome/oneteam/content/about.xul:8
 #: ../chrome/oneteam/content/command.xul:10
 #: ../chrome/oneteam/content/main.xul:12
