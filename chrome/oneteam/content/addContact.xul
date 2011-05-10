@@ -110,7 +110,7 @@
       if (currentGateway && !internal) {
         progressmeter.style.visibility = "visible";
         document.documentElement.getButton("accept").disabled = true;
-        currentGateway.mapName(document.getElementById("gateway-id").value},
+        currentGateway.mapName(document.getElementById("gateway-id").value,
                                _mapNameReady);
         return false;
       }
