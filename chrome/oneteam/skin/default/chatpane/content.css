@@ -156,10 +156,8 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
     background-image: url(imgs/chat-edit-active.png);
 }
 
-.thread-marker:focus,
-.thread-marker::-moz-selection {
-    color: #fff;
-    background: #7ea1dc;
+.thread-marker {
+    -moz-user-select: none;
 }
 
 body[threadId]:before,
