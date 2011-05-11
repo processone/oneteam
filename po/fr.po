@@ -178,7 +178,7 @@ msgstr "Envoyer"
 #: ../chrome/oneteam/content/addContact.xul:10
 #: ../chrome/oneteam/content/search.xul:221
 msgid "Add Contact"
-msgstr "Ajouter contact"
+msgstr "Ajouter un contact"
 
 #: ../chrome/oneteam/content/addContact.xul:14
 msgid "Add"
@@ -533,7 +533,7 @@ msgstr "Ajouter nouveau contact"
 
 #: ../chrome/oneteam/content/main.xul:460
 msgid "Join group chat room"
-msgstr "Rejoindre salon de discussion"
+msgstr "Rejoindre un salon de discussion"
 
 #: ../chrome/oneteam/content/main.xul:465
 msgid "Toggle offline contacts visibility"
@@ -1581,7 +1581,7 @@ msgstr "Passerelle Google Wave"
 
 #: ../chrome/oneteam/content/disco.xul:80
 msgid "Join room"
-msgstr "Rejoindre le salon de discussion"
+msgstr "Rejoindre un salon de discussion"
 
 #: ../chrome/oneteam/content/bindings/contactinfo.xml:248
 msgid "Active"
@@ -1666,7 +1666,7 @@ msgstr "Votre pseudo est déjà utilisé, essayez avec un autre"
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:238
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:284
 msgid "Voice Call..."
-msgstr "Appel..."
+msgstr "Appeler..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:278
 msgid "Rename..."
@@ -2118,7 +2118,7 @@ msgstr "Ceci est la première version du message"
 #: ../chrome/oneteam/content/subscribe.xul:69
 #, fuzzy
 msgid "Show Contact Details"
-msgstr "Informations sur ce contact"
+msgstr "Infos sur ce contact"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:40
 #, fuzzy
@@ -2349,22 +2349,22 @@ msgstr "Statut"
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:396
 #, fuzzy
 msgid "Show Details..."
-msgstr "Informations sur ce contact..."
+msgstr "Infos sur ce contact..."
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:2046
 #, fuzzy
 msgid "Show contact details"
-msgstr "Informations sur ce contact"
+msgstr "Infos sur ce contact"
 
 #: ../chrome/oneteam/content/main.xul:481
 #, fuzzy
 msgid "Chat _Room"
-msgstr "Salon de discussion :"
+msgstr "Salons de discussion"
 
 #: ../chrome/oneteam/content/main.xul:486
 #, fuzzy
 msgid "_Manage Chat Rooms..."
-msgstr "Rejoindre un salon de discussion"
+msgstr "Gérer les salons de discussion..."
 
 #: ../chrome/oneteam/content/joinRoomError.xul:10
 #: ../chrome/oneteam/content/joinRoomError.xul:72
@@ -2375,7 +2375,7 @@ msgstr ""
 #: ../chrome/oneteam/content/joinRoomError.xul:14
 #, fuzzy
 msgid "Join Room"
-msgstr "Rejoindre le salon de discussion"
+msgstr "Rejoindre un salon de discussion"
 
 #: ../chrome/oneteam/content/joinRoomError.xul:75
 msgid "Error ocured during joining room:"
