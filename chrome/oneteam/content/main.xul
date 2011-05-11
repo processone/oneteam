@@ -478,12 +478,12 @@
             <menupopup id="file-popup">
               <menuitem label="_('_Add Contact...')" command="cmd_addContact" key="key_addContact"/>
 
-              <menu label="_('_Join Chat Room')">
+              <menu label="_('Chat _Room')">
                 <menupopup>
                   <menuitem label="_('Join Chat Room...')" command="cmd_joinRoom" key="key_joinRoom"/>
                   <menuseparator/>
                   <menuseparator id="conference-menu-separator" hidden="true"/>
-                  <menuitem label="_('_Manage Bookmarks...')" command="cmd_manageBookmarks"/>
+                  <menuitem label="_('_Manage Chat Rooms...')" command="cmd_manageBookmarks"/>
                 </menupopup>
               </menu>
               <menu label="_('_Gateways')" id="gateways-menu">
