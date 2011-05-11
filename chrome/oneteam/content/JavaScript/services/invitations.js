@@ -11,7 +11,10 @@ _DECL_(MessageInvitationsService).prototype =
     {
         var from, conference, reason, sendDecline;
 
-        if (query.nodeName == "x") {
+        if (query.localName != "x")
+            return 2;
+
+        if (query.namespaceURI == this._ns2) {
             var invite = query.getElementsByTagName("invite")[0];
             if (!invite)
                 return 2;
@@ -22,14 +25,15 @@ _DECL_(MessageInvitationsService).prototype =
             reason = reason && reason.textContent;
             sendDecline = true;
         } else {
-            from = jid;
+            from = pkt.getFrom();
             conference = account.getOrCreateConference(query.getAttribute("jid"));
             reason = query.getAttribute("reason");
         }
-        from = new JID(from);
 
         if (conference.joined)
             return 2;
+
+        from = new JID(from);
 
         account.addEvent(from, "mucinvite",
                          _xml("You have been invited to room <b>{0}</b> by <b>{1}</b>",
