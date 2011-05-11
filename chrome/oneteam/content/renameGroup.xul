@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="oneteam" windowtype="ot:renameGroup" title="Change Group Name"
+<dialog id="oneteam" windowtype="ot:renameGroup" title="_('Change Group Name')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="150"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
@@ -37,8 +37,8 @@
   </toolbox>
 
   <hbox class="entry">
-    <description value="New Group Name:"/>
-    <textbox type="verifiable" id="name" regex="." errortext="Group name can't be empty"/>
+    <description value="_('New Group Name:')"/>
+    <textbox type="verifiable" id="name" regex="."/>
   </hbox>
 
 </dialog>

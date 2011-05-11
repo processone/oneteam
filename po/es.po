@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
-"POT-Creation-Date: 2011-05-11 14:24+0200\n"
+"POT-Creation-Date: 2011-05-11 16:52+0200\n"
 "PO-Revision-Date: 2010-09-15 18:01+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -62,6 +62,7 @@ msgid "Change Nick"
 msgstr "Cambiar Apodo"
 
 #: ../chrome/oneteam/content/changeNick.xul:41
+#: ../chrome/oneteam/content/joinRoomError.xul:81
 msgid "New Nick:"
 msgstr "Nuevo Apodo:"
 
@@ -177,6 +178,7 @@ msgid "Send"
 msgstr "Enviar"
 
 #: ../chrome/oneteam/content/addContact.xul:10
+#: ../chrome/oneteam/content/search.xul:221
 msgid "Add Contact"
 msgstr "Añadir Contacto"
 
@@ -206,6 +208,7 @@ msgstr "Jabber ID:"
 
 #: ../chrome/oneteam/content/addContact.xul:213
 #: ../chrome/oneteam/content/bookmarkRoom.xul:87
+#: ../chrome/oneteam/content/joinRoom.xul:105
 #: ../chrome/oneteam/content/manageBookmarks.xul:206
 #: ../chrome/oneteam/content/vcard.xul:101
 msgid "Nickname:"
@@ -235,17 +238,21 @@ msgid "Bookmark with that name already exists"
 msgstr "Ya tienes guardada en marcadores una sala con este nombre"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:75
+#: ../chrome/oneteam/content/joinRoom.xul:95
 #: ../chrome/oneteam/content/manageBookmarks.xul:190
 msgid "Room:"
 msgstr "Sala:"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:82
+#: ../chrome/oneteam/content/joinRoom.xul:100
 #: ../chrome/oneteam/content/manageBookmarks.xul:199
 msgid "Server:"
 msgstr "Servidor:"
 
 #: ../chrome/oneteam/content/bindings/forms.xml:26
 #: ../chrome/oneteam/content/bookmarkRoom.xul:93
+#: ../chrome/oneteam/content/joinRoom.xul:110
+#: ../chrome/oneteam/content/joinRoomError.xul:86
 #: ../chrome/oneteam/content/manageBookmarks.xul:213
 msgid "Password:"
 msgstr "Contraseña:"
@@ -677,6 +684,7 @@ msgstr "Nuevo"
 msgid "Remove"
 msgstr "Borrar"
 
+#: ../chrome/oneteam/content/joinRoom.xul:128
 #: ../chrome/oneteam/content/manageBookmarks.xul:221
 msgid "Always join this room at startup"
 msgstr "Siempre entrar en esta sala al conectar"
@@ -2100,6 +2108,7 @@ msgstr "See Next Version"
 msgid "This is the first version of the message"
 msgstr "This is the first version of the message"
 
+#: ../chrome/oneteam/content/search.xul:220
 #: ../chrome/oneteam/content/subscribe.xul:69
 #, fuzzy
 msgid "Show Contact Details"
@@ -2351,6 +2360,109 @@ msgstr "_Entrar en sala de charla"
 #, fuzzy
 msgid "_Manage Chat Rooms..."
 msgstr "Entrar en Sala de Charla..."
+
+#: ../chrome/oneteam/content/joinRoomError.xul:10
+#: ../chrome/oneteam/content/joinRoomError.xul:72
+msgid "Joining Room Error"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoom.xul:10
+#: ../chrome/oneteam/content/joinRoomError.xul:14
+#, fuzzy
+msgid "Join Room"
+msgstr "Entrar en la sala"
+
+#: ../chrome/oneteam/content/joinRoomError.xul:75
+msgid "Error ocured during joining room:"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoomError.xul:77
+#, fuzzy
+msgid "Error message:"
+msgstr "mensajes"
+
+#: ../chrome/oneteam/content/preferences.xul:240
+#, fuzzy
+msgid "Native"
+msgstr "Inactivo"
+
+#: ../chrome/oneteam/content/preferences.xul:241
+#, fuzzy
+msgid "HTTP Bind"
+msgstr "Base HTTP:"
+
+#: ../chrome/oneteam/content/preferences.xul:242
+#, fuzzy
+msgid "HTTPS Bind"
+msgstr "Base HTTP:"
+
+#: ../chrome/oneteam/content/preferences.xul:243
+msgid "HTTP Polling"
+msgstr ""
+
+#: ../chrome/oneteam/content/roomPermissions.xul:11
+#: ../chrome/oneteam/content/roomPermissions.xul:91
+#, fuzzy
+msgid "Edit Permissions"
+msgstr "Editar permisos..."
+
+#: ../chrome/oneteam/content/roomPermissions.xul:97
+#, fuzzy
+msgid "Owners"
+msgstr "Dueño"
+
+#: ../chrome/oneteam/content/roomPermissions.xul:98
+#, fuzzy
+msgid "Admins"
+msgstr "Administrador"
+
+#: ../chrome/oneteam/content/roomPermissions.xul:99
+#, fuzzy
+msgid "Members"
+msgstr "Miembro"
+
+#: ../chrome/oneteam/content/roomPermissions.xul:100
+msgid "Banned"
+msgstr ""
+
+#: ../chrome/oneteam/content/renameGroup.xul:10
+#, fuzzy
+msgid "Change Group Name"
+msgstr "Cambiar apodo"
+
+#: ../chrome/oneteam/content/renameGroup.xul:40
+#, fuzzy
+msgid "New Group Name:"
+msgstr "Nuevo apodo:"
+
+#: ../chrome/oneteam/content/search.xul:48
+msgid "Can't fetch registration form"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoom.xul:13
+#, fuzzy
+msgid "Join"
+msgstr "Entrar en la sala"
+
+#: ../chrome/oneteam/content/joinRoom.xul:124
+#, fuzzy
+msgid "Bookmark this room as"
+msgstr "Añadir Sala a Marcadores"
+
+#: ../chrome/oneteam/content/status.xul:97
+#, fuzzy
+msgid "Status message:"
+msgstr "Mensaje de estado"
+
+#: ../chrome/oneteam/content/status.xul:100
+#, fuzzy
+msgid "Save message"
+msgstr "Mensaje de estado"
+
+#: ../chrome/oneteam/content/status.xul:104
+#, fuzzy
+msgid "Saved messages:"
+msgstr "mensajes"
 
 #~ msgid "Please enter correct Jabber ID"
 #~ msgstr "Por favor indica el Jabber ID correcto"

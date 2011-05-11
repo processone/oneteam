@@ -94,14 +94,14 @@
     </menupopup>
   </menulist>
   <spacer/>
-  <label value="Status message:" control="statusText"/>
+  <label value="_('Status message:')" control="statusText"/>
   <textbox id="statusText" multiline="true" rows="4" flex="1"/>
   <hbox pack="end">
-    <checkbox id="saveMessage" label="Save message"/>
+    <checkbox id="saveMessage" label="_('Save message')"/>
   </hbox>
   <spacer/>
 
-  <label value="Saved messages:"/>
+  <label value="_('Saved messages:')"/>
   <menulist id="savedMessages" onselect="onSelect()"/>
 
 </dialog>

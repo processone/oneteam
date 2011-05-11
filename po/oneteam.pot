@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-11 14:24+0200\n"
+"POT-Creation-Date: 2011-05-11 16:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,6 +57,7 @@ msgid "Change Nick"
 msgstr ""
 
 #: ../chrome/oneteam/content/changeNick.xul:41
+#: ../chrome/oneteam/content/joinRoomError.xul:81
 msgid "New Nick:"
 msgstr ""
 
@@ -172,6 +173,7 @@ msgid "Send"
 msgstr ""
 
 #: ../chrome/oneteam/content/addContact.xul:10
+#: ../chrome/oneteam/content/search.xul:221
 msgid "Add Contact"
 msgstr ""
 
@@ -201,6 +203,7 @@ msgstr ""
 
 #: ../chrome/oneteam/content/addContact.xul:213
 #: ../chrome/oneteam/content/bookmarkRoom.xul:87
+#: ../chrome/oneteam/content/joinRoom.xul:105
 #: ../chrome/oneteam/content/manageBookmarks.xul:206
 #: ../chrome/oneteam/content/vcard.xul:101
 msgid "Nickname:"
@@ -230,17 +233,21 @@ msgid "Bookmark with that name already exists"
 msgstr ""
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:75
+#: ../chrome/oneteam/content/joinRoom.xul:95
 #: ../chrome/oneteam/content/manageBookmarks.xul:190
 msgid "Room:"
 msgstr ""
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:82
+#: ../chrome/oneteam/content/joinRoom.xul:100
 #: ../chrome/oneteam/content/manageBookmarks.xul:199
 msgid "Server:"
 msgstr ""
 
 #: ../chrome/oneteam/content/bindings/forms.xml:26
 #: ../chrome/oneteam/content/bookmarkRoom.xul:93
+#: ../chrome/oneteam/content/joinRoom.xul:110
+#: ../chrome/oneteam/content/joinRoomError.xul:86
 #: ../chrome/oneteam/content/manageBookmarks.xul:213
 msgid "Password:"
 msgstr ""
@@ -658,6 +665,7 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+#: ../chrome/oneteam/content/joinRoom.xul:128
 #: ../chrome/oneteam/content/manageBookmarks.xul:221
 msgid "Always join this room at startup"
 msgstr ""
@@ -2067,6 +2075,7 @@ msgstr ""
 msgid "This is the first version of the message"
 msgstr ""
 
+#: ../chrome/oneteam/content/search.xul:220
 #: ../chrome/oneteam/content/subscribe.xul:69
 msgid "Show Contact Details"
 msgstr ""
@@ -2278,5 +2287,92 @@ msgstr ""
 
 #: ../chrome/oneteam/content/main.xul:486
 msgid "_Manage Chat Rooms..."
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoomError.xul:10
+#: ../chrome/oneteam/content/joinRoomError.xul:72
+msgid "Joining Room Error"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoom.xul:10
+#: ../chrome/oneteam/content/joinRoomError.xul:14
+msgid "Join Room"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoomError.xul:75
+msgid "Error ocured during joining room:"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoomError.xul:77
+msgid "Error message:"
+msgstr ""
+
+#: ../chrome/oneteam/content/preferences.xul:240
+msgid "Native"
+msgstr ""
+
+#: ../chrome/oneteam/content/preferences.xul:241
+msgid "HTTP Bind"
+msgstr ""
+
+#: ../chrome/oneteam/content/preferences.xul:242
+msgid "HTTPS Bind"
+msgstr ""
+
+#: ../chrome/oneteam/content/preferences.xul:243
+msgid "HTTP Polling"
+msgstr ""
+
+#: ../chrome/oneteam/content/roomPermissions.xul:11
+#: ../chrome/oneteam/content/roomPermissions.xul:91
+msgid "Edit Permissions"
+msgstr ""
+
+#: ../chrome/oneteam/content/roomPermissions.xul:97
+msgid "Owners"
+msgstr ""
+
+#: ../chrome/oneteam/content/roomPermissions.xul:98
+msgid "Admins"
+msgstr ""
+
+#: ../chrome/oneteam/content/roomPermissions.xul:99
+msgid "Members"
+msgstr ""
+
+#: ../chrome/oneteam/content/roomPermissions.xul:100
+msgid "Banned"
+msgstr ""
+
+#: ../chrome/oneteam/content/renameGroup.xul:10
+msgid "Change Group Name"
+msgstr ""
+
+#: ../chrome/oneteam/content/renameGroup.xul:40
+msgid "New Group Name:"
+msgstr ""
+
+#: ../chrome/oneteam/content/search.xul:48
+msgid "Can't fetch registration form"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoom.xul:13
+msgid "Join"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoom.xul:124
+msgid "Bookmark this room as"
+msgstr ""
+
+#: ../chrome/oneteam/content/status.xul:97
+msgid "Status message:"
+msgstr ""
+
+#: ../chrome/oneteam/content/status.xul:100
+msgid "Save message"
+msgstr ""
+
+#: ../chrome/oneteam/content/status.xul:104
+msgid "Saved messages:"
 msgstr ""
 
