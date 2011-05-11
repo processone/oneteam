@@ -237,10 +237,10 @@
           <label value="_('Connection Method:')"/>
           <menulist id="protocol" preference="type" onselect="updateConnectionFields()">
             <menupopup>
-              <menuitem label="Native" value="native"/>
-              <menuitem label="HTTP Bind" value="http-bind"/>
-              <menuitem label="HTTPS Bind" value="https-bind"/>
-              <menuitem label="HTTP Polling" value="http-polling"/>
+              <menuitem label="_('Native')" value="native"/>
+              <menuitem label="_('HTTP Bind')" value="http-bind"/>
+              <menuitem label="_('HTTPS Bind')" value="https-bind"/>
+              <menuitem label="_('HTTP Polling')" value="http-polling"/>
             </menupopup>
           </menulist>
         </row>

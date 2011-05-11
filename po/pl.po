@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-11 14:24+0200\n"
+"POT-Creation-Date: 2011-05-11 16:52+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -9,7 +9,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2;\n"
 "X-Poedit-Language: Polish\n"
 "X-Poedit-Country: POLAND\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -61,6 +62,7 @@ msgid "Change Nick"
 msgstr "Zmień pseudonim"
 
 #: ../chrome/oneteam/content/changeNick.xul:41
+#: ../chrome/oneteam/content/joinRoomError.xul:81
 msgid "New Nick:"
 msgstr "Nowy pseudonim:"
 
@@ -176,6 +178,7 @@ msgid "Send"
 msgstr "Wyślij"
 
 #: ../chrome/oneteam/content/addContact.xul:10
+#: ../chrome/oneteam/content/search.xul:221
 msgid "Add Contact"
 msgstr "Dodawanie kontaktu"
 
@@ -205,6 +208,7 @@ msgstr "ID Jabbera:"
 
 #: ../chrome/oneteam/content/addContact.xul:213
 #: ../chrome/oneteam/content/bookmarkRoom.xul:87
+#: ../chrome/oneteam/content/joinRoom.xul:105
 #: ../chrome/oneteam/content/manageBookmarks.xul:206
 #: ../chrome/oneteam/content/vcard.xul:101
 msgid "Nickname:"
@@ -234,17 +238,21 @@ msgid "Bookmark with that name already exists"
 msgstr "Zakładka o tej nazwie istnieje"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:75
+#: ../chrome/oneteam/content/joinRoom.xul:95
 #: ../chrome/oneteam/content/manageBookmarks.xul:190
 msgid "Room:"
 msgstr "Pokój:"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:82
+#: ../chrome/oneteam/content/joinRoom.xul:100
 #: ../chrome/oneteam/content/manageBookmarks.xul:199
 msgid "Server:"
 msgstr "Serwer:"
 
 #: ../chrome/oneteam/content/bindings/forms.xml:26
 #: ../chrome/oneteam/content/bookmarkRoom.xul:93
+#: ../chrome/oneteam/content/joinRoom.xul:110
+#: ../chrome/oneteam/content/joinRoomError.xul:86
 #: ../chrome/oneteam/content/manageBookmarks.xul:213
 msgid "Password:"
 msgstr "Hasło:"
@@ -554,7 +562,8 @@ msgstr "Wyświetl historię..."
 
 #: ../chrome/oneteam/content/addContact.xul:155
 msgid "Gateway can't convert ID into Jabber ID"
-msgstr "Bramka nie jest w stanie zamienić identyfikatora na identyfikator Jabbera"
+msgstr ""
+"Bramka nie jest w stanie zamienić identyfikatora na identyfikator Jabbera"
 
 #: ../chrome/oneteam/content/invite.xul:14
 #: ../chrome/oneteam/content/inviteByMail.xul:14
@@ -584,8 +593,12 @@ msgstr "E-mails:"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:77
 #: ../chrome/oneteam/content/manageBookmarks.xul:192
-msgid "Room name can't be empty and can\\'t contain any of [\"&\\'/:<>@] or blank characters"
-msgstr "Nazwa konferencji nie może być pusta, ani zawierać żadnego ze znaków [\"&\\'/:<>@] lub spacji"
+msgid ""
+"Room name can't be empty and can\\'t contain any of [\"&\\'/:<>@] or blank "
+"characters"
+msgstr ""
+"Nazwa konferencji nie może być pusta, ani zawierać żadnego ze znaków [\"&"
+"\\'/:<>@] lub spacji"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:103
 #: ../chrome/oneteam/content/manageBookmarks.xul:181
@@ -647,19 +660,20 @@ msgstr "Nowy pokój"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:118
 msgid ""
-"Entered informations are invalid.\\n"
-"Do you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
+"Entered informations are invalid.\\nDo you want to forget entered "
+"informations and restore previous values (click \"Cancel\" if you want to "
+"correct values)?"
 msgstr ""
-"Wprowadzone informacje nie są prawidłowe.\\n"
-"Czy chcesz przywrócić poprzednie wartości? (Kliknięcie na \"Anuluj\" zostawi obecne wartości)"
+"Wprowadzone informacje nie są prawidłowe.\\nCzy chcesz przywrócić poprzednie "
+"wartości? (Kliknięcie na \"Anuluj\" zostawi obecne wartości)"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:119
 msgid ""
-"Entered informations are invalid.\\n"
-"Do you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
+"Entered informations are invalid.\\nDo you want to forget this bookmark "
+"(click \"Cancel\" if you want to correct values)?"
 msgstr ""
-"Wprowadzone dane są nie prawidłwe.\\n"
-"Czy chcesz anulować dodawanie zakładki kliknij \"Anuluj\" jeśli chcesz poprawić wartości)?"
+"Wprowadzone dane są nie prawidłwe.\\nCzy chcesz anulować dodawanie zakładki "
+"kliknij \"Anuluj\" jeśli chcesz poprawić wartości)?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:165
 msgid "New"
@@ -670,6 +684,7 @@ msgstr "Nowy"
 msgid "Remove"
 msgstr "Usuń"
 
+#: ../chrome/oneteam/content/joinRoom.xul:128
 #: ../chrome/oneteam/content/manageBookmarks.xul:221
 msgid "Always join this room at startup"
 msgstr "Dołącz do tel konferencji na starcie"
@@ -882,15 +897,11 @@ msgstr "Zaproszenie do konferencji {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:221
 msgid ""
-"User *{0}* invited you to conference *{1}*.\\n"
-"\\n"
-"To join this conference please click on this link:\\n"
-"{2}\\n"
+"User *{0}* invited you to conference *{1}*.\\n\\nTo join this conference "
+"please click on this link:\\n{2}\\n"
 msgstr ""
-"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n"
-"\\n"
-"Aby dołączyć do tej konferencji kliknij ten link:\\n"
-"{2}\\n"
+"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n\\nAby dołączyć do tej "
+"konferencji kliknij ten link:\\n{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/roster.js:982
 msgid "{0}/{1}"
@@ -1117,8 +1128,11 @@ msgid "Registering in Service"
 msgstr "Rejestrowanie w serwisie"
 
 #: ../chrome/oneteam/content/addContact.xul:253
-msgid "Before adding contacts from this network, you need to register in this network's gateway."
-msgstr "Zanim dodasz kogoś z tej sieci, musisz zarejestrować się w bramce tej sieci."
+msgid ""
+"Before adding contacts from this network, you need to register in this "
+"network's gateway."
+msgstr ""
+"Zanim dodasz kogoś z tej sieci, musisz zarejestrować się w bramce tej sieci."
 
 #: ../chrome/oneteam/content/addContact.xul:255
 msgid "Registration Gateway"
@@ -1428,15 +1442,20 @@ msgstr "{0} {0, plurals, sekunda, sekundy, sekund}"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:72
 msgid "{0} {0, plurals, day, days}, {1} {1, plurals, hour, hours}"
-msgstr "{0} {0, plurals, dzień, dni, dni}, {1} {1, plurals, godzina, godziny, godzin}"
+msgstr ""
+"{0} {0, plurals, dzień, dni, dni}, {1} {1, plurals, godzina, godziny, godzin}"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:74
 msgid "{0} {0, plurals, hour, hours}, {1} {1, plurals, minute, minutes}"
-msgstr "{0} {0, plurals, godzina, godziny, godzin}, {1} {1, plurals, minuta, minuty, minut}"
+msgstr ""
+"{0} {0, plurals, godzina, godziny, godzin}, {1} {1, plurals, minuta, minuty, "
+"minut}"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:76
 msgid "{0} {0, plurals, minute, minutes}, {1} {1, plurals, second, seconds}"
-msgstr "{0} {0, plurals, minuta, minuty, minut}, {1} {1, plurals, sekunda, sekundy, sekund}"
+msgstr ""
+"{0} {0, plurals, minuta, minuty, minut}, {1} {1, plurals, sekunda, sekundy, "
+"sekund}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:456
 msgid "This room requires password"
@@ -1452,7 +1471,8 @@ msgstr "Ta konferencja nie istnieje"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:459
 msgid "This room doesn't exist, and can be created only by administrator"
-msgstr "Pokój nie istnieje, i może być utworzony wyłącznie przez administratora"
+msgstr ""
+"Pokój nie istnieje, i może być utworzony wyłącznie przez administratora"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:460
 msgid "This room can be accessed only by registered persons"
@@ -1463,8 +1483,11 @@ msgid "You are not member of this room"
 msgstr "Nie jesteś członkiem tego pokoju"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:463
-msgid "Conference server can't be contacted or room reached maximum number of users"
-msgstr "Nie można skomunikować się z serwerem konferencji, lub liczba osób w pokoju osiągnęła maksimum"
+msgid ""
+"Conference server can't be contacted or room reached maximum number of users"
+msgstr ""
+"Nie można skomunikować się z serwerem konferencji, lub liczba osób w pokoju "
+"osiągnęła maksimum"
 
 #: ../chrome/oneteam/content/JavaScript/model/roster.js:1018
 msgid "(Anonymous)"
@@ -2087,17 +2110,25 @@ msgstr "See Next Version"
 msgid "This is the first version of the message"
 msgstr "This is the first version of the message"
 
+#: ../chrome/oneteam/content/search.xul:220
 #: ../chrome/oneteam/content/subscribe.xul:69
 msgid "Show Contact Details"
 msgstr "Wyświetl szczegóły kontaktu"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:40
-msgid "Another client is active on your account. Because it has higher priority that OneTeam Desktop, messages usually will be routed to that other client."
-msgstr "Inny program jest aktywny na Twoim koncie. Ponieważ ma on wyższy priorytet niż OneTeam, zwykle wiadomości będą kierowane do niego."
+msgid ""
+"Another client is active on your account. Because it has higher priority "
+"that OneTeam Desktop, messages usually will be routed to that other client."
+msgstr ""
+"Inny program jest aktywny na Twoim koncie. Ponieważ ma on wyższy priorytet "
+"niż OneTeam, zwykle wiadomości będą kierowane do niego."
 
 #: ../chrome/oneteam/content/bumpPriority.xul:43
-msgid "Do you want to increase OneTeam Desktop priority to make it your main client?"
-msgstr "Czy chcesz zwiększyć priorytet programu OneTeam by uczynić go głównym klientem?"
+msgid ""
+"Do you want to increase OneTeam Desktop priority to make it your main client?"
+msgstr ""
+"Czy chcesz zwiększyć priorytet programu OneTeam by uczynić go głównym "
+"klientem?"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:44
 msgid "Ask me next time."
@@ -2299,6 +2330,109 @@ msgstr "Konferencje"
 #: ../chrome/oneteam/content/main.xul:486
 msgid "_Manage Chat Rooms..."
 msgstr "Zarządzaj konferencjami..."
+
+#: ../chrome/oneteam/content/joinRoomError.xul:10
+#: ../chrome/oneteam/content/joinRoomError.xul:72
+msgid "Joining Room Error"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoom.xul:10
+#: ../chrome/oneteam/content/joinRoomError.xul:14
+#, fuzzy
+msgid "Join Room"
+msgstr "Dołącz do konferencji"
+
+#: ../chrome/oneteam/content/joinRoomError.xul:75
+msgid "Error ocured during joining room:"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoomError.xul:77
+#, fuzzy
+msgid "Error message:"
+msgstr "wiadomości"
+
+#: ../chrome/oneteam/content/preferences.xul:240
+#, fuzzy
+msgid "Native"
+msgstr "Nieaktywny"
+
+#: ../chrome/oneteam/content/preferences.xul:241
+#, fuzzy
+msgid "HTTP Bind"
+msgstr "Baza HTTP:"
+
+#: ../chrome/oneteam/content/preferences.xul:242
+#, fuzzy
+msgid "HTTPS Bind"
+msgstr "Baza HTTP:"
+
+#: ../chrome/oneteam/content/preferences.xul:243
+msgid "HTTP Polling"
+msgstr ""
+
+#: ../chrome/oneteam/content/roomPermissions.xul:11
+#: ../chrome/oneteam/content/roomPermissions.xul:91
+#, fuzzy
+msgid "Edit Permissions"
+msgstr "Edycja uprawnienień..."
+
+#: ../chrome/oneteam/content/roomPermissions.xul:97
+#, fuzzy
+msgid "Owners"
+msgstr "Właściciel"
+
+#: ../chrome/oneteam/content/roomPermissions.xul:98
+#, fuzzy
+msgid "Admins"
+msgstr "Administrator"
+
+#: ../chrome/oneteam/content/roomPermissions.xul:99
+#, fuzzy
+msgid "Members"
+msgstr "Członek"
+
+#: ../chrome/oneteam/content/roomPermissions.xul:100
+msgid "Banned"
+msgstr ""
+
+#: ../chrome/oneteam/content/renameGroup.xul:10
+#, fuzzy
+msgid "Change Group Name"
+msgstr "Zmień pseudonim"
+
+#: ../chrome/oneteam/content/renameGroup.xul:40
+#, fuzzy
+msgid "New Group Name:"
+msgstr "Nowy pseudonim:"
+
+#: ../chrome/oneteam/content/search.xul:48
+msgid "Can't fetch registration form"
+msgstr ""
+
+#: ../chrome/oneteam/content/joinRoom.xul:13
+#, fuzzy
+msgid "Join"
+msgstr "Dołącz do konferencji"
+
+#: ../chrome/oneteam/content/joinRoom.xul:124
+#, fuzzy
+msgid "Bookmark this room as"
+msgstr "Zakładka konferencji"
+
+#: ../chrome/oneteam/content/status.xul:97
+#, fuzzy
+msgid "Status message:"
+msgstr "Komunikat stanu"
+
+#: ../chrome/oneteam/content/status.xul:100
+#, fuzzy
+msgid "Save message"
+msgstr "Komunikat stanu"
+
+#: ../chrome/oneteam/content/status.xul:104
+#, fuzzy
+msgid "Saved messages:"
+msgstr "wiadomości"
 
 #~ msgid "_Join Chat Room"
 #~ msgstr "Dołącz do _konferencji"

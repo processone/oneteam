@@ -8,7 +8,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="oneteam" windowtype="ot:roomPermissions" title="Edit Permissions"
+<dialog id="oneteam" windowtype="ot:roomPermissions" title="_('Edit Permissions')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="600" height="500"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
@@ -88,16 +88,16 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="Edit Permissions"/>
+  <dialogheader title="_('Edit Permissions')"/>
 
   <spacer/>
 
   <tabbox flex="1">
     <tabs>
-      <tab label="Owners" id="owner-tab" collapsed="true"/>
-      <tab label="Admins" id="admin-tab" collapsed="true"/>
-      <tab label="Members" id="member-tab" collapsed="true"/>
-      <tab label="Banned" id="outcast-tab" collapsed="true"/>
+      <tab label="_('Owners')" id="owner-tab" collapsed="true"/>
+      <tab label="_('Admins')" id="admin-tab" collapsed="true"/>
+      <tab label="_('Members')" id="member-tab" collapsed="true"/>
+      <tab label="_('Banned')" id="outcast-tab" collapsed="true"/>
     </tabs>
     <tabpanels flex="1">
       <tabpanel>

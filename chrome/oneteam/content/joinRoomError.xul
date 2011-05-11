@@ -7,11 +7,11 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="oneteam" windowtype="ot:joinRoomError" title="Joining Room Error"
+<dialog id="oneteam" windowtype="ot:joinRoomError" title="_('Joining Room Error')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="600" height="300"
-  buttonlabelaccept="Join Room" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('Join Room')" buttonlabelcancel="_('Cancel')"
   onload="onLoad()" ondialogaccept="return joinRoom()">
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
@@ -69,22 +69,21 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="Joining Room Error"/>
+  <dialogheader title="_('Joining Room Error')"/>
 
   <vbox flex="1">
-    <description id="errorInfo">Error ocured during joining room:
+    <description id="errorInfo">_('Error ocured during joining room:')
       <html:span id="jid" style="font-weight: bold"/></description>
-    <description>Error message:
+    <description>_('Error message:')
       <html:span id="errorMsg" style="font-style: italic"/></description>
 
     <hbox class="entry" style="margin-top: 1em">
-      <label value="New Nick:"/>
-      <textbox type="verifiable" id="nick" regex="^[^/]+$"
-               errortext="Nickname can't be empty and can't contain '/' character"/>
+      <label value="_('New Nick:')"/>
+      <textbox type="verifiable" id="nick" regex="^[^/]+$"/>
     </hbox>
 
     <hbox class="entry" style="margin-top: 1em">
-      <label value="Password:"/>
+      <label value="_('Password:')"/>
       <textbox id="password" type="password"/>
     </hbox>
 

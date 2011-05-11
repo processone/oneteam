@@ -45,7 +45,7 @@
 
     function onSearchForm(pkt) {
       if (pkt.getType() == "error") {
-        alert("Can't fetch registration form.")
+        alert(_("Can't fetch registration form"))
         window.close();
       }
       document.getElementById("formDeck").selectedIndex = 1;
@@ -217,8 +217,8 @@
           <spacer/>
         <hbox id="itemButtons">
           <spacer flex="1"/>
-          <button id="showVCard" label="Show Contact Details" oncommand="showVCard()" disabled="true"/>
-          <button id="addContact" label="Add Contact" oncommand="addContact()" disabled="true"/>
+          <button id="showVCard" label="_('Show Contact Details')" oncommand="showVCard()" disabled="true"/>
+          <button id="addContact" label="_('Add Contact')" oncommand="addContact()" disabled="true"/>
         </hbox>
       </vbox>
       <vbox>
