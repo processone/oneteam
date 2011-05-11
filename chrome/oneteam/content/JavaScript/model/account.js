@@ -1166,6 +1166,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (!query.nodeType)
             return;
 
+        if (packet.getType() == "set")
+            servicesManager._sendResponse({}, packet);
+
         if (initialRoster)
             for (var c in this.contactsIterator())
                 contactsToRemove[c.jid.normalizedJID] = c;
