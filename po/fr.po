@@ -57,11 +57,11 @@ msgstr "Annuler"
 
 #: ../chrome/oneteam/content/changeNick.xul:10
 msgid "Change Nick"
-msgstr "Changer de surnom"
+msgstr "Changer de pseudo"
 
 #: ../chrome/oneteam/content/changeNick.xul:41
 msgid "New Nick:"
-msgstr "Nouveau surnom :"
+msgstr "Nouveau pseudo :"
 
 #: ../chrome/oneteam/content/status.xul:8
 #: ../chrome/oneteam/content/waveBrowser.xul:8
@@ -188,7 +188,7 @@ msgstr "Identifiant :"
 
 #: ../chrome/oneteam/content/addContact.xul:120
 msgid "Contact with this Jabber ID already exists"
-msgstr "Un contact avec ce Jabber ID existe déjà"
+msgstr "Un contact avec cette adresse Jabber existe déjà"
 
 #: ../chrome/oneteam/content/addContact.xul:174
 msgid "Network:"
@@ -200,14 +200,14 @@ msgstr "XMPP"
 
 #: ../chrome/oneteam/content/addContact.xul:203
 msgid "Jabber ID:"
-msgstr "Jabber ID :"
+msgstr "Adresse Jabber :"
 
 #: ../chrome/oneteam/content/addContact.xul:213
 #: ../chrome/oneteam/content/bookmarkRoom.xul:87
 #: ../chrome/oneteam/content/manageBookmarks.xul:206
 #: ../chrome/oneteam/content/vcard.xul:101
 msgid "Nickname:"
-msgstr "Surnom :"
+msgstr "Pseudo :"
 
 #: ../chrome/oneteam/content/addContact.xul:230
 #: ../chrome/oneteam/content/vcard.xul:107
@@ -291,7 +291,7 @@ msgstr "Le serveur n'autorise pas les changements de mot de passe"
 #: ../chrome/oneteam/content/changeNick.xul:42
 #: ../chrome/oneteam/content/manageBookmarks.xul:207
 msgid "Nickname can't be empty"
-msgstr "Le surnom ne peut être vide"
+msgstr "Le pseudo ne peut être vide"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:258
 #: ../chrome/oneteam/content/vcardEdit.xul:9
@@ -344,7 +344,7 @@ msgstr "Nom secondaire"
 #: ../chrome/oneteam/content/search.xul:94
 #: ../chrome/oneteam/content/vcardEdit.xul:294
 msgid "Nickname"
-msgstr "Surnom"
+msgstr "Pseudo"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:298
 msgid "Prefix"
@@ -541,7 +541,7 @@ msgstr "Préférences"
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:270
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:292
 msgid "Execute Command..."
-msgstr "Éxecuter la commande..."
+msgstr "Exécuter la commande..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:266
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:293
@@ -553,7 +553,7 @@ msgstr "Voir l'historique..."
 
 #: ../chrome/oneteam/content/addContact.xul:155
 msgid "Gateway can't convert ID into Jabber ID"
-msgstr "La passerelle ne peut convertir l'ID en Jabber ID"
+msgstr "La passerelle ne peut convertir l'ID en adresse Jabber"
 
 #: ../chrome/oneteam/content/invite.xul:14
 #: ../chrome/oneteam/content/inviteByMail.xul:14
@@ -597,7 +597,7 @@ msgstr "Le nom du marque-page ne peut être vide"
 
 #: ../chrome/oneteam/content/changeSubject.xul:10
 msgid "Change Conference Subject"
-msgstr "Change le sujet du salon de discussion"
+msgstr "Changer le sujet du salon de discussion"
 
 #: ../chrome/oneteam/content/changeSubject.xul:42
 msgid "New Subject:"
@@ -811,11 +811,11 @@ msgstr "{0} a quitté le salon de discussion"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:332
 msgid "{0} changed nick to {1}"
-msgstr "{0} a changé de surnom en {1}"
+msgstr "{0} a changé son pseudo en {1}"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:347
 msgid "{0} changed subject to {1}"
-msgstr "{0} a changé de sujet en {1}"
+msgstr "{0} a changé le sujet en {1}"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:386
 msgid "New message from <b>{0}</b>"
@@ -966,7 +966,7 @@ msgstr "Inviter à"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:248
 msgid "Change Nickname..."
-msgstr "Changer le surnom..."
+msgstr "Changer le pseudo..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:252
 msgid "Authorization"
@@ -996,7 +996,7 @@ msgstr "Inviter des utilisateurs à ce salon de discussion..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:302
 msgid "Change Nick..."
-msgstr "Changer de surnom..."
+msgstr "Changer de pseudo..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:304
 msgid "Change Subject..."
@@ -1269,11 +1269,11 @@ msgstr "Fonctionnalités :"
 
 #: ../chrome/oneteam/content/rename.xul:9
 msgid "Change Nickname"
-msgstr "Changer de surnom"
+msgstr "Changer de pseudo"
 
 #: ../chrome/oneteam/content/rename.xul:39
 msgid "New Nickname:"
-msgstr "Nouveau surnom :"
+msgstr "Nouveau pseudo :"
 
 #: ../chrome/oneteam/content/preferences.xul:192
 msgid "Notify about other clients with higher priority"
@@ -1311,7 +1311,7 @@ msgstr "Nom d'utilisateur :"
 #: ../chrome/oneteam/content/bindings/forms.xml:182
 #: ../chrome/oneteam/content/bindings/forms.xml:22
 msgid "Nick:"
-msgstr "Surnom :"
+msgstr "Pseudo :"
 
 #: ../chrome/oneteam/content/bindings/forms.xml:174
 #: ../chrome/oneteam/content/bindings/forms.xml:34
@@ -1652,7 +1652,7 @@ msgstr "Prière de rejoindre ce salon de discussion"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:462
 msgid "Your nick name is already used, try another nick"
-msgstr "Votre surnom est déjà utilisé, essayez un autre"
+msgstr "Votre pseudo est déjà utilisé, essayez avec un autre"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:237
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:238
@@ -1805,11 +1805,11 @@ msgstr "{0} ne vous a pas autorisé à voir son statut"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:333
 msgid "<b>{0}</b> from {1} changed nick to <b>{2}</b>"
-msgstr "<b>{0}</b> de {1} a changé de surnom à <b>{2}</b>"
+msgstr "<b>{0}</b> de {1} a changé son pseudo en <b>{2}</b>"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:348
 msgid "{0} from {1} changed subject to {2}"
-msgstr "{0} de {1} a changé le sujet à {2}"
+msgstr "{0} de {1} a changé le sujet en {2}"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:398
 msgid "{0} requests a call"
@@ -2038,7 +2038,7 @@ msgstr "Hier {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:177
 msgid "nickname"
-msgstr "Surnom"
+msgstr "Pseudo"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:179
 msgid "birthday"
@@ -2109,7 +2109,7 @@ msgstr "Ceci est la première version du message"
 #: ../chrome/oneteam/content/subscribe.xul:69
 #, fuzzy
 msgid "Show Contact Details"
-msgstr "Détails du contact"
+msgstr "Informations sur ce contact"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:40
 #, fuzzy
@@ -2149,7 +2149,7 @@ msgstr ""
 #: ../chrome/oneteam/content/preferences.xul:229
 #, fuzzy
 msgid "Resource can not be empty"
-msgstr "Le surnom ne peut être vide"
+msgstr "La ressource ne peut être vide"
 
 #: ../chrome/oneteam/content/preferences.xul:247
 msgid "Old Style SSL Encryption"
@@ -2340,12 +2340,12 @@ msgstr "Statut"
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:396
 #, fuzzy
 msgid "Show Details..."
-msgstr "Voir l'historique..."
+msgstr "Informations sur ce contact..."
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:2046
 #, fuzzy
 msgid "Show contact details"
-msgstr "Détails du contact"
+msgstr "Informations sur ce contact"
 
 #: ../chrome/oneteam/content/main.xul:481
 #, fuzzy
@@ -2361,7 +2361,7 @@ msgstr "Rejoindre un salon de discussion"
 #~ msgstr "Re_joindre salon de discussion"
 
 #~ msgid "Please enter correct Jabber ID"
-#~ msgstr "Veuillez entrer un Jabber ID correct"
+#~ msgstr "Veuillez entrer une adresse Jabber correcte"
 
 #~ msgid "_Manage Bookmarks..."
 #~ msgstr "Gérer les _marque-pages"
