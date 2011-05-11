@@ -200,22 +200,12 @@ ML.importMod("exceptions.js");
 ML.importMod("services/xpcom/compatibilityLayer.js")
 ML.importMod("services/xpcom/utils.js")
 ML.importMod("services/xpcom/contactsAutocomplete.js")
-// #ifdef XPI
-ML.importMod("services/xpcom/contentDispatcher.js");
-// #endif
 
 function init(win) {
-// #ifdef XPI
-    ML.importMod("services/xpcom/scriptInjector.js");
-// #endif
     ML.importMod("services/xpcom/browserUIUpdater.js");
 }
 
-var components = [OneTeamLoader, ContactsAutoComplete
-// #ifdef XPI
-                  , OneTeamContentDispatcher
-// #endif
-];
+var components = [OneTeamLoader, ContactsAutoComplete];
 
 if (XPCOMUtils.generateNSGetFactory)
     var NSGetFactory = XPCOMUtils.generateNSGetFactory(components);
