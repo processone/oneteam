@@ -49,7 +49,7 @@ expander[open="true"] .expanderButton {
 .counter-box[event="jinglecall"],
 .counter-box[event="missedjinglecall"]
 {
-  background-image: url(../chatpane/imgs/call.png);
+  background-image: url(../chatpane/imgs/toolbar/call.png);
 }
 
 .counter-box > vbox {
