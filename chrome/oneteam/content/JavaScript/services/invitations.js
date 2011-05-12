@@ -25,8 +25,12 @@ _DECL_(MessageInvitationsService).prototype =
             reason = reason && reason.textContent;
             sendDecline = true;
         } else {
+            jid = query.getAttribute("jid");
+            if (!jid)
+                return 2;
+
             from = pkt.getFrom();
-            conference = account.getOrCreateConference(query.getAttribute("jid"));
+            conference = account.getOrCreateConference(jid);
             reason = query.getAttribute("reason");
         }
 
