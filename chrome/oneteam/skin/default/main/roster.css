@@ -56,6 +56,10 @@ expander[open="true"] .expanderButton {
   background-image: url(../chatpane/imgs/toolbar/call-inactive.png);
 }
 
+.counter-box[event="filetransfer"] {
+  background-image: url(../chatpane/imgs/toolbar/send-file.png);
+}
+
 .counter-box > vbox {
   background-color: #52affa;
   border: 3px solid white;
