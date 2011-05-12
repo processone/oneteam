@@ -8,7 +8,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "enumerateMatchingProps", "report", "Animator",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
-                        "xmlUnescape"];
+                        "xmlUnescape", "getMimeTypeForFile"];
 
 ML.importMod("roles.js");
 
@@ -711,6 +711,43 @@ function perlSplit(str, split, limit) {
         res.push(str.substring(idx));
     }
     return res;
+}
+
+function getMimeTypeForFile(file) {
+    var fileObj;
+
+    try {
+        if (typeof(file) == "string")
+            file = new File(file);
+        if (file instanceof File) {
+            fileObj = file;
+            file = file.file;
+        }
+
+        var svc = Components.classes["@mozilla.org/uriloader/external-helper-app-service;1"].
+            getService(Components.interfaces.nsIMIMEService);
+
+        return svc.getTypeFromFile(file);
+    } catch (ex) {
+        try {
+            if (!fileObj)
+                return null;
+            fileObj.open(null, 1);
+            var data = fileObj.read(16);
+            if (data.substr(0, 2) == "BM")
+                return "image/x-ms-bmp";
+            else if (data.substr(0, 4) == "GIF8")
+                return "image/gif";
+            else if (data.substr(0, 4) == "\xff\xd8\xff\xe0")
+                return "image/jpeg";
+            else if (data.substr(0, 4) == "\x89\x50\x4e\x47")
+                return "image/png";
+
+            return null;
+        } catch (ex2) {
+            return null;
+        }
+    }
 }
 
 function iteratorEx(container, sortFun, predicateFun, token) {
