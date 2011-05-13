@@ -626,8 +626,10 @@
         <description id="extra-message" hidden="true"/>
         <vbox id="contacts-list" flex="1" persist="hideOffline"/>
       </vbox>
+      <!--
       <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>
       <chattabbox id="chats" collapsed="true" flex="1"/>
+      -->
     </hbox>
   </vbox>
   <otsystray id="systray" type="minimizer"/>
