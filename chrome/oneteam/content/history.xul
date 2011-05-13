@@ -160,7 +160,7 @@
       <tab value="search" label="_('Search')"/>
 <!-- #endif -->
       <tab value="chats" label="_('Chats')"/>
-      <tab value="conferences" label="_('Conferences')"/>
+      <tab value="conferences" label="_('Chat Rooms')"/>
     </tabs>
     <tabpanels flex="1">
 <!-- #ifdef XULAPP -->
@@ -214,7 +214,7 @@
             <tree id="conferences-threads" height="150" persist="height" hidecolumnpicker="true"
               seltype="single" onselect="updateMessages(this, conferencesMessages)">
               <treecols>
-                <treecol primary="true" flex="5" label="_('Conference')" id="jid"/>
+                <treecol primary="true" flex="5" label="_('Chat Room')" id="jid"/>
                 <splitter class="tree-splitter"/>
                 <treecol sortDirection="descending" sortActive="true" flex="1" label="_('Date')" id="date"/>
               </treecols>

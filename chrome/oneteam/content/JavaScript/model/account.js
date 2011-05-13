@@ -51,7 +51,7 @@ function Account()
     this.init();
 
     this.defaultGroup = new Group(null, _("Contacts"), true, -1);
-    this.notInRosterGroup = new Group(null, _("Not in roster"), true, 1);
+    this.notInRosterGroup = new Group(null, _("Not in contact list"), true, 1);
     this.myEventsGroup = new Group(null, _("My events"), true, -3);
     this.otherResourcesGroup = new Group(null, _("My other resources"), true, -2);
 

@@ -210,12 +210,12 @@
 
             <spacer/>
             <row>
-              <label value="_('Nickname:')" control="nick"/>
+              <label value="_('Nick:')" control="nick"/>
               <textbox id="nick"/>
             </row>
             <row>
               <spacer/>
-              <description class="field-desc">_("This alias is used in the roster")</description>
+              <description class="field-desc">_("Optional, used to mark the contact")</description>
             </row>
           </rows>
         </grid>

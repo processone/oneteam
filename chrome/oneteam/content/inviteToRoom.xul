@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="oneteam" windowtype="ot:invite" title="_('Invite to group chat room')"
+<dialog id="oneteam" windowtype="ot:invite" title="_('Invite to chat room')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="400" height="450"
@@ -25,7 +25,7 @@
     function onLoad() {
       rooms = document.getElementById("rooms");
       document.getElementById("header").setAttribute("title",
-        _("Invite {0} to group chat room", contact.visibleName));
+        _("Invite {0} to chat room", contact.visibleName));
 
       var conferences = account.conferences;
       for (var i = 0; i < conferences.length; i++)

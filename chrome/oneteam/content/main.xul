@@ -457,7 +457,7 @@
     <toolbarpalette id="main-toolbarpalette">
       <toolbarbutton id="adduser-button" tooltiptext="_('Add new contact')"
             command="cmd_addContact"/>
-      <toolbarbutton id="joinroom-button" tooltiptext="_('Join group chat room')"
+      <toolbarbutton id="joinroom-button" tooltiptext="_('Join chat room')"
             command="cmd_joinRoom"/>
       <toolbarbutton id="presencestab-button" tooltiptext="_('Presences archive')"
             command="cmd_presences_tab"/>
@@ -478,7 +478,7 @@
             <menupopup id="file-popup">
               <menuitem label="_('_Add Contact...')" command="cmd_addContact" key="key_addContact"/>
 
-              <menu label="_('Chat _Room')">
+              <menu label="_('Chat _Rooms')">
                 <menupopup>
                   <menuitem label="_('Join Chat Room...')" command="cmd_joinRoom" key="key_joinRoom"/>
                   <menuseparator/>

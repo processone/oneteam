@@ -98,7 +98,7 @@
         </tabpanel>
         <tabpanel id="editorPanel" orient="vertical">
           <hbox class="entry" flex="0">
-            <label value="_('Nickname:')" control="nick"/>
+            <label value="_('Nick:')" control="nick"/>
             <textbox id="nick"/>
           </hbox>
 

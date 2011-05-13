@@ -34,7 +34,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <description>_('Do you want to remove this contact from your roster?')</description>
+  <description>_('Do you want to remove this contact from your contact list?')</description>
   <contactinfo id="contact-info"/>
 
 </dialog>

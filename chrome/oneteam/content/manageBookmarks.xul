@@ -188,9 +188,7 @@
 
           <row>
             <label value="_('Room:')" control="room"/>
-            <textbox id="room" type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"
-                     errortext="_('Room name can\'t be empty and can\'t contain any of
-                                [&quot;&amp;\&apos;/:&lt;&gt;@] or blank characters')"/>
+            <textbox id="room" type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"/>
           </row>
 
           <spacer/>
@@ -203,8 +201,8 @@
           <spacer/>
 
           <row>
-            <label value="_('Nickname:')" control="nick"/>
-            <textbox id="nick" type="verifiable" regex="." errortext="_('Nickname can\'t be empty')"/>
+            <label value="_('Nick:')" control="nick"/>
+            <textbox id="nick" type="verifiable" regex="."/>
           </row>
 
           <spacer/>

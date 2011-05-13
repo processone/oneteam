@@ -6,7 +6,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<dialog id="oneteam" windowtype="ot:rename" title="_('Change Nickname')"
+<dialog id="oneteam" windowtype="ot:rename" title="_('Change Nick')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="300" height="150"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
@@ -36,7 +36,7 @@
   </toolbox>
 
   <hbox class="entry">
-    <description value="_('New Nickname:')"/>
+    <description value="_('New Nick:')"/>
     <textbox id="name"/>
   </hbox>
 

@@ -397,7 +397,7 @@ _DECL_(NotificationScheme).prototype =
 
         return provider.show(_("{0} requests a call", resource.visibleName),
                              _("Call request received"),
-                             _xml("User <b>{0}</b> want to initiate call with you",
+                             _xml("User <b>{0}</b> wants to initiate call with you",
                                   resource.visibleName),
                              "chrome://oneteam/skin/main/imgs/callicon.png",
                              null, callback, inlineCommands);
@@ -421,10 +421,10 @@ _DECL_(NotificationScheme).prototype =
         if (!provider)
             return this._nopCanceler;
 
-        return provider.show(_("{0} want to send you file \"{1}\"", resource.visibleName,
+        return provider.show(_("{0} wants to send you file \"{1}\"", resource.visibleName,
                                fileName),
                              _("File transfer request"),
-                             _xml("User <b>{0}</b> want to send you <b>\"{1}\"</b> file",
+                             _xml("User <b>{0}</b> wants to send you <b>\"{1}\"</b> file",
                                   resource.visibleName, fileName),
                              "chrome://oneteam/skin/main/imgs/fticon.png",
                              null, callback, inlineCommands);
@@ -494,17 +494,17 @@ _DECL_(NotificationScheme).prototype =
         "signOut": new NotificationProvider(true, false, true, "disconnected", true,
                                             _("Contact signed out"), true),
         "mucSignIn": new NotificationProvider(true, true, false, "connected", false,
-                                              _("MUC participant signed in"), false),
+                                              _("Chat room participant signed in"), false),
         "mucSignOut": new NotificationProvider(true, true, false, "disconnected", false,
-                                               _("MUC participant signed out"), false),
+                                               _("Chat room participant signed out"), false),
         "presence": new NotificationProvider(true, false, false, "sent", false,
                                              _("Contact changed presence"), true),
         "mucPresence": new NotificationProvider(false, false, false, "sent", false,
-                                                _("MUC participant changed presence"), false),
+                                                _("Chat room participant changed presence"), false),
         "nickChange": new NotificationProvider(false, true, false, "sent", false,
-                                               _("MUC participant changed nick"), false),
+                                               _("Chat room participant changed nick"), false),
         "subjectChange": new NotificationProvider(false, true, false, "sent", false,
-                                                  _("MUC subject change"), false),
+                                                  _("Chat room subject change"), false),
         "subscription": new NotificationProvider(false, false, true, "sent", false,
                                                  _("Subscription request received"), false),
         "message": new NotificationProvider(false, false, false, "message2", true,
@@ -512,9 +512,9 @@ _DECL_(NotificationScheme).prototype =
         "firstMessage": new NotificationProvider(false, false, true, "message1", true,
                                                  _("Message received (initial)"), true),
         "mucMessage": new NotificationProvider(false, false, false, "message2", false,
-                                               _("MUC message received"), false),
+                                               _("Chat room message received"), false),
         "mucDirectedMessage": new NotificationProvider(false, false, true, "message2", true,
-                                                       _("MUC nick: message received"), false),
+                                                       _("Chat room nick: message received"), false),
         "jingleCall": new NotificationProvider(true, false, true, "ring", false,
                                                _("Voice call request received"), true),
         "missedJingleCall": new NotificationProvider(true, false, true, "ring", false,
@@ -526,7 +526,7 @@ _DECL_(NotificationScheme).prototype =
         "fileTransferRejected": new NotificationProvider(true, false, false, "sent", false,
                                                          _("File transfer rejected"), true),
         "invitationDeclined": new NotificationProvider(true, false, false, "sent", false,
-                                                       _("MUC invitation declined"), true),
+                                                       _("Invitation to chat room declined"), true),
         "disconnect": new NotificationProvider(false, false, true, "sent", false,
                                                _("Connection to server lost"), false),
         "reconnect": new NotificationProvider(false, false, false, "sent", false,
@@ -618,7 +618,7 @@ _DECL_(NotificationScheme).prototype =
             row.appendChild(cb);
 
             cb = doc.createElementNS(XULNS, "checkbox");
-            cb.setAttribute("label", _("Display message in MUC chat pane"))
+            cb.setAttribute("label", _("Display message in chat room pane"))
             cb.setAttribute("checked", !!provider.showInMucChatpane);
             cb.setAttribute("disabled", !!globalSetting);
             if (instantApply)

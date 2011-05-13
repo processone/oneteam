@@ -39,7 +39,7 @@
 
   <hbox class="entry">
     <description value="_('New Nick:')"/>
-    <textbox type="verifiable" id="nick" regex="." errortext="_('Nickname can\'t be empty')"/>
+    <textbox type="verifiable" id="nick" regex="."/>
   </hbox>
 
 </dialog>

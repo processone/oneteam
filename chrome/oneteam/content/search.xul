@@ -91,7 +91,7 @@
               label = _("Last Name");
               break;
             case "nick":
-              label = _("Nickname");
+              label = _("Nick");
               break;
             case "email":
               label = _("Email");

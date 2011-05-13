@@ -25,7 +25,7 @@
       _("Server"),
        "chrome://oneteam/skin/disco/imgs/server.png"],
       [{category: "conference"},
-      _("Conference server"),
+      _("Chat Room Server"),
        "chrome://oneteam/skin/disco/imgs/conference.png"],
       [{category: "gateway", type: "msn"},
        _("MSN Gateway"),

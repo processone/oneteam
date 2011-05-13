@@ -72,7 +72,7 @@
   <dialogheader title="_('Joining Room Error')"/>
 
   <vbox flex="1">
-    <description id="errorInfo">_('Error ocured during joining room:')
+    <description id="errorInfo">_('Error occured during joining room:')
       <html:span id="jid" style="font-weight: bold"/></description>
     <description>_('Error message:')
       <html:span id="errorMsg" style="font-style: italic"/></description>

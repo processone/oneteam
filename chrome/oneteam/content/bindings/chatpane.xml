@@ -2064,7 +2064,7 @@
 
       <xul:toolbarbutton id="extraCmds" tooltiptext="_('Additional commands')" type="menu">
         <xul:menupopup id="extraCmds-popup" onpopupshowing="this.parentNode.parentNode._syncMenu()">
-          <xul:menuitem label="_('Invite to group chat room')"
+          <xul:menuitem label="_('Invite to chat room')"
                         onmenushowing="this.hidden = contact instanceof ConferenceMember ||
                                        contact instanceof Conference;
                                        this.disabled = account.conferences.length == 0"

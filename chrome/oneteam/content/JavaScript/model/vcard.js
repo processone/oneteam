@@ -174,7 +174,7 @@ VCard.prototype =
             list.push([1, null, xmlEscape(text), "organisation"])
         }
         if ("NICKNAME" in this)
-            list.push([10, _("nickname"), xmlEscape(this.NICKNAME)])
+            list.push([10, _("nick"), xmlEscape(this.NICKNAME)])
         if ("BDAY" in this)
             list.push([11, _("birthday"), xmlEscape(this.BDAY)])
         if ("URL" in this)

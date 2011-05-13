@@ -102,7 +102,7 @@
       </row>
 
       <row align="center">
-        <label value="_('Nickname:')" control="nick"/>
+        <label value="_('Nick:')" control="nick"/>
         <textbox type="verifiable" id="nick" regex="."/>
       </row>
 

@@ -216,9 +216,9 @@ _DECL_(Conference, Contact).prototype =
             account.connection.send(iq);
         } else {
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
-                     encodeURIComponent(_("Invitation into {0} conference", this.jid.toUserString()))+
+                     encodeURIComponent(_("Invitation into {0} chat room", this.jid.toUserString()))+
                      "&body="+
-                     encodeURIComponent(_("User *{0}* invited you to conference *{1}*.\n\nTo join this conference please click on this link:\n{2}\n",
+                     encodeURIComponent(_("User *{0}* invited you to chat room *{1}*.\n\nTo join this chat room please click on this link:\n{2}\n",
                                           this.myResourceJID.resource,
                                           this.jid.toUserString(),
                                           url)));
@@ -459,8 +459,8 @@ _DECL_(Conference, Contact).prototype =
               405: _("This room doesn't exist, and can be created only by administrator"),
               406: _("This room can be accessed only by registered persons"),
               407: _("You are not member of this room"),
-              409: _("Your nick name is already used, try another nick"),
-              503: _("Conference server can't be contacted or room reached maximum number of users")
+              409: _("Your nick is already used, try another nick"),
+              503: _("Chat room server can't be contacted or room reached maximum number of users")
             };
             errorMsg = errorCodesMap[+errorTag.getAttribute("code")] ||
                 "Joining that room failed";

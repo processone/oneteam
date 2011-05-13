@@ -229,9 +229,9 @@
 
   <popupset>
     <popup id="contact-contextmenu" onpopupshowing="updateContextMenu(this, event)">
-      <menuitem id="contact-chat-single" label="_('Send Message...')"
+      <menuitem id="contact-chat-single" label="_('Open Chat...')"
           oncommand="menuModel.onOpenChat()"/>
-      <menu id="contact-chat-multi" label="_('Send Message...')" hidden="true">
+      <menu id="contact-chat-multi" label="_('Open Chat...')" hidden="true">
         <menupopup/>
       </menu>
       <menuitem id="contact-call" label="_('Voice Call...')" oncommand="menuModel.onJingleCall()"/>
@@ -245,13 +245,13 @@
       <menuseparator/>
 
       <menuitem label="_('Remove Contact...')" oncommand="menuModel.onRemove()"/>
-      <menuitem label="_('Change Nickname...')" oncommand="menuModel.onRename()"/>
+      <menuitem label="_('Change Nick...')" oncommand="menuModel.onRename()"/>
 
       <menuseparator/>
 
       <menu label="_('Authorization')">
         <menupopup>
-          <menuitem id="contact-authorization-ask" label="_('Ask To See Him')"
+          <menuitem id="contact-authorization-ask" label="_('Ask To See Him/Her')"
               oncommand="menuModel.askForSubscription()"/>
           <menuitem id="contact-authorization-allow" label="_('Authorize To See Me')"
               oncommand="menuModel.allowToSeeMe()"/>
@@ -280,7 +280,7 @@
     </popup>
 
     <popup id="resource-contextmenu" onpopupshowing="updateContextMenu(this, event)">
-      <menuitem label="_('Send Message...')" oncommand="menuModel.onOpenChat()"/>
+      <menuitem label="_('Open Chat...')" oncommand="menuModel.onOpenChat()"/>
       <menuitem id="resource-call" label="_('Voice Call...')" oncommand="menuModel.onJingleCall()"/>
       <menu id="resource-invite" label="_('Invite To')" hidden="true">
         <menupopup/>
@@ -322,12 +322,12 @@
 
       <menuseparator/>
 
-      <menuitem id="conference-leave" label="_('Leave Conference')"
+      <menuitem id="conference-leave" label="_('Leave Chat Room')"
           oncommand="menuModel.exitRoom()"/>
     </popup>
 
     <popup id="conferencemember-contextmenu" onpopupshowing="updateContextMenu(this, event)">
-      <menuitem id="conferencemember-chat-single" label="_('Send Message...')"
+      <menuitem id="conferencemember-chat-single" label="_('Open Chat...')"
           oncommand="menuModel.onOpenChat()"/>
 
       <menuseparator/>
@@ -381,7 +381,7 @@
     </popup>
 
     <popup id="gateway-contextmenu" onpopupshowing="updateContextMenu(this, event)">
-      <menuitem id="gateway-chat-single" label="_('Send Message...')"
+      <menuitem id="gateway-chat-single" label="_('Open Chat...')"
           oncommand="menuModel.onOpenChat()"/>
 
       <menuseparator/>
