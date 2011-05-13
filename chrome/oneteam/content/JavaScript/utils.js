@@ -8,7 +8,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "enumerateMatchingProps", "report", "Animator",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
-                        "xmlUnescape", "getMimeTypeForFile"];
+                        "xmlUnescape", "getMimeTypeForFile", "getWindowWithType"];
 
 ML.importMod("roles.js");
 
@@ -95,11 +95,8 @@ function openDialogUniq(type, url, flags)
 {
     var win;
 
-    if (type) {
-        var wmediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].
-            getService(Components.interfaces.nsIWindowMediator);
-        win = wmediator.getMostRecentWindow(type);
-    }
+    if (type)
+        win = getWindowWithType(type);
 
     if (!win) {
         var args = [url, "_blank"].concat(Array.slice(arguments, 2));
@@ -110,6 +107,12 @@ function openDialogUniq(type, url, flags)
         win.focus();
 
     return win;
+}
+
+function getWindowWithType(type) {
+    var wmediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].
+        getService(Components.interfaces.nsIWindowMediator);
+    return wmediator.getMostRecentWindow(type);
 }
 
 function openLink(uri)
