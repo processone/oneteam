@@ -352,6 +352,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             this.setPresence(this.currentPresence, this.currentPresence == this.userPresence);
     },
 
+    onInitiateChat: function() {
+        openDialogUniq("ot:initiateChat", "chrome://oneteam/content/initiateChat.xul",
+                       "chrome,centerscreen");
+    },
+
     onShowPresences: function() {
         chatTabsController.openTab(this.historyMgr.deliverPresencesThread());
     },

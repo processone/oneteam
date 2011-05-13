@@ -403,6 +403,7 @@
   ]]></script>
 
   <comandset>
+    <command id="cmd_initateChat" key="key_initiateChat" oncommand="account.onInitiateChat()"/>
     <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
     <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
     <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
@@ -476,6 +477,8 @@
         <menubar style="border: 0; padding: 0; margin:0; -moz-appearance:none">
           <menu id="lagger-menu" label="_('_Actions')">
             <menupopup id="file-popup">
+              <menuitem label="_('_Initiate Chat...')" command="cmd_initateChat" key="key_initiateChat"/>
+
               <menuitem label="_('_Add Contact...')" command="cmd_addContact" key="key_addContact"/>
 
               <menu label="_('Chat _Room')">
