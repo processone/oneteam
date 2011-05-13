@@ -56,6 +56,11 @@
       document.documentElement.currentPane.userChangedValue(el);
     }
 
+    function updateUpdateChannel(value) {
+      if (document.documentElement.instantApply)
+        prefManager.setPref("app.update.channel", value, true);
+    }
+
     function updateSSLField() {
       var port = document.getElementById("portField");
       var value = document.getElementById("sslField").checked;
@@ -102,7 +107,22 @@
     }
 
     function onBeforeAccept() {
-      account.notificationScheme.saveSettings(document.getElementById("notifications").firstChild);
+      account.notificationScheme.saveSettings(
+          document.getElementById("notifications").firstChild);
+// #ifndef XPI
+      prefManager.setPref("app.update.channel",
+                          document.getElementById("update_channel_selector").value,
+                          true);
+// #endif
+    }
+
+    function initGeneralPane() {
+// #ifndef XPI
+      var val = prefManager.getPref("app.update.channel", true) || "release";
+      var el = document.getElementById("update_channel_selector");
+
+      el.selectedIndex = val == "release" ? 0 : 1;
+// #endif
     }
 
     function initAppearance() {
@@ -162,14 +182,6 @@
       rli.appendChild(label);
       return rli;
     }
-
-    function iconsSetPref(event) {
-      prefManager.setPref("chat.general.iconset", event.target.value);
-    }
-
-    function smilesSetPref(event) {
-      prefManager.setPref("chat.general.smilesset", event.target.value);
-    }
   ]]></script>
 
   <group id="macMenu"/>
@@ -178,7 +190,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <prefpane id="general" label="_('General')">
+  <prefpane id="general" label="_('General')" onpaneload="initGeneralPane()">
     <preferences id="general-preferences">
       <preference id="showavatars" name="chat.general.showavatars" type="bool"/>
       <preference id="sortbystatus" name="chat.roster.sortbystatus" type="bool"/>
@@ -195,6 +207,19 @@
               preference="ask_to_quit"/>
     <checkbox label="_('Show icon in system tray')"
               preference="systray"/>
+    <!-- #ifndef XPI -->
+    <spacer/>
+
+    <hbox class="entry">
+      <label value="_('Offer updates from channel:')"/>
+      <menulist id="update_channel_selector" oncommand="updateUpdateChannel(this.value)">
+        <menupopup>
+          <menuitem label="_('Releases')" value="releases"/>
+          <menuitem label="_('Development builds')" value="devel"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+    <!-- #endif -->
   </prefpane>
 
   <prefpane id="connection" label="_('Connection')">
