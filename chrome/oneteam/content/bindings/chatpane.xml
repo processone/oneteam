@@ -55,6 +55,16 @@
         ]]></setter>
       </property>
 
+      <property name="searchString" onget="return this._searchString">
+        <setter><![CDATA[
+          this._searchString = val;
+
+          if (this._lastMsg)
+            this._output.contentWindow.find(this._searchString, false, false,
+                                            true, false, true)
+        ]]></setter>
+      </property>
+
       <property name="visible" onget="return this._visible">
         <setter><![CDATA[
           if (!val == !this._visible)
@@ -715,6 +725,11 @@
               doc.body.scrollTop = doc.body.scrollHeight;
             else
               this._scrollToBottomAnimation = this.scrollToElement(msgEl);
+
+          if (!this.lastMsg && this._searchString) {
+            this._output.contentWindow.find(this._searchString, false, false,
+                                            true, false, true)
+          }
 
           this._lastMsg = msgs[msgs.length-1];
           this._lastMsgEl = msgEl;
