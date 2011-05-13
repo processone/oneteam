@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-13 10:40+0200\n"
+"POT-Creation-Date: 2011-05-13 19:47+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -27,6 +27,7 @@ msgstr ""
 #: ../chrome/oneteam/content/status.xul:11
 #: ../chrome/oneteam/content/subscribe.xul:12
 #: ../chrome/oneteam/content/vcard.xul:15
+#: ../chrome/oneteam/content/vcardEdit.xul:13
 msgid "OK"
 msgstr "OK"
 
@@ -286,10 +287,6 @@ msgstr "Serwer nie pozwala na zmiany hasła"
 msgid "My vCard"
 msgstr "Mój vCard"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:13
-msgid "Ok"
-msgstr "Ok"
-
 #: ../chrome/oneteam/content/vcardEdit.xul:248
 msgid "Can't read your avatar image data"
 msgstr "Nie można odczytać obrazka z awatarem"
@@ -535,6 +532,7 @@ msgid "Gateway can't convert ID into Jabber ID"
 msgstr ""
 "Bramka nie jest w stanie zamienić identyfikatora na identyfikator Jabbera"
 
+#: ../chrome/oneteam/content/JavaScript/views/conference.js:181
 #: ../chrome/oneteam/content/invite.xul:14
 #: ../chrome/oneteam/content/inviteByMail.xul:14
 #: ../chrome/oneteam/content/inviteToRoom.xul:14
@@ -585,6 +583,7 @@ msgstr "Prośba o przesłanie pliku"
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:109
 #: ../chrome/oneteam/content/fileTransferRequest.xul:14
+#: ../chrome/oneteam/content/invitation.xul:14
 #: ../chrome/oneteam/content/jingleCall.xul:177
 msgid "Accept"
 msgstr "Akceptuj"
@@ -647,6 +646,7 @@ msgstr "Nowy"
 
 #: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:126
 #: ../chrome/oneteam/content/manageBookmarks.xul:166
+#: ../chrome/oneteam/content/removeContact.xul:13
 msgid "Remove"
 msgstr "Usuń"
 
@@ -2439,6 +2439,18 @@ msgstr "Zaproszenie do konferencji {0}"
 #, fuzzy
 msgid "Display message in chat room pane"
 msgstr "Wyświetlaj w oknie wiadomości"
+
+#: ../chrome/oneteam/content/invitation.xul:14
+#, fuzzy
+msgid "Decline"
+msgstr "Headline"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2086
+msgid "Autospellchecker"
+msgstr ""
+
+#~ msgid "Ok"
+#~ msgstr "Ok"
 
 #~ msgid "MUC invitation declined"
 #~ msgstr "Odrzucono nasze zaproszenie do konferencji"

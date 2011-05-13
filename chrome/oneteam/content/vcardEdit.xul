@@ -10,7 +10,7 @@
   width="800" height="640"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  buttonlabelaccept="_('Ok')" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel"
   onload="onLoad()" ondialogaccept="return saveVCard()" ondialogextra1="fetchVCard(true)">
 

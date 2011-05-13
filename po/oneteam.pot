@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-13 10:40+0200\n"
+"POT-Creation-Date: 2011-05-13 19:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,7 @@ msgstr ""
 #: ../chrome/oneteam/content/status.xul:11
 #: ../chrome/oneteam/content/subscribe.xul:12
 #: ../chrome/oneteam/content/vcard.xul:15
+#: ../chrome/oneteam/content/vcardEdit.xul:13
 msgid "OK"
 msgstr ""
 
@@ -281,10 +282,6 @@ msgstr ""
 msgid "My vCard"
 msgstr ""
 
-#: ../chrome/oneteam/content/vcardEdit.xul:13
-msgid "Ok"
-msgstr ""
-
 #: ../chrome/oneteam/content/vcardEdit.xul:248
 msgid "Can't read your avatar image data"
 msgstr ""
@@ -529,6 +526,7 @@ msgstr ""
 msgid "Gateway can't convert ID into Jabber ID"
 msgstr ""
 
+#: ../chrome/oneteam/content/JavaScript/views/conference.js:181
 #: ../chrome/oneteam/content/invite.xul:14
 #: ../chrome/oneteam/content/inviteByMail.xul:14
 #: ../chrome/oneteam/content/inviteToRoom.xul:14
@@ -575,6 +573,7 @@ msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:109
 #: ../chrome/oneteam/content/fileTransferRequest.xul:14
+#: ../chrome/oneteam/content/invitation.xul:14
 #: ../chrome/oneteam/content/jingleCall.xul:177
 msgid "Accept"
 msgstr ""
@@ -628,6 +627,7 @@ msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:126
 #: ../chrome/oneteam/content/manageBookmarks.xul:166
+#: ../chrome/oneteam/content/removeContact.xul:13
 msgid "Remove"
 msgstr ""
 
@@ -2361,5 +2361,13 @@ msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:621
 msgid "Display message in chat room pane"
+msgstr ""
+
+#: ../chrome/oneteam/content/invitation.xul:14
+msgid "Decline"
+msgstr ""
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2086
+msgid "Autospellchecker"
 msgstr ""
 

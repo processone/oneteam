@@ -178,7 +178,7 @@ function ConferenceView(model, containerNode, parentView)
         this.invite.setAttribute("autocompletesearch", "oneteam-contacts");
         this.invite.setAttribute("completedefaultindex", "true");
         this.invite.setAttribute("enablehistory", "true");
-        this.invite.setAttribute("emptytext", "Invite");
+        this.invite.setAttribute("emptytext", _('Invite'));
         this.invite.setAttribute("ontextentered", "this.view.onInvite(this.value);this.value='';this.blur()");
         this.invite.setAttribute("ontextreverted", "this.value='';this.blur();return true");
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-13 10:40+0200\n"
+"POT-Creation-Date: 2011-05-13 19:47+0200\n"
 "PO-Revision-Date: 2010-09-15 10:56+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
@@ -25,6 +25,7 @@ msgstr ""
 #: ../chrome/oneteam/content/status.xul:11
 #: ../chrome/oneteam/content/subscribe.xul:12
 #: ../chrome/oneteam/content/vcard.xul:15
+#: ../chrome/oneteam/content/vcardEdit.xul:13
 msgid "OK"
 msgstr "OK"
 
@@ -58,7 +59,7 @@ msgstr "Annuler"
 #: ../chrome/oneteam/content/changeNick.xul:10
 #: ../chrome/oneteam/content/rename.xul:9
 msgid "Change Nick"
-msgstr "Changer de pseudo"
+msgstr "Changer le pseudo"
 
 #: ../chrome/oneteam/content/changeNick.xul:41
 #: ../chrome/oneteam/content/joinRoomError.xul:81
@@ -283,10 +284,6 @@ msgstr "Le serveur n'autorise pas les changements de mot de passe"
 #: ../chrome/oneteam/content/vcardEdit.xul:9
 msgid "My vCard"
 msgstr "Ma carte de visite"
-
-#: ../chrome/oneteam/content/vcardEdit.xul:13
-msgid "Ok"
-msgstr "Ok"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:248
 msgid "Can't read your avatar image data"
@@ -532,6 +529,7 @@ msgstr "Voir l'historique..."
 msgid "Gateway can't convert ID into Jabber ID"
 msgstr "La passerelle ne peut convertir l'identifiant en adresse Jabber"
 
+#: ../chrome/oneteam/content/JavaScript/views/conference.js:181
 #: ../chrome/oneteam/content/invite.xul:14
 #: ../chrome/oneteam/content/inviteByMail.xul:14
 #: ../chrome/oneteam/content/inviteToRoom.xul:14
@@ -582,6 +580,7 @@ msgstr "Requête de transfert de fichier"
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:109
 #: ../chrome/oneteam/content/fileTransferRequest.xul:14
+#: ../chrome/oneteam/content/invitation.xul:14
 #: ../chrome/oneteam/content/jingleCall.xul:177
 msgid "Accept"
 msgstr "Accepter"
@@ -645,6 +644,7 @@ msgstr "Nouveau"
 
 #: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:126
 #: ../chrome/oneteam/content/manageBookmarks.xul:166
+#: ../chrome/oneteam/content/removeContact.xul:13
 msgid "Remove"
 msgstr "Supprimer"
 
@@ -928,7 +928,7 @@ msgstr "Inviter des utilisateurs à ce salon..."
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:248
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:302
 msgid "Change Nick..."
-msgstr "Changer de pseudo..."
+msgstr "Changer le pseudo..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:304
 msgid "Change Subject..."
@@ -2318,7 +2318,7 @@ msgstr "Erreur lors de l'accès au salon"
 #: ../chrome/oneteam/content/main.xul:460
 #, fuzzy
 msgid "Join chat room"
-msgstr "Re_joindre salon de discussion"
+msgstr "Rejoindre un salon de discussion"
 
 #: ../chrome/oneteam/content/invitation.xul:10
 #: ../chrome/oneteam/content/invitation.xul:59
@@ -2480,6 +2480,18 @@ msgstr "Invitation au salon rejetée"
 #: ../chrome/oneteam/content/JavaScript/notification.js:621
 msgid "Display message in chat room pane"
 msgstr "L'annoncer dans la fenêtre du salon de discussion"
+
+#: ../chrome/oneteam/content/invitation.xul:14
+#, fuzzy
+msgid "Decline"
+msgstr "Rejeter"
+
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2086
+msgid "Autospellchecker"
+msgstr "Vérification d'orthographe"
+
+#~ msgid "Ok"
+#~ msgstr "Ok"
 
 #~ msgid "This alias is used in the roster"
 #~ msgstr "Cet alias est utilisé dans le roster"

@@ -10,7 +10,7 @@
 <dialog id="oneteam" windowtype="ot:removeContact" title="_('Remove Contact')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   width="400" height="200"
-  buttonlabelaccept="Remove" buttonlabelcancel="_('Cancel')"
+  buttonlabelaccept="_('Remove')" buttonlabelcancel="_('Cancel')"
   buttons="accept,cancel" defaultButton="cancel"
   onload="onLoad()" ondialogaccept="onAccept()">
 

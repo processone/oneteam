@@ -2083,7 +2083,7 @@
 
       <xul:spacer flex="1"/>
 
-      <xul:toolbarbutton id="spellingButton"
+      <xul:toolbarbutton id="spellingButton" tooltiptext="_('Autospellchecker')"
                      type="menu-button"
                      oncommand="spellcheck.toggle(this);">
         <xul:menupopup id="languageMenuList" onpopupshowing="spellcheck.onShowDictionariesMenu(this, event.target);"/>

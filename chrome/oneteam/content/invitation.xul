@@ -11,7 +11,7 @@
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   width="600" height="200"
-  buttonlabelaccept="Accept" buttonlabelcancel="Decline"
+  buttonlabelaccept="_('Accept')" buttonlabelcancel="_('Decline')"
   buttons="accept,cancel"
   ondialogaccept="return acceptInvitation()" ondialogcancel="return declineInvitation()"
   onload="onLoad()">
