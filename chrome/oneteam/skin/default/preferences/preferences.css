@@ -22,7 +22,7 @@
   padding: 1px;
 }
 
-#preferences radio[pane] {
+radio[pane] {
   list-style-image: url("imgs/icons.png");
 }
 
