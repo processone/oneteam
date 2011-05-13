@@ -215,7 +215,7 @@
       <menulist id="update_channel_selector" oncommand="updateUpdateChannel(this.value)">
         <menupopup>
           <menuitem label="_('Releases')" value="releases"/>
-          <menuitem label="_('Development builds')" value="devel"/>
+          <menuitem label="_('Test')" value="devel"/>
         </menupopup>
       </menulist>
     </hbox>
