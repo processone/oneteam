@@ -7,7 +7,7 @@
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
-<prefwindow id="preferences"
+<prefwindow id="oneteam"
             windowtype="ot:preferences"
             title="_('Preferences')"
             onload="onLoad()"
