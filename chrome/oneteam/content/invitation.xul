@@ -36,8 +36,13 @@
 
     function acceptInvitation()
     {
-      window.opener.setTimeout(function(a,c){a.onJoinRoom(c)}, 100,
-                               account, conference);
+      if (conference.bookmarkNick) {
+        conference.backgroundJoinRoom();
+      } else {
+        window.opener.setTimeout(function(a,c){a.onJoinRoom(c)}, 100,
+                                 account, conference);
+      }
+
       return true;
     }
 
