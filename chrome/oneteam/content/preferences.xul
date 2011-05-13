@@ -13,6 +13,8 @@
             onload="onLoad()"
             onunload="onUnload()"
             onbeforeaccept="onBeforeAccept()"
+            buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
+            closebuttonlabel="_('Close')"
             xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
