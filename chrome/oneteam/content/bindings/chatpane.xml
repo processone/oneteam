@@ -1509,6 +1509,24 @@
         ]]></setter>
       </property>
 
+      <property name="visible" onget="return this._visible">
+        <setter><![CDATA[
+          if (!this._visible == !val) {
+            this._visible = val;
+            return val;
+          }
+
+          this._visible = val;
+
+          if (!val && "_focusTimer" in this) {
+            clearTimeout(this._focusTimer);
+            delete this._focusTimer;
+          }
+
+          return val;
+        ]]></setter>
+      </property>
+
       <constructor><![CDATA[
         var me = this;
         this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
@@ -1722,7 +1740,7 @@
             }, false);
           }
 
-          win.focus();
+          this.focus(true);
 
           this.maybeResize()
 
@@ -1774,21 +1792,19 @@
       </method>
 
       <method name="focus">
+        <parameter name="immediatelly"/>
         <body><![CDATA[
-          if (this._input)
+        if (this._input && !this._visible)
+          if (!this._input || !this._visible)
+            return;
+
+          if (immediatelly)
+            this._input.contentWindow.focus();
+          else if (!this._focusTimer)
             this._focusTimer = setTimeout(function(el, _this) {
               delete _this._focusTimer;
               el.focus();
             }, 100, this._input.contentWindow, this);
-        ]]></body>
-      </method>
-
-      <method name="blured">
-        <body><![CDATA[
-          if ("_focusTimer" in this) {
-            clearTimeout(this._focusTimer);
-            delete this._focusTimer;
-          }
         ]]></body>
       </method>
 
@@ -2333,6 +2349,22 @@
         ]]></setter>
       </property>
 
+      <property name="visible" onget="return this._visible">
+        <setter><![CDATA[
+          this._visible = val;
+
+          try {
+            this._output.visible = val;
+          } catch (ex) { }
+
+          try {
+            this._input.visible = val;
+          } catch (ex) { }
+
+          return val;
+        ]]></setter>
+      </property>
+
       <property name="sthgToEdit" onget="return this._sthgToEdit">
         <setter><![CDATA[
           this._sthgToEdit = !!val;
@@ -2533,12 +2565,6 @@
       <method name="focus">
         <body><![CDATA[
           this._input.focus();
-        ]]></body>
-      </method>
-
-      <method name="blured">
-        <body><![CDATA[
-          this._input.blured();
         ]]></body>
       </method>
 
