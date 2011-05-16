@@ -30,7 +30,7 @@
 
       fetchVCard(true);
 
-      var fragment = account.notificationScheme.generateSettings(contact, document);
+      var fragment = account.notificationScheme.generateSettings(contact, document, true);
       fragment.setAttribute("flex", "1");
       var np = document.getElementById("notificationsPanel");
 
@@ -61,10 +61,6 @@
         "<div class='name'>"+xmlEscape(contact.visibleName)+"</div>";
     }
 
-    function saveNotificationsChanges() {
-      account.notificationScheme.saveSettings(document.getElementById("notificationsPanel").firstChild);
-    }
-
     function saveContactChanges() {
       contact.editContact(document.getElementById("nick").value,
         document.getElementById("groups").choosenGroups);
@@ -92,9 +88,6 @@
           <description id="details" flex="1"><html:div/></description>
         </tabpanel>
         <tabpanel id="notificationsPanel" orient="vertical">
-          <hbox pack="end">
-            <button label="_('Save')" oncommand="saveNotificationsChanges()"/>
-          </hbox>
         </tabpanel>
         <tabpanel id="editorPanel" orient="vertical">
           <hbox class="entry" flex="0">
