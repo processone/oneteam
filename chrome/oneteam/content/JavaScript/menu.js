@@ -43,8 +43,15 @@ var menuHandler = {
                 e = document.getElementById("menu_options");
                 e.previousSibling.hidden = e.hidden = true;
             }
-
         } else {
+            e = document.getElementById("menu_window_keys");
+            while (e && e.firstChild)
+                e.removeChild(e.firstChild);
+
+            e = document.getElementById("menu_window");
+            if (e)
+                e.hidden = true;
+
             e = document.getElementById("key_prefs");
             e.parentNode.removeChild(e);
 
