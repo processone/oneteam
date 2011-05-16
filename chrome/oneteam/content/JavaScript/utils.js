@@ -9,7 +9,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
                         "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
-                        "updateMenuList"];
+                        "updateMenuList", "alertEx"];
 
 ML.importMod("roles.js");
 
@@ -1352,4 +1352,11 @@ function updateMenuList(multipleItemsMenuList, singleItemMenuItem, items,
         }, false)
         list.appendChild(item);
     }
+}
+
+function alertEx(title, text) {
+    var ps = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
+        getService(Components.interfaces.nsIPromptService)
+
+    ps.alert(findCallerWindow(), title == null ? "Alert" : ""+title, ""+text);
 }
