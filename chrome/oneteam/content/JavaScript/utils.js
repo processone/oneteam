@@ -1321,7 +1321,7 @@ var Animator = {
 }
 
 function updateMenuList(multipleItemsMenuList, singleItemMenuItem, items,
-                        action, labelFun, hideWhenNoItems)
+                        action, labelFun, hideWhenNoItems, extraItems)
 {
     if (singleItemMenuItem) {
         singleItemMenuItem.hidden = hideWhenNoItems ?
@@ -1331,6 +1331,10 @@ function updateMenuList(multipleItemsMenuList, singleItemMenuItem, items,
     }
 
     multipleItemsMenuList.hidden = items.length <= 1;
+
+    if (hideWhenNoItems)
+        for (var i = 0; i < extraItems.length; i++)
+            extraItems[i].hidden = items.length == 0;
 
     if (items.length <= 1)
         return;

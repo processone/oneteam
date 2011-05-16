@@ -81,10 +81,10 @@
            oncommand="goDoCommand('cmd_selectAll')"
            disabled="true"/>
 
-  <group id="macMenuTabbed">
-    <command id="cmd_closeTab"
-             oncommand="closeTab()"/>
-  </group>
+  <command id="cmd_closeTab"
+           oncommand="closeTab()"/>
+
+  <group id="macMenuTabbed"/>
 
   <toolbox id="mainToolbox">
     <menubar id="macMenuBarTabbed"/>

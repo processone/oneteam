@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<window id="oneteam" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  minwidth="1" minheight="1" windowtype="ot:systrayHelper">
+
+  <popupset>
+    <popup id="popup" onpopuphidden="hideWindow()"/>
+  </popupset>
+
+  <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
+  <script type="application/x-javascript"><![CDATA[
+    var pn = document.getElementById("popup");
+
+    function hideWindow()
+    {
+      window.
+        QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+        getInterface(Components.interfaces.nsIWebNavigation).
+        QueryInterface(Components.interfaces.nsIDocShellTreeItem).
+        treeOwner.
+        QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+        getInterface(Components.interfaces.nsIBaseWindow).visibility = false;
+     }
+
+    function showPopup(items, x, y)
+    {
+      var i;
+
+      while (pn.firstChild)
+        pn.removeChild(pn.firstChild);
+
+      for (i = 0; i < items.length; i++) {
+        var item = document.createElementNS(items[i].namespaceURI, items[i].nodeName);
+        for (var j = 0; j < items[i].attributes.length; j++)
+          if (items[i].attributes[j].nodeName != "oncommand")
+            item.setAttribute(items[i].attributes[j].nodeName,items[i].attributes[j].nodeValue);
+        item.realItem = items[i];
+        item.setAttribute("oncommand", "this.realItem.doCommand()");
+        pn.appendChild(item);
+      }
+
+      pn.showPopup(document.documentElement, x, y, "context", "", "");
+    }
+
+    function playSound(src, loops) {
+      var canceler = {
+        _player: new Audio(),
+        cancel: function() {
+          if (this._loops)
+            this._player.removeEventListener("ended", this, false);
+          this._loops = 0;
+
+          this._player.pause();
+          this._player.src = "";
+        },
+
+        handleEvent: function(ev) {
+          if (ev.type != "ended")
+            return;
+
+          if (--this._loops > 0)
+            this._player.play();
+          else
+            this.cancel();
+        }
+      }
+
+      canceler._player.src = src;
+
+      if (loops) {
+        canceler._loops = loops;
+        canceler._player.addEventListener("ended", canceler, false);
+      }
+
+      canceler._player.load();
+      canceler._player.play();
+
+      return canceler;
+    }
+
+    function newCommands() {
+      var cmds = getHiddenWindowCommands();
+      for (var i = 0; i < cmds.length; i++)
+        if (cmds[i][0] == "playSound") {
+          var res = playSound(cmds[i][2], cmds[i][3]);
+
+          if (cmds[i][1])
+            cmds[i][1].result(res);
+        } else if (cmds[i][0] == "showPopup") {
+          showPopup(cmds[i][1], cmds[i][2], cmds[i][3]);
+        }
+    }
+
+    hideWindow();
+
+    ML.importMod("services/xpcom/utils.js");
+
+    newCommands();
+  ]]></script>
+</window>
