@@ -39,9 +39,6 @@ var menuHandler = {
 
                 e = document.getElementById("menu_preferences");
                 e.previousSibling.hidden = true;
-
-                e = document.getElementById("menu_options");
-                e.previousSibling.hidden = e.hidden = true;
             }
         } else {
             e = document.getElementById("menu_window_keys");
@@ -55,9 +52,17 @@ var menuHandler = {
             e = document.getElementById("key_prefs");
             e.parentNode.removeChild(e);
 
+            e = document.getElementById("menu_preferences");
             if (node) {
-                e = document.getElementById(isWin ? "menu_preferences" : "menu_options");
-                e.previousSibling.hidden = e.hidden = true;
+                if (isWin)
+                    e.setAttribute("label", e.getAttribute("winlabel"));
+                else {
+                    var c = document.getElementById("menu_edit");
+                    if (c) {
+                        c.firstChild.appendChild(e.previousSibling);
+                        c.firstChild.appendChild(e);
+                    }
+                }
             }
         }
     },

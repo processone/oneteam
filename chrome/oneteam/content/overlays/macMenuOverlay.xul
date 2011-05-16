@@ -69,7 +69,8 @@
       <menuseparator/>
       <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
       <menuseparator/>
-      <menuitem id="menu_options" label="_('_Options...')" command="cmd_prefs" key="key_prefs"/>
+      <menuitem id="menu_preferences" label="_('_Preferences...')" command="cmd_prefs" key="key_prefs"
+                winlabel="_('_Options...')"/>
     </menupopup>
   </menu>
 
@@ -104,8 +105,6 @@
       <menuitem id="menu_delete"/>
       <menuseparator/>
       <menuitem id="menu_selectAll"/>
-      <menuseparator/>
-      <menuitem id="menu_preferences" label="_('_Preferences...')" command="cmd_prefs" key="key_prefs"/>
     </menupopup>
   </menu>
 
