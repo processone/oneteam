@@ -91,6 +91,7 @@ sub _generate_install_rdf {
     my $ir = slurp("install.rdf");
 
     copy("icon.png", $tmpdir);
+    copy("icon64.png", $tmpdir);
 
     $ir =~ s/(em:version>)[^<]*/$1.$self->{version}->()/ei;
     $ir =~ s/(em:updateURL>)[^<]*/$1.$self->{updateURL}/ei if $self->{updateURL};
