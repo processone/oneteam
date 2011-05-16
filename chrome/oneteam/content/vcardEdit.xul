@@ -31,11 +31,17 @@
     {
       if (generateResult) {
         var ns = new Namespace("vcard-temp");
+        var avatarUrl = account.cache.
+          getValue("avatar-"+avatarList.selectedAvatarHash, true);
         var avatarData = account.cache.
           getValue("avatar-"+avatarList.selectedAvatarHash);
+        var mimeType = getMimeTypeForFile(avatarUrl);
 
         default xml namespace = ns;
-        return <><BINVAL>{btoa(avatarData)}</BINVAL></>;
+        if (mimeType)
+          return <><TYPE>{{mimeType}</TYPE><BINVAL>{btoa(avatarData)}</BINVAL></>;
+        else
+          return <><BINVAL>{btoa(avatarData)}</BINVAL></>;
       } else {
         avatarList.selectAvatar(account.avatarHash, account.avatar);
       }

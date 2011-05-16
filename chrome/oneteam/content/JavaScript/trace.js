@@ -1,6 +1,11 @@
 var EXPORTED_SYMBOLS=["Tracer"];
 
 var Tracer = {
+    frames: [],
+    skipWindows: {
+        "chrome://oneteam/content/command.xul": 1
+    },
+
     start: function() {
         this._svc = Components.classes["@mozilla.org/js/jsd/debugger-service;1"].
             getService(Components.interfaces.jsdIDebuggerService);
@@ -53,10 +58,35 @@ var Tracer = {
     onCall: function(frame, type) {
         if (type == 3) {
             this._depth--;
+            for (var i = this.frames.length-1; i >= 0; i--) {
+                if (this.frames[i][1]) {
+                    this.frames.pop();
+                    return;
+                }
+            }
+            for (var i = 0; i < this.frames.length; i++) {
+                if (!this.frames[i][2]) {
+                    this.frames[i][2] = true;
+                    dump(this.frames[i][0]);
+                }
+            }
+            this.frames.pop();
+
             return;
         }
-        dump("                                              ".substr(0, this._depth)+
-             frame.functionName+"()@"+frame.script.fileName+":"+frame.line+"\n");
+
+        var skip = false;
+        var scope = frame.executionContext.globalObject;
+
+        if (scope && scope.getWrappedValue() instanceof Components.interfaces.nsIDOMChromeWindow) {
+            skip = scope.getWrappedValue().location.href in this.skipWindows;
+        }
+        if (skip) {
+            this.frames.push(["", true, true]);
+        } else {
+            this.frames.push(["                                              ".substr(0, this._depth)+
+                 frame.functionName+"()@"+frame.script.fileName+":"+frame.line+"\n", false, false]);
+        }
         this._depth++;
     }
 }

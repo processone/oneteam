@@ -16,9 +16,8 @@
     <em:name>OneTeam</em:name>
     <em:description>OneTeam Extension</em:description>
     <em:creator>ProcessOne</em:creator>
-    <!--Firefox 3.5 compatibility-->
-    <em:iconURL>chrome://oneteam/skin/icons/main.png</em:iconURL>
-    <!-- -->
+    <em:iconURL>chrome://oneteam/skin/icons/icon32.png</em:iconURL>
+    <em:icon64URL>chrome://oneteam/skin/icons/icon64.png</em:icon64URL>
     <em:optionsURL>chrome://oneteam/content/preferences.xul</em:optionsURL>
     <em:homepageURL>http://oneteam.im/</em:homepageURL>
     <em:unpack>true</em:unpack>

@@ -114,7 +114,7 @@ _DECL_(PersistentCache).prototype =
             var file;
 
             do {
-                file = new File(this.fileCacheDir, generateRandomName("10"));
+                file = new File(this.fileCacheDir, generateRandomName(10));
                 try {
                     file.open(null, 0x02|0x08|0x80);
                 } catch (ex) { file = null; }

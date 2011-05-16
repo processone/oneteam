@@ -1,6 +1,6 @@
 /* #ifndef XPI
 pref("toolkit.defaultChromeURI", "chrome://oneteam/content/main.xul");
-//pref("toolkit.singletonWindowType", "ot:main");
+pref("toolkit.singletonWindowType", "ot:main");
 
 pref("browser.preferences.animateFadeIn", true);
 pref("browser.preferences.instantApply", false);

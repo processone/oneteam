@@ -46,11 +46,27 @@ expander[open="true"] .expanderButton {
   background: no-repeat top right transparent;
 }
 
-.counter-box[event="jinglecall"],
+.counter-box[event="jinglecall"]
+{
+  background-image: url(../chatpane/imgs/toolbar/call.png);
+}
+
 .counter-box[event="missedjinglecall"]
 {
-  background-image: url(../chatpane/imgs/call.png);
+  background-image: url(../chatpane/imgs/toolbar/call-inactive.png);
 }
+
+.counter-box[event="filetransfer"] {
+  background-image: url(../chatpane/imgs/toolbar/send-file.png);
+}
+
+/*
+ TODO: add icons for those events
+
+.counter-box[event="mucinvite"]
+.counter-box[event="mucerror"]
+
+*/
 
 .counter-box > vbox {
   background-color: #52affa;

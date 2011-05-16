@@ -9,3 +9,5 @@
 .DS_Store
 *.xpi
 /mars-info.txt
+/app
+/defaults/preferences/non-build.js

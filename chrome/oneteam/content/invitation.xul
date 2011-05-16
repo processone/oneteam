@@ -10,7 +10,6 @@
 <dialog id="oneteam" windowtype="ot:invitation" title="_('Invitation to a Chat Room')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  width="600" height="200"
   buttonlabelaccept="_('Accept')" buttonlabelcancel="_('Decline')"
   buttons="accept,cancel"
   ondialogaccept="return acceptInvitation()" ondialogcancel="return declineInvitation()"
@@ -37,8 +36,13 @@
 
     function acceptInvitation()
     {
-      window.opener.setTimeout(function(a,c){a.onJoinRoom(c)}, 100,
-                               account, conference);
+      if (conference.bookmarkNick) {
+        conference.backgroundJoinRoom();
+      } else {
+        window.opener.setTimeout(function(a,c){a.onJoinRoom(c)}, 100,
+                                 account, conference);
+      }
+
       return true;
     }
 

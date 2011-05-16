@@ -46,7 +46,7 @@ sub _prepare_files {
     $plist =~ s/\@\@buildid\@\@/$self->{buildid}->()/eig;
     print_to_file(catfile($content, 'Info.plist'), $plist);
 
-    copy(catfile(qw(chrome icons default oneteam.icns)),
+    copy(catfile(qw(oneteam.icns)),
          catfile($tmppfxdir, 'oneteam.icns'));
 
     dircopy($self->{xulrunner_path},

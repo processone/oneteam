@@ -25,8 +25,12 @@ _DECL_(MessageInvitationsService).prototype =
             reason = reason && reason.textContent;
             sendDecline = true;
         } else {
+            jid = query.getAttribute("jid");
+            if (!jid)
+                return 2;
+
             from = pkt.getFrom();
-            conference = account.getOrCreateConference(query.getAttribute("jid"));
+            conference = account.getOrCreateConference(jid);
             reason = query.getAttribute("reason");
         }
 
@@ -50,7 +54,10 @@ _DECL_(MessageInvitationsService).prototype =
 
 var messageInvitationsService = new MessageInvitationsService();
 
+var callback = new Callback(messageInvitationsService._messageHandler,
+                            messageInvitationsService);
+
 servicesManager.addMessageService(messageInvitationsService._ns,
-                                  messageInvitationsService._messageHandler);
+                                  callback);
 servicesManager.addMessageService(messageInvitationsService._ns2,
-                                  messageInvitationsService._messageHandler);
+                                  callback);

@@ -12,6 +12,7 @@ use lib ("$FindBin::Bin/perl5lib", "$FindBin::Bin/perl5lib/3rdparty");
 use OneTeam::Utils;
 use OneTeam::L10N::InputFile;
 use OneTeam::L10N::POFile;
+use File::Which;
 
 chdir($FindBin::RealBin);
 
@@ -30,3 +31,19 @@ find({no_chdir => 1, wanted => sub {
 
 $po->write(undef, 1);
 $branding_po->write(undef, 1);
+
+sub update_locale {
+    my ($locale, $pot) = @_;
+
+}
+
+if (which("msgmerge")) {
+    for (glob "$FindBin::RealBin/../po/branding/*.po") {
+        system("msgmerge", "--no-wrap", "-q", "-U", $_, "$FindBin::RealBin/../po/branding/oneteam.pot");
+    }
+    for (glob "$FindBin::RealBin/../po/*.po") {
+        system("msgmerge", "--no-wrap", "-q", "-U", $_, "$FindBin::RealBin/../po/oneteam.pot");
+    }
+} else {
+    print STDERR "'msgmerge' not found, localization file not updated from template";
+}

@@ -169,7 +169,8 @@ sub _generate_components_manifest {
     print $fh "contract   \@oneteam.im/loader;1 {cbbda744-0deb-495e-8c1b-8054b7ba9b4b}\n";
     print $fh "category   profile-after-change OneTeamLoader \@oneteam.im/loader;1\n";
     print $fh "component  {d2de57da-be3a-4ec2-86f7-c73049cc70ef} components/oneteam.js\n";
-    print $fh "contract   \@mozilla.org/autocomplete/search;1?name=oneteam-contacts\n";
+    print $fh "contract   \@mozilla.org/autocomplete/search;1?name=oneteam-contacts ".
+            "{d2de57da-be3a-4ec2-86f7-c73049cc70ef}\n";
     print $fh "interfaces components/oneteam.xpt\n\n";
 
     my %skip;

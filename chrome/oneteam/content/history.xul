@@ -113,8 +113,17 @@
       regToken.unregisterFromAll();
     }
 
+    var lastSearch;
+
     function updateSearch(val)
     {
+      searchMessages.searchString = val;
+
+      if (val == lastSearch)
+        return;
+
+      lastSearch = val;
+
       if (searchThreads.token){
         searchThreads.token.unregisterFromAll();
         regToken.unmerge(searchThreads.token);
