@@ -47,6 +47,7 @@
       if (pkt.getType() == "error") {
         alertEx(_("Search Error"), _("Can't fetch registration form"))
         window.close();
+        return;
       }
       document.getElementById("formDeck").selectedIndex = 1;
 
