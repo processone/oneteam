@@ -375,6 +375,7 @@
 
   <keyset>
     <key id="key_closeWindow" key="w" modifiers="accel" command="cmd_closeWindow"/>
+    <key id="key_rosterSearch" key="f" modifiers="accel" oncommand="document.getElementById('search').focus()"/>
   </keyset>
 
   <keyset id="extraKeys"/>
@@ -508,7 +509,7 @@
             </hbox>
           </vbox>
         </deck>
-        <textbox type="search" oncommand="refineSearch(this)"
+        <textbox id="search" type="search" oncommand="refineSearch(this)"
                  timeout="50" emptytext="_('Search')"/>
         <description id="extra-message" hidden="true"/>
         <vbox id="contacts-list" flex="1" persist="hideOffline"/>
