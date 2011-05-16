@@ -210,11 +210,11 @@
   </group>
 
   <keyset id="extraKeys">
-    <key id="key_initiateChat" modifiers="accel" key="n" command="cmd_initateChat"/>
-    <key id="key_addContact" modifiers="control" key="A" command="cmd_addContact"/>
-    <key id="key_joinRoom" modifiers="control" key="J" command="cmd_joinRoom"/>
-    <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
-    <key id="key_transfers" modifiers="control" key="T" command="cmd_transfers"/>
+    <key id="key_initiateChat" modifiers="accel" key="N" command="cmd_initateChat"/>
+    <key id="key_addContact" modifiers="accel" key="D" command="cmd_addContact"/>
+    <key id="key_joinRoom" modifiers="accel" key="J" command="cmd_joinRoom"/>
+    <key id="key_history" modifiers="accel" key="H" command="cmd_history"/>
+    <key id="key_transfers" modifiers="accel" key="T" command="cmd_transfers"/>
   </keyset>
 
   <group id="macMenu">
