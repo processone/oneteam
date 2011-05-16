@@ -377,6 +377,7 @@
     <key id="key_closeWindow" key="w" modifiers="accel" command="cmd_closeWindow"/>
   </keyset>
 
+  <keyset id="extraKeys"/>
   <keyset id="menu_window_keys"/>
   <keyset id="editMenuKeys"/>
 <!-- #endif -->

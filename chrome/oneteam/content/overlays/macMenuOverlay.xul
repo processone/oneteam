@@ -77,10 +77,10 @@
     <menupopup id="help-popup">
       <menuitem label="_('_Documentation')" command="cmd_help"/>
       <menuitem label="_('_Report Bug')" command="cmd_bug"/>
-      <menuitem label="_('XML _Console...')" command="cmd_xmlConsole"/>
+      <menuitem label="_('XML _Console...')" command="cmd_xmlConsole" key="key_xmlConsole"/>
 <!-- #ifdef DEBUG -->
-      <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole"/>
-      <menuitem label="_('Commands Console...')" command="cmd_cmdConsole"/>
+      <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole" key="key_jsConsole"/>
+      <menuitem label="_('Commands Console...')" command="cmd_cmdConsole" key="key_cmdConsole"/>
 <!-- #endif -->
 <!-- #ifndef XPI -->
       <menuseparator/>
@@ -209,6 +209,14 @@
     </keyset>
   </group>
 
+  <keyset id="extraKeys">
+    <key id="key_initiateChat" modifiers="accel" key="n" command="cmd_initateChat"/>
+    <key id="key_addContact" modifiers="control" key="A" command="cmd_addContact"/>
+    <key id="key_joinRoom" modifiers="control" key="J" command="cmd_joinRoom"/>
+    <key id="key_history" modifiers="control" key="H" command="cmd_history"/>
+    <key id="key_transfers" modifiers="control" key="T" command="cmd_transfers"/>
+  </keyset>
+
   <group id="macMenu">
     <group id="default-group"/>
 
@@ -219,6 +227,7 @@
       <key id="key_closeWindow" key="w" modifiers="accel" command="cmd_closeWindow"/>
     </keyset>
 
+    <keyset id="extraKeys"/>
     <keyset id="menu_window_keys"/>
     <keyset id="editMenuKeys"/>
   </group>
@@ -247,6 +256,7 @@
       <key id="key_closeTab" key="w" modifiers="accel" command="cmd_closeTab"/>
     </keyset>
 
+    <keyset id="extraKeys"/>
     <keyset id="menu_window_keys"/>
     <keyset id="editMenuKeys"/>
   </group>
