@@ -157,7 +157,11 @@ sub _generate_chrome_manifest {
         for @{$self->{locales}};
     print $fh "resource oneteam-skin chrome://oneteam/skin/\n";
     print $fh "resource oneteam-data chrome://oneteam/content/data/\n";
-    print $fh "overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browserOverlay.xul\n"
+    print $fh "overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browserOverlay.xul appversion<4.0\n"
+        if $self->_add_browser_overlays;
+    print $fh "overlay chrome://browser/content/browser.xul chrome://oneteam/content/overlays/browser4Overlay.xul appversion>=4.0\n"
+        if $self->_add_browser_overlays;
+    print $fh "style chrome://global/content/customizeToolbar.xul chrome://oneteam/skin/browserUI/browserUI.css\n"
         if $self->_add_browser_overlays;
     $self->_generate_components_manifest($fh) if $prefix;
     close($fh);

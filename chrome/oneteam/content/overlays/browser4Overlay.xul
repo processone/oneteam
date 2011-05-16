@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://oneteam/skin/browserUI/browserUI.css" type="text/css"?>
+
+<overlay id="oneteamBrowserOverlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script><![CDATA[
+    var OneTeamUpdater = {
+      onStatusClick: function() {
+        if (this.event)
+          this.event();
+        else
+          toggleSidebar("showOneteam");
+      },
+
+      addToToolbar: function() {
+        window.removeEventListener("load", OneTeamUpdater.addToToolbar, false);
+        Services.prefs.setBoolPref("extensions.oneteam.firstrun", false);
+
+        var addonBar = document.getElementById("addon-bar");
+        if (addonBar) {
+          if (!document.getElementById("oneteam-status")) {
+            var addonBarCloseButton = document.getElementById("addonbar-closebutton")
+            addonBar.insertItem("oneteam-status", addonBarCloseButton.nextSibling);
+            addonBar.collapsed = false;
+          }
+        }
+      }
+    }
+
+    if (Services.prefs.getBoolPref("extensions.oneteam.firstrun"))
+      window.addEventListener("load", OneTeamUpdater.addToToolbar, false);
+  ]]></script>
+
+  <menupopup id="viewSidebarMenu">
+    <menuitem key="key_showOneteam" observes="showOneteam" />
+  </menupopup>
+
+  <keyset id="mainKeyset">
+    <key id="key_showOneteam" command="showOneteam" key="O" modifiers="shift accel"/>
+  </keyset>
+
+  <popupset id="mainPopupSet">
+    <tooltip id="oneteam-default-tooltip">
+      <label value="_('$$branding$$:OneTeam')"/>
+    </tooltip>
+
+    <tooltip id="oneteam-messages-tooltip"/>
+  </popupset>
+
+  <toolbarpalette id="BrowserToolbarPalette">
+    <toolbarbutton class="toolbarbutton-1 chromeclass-toolbar-additional"
+                   id="oneteam-status"
+                   tooltip="oneteam-default-tooltip"
+                   label="_('$$branding$$:OneTeam')"
+                   oncommand="OneTeamUpdater.onStatusClick(event)">
+
+    </toolbarbutton>
+  </toolbarpalette>
+
+  <broadcasterset id="mainBroadcasterSet">
+    <broadcaster id="showOneteam"
+                 label="_('$$branding$$:OneTeam')"
+                 autoCheck="false"
+                 type="checkbox"
+                 group="sidebar"
+                 sidebarurl="chrome://oneteam/content/main.xul"
+                 sidebartitle="_('$$branding$$:OneTeam')"
+                 oncommand="toggleSidebar('showOneteam');" />
+  </broadcasterset>
+</overlay>
