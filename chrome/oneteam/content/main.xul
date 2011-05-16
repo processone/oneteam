@@ -29,10 +29,6 @@
     var loginProgress;
     var globalRegToken = new RegistrationToken();
 
-    function systrayInit() {
-      document.getElementById("systray").hidden = !prefManager.getPref("chat.systray");
-    }
-
     function selectLoginDeck(idx) {
       var sd = document.getElementById("login-state-deck");
 
@@ -126,9 +122,8 @@
       },
 
       _updatePresenceIcon: function(_this, icons, idx) {
-//        document.getElementById("setPresence-type-image").src =
-          _this.systray.icon =
-          icons[idx.idx = (idx.idx+1)%icons.length];
+        if (_this.systray)
+          _this.systray.icon = icons[idx.idx = (idx.idx+1)%icons.length];
       },
 
       updatePresenceIcon: function()
@@ -142,7 +137,7 @@
         this._presenceIconBlinkTimeout = null;
 
         if (account.contactsWithEvents.length > 0) {
-          if (icons.length > 1) {
+          if (this.systray && icons.length > 1) {
             this._presenceIconBlinkTimeout =
               setInterval(this._updatePresenceIcon, 500, this, icons, {idx: 0});
           }
@@ -191,6 +186,9 @@
 
         this.onConnecting();
 
+        if (this.systray)
+          this.systray.hidden = !prefManager.getPref("chat.systray");
+
         if (account.connected) {
           this.onConnect();
           this.onIconSetChange();
@@ -207,7 +205,6 @@
     };
 
     function onLoad() {
-      systrayInit();
       setPresenceUpdater.init();
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
@@ -363,10 +360,10 @@
     <command id="cmd_toggleShowToolbar" checked="true"
              oncommand="var c = this.getAttribute('checked') == 'true'; this.setAttribute('checked', !c);
                         document.getElementById('actions-toolbar').collapsed = c"/>
-<!-- #ifdef XPI -->
+<!-- #ifdef XPI
     <command id="cmd_closeWindow" oncommand="window.frameElement.ownerDocument.
         defaultView.toggleSidebar('showOneteam')"/>
-<!-- #else -->
+//   #else -->
     <command id="cmd_closeWindow" oncommand="window.close()"/>
 <!-- #endif -->
   </commandset>
@@ -524,7 +521,9 @@
       -->
     </hbox>
   </vbox>
+<!-- #ifndef XPI -->
   <otsystray id="systray" type="minimizer"/>
+<!-- #endif XPI -->
   <vbox id="hiddenContainer" collapsed="true">
     <html:iframe id="hiddenFrame"/>
   </vbox>
