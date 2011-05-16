@@ -8,10 +8,7 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/rosterContextMenus.xul"?>
-
-<!-- #ifndef XPI -->
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
-<!-- #endif -->
 
 <window id="oneteam" windowtype="ot:main" title="_('$$branding$$:OneTeam')" class="no-verifier"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
@@ -25,6 +22,7 @@
     ML.importMod("prefs.js");
     ML.importMod("model/account.js");
     ML.importMod("views/roster.js");
+    ML.importMod("views/gateway.js");
     ML.importMod("views/chattabs.js");
     ML.importMod("services/xpcom/utils.js");
 
@@ -365,6 +363,12 @@
     <command id="cmd_toggleShowToolbar" checked="true"
              oncommand="var c = this.getAttribute('checked') == 'true'; this.setAttribute('checked', !c);
                         document.getElementById('actions-toolbar').collapsed = c"/>
+<!-- #ifdef XPI -->
+    <command id="cmd_closeWindow" oncommand="window.frameElement.ownerDocument.
+        defaultView.toggleSidebar('showOneteam')"/>
+<!-- #else -->
+    <command id="cmd_closeWindow" oncommand="window.close()"/>
+<!-- #endif -->
   </commandset>
 
   <group id="default-group"/>

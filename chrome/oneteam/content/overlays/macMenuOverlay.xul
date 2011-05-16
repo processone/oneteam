@@ -43,8 +43,8 @@
                 insertbefore="close-menuseparator"/>
       <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"
                 insertbefore="close-menuseparator"/>
-      <menuseparator/>
 <!-- #ifndef XPI -->
+      <menuseparator/>
       <menuitem id="menu_FileQuitItem" label="_('_Quit')" command="cmd_quit" key="key_quit"
                 maclabel="_('Quit {0}', _('$$branding$$:OneTeam'))"/>
 <!-- #endif -->
@@ -192,7 +192,6 @@
   <!-- #endif -->
       <command id="cmd_chkUpdates" oncommand="menuHandler.checkForUpdates()"/>
       <command id="cmd_about" oncommand="account.showAbout()"/>
-      <command id="cmd_closeWindow" oncommand="window.close()"/>
     </comandset>
 
     <keyset>
@@ -222,6 +221,7 @@
 
     <commandset id="menu_window_commands"/>
     <commandset id="editMenuCommands"/>
+    <command id="cmd_closeWindow" oncommand="window.close()"/>
 
     <keyset>
       <key id="key_closeWindow" key="w" modifiers="accel" command="cmd_closeWindow"/>
@@ -250,6 +250,7 @@
 
     <commandset id="menu_window_commands"/>
     <commandset id="editMenuCommands"/>
+    <command id="cmd_closeWindow" oncommand="window.close()"/>
 
     <keyset>
       <key id="key_closeWindow" key="w" modifiers="accel shift" command="cmd_closeWindow"/>
