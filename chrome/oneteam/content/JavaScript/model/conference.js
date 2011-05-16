@@ -857,7 +857,7 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         for (var i = 0; i < bookmarksTags.length; i++) {
             var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
             var password = bookmarksTags[i].getElementsByTagName("password")[0];
-            var conference = account.
+            let conference = account.
                 getOrCreateConference(bookmarksTags[i].getAttribute("jid"));
 
             conference.bookmark(bookmarksTags[i].getAttribute("name"),

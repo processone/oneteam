@@ -447,7 +447,7 @@
             return;
 
           try {
-            this._chatpane._output.visible = true;
+            this._chatpane.visible = true;
           } catch (ex) {}
 
           if (!this._activateTimer) {
@@ -472,8 +472,7 @@
             return;
 
           try {
-            this._chatpane._output.visible = false;
-            this._chatpane.blured();
+            this._chatpane.visible = false;
           } catch (ex) {}
         ]]></body>
       </method>
