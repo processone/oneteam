@@ -50,7 +50,8 @@ var menuHandler = {
                 e.hidden = true;
 
             e = document.getElementById("key_prefs");
-            e.parentNode.removeChild(e);
+            if (e)
+                e.parentNode.removeChild(e);
 
             e = document.getElementById("menu_preferences");
             if (node) {
