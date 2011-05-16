@@ -55,8 +55,6 @@
 
       document.getElementById("updateProgress").style.visibility = "hidden";
 
-      dump(obj && obj.toHtml()+"\n");
-
       details.firstChild.innerHTML = obj ? obj.toHtml() :
         "<div class='name'>"+xmlEscape(contact.visibleName)+"</div>";
     }
