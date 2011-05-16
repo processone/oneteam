@@ -8,7 +8,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "enumerateMatchingProps", "report", "Animator",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
-                        "xmlUnescape", "getMimeTypeForFile", "getWindowWithType"];
+                        "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
+                        "updateMenuList"];
 
 ML.importMod("roles.js");
 
@@ -1316,5 +1317,39 @@ var Animator = {
         data.element = p;
 
         return this.animateScroll(data, pos[0].v, pos[1].v);
+    }
+}
+
+function updateMenuList(multipleItemsMenuList, singleItemMenuItem, items,
+                        action, labelFun, hideWhenNoItems)
+{
+    if (singleItemMenuItem) {
+        singleItemMenuItem.hidden = hideWhenNoItems ?
+            items.length != 1 : items.length > 1;
+        if (items.length == 1)
+            singleItemMenuItem.model = items[0];
+    }
+
+    multipleItemsMenuList.hidden = items.length <= 1;
+
+    if (items.length <= 1)
+        return;
+
+    var list = multipleItemsMenuList.firstChild;
+    while (list && list.firstChild)
+        list.removeChild(list.firstChild);
+
+    for (var i = 0; i < items.length; i++) {
+        var item = list.ownerDocument.createElementNS(XULNS, "menuitem");
+        var label = labelFun(items[i]);
+        item.model = items[i];
+
+        item.setAttribute("label", label);
+        item.setAttribute("oncommand", action);
+
+        bsearch(list.childNodes, label.toLowerCase(), function(a, b) {
+            return a.localeCompare(b.getAttribute("label").toLowerCase());
+        }, false)
+        list.appendChild(item);
     }
 }

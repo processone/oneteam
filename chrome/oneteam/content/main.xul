@@ -75,10 +75,13 @@
 
         if (!account.connected)
           selectLoginDeck(0);
+
         selectStateDeck(account.connected ? 1 : 0);
 
         if (!account.connected) {
           this._updateErrorMessage();
+
+          updateSearchMenu(null, [], null);
 
           return;
         }
@@ -89,6 +92,10 @@
         account.hasDiscoFeature("http://jabber.org/protocol/commands", false, function(a, val) {
           document.getElementById("cmd_adhoc").hidden = !val;
         });
+
+
+        account.getDiscoItemsByFeature("jabber:iq:search", false,
+                                       updateSearchMenu);
       },
 
       onConnecting: function() {
@@ -214,6 +221,28 @@
         this.gatewaysButtonsView.destroy();
       }
     };
+
+    function updateSearchMenu(a, items, item) {
+      updateMenuList(document.getElementById("search-multiple"),
+                     document.getElementById("search-single"),
+                     items, "onSearch(this.model)",
+                     function(item) {
+                        var name, id = item.getDiscoIdentities();
+
+                        for (var i = 0; id && i < id.length; i++)
+                          if (id[i].name)
+                            return _('{0}...', id[i].name);
+
+                        return _('Users search...');
+                     }, true);
+    }
+
+    function onSearch(discoItem) {
+      var jid = discoItem.discoJID || discoItem.jid;
+      var contact = account.getOrCreateContact(jid);
+
+      contact.onSearch();
+    }
 
     function onLoad() {
       systrayInit();
@@ -492,6 +521,10 @@
               <menu label="_('_Gateways')" id="gateways-menu">
                 <menupopup/>
               </menu>
+              <menu id="search-multiple" label="_('_Search Users')">
+                <menupopup/>
+              </menu>
+              <menuitem id="search-single" label="_('_Search Users...')" oncommand="onSearch(this.model)"/>
               <menuseparator/>
               <menuitem id="disco-menuitem" label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
               <menuitem label="_('_Server Commands...')" command="cmd_adhoc"/>
