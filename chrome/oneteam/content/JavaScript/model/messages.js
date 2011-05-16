@@ -425,7 +425,7 @@ _DECL_(MessagesThread, Model).prototype =
             this.modelUpdated("peerChatState");
         }
 
-        if (!msg.text)
+        if (!msg._text && (msg._text == "" || msg.text == ""))
             return;
 
         var firstMessage  = !this._afterFirstMessage;
@@ -553,7 +553,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
     this.myNick = myNick;
 
     if (body instanceof JSJaCMessage) {
-        this.text = body.getBody();
+        this._text = body.getBody();
 
         stampNode = body.getNode().getElementsByTagNameNS("urn:xmpp:delay", "delay")[0];
         stamp = stampNode && stampNode.getAttribute("stamp");
@@ -607,11 +607,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
                 this.xReplyTo.push(rt[i].textContent.replace(/\s+/g, ""));
         }
 
-        var html = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
-        if (html)
-            [this.html, this.text, this.sanitizedHtml] =
-                this._processDOM(html.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0],
-                                 false, "");
+        this._rawHtml = body.getNode().getElementsByTagNameNS("http://jabber.org/protocol/xhtml-im", "html")[0];
 
         if (body.getNode().hasAttribute("id"))
           this.messageId = body.getNode().getAttribute("id");
@@ -619,12 +615,8 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
         if (replaceNode)
           this.replaceMessageId = replaceNode.getAttribute("id");
     } else {
-        if (body_html instanceof Node)
-            [this.html, this.text, this.sanitizedHtml] = this._processDOM(body_html, false, "");
-        else {
-            this.text = body;
-            this.html = body_html;
-        }
+        this._text = body;
+        this._rawHtml = body_html;
 
         this.time = time || new Date();
         this.chatState = chatState;
@@ -703,37 +695,66 @@ _DECL_(Message).prototype =
         return res.join(" ");
     },
 
-    get formatedHtml() {
-        if (!this._html || this._formatedHtmlEpoch != Message.prototype.epoch) {
-            if (!this.html)
-                this._html = this._processUrls(this.text, this.formatFlags || {});
-            else {
-                this._html = this.html;
-                if (!this.contact.representsMe &&
-                    !account.cache.getValue("loadimage-"+this.contact.jid.normalizedJID.shortJID))
-                    this._html = this.html.replace(/<img\s+((?:[^\/]+=(?:"[^"]*"|'[^']*')\s*)+)\/>/g,
-                        "<div class='image-replacement' onclick=\"var ev = document.createEvent('Events');"+
-                            "ev.initEvent('replacewithimage', true, false);"+
-                            "this.dispatchEvent(ev)\" $1>" +
-                                "<div><div>"+_xml("Click to load image")+"</div></div>"+
-                                "<label onclick='event.stopPropagation()'><input type='checkbox'/>"+
-                                _xml("Always load images from that contact")+"</label>"+
-                            "</div>");
-            }
-
-            if (this.inlineCommands && !this._canceled) {
-                for (var i = 0; i < this.inlineCommands.length; i++)
-                    this._html += " <input type='button' class='inline-command' index='"+i+
-                        "' value='"+xmlEscape(this.inlineCommands[i].label)+"'/>";
-            }
-
-            if (this.text.search(/\n*\/me/) == 0)
-                this._html = this._html.replace(/\/me(\s|<)/, "<b>* "+xmlEscape(this.nick)+"</b>$1");
-
-            this._formatedHtmlEpoch = Message.prototype.epoch
-        }
+    get html() {
+        if (!this._html)
+            this._processHtml();
 
         return this._html;
+    },
+
+    get sanitizedHtml() {
+        if (!this._sanitizedHtml)
+            this._processHtml();
+
+        return this._sanitizedHtml;
+    },
+
+    get text() {
+        if (!this._text)
+            this._processHtml();
+
+        return this._text;
+    },
+
+    get formatedHtml() {
+        if (!this._formatedHtml || this._formatedHtmlEpoch != Message.prototype.epoch)
+            this._processHtml();
+
+        return this._formatedHtml;
+    },
+
+    _processHtml: function() {
+        if (this._rawHtml) {
+            if (typeof(this._rawHtml) == "string") {
+                var dp = new DOMParser();
+                var doc = dp.parseFromString("<body xmlns='http://www.w3.org/1999/xhtml'>"+
+                                             this._rawHtml+"</body>", "text/xml");
+                this._rawHtml = doc.documentElement;
+            }
+            [this._html, this._text, this._sanitizedHtml, this._formatedHtml] =
+                this._processDOM(this._rawHtml, {
+                    substituteImages: !this.contact.representsMe &&
+                        !account.cache.getValue("loadimage-"+this.contact.jid.normalizedJID.shortJID)
+                }, false, "");
+        } else if (this._text) {
+            this._html = this._processFormatingChars(this._text, {});
+            this._formatedHtml = this._processUrls(this._text, {});
+            this._sanitizedHtml = this._processUrls(this._text, {skipSmiles: true});
+        } else {
+            this._text = this._html = this._formatedHtml = this._sanitizedHtml = "";
+        }
+
+        if (this.inlineCommands && !this._canceled) {
+            for (var i = 0; i < this.inlineCommands.length; i++)
+                this._formatedHtml += " <input type='button' class='inline-command' index='"+i+
+                    "' value='"+xmlEscape(this.inlineCommands[i].label)+"'/>";
+        }
+
+        if (this._text.search(/\n*\/me/) == 0)
+            this._formatedHtml = this._formatedHtml.
+                replace(/\/me(\s|<)/, "<b>* "+xmlEscape(this.nick)+"</b>$1");
+
+        this._formatedHtmlEpoch = Message.prototype.epoch
     },
 
     addRepresentation: function(msgEl) {
@@ -886,9 +907,10 @@ _DECL_(Message).prototype =
         "pre"        : 1
     },
 
-    _processDOM: function(dom, insideLink, indent, counter, block, siblingIsBlock) {
+    _processDOM: function(dom, flags, insideLink, indent, counter, block, siblingIsBlock) {
         var i, info, tag, nodeName, conv, attrs = {}, skip = false;
-        var content = "", textContent = "", sanitizedContent = "", isBlock = false;
+        var content = "", textContent = "", sanitizedContent = "", formatedContent = "";
+        var isBlock = false;
 
         if (dom.nodeType == dom.ELEMENT_NODE) {
             var attrs, nodeName = dom.nodeName.toLowerCase();
@@ -941,13 +963,15 @@ _DECL_(Message).prototype =
                 }
 
                 for (i = 0; i < dom.childNodes.length; i++) {
-                    var [c, t, s, b] = this._processDOM(dom.childNodes[i],
-                                                        insideLink || nodeName == "a",
-                                                        indent, myCounter,
-                                                        i == 0? isBlock : false, b);
+                    var [c, t, s, f, b] = this._processDOM(dom.childNodes[i],
+                                                           flags,
+                                                           insideLink || nodeName == "a",
+                                                           indent, myCounter,
+                                                           i == 0? isBlock : false, b);
                     content += c;
                     textContent += t;
                     sanitizedContent += s;
+                    formatedContent += f;
                 }
                 if (nodeName == "li")
                     textContent += "\n";
@@ -959,39 +983,52 @@ _DECL_(Message).prototype =
 
             if (nodeName) {
                 if (nodeName == "br") {
-                    sanitizedContent = content = "<br/>";
+                    sanitizedContent = content = formatedContent = "<br/>";
                     textContent = "\n";
                 } else {
                     var pfx = "<"+nodeName+" ";
+                    var attrsStr = "";
                     for (var i in attrs)
                         if (i == "style") {
-                            pfx += "style=\"";
+                            attrsStr += "style=\"";
                             for (var j in attrs[i])
-                                pfx += xmlEscape(j)+":"+xmlEscape(attrs[i][j])+";";
-                            pfx += "\" ";
+                                attrsStr += xmlEscape(j)+":"+xmlEscape(attrs[i][j])+";";
+                            attrsStr += "\" ";
                         } else
-                            pfx += i+"=\""+xmlEscape(attrs[i])+"\" ";
-                    content = pfx + (content ? ">" + content + "</"+nodeName+">" : "/>");
-                    sanitizedContent = pfx + ">" + sanitizedContent + "</"+nodeName+">"
+                            attrsStr += i+"=\""+xmlEscape(attrs[i])+"\" ";
+                    content = pfx + attrsStr +">" + content + "</"+nodeName+">";
+                    sanitizedContent = pfx + attrsStr +">" + sanitizedContent + "</"+nodeName+">";
+
+                    if (nodeName == "img" && flags.substituteImages) {
+                        formatedContent = "<div class='image-replacement' "+
+                            "onclick=\"var ev = document.createEvent('Events');"+
+                                "ev.initEvent('replacewithimage', true, false);"+
+                                "this.dispatchEvent(ev)\" "+attrsStr+">" +
+                                    "<div><div>"+_xml("Click to load image")+"</div></div>"+
+                                    "<label onclick='event.stopPropagation()'><input type='checkbox'/>"+
+                                    _xml("Always load images from that contact")+"</label>"+
+                                "</div>";
+                    } else
+                        formatedContent = pfx + attrsStr +">" + formatedContent + "</"+nodeName+">";
                 }
             }
-
         } else if (dom.nodeType == dom.TEXT_NODE) {
             textContent = dom.nodeValue.replace(/\s/g, " ");
 
             var textForXml = dom.nodeValue.replace(/[^\S\xa0]/g, " ");
 
+            content = this._processFormatingChars(textForXml, {skipNL: true});
             sanitizedContent = insideLink ?
                 this._processSmiles(textForXml, {skipNL: true, skipSmiles: true}) :
                 this._processUrls(textForXml, {skipNL: true, skipSmiles: true});
-            content = insideLink ?
+            formatedContent = insideLink ?
                 this._processSmiles(textForXml, {skipNL: true}) :
                 this._processUrls(textForXml, {skipNL: true});
             if (block || siblingIsBlock)
                 textContent = "\n"+textContent;
         }
 
-        return [content, textContent, sanitizedContent, isBlock];
+        return [content, textContent, sanitizedContent, formatedContent, isBlock];
     },
 
     _allowedStyles:
