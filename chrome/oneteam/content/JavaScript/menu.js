@@ -266,8 +266,7 @@ var menuHandler = {
         if (account.connection  && prefManager.getPref("chat.general.ask_to_quit")) {
             var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
                 getService(Components.interfaces.nsIPromptService);
-
-            var check = {value: ask};
+            var check = {value: true};
             var result = promptSrv.confirmCheck(window, _("Quit prompt"),
                                                 _("You are connected, do you really want to quit?"),
                                                 "Ask me again", check);
