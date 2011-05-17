@@ -282,7 +282,7 @@ _DECL_(CallbacksList).prototype =
         if (this._callbacks instanceof Array) {
             this._callbacks.push(callback);
             if (this._callbacks.length == 1 && this._watchers.onStartWatching)
-                this._watchers.onStartWatching(this._watchersBase, "");
+                this._watchers.onStartWatching.call(this._watchersBase, "");
         }
         else {
             var contexts = arguments.length > 2 ? arguments : [null, null, ""];
@@ -295,7 +295,7 @@ _DECL_(CallbacksList).prototype =
                 if (this._callbacks[contexts[i]].length == 1) {
                     var watchers = this._watchers[contexts[i]];
                     if (watchers && watchers.onStartWatching)
-                        watchers.onStartWatching(this._watchersBase, contexts[i]);
+                        watchers.onStartWatching.call(this._watchersBase, contexts[i]);
                 }
             }
         }
@@ -326,7 +326,7 @@ _DECL_(CallbacksList).prototype =
                 this._callbacks.splice(idx, 1);
 
                 if (this._callbacks.length == 0 && this._watchers.onStopWatching)
-                    this._watchers.onStopWatching(this._watchersBase, "");
+                    this._watchers.onStopWatching.call(this._watchersBase, "");
             }
         } else
             for (var prop in this._callbacks) {
@@ -339,7 +339,7 @@ _DECL_(CallbacksList).prototype =
                     if (context.length == 0) {
                         var watchers = this._watchers[prop];
                         if (watchers && watchers.onStopWatching)
-                            watchers.onStopWatching(this._watchersBase, prop);
+                            watchers.onStopWatching.call(this._watchersBase, prop);
                     }
                 }
             }

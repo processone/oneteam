@@ -49,6 +49,8 @@ function getWindowHandle() {
         getService(Components.interfaces.nsIWindowMediator);
     if ((win = wm.getMostRecentWindow("ot:main")))
         return win;
+    if ((win = wm.getMostRecentWindow("ot:hiddenWindow")))
+        return win;
     if ((win = wm.getMostRecentWindow("navigator:browser")))
         return win;
 

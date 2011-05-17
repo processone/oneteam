@@ -99,15 +99,15 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
 
     PROP_VIEWS: {
         "messages" : {
-            onStartWatching: function(_this, prop) {
-                if (!_this.watched) {
-                    _this.watched = true;
-                    _this.messages = _this.allMessages.concat([]);
-                    _this.getNewMessages();
+            onStartWatching: function(prop) {
+                if (!this.watched) {
+                    this.watched = true;
+                    this.messages = this.allMessages.concat([]);
+                    this.getNewMessages();
                 }
             },
-            onStopWatching: function(_this, prop) {
-                _this.watched = false;
+            onStopWatching: function(prop) {
+                this.watched = false;
             }
         }
     }
@@ -754,16 +754,16 @@ _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
 
     PROP_VIEWS: {
         "contacts" : {
-            onStartWatching: function(_this, prop) {
-                if (!_this._jidIds)
-                    _this._loadJIDs();
+            onStartWatching: function(prop) {
+                if (!this._jidIds)
+                    this._loadJIDs();
             }
         },
 
         "conferences" : {
-            onStartWatching: function(_this, prop) {
-                if (!_this._jidIds)
-                    _this._loadJIDs();
+            onStartWatching: function(prop) {
+                if (!this._jidIds)
+                    this._loadJIDs();
             }
         }
     }
@@ -892,16 +892,16 @@ _DECL_(PresenceUpdatesThread, ArchivedMessagesThreadBase).prototype =
 
     PROP_VIEWS: {
         "messages" : {
-            onStartWatching: function(_this, prop) {
-                if (!_this.watched) {
-                    _this.watched = true;
-                    account.historyMgr._registerCallback(_this, null, "presences");
+            onStartWatching: function(prop) {
+                if (!this.watched) {
+                    this.watched = true;
+                    account.historyMgr._registerCallback(this, null, "presences");
                 }
             },
 
-            onStopWatching: function(_this, prop) {
-                _this.watched = false;
-                account.historyMgr._unregisterCallback(_this);
+            onStopWatching: function(prop) {
+                this.watched = false;
+                account.historyMgr._unregisterCallback(this);
             }
         }
     },
