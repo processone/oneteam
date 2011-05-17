@@ -387,7 +387,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         return win;
 /* #else
         if (!win) {
-            for (win in iterateWindowsWithType("navigator:browser") {
+            for (win in iterateWindowsWithType("navigator:browser")) {
                 win = win.document.getElementById("sidebar")._contentWindow;
                 if (win && win.document.documentElement.getAttribute("windowtype") == "ot:main")
                     return win;
