@@ -3,6 +3,7 @@ var EXPORTED_SYMBOLS = ["HistoryManager"];
 ML.importMod("roles.js");
 ML.importMod("model/messages.js");
 ML.importMod("utils.js");
+ML.importMod("edit.js");
 
 function ArchivedMessagesThreadBase(contact, threadID, time, messagesById,
                                     editMessagesByReplaceMessageId)
@@ -334,10 +335,10 @@ function HistoryManager()
                 WHERE J.id = P.jid_id AND B.id = P.body_id AND P.jid_id = ?1 AND P.time > ?2
                 ORDER BY time ASC;
         </sql>.toString());
-    this.getLastMessageIdFromJid = this.db.createStatement(<sql>
+    /*this.getLastMessageIdFromJid = this.db.createStatement(<sql>
             SELECT message_id FROM messages
                 WHERE jid_id = ?1 ORDER BY time DESC LIMIT 1;
-        </sql>.toString());
+        </sql>.toString());*/
 }
 
 _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
@@ -493,14 +494,13 @@ _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
 
     addMessage: function(msg)
     {
-        if (msg.isEditMessage) {
-            // check that the edited message is the last message from this contact
-            var stmt = this.getLastMessageIdFromJid;
-            stmt.bindInt32Parameter(0, this._getJidId(msg.contact.jid));
-            stmt.executeStep();
-            var lastMessageId = stmt.getString(0);
-            stmt.reset();
-            if (!lastMessageId || lastMessageId != msg.replaceMessageId)
+        var oldFormatEditMessage = !!oldFormatEditMessageRegex.test(msg);
+        if (oldFormatEditMessage || msg.replaceMessageId) {
+            var lastMsg = this.getLastMessagesFromContact(msg.contact.contact, 1)[1][0];
+            if (!lastMsg
+                || (msg.replaceMessageId && lastMsg.messageId != msg.replaceMessageId)
+                || (oldFormatEditMessage && !convertOldFormatEditMessage(msg, lastMsg))
+            )
                 return;
         }
 

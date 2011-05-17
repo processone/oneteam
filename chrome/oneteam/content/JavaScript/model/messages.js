@@ -613,11 +613,13 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
                 this._processDOM(html.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "body")[0],
                                  false, "");
 
-        if (body.getNode().hasAttribute("id"))
-          this.messageId = body.getNode().getAttribute("id");
+        this.messageId =
+            body.getNode().hasAttribute("id") ? body.getNode().getAttribute("id") :
+            generateRandomName(12);
+   
         var replaceNode = body.getNode().getElementsByTagNameNS("http://process-one.net/edit", "replace")[0];
         if (replaceNode)
-          this.replaceMessageId = replaceNode.getAttribute("id");
+            this.replaceMessageId = replaceNode.getAttribute("id");
     } else {
         if (body_html instanceof Node)
             [this.html, this.text, this.sanitizedHtml] = this._processDOM(body_html, false, "");

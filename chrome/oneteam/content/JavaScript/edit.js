@@ -1,4 +1,5 @@
-var EXPORTED_SYMBOLS = ["tooltip", "removeTooltip", "displayEditButton"];
+var EXPORTED_SYMBOLS = ["tooltip", "removeTooltip", "displayEditButton",
+    "convertOldFormatEditMessage", "oldFormatEditMessageRegex"];
 
 
 function tooltip(htmlNode, xulNode, text) {
@@ -277,4 +278,33 @@ function displayEditButton(body, originalMessage, xulNode) {
   }
 
   return button;
+}
+
+/*
+ * convertOldFormatEditMessage(Message msg, Message lastMsg)
+ * if msg is an old format edit message (i.e. looks like s/bad/good/)
+ * and matches lastMsg, modifies msg as XEP-proposal compliant edit message
+ * (i.e. with a replaceMessageId) and return true;
+ * else, return false
+*/
+
+var oldFormatEditMessageRegex = /^s\/([^\/]*)\/([^\/]*)\/\s*$/;
+
+function convertOldFormatEditMessage(msg, lastMsg) {
+dump("convertOldFormatEditMessage :\n");
+  var match = oldFormatEditMessageRegex(msg.text);
+  if (!lastMsg || !match || lastMsg.text.indexOf(match[1]) == -1) {
+dump("pas un oldFormatEditMessage\n");
+    return false;
+}
+dump("oldFormatEditMessage\n");
+try {
+  dump("msg.html = " + msg.html + "\n");
+  var matchHtml = oldFormatEditMessageRegex.exec(msg.html);
+  msg.text = lastMsg.text.replace(match[1]    , match[2]    );
+  msg.html = lastMsg.html.replace(matchHtml[1], matchHtml[2]);
+  msg.replaceMessageId = lastMsg.messageId;
+dump("oldFormatEditMessage:\nmsg.text = " + msg.text + "\nmsg.html = " + msg.html + "\nmsg.replaceMessageId = " + msg.replaceMessageId + "\n");
+  return true;
+} catch (ex) {dump(ex);}
 }
