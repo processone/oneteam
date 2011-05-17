@@ -4,6 +4,8 @@ ML.importMod("roles.js");
 ML.importMod("3rdparty/jsjac/JSJaC.js");
 ML.importMod("exceptions.js");
 ML.importMod("l10n.js");
+ML.importMod("utils.js");
+ML.importMod("windowutils.js");
 ML.importMod("modeltypes.js");
 ML.importMod("disco.js");
 ML.importMod("xmpptypes.js");
@@ -377,6 +379,42 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         openDialogUniq("ot:manageBookmarks", "chrome://oneteam/content/manageBookmarks.xul",
                        "chrome,centerscreen", jid);
+    },
+
+    getRosterWindow: function() {
+        var win = getWindowWithType("ot:main");
+// #ifndef XPI
+        return win;
+/* #else
+        if (!win) {
+            for (win in iterateWindowsWithType("navigator:browser") {
+                win = win.document.getElementById("sidebar")._contentWindow;
+                if (win && win.document.documentElement.getAttribute("windowtype") == "ot:main")
+                    return win;
+            }
+        }
+
+        return null;
+// #endif */
+    },
+
+    showRoster: function() {
+        var win = this.getRosterWindow();
+        if (win) {
+            if (win.setPresenceUpdater.systray)
+                win.setPresenceUpdater.systray.minimized = false;
+            if (win.windowState == win.STATE_MINIMIZED)
+                win.restore();
+            win.focus();
+            return;
+        }
+// #ifndef XPI
+        openDialogUniq("ot:main", "chrome://oneteam/content/main.xul", "chrome,centerscreen,dialog=no");
+/* #else
+        win = getWindowWithType("navigator:browser");
+        win.toggleSidebar("showOneteam");
+        win.focus();
+// #endif */
     },
 
     showHistoryManager: function(contact)

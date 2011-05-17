@@ -1,3 +1,4 @@
+ML.importMod("model/account.js");
 ML.importMod("views/gateway.js");
 ML.importMod("views/conference.js");
 
@@ -39,6 +40,11 @@ var menuHandler = {
 
                 e = document.getElementById("menu_preferences");
                 e.previousSibling.hidden = true;
+
+                this._windowsSep = document.getElementById("menu-windows-sep");
+                this._tabsSep = document.getElementById("menu-tabs-sep");
+
+                windowsObserver.registerObserver(this, this._token);
             }
         } else {
             e = document.getElementById("menu_window_keys");
@@ -77,6 +83,132 @@ var menuHandler = {
             this.gatewaysMenuView.destroy();
         }
         this.bookmarksMenuView = this.gatewaysMenuView = this._token = null;
+    },
+
+    showChatPane: function(mi) {
+        var m = this._windowsSep.parentNode;
+        var idx = Array.indexOf(m.childNodes, mi) -
+            Array.indexOf(m.childNodes, this._tabsSep)-1;
+
+        var win = windowsObserver._tabs[idx].focus();
+    },
+
+    onChatPaneAdded: function(cp, idx) {
+        var m = this._windowsSep.parentNode;
+
+        this._tabsSep.hidden = false;
+
+        idx += Array.indexOf(m.childNodes, this._tabsSep)+1;
+
+        var mi = document.createElementNS(XULNS, "menuitem");
+        mi.setAttribute("label", cp._thread.contact.visibleName);
+        mi.setAttribute("class", "menu-iconic");
+        mi.setAttribute("name", "windows");
+        mi.setAttribute("image", cp._thread.contact.avatar ||
+                        "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+        mi.setAttribute("oncommand", "menuHandler.showChatPane(this)");
+
+        if (idx >= m.childNodes.length)
+            m.appendChild(mi);
+        else
+            m.insertBefore(mi, m.childNodes[idx]);
+    },
+
+    onChatPaneRemoved: function(cp, idx) {
+        var m = this._windowsSep.parentNode;
+
+        idx += Array.indexOf(m.childNodes, this._tabsSep)+1;
+
+        m.removeChild(m.childNodes[idx]);
+
+        if (this._tabsSep.nextSibling == this._windowsSep)
+            this._tabsSep.hidden = true;
+    },
+
+    checkFocusedWindow: function() {
+        for (var i = 0; i < windowsObserver._windows.length; i++)
+            if (windowsObserver._windows[i] == window) {
+                if (this._rosterWinIdx == i)
+                    this._tabsSep.previousSibling.setAttribute("checked", true);
+                else {
+                    var m = this._windowsSep.parentNode;
+
+                    if (this._rosterWinIdx != null && this._rosterWinIdx < i)
+                        i--;
+                    i += Array.indexOf(m.childNodes, this._windowsSep)+1;
+
+                    m.childNodes[i].setAttribute("checked", true);
+                }
+                break;
+            }
+    },
+
+    showWindow: function(mi) {
+        var m = this._windowsSep.parentNode;
+        var idx = Array.indexOf(m.childNodes, mi) -
+            Array.indexOf(m.childNodes, this._windowsSep)-1;
+
+        if (this._rosterWinIdx != null && this._rosterWinIdx <= idx)
+            idx++;
+
+        var win = windowsObserver._windows[idx];
+
+        if (win.windowState == win.STATE_MINIMIZED)
+            win.restore();
+
+        win.focus();
+    },
+
+    onWindowAdded: function(win, idx) {
+        var m = this._windowsSep.parentNode;
+
+        if (win.document && win.document.documentElement &&
+            win.document.documentElement.getAttribute("windowtype") == "ot:main")
+        {
+            this._rosterWinIdx = idx;
+            return;
+        }
+
+        this._windowsSep.hidden = false;
+
+        if (this._rosterWinIdx != null)
+            if (this._rosterWinIdx < idx)
+                idx--;
+            else
+                this._rosterWinIdx++;
+
+        idx += Array.indexOf(m.childNodes, this._windowsSep)+1;
+
+        var mi = document.createElementNS(XULNS, "menuitem");
+        mi.setAttribute("label", win.document.title);
+        mi.setAttribute("type", "radio");
+        mi.setAttribute("name", "window");
+        mi.setAttribute("oncommand", "menuHandler.showWindow(this)");
+
+        if (idx >= m.childNodes.length)
+            m.appendChild(mi);
+        else
+            m.insertBefore(mi, m.childNodes[idx]);
+    },
+
+    onWindowRemoved: function(win, idx) {
+        if (this._rosterWinIdx == idx) {
+            delete this._rosterWinIdx;
+            return;
+        }
+        var m = this._windowsSep.parentNode;
+
+        if (this._rosterWinIdx != null)
+            if (this._rosterWinIdx < idx)
+                idx--;
+            else
+                this._rosterWinIdx--;
+
+        idx += Array.indexOf(m.childNodes, this._windowsSep)+1;
+
+        m.removeChild(m.childNodes[idx]);
+        if (!this._windowsSep.nextSibling)
+            this._windowsSep.hidden = true;
     },
 
     onConnectedChanged: function() {
