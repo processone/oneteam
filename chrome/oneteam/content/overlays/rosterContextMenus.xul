@@ -52,33 +52,6 @@
       return true;
     }
 
-    function updateMenuList(multipleItemsMenuList, singleItemMenuItem, items,
-                            action, labelFun, hideWhenNoItems)
-    {
-      if (singleItemMenuItem)
-        singleItemMenuItem.hidden = hideWhenNoItems ?
-          items.length != 1 : items.length > 1;
-
-      multipleItemsMenuList.hidden = items.length <= 1;
-
-      if (items.length <= 1)
-        return;
-
-      var list = multipleItemsMenuList.firstChild;
-      while (list && list.firstChild)
-        list.removeChild(list.firstChild);
-
-      for (var i = 0; i < items.length; i++) {
-        var item = document.createElementNS(XULNS, "menuitem");
-        item.model = items[i];
-
-        item.setAttribute("label", labelFun(item.model));
-        item.setAttribute("oncommand", action);
-
-        list.appendChild(item);
-      }
-    }
-
     function updateContactContextMenu(menu, event) {
       var cs = document.getElementById("contact-chat-single");
       var cm = document.getElementById("contact-chat-multi");

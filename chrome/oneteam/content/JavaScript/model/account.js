@@ -682,6 +682,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     disconnect: function()
     {
+        if (!this.connection)
+            return;
+
         if (this.currentPresence.profile)
             privacyService.deactivate();
 

@@ -20,167 +20,259 @@
 <overlay id="macMenuOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <script type="application/javascript" src="chrome://global/content/globalOverlay.js"/>
   <script type="application/javascript" src="chrome://global/content/macWindowMenu.js"/>
+  <script type="application/javascript" src="../JavaScript/menu.js"/>
 
-  <group id="macMenu">
+  <menu id="menu-file" label="_('_File')">
+    <menupopup id="file-popup">
+      <menuitem label="_('_Initiate Chat...')" command="cmd_initateChat" key="key_initiateChat"
+                insertbefore="close-menuseparator"/>
+
+      <menuitem label="_('_Add Contact...')" command="cmd_addContact" key="key_addContact"
+                insertbefore="close-menuseparator"/>
+
+      <menu label="_('Chat _Rooms')" insertbefore="close-menuseparator">
+        <menupopup>
+          <menuitem label="_('Join Chat Room...')" command="cmd_joinRoom" key="key_joinRoom"/>
+          <menuseparator/>
+          <menuseparator id="conference-menu-separator" hidden="true"/>
+          <menuitem label="_('_Manage Chat Rooms...')" command="cmd_manageBookmarks"/>
+        </menupopup>
+      </menu>
+      <menuseparator insertbefore="close-menuseparator"/>
+      <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"
+                insertbefore="close-menuseparator"/>
+      <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"
+                insertbefore="close-menuseparator"/>
+<!-- #ifndef XPI -->
+      <menuseparator/>
+      <menuitem id="menu_FileQuitItem" label="_('_Quit')" command="cmd_quit" key="key_quit"
+                maclabel="_('Quit {0}', _('$$branding$$:OneTeam'))"/>
+<!-- #endif -->
+    </menupopup>
+  </menu>
+
+  <menu id="menu-account" label="_('_Account')">
+    <menupopup id="account-popup">
+      <menuitem label="_('_Edit personal info...')" command="cmd_ourVCard" key="key_ourVCard"/>
+      <menuitem label="_('_Change password...')" command="cmd_changePassword"/>
+      <menuseparator/>
+      <menu id="search-multiple" label="_('_Search Users')">
+        <menupopup/>
+      </menu>
+      <menuitem id="search-single" label="_('_Search Users...')" oncommand="menuHandler.onSearch(this.model)"/>
+      <menu label="_('_Gateways')" id="gateways-menu">
+        <menupopup/>
+      </menu>
+      <menuseparator/>
+      <menuitem id="disco-menuitem" label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
+      <menuitem label="_('_Server Commands...')" command="cmd_adhoc" key="key_adhoc"/>
+      <menuseparator/>
+      <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
+      <menuseparator/>
+      <menuitem id="menu_preferences" label="_('_Preferences...')" command="cmd_prefs" key="key_prefs"
+                winlabel="_('_Options...')"/>
+    </menupopup>
+  </menu>
+
+  <menu id="menu-help" label="_('_Help')">
+    <menupopup id="help-popup">
+      <menuitem label="_('_Documentation')" command="cmd_help"/>
+      <menuitem label="_('_Report Bug')" command="cmd_bug"/>
+      <menuitem label="_('XML _Console...')" command="cmd_xmlConsole" key="key_xmlConsole"/>
+<!-- #ifdef DEBUG -->
+      <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole" key="key_jsConsole"/>
+      <menuitem label="_('Commands Console...')" command="cmd_cmdConsole" key="key_cmdConsole"/>
+<!-- #endif -->
+<!-- #ifndef XPI -->
+      <menuseparator/>
+      <menuitem label="_('Check for Updates...')" command="cmd_chkUpdates"/>
+      <menuitem label="_('Add-ons...')" command="cmd_addons"/>
+<!-- #endif -->
+      <menuseparator/>
+      <menuitem id="aboutName" label="_('About...')" command="cmd_about"
+                maclabel="_('About {0}', _('$$branding$$:OneTeam'))"/>
+    </menupopup>
+  </menu>
+
+  <menu id="menu_edit">
+    <menupopup id="editmenu-popup">
+      <menuitem id="menu_undo"/>
+      <menuitem id="menu_redo"/>
+      <menuseparator/>
+      <menuitem id="menu_cut"/>
+      <menuitem id="menu_copy"/>
+      <menuitem id="menu_paste"/>
+      <menuitem id="menu_delete"/>
+      <menuseparator/>
+      <menuitem id="menu_selectAll"/>
+    </menupopup>
+  </menu>
+
+  <commandset id="menu_window_commands">
     <command id="minimizeWindow"
              label="&minimizeWindow.label;"
              oncommand="window.minimize();" />
     <command id="zoomWindow"
              label="&zoomWindow.label;"
              oncommand="zoomWindow();" />
-    <command id="cmd_closeWindow"
-             label="_('Close')"
-             oncommand="window.close()"/>
+  </commandset>
+
+  <keyset id="menu_window_keys">
+    <key id="key_minimizeWindow"
+         command="minimizeWindow"
+         key="&minimizeWindow.key;"
+         modifiers="accel"/>
+  </keyset>
+
+  <menu id="menu_window"
+        label="&windowMenu.label;"
+        datasources="rdf:window-mediator"
+        ref="NC:WindowMediatorRoot"
+        onpopupshowing="checkFocusedWindow();"
+        hidden="false">
+    <template>
+      <rule>
+        <menupopup>
+          <menuitem uri="rdf:*"
+                    label="rdf:http://home.netscape.com/NC-rdf#Name"
+                    type="radio"
+                    name="windowList"
+                    oncommand="ShowWindowFromResource(event.target)"/>
+        </menupopup>
+      </rule>
+    </template>
+    <menupopup id="windowPopup">
+      <menuitem command="minimizeWindow" key="key_minimizeWindow"/>
+      <menuitem command="zoomWindow"/>
+      <!-- decomment when "BringAllToFront" is implemented
+      <menuseparator/>
+      <menuitem label="&bringAllToFront.label;" disabled="true"/> -->
+      <menuseparator id="sep-window-list"/>
+    </menupopup>
+  </menu>
+
+  <group id="default-group">
+    <broadcasterset>
+      <broadcaster id="isOffline" disabled="true"/>
+    </broadcasterset>
+
+    <comandset>
+      <command id="cmd_initateChat" key="key_initiateChat" oncommand="account.onInitiateChat()"
+               observes="isOffline"/>
+      <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"
+               observes="isOffline"/>
+      <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"
+               observes="isOffline"/>
+      <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"
+               observes="isOffline"/>
+      <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
+      <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
+      <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()" observes="isOffline"/>
+      <command id="cmd_presences_tab" key="key_presences_tab" oncommand="account.onShowPresences()"/>
+      <command id="cmd_adhoc" oncommand="account.onAdHocCommand()" observes="isOffline"/>
+      <command id="cmd_disconnect" oncommand="account.disconnect()" observes="isOffline"/>
+      <command id="cmd_quit" key="key_quit" oncommand="menuHandler.quit()"/>
+
+      <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()" observes="isOffline"/>
+      <command id="cmd_changePassword" oncommand="account.onChangePassword()" observes="isOffline"/>
+  <!-- #ifndef XPI -->
+      <command id="cmd_addons" oncommand="window.openDialog('chrome://mozapps/content/extensions/extensions.xul');"/>
+  <!-- #endif -->
+      <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
+
+      <command id="cmd_help" key="key_help" oncommand="openLink('http://www.process-one.net/en/oneteam/')"/>
+      <command id="cmd_bug" oncommand="openLink('https://support.process-one.net/browse/TEAM')"/>
+      <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
+  <!-- #ifdef DEBUG -->
+      <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
+      <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "chrome://oneteam/content/command.xul", "chrome,dialog=no,all", "")'/>
+      <command id="cmd_cmdVenkman" oncommand='window.openDialogUniq("mozapp:venkman", "chrome://venkman/content/venkman.xul", "chrome,dialog=no,all", "")'/>
+      <command id="cmd_cmdDOMInspector" oncommand='window.openDialogUniq("mozapp:dominspector", "chrome://inspector/content/", "chrome,dialog=no,all", "")'/>
+  <!-- #endif -->
+      <command id="cmd_chkUpdates" oncommand="menuHandler.checkForUpdates()"/>
+      <command id="cmd_about" oncommand="account.showAbout()"/>
+    </comandset>
 
     <keyset>
-      <key id="key_minimizeWindow"
-           command="minimizeWindow"
-           key="&minimizeWindow.key;"
-           modifiers="accel"/>
-      <key id="key_closeWindow"
-           key="w"
-           modifiers="accel"
-           command="cmd_closeWindow"/>
+  <!-- #ifndef XPI -->
+      <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
+      <key id="key_prefs" disabled="true" modifiers="meta" key="," command="cmd_prefs"/>
+  <!-- #endif -->
+  <!-- #ifdef DEBUG -->
+      <key id="key_xmlConsole" modifiers="control" key="1" command="cmd_xmlConsole"/>
+      <key id="key_cmdConsole" modifiers="control" key="2" command="cmd_cmdConsole"/>
+      <key id="key_cmdVenkman" modifiers="control" key="3" command="cmd_cmdVenkman"/>
+      <key id="key_cmdDOMInspector" modifiers="control" key="4" command="cmd_cmdDOMInspector"/>
+  <!-- #endif -->
+    </keyset>
+  </group>
+
+  <keyset id="extraKeys">
+    <key id="key_initiateChat" modifiers="accel" key="N" command="cmd_initateChat"/>
+    <key id="key_addContact" modifiers="accel" key="D" command="cmd_addContact"/>
+    <key id="key_joinRoom" modifiers="accel" key="J" command="cmd_joinRoom"/>
+    <key id="key_history" modifiers="accel" key="H" command="cmd_history"/>
+    <key id="key_transfers" modifiers="accel" key="T" command="cmd_transfers"/>
+  </keyset>
+
+  <group id="macMenu">
+    <group id="default-group"/>
+
+    <commandset id="menu_window_commands"/>
+    <commandset id="editMenuCommands"/>
+    <command id="cmd_closeWindow" oncommand="window.close()"/>
+
+    <keyset>
+      <key id="key_closeWindow" key="w" modifiers="accel" command="cmd_closeWindow"/>
     </keyset>
 
-    <commandset id="editMenuCommands"/>
+    <keyset id="extraKeys"/>
+    <keyset id="menu_window_keys"/>
     <keyset id="editMenuKeys"/>
   </group>
 
   <menubar id="macMenuBar" hidden="true">
-    <menu id="fileMenuTabbed"
-          label="_('File')">
-      <menupopup>
-        <menuitem command="cmd_closeWindow"
-                  key="key_closeWindow"/>
+    <menu id="menu-file">
+      <menupopup id="file-popup">
+        <menuseparator id="close-menuseparator"/>
+        <menuitem label="_('Close')" command="cmd_closeWindow" key="key_closeWindow"/>
       </menupopup>
     </menu>
-
-    <menu id="menu_edit">
-      <menupopup id="editmenu-popup">
-        <menuitem id="menu_undo"/>
-        <menuitem id="menu_redo"/>
-        <menuseparator/>
-        <menuitem id="menu_cut"/>
-        <menuitem id="menu_copy"/>
-        <menuitem id="menu_paste"/>
-        <menuitem id="menu_delete"/>
-        <menuseparator/>
-        <menuitem id="menu_selectAll"/>
-      </menupopup>
-    </menu>
-
-    <menu id="windowMenu"
-          label="&windowMenu.label;"
-          datasources="rdf:window-mediator"
-          ref="NC:WindowMediatorRoot"
-          onpopupshowing="checkFocusedWindow();"
-          hidden="false">
-      <template>
-        <rule>
-          <menupopup>
-            <menuitem uri="rdf:*"
-                      label="rdf:http://home.netscape.com/NC-rdf#Name"
-                      type="radio"
-                      name="windowList"
-                      oncommand="ShowWindowFromResource(event.target)"/>
-          </menupopup>
-        </rule>
-      </template>
-      <menupopup id="windowPopup">
-        <menuitem command="minimizeWindow" key="key_minimizeWindow"/>
-        <menuitem command="zoomWindow"/>
-        <!-- decomment when "BringAllToFront" is implemented
-        <menuseparator/>
-        <menuitem label="&bringAllToFront.label;" disabled="true"/> -->
-        <menuseparator id="sep-window-list"/>
-      </menupopup>
-    </menu>
+    <menu id="menu_edit"/>
+    <menu id="menu-account"/>
+    <menu id="menu_window"/>
+    <menu id="menu-help"/>
   </menubar>
 
   <group id="macMenuTabbed">
-    <command id="minimizeWindow"
-             label="&minimizeWindow.label;"
-             oncommand="window.minimize();" />
-    <command id="zoomWindow"
-             label="&zoomWindow.label;"
-             oncommand="zoomWindow();" />
-    <command id="cmd_closeWindow"
-             label="_('Close')"
-             oncommand="window.close()"/>
-    <command id="cmd_closeTab"
-             label="_('Close Tab')"/>
+    <group id="default-group"/>
+
+    <commandset id="menu_window_commands"/>
+    <commandset id="editMenuCommands"/>
+    <command id="cmd_closeWindow" oncommand="window.close()"/>
 
     <keyset>
-      <key id="key_minimizeWindow"
-           command="minimizeWindow"
-           key="&minimizeWindow.key;"
-           modifiers="accel"/>
-      <key id="key_closeWindow"
-           key="w"
-           modifiers="accel shift"
-           command="cmd_closeWindow"/>
-      <key id="key_closeTab"
-           key="w"
-           modifiers="accel"
-           command="cmd_closeTab"/>
+      <key id="key_closeWindow" key="w" modifiers="accel shift" command="cmd_closeWindow"/>
+      <key id="key_closeTab" key="w" modifiers="accel" command="cmd_closeTab"/>
     </keyset>
 
-    <commandset id="editMenuCommands"/>
+    <keyset id="extraKeys"/>
+    <keyset id="menu_window_keys"/>
     <keyset id="editMenuKeys"/>
   </group>
 
   <menubar id="macMenuBarTabbed" hidden="true">
-    <menu id="fileMenuTabbed"
-          label="_('File')">
-      <menupopup>
-        <menuitem command="cmd_closeWindow"
-                  key="key_closeWindow"/>
-        <menuitem command="cmd_closeTab"
-                  key="key_closeTab"/>
+    <menu id="menu-file">
+      <menupopup id="file-popup">
+        <menuseparator id="close-menuseparator"/>
+        <menuitem label="_('Close')" command="cmd_closeWindow" key="key_closeWindow"/>
+        <menuitem label="_('Close Tab')" command="cmd_closeTab" key="key_closeTab"/>
       </menupopup>
     </menu>
-
-    <menu id="menu_edit">
-      <menupopup id="editmenu-popup">
-        <menuitem id="menu_undo"/>
-        <menuitem id="menu_redo"/>
-        <menuseparator/>
-        <menuitem id="menu_cut"/>
-        <menuitem id="menu_copy"/>
-        <menuitem id="menu_paste"/>
-        <menuitem id="menu_delete"/>
-        <menuseparator/>
-        <menuitem id="menu_selectAll"/>
-      </menupopup>
-    </menu>
-
-    <menu id="windowMenu"
-          label="&windowMenu.label;"
-          datasources="rdf:window-mediator"
-          ref="NC:WindowMediatorRoot"
-          onpopupshowing="checkFocusedWindow();"
-          hidden="false">
-      <template>
-        <rule>
-          <menupopup>
-            <menuitem uri="rdf:*"
-                      label="rdf:http://home.netscape.com/NC-rdf#Name"
-                      type="radio"
-                      name="windowList"
-                      oncommand="ShowWindowFromResource(event.target)"/>
-          </menupopup>
-        </rule>
-      </template>
-      <menupopup id="windowPopup">
-        <menuitem command="minimizeWindow" key="key_minimizeWindow"/>
-        <menuitem command="zoomWindow"/>
-        <!-- decomment when "BringAllToFront" is implemented
-        <menuseparator/>
-        <menuitem label="&bringAllToFront.label;" disabled="true"/> -->
-        <menuseparator id="sep-window-list"/>
-      </menupopup>
-    </menu>
+    <menu id="menu_edit"/>
+    <menu id="menu-account"/>
+    <menu id="menu_window"/>
+    <menu id="menu-help"/>
   </menubar>
 
 </overlay>

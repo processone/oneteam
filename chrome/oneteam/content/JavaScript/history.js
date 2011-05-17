@@ -549,7 +549,7 @@ _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
         stmt.bindInt32Parameter(0, this._getJidId(msg.contact.jid));
         stmt.bindInt32Parameter(1, msg.type)
         stmt.bindStringParameter(2, msg.text);
-        stmt.bindStringParameter(3, msg.html);
+        stmt.bindStringParameter(3, msg.html == xmlEscape(msg.text) ? null : msg.html);
         stmt.bindStringParameter(4, msg.nick);
         stmt.bindInt64Parameter(5, msg.time.getTime());
         stmt.bindInt32Parameter(6, archivedThread.threadID);

@@ -8,6 +8,7 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/rosterContextMenus.xul"?>
+<?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
 <window id="oneteam" windowtype="ot:main" title="_('$$branding$$:OneTeam')" class="no-verifier"
     onload="onLoad()" onclose="return onClose()" onunload="onUnload()"
@@ -22,16 +23,11 @@
     ML.importMod("model/account.js");
     ML.importMod("views/roster.js");
     ML.importMod("views/gateway.js");
-    ML.importMod("views/conference.js");
     ML.importMod("views/chattabs.js");
     ML.importMod("services/xpcom/utils.js");
 
     var loginProgress;
     var globalRegToken = new RegistrationToken();
-
-    function systrayInit() {
-      document.getElementById("systray").hidden = !prefManager.getPref("chat.systray");
-    }
 
     function selectLoginDeck(idx) {
       var sd = document.getElementById("login-state-deck");
@@ -75,6 +71,7 @@
 
         if (!account.connected)
           selectLoginDeck(0);
+
         selectStateDeck(account.connected ? 1 : 0);
 
         if (!account.connected) {
@@ -85,10 +82,6 @@
 
         document.getElementById("setPresence-jid").value = account.myResource.jid.getShortJID().toUserString();
         document.getElementById("setPresence-nick").value = account.myResource.visibleName;
-
-        account.hasDiscoFeature("http://jabber.org/protocol/commands", false, function(a, val) {
-          document.getElementById("cmd_adhoc").hidden = !val;
-        });
       },
 
       onConnecting: function() {
@@ -129,9 +122,8 @@
       },
 
       _updatePresenceIcon: function(_this, icons, idx) {
-//        document.getElementById("setPresence-type-image").src =
-          _this.systray.icon =
-          icons[idx.idx = (idx.idx+1)%icons.length];
+        if (_this.systray)
+          _this.systray.icon = icons[idx.idx = (idx.idx+1)%icons.length];
       },
 
       updatePresenceIcon: function()
@@ -145,7 +137,7 @@
         this._presenceIconBlinkTimeout = null;
 
         if (account.contactsWithEvents.length > 0) {
-          if (icons.length > 1) {
+          if (this.systray && icons.length > 1) {
             this._presenceIconBlinkTimeout =
               setInterval(this._updatePresenceIcon, 500, this, icons, {idx: 0});
           }
@@ -185,10 +177,6 @@
         this.presence = this.chooser.value;
 
         this.rosterView = new RosterView(document.getElementById("contacts-list"));
-        this.bookmarksMenuView =
-          new BookmarksMenuView(document.getElementById("conference-menu-separator"));
-        this.gatewaysMenuView =
-          new GatewaysMenuView(document.getElementById("gateways-menu"));
         this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
 
         this.rosterView.hideOffline = document.getElementById("cmd_toggleShowOffline").
@@ -197,6 +185,9 @@
         this.updatePresenceIcon();
 
         this.onConnecting();
+
+        if (this.systray)
+          this.systray.hidden = !prefManager.getPref("chat.systray");
 
         if (account.connected) {
           this.onConnect();
@@ -209,14 +200,11 @@
         if (!this.rosterView)
           return;
         this.rosterView.destroy();
-        this.bookmarksMenuView.destroy();
-        this.gatewaysMenuView.destroy();
         this.gatewaysButtonsView.destroy();
       }
     };
 
     function onLoad() {
-      systrayInit();
       setPresenceUpdater.init();
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
@@ -291,11 +279,18 @@
 */
     }
 
+    var origClose = window.close;
+    window.close = function() {
+      if (onClose())
+        origClose.call(window);
+    }
+
     function onClose() {
-      if(document.getElementById("systray").hidden == false){
+      var st = document.getElementById("systray")
+      if (!st.hidden && st._systray)
         setPresenceUpdater.systray.minimized = true;
-        return false;
-      }
+
+      return window.navigator.platform.indexOf("Mac") == 0;
     }
 
     function onUnload() {
@@ -318,42 +313,11 @@
       document.persist(document.documentElement.getAttribute("id"), "height");
     }
 
-    var quitSequence = false;
-    function quit() {
-      var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
-        getService(Components.interfaces.nsIPromptService);
-
-      var ask = prefManager.getPref("chat.general.ask_to_quit");
-        if ((window.account.connection)&&(ask == true)) {
-          var check = {value: ask};
-          var result = promptSrv.confirmCheck(window, _("Quit prompt"), _("You are connected, do you really want to quit?"),
-                                  "Ask me again", check);
-          prefManager.setPref("chat.general.ask_to_quit", check.value);
-          if(result == false)
-            return;
-        }
-
-
-      quitSequence = true;
-
-      if (window.account.connection)
-        account.disconnect();
-
-      Components.classes['@mozilla.org/toolkit/app-startup;1'].
-        getService(Components.interfaces.nsIAppStartup).
-          quit(Components.interfaces.nsIAppStartup.eAttemptQuit);
-    }
-
     function connect() {
       account.setUserAndPass(document.getElementById("login-user").value,
         document.getElementById("login-pass").value,
         document.getElementById("login-savePass").checked);
       account.connect();
-    }
-
-    function disconnect() {
-      if (account.connection)
-        account.disconnect();
     }
 
     function _connect(event) {
@@ -385,74 +349,40 @@
       },
     }
 
-    function checkForUpdates() {
-      var um = Components.classes["@mozilla.org/updates/update-manager;1"].
-        getService(Components.interfaces.nsIUpdateManager);
-      var prompter = Components.classes["@mozilla.org/updates/update-prompt;1"].
-        createInstance(Components.interfaces.nsIUpdatePrompt);
-
-      if (um.activeUpdate && um.activeUpdate.state == "pending")
-        prompter.showUpdateDownloaded(um.activeUpdate);
-      else
-        prompter.checkForUpdates();
-    }
-
     function refineSearch(el) {
       setPresenceUpdater.rosterView.searchTerm = el.value;
     }
   ]]></script>
-
-  <comandset>
-    <command id="cmd_initateChat" key="key_initiateChat" oncommand="account.onInitiateChat()"/>
-    <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"/>
-    <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"/>
-    <command id="cmd_manageBookmarks" oncommand="account.onManageBookmarks()"/>
-    <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
-    <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
-    <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()"/>
-    <command id="cmd_presences_tab" key="key_presences_tab" oncommand="account.onShowPresences()"/>
-    <command id="cmd_adhoc" oncommand="account.onAdHocCommand()"/>
-    <command id="cmd_disconnect" oncommand="account.disconnect()"/>
-    <command id="cmd_quit" key="key_quit" oncommand="quit()"/>
-
-    <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()"/>
-    <command id="cmd_changePassword" oncommand="account.onChangePassword()"/>
-<!-- #ifndef XPI -->
-    <command id="cmd_addons" oncommand="window.openDialog('chrome://mozapps/content/extensions/extensions.xul');"/>
-<!-- #endif -->
-    <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
-
-    <command id="cmd_help" key="key_help" oncommand="openLink('http://www.process-one.net/en/oneteam/')"/>
-    <command id="cmd_bug" oncommand="openLink('https://support.process-one.net/browse/TEAM')"/>
-    <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
-<!-- #ifdef DEBUG -->
-    <command id="cmd_jsConsole" oncommand='window.openDialog("chrome://global/content/console.xul", "_blank","chrome,dialog=no,all", "")'/>
-    <command id="cmd_cmdConsole" oncommand='window.openDialogUniq("ot:command", "chrome://oneteam/content/command.xul", "chrome,dialog=no,all", "")'/>
-    <command id="cmd_cmdVenkman" oncommand='window.openDialogUniq("mozapp:venkman", "chrome://venkman/content/venkman.xul", "chrome,dialog=no,all", "")'/>
-    <command id="cmd_cmdDOMInspector" oncommand='window.openDialogUniq("mozapp:dominspector", "chrome://inspector/content/", "chrome,dialog=no,all", "")'/>
-<!-- #endif -->
-    <command id="cmd_chkUpdates" oncommand='checkForUpdates()'/>
-    <command id="cmd_about" oncommand="account.showAbout()"/>
-
+  <commandset>
     <command id="cmd_toggleShowOffline" key="key_toggleShowOffline" persist="checked"
-      oncommand="this.setAttribute('checked', setPresenceUpdater.rosterView.hideOffline =
-        !setPresenceUpdater.rosterView.hideOffline)"/>
+             oncommand="this.setAttribute('checked', setPresenceUpdater.rosterView.hideOffline =
+                        !setPresenceUpdater.rosterView.hideOffline)"/>
     <command id="cmd_toggleShowToolbar" checked="true"
-      oncommand="var c = this.getAttribute('checked') == 'true'; this.setAttribute('checked', !c);
-                 document.getElementById('actions-toolbar').collapsed = c"/>
-  </comandset>
+             oncommand="var c = this.getAttribute('checked') == 'true'; this.setAttribute('checked', !c);
+                        document.getElementById('actions-toolbar').collapsed = c"/>
+<!-- #ifdef XPI
+    <command id="cmd_closeWindow" oncommand="window.frameElement.ownerDocument.
+        defaultView.toggleSidebar('showOneteam')"/>
+//   #else -->
+    <command id="cmd_closeWindow" oncommand="window.close()"/>
+<!-- #endif -->
+  </commandset>
+
+  <group id="default-group"/>
+
+<!-- #ifndef XPI -->
+  <commandset id="menu_window_commands"/>
+  <commandset id="editMenuCommands"/>
 
   <keyset>
-<!-- #ifndef XPI -->
-    <key id="key_quit" modifiers="control" key="Q" command="cmd_quit"/>
-<!-- #endif -->
-<!-- #ifdef DEBUG -->
-    <key id="key_xmlConsole" modifiers="control" key="1" command="cmd_xmlConsole"/>
-    <key id="key_cmdConsole" modifiers="control" key="2" command="cmd_cmdConsole"/>
-    <key id="key_cmdVenkman" modifiers="control" key="3" command="cmd_cmdVenkman"/>
-    <key id="key_cmdDOMInspector" modifiers="control" key="4" command="cmd_cmdDOMInspector"/>
-<!-- #endif -->
+    <key id="key_closeWindow" key="w" modifiers="accel" command="cmd_closeWindow"/>
+    <key id="key_rosterSearch" key="f" modifiers="accel" oncommand="document.getElementById('search').focus()"/>
   </keyset>
+
+  <keyset id="extraKeys"/>
+  <keyset id="menu_window_keys"/>
+  <keyset id="editMenuKeys"/>
+<!-- #endif -->
 
   <toolbox id="main-toolbox" class="toolbox-top">
     <toolbarpalette id="main-toolbarpalette">
@@ -475,37 +405,17 @@
     <toolbar class="chromeclass-menubar" type="menubar">
       <toolbaritem>
         <menubar style="border: 0; padding: 0; margin:0; -moz-appearance:none">
-          <menu id="lagger-menu" label="_('_Actions')">
+          <menu id="menu-file">
             <menupopup id="file-popup">
-              <menuitem label="_('_Initiate Chat...')" command="cmd_initateChat" key="key_initiateChat"/>
-
-              <menuitem label="_('_Add Contact...')" command="cmd_addContact" key="key_addContact"/>
-
-              <menu label="_('Chat _Rooms')">
-                <menupopup>
-                  <menuitem label="_('Join Chat Room...')" command="cmd_joinRoom" key="key_joinRoom"/>
-                  <menuseparator/>
-                  <menuseparator id="conference-menu-separator" hidden="true"/>
-                  <menuitem label="_('_Manage Chat Rooms...')" command="cmd_manageBookmarks"/>
-                </menupopup>
-              </menu>
-              <menu label="_('_Gateways')" id="gateways-menu">
-                <menupopup/>
-              </menu>
-              <menuseparator/>
-              <menuitem id="disco-menuitem" label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
-              <menuitem label="_('_Server Commands...')" command="cmd_adhoc"/>
-              <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"/>
-              <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"/>
-              <menuseparator/>
-              <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
-  <!-- #ifndef XPI -->
-              <menuitem label="_('_Quit')" command="cmd_quit" key="key_quit"/>
-  <!-- #endif -->
+              <menuseparator id="close-menuseparator"/>
+              <menuitem label="_('Close')" command="cmd_closeWindow" key="key_closeWindow"/>
             </menupopup>
           </menu>
-          <menu id="configuration-menu" label="_('_View')">
-            <menupopup id="config-popup">
+<!-- #ifndef XPI -->
+          <menu id="menu_edit"/>
+<!-- #endif -->
+          <menu id="menu-view" label="_('_View')">
+            <menupopup id="view-popup">
               <menuitem label="_('Show _Actions Toolbar')" command="cmd_toggleShowToolbar"
                         type="checkbox"/>
               <menuseparator/>
@@ -513,35 +423,11 @@
                         type="checkbox"/>
             </menupopup>
           </menu>
-          <menu id="configuration-menu" label="_('_Config')">
-            <menupopup id="config-popup">
-              <menuitem label="_('_Edit personal info...')" command="cmd_ourVCard" key="key_ourVCard"/>
-              <menuitem label="_('_Change password...')" command="cmd_changePassword"/>
-              <menuseparator/>
-  <!-- #ifndef XPI -->
-              <menuitem label="_('Add-ons...')" command="cmd_addons"/>
-              <menuseparator/>
-  <!-- #endif -->
-              <menuitem label="_('_Preferences...')" command="cmd_prefs" key="key_prefs"/>
-            </menupopup>
-          </menu>
-          <menu id="help-menu" label="_('_Help')">
-            <menupopup id="help-popup">
-              <menuitem label="_('_Documentation')" command="cmd_help"/>
-              <menuitem label="_('_Report Bug')" command="cmd_bug"/>
-              <menuitem label="_('XML _Console...')" command="cmd_xmlConsole"/>
-  <!-- #ifdef DEBUG -->
-              <menuitem label="_('JavaScript Console...')" command="cmd_jsConsole"/>
-              <menuitem label="_('Commands Console...')" command="cmd_cmdConsole"/>
-  <!-- #endif -->
-  <!-- #ifndef XPI -->
-              <menuseparator/>
-              <menuitem label="_('Check for Updates...')" command="cmd_chkUpdates"/>
-  <!-- #endif -->
-              <menuseparator/>
-              <menuitem label="_('About...')" command="cmd_about"/>
-            </menupopup>
-          </menu>
+          <menu id="menu-account"/>
+<!-- #ifndef XPI -->
+          <menu id="menu_window"/>
+<!-- #endif -->
+          <menu id="menu-help"/>
         </menubar>
       </toolbaritem>
     </toolbar>
@@ -588,7 +474,7 @@
                   <description id="connection-state">_('Connecting')</description>
                 </hbox>
                 <vbox align="center">
-                  <button id="login-signoff" label="_('Stop Connecting')" oncommand="disconnect()"/>
+                  <button id="login-signoff" label="_('Stop Connecting')" oncommand="account.disconnect()"/>
                 </vbox>
               </vbox>
             </deck>
@@ -624,7 +510,7 @@
             </hbox>
           </vbox>
         </deck>
-        <textbox type="search" oncommand="refineSearch(this)"
+        <textbox id="search" type="search" oncommand="refineSearch(this)"
                  timeout="50" emptytext="_('Search')"/>
         <description id="extra-message" hidden="true"/>
         <vbox id="contacts-list" flex="1" persist="hideOffline"/>
@@ -635,7 +521,9 @@
       -->
     </hbox>
   </vbox>
+<!-- #ifndef XPI -->
   <otsystray id="systray" type="minimizer"/>
+<!-- #endif XPI -->
   <vbox id="hiddenContainer" collapsed="true">
     <html:iframe id="hiddenFrame"/>
   </vbox>

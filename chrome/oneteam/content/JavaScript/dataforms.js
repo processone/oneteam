@@ -256,7 +256,9 @@ function buildResponseDataFormFromXUL(element)
 
             var value = els[i][els[i]._value];
 
-            if (els[i]._transform == "split")
+            if (!("_transform" in els[i]))
+                field.* += <value>{value}</value>;
+            else if (els[i]._transform == "split")
                 for each (var line in value.split("\n"))
                     field.* += <value>{line}</value>;
             else if (els[i]._transform == "toBool")
@@ -267,8 +269,6 @@ function buildResponseDataFormFromXUL(element)
             else if (els[i]._transform == "flattenValues")
                 for each (var item in value)
                     field.* += <value>{item.value}</value>;
-            else
-                field.* += <value>{value}</value>;
 
             if (idx == null)
                 res.* += field;

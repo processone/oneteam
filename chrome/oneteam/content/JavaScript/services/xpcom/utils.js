@@ -21,7 +21,7 @@ function findCallerWindow()
 }
 
 function getHiddenWindowHandle() {
-    return openDialogUniq("ot:hiddenWindow", "chrome://oneteam/content/hiddenWindow.xul",
+    return openDialogUniq("ot:systrayHelper", "chrome://oneteam/content/systrayHelper.xul",
                           "chrome,dialog=no,popup,alwaysLowered")
 }
 

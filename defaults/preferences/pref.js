@@ -44,3 +44,4 @@ pref("chat.status.autoxa.time",10);
 pref("chat.status.autoxa.status", "");
 
 pref("oneteam.onlyJingleNodes", false);
+pref("extensions.oneteam.firstrun", true);
