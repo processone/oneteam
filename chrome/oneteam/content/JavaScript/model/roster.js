@@ -671,8 +671,8 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     PROP_VIEWS: {
         "avatar" : {
-            onStartWatching: function(_this, prop) {
-                _this.onAvatarChange();
+            onStartWatching: function(prop) {
+                this.onAvatarChange();
             }
         }
     },
