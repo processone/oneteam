@@ -24,7 +24,7 @@
     var room, server, nick, password, bookmark, bookmarkName, progressmeter, autoJoin;
 
     function onLoad() {
-      for each (i in "room server nick password bookmark bookmarkName progressmeter autoJoin".split(" "))
+      for each (var i in "room server nick password bookmark bookmarkName progressmeter autoJoin".split(" "))
         self[i] = document.getElementById(i);
 
       if (conference instanceof Conference) {
