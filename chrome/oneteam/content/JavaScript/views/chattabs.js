@@ -52,8 +52,9 @@ _DECL_(ChatPane).prototype = {
 
 function ChatTabsController() {
     this._chatPanes = [];
+    this.init();
 }
-_DECL_(ChatTabsController).prototype = {
+_DECL_(ChatTabsController, null, Model).prototype = {
     get tabCount() {
         return this._chatPanes.length;
     },
@@ -70,6 +71,7 @@ _DECL_(ChatTabsController).prototype = {
             if  (!this._chatWindow.closed) {
                 this._chatPanes.push(chatPane);
                 chatPane._attach(this._controller);
+                this.modelUpdated("_chatPanes", {added: [chatPane]});
                 return chatPane;
             }
             this._onChatWindowClosed();
@@ -114,6 +116,8 @@ _DECL_(ChatTabsController).prototype = {
         if (idx >= 0)
             this._chatPanes.splice(idx, 1);
 
+        this.modelUpdated("_chatPanes", {removed: [chatPane]});
+
         if (!this._chatPanes.length)
             this._chatWindow.close();
     },
@@ -122,6 +126,8 @@ _DECL_(ChatTabsController).prototype = {
         this._controller = this._chatWindow.document.getElementById("chats");
         for (var i = 0; i < this._chatPanes.length; i++)
             this._chatPanes[i]._attach(this._controller);
+
+        this.modelUpdated("_chatPanes", {added: this._chatPanes});
     },
 
     _onChatWindowClosed: function() {
@@ -130,9 +136,13 @@ _DECL_(ChatTabsController).prototype = {
         for (var i = 0; i < this._chatPanes.length; i++)
             this._chatPanes[i].close();
 
+        var cp = this._chatPanes;
+
         this._chatPanes = [];
         this._chatWindow = null;
         this._controller = null;
+
+        this.modelUpdated("_chatPanes", {removed: cp});
 
         this._inClose = false;
     }

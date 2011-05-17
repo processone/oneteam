@@ -1,6 +1,6 @@
 var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
-                        "linkEventsRedirector", "openDialogUniq", "openLink",
-                        "pickFile", "closeAllWindows", "StorageWrapper",
+                        "linkEventsRedirector", "openLink",
+                        "pickFile", "StorageWrapper",
                         "Callback", "CallbacksList", "RegistrationToken",
                         "Comparator", "NotificationsCanceler", "xmlEscape",
                         "unescapeJS", "generateRandomName", "generateUniqueId",
@@ -8,7 +8,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "enumerateMatchingProps", "report", "Animator",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
-                        "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
+                        "xmlUnescape", "getMimeTypeForFile",
                         "updateMenuList", "alertEx", "tooltip", "removeTooltip"];
 
 ML.importMod("roles.js");
@@ -90,30 +90,6 @@ function linkEventsRedirector(event)
     event.stopPropagation();
 
     openLink(event.target.href);
-}
-
-function openDialogUniq(type, url, flags)
-{
-    var win;
-
-    if (type)
-        win = getWindowWithType(type);
-
-    if (!win) {
-        var args = [url, "_blank"].concat(Array.slice(arguments, 2));
-        return window.openDialog.apply(window, args);
-    }
-
-    if (!/\balwaysLowered\b/.exec(flags))
-        win.focus();
-
-    return win;
-}
-
-function getWindowWithType(type) {
-    var wmediator = Components.classes["@mozilla.org/appshell/window-mediator;1"].
-        getService(Components.interfaces.nsIWindowMediator);
-    return wmediator.getMostRecentWindow(type);
 }
 
 function openLink(uri)
