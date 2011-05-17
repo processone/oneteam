@@ -278,9 +278,14 @@ function HistoryManager()
                 ORDER BY T.time ASC;
         </sql>.toString());
     this.getThreadMessagesStmt = this.db.createStatement(<sql>
-            SELECT J.jid, M.flags, body, body_html, nick, time, M.id, message_id,
+            SELECT J.jid, flags, body, body_html, nick, time, M.id, message_id,
                    replace_message_id FROM messages M, jids J
                 WHERE thread_id = ?1 AND jid_id = J.id AND time > ?2 ORDER BY time ASC;
+        </sql>.toString());
+    this.getLastMessageFromContactStmt = this.db.createStatement(<sql>
+            SELECT flags, body, body_html, nick, time, id, message_id
+                   replace_message_id FROM messages
+                WHERE jid_id = ?1 AND flags != 4 ORDER BY time DESC LIMIT 1;
         </sql>.toString());
     this.addReplyStmt = this.db.createStatement(<sql>
             INSERT INTO message_replies (id, replies_to)
@@ -335,10 +340,6 @@ function HistoryManager()
                 WHERE J.id = P.jid_id AND B.id = P.body_id AND P.jid_id = ?1 AND P.time > ?2
                 ORDER BY time ASC;
         </sql>.toString());
-    /*this.getLastMessageIdFromJid = this.db.createStatement(<sql>
-            SELECT message_id FROM messages
-                WHERE jid_id = ?1 ORDER BY time DESC LIMIT 1;
-        </sql>.toString());*/
 }
 
 _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
@@ -492,16 +493,31 @@ _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
         return this._registerCallback(info, token, "searches");
     },
 
+    getLastMessageFromContact: function(contact)
+    {
+        var stmt = this.getLastMessageFromContactStmt;
+        stmt.bindInt32Parameter(0, this._getJidId(contact.jid));
+        if (!stmt.executeStep())
+            return null;
+        var msg = new Message(stmt.getString(1), stmt.getString(2),
+                              contact, stmt.getInt32(0),
+                              new Date(stmt.getInt64(4)), null,
+                              null, null, stmt.getString(6));
+        stmt.reset();
+        return msg;
+    },
+
     addMessage: function(msg)
     {
-        var oldFormatEditMessage = !!oldFormatEditMessageRegex.test(msg);
+        var oldFormatEditMessage = !!oldFormatEditMessageRegex.test(msg.text);
         if (oldFormatEditMessage || msg.replaceMessageId) {
-            var lastMsg = this.getLastMessagesFromContact(msg.contact.contact, 1)[1][0];
-            if (!lastMsg
-                || (msg.replaceMessageId && lastMsg.messageId != msg.replaceMessageId)
-                || (oldFormatEditMessage && !convertOldFormatEditMessage(msg, lastMsg))
-            )
+            var lastMsg = this.getLastMessageFromContact(msg.contact);
+            if (msg.replaceMessageId && (!lastMsg || lastMsg.messageId != msg.replaceMessageId))
+                // an editMessage intended to edit a message which is not the last one from 
+                // the contact is simply ignored, and not stored
                 return;
+            if (oldFormatEditMessage && lastMsg)
+                tryToConvertOldFormatEditMessage(msg, lastMsg);
         }
 
         var archivedThread, idx = this._sessionThreads.indexOf(msg.thread);

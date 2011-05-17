@@ -751,42 +751,28 @@
 
           for (var i = 0; i < msgs.length; i++) {
             var msg = msgs[i].clone();
+            var animRequired = false;
 
-            var lastMsg = msg.nick in this._lastNickMessage ? this._lastNickMessage[msg.nick] : null;
-            var match, animRequired = false;
+            if (!afterMsg) {
+              var lastMsg = this._lastNickMessage[msg.nick];
+              if (msg.replaceMessageId && (!lastMsg || msg.replaceMessageId != lastMsg.messageId))
+                continue; // an invalid editMessage (i.e. with invalid replaceMessageId) is ignored
 
-            if (!afterMsg && !!lastMsg)
-              convertOldFormatEditMessage(msg, lastMsg);
+              tryToConvertOldFormatEditMessage(msg, lastMsg);
 
-            /*if (!afterMsg
-                && (match = msg.text.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/))
-                && lastMsg && lastMsg.text.indexOf(match[1]) != -1
-            ) {
-              msg.isOldFormatEditMessage = true;
-              var matchHtml = msg.html.match(/^s\/([^\/]*)\/([^\/]*)\/\s*$/);
-              msg.text = lastMsg.text.replace(match[1]    , match[2]    );
-              msg.html = lastMsg.html.replace(matchHtml[1], matchHtml[2]);
-            }*/
-
-            if (!afterMsg && (msg.replaceMessageId || msg.isOldFormatEditMessage)) {
-              if ((msg.replaceMessageId == lastMsg.messageId) || msg.isOldFormatEditMessage) {
+              if (msg.replaceMessageId) {
                 msg.editCounter = lastMsg.editCounter ? lastMsg.editCounter+1 : 1;
 
                 if (msg.editCounter <= 3) {
                   lastMsg.editMessage = msg;
                   animRequired = !msg.archived;
                   msg = lastMsg;
-                } else {
-                  msg.isOriginalMessage = true;
-                  msg.editCounter = 0;
-                  //the 4th edition of a message is displayed as a normal message,
-                  // for compatibility with other clients which allow more than 3 edits
-                }
-              } // an invalid editMessage (i.e. with invalid replaceMessageId) is ignored
-            } else
-              msg.isOriginalMessage = true;
+                } else
+                  msg.editCounter = 0; // 4th edition of a message displayed as an original message
+              }
+            }
 
-            if (msg.isOriginalMessage && !msg.msgEl) {
+            if (!msg.editCounter && !msg.msgEl) {
               var msgEl = doc.createElement("div");
               msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
               msgEl.setAttribute("not-seen", "true");
@@ -940,7 +926,7 @@
               this._msgElList.push(msgEl);
             }
 
-            if (msg.isOriginalMessage && msg.editMessage) {
+            if (!msg.editCounter && msg.editMessage) {
               var body = msg.msgEl.lastChild;
               if (!msg.msgEl.displayEditButton) {
                 msg.msgEl.displayEditButton = displayEditButton(body, msg, this._output);
@@ -994,7 +980,7 @@
             this.parentNode.parentNode.parentNode.parentNode.sthgToEdit =
               this._input.lastMessage
               && !this._input.lastMessage.isOldFormatEditMessage
-              && (this._input.lastMessage.isOriginalMessage
+              && (!this._input.lastMessage.editCounter
                   || this._input.lastMessage.editCounter < 3);
 
           if (afterMsg) {
@@ -1759,7 +1745,7 @@
               chatpane.sthgToEdit =
                 this.lastMessage
                 && !this.lastMessage.isOldFormatEditMessage
-                && (this.lastMessage.isOriginalMessage || this.lastMessage.editCounter < 3);
+                && (!this.lastMessage.editCounter || this.lastMessage.editCounter < 3);
               break;
             }
           }

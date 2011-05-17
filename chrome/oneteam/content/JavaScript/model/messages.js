@@ -1127,6 +1127,13 @@ _DECL_(Message).prototype =
         var F = function() {};
         F.prototype = this;
         return new F();
+    },
+
+    setContent: function(text, html)
+    {
+        this._text = text;
+        this._rawHtml = html;
+        this._processHtml();
     }
 }
 
