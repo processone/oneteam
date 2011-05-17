@@ -851,6 +851,7 @@
               e.setAttribute("class", "body");
               msg.contentNode = doc.createElement("div");
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
+              tooltipLinks(msg.contentNode, this._output);
               e.appendChild(msg.contentNode);
 
               msgEl.appendChild(e);
@@ -944,6 +945,7 @@
               msg = msg.editMessage;
               msg.contentNode = doc.createElement("div");
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
+              tooltipLinks(msg.contentNode, this._output);
             } // now, msg is the last edit message, or the original message if not edited
             if (msg.msgEl.displayEditButton)
               msg.msgEl.displayEditButton.reload(msg);

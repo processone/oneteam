@@ -9,7 +9,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
                         "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
-                        "updateMenuList", "alertEx", "tooltip", "removeTooltip"];
+                        "updateMenuList", "alertEx", "tooltip", "removeTooltip",
+                        "tooltipLinks"];
 
 ML.importMod("roles.js");
 
@@ -1366,30 +1367,41 @@ function alertEx(title, text) {
 }
 
 function tooltip(htmlNode, xulNode, text) {
-  /* this is to remedy the fact that in html elements embedded in xul, neither the
-     html attribute 'title', nor the xul attributes 'tooltip' and 'tooltiptext' work.
-     The solution consists in changing the attribute 'tooltiptext' of xulNode, which
-     is logically an ancestor of htmlNode, when hovering or leaving htmlNode */
+    /* this is to remedy the fact that in html elements embedded in xul, neither the
+       html attribute 'title', nor the xul attributes 'tooltip' and 'tooltiptext' work.
+       The solution consists in changing the attribute 'tooltiptext' of xulNode, which
+       is logically an ancestor of htmlNode, when hovering or leaving htmlNode */
 
-  removeTooltip(htmlNode);
+    removeTooltip(htmlNode);
 
-  htmlNode.xulNode = xulNode;
-  htmlNode.tooltiptext = text;
-  htmlNode.mouseover = function() {
-    xulNode.setAttribute("tooltiptext", text);
-  }
-  htmlNode.mouseout = function() {
-    if (xulNode.getAttribute("tooltiptext") == text)
-      xulNode.removeAttribute("tooltiptext");
-  }
-  htmlNode.addEventListener("mouseover", htmlNode.mouseover, true);
-  htmlNode.addEventListener("mouseout", htmlNode.mouseout, true);
+    htmlNode.xulNode = xulNode;
+    htmlNode.tooltiptext = text;
+    htmlNode.mouseover = function() {
+        xulNode.setAttribute("tooltiptext", text);
+    }
+    htmlNode.mouseout = function() {
+        if (xulNode.getAttribute("tooltiptext") == text)
+            xulNode.removeAttribute("tooltiptext");
+    }
+    htmlNode.addEventListener("mouseover", htmlNode.mouseover, true);
+    htmlNode.addEventListener("mouseout", htmlNode.mouseout, true);
 }
 
 function removeTooltip(htmlNode) {
-  htmlNode.removeEventListener("mouseover", htmlNode.mouseover, true);
-  htmlNode.removeEventListener("mouseout", htmlNode.mouseout, true);
-  if (htmlNode.xulNode &&
-      htmlNode.xulNode.getAttribute("tooltiptext") == htmlNode.tooltiptext)
-    htmlNode.xulNode.removeAttribute("tooltiptext");
+    htmlNode.removeEventListener("mouseover", htmlNode.mouseover, true);
+    htmlNode.removeEventListener("mouseout", htmlNode.mouseout, true);
+    if (htmlNode.xulNode &&
+            htmlNode.xulNode.getAttribute("tooltiptext") == htmlNode.tooltiptext)
+        htmlNode.xulNode.removeAttribute("tooltiptext");
+}
+
+function tooltipLinks(htmlNode, xulNode) {
+    var iterator = document.createNodeIterator(htmlNode, 1, {
+        acceptNode: function(node) {
+            return node.tagName.toUpperCase() == "A" && node.getAttribute("href") ? 1 : 0;
+        }
+    }, true);
+    var n;
+    while ((n = iterator.nextNode()))
+        tooltip(n, xulNode, n.getAttribute("href"));
 }

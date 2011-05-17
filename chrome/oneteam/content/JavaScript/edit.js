@@ -1,6 +1,8 @@
 var EXPORTED_SYMBOLS = ["displayEditButton", "oldFormatEditMessageRegex",
                         "tryToConvertOldFormatEditMessage"];
 
+ML.importMod("utils.js");
+
 
 function highlightDiff (node1, node2) {
   /* find out the text differences between nodes node1 and node2,
