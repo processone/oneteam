@@ -191,9 +191,9 @@
         <![CDATA[
           this._container = document.getAnonymousElementByAttribute(this, "id", "container")
 
-          for (var key in account.cache.iterator("avatar-", true)) {
-            this.addAvatar(account.cache.getValue(key, true), key.slice(7));
-          }
+          for (var key in account.cache.iterator("avatar-", true))
+            if (!/-.*-/.exec(key))
+              this.addAvatar(account.cache.getValue(key, true), key.slice(7));
          ]]>
       </constructor>
 

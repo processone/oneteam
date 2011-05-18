@@ -39,7 +39,7 @@
 
         default xml namespace = ns;
         if (mimeType)
-          return <><TYPE>{{mimeType}</TYPE><BINVAL>{btoa(avatarData)}</BINVAL></>;
+          return <><TYPE>{mimeType}</TYPE><BINVAL>{btoa(avatarData)}</BINVAL></>;
         else
           return <><BINVAL>{btoa(avatarData)}</BINVAL></>;
       } else {
