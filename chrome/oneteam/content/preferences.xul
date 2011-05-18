@@ -205,8 +205,10 @@
     <checkbox label="_('Play sounds')" preference="sounds"/>
     <checkbox label="_('Notify about other clients with higher priority')"
               preference="bumppriority"/>
+    <!-- #ifndef XPI -->
     <checkbox label="_('Ask to quit')"
               preference="ask_to_quit"/>
+    <!-- #endif -->
     <checkbox label="_('Show icon in system tray')"
               preference="systray"/>
     <!-- #ifndef XPI -->

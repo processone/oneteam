@@ -364,7 +364,7 @@ msgstr "Adresse"
 #: ../chrome/oneteam/content/vcardEdit.xul:345
 #: ../chrome/oneteam/content/vcardEdit.xul:406
 msgid "Street"
-msgstr "Rue"
+msgstr "Numéro, Voie"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:347
 #: ../chrome/oneteam/content/vcardEdit.xul:408
