@@ -74,6 +74,7 @@ my $locale_processor =
 
 my @filters = (
     new OneTeam::Builder::Filter::Preprocessor(%defs),
+    $locale_processor,
     new OneTeam::Builder::Filter::CommentsStripper(),
     $saver);
 
