@@ -65,13 +65,24 @@ function highlightDiff (node1, node2) {
            b2: idem for a2
          }
        */
+
+      function zero(n) {
+        //return a string of length n containing only 0
+        if (n<=20)
+          return (0).toFixed(n).substr(2);
+        else {
+          var s = zero(n >>> 1);
+          return s + s + (n & 1 ? "0" : "");
+        }
+      }
+
       if (memo[x] == undefined)
         memo[x] = [];
       if (memo[x][y] == undefined) {
         if (x == 0)
-          memo[x][y] = { b1: "", b2: (0).toFixed(y).substr(2), w: 0 }
+          memo[x][y] = { b1: "", b2: zero(y), w: 0 }
         else if (y == 0)
-          memo[x][y] = { b1: (0).toFixed(x).substr(2), b2: "", w: 0 }
+          memo[x][y] = { b1: zero(x), b2: "", w: 0 }
         else if (a1[x-1] == a2[y-1]) {
           var m = lcs(x-1, y-1);
           memo[x][y] = { b1: m.b1 + "1", b2: m.b2 + "1", w:  m.w  + 1 };
@@ -124,11 +135,13 @@ function highlightDiff (node1, node2) {
     }
   }
 
+try {
   _removeEditSpans(node1);
   _removeEditSpans(node2);
   var diff = _diff(_split(node1), _split(node2));
   _unsplit(node1, diff.b1);
   _unsplit(node2, diff.b2);
+} catch (ex) {dump(ex);}
 }
 
 
