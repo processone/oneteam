@@ -101,6 +101,10 @@ tabpanels {
 /*  -moz-appearance: none;*/
 }
 
+#setPresence-type-chooser .menu-iconic-left {
+  visibility: visible;
+}
+
 #setPresence-type-chooser:hover {
 /*  -moz-appearance: menulist*/
 }
