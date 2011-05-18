@@ -491,7 +491,7 @@
                           oncommand="setPresenceUpdater.onCommand()">
                   <menupopup>
                     <menuitem id="setPresence-type-available" label="_('Available')"
-                        selected="true" value="available" class="menuitem-iconic"/>
+                        selected="true" value="available" class="menuitem-iconic-noaccel"/>
                     <menuitem id="setPresence-type-chat" label="_('Available for chat')"
                         value="chat" class="menuitem-iconic-noaccel"/>
                     <menuitem id="setPresence-type-dnd" label="_('Busy')"
