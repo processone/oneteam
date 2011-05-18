@@ -3,8 +3,8 @@ use Exporter;
 
 sub import {
     my @pkgs = map {"OneTeam::Builder::$_"} "Utils", "Filter",
-        map { "Filter::$_"} qw(DialogSizeProcessor LocaleProcessor PathConverter
-            Preprocessor Saver Saver::WebDir Saver::WebJar Saver::XulApp
+        map { "Filter::$_"} qw(LocaleProcessor
+            Preprocessor Saver Saver::XulApp
             CommentsStripper Saver::XPI Saver::Dmg Saver::XPI Saver::TarBz );
 
     eval("package ".scalar(caller()).";".(join "", map "use $_;", @pkgs));

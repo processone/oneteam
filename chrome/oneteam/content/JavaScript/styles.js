@@ -130,19 +130,11 @@ _DECL_(StylesRegistry, null, Model).prototype =
         var iconDefData = "";
 
         try {
-// #ifdef XULAPP
             var reader = new Reader(url+"/icondef.xml");
             reader.open();
             iconDefData = reader.read();
             reader.close();
-/* #else
-            url = url.replace(/^(\.\.\/)*content/,
-                            location.href.replace(/\/content\/.*$/,"/content"));
-            var xhr = new XMLHttpRequest()
-            xhr.open("GET", url+"/icondef.xml", false);
-            xhr.send("");
-            iconDefData = xhr.responseText;
-// #endif */
+
             iconDefData = iconDefData.replace(/<\?xml.*\?>/, "");
             iconDefData = new XML(iconDefData);
         } catch (ex) { return }

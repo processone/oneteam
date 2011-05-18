@@ -3,7 +3,6 @@ var EXPORTED_SYMBOLS = ["PersistentCache"];
 ML.importMod("roles.js");
 ML.importMod("file.js");
 
-// #ifdef XULAPP
 function PersistentCache(name)
 {
     var file = Components.classes["@mozilla.org/file/directory_service;1"].
@@ -244,77 +243,3 @@ _DECL_(StorageFunctionDelete).prototype =
         f.remove();
     }
 }
-/* #else
-function PersistentCache(name)
-{
-    this.storage = new StorageWrapper("cache");
-
-    var keysToDel = [];
-    for (var key in this.storage)
-        if (key.indexOf("expiration:") == 0)
-            if (this.storage.get(key) < Date.now())
-                keysToDel.push(key.substr("expiration:".length));
-
-    for (var i = 0; i < keysToDel.length; i++)
-        this.removeValue(keysToDel[i]);
-}
-
-_DECL_(PersistentCache).prototype =
-{
-    setValue: function(key, value, expirationDate, storeAsFile)
-    {
-        this.storage.set("value:"+key, value);
-        if (expirationDate)
-            this.storage.set("expiration:"+key, expirationDate.getTime());
-        return value;
-    },
-
-    getValue: function(key, asFile)
-    {
-        var data = this.storage.get("value:"+key);
-        if (data != null && asFile)
-            return "data:image/png;base64,"+btoa(data);
-        return data;
-    },
-
-    removeValue: function(key)
-    {
-        this.storage.delete("value:"+key);
-        this.storage.delete("expiration:"+key);
-    },
-
-    bumpExpirationDate: function(key, expirationDate)
-    {
-        if (this.getValue(key) != null)
-            this.storage.set("expiration:"+key, expirationDate.getTime());
-    },
-
-    clear: function()
-    {
-        var keys = [i for (i in this.storage)]
-        for (var i = 0; i < keys.length; i++)
-            this.storage.delete(keys[i]);
-    },
-
-    iterator: function(prefix, asFile)
-    {
-        return {
-            prefix: "value:"+prefix,
-            storage: this.storage,
-            asFile: asFile,
-
-            __iterator__: function(onlyKeys) {
-                if (onlyKeys) {
-                    for (var key in this.storage)
-                        if (key.indexOf(this.prefix) == 0)
-                            yield (key.slice(6));
-                } else
-                    for (var [key, val] in this.storage)
-                        if (key.indexOf(this.prefix) == 0)
-                            yield ([key.slice(6), this.asFile ?
-                                "data:image/png;base64,"+btoa(val) : val]);
-            }
-        };
-    }
-}
-// #endif */

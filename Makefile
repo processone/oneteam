@@ -18,15 +18,6 @@ xpi:
 xpidbg:
 	perl build.pl XPI 1 DEBUG 1
 
-webjar:
-	perl build.pl
-
-webjardbg:
-	perl build.pl DEBUG 1
-
-webdir:
-	perl build.pl NOJAR 1 DEBUG 1
-
 watch:
 	perl tools/autoup.pl
 

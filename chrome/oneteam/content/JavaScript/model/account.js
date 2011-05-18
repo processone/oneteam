@@ -639,16 +639,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         var base = this.connectionInfo.base.replace(/^\//, "").replace(/\/$/, "");
 
-// #ifdef XULAPP
         var domain = host;
         var httpbase = (this.connectionInfo.type == "https-bind" ? "https://" : "http://")+
             host+":"+this.connectionInfo.port+"/"+base+"/";
-/* #else
-        var domain = this.connectionInfo.domain || this.connectionInfo.host ||
-            document.location.toString().replace(/(?:jar:)?\w+:\/\/([^:\/]+).*$/, "$1");
-        var httpbase = document.location.toString().
-            replace(/(?:jar:)?(\w+:\/\/[^:\/]+(?::\d+)?\/).*$/, "$1")+base+"/";
-// #endif */
+
         var args = {
             httpbase: httpbase,
             oDbg: {log: function(a) {
@@ -659,11 +653,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             timerval: 2000};
 
         switch (this.connectionInfo.type) {
-// #ifdef XULAPP
             case "native":
                 account.connection = new JSJaCMozillaConnection(args);
                 break;
-// #endif
             case "http-bind":
             case "https-bind":
                 account.connection = new JSJaCHttpBindingConnection(args);
@@ -807,7 +799,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                                      function(account, items, item) {
                                         account.getOrCreateContact(item._discoCacheEntry.jid);
                                      });
-// #ifdef XULAPP
         this.getDiscoItemsByCategory("proxy", "bytestreams", false,
             function(account, items, item) {
                socks5Service.registerProxy(item._discoCacheEntry.jid);
@@ -816,12 +807,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             function(account, items, item) {
                jingleNodesService.askForServices(item._discoCacheEntry.jid);
             });
-/* #else
-        this.getDiscoItemsByFeature("http://oneteam.im/bs-proxy", false,
-                                     function(account, items, item) {
-                                        socks5Service.registerProxy(item._discoCacheEntry.jid);
-                                     });
-// #endif */
+
         // Enable auto archiving
         this.hasDiscoFeature("http://www.xmpp.org/extensions/xep-0136.html#ns", false,
                              function (account, value) {

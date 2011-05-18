@@ -929,27 +929,17 @@ function report(to, level, info, context)
                 msg += "E CONTEXT:\n";
                 msg += inspect(context);
             }
-// #ifdef XULAPP
             dump(msg);
             logExceptionInConsole(info);
-/* #else
-// #ifdef DEBUG
-            alert(msg);
-// #endif
-// #endif */
             break;
         default:
-// #ifdef XULAPP
             dump(dumpStack());
-// #endif
             throw new Error("Error while trying to report error, unrecognized level: " + level);
         }
 
         break;
     default:
-// #ifdef XULAPP
         dump(dumpStack());
-// #endif
         throw new Error("Error while trying to reporting error, unrecognized receiver type: " + to);
     }
 }

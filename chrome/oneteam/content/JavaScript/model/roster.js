@@ -887,13 +887,9 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
     onSendFile: function()
     {
-// #ifdef XULAPP
         var path = pickFile(_("Select a File"), false);
         if (path)
             this.sendFile(path);
-/* #else
-        this.sendFile();
-// #endif */
     },
 
     sendFile: function(path)

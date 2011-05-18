@@ -57,20 +57,6 @@ sub analyze {
     return $content;
 }
 
-package OneTeam::Builder::Filter::LocaleProcessor::Web;
-
-our @ISA;
-push @ISA, 'OneTeam::Builder::Filter::LocaleProcessor';
-
-sub process {
-    my ($self, $content, $file, $locale) = @_;
-
-    return $self->{files}->{$file}->translate($self->{po_files}->{$locale})
-        if exists $self->{files}->{$file};
-
-    return $content;
-}
-
 package OneTeam::Builder::Filter::LocaleProcessor::XulApp;
 use File::Spec::Functions qw(catfile);
 

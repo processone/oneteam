@@ -73,11 +73,9 @@
     var regToken = new RegistrationToken();
 
     function onLoad() {
-// #ifdef XULAPP
       searchThreads = new HistoryTreeView(document.getElementById("search-threads"), true);
       searchMessages = document.getElementById("search-view");
       searchMessages.scrollToBottom = false;
-// #endif
 
       contactsList = new ContactsListView(document.getElementById("contacts-list"),
                                           account.historyMgr, "contacts",
@@ -165,14 +163,11 @@
 
   <tabbox flex="1">
     <tabs id="tabs">
-<!-- #ifdef XULAPP -->
       <tab value="search" label="_('Search')"/>
-<!-- #endif -->
       <tab value="chats" label="_('Chats')"/>
       <tab value="conferences" label="_('Chat Rooms')"/>
     </tabs>
     <tabpanels flex="1">
-<!-- #ifdef XULAPP -->
       <tabpanel>
         <vbox flex="1">
           <vbox id="search-container">
@@ -193,7 +188,6 @@
           <chatpane-view id="search-view" flex="1"/>
         </vbox>
       </tabpanel>
-<!-- #endif -->
       <tabpanel>
         <hbox flex="1">
           <richlistbox id="contacts-list" width="250" persist="width" class="conference-view"

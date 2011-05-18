@@ -429,25 +429,10 @@
             <caption label="_('Avatar')"/>
             <avatarlist id="avatarList" flex="1"/>
           </groupbox>
-<!-- #ifdef XULAPP -->
           <hbox>
             <spacer flex="1"/>
             <button label="_('Add image...')" oncommand="addImage()"/>
           </hbox>
-<!-- #else
-          <hbox>
-            <spacer flex="1"/>
-            <html:form id="avatarUploadForm" method="post"
-                       enctype="multipart/form-data" onsubmit="submitAvatar(this)"
-                       target="avatarIframe">
-              <html:input id="avatarFile" type="file" name="avatar" flex="1" onchange="avatarSelected(this)"/>
-              <html:input id="avatarSubmit" type="submit" value="_('Add image...')"/>
-            </html:form>
-            <html:iframe id="avatarIframe" style="visibility: collapse"
-                         onload="avatarSubmited(this)"/>
-          </hbox>
-          <progressmeter mode="undetermined" hidden="true"/>
-// #endif -->
         </tabpanel>
       </tabpanels>
     </tabbox>

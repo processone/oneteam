@@ -64,32 +64,17 @@ my $saver =
         exists $defs{NOJAR} ?
             new OneTeam::Builder::Filter::Saver::XulApp::Flat($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
             new OneTeam::Builder::Filter::Saver::XulApp($topdir, \&get_version_str, \&get_buildid, \%mar_options) :
-    exists $defs{XPI} ?
         new OneTeam::Builder::Filter::Saver::XPI($topdir, \&get_version_str, \&get_buildid,
-                                                 $defs{UPDATE_URL}, $defs{XPI_URL}) :
-        exists $defs{NOJAR} ?
-            new OneTeam::Builder::Filter::Saver::WebDir($topdir, \&get_version_str, \&get_buildid) :
-            new OneTeam::Builder::Filter::Saver::WebJar($topdir, \&get_version_str, \&get_buildid);
+                                                 $defs{UPDATE_URL}, $defs{XPI_URL});
 
 $defs{XULAPP} = 1 if exists $defs{XPI} or exists $defs{DMG};
 
-my $locale_processor = exists $defs{XULAPP} ?
-    new OneTeam::Builder::Filter::LocaleProcessor::XulApp($saver, split /,/, ($defs{LANGS}||"")) :
-    new OneTeam::Builder::Filter::LocaleProcessor::Web($saver, split /,/, ($defs{LANGS}||""));
+my $locale_processor =
+    new OneTeam::Builder::Filter::LocaleProcessor::XulApp($saver, split /,/, ($defs{LANGS}||""));
 
-my @filters = (exists $defs{XULAPP} ?
-    (
-        new OneTeam::Builder::Filter::Preprocessor(%defs),
-        $locale_processor,
-        new OneTeam::Builder::Filter::CommentsStripper(),
-    ):
-    (
-        new OneTeam::Builder::Filter::Preprocessor(%defs),
-        $locale_processor,
-        new OneTeam::Builder::Filter::PathConverter::Web(),
-        new OneTeam::Builder::Filter::DialogSizeProcessor(),
-        new OneTeam::Builder::Filter::CommentsStripper(),
-    ),
+my @filters = (
+    new OneTeam::Builder::Filter::Preprocessor(%defs),
+    new OneTeam::Builder::Filter::CommentsStripper(),
     $saver);
 
 my @locales = $locale_processor->locales;

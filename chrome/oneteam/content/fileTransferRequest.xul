@@ -42,7 +42,6 @@
 
     function acceptFileTransfer()
     {
-//#ifdef XULAPP
       var path = pickFile(_("Select a File"), true, "", fileName, window);
       if (path) {
         fileTransfer.accept(path);
@@ -50,10 +49,6 @@
       }
 
       return false;
-/* #else
-      fileTransfer.accept();
-      return true;
-// #endif */
     }
 
     function rejectFileTransfer()

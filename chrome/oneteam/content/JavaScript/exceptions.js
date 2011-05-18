@@ -55,7 +55,6 @@ function exceptionToString(exc, indent)
     indent = indent || "";
 
     if (exc) {
-// #ifdef XULAPP
         if (exc instanceof Components.interfaces.nsIException) {
             msg = indent+"Exception '"+exc.message+"' - "+
             exc.result+"("+exc.name+") thrown at " +
@@ -68,9 +67,6 @@ function exceptionToString(exc, indent)
             return msg+indent+"Stacktrace:\n"+
                 dumpStack(exc.location, indent+"   ");
         } else if (exc instanceof Error || exc.stack) {
-/* #else
-        if (exc instanceof Error || exc.stack) {
-// #endif */
             msg = indent+"Exception '"+exc.message+"' thrown at " +
             exc.fileName+":"+exc.lineNumber +"\n";
 
@@ -101,7 +97,6 @@ function exceptionToString(exc, indent)
 
 function logExceptionInConsole(exc)
 {
-// #ifdef XULAPP
     var cs = Components.classes["@mozilla.org/consoleservice;1"].
         getService(Components.interfaces.nsIConsoleService);
     var se = Components.classes["@mozilla.org/scripterror;1"].
@@ -112,7 +107,6 @@ function logExceptionInConsole(exc)
 
     se.init(msg, file, null, line, 0, 0, "component");
     cs.logMessage(se);
-// #endif
 }
 
 function TRACE(_this, args) {
@@ -145,9 +139,8 @@ function TRACE(_this, args) {
 Error.prototype.toString = function() {
     return exceptionToString(this, "");
 }
-// #ifdef XULAPP
+
 Components.interfaces.nsIException.toString = Error.prototype.toString;
-// #endif
 
 /**
  * Base class for all exception classes.
@@ -169,7 +162,6 @@ Components.interfaces.nsIException.toString = Error.prototype.toString;
  */
 function GenericError(message, reason) {
     var exc;
-// #ifdef XULAPP
     var stack = Components.stack.caller;
     var fun = arguments.callee;
 
@@ -192,9 +184,7 @@ function GenericError(message, reason) {
     exc = new Error(message,
             stack.filename,
             stack.lineNumber);
-/* #else
-    exc = new Error(message);
-// #endif */
+
     exc.__proto__ = this.__proto__;
 
     if (reason)
