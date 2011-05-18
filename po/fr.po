@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
 "POT-Creation-Date: 2011-05-18 16:29+0200\n"
-"PO-Revision-Date: 2011-05-18 16:58+0100\n"
+"PO-Revision-Date: 2011-05-18 19:22+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
 "Language: \n"
@@ -466,7 +466,7 @@ msgstr "_Affichage"
 
 #: ../chrome/oneteam/content/main.xul:419
 msgid "Show _Actions Toolbar"
-msgstr "Afficher la barre d'outils _Actions"
+msgstr "Afficher la barre d'outils"
 
 #: ../chrome/oneteam/content/main.xul:422
 msgid "Hide _Offline Contacts"
@@ -474,7 +474,7 @@ msgstr "Cacher les contacts _déconnectés"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:56
 msgid "_Edit personal info..."
-msgstr "_Éditer les infos personnelles..."
+msgstr "Ma carte de visite..."
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:57
 msgid "_Change password..."
@@ -1117,7 +1117,7 @@ msgstr "Découverte des services"
 #: ../chrome/oneteam/content/preferences.xul:17
 #: ../chrome/oneteam/content/vcard.xul:15
 msgid "Close"
-msgstr "Fermer"
+msgstr "Cacher cette fenêtre"
 
 #: ../chrome/oneteam/content/disco.xul:25
 msgid "Server"
@@ -2386,15 +2386,15 @@ msgstr "Vérification d'orthographe"
 
 #: ../chrome/oneteam/content/preferences.xul:216
 msgid "Offer updates from channel:"
-msgstr ""
+msgstr "Mises à jour"
 
 #: ../chrome/oneteam/content/preferences.xul:219
 msgid "Releases"
-msgstr "Versions publiées"
+msgstr "Versions majeures"
 
 #: ../chrome/oneteam/content/preferences.xul:220
 msgid "Test"
-msgstr "Test"
+msgstr "Versions de test"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:27
 msgid "_Initiate Chat..."
@@ -2419,7 +2419,7 @@ msgstr "{0}..."
 
 #: ../chrome/oneteam/content/JavaScript/menu.js:242
 msgid "Users search..."
-msgstr ""
+msgstr "Recherche de contacts..."
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:25
 msgid "_File"
@@ -2431,7 +2431,7 @@ msgstr "Quitter {0}"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:54
 msgid "_Account"
-msgstr ""
+msgstr "Compte"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:59
 msgid "_Search Users"
@@ -2439,7 +2439,7 @@ msgstr "Recherche de contacts"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:62
 msgid "_Search Users..."
-msgstr ""
+msgstr "Rechercher des contacts..."
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:73
 msgid "_Options..."
