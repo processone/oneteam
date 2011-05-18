@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
 "POT-Creation-Date: 2011-05-16 10:44+0200\n"
-"PO-Revision-Date: 2010-09-15 10:56+0100\n"
+"PO-Revision-Date: 2011-05-18 16:27+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
 "Language: \n"
@@ -620,12 +620,20 @@ msgid "New Room"
 msgstr "Nouveau salon"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:118
-msgid "Entered informations are invalid.\\nDo you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
-msgstr "Les informations saisies sont incorrectes.\\nSouhaitez-vous oublier les informations saisies et restaurer les valeurs précédentes (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
+msgstr ""
+"Les informations saisies sont incorrectes.\\n"
+"Souhaitez-vous oublier les informations saisies et restaurer les valeurs précédentes (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:119
-msgid "Entered informations are invalid.\\nDo you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
-msgstr "Les informations saisies sont incorrectes.\\nSouhaitez-vous oublier ce marque-page (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
+msgstr ""
+"Les informations saisies sont incorrectes.\\n"
+"Souhaitez-vous oublier ce marque-page (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:165
 msgid "New"
@@ -1959,32 +1967,26 @@ msgstr "Ceci est la première version du message"
 
 #: ../chrome/oneteam/content/search.xul:220
 #: ../chrome/oneteam/content/subscribe.xul:69
-#, fuzzy
 msgid "Show Contact Details"
 msgstr "Infos sur ce contact"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:40
-#, fuzzy
 msgid "Another client is active on your account. Because it has higher priority that OneTeam Desktop, messages usually will be routed to that other client."
 msgstr "Un autre client est actif sur votre compte. Parcequ'il a une priorité plus élevée, les messages seront sans doute routés vers ce client."
 
 #: ../chrome/oneteam/content/bumpPriority.xul:43
-#, fuzzy
 msgid "Do you want to increase OneTeam Desktop priority to make it your main client?"
-msgstr "Souhaitez-vous élever la priorité pour en faire votre client principal ?"
+msgstr "Souhaitez-vous élever la priorité de OneTeam Desktop pour en faire votre client principal ?"
 
 #: ../chrome/oneteam/content/bumpPriority.xul:44
-#, fuzzy
 msgid "Ask me next time."
 msgstr "Me demander la prochaine fois."
 
 #: ../chrome/oneteam/content/main.xul:463
-#, fuzzy
 msgid "Presences archive"
 msgstr "Historique des présences"
 
 #: ../chrome/oneteam/content/preferences.xul:210
-#, fuzzy
 msgid "Show icon in system tray"
 msgstr "Afficher l'icône dans la zone de notification"
 
@@ -1993,9 +1995,8 @@ msgid "This is not valid hostname"
 msgstr "Nom de domaine incorrect"
 
 #: ../chrome/oneteam/content/preferences.xul:256
-#, fuzzy
 msgid "Resource can not be empty"
-msgstr "La ressource ne peut être vide"
+msgstr "La ressource ne peut pas être vide"
 
 #: ../chrome/oneteam/content/preferences.xul:274
 msgid "Old Style SSL Encryption"
@@ -2003,9 +2004,8 @@ msgstr "Chiffrement SSL ancien format"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:412
 #: ../chrome/oneteam/content/jingleCall.xul:42
-#, fuzzy
 msgid "Missed call"
-msgstr "Appel perdu"
+msgstr "Appel manqué"
 
 #: ../chrome/oneteam/content/jingleCall.xul:184
 msgid "Initiate New Call"
@@ -2016,37 +2016,30 @@ msgid "Drop Call"
 msgstr "Rejeter"
 
 #: ../chrome/oneteam/content/vcard.xul:11
-#, fuzzy
 msgid "Contact Details"
 msgstr "Informations sur un contact"
 
 #: ../chrome/oneteam/content/vcard.xul:86
-#, fuzzy
 msgid "Contact informations"
 msgstr "Infos sur le contact"
 
 #: ../chrome/oneteam/content/vcard.xul:88
-#, fuzzy
 msgid "Contact editing"
 msgstr "Modifier les infos"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:411
-#, fuzzy
 msgid "Missed call from {0}"
-msgstr "Appel perdu de <b>{0}</b>"
+msgstr "Appel manqué de <b>{0}</b>"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:413
-#, fuzzy
 msgid "You missed call from user <b>{0}</b>"
-msgstr "Vous avez perdu un appel de <b>{0}</b>"
+msgstr "Vous avez manqué un appel de <b>{0}</b>"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:493
-#, fuzzy
 msgid "Contact signed in"
 msgstr "Un contact s'est connecté"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:495
-#, fuzzy
 msgid "Contact signed out"
 msgstr "Un contact s'est déconnecté"
 
@@ -2055,45 +2048,38 @@ msgid "Contact changed presence"
 msgstr "Un contact a modifié sa présence"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:509
-#, fuzzy
 msgid "Subscription request received"
-msgstr "Demande de souscription"
+msgstr "Demande de souscription reçue"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:511
-#, fuzzy
 msgid "Message received"
-msgstr "Réception d'un message"
+msgstr "Message reçu"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:513
 msgid "Message received (initial)"
 msgstr "Réception du premier message"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:519
-#, fuzzy
 msgid "Voice call request received"
-msgstr "Appel demandé"
+msgstr "Appel entrant"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:521
 msgid "Missed voice call"
 msgstr "Appel perdu"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:523
-#, fuzzy
 msgid "File transfer request received"
 msgstr "Demande de transfert de fichier"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:527
-#, fuzzy
 msgid "File transfer rejected"
 msgstr "Transfert de fichier rejeté"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:531
-#, fuzzy
 msgid "Connection to server lost"
 msgstr "Connexion au serveur perdue"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:533
-#, fuzzy
 msgid "Reconnected to server"
 msgstr "À nouveau connecté au serveur"
 
@@ -2110,7 +2096,6 @@ msgid "Display notification bubble"
 msgstr "L'annoncer dans une infobulle"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:640
-#, fuzzy
 msgid "Play sound"
 msgstr "Lancer un signal sonore"
 
@@ -2123,22 +2108,18 @@ msgid "Initiate call"
 msgstr "Appeler"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:859
-#, fuzzy
 msgid "You missed call from <b>{0}</b>"
-msgstr "Appel perdu de <b>{0}</b>"
+msgstr "Appel manqué de <b>{0}</b>"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:898
-#, fuzzy
 msgid "Accept call"
-msgstr "Accepter"
+msgstr "Accepter l'appel"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:909
-#, fuzzy
 msgid "Reject call"
-msgstr "Rejeter"
+msgstr "Rejeter l'appel"
 
 #: ../chrome/oneteam/content/JavaScript/model/roster.js:1059
-#, fuzzy
 msgid "Statuses"
 msgstr "Statuts"
 
@@ -2147,17 +2128,14 @@ msgstr "Statuts"
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:318
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:375
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:396
-#, fuzzy
 msgid "Show Details..."
 msgstr "Infos sur ce contact..."
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:2077
-#, fuzzy
 msgid "Show contact details"
 msgstr "Infos sur ce contact"
 
 #: ../chrome/oneteam/content/main.xul:489
-#, fuzzy
 msgid "_Manage Chat Rooms..."
 msgstr "Gérer les salons de discussion..."
 
@@ -2168,27 +2146,22 @@ msgstr "Erreur lors de l'accès au salon"
 
 #: ../chrome/oneteam/content/joinRoom.xul:10
 #: ../chrome/oneteam/content/joinRoomError.xul:14
-#, fuzzy
 msgid "Join Room"
 msgstr "Rejoindre un salon de discussion"
 
 #: ../chrome/oneteam/content/joinRoomError.xul:77
-#, fuzzy
 msgid "Error message:"
 msgstr "Message d'erreur :"
 
 #: ../chrome/oneteam/content/preferences.xul:267
-#, fuzzy
 msgid "Native"
 msgstr "Native"
 
 #: ../chrome/oneteam/content/preferences.xul:268
-#, fuzzy
 msgid "HTTP Bind"
-msgstr "HTTP Bind :"
+msgstr "HTTP Bind"
 
 #: ../chrome/oneteam/content/preferences.xul:269
-#, fuzzy
 msgid "HTTPS Bind"
 msgstr "HTTPS Bind"
 
@@ -2198,22 +2171,18 @@ msgstr "HTTP Polling"
 
 #: ../chrome/oneteam/content/roomPermissions.xul:11
 #: ../chrome/oneteam/content/roomPermissions.xul:91
-#, fuzzy
 msgid "Edit Permissions"
-msgstr "Éditer les permissions..."
+msgstr "Éditer les permissions"
 
 #: ../chrome/oneteam/content/roomPermissions.xul:97
-#, fuzzy
 msgid "Owners"
 msgstr "Propriétaires"
 
 #: ../chrome/oneteam/content/roomPermissions.xul:98
-#, fuzzy
 msgid "Admins"
 msgstr "Administrateurs"
 
 #: ../chrome/oneteam/content/roomPermissions.xul:99
-#, fuzzy
 msgid "Members"
 msgstr "Membres"
 
@@ -2222,12 +2191,10 @@ msgid "Banned"
 msgstr "Exclu"
 
 #: ../chrome/oneteam/content/renameGroup.xul:10
-#, fuzzy
 msgid "Change Group Name"
 msgstr "Changer le nom du groupe"
 
 #: ../chrome/oneteam/content/renameGroup.xul:40
-#, fuzzy
 msgid "New Group Name:"
 msgstr "Nouveau nom :"
 
@@ -2236,27 +2203,22 @@ msgid "Can't fetch registration form"
 msgstr "Impossible de charger le formulaire d'enregistrement"
 
 #: ../chrome/oneteam/content/joinRoom.xul:13
-#, fuzzy
 msgid "Join"
 msgstr "Rejoindre le salon de discussion"
 
 #: ../chrome/oneteam/content/joinRoom.xul:124
-#, fuzzy
 msgid "Bookmark this room as"
 msgstr "Retenir ce salon sous le nom"
 
 #: ../chrome/oneteam/content/status.xul:97
-#, fuzzy
 msgid "Status message:"
 msgstr "Message de statut :"
 
 #: ../chrome/oneteam/content/status.xul:100
-#, fuzzy
 msgid "Save message"
 msgstr "Enregistrer ce message"
 
 #: ../chrome/oneteam/content/status.xul:104
-#, fuzzy
 msgid "Saved messages:"
 msgstr "Messages enregistrés :"
 
@@ -2266,60 +2228,50 @@ msgid "Room Configuration"
 msgstr "Paramètres du salon"
 
 #: ../chrome/oneteam/content/history.xul:172
-#, fuzzy
 msgid "Chat Rooms"
 msgstr "Salons de discussion"
 
 #: ../chrome/oneteam/content/history.xul:226
-#, fuzzy
 msgid "Chat Room"
 msgstr "Salon de discussion"
 
 #: ../chrome/oneteam/content/changeSubject.xul:10
 #: ../chrome/oneteam/content/changeSubject.xul:39
-#, fuzzy
 msgid "Change Chat Room Subject"
 msgstr "Changer le sujet du salon de discussion"
 
 #: ../chrome/oneteam/content/search.xul:94
 #: ../chrome/oneteam/content/vcardEdit.xul:300
-#, fuzzy
 msgid "Nick"
-msgstr "Pseudo :"
+msgstr "Pseudo"
 
 #: ../chrome/oneteam/content/joinRoomError.xul:75
 msgid "Error occured during joining room:"
 msgstr "Erreur lors de l'accès au salon"
 
 #: ../chrome/oneteam/content/main.xul:461
-#, fuzzy
 msgid "Join chat room"
 msgstr "Rejoindre un salon de discussion"
 
 #: ../chrome/oneteam/content/invitation.xul:10
 #: ../chrome/oneteam/content/invitation.xul:63
-#, fuzzy
 msgid "Invitation to a Chat Room"
 msgstr "Inviter au salon de discussion"
 
 #: ../chrome/oneteam/content/invitation.xul:27
-#, fuzzy
 msgid "You have been invited to chat room <b>{0}</b> by <b>{1}</b>"
 msgstr "Vous avez été invité(e) au salon de discussion <b>{0}</b> par <b>{1}</b>"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:2098
 #: ../chrome/oneteam/content/inviteToRoom.xul:10
-#, fuzzy
 msgid "Invite to chat room"
 msgstr "Inviter au salon de discussion"
 
 #: ../chrome/oneteam/content/inviteToRoom.xul:28
-#, fuzzy
 msgid "Invite {0} to chat room"
 msgstr "Inviter {0} au salon de discussion"
 
 #: ../chrome/oneteam/content/disco.xul:28
-#, fuzzy
 msgid "Chat Room Server"
 msgstr "Serveur de salons de discussion"
 
@@ -2328,67 +2280,62 @@ msgstr "Serveur de salons de discussion"
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:283
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:330
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:384
-#, fuzzy
 msgid "Open Chat..."
 msgstr "Ouvrir une discussion..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:254
-#, fuzzy
 msgid "Ask To See Him/Her"
 msgstr "Lui demander l'autorisation de voir sa présence"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:325
-#, fuzzy
 msgid "Leave Chat Room"
 msgstr "Quitter le salon"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:400
-#, fuzzy
 msgid "User <b>{0}</b> wants to initiate call with you"
 msgstr "L'utilisateur <b>{0}</b> souhaite vous appeler"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:424
-#, fuzzy
 msgid "{0} wants to send you file \"{1}\\\""
-msgstr "{0} souhaite envoyer un ficher \"{1}\\\""
+msgstr "{0} souhaite vous envoyer le ficher \"{1}\\\""
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:427
-#, fuzzy
 msgid "User <b>{0}</b> wants to send you <b>\"{1}\\\"</b> file"
-msgstr "L'utilisateur <b>{0}</b> souhaite vous envoyer un fichier <b>\"{1}\\\"</b>"
+msgstr "L'utilisateur <b>{0}</b> souhaite vous envoyer le fichier <b>\"{1}\\\"</b>"
 
 #: ../chrome/oneteam/content/JavaScript/model/vcard.js:177
-#, fuzzy
 msgid "nick"
 msgstr "Pseudo"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:219
-#, fuzzy
 msgid "Invitation into {0} chat room"
 msgstr "Invitation au salon {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:221
-#, fuzzy
-msgid "User *{0}* invited you to chat room *{1}*.\\n\\nTo join this chat room please click on this link:\\n{2}\\n"
-msgstr "*{0}* vous a invité au salon de discussion *{1}*.\\n\\nPour rejoindre ce salon de discussion, veuillez cliquer sur ce lien :\\n{2}\\n"
+msgid ""
+"User *{0}* invited you to chat room *{1}*.\\n"
+"\\n"
+"To join this chat room please click on this link:\\n"
+"{2}\\n"
+msgstr ""
+"*{0}* vous a invité au salon de discussion *{1}*.\\n"
+"\\n"
+"Pour rejoindre ce salon de discussion, veuillez cliquer sur ce lien :\\n"
+"{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:463
-#, fuzzy
 msgid "Chat room server can't be contacted or room reached maximum number of users"
 msgstr "Le serveur de salons de discussion ne peut être contacté ou le salon a atteint le nombre maximum d'utilisateurs"
 
 #: ../chrome/oneteam/content/JavaScript/services/jingle.js:921
-#, fuzzy
 msgid "<b>{0}</b> wants to initiate call with you"
 msgstr "<b>{0}</b> souhaite vous appeler"
 
 #: ../chrome/oneteam/content/main.xul:484
-#, fuzzy
 msgid "Chat _Rooms"
 msgstr "Salons de discussion"
 
 #: ../chrome/oneteam/content/removeContact.xul:37
-#, fuzzy
 msgid "Do you want to remove this contact from your contact list?"
 msgstr "Voulez-vous effacer ce contact de votre liste de contacts ?"
 
@@ -2397,22 +2344,18 @@ msgid "Optional, used to mark the contact"
 msgstr "Facultatif, sert à désigner le contact"
 
 #: ../chrome/oneteam/content/JavaScript/model/account.js:54
-#, fuzzy
 msgid "Not in contact list"
 msgstr "Pas dans la liste de contacts"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:462
-#, fuzzy
 msgid "Your nick is already used, try another nick"
 msgstr "Votre pseudo est déjà utilisé, essayez avec un autre"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:497
-#, fuzzy
 msgid "Chat room participant signed in"
 msgstr "Un membre du salon s'est connecté"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:499
-#, fuzzy
 msgid "Chat room participant signed out"
 msgstr "Un membre du salon s'est déconnecté"
 
@@ -2425,22 +2368,18 @@ msgid "Chat room participant changed nick"
 msgstr "Un membre du salon a modifié son pseudo"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:507
-#, fuzzy
 msgid "Chat room subject change"
 msgstr "Le sujet du salon de discussion a changé"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:515
-#, fuzzy
 msgid "Chat room message received"
 msgstr "Réception d'un message dans un salon"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:517
-#, fuzzy
 msgid "Chat room nick: message received"
 msgstr "Réception d'un message qui vous est adressé dans un salon"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:529
-#, fuzzy
 msgid "Invitation to chat room declined"
 msgstr "Invitation au salon rejetée"
 
@@ -2449,7 +2388,6 @@ msgid "Display message in chat room pane"
 msgstr "L'annoncer dans la fenêtre du salon de discussion"
 
 #: ../chrome/oneteam/content/invitation.xul:13
-#, fuzzy
 msgid "Decline"
 msgstr "Rejeter"
 
@@ -2463,22 +2401,20 @@ msgstr ""
 
 #: ../chrome/oneteam/content/preferences.xul:219
 msgid "Releases"
-msgstr ""
+msgstr "Versions publiées"
 
 #: ../chrome/oneteam/content/preferences.xul:220
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #: ../chrome/oneteam/content/main.xul:480
-#, fuzzy
 msgid "_Initiate Chat..."
-msgstr "Lancer un chat..."
+msgstr "Ouvrir une discussion..."
 
 #: ../chrome/oneteam/content/initiateChat.xul:11
 #: ../chrome/oneteam/content/initiateChat.xul:40
-#, fuzzy
 msgid "Initiate Chat"
-msgstr "Lancer un chat"
+msgstr "Ouvrir une discussion"
 
 #: ../chrome/oneteam/content/initiateChat.xul:42
 msgid "Please enter Jabber ID of the contact you would like to chat:"
