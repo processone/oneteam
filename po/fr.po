@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
 "POT-Creation-Date: 2011-05-18 16:29+0200\n"
-"PO-Revision-Date: 2011-05-18 16:53+0100\n"
-"Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
+"PO-Revision-Date: 2011-05-18 16:58+0100\n"
+"Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -2410,9 +2410,8 @@ msgid "Please enter Jabber ID of the contact you would like to chat:"
 msgstr "Saisissez l'adresse Jabber du contact avec lequel vous voulez discuter"
 
 #: ../chrome/oneteam/content/search.xul:48
-#, fuzzy
 msgid "Search Error"
-msgstr "Recherche"
+msgstr "Erreur de recherche"
 
 #: ../chrome/oneteam/content/JavaScript/menu.js:240
 msgid "{0}..."
@@ -2423,37 +2422,32 @@ msgid "Users search..."
 msgstr ""
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:25
-#, fuzzy
 msgid "_File"
 msgstr "Fichier"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:49
-#, fuzzy
 msgid "Quit {0}"
-msgstr "À propos de {0}"
+msgstr "Quitter {0}"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:54
 msgid "_Account"
 msgstr ""
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:59
-#, fuzzy
 msgid "_Search Users"
-msgstr "Recherche"
+msgstr "Recherche de contacts"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:62
 msgid "_Search Users..."
 msgstr ""
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:73
-#, fuzzy
 msgid "_Options..."
-msgstr "_Actions"
+msgstr "_Options..."
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:121
-#, fuzzy
 msgid "Contacts lists"
-msgstr "Contacts"
+msgstr "Liste de contacts"
 
 #~ msgid "_Config"
 #~ msgstr "_Config"
