@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-16 10:44+0200\n"
+"POT-Creation-Date: 2011-05-18 16:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,10 +13,16 @@ msgstr ""
 #: ../chrome/oneteam/content/JavaScript/notification.js:472
 #: ../chrome/oneteam/content/about.xul:8
 #: ../chrome/oneteam/content/command.xul:10
-#: ../chrome/oneteam/content/main.xul:12
+#: ../chrome/oneteam/content/main.xul:13
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:46
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:56
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:64
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:69
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:28
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:41
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:46
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:49
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:93
 msgid "OneTeam"
 msgstr ""
 

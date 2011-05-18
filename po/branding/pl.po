@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-13 19:47+0200\n"
+"POT-Creation-Date: 2011-05-17 19:15+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -9,16 +9,21 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:472
 #: ../chrome/oneteam/content/about.xul:8
 #: ../chrome/oneteam/content/command.xul:10
-#: ../chrome/oneteam/content/main.xul:12
+#: ../chrome/oneteam/content/main.xul:13
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:46
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:56
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:64
+#: ../chrome/oneteam/content/overlays/browser4Overlay.xul:69
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:28
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:41
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:46
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:49
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:93
 msgid "OneTeam"
 msgstr "OneTeam"
 
