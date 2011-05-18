@@ -2472,13 +2472,13 @@ msgstr ""
 #: ../chrome/oneteam/content/main.xul:480
 #, fuzzy
 msgid "_Initiate Chat..."
-msgstr "Appeler"
+msgstr "Lancer un chat..."
 
 #: ../chrome/oneteam/content/initiateChat.xul:11
 #: ../chrome/oneteam/content/initiateChat.xul:40
 #, fuzzy
 msgid "Initiate Chat"
-msgstr "Appeler"
+msgstr "Lancer un chat"
 
 #: ../chrome/oneteam/content/initiateChat.xul:42
 msgid "Please enter Jabber ID of the contact you would like to chat:"
