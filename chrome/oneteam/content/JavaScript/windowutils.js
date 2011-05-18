@@ -141,16 +141,28 @@ function iterateWindowsWithType(type) {
         yield e.getNext();
 }
 
+var openingWindows = {};
 function openDialogUniq(type, url, flags)
 {
     var win;
 
-    if (type)
+    if (type) {
         win = getWindowWithType(type);
+        if (!win)
+            win = openingWindows[type];
+    }
 
     if (!win) {
         var args = [url, "_blank"].concat(Array.slice(arguments, 2));
-        return window.openDialog.apply(window, args);
+        win = window.openDialog.apply(window, args);
+        if (type) {
+            openingWindows[type] = win;
+            setTimeout(function(type) {
+                delete openingWindows[type];
+            }, 1000, type);
+        }
+
+        return win;
     }
 
     if (!/\balwaysLowered\b/.exec(flags))
