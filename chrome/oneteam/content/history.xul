@@ -174,7 +174,7 @@
             <textbox id="search-field" type="search" oncommand="updateSearch(this.value)"
                      timeout="50" emptytext="_('Search')" searchbutton="true"/>
             <tree id="search-threads" height="150" persist="height" hidecolumnpicker="true"
-                seltype="single" onselect="updateMessages(this, searchMessages)">
+                seltype="single" onselect="updateMessages(this, searchMessages)" flex="1">
               <treecols>
                 <treecol sortDirection="ascending" sortActive="true"
                          primary="true" flex="5" label="_('Contact')" id="jid"/>
