@@ -181,6 +181,7 @@ function ConferenceView(model, containerNode, parentView)
         this.invite.setAttribute("emptytext", _('Invite'));
         this.invite.setAttribute("ontextentered", "this.view.onInvite(this.value);this.value='';this.blur()");
         this.invite.setAttribute("ontextreverted", "this.value='';this.blur();return true");
+        this.invite.setAttribute("regex", "^([^@]+@)?(?:\\w(?:[\\w-]*\\w)?\\.)*[^\\W](?:[\\w-]*\\w)?$");
 
         this.onItemAdded(this.invite);
     }

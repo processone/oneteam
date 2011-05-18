@@ -28,7 +28,6 @@
       contact.onOpenChat();
       window.close();
     }
-
   ]]></script>
 
   <group id="macMenu"/>
@@ -44,6 +43,7 @@
   <textbox id="jid" type="autocomplete" autocompletepopup="oneteam-contacts-autocomplete-popup"
            autocompletesearch="oneteam-contacts" completedefaultindex="true"
            enablehistory="true" emptytext="Enter ID"
+           regex="^([^@]+@)?(?:\w(?:[\w-]*\w)?\.)*[^\W](?:[\w-]*\w)?$"
            ontextentered="startChat()"/>
 
 </dialog>

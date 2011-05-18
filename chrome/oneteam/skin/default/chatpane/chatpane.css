@@ -141,6 +141,10 @@ splitter.roster-splitter {
   background-color: #fff;
 }
 
+.add-participant-view:not([focused="true"]) .verifier-state-image {
+  display: none;
+}
+
 #thread-picker-container .radio-spacer-box,
 #thread-picker-container .radio-check,
 #thread-picker-container .radio-check-box1
