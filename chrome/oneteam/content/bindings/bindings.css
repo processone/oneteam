@@ -80,6 +80,12 @@ textbox[type="verifiable"] {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#textbox");
 }
 
+textbox[type="autocomplete"][regex],
+textbox[type="autocomplete"][condition] {
+  -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#autocomplete");
+}
+
+
 ifvalid {
   -moz-binding: url("chrome://oneteam/content/bindings/verifier.xml#ifvalid");
 }
