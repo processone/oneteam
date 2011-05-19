@@ -1567,10 +1567,8 @@
 
           for each (var event in ("mousedown paste keypress resize DOMSubtreeModified "+
                                   "keydown keyup mouseup dragdrop").split(" "))
-          {
             if (("_on"+event) in this)
-              doc.removeEventListener(event, this["_on"+event], false);
-          }
+              doc.removeEventListener(event, this["_on"+event], (event == "keypress"));
 
           delete this.lastMessage;
           this.parentNode.parentNode.parentNode.sthgToEdit = false;
@@ -1691,8 +1689,11 @@
                  && !event.shiftKey && !event.metaKey && (
                     (!event.altKey && event.ctrlKey) // unix/windows
                      || event.cmdKey                 // apple
-               ))
+               )) {
               me.parentNode.parentNode.parentNode.switchEditMode();
+              me._onUserType();
+              return false;
+            }
 
             me._onUserType();
             return true;
