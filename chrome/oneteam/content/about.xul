@@ -14,10 +14,6 @@
   <script type="text/javascript;version=1.7" src="JavaScript/moduleloader.js"/>
   <script><![CDATA[
     ML.importMod("model/account.js");
-
-    function launchBrowser() {
-      openLink(_("$$branding$$: http://www.process-one.net/en/oneteam/"));
-    }
   ]]></script>
 
   <group id="macMenu"/>
@@ -27,12 +23,15 @@
   </toolbox>
 
   <vbox style="background-color: white; -moz-border-radius: 5px; -moz-box-shadow: 1px 1px 10px grey; padding: 20px;">
-    <hbox>
-      <image src="chrome://oneteam-branding/locale/ot_logo.png" style="cursor: pointer" onclick="launchBrowser();"/>
-        <vbox pack="center" align="start">
-          <image src="chrome://oneteam-branding/locale/ot_text.png" style="cursor: pointer" onclick="launchBrowser();"/>
-          <label value="_('Release {0} ({1})', '@@VERSION@@', '@@BRANCH@@-@@VERSION@@')" style="font-size: 10px"/>
-        </vbox>
+    <hbox style="cursor: pointer" onclick="openLink(_('$$branding$$: http://oneteam.im/'));">
+      <image src="chrome://oneteam-branding/locale/ot_logo.png" style="cursor: pointer"/>
+      <vbox pack="center" align="center">
+        <image src="chrome://oneteam-branding/locale/ot_text.png" style="cursor: pointer"/>
+        <label value="_('$$branding$$: http://oneteam.im/')"
+               style="cursor: pointer; color: blue; text-decoration: underline"/>
+        <label value="_('Release {0} ({1})', '@@VERSION@@', '@@BRANCH@@-@@VERSION@@')"
+               style="cursor: pointer; font-size: 10px"/>
+      </vbox>
     </hbox>
     <spacer height="5"/>
     <html:hr style="background-color: #ededed; border: 0; height: 1px;"/>

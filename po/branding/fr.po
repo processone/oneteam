@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-17 19:15+0200\n"
+"POT-Creation-Date: 2011-05-19 17:37+0200\n"
 "PO-Revision-Date: 2010-06-16 16:56+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,22 +23,26 @@ msgstr ""
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:41
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:46
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:49
-#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:93
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:92
 msgid "OneTeam"
 msgstr "OneTeam"
 
-#: ../chrome/oneteam/content/about.xul:19
-msgid "http://www.process-one.net/en/oneteam/"
-msgstr "http://www.process-one.net/en/oneteam/"
-
-#: ../chrome/oneteam/content/about.xul:43
+#: ../chrome/oneteam/content/about.xul:42
 msgid "OneTeam Instant Messenging Client"
 msgstr "Client de messagerie instantanée OneTeam"
 
-#: ../chrome/oneteam/content/about.xul:47
+#: ../chrome/oneteam/content/about.xul:46
 msgid "Created by ProcessOne"
 msgstr "Créé par ProcessOne"
 
-#: ../chrome/oneteam/content/about.xul:48
+#: ../chrome/oneteam/content/about.xul:47
 msgid "www.process-one.net"
 msgstr "www.process-one.net"
+
+#: ../chrome/oneteam/content/about.xul:26
+#: ../chrome/oneteam/content/about.xul:30
+msgid "http://oneteam.im/"
+msgstr ""
+
+#~ msgid "http://www.process-one.net/en/oneteam/"
+#~ msgstr "http://www.process-one.net/en/oneteam/"

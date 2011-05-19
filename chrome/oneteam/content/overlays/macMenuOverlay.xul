@@ -76,7 +76,6 @@
 
   <menu id="menu-help" label="_('_Help')">
     <menupopup id="help-popup">
-      <menuitem label="_('_Documentation')" command="cmd_help"/>
       <menuitem label="_('_Report Bug')" command="cmd_bug"/>
       <menuitem label="_('XML _Console...')" command="cmd_xmlConsole" key="key_xmlConsole"/>
 <!-- #ifdef DEBUG -->
@@ -171,7 +170,6 @@
   <!-- #endif -->
       <command id="cmd_prefs" key="key_prefs" oncommand="account.showPrefs()"/>
 
-      <command id="cmd_help" key="key_help" oncommand="openLink('http://www.process-one.net/en/oneteam/')"/>
       <command id="cmd_bug" oncommand="openLink('https://support.process-one.net/browse/TEAM')"/>
       <command id="cmd_xmlConsole" key="key_xmlConsole" oncommand="account.showConsole()"/>
   <!-- #ifdef DEBUG -->

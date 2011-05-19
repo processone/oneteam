@@ -1660,7 +1660,6 @@
               }
             }
 
-            var inputValue;
             if (event.keyCode == KeyEvent.DOM_VK_RETURN) {
               if (me._doSend(!event.shiftKey)) {
                 event.preventDefault();
@@ -1678,7 +1677,7 @@
               if (s.anchorNode == s.focusNode && s.anchorOffset == s.focusOffset && s.anchorOffset == 0) {
                 var n = s.anchorNode;
 
-                while (n != doc.body && !n.previousSiblings)
+                while (n != doc.body && !n.previousSibling)
                   n = n.parentNode;
 
                 if (n == doc.body)
@@ -1913,12 +1912,12 @@
         ]]></body>
       </method>
 
-      <!--method name="_send">
+      <method name="_send">
         <parameter name="withEnter"/>
         <body><![CDATA[
           return withEnter ? null : this._input.value;
         ]]></body>
-      </method-->
+      </method>
 
       <method name="_blink">
         <body><![CDATA[
