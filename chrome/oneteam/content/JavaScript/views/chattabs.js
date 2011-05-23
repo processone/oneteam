@@ -52,6 +52,7 @@ _DECL_(ChatPane).prototype = {
 
 function ChatTabsController() {
     this._chatPanes = [];
+    this._pastChats = [];
     this.init();
 }
 _DECL_(ChatTabsController, null, Model).prototype = {
@@ -83,6 +84,27 @@ _DECL_(ChatTabsController, null, Model).prototype = {
                                               "chrome://oneteam/content/chats.xul",
                                               "chrome,centerscreen", this);
         return chatPane;
+    },
+
+    undoCloseTab: function() {
+        if (!this._pastChats.length)
+            return;
+        var c = this._pastChats.pop();
+
+        if (c instanceof ConferenceMember) {
+            if (c.contact.joined)
+                c.openChatTab();
+            else
+                this.undoCloseTab();
+        } else if (c instanceof Conference) {
+            if (!c.joined && !c._joinRequested)
+                c.backgroundJoinRoom(c._lastNick, c._lastPass);
+            else
+                this.undoCloseTab();
+        } else if (!c.chatPane)
+            c.openChatTab();
+        else
+            this.undoCloseTab();
     },
 
     cycleNextTab: function(contact) {
@@ -118,6 +140,11 @@ _DECL_(ChatTabsController, null, Model).prototype = {
 
         this.modelUpdated("_chatPanes", {removed: [chatPane]});
 
+        var idx = this._pastChats.indexOf(chatPane.thread.contact);
+        if (idx >= 0)
+            this._pastChats.splice(idx, 1);
+        this._pastChats.push(chatPane.thread.contact);
+
         if (!this._chatPanes.length)
             this._chatWindow.close();
     },
@@ -133,8 +160,13 @@ _DECL_(ChatTabsController, null, Model).prototype = {
     _onChatWindowClosed: function() {
         this._inClose = true;
 
-        for (var i = 0; i < this._chatPanes.length; i++)
+        for (var i = this._chatPanes.length-1; i >= 0; i--) {
+            var idx = this._pastChats.indexOf(this._chatPanes[i].thread.contact);
+            if (idx >= 0)
+                this._pastChats.splice(idx, 1);
+            this._pastChats.push(this._chatPanes[i].thread.contact);
             this._chatPanes[i].close();
+        }
 
         var cp = this._chatPanes;
 
