@@ -1413,10 +1413,13 @@
     </resources>
 
     <content>
-      <xul:stack id="inputBoxStack" flex="1">
+      <xul:stack flex="1">
         <xul:hbox>
           <xul:spacer flex="1"/>
-          <xul:label id="_counter" value="0"/>
+          <xul:vbox>
+            <xul:spacer flex="1" style="height: 0"/>
+            <xul:label id="_counter" value="0"/>
+          </xul:vbox>
         </xul:hbox>
         <xul:vbox class="inputBox textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
           <html:iframe id="_input" style="height: 1em"/>
@@ -1514,7 +1517,6 @@
         this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
         this._input.addEventListener("load", function(){me._init()}, true);
-        this.inputField = this._input;
 
         var el = this.previousSibling;
         if (!el)
@@ -1525,6 +1527,7 @@
 
         this._history = [];
         this._historyPosition = 0;
+
       ]]></constructor>
 
       <method name="syncEditMode">
@@ -1535,24 +1538,17 @@
                the edited message, or cancel the edition */
             this._currentMessage = this.value.innerHTML;
             this.clear();
-            this._input.parentNode.parentNode.setAttribute("type", "editMode");
+            this._input.parentNode.setAttribute("editMode", "true");
             this._input.contentDocument.body.setAttribute("editMode", "true");
-            if (this.lastMessage) {
-              // the following line is experiential: else, if nothing was ever typed in the
-              // textbox, it is impossible to delete any char of the inserted string (in
-              // this case, this.lastMessage.html) until typing sthg. I can't explain why. FX
-              this._input.contentDocument.execCommand("insertHTML", false, "<br/>");
-
+            if (this.lastMessage)
               this.value = this.lastMessage.html;
-            }
           }
           else {
             if (this._currentMessage) {
-              //this._input.contentDocument.body.innerHTML
               this.value = this._currentMessage;
               delete this._currentMessage;
             }
-            this._input.parentNode.parentNode.removeAttribute("type");
+            this._input.parentNode.removeAttribute("editMode");
             this._input.contentDocument.body.removeAttribute("editMode");
           }
         ]]></body>
@@ -1561,7 +1557,6 @@
       <method name="_disableInput">
         <body><![CDATA[
           var doc = this._input.contentDocument;
-          var win = this._input.contentWindow;
 
           doc.designMode = "off";
 
@@ -1579,7 +1574,6 @@
         <body><![CDATA[
           var me = this;
           var doc = this._input.contentDocument;
-          var win = this._input.contentWindow;
 
           doc.designMode = "on";
 
@@ -1729,7 +1723,6 @@
           if (this._toolbar)
             this._toolbar._updateState();
 
-          doc = win = null;
 
           var chatpane = this.parentNode.parentNode.parentNode;
           for (var nick in this._output._lastNickMessage) {
@@ -1749,7 +1742,6 @@
         <body><![CDATA[
           var me = this;
           var doc = this._input.contentDocument;
-          var win = this._input.contentWindow;
 
           this._initialized = true;
 
@@ -1757,6 +1749,11 @@
           link.setAttribute("href", "chrome://oneteam/skin/chatpane/content.css");
           link.setAttribute("rel", "stylesheet");
           doc.getElementsByTagName("HEAD")[0].appendChild(link);
+
+          // the following line is experiential: else, if nothing was ever typed in the
+          // textbox, there are odd behaviour with deletion: impossible to delete <br/>
+          // and messages to edit, until typing sthg. I can't explain why. FX
+          this.value = "<br/>";
 
           if (this._toolbar)
             doc.body.setAttribute("hasSendButton", "true");
@@ -1947,6 +1944,7 @@
           me._preMaybeResize();
 
           var body = me._input.contentDocument.body;
+          body.style.marginRight = me._counter.getBoundingClientRect().width+"px";
 
           var h = me._input.clientHeight + body.offsetHeight - body.clientHeight;
 
@@ -1959,7 +1957,6 @@
           } else
             body.style.overflowY = "hidden";
 
-          me._counter.style.fontSize = body.clientHeight+"px";
           me._counter.style.marginRight = (50+me._input.clientWidth-body.clientWidth)+"px";
           me._input.style.height = (h) + "px";
 
@@ -2150,8 +2147,10 @@
           counter.setAttribute("checked", !!val);
           counter.checked = !!val;
 
-          if (this._textbox)
+          if (this._textbox) {
             this._textbox._counter.hidden = !val;
+            this._textbox.maybeResize();
+          }
 
           if (this._model)
             if (val)

@@ -8,15 +8,20 @@
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-  min-height: 1em !important;
+  min-height: 1.5em !important;
   -moz-appearance: none !important;
-  /*height: 1.5em;*/
+}
+
+.inputBox[editMode] {
+  outline: solid 2px #7ea1dc;
 }
 
 #_counter {
-  margin: 0 50px 0 0 !important;
+  margin-top: -2px !important;
+  margin-bottom: -2px !important;
   padding: 0 !important;
   color: #FFA4A2;
+  font-size: 1.6em;
 }
 
 toolbar[type="chatpane-commands"] {
@@ -102,11 +107,6 @@ toolbar[type="chatpane-commands"] dropmarker {
 
 #spellingButton[disable="true"] {
   list-style-image: url(imgs/toolbar/spellcheck-inactive.png);
-}
-
-#inputBoxStack[type="editMode"] {
-  border: solid 2px #7ea1dc;
-  margin: -2px;
 }
 
 #editButton[type="cancel"] {
