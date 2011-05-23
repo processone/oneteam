@@ -13,7 +13,28 @@ body {
 
 body[hasSendButton=true] {
     background: transparent !important;
+    padding-right: 50px;
     word-wrap: break-word;
+}
+
+body[hasSendButton=true]:after {
+    content: "";
+    float: right;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: 0px;
+    right: 0px;
+    -moz-border-image: url(imgs/send-border-image.png) 5/5px repeat repeat;
+    background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
+    padding: 0px;
+    width: 38px;
+}
+
+body[hasSendButton=true][disabled=true]:after {
+    -moz-border-image: none;
+    background: transparent;
 }
 
 .mainContainer {
@@ -368,6 +389,22 @@ div.message:after {
     -moz-border-top-colors: #7ea1dc;
     border-top-width: 2px;
     padding-top: 0;
+}
+
+/* arrow in the 'send' button replaced with a pencil in edit mode */
+body[hasSendButton=true][editMode]:after {
+    content: "";
+    float: right;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: 0px;
+    right: 0px;
+    -moz-border-image: url(imgs/send-border-image.png) 5/5px repeat repeat;
+    background: #b3ce00 url(imgs/edit-send.png) center center no-repeat;
+    padding: 0px;
+    width: 38px;
 }
 
 span.body {

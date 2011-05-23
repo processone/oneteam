@@ -8,29 +8,15 @@
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-  min-height: 21px !important;
+  min-height: 1em !important;
   -moz-appearance: none !important;
-  height: 21px;
-}
-
-.inputBox[editMode] {
-  outline: solid 2px #7ea1dc;
-}
-
-#_sendButton[enabled] {
-    -moz-border-image: url(imgs/send-border-image.png) 5/5px repeat repeat;
-    background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
-    width: 50px;
-}
-.inputBox[editMode] #_sendButton[enabled] {
-    background-image: url(imgs/edit-send.png);
+  /*height: 1.5em;*/
 }
 
 #_counter {
-  margin: -3px 0 !important;
+  margin: 0 50px 0 0 !important;
   padding: 0 !important;
   color: #FFA4A2;
-  font-size: 23px;
 }
 
 toolbar[type="chatpane-commands"] {
@@ -118,10 +104,10 @@ toolbar[type="chatpane-commands"] dropmarker {
   list-style-image: url(imgs/toolbar/spellcheck-inactive.png);
 }
 
-/*#inputBoxStack[type="editMode"] {
+#inputBoxStack[type="editMode"] {
   border: solid 2px #7ea1dc;
   margin: -2px;
-}*/
+}
 
 #editButton[type="cancel"] {
   list-style-image: url(imgs/toolbar/edit-inactive.png);

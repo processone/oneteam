@@ -1413,14 +1413,15 @@
     </resources>
 
     <content>
-        <xul:hbox class="inputBox" flex="1" xbl:inherits="context,spellcheck">
-          <html:iframe id="_input" flex="1"/>
-          <xul:vbox>
-            <xul:spacer flex="1" style="height: 0"/>
-            <xul:label id="_counter" value="0"/>
-          </xul:vbox>
-          <xul:vbox id="_sendButton"/>
+      <xul:stack id="inputBoxStack" flex="1">
+        <xul:hbox>
+          <xul:spacer flex="1"/>
+          <xul:label id="_counter" value="0"/>
         </xul:hbox>
+        <xul:vbox class="inputBox textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
+          <html:iframe id="_input" style="height: 1em"/>
+        </xul:vbox>
+      </xul:stack>
     </content>
 
     <implementation implements="nsIDOMXULTextBoxElement">
@@ -1510,7 +1511,6 @@
 
       <constructor><![CDATA[
         var me = this;
-        this._sendButton = document.getAnonymousElementByAttribute(this, "id", "_sendButton");
         this._counter = document.getAnonymousElementByAttribute(this, "id", "_counter");
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
         this._input.addEventListener("load", function(){me._init()}, true);
@@ -1535,7 +1535,8 @@
                the edited message, or cancel the edition */
             this._currentMessage = this.value.innerHTML;
             this.clear();
-            this._input.parentNode.setAttribute("editMode", "true");
+            this._input.parentNode.parentNode.setAttribute("type", "editMode");
+            this._input.contentDocument.body.setAttribute("editMode", "true");
             if (this.lastMessage) {
               // the following line is experiential: else, if nothing was ever typed in the
               // textbox, it is impossible to delete any char of the inserted string (in
@@ -1547,10 +1548,12 @@
           }
           else {
             if (this._currentMessage) {
+              //this._input.contentDocument.body.innerHTML
               this.value = this._currentMessage;
               delete this._currentMessage;
             }
-            this._input.parentNode.removeAttribute("editMode");
+            this._input.parentNode.parentNode.removeAttribute("type");
+            this._input.contentDocument.body.removeAttribute("editMode");
           }
         ]]></body>
       </method>
@@ -1560,8 +1563,6 @@
           var doc = this._input.contentDocument;
           var win = this._input.contentWindow;
 
-          this._sendButton.removeAttribute("enabled");
-          this._sendButton.removeEventListener("mousedown", this._sendButton._onmousedown, false);
           doc.designMode = "off";
 
           for each (var event in ("mousedown paste keypress resize DOMSubtreeModified "+
@@ -1580,7 +1581,6 @@
           var doc = this._input.contentDocument;
           var win = this._input.contentWindow;
 
-          this._sendButton.setAttribute("enabled", true);
           doc.designMode = "on";
 
           try {
@@ -1590,12 +1590,13 @@
           } catch (ex) {
           }
 
-          this._sendButton.addEventListener("mousedown",
-            this._sendButton._onmousedown = function(event) {
+          doc.addEventListener("mousedown", this._onmousedown = function(event) {
             if (me._toolbar)
               me._toolbar._updateState(event);
 
-            if (event.button == 0)
+            if (event.button == 0 &&
+                event.pageX >= event.target.ownerDocument.body.clientWidth-42 &&
+                event.pageX < event.target.ownerDocument.body.clientWidth)
               me._doSend(true);
           }, false);
 
@@ -1949,14 +1950,18 @@
 
           var h = me._input.clientHeight + body.offsetHeight - body.clientHeight;
 
+          if (h < 10)
+            h = 10;
+
           if (h > 0.3*window.innerHeight) {
             body.style.overflowY = "auto"
             h = 0.3*window.innerHeight;
           } else
             body.style.overflowY = "hidden";
 
+          me._counter.style.fontSize = body.clientHeight+"px";
+          me._counter.style.marginRight = (50+me._input.clientWidth-body.clientWidth)+"px";
           me._input.style.height = (h) + "px";
-          // the textbox's height can't be < 21px, because of the css min-height attr in textbox.css
 
           me._postMaybeResize();
         ]]></body>
