@@ -154,6 +154,9 @@ _DECL_(Conference, Contact).prototype =
             this._cpToken = null;
         }
 
+        this._lastNick = this.myResourceJID.resource;
+        this._lastPass = this._password;
+
         this.joined = false;
         this._joinRequested = false;
         delete this._myResourceJID;

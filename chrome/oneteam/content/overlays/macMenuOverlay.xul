@@ -116,6 +116,8 @@
     <menupopup id="windowPopup">
       <menuitem command="minimizeWindow" key="key_minimizeWindow"/>
       <menuitem command="zoomWindow"/>
+      <menuitem label="_('Restore Last Chat')" command="cmd_undoCloseChat"
+                key="key_undoCloseChat"/>
       <menuseparator/>
       <menuitem label="_('Contacts lists')" type="radio" name="window"
                 oncommand="account.showRoster()"/>
@@ -148,6 +150,8 @@
 
     <comandset>
       <command id="cmd_initateChat" key="key_initiateChat" oncommand="account.onInitiateChat()"
+               observes="isOffline"/>
+      <command id="cmd_undoCloseChat" key="key_undoCloseChat" oncommand="chatTabsController.undoCloseTab()"
                observes="isOffline"/>
       <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"
                observes="isOffline"/>
@@ -198,6 +202,7 @@
 
   <keyset id="extraKeys">
     <key id="key_initiateChat" modifiers="accel" key="N" command="cmd_initateChat"/>
+    <key id="key_key_undoCloseChat" modifiers="accel,shift" key="N" command="cmd_undoCloseChat"/>
     <key id="key_addContact" modifiers="accel" key="D" command="cmd_addContact"/>
     <key id="key_joinRoom" modifiers="accel" key="J" command="cmd_joinRoom"/>
     <key id="key_history" modifiers="accel" key="H" command="cmd_history"/>
