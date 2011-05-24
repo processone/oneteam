@@ -10,8 +10,6 @@
 <prefwindow id="oneteam"
             windowtype="ot:preferences"
             title="_('Preferences')"
-            onload="onLoad()"
-            onunload="onUnload()"
             onbeforeaccept="onBeforeAccept()"
             buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
             closebuttonlabel="_('Close')"
@@ -21,31 +19,6 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("prefs.js");
     ML.importMod("model/account.js");
-
-    var prefObserver = {
-      init: function() {
-        prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.status", true);
-        prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.connection", true);
-        prefManager.registerChangeCallback(new Callback(this.onPrefChange, this), "chat.general", true);
-      },
-      uninit: function() {
-        prefManager.unregisterChangeCallback(this.onPrefChange, "chat.status");
-        prefManager.unregisterChangeCallback(this.onPrefChange, "chat.connection");
-        prefManager.unregisterChangeCallback(this.onPrefChange, "chat.general");
-      },
-      onPrefChange: function(name, value) {
-        if (name == "chat.general.iconset"){
-          var iconsContainer = document.getElementById("iconsSet");
-          if(iconsContainer)
-            iconsContainer.selectItem(value);
-        }
-        else if (name == "chat.general.smilesset"){
-          var smilesContainer = document.getElementById("smilesSet");
-          if(smilesContainer)
-            smilesContainer.selectItem(value);
-        }
-      }
-    }
 
     function updateAway(el) {
       el.nextSibling.disabled =
@@ -104,10 +77,6 @@
       prevType = el.value;
     }
 
-    function onLoad() {
-      prefObserver.init();
-    }
-
     function onBeforeAccept() {
       account.notificationScheme.saveSettings(
           document.getElementById("notifications").firstChild);
@@ -138,6 +107,7 @@
       if (iconsset)
         setTimeout(function() {
           iconsContainer.value = iconsset;
+          iconsContainer.ensureElementIsVisible(iconsContainer.selectedItem);
         }, 100);
 
       var smilesContainer = document.getElementById("smilesSet");
@@ -148,6 +118,7 @@
       if (smilesset)
         setTimeout(function() {
           smilesContainer.value = smilesset;
+          smilesContainer.ensureElementIsVisible(smilesContainer.selectedItem);
         }, 100);
     }
 
@@ -155,10 +126,6 @@
       var fragment = account.notificationScheme.generateSettings(null, document,
           document.documentElement.instantApply);
       document.getElementById("notifications").appendChild(fragment);
-    }
-
-    function onUnload() {
-      prefObserver.uninit();
     }
 
     function generateIconSetElement(iconSet) {
