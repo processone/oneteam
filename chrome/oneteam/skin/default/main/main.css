@@ -23,28 +23,24 @@ tabpanels {
 }
 
 /* Toolbar icons */
-#adduser-button {
-  list-style-image: url(imgs/adduser.png);
+#initiate-chat-button {
+  list-style-image: url(imgs/init-chat.png);
 }
 
-#joinroom-button {
-  list-style-image: url(imgs/joinroom.png);
+#add-user-button {
+  list-style-image: url(imgs/add-contact.png);
 }
 
-#editgroups-button {
-  list-style-image: url(imgs/editgroups.png);
+#join-room-button {
+  list-style-image: url(imgs/join-room.png);
 }
 
-#disco-button {
-  list-style-image: url(imgs/disco.png);
+#prefs-button {
+  list-style-image: url(imgs/prefs.png);
 }
 
-#toggleshowoffline-button {
-  list-style-image: url(imgs/toggleoffline.png);
-}
-
-#presencestab-button {
-  list-style-image: url(imgs/presencestab.png);
+#presences-tab-button {
+  list-style-image: url(imgs/presences-tab.png);
 }
 
 /* Login box */
