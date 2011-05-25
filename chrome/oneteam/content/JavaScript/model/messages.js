@@ -612,7 +612,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
         this.messageId =
             body.getNode().hasAttribute("id") ? body.getNode().getAttribute("id") :
             generateRandomName(12);
-   
+
         var replaceNode = body.getNode().getElementsByTagNameNS("http://process-one.net/edit", "replace")[0];
         if (replaceNode)
             this.replaceMessageId = replaceNode.getAttribute("id");
@@ -730,7 +730,7 @@ _DECL_(Message).prototype =
             if (typeof(this._rawHtml) == "string") {
                 var dp = new DOMParser();
                 var doc = dp.parseFromString("<body xmlns='http://www.w3.org/1999/xhtml'>"+
-                                             this._rawHtml+"</body>", "text/xml");
+                                             this._rawHtml.replace(/&nbsp;/g, "\xa0")+"</body>", "text/xml");
                 this._rawHtml = doc.documentElement;
             }
             [this._html, this._text, this._sanitizedHtml, this._formatedHtml] =
@@ -739,7 +739,7 @@ _DECL_(Message).prototype =
                         !account.cache.getValue("loadimage-"+this.contact.jid.normalizedJID.shortJID)
                 }, false, "");
         } else if (this._text) {
-            this._html = this._processFormatingChars(this._text, {});
+            this._html = this._processFormatingChars(this._text, {skipSmiles: true});
             this._formatedHtml = this._processUrls(this._text, {});
             this._sanitizedHtml = this._processUrls(this._text, {skipSmiles: true});
         } else {
@@ -1114,7 +1114,7 @@ _DECL_(Message).prototype =
 
             var spaces = match[1] || match[2] || match[3] || match[4] || match[5];
             if (spaces)
-                res += spaces.replace(/\t/g, "        ").replace(/ /g, "&nbsp;");
+                res += spaces.replace(/\t/g, "        ").replace(/ /g, "\xa0");
             last = re.lastIndex;
         }
         str = str.substring(last);
