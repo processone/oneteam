@@ -1234,20 +1234,33 @@
       <method name="_onThreadMarkerOver">
         <parameter name="el"/>
         <body><![CDATA[
-          for (var token in this._threadingDriver
-                .getThreadForMsgId(el.parentNode.parentNode.msgId).iterator())
-            token[1].setAttribute("in-marked-thread", "true");
-
-          this._output.contentDocument.body.setAttribute("marked-thread", "true");
+          this.highlightThread(
+            this._threadingDriver.getThreadForMsgId(el.parentNode.parentNode.msgId));
         ]]></body>
       </method>
 
       <method name="_onThreadMarkerOut">
         <parameter name="el"/>
         <body><![CDATA[
+          this.unhighlightThread(
+            this._threadingDriver.getThreadForMsgId(el.parentNode.parentNode.msgId));
+        ]]></body>
+      </method>
+
+      <method name="highlightThread">
+        <parameter name="thread"/>
+        <body><![CDATA[
+          for (var token in thread.iterator())
+            token[1].setAttribute("in-marked-thread", "true");
+          this._output.contentDocument.body.setAttribute("marked-thread", "true");
+        ]]></body>
+      </method>
+
+      <method name="unhighlightThread">
+        <parameter name="thread"/>
+        <body><![CDATA[
           this._output.contentDocument.body.removeAttribute("marked-thread");
-          for (var token in this._threadingDriver
-                .getThreadForMsgId(el.parentNode.parentNode.msgId).iterator())
+          for (var token in thread.iterator())
             token[1].removeAttribute("in-marked-thread");
         ]]></body>
       </method>
@@ -1464,15 +1477,19 @@
 
       <property name="thread" onget="return this._thread">
         <setter><![CDATA[
-          if (this._thread)
+          if (this._thread) {
+            this._output.unhighlightThread(this._thread);
             this._thread.destroy();
+          }
 
           this._thread = val;
 
           var doc = this._input.contentDocument;
 
-          if (val)
+          if (val) {
+            this._output.highlightThread(this._thread);
             doc.body.setAttribute("threadId", val.age+1);
+          }
           else
             doc.body.removeAttribute("threadId")
         ]]></setter>
