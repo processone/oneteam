@@ -39,6 +39,8 @@
         </menupopup>
       </menu>
       <menuseparator insertbefore="close-menuseparator"/>
+      <menuitem label="_('_Presences archive...')" command="cmd_presences_tab" key="key_presences_tab"
+                insertbefore="close-menuseparator"/>
       <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"
                 insertbefore="close-menuseparator"/>
       <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"
@@ -151,8 +153,7 @@
     <comandset>
       <command id="cmd_initateChat" key="key_initiateChat" oncommand="account.onInitiateChat()"
                observes="isOffline"/>
-      <command id="cmd_undoCloseChat" key="key_undoCloseChat" oncommand="chatTabsController.undoCloseTab()"
-               observes="isOffline"/>
+      <command id="cmd_undoCloseChat" key="key_undoCloseChat" oncommand="chatTabsController.undoCloseTab()"/>
       <command id="cmd_addContact" key="key_addContact" oncommand="account.onAddContact()"
                observes="isOffline"/>
       <command id="cmd_joinRoom" key="key_joinRoom" oncommand="account.onJoinRoom()"

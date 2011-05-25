@@ -179,8 +179,7 @@
         this.rosterView = new RosterView(document.getElementById("contacts-list"));
         this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
 
-        this.rosterView.hideOffline = document.getElementById("cmd_toggleShowOffline").
-          getAttribute("checked") == "true";
+        toggleShowOffline(!prefManager.getPref("chat.roster.showoffline"));
 
         this.updatePresenceIcon();
 
@@ -352,11 +351,22 @@
     function refineSearch(el) {
       setPresenceUpdater.rosterView.searchTerm = el.value;
     }
+
+    function toggleShowOffline(value) {
+      var rv = setPresenceUpdater.rosterView;
+
+      if (value == null)
+        value = !setPresenceUpdater.rosterView.hideOffline;
+      setPresenceUpdater.rosterView.hideOffline = value;
+
+      document.getElementById("cmd_toggleShowOffline").
+        setAttribute("checked", !value);
+      prefManager.setPref("chat.roster.showoffline", !value);
+    }
   ]]></script>
   <commandset>
-    <command id="cmd_toggleShowOffline" key="key_toggleShowOffline" persist="checked"
-             oncommand="this.setAttribute('checked', setPresenceUpdater.rosterView.hideOffline =
-                        !setPresenceUpdater.rosterView.hideOffline)"/>
+    <command id="cmd_toggleShowOffline" key="key_toggleShowOffline"
+             oncommand="toggleShowOffline()"/>
     <command id="cmd_toggleShowToolbar" checked="true"
              oncommand="var c = this.getAttribute('checked') == 'true'; this.setAttribute('checked', !c);
                         document.getElementById('actions-toolbar').collapsed = c"/>
@@ -386,18 +396,15 @@
 
   <toolbox id="main-toolbox" class="toolbox-top">
     <toolbarpalette id="main-toolbarpalette">
-      <toolbarbutton id="adduser-button" tooltiptext="_('Add new contact')"
-            command="cmd_addContact"/>
-      <toolbarbutton id="joinroom-button" tooltiptext="_('Join chat room')"
+      <toolbarbutton id="initiate-chat-button" tooltiptext="_('Initiate new chat')"
+            command="cmd_initateChat"/>
+      <toolbarbutton id="join-room-button" tooltiptext="_('Join chat room')"
             command="cmd_joinRoom"/>
-      <toolbarbutton id="presencestab-button" tooltiptext="_('Presences archive')"
+      <toolbarbutton id="presences-tab-button" tooltiptext="_('Presences archive')"
             command="cmd_presences_tab"/>
-      <toolbarseparator/>
-      <toolbarbutton id="toggleshowoffline-button" tooltiptext="_('Toggle offline contacts visibility')"
-            command="cmd_toggleShowOffline"/>
-      <toolbarbutton id="disco-button" tooltiptext="_('Show service discovery')"
-            command="cmd_disco"/>
-      <toolbarbutton id="editgroups-button" tooltiptext="_('Preferences')"
+      <toolbarbutton id="add-user-button" tooltiptext="_('Add new contact')"
+            command="cmd_addContact"/>
+      <toolbarbutton id="prefs-button" tooltiptext="_('Preferences')"
             command="cmd_prefs"/>
       <toolbarseparator id="gateways-separator" hidden="true"/>
     </toolbarpalette>
@@ -419,7 +426,7 @@
               <menuitem label="_('Show _Actions Toolbar')" command="cmd_toggleShowToolbar"
                         type="checkbox"/>
               <menuseparator/>
-              <menuitem label="_('Hide _Offline Contacts')" command="cmd_toggleShowOffline"
+              <menuitem label="_('Show _Offline Contacts')" command="cmd_toggleShowOffline"
                         type="checkbox"/>
             </menupopup>
           </menu>
@@ -433,7 +440,7 @@
     </toolbar>
 
     <toolbar id="actions-toolbar" class="toolbar-primary chromeclass-toolbar"
-             defaultset="adduser-button,presencestab-button,joinroom-button,toggleshowoffline-button,disco-button,editgroups-button,gateways-separator" hidden="true"/>
+             defaultset="initiate-chat-button,join-room-button,presences-tab-button,separator,add-user-button,separator,prefs-button,gateways-separator" hidden="true"/>
   </toolbox>
 
   <vbox id="main-box" flex="1">
@@ -513,7 +520,7 @@
         <textbox id="search" type="search" oncommand="refineSearch(this)"
                  timeout="50" emptytext="_('Search')"/>
         <description id="extra-message" hidden="true"/>
-        <vbox id="contacts-list" flex="1" persist="hideOffline"/>
+        <vbox id="contacts-list" flex="1"/>
       </vbox>
       <!--
       <splitter id="chats-splitter" collapsed="true" persist="rightWidth"/>

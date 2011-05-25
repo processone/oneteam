@@ -399,7 +399,7 @@ _DECL_(NotificationScheme).prototype =
                              _("Call request received"),
                              _xml("User <b>{0}</b> wants to initiate call with you",
                                   resource.visibleName),
-                             "chrome://oneteam/skin/main/imgs/callicon.png",
+                             "chrome://oneteam/skin/main/imgs/call.png",
                              null, callback, inlineCommands);
     },
 
@@ -412,7 +412,7 @@ _DECL_(NotificationScheme).prototype =
                              _("Missed call"),
                              _xml("You missed call from user <b>{0}</b>",
                                   resource.visibleName),
-                             "chrome://oneteam/skin/main/imgs/callicon.png",
+                             "chrome://oneteam/skin/main/imgs/call.png",
                              null, callback, inlineCommands);
     },
 
@@ -426,7 +426,7 @@ _DECL_(NotificationScheme).prototype =
                              _("File transfer request"),
                              _xml("User <b>{0}</b> wants to send you <b>\"{1}\"</b> file",
                                   resource.visibleName, fileName),
-                             "chrome://oneteam/skin/main/imgs/fticon.png",
+                             "chrome://oneteam/skin/main/imgs/file-transfer.png",
                              null, callback, inlineCommands);
     },
 
@@ -440,7 +440,7 @@ _DECL_(NotificationScheme).prototype =
                              _("File transfer aborted"),
                              _xml("User <b>{0}</b> doesn't want to receive your <b>\"{1}\"</b> file",
                                   resource.visibleName, fileName),
-                             "chrome://oneteam/skin/main/imgs/fticon.png",
+                             "chrome://oneteam/skin/main/imgs/file-transfer.png",
                              null, callback);
     },
 
@@ -454,7 +454,7 @@ _DECL_(NotificationScheme).prototype =
                              _("File transfer accepted"),
                              _xml("User <b>{0}</b> accepted your <b>\"{1}\"</b> file",
                                   resource.visibleName, fileName),
-                             "chrome://oneteam/skin/main/imgs/fticon.png",
+                             "chrome://oneteam/skin/main/imgs/file-transfer.png",
                              null, callback);
     },
 
