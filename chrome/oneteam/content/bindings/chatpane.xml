@@ -1435,7 +1435,7 @@
           </xul:vbox>
         </xul:hbox>
         <xul:vbox class="inputBox textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
-          <html:iframe id="_input" style="height: 1em"/>
+          <html:iframe id="_input" style="height: 1.4em"/>
         </xul:vbox>
       </xul:stack>
     </content>
@@ -1965,8 +1965,8 @@
 
           var h = me._input.clientHeight + body.offsetHeight - body.clientHeight;
 
-          if (h < 10)
-            h = 10;
+          if (h < 25)
+            h = 25;
 
           if (h > 0.3*window.innerHeight) {
             body.style.overflowY = "auto"

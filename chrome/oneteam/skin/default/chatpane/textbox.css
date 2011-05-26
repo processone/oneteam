@@ -8,7 +8,7 @@
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-  min-height: 1.5em !important;
+  -min-height: 1.5em !important;
   -moz-appearance: none !important;
 }
 
@@ -17,11 +17,11 @@
 }
 
 #_counter {
-  margin-top: -2px !important;
-  margin-bottom: -2px !important;
+/*  margin-top: -2px !important;
+  margin-bottom: -2px !important;*/
   padding: 0 !important;
   color: #FFA4A2;
-  font-size: 1.6em;
+  font-size: 1.2em;
 }
 
 toolbar[type="chatpane-commands"] {
