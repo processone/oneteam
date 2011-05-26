@@ -337,15 +337,15 @@ div#editButton, .displayEditButton {
     bottom: 0.4em;
 }
 div#editButton {
-    width: 14px;
-    background: url(imgs/edit-disabled-14.png);
+    width: 16px;
+    background: url(imgs/edit.png) no-repeat center;
     cursor: pointer;
 }
 div#editButton[editing] {
-    background: url(imgs/edit-enabled-14.png);
+    background-image: url(imgs/edit-in-progress.png);
 }
 .displayEditButton {
-    width: 30px;
+    width: 40px;
 }
 
 span.body[displayEdit] span.edit {
@@ -361,24 +361,26 @@ div.message:after {
 }
 
 .previousMessage, .nextMessage {
-    width: 8px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
+    margin: 1px;
     float: left;
     cursor: pointer;
+    background: transparent no-repeat center;
 }
 .previousMessage[disabled], .nextMessage[disabled] {
     cursor: default;
 }
-.previousMessage           {background: url(imgs/previous.png);         }
-.previousMessage[disabled] {background: url(imgs/previous-disabled.png);}
-.nextMessage               {background: url(imgs/next.png);             }
-.nextMessage[disabled]     {background: url(imgs/next-disabled.png);    }
+.previousMessage           {background-image: url(imgs/previous.png);         }
+.previousMessage[disabled] {background-image: url(imgs/previous-disabled.png);}
+.nextMessage               {background-image: url(imgs/next.png);             }
+.nextMessage[disabled]     {background-image: url(imgs/next-disabled.png);    }
 
 .tooltipDiv {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 12px;
     float: right;
-    background: url(imgs/edit-unavailable-14.png) center center no-repeat;
+    background: url(imgs/edit-inactive.png) no-repeat center;
 }
 
 /* 2px blue border around message being edited */
