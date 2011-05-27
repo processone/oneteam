@@ -135,17 +135,15 @@ function highlightDiff (node1, node2) {
     }
   }
 
-try {
   _removeEditSpans(node1);
   _removeEditSpans(node2);
   var diff = _diff(_split(node1), _split(node2));
   _unsplit(node1, diff.b1);
   _unsplit(node2, diff.b2);
-} catch (ex) {dump(ex);}
 }
 
 
-function displayEditButton(body, originalMessage, xulNode) {
+function displayEditButton(body, message, xulNode) {
   // xulNode is used only to attach the tooltips to a xul element
 
   function mytooltip(htmlNode, text) {
@@ -154,36 +152,28 @@ function displayEditButton(body, originalMessage, xulNode) {
 
   var doc = body.ownerDocument;
 
-  var button = doc.createElement("div");
-  button.setAttribute("class", "displayEditButton");
+  var rightDiv = message.rightDiv;
 
   var previous = doc.createElement("div");
   previous.setAttribute("class", "previousMessage");
-  button.appendChild(previous);
+  if (rightDiv.firstChild)
+    rightDiv.insertBefore(previous, rightDiv.firstChild);
+  else
+    rightDiv.appendChild(previous);
 
   var next = doc.createElement("div");
   next.setAttribute("class", "nextMessage");
-  button.appendChild(next);
+  rightDiv.insertBefore(next, rightDiv.firstChild);
 
-  var tooltipDiv;
-
-  button.addEventListener("mouseover", function() {
+  rightDiv.addEventListener("mouseover", function() {
     body.setAttribute("displayEdit", true);
   }, true);
-  button.addEventListener("mouseout", function() {
+  rightDiv.addEventListener("mouseout", function() {
     body.removeAttribute("displayEdit");
   }, true);
 
-  var currentMsg = originalMessage;
+  var currentMsg = message;
   var nbVersions;
-
-  function _updateTooltip() {
-    mytooltip(tooltipDiv,
-      nbVersions == 1 ? _("This message has been edited once") :
-      nbVersions == 2 ? _("This message has been edited twice") :
-                        _("This message has been edited {0} times", nbVersions)
-    );
-  }
 
   function _displayOtherVersion(msg) {
     // display the version in msg of the message instead of that in currentMsg
@@ -221,48 +211,43 @@ function displayEditButton(body, originalMessage, xulNode) {
   }
 
   function _updateButtons() {
-    if (currentMsg.editCounter && currentMsg.editCounter > 0) {
+    // 'See previous version' button
+    if (currentMsg.previous) {
       previous.removeAttribute("disabled");
       previous.addEventListener("click", _displayPrevious, true);
-      mytooltip(previous, _('See Previous Version') + ", "
-                          + readableTimestamp(currentMsg.previous.time));
+      mytooltip(previous, _('See version ') + currentMsg.editCounter
+                          + "/" + nbVersions + ", " + readableTimestamp(currentMsg.previous.time));
     } else {
-      previous.setAttribute("disabled", true);
+      previous.setAttribute("disabled", "true");
       previous.removeEventListener("click", _displayPrevious, true);
-      mytooltip(previous, _('This is the first version of the message'));
+      mytooltip(previous, _('This is version ') + "1/" + nbVersions + ", "
+                          + readableTimestamp(currentMsg.time));
     }
-    if (!currentMsg.editCounter || currentMsg.editCounter < nbVersions) {
+
+    // 'See next version' button
+    if (currentMsg.editMessage) {
       next.removeAttribute("disabled");
       next.addEventListener("click", _displayNext, true);
-      mytooltip(next, _('See Next Version') + ", "
-                      + readableTimestamp(currentMsg.editMessage.time));
+      mytooltip(next, _('See version ') + (currentMsg.editCounter ? currentMsg.editCounter+2 : 2)
+                      + "/" + nbVersions + ", " + readableTimestamp(currentMsg.editMessage.time));
     } else {
-      next.setAttribute("disabled", true);
+      next.setAttribute("disabled", "true");
       next.removeEventListener("click", _displayNext, true);
-      mytooltip(next, _('This is the last version of the message'));
+      mytooltip(next, _('This is version ') + nbVersions + "/" + nbVersions + ", "
+                      + readableTimestamp(currentMsg.time));
     }
   }
 
-  button.reload = function(msg) {
-    if (currentMsg == msg)
-      return;
-    nbVersions = msg.editCounter;
-    if (tooltipDiv)
-      _updateTooltip();
-    _displayOtherVersion(msg);
-    _updateButtons();
-  }
-
-  button.setTooltipDiv = function() {
-    if (!tooltipDiv) {
-      tooltipDiv = doc.createElement("div");
-      tooltipDiv.setAttribute("class", "tooltipDiv");
-      button.appendChild(tooltipDiv);
+  return {
+    reload: function(msg) {
+      // msg is supposed to be the last version of the message
+      if (currentMsg == msg)
+        return;
+      nbVersions = msg.editCounter + 1;
+      _displayOtherVersion(msg);
+      _updateButtons();
     }
-    _updateTooltip();
   }
-
-  return button;
 }
 
 

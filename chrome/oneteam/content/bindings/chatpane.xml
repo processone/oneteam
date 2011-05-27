@@ -855,6 +855,10 @@
               }
 
               if (!msg.isSystemMessage) {
+                msg.rightDiv = doc.createElement("div");
+                msg.rightDiv.setAttribute("class", "right-div");
+                e.insertBefore(msg.rightDiv, e.firstChild);
+
                 var xReplyTo = "xReplyTo" in msg ? msg.xReplyTo[0] : null;
                 var xMessageId = "xMessageId" in msg ? msg.xMessageId : null;
 
@@ -920,17 +924,16 @@
 
             if (!msg.editCounter && msg.editMessage) {
               var body = msg.msgEl.lastChild;
-              if (!msg.msgEl.displayEditButton) {
-                msg.msgEl.displayEditButton = displayEditButton(body, msg, this._output);
-                body.insertBefore(msg.msgEl.displayEditButton, body.childNodes[1]);
+              if (!msg.displayEditButton) {
+                msg.displayEditButton = displayEditButton(body, msg, this._output);
               }
-              if (!this._editButton || this._editButton.parentNode != body)
-                msg.msgEl.displayEditButton.setTooltipDiv();
             }
 
             while (msg.editMessage) {
               msg.editMessage.editCounter =
                 msg.editCounter ? msg.editCounter +1 : 1;
+              msg.editMessage.rightDiv = msg.rightDiv;
+              msg.editMessage.displayEditButton = msg.displayEditButton;
               msg.editMessage.msgEl = msg.msgEl;
               msg.editMessage.previous = msg;
               msg = msg.editMessage;
@@ -938,8 +941,8 @@
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
               tooltipLinks(msg.contentNode, this._output);
             } // now, msg is the last edit message, or the original message if not edited
-            if (msg.msgEl.displayEditButton)
-              msg.msgEl.displayEditButton.reload(msg);
+            if (msg.displayEditButton)
+              msg.displayEditButton.reload(msg);
 
             if (!afterMsg && !msg.isSystemMessage) {
               this._lastNickMessage[msg.nick] = msg;
@@ -996,13 +999,13 @@
           var chatpane = this.parentNode.parentNode.parentNode.parentNode;
           if (chatpane.editModeAvailable) {
             this._attachEditButton();
-            var messageDiv = this._editButton.parentNode.parentNode;
+            var messageDiv = this._editButton.parentNode.parentNode.parentNode;
             if (chatpane.editModeEnabled) {
-              this._editButton.setAttribute("editing", true);
+              //this._editButton.setAttribute("editing", true);
               tooltip(this._editButton, this._output, _("Cancel Edition"));
               messageDiv.setAttribute("editing", true);
             } else {
-              this._editButton.removeAttribute("editing");
+              //this._editButton.removeAttribute("editing");
               tooltip(this._editButton, this._output, _("Edit Last Message"));
               messageDiv.removeAttribute("editing");
             }
@@ -1017,10 +1020,7 @@
       <method name="_removeEditButton">
         <body><![CDATA[
           if (this._editButton) {
-            var msgBody = this._editButton.parentNode;
-            msgBody.removeChild(this._editButton);
-            if (msgBody.parentNode.displayEditButton)
-              msgBody.parentNode.displayEditButton.setTooltipDiv();
+            this._editButton.parentNode.removeChild(this._editButton);
             delete this._editButton;
           }
         ]]></body>
@@ -1029,8 +1029,8 @@
       <method name="_attachEditButton">
         <body><![CDATA[
           if (this._input.lastMessage) {
-            var body = this._input.lastMessage.msgEl.lastChild;
-            if (!this._editButton || body != this._editButton.parentNode) {
+            var rightDiv = this._input.lastMessage.rightDiv;
+            if (!this._editButton || rightDiv != this._editButton.parentNode) {
               this._removeEditButton();
               var doc = this._output.contentDocument;
               var im = doc.createElement("div");
@@ -1040,7 +1040,7 @@
               }, this), true);
               tooltip(im, this._output, _("Edit Last Message"));
               this._editButton = im;
-              body.appendChild(im);
+              rightDiv.appendChild(im);
             }
           }
         ]]></body>
@@ -2686,7 +2686,7 @@
 
           var text = this._input.value.textContent;
 
-          if (~text.search(/\S/)) {
+          if (~text.search(/\S/) || this.editModeEnabled) {
             if (!this.completionEngine || !this.completionEngine.execCommand(text)) {
 
               // the following lines are a fallback for the thread feature

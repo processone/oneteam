@@ -53,6 +53,19 @@ _DECL_(PrefManager).prototype =
     getPref: function(name, inDefaults) {
         var srv = inDefaults ? this.defaultSrv : this.srv;
 
+/*if (name == "chat.general.iconset") {
+dump("getPref(" + name + ", " + inDefaults + ") = ");
+var res, type = srv.getPrefType(name);
+            if (type == srv.PREF_BOOL) 
+                res = srv.getBoolPref(name);  
+            if (type == srv.PREF_INT) 
+                res = srv.getIntPref(name);  
+            if (type == srv.PREF_STRING) 
+                res = srv.getComplexValue(name, Components.interfaces.nsISupportsString).data;
+dump(res + "\n");
+return res;
+}*/
+
         try {
             var type = srv.getPrefType(name);
             if (type == srv.PREF_BOOL)
@@ -70,6 +83,7 @@ _DECL_(PrefManager).prototype =
 
     setPref: function(name, value, inDefaults) {
         var valueType = typeof(value);
+dump("setPref(" +name + ", " +value+ " (" +valueType+ "), " +inDefaults+ ")\n");
 
         var srv = inDefaults ? this.defaultSrv : this.srv;
 

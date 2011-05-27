@@ -109,11 +109,7 @@ toolbar[type="chatpane-commands"] dropmarker {
   list-style-image: url(imgs/toolbar/spellcheck-inactive.png);
 }
 
-#editButton[type="cancel"] {
-  list-style-image: url(imgs/toolbar/edit-inactive.png);
-}
-
-#editButton[type="edit"] {
+#editButton[type="cancel"], #editButton[type="edit"] {
   list-style-image: url(imgs/toolbar/edit.png);
 }
 

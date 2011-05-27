@@ -9,12 +9,13 @@ body {
     margin: 0px;
     padding: 2px;
     min-height: 17px;
+    word-wrap: break-word;
 }
 
 body[hasSendButton=true] {
     background: transparent !important;
     padding-right: 50px;
-    word-wrap: break-word;
+    min-height: 19px;
 }
 
 body[hasSendButton=true]:after {
@@ -55,7 +56,6 @@ body[hasSendButton=true][disabled=true]:after {
     -moz-border-right-colors: #c1c1c1 #bbbbbb #b3b3b3;
     border-top-width: 1px;
     border-bottom-width: 0;
-    /*width of border-top and border-bottom reversed by FX*/
 }
 
 body[hide-not-marked=true] .message {
@@ -251,7 +251,7 @@ body[threadId]:before {
 .message > .body {
     position: relative;
     display: block;
-    padding: 3px 34px 3px 30px;
+    padding: 3px 50px 3px 30px;
 }
 
 .message[starts-chunk=true]::before {
@@ -330,56 +330,40 @@ body[marked-thread=true] .message[in-marked-thread=true] {
     background: url(imgs/vertical-gradient.png) top left repeat-x;
 }
 
-div#editButton, .displayEditButton {
-    height: 14px;
-    position: absolute;
-    right: 1px;
-    bottom: 0.4em;
-}
 div#editButton {
-    width: 14px;
-    background: url(imgs/edit-disabled-14.png);
+    height: 16px;
+    width: 16px;
+    float: right;
+    background: url(imgs/edit.png);
     cursor: pointer;
 }
-div#editButton[editing] {
-    background: url(imgs/edit-enabled-14.png);
-}
-.displayEditButton {
-    width: 30px;
+
+div.right-div {
+    position: absolute;
+    right: 0;
+    bottom: 3px;
+    height: 18px;
 }
 
 span.body[displayEdit] span.edit {
     background: yellow;
 }
 
-/* for the 'displayEdit' and 'edit' button in the chatpane-view
-   not to overflow the message div, particularly when it is empty */
-div.message:after {
-    content: "";
-    display: block;
-    clear: both;
-}
-
 .previousMessage, .nextMessage {
-    width: 8px;
+    width: 14px;
     height: 14px;
-    float: left;
     cursor: pointer;
+    float: right;
+    margin: 2px 0 2px 2px;
 }
 .previousMessage[disabled], .nextMessage[disabled] {
     cursor: default;
 }
-.previousMessage           {background: url(imgs/previous.png);         }
-.previousMessage[disabled] {background: url(imgs/previous-disabled.png);}
+
+.previousMessage           {background: url(imgs/prev.png);         }
+.previousMessage[disabled] {background: url(imgs/prev-disabled.png);}
 .nextMessage               {background: url(imgs/next.png);             }
 .nextMessage[disabled]     {background: url(imgs/next-disabled.png);    }
-
-.tooltipDiv {
-    width: 14px;
-    height: 14px;
-    float: right;
-    background: url(imgs/edit-unavailable-14.png) center center no-repeat;
-}
 
 /* 2px blue border around message being edited */
 .message[editing] {
