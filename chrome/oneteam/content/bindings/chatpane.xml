@@ -1427,12 +1427,8 @@
 
     <content>
       <xul:stack flex="1">
-        <xul:hbox>
-          <xul:spacer flex="1"/>
-          <xul:vbox>
-            <xul:spacer flex="1" style="height: 0"/>
-            <xul:label id="_counter" value="0"/>
-          </xul:vbox>
+        <xul:hbox align="end" pack="end">
+          <xul:label id="_counter" value="0"/>
         </xul:hbox>
         <xul:vbox class="inputBox textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
           <html:iframe id="_input" style="height: 1.4em"/>
@@ -1961,9 +1957,13 @@
           me._preMaybeResize();
 
           var body = me._input.contentDocument.body;
-          body.style.marginRight = me._counter.getBoundingClientRect().width+"px";
+          var counterBB = me._counter.getBoundingClientRect();
+          body.style.marginRight = counterBB.width+"px";
 
           var h = me._input.clientHeight + body.offsetHeight - body.clientHeight;
+
+          if (counterBB.height > h)
+            h = counterBB.height;
 
           if (h < 25)
             h = 25;

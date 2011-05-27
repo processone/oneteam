@@ -17,11 +17,11 @@
 }
 
 #_counter {
-/*  margin-top: -2px !important;
-  margin-bottom: -2px !important;*/
   padding: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
   color: #FFA4A2;
-  font-size: 1.2em;
+  font-size: 1.6em;
 }
 
 toolbar[type="chatpane-commands"] {
