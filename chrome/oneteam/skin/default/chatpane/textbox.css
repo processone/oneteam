@@ -8,7 +8,7 @@
   margin: 0 !important;
   padding: 0 !important;
   border: none !important;
-  min-height: 1.5em !important;
+  -min-height: 1.5em !important;
   -moz-appearance: none !important;
 }
 
@@ -17,17 +17,21 @@
 }
 
 #_counter {
-  margin-top: -2px !important;
-  margin-bottom: -2px !important;
+/*  margin-top: -2px !important;
+  margin-bottom: -2px !important;*/
   padding: 0 !important;
   color: #FFA4A2;
-  font-size: 1.6em;
+  font-size: 1.2em;
 }
 
 toolbar[type="chatpane-commands"] {
   -moz-appearance: none !important;
   background: #515151 !important;
   -moz-border-radius: 2px;
+}
+
+toolbar[type="chatpane-commands"] .toolbarbutton-text {
+  display: none;
 }
 
 toolbar[type="chatpane-commands"] toolbarseparator {
@@ -51,34 +55,59 @@ toolbar[type="chatpane-commands"] dropmarker {
   -moz-box-pack: center;
 }
 
-#boldButton {
+#boldButton, #boldButton[checked=true][disabled=true] {
+    list-style-image: url(imgs/toolbar/text-style-bold-inactive.png);
+}
+
+#boldButton[checked=true] {
     list-style-image: url(imgs/toolbar/text-style-bold.png);
 }
 
-#italicButton {
+#italicButton, #italicButton[checked=true][disabled=true] {
+    list-style-image: url(imgs/toolbar/text-style-italic-inactive.png);
+}
+
+#italicButton[checked=true] {
     list-style-image: url(imgs/toolbar/text-style-italic.png);
 }
 
-#underlineButton {
+#underlineButton, #underlineButton[checked=true][disabled=true] {
+    list-style-image: url(imgs/toolbar/text-style-underline-inactive.png);
+}
+
+#underlineButton[checked=true] {
     list-style-image: url(imgs/toolbar/text-style-underline.png);
 }
 
+#smallerFontButton[disabled=true] {
+    list-style-image: url(imgs/toolbar/text-size-smaller-inactive.png);
+}
+
+
 #smallerFontButton {
-    list-style-image: url(imgs/toolbar/text-size-smaller.png);
+    list-style-image: url(imgs/toolbar/text-size-smaller-inactive.png);
+}
+
+#biggerFontButton[disabled=true] {
+    list-style-image: url(imgs/toolbar/text-size-bigger-inactive.png);
 }
 
 #biggerFontButton {
-    list-style-image: url(imgs/toolbar/text-size-bigger.png);
+    list-style-image: url(imgs/toolbar/text-size-bigger-inactive.png);
 }
 
 #fontColorButton {
   -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
-  list-style-image: url(imgs/toolbar/text-font-color.png);
+  list-style-image: url(imgs/toolbar/text-font-color-inactive.png);
 }
 
 #fontBackgroundButton {
   -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
-  list-style-image: url(imgs/toolbar/text-font-background.png);
+  list-style-image: url(imgs/toolbar/text-font-background-inactive.png);
+}
+
+#vcardButton, #sendFile, #jingleCall, #extraCmds, #editButton {
+  min-width: 40px;
 }
 
 #vcardButton {

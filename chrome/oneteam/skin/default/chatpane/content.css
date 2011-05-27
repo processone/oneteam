@@ -26,14 +26,14 @@ body[hasSendButton=true]:after {
     right: 0px;
     bottom: 0px;
     margin: 0px;
-    -moz-border-image: url(imgs/send-border-image.png) 5/5px repeat repeat;
-    background: #b3ce00 url(imgs/send-icon.png) center center no-repeat;
+    -moz-border-image: url(imgs/in-chat-button-border-image.png) 7/7px repeat repeat;
+    background: #bac533 url(imgs/in-chat-button-send.png) center no-repeat;
     padding: 0px;
-    width: 38px;
+    width: 36px;
 }
 
 body[hasSendButton=true][editMode]:after {
-    background-image: url(imgs/edit-send.png);
+    background-image: url(imgs/in-chat-button-edit.png);
 }
 
 body[hasSendButton=true][disabled=true]:after {
@@ -355,6 +355,7 @@ span.body[displayEdit] span.edit {
     cursor: pointer;
     float: right;
     margin: 2px 0 2px 2px;
+    background: transparent no-repeat center;
 }
 .previousMessage[disabled], .nextMessage[disabled] {
     cursor: default;

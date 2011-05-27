@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
 "POT-Creation-Date: 2011-05-19 17:37+0200\n"
-"PO-Revision-Date: 2011-05-18 19:22+0100\n"
+"PO-Revision-Date: 2011-05-25 19:29+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
 "Language: \n"
@@ -608,12 +608,20 @@ msgid "New Room"
 msgstr "Nouveau salon"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:118
-msgid "Entered informations are invalid.\\nDo you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
-msgstr "Les informations saisies sont incorrectes.\\nSouhaitez-vous oublier les informations saisies et restaurer les valeurs précédentes (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to forget entered informations and restore previous values (click \"Cancel\" if you want to correct values)?"
+msgstr ""
+"Les informations saisies sont incorrectes.\\n"
+"Souhaitez-vous oublier les informations saisies et restaurer les valeurs précédentes (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:119
-msgid "Entered informations are invalid.\\nDo you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
-msgstr "Les informations saisies sont incorrectes.\\nSouhaitez-vous oublier ce marque-page (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to forget this bookmark (click \"Cancel\" if you want to correct values)?"
+msgstr ""
+"Les informations saisies sont incorrectes.\\n"
+"Souhaitez-vous oublier ce marque-page (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:165
 msgid "New"
@@ -1103,7 +1111,7 @@ msgstr "Découverte des services"
 #: ../chrome/oneteam/content/preferences.xul:17
 #: ../chrome/oneteam/content/vcard.xul:15
 msgid "Close"
-msgstr "Cacher cette fenêtre"
+msgstr "Fermer"
 
 #: ../chrome/oneteam/content/disco.xul:25
 msgid "Server"
@@ -2287,8 +2295,16 @@ msgid "Invitation into {0} chat room"
 msgstr "Invitation au salon {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:221
-msgid "User *{0}* invited you to chat room *{1}*.\\n\\nTo join this chat room please click on this link:\\n{2}\\n"
-msgstr "*{0}* vous a invité au salon de discussion *{1}*.\\n\\nPour rejoindre ce salon de discussion, veuillez cliquer sur ce lien :\\n{2}\\n"
+msgid ""
+"User *{0}* invited you to chat room *{1}*.\\n"
+"\\n"
+"To join this chat room please click on this link:\\n"
+"{2}\\n"
+msgstr ""
+"*{0}* vous a invité au salon de discussion *{1}*.\\n"
+"\\n"
+"Pour rejoindre ce salon de discussion, veuillez cliquer sur ce lien :\\n"
+"{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:463
 msgid "Chat room server can't be contacted or room reached maximum number of users"

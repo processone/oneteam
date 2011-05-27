@@ -7,7 +7,3 @@ pref("extensions.logging.enabled", true);
 pref("javascript.options.strict", true);
 
 pref("toolkit.defaultChromeURI", "chrome://oneteam/content/main.xul");
-
-// perso
-pref("app.update.channel", "devel", true);
-
