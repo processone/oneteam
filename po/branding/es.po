@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: oneteam\n"
-"POT-Creation-Date: 2011-05-19 17:37+0200\n"
+"POT-Creation-Date: 2011-05-27 15:03+0200\n"
 "PO-Revision-Date: 2010-09-14 13:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -24,8 +24,8 @@ msgstr ""
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:28
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:41
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:46
-#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:49
-#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:92
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:51
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:94
 msgid "OneTeam"
 msgstr "OneTeam"
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-19 17:37+0200\n"
+"POT-Creation-Date: 2011-05-27 15:03+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -22,8 +22,8 @@ msgstr ""
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:28
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:41
 #: ../chrome/oneteam/content/overlays/browserOverlay.xul:46
-#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:49
-#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:92
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:51
+#: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:94
 msgid "OneTeam"
 msgstr "OneTeam"
 

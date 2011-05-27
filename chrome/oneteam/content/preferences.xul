@@ -185,7 +185,7 @@
       <label value="_('Offer updates from channel:')"/>
       <menulist id="update_channel_selector" oncommand="updateUpdateChannel(this.value)">
         <menupopup>
-          <menuitem label="_('Releases')" value="releases"/>
+          <menuitem label="_('Releases')" value="release"/>
           <menuitem label="_('Test')" value="devel"/>
         </menupopup>
       </menulist>
