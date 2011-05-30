@@ -80,7 +80,7 @@
     function saveUpdatePrefs() {
 // #ifndef XPI
       var val = document.getElementById("update_channel_selector").value;
-      if (val == prefManager.getPref("app.update.channel", true))
+      if (val == prefManager.getPref("app.update.channel"))
         prefManager.deletePref("app.partner.process-one");
       else
         prefManager.setPref("app.partner.process-one", val);

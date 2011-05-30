@@ -76,20 +76,10 @@ function Account()
     var [user, host] = this.getConnectionCreds();
 
     if (host && user) {
-        var lm = Components.classes["@mozilla.org/login-manager;1"].
-            getService(Components.interfaces.nsILoginManager);
-        var logins = lm.findLogins({}, "xmpp://"+host, null, host);
-        for (var i = 0; i < logins.length; i++)
-            if (logins[i].username == user) {
-                this.connectionInfo.pass = logins[i].password;
-                this.modelUpdated("connectionInfo");
-                break;
-            }
-    }
-
-    var [user, host] = this.getConnectionCreds();
-    if (user && host)
         this.myJID = new JID(user, host);
+        if ((this.connectionInfo.pass = this.storedPassword()))
+            this.modelUpdated("connectionInfo");
+    }
 
     setTimeout(function(t){t._restoreContactsFromCache()}, 0, this);
 }
@@ -470,6 +460,18 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     {
         openDialogUniq("ot:changePassword", "chrome://oneteam/content/changePassword.xul",
                        "chrome,centerscreen");
+    },
+
+    storedPassword: function()
+    {
+        var [user, host] = this.getConnectionCreds();
+        var lm = Components.classes["@mozilla.org/login-manager;1"].
+            getService(Components.interfaces.nsILoginManager);
+        var logins = lm.findLogins({}, "xmpp://"+host, null, host);
+        for (var i = 0; i < logins.length; i++)
+            if (logins[i].username == user)
+                return logins[i].password;
+        return null;
     },
 
     changePassword: function(password, callback)

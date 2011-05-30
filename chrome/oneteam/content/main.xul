@@ -208,27 +208,33 @@
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
 
+      /* for web version of onetam => deprecated
       var args = {};
       for each (var part in document.location.toString().replace(/.*?\?/, "").split("&")) {
         if (!part)
           continue;
         part = perlSplit(part, "=", 2);
         args[decodeURIComponent(part[0])] = part.length == 1 ? null : decodeURIComponent(part[1]);
-      }
+      }*/
 
       var username = prefManager.getPref("chat.connection.user");
       var password = account.connectionInfo.pass;
       var savePass = account.connectionInfo.pass != null;
 
+      /* idem as previous comments
       if (args.username) {
         username = args.username;
         password = args.password || ""
         savePass = false;
-      }
+      }*/
 
       document.getElementById("login-user").value = username || "";
       document.getElementById("login-pass").value = password || "";
       document.getElementById("login-savePass").checked = savePass;
+
+      account.resetPassInRoster = new Callback(function() {
+        this.value = account.connectionInfo.pass;
+      }, document.getElementById("login-pass"));
 
       if (("login" in args || args.openchat || args.openconference) && username && password) {
         connect();
