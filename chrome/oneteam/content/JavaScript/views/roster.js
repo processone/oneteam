@@ -436,6 +436,9 @@ _DECL_(ContactView).prototype =
         this._bundle.unregister();
 
         prefManager.unregisterChangeCallback(this._prefToken, "chat.general.showavatars");
+
+        if (this._matches)
+            this.parentView.onMatchingCountChanged(-1);
     }
 }
 
