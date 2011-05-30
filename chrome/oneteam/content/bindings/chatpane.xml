@@ -1961,7 +1961,7 @@
       <method name="_maybeResize">
         <parameter name="me"/>
         <body><![CDATA[
-          delete this._maybeResizeTimeout;
+          delete me._maybeResizeTimeout;
 
           me._preMaybeResize();
 
