@@ -33,7 +33,7 @@
 
     function updateUpdateChannel(value) {
       if (document.documentElement.instantApply)
-        prefManager.setPref("app.update.channel", value, true);
+        saveUpdatePrefs();
     }
 
     function updateSSLField() {
@@ -75,21 +75,27 @@
         fieldChanged(httpBase, httpBase.value.replace(/http-bind/, "http-poll"));
 
       prevType = el.value;
+      }
+
+    function saveUpdatePrefs() {
+// #ifndef XPI
+      var val = document.getElementById("update_channel_selector").value;
+      if (val == prefManager.getPref("app.update.channel", true))
+        prefManager.deletePref("app.partner.process-one");
+      else
+        prefManager.setPref("app.partner.process-one", val);
+// #endif
     }
 
     function onBeforeAccept() {
       account.notificationScheme.saveSettings(
-          document.getElementById("notifications").firstChild);
-// #ifndef XPI
-      prefManager.setPref("app.update.channel",
-                          document.getElementById("update_channel_selector").value,
-                          true);
-// #endif
+        document.getElementById("notifications").firstChild);
+      saveUpdatePrefs();
     }
 
     function initGeneralPane() {
 // #ifndef XPI
-      var val = prefManager.getPref("app.update.channel", true) || "release";
+      var val = prefManager.getPref("app.partner.process-one") || prefManager.getPref("app.update.channel", true) || "release";
       var el = document.getElementById("update_channel_selector");
 
       el.selectedIndex = val == "release" ? 0 : 1;
