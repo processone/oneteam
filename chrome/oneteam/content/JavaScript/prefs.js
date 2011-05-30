@@ -52,6 +52,7 @@ _DECL_(PrefManager).prototype =
 
     getPref: function(name, inDefaults) {
         var srv = inDefaults ? this.defaultSrv : this.srv;
+
         try {
             var type = srv.getPrefType(name);
             if (type == srv.PREF_BOOL)
@@ -69,7 +70,6 @@ _DECL_(PrefManager).prototype =
 
     setPref: function(name, value, inDefaults) {
         var valueType = typeof(value);
-
         var srv = inDefaults ? this.defaultSrv : this.srv;
 
         if (valueType == "boolean")

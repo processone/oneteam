@@ -7,6 +7,8 @@ print $q->header(-type => "text/xml", -expires => "1h");
 
 my ($product, $version, $build, $arch, $os, $channel) = (split "/", $q->param("q"));
 
+$channel =~ s/.*-cck-(.*)/$1/;
+
 open(my $fh, "<", "mars-info-$channel.txt") or empty_update();
 my @mars = <$fh>;
 close($fh);

@@ -151,7 +151,6 @@ function displayEditButton(body, message, xulNode) {
   }
 
   var doc = body.ownerDocument;
-
   var rightDiv = message.rightDiv;
 
   var previous = doc.createElement("div");
