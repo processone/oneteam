@@ -1543,6 +1543,12 @@
 
       ]]></constructor>
 
+      <destructor><![CDATA[
+        if (this._maybeResizeTimeout)
+          clearTimeout(this._maybeResizeTimeout);
+        delete this._maybeResizeTimeout;
+      ]]></destructor>
+
       <method name="syncEditMode">
         <body><![CDATA[
           if (this.parentNode.parentNode.parentNode.editModeEnabled) {
@@ -1947,13 +1953,16 @@
 
       <method name="maybeResize">
         <body><![CDATA[
-          setTimeout(this._maybeResize, 0, this);
+          if (!this._maybeResizeTimeout)
+            this._maybeResizeTimeout = setTimeout(this._maybeResize, 0, this);
         ]]></body>
       </method>
 
       <method name="_maybeResize">
         <parameter name="me"/>
         <body><![CDATA[
+          delete this._maybeResizeTimeout;
+
           me._preMaybeResize();
 
           var body = me._input.contentDocument.body;
