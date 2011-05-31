@@ -32,8 +32,8 @@ sub new {
 
 sub _make_package {
     my ($self, $tmpdir, $tmppfxdir) = @_;
-    system("hdiutil create -srcfolder '$tmpdir' '".
-           catfile($self->{topdir}, $self->_output_filename)."'");
+    system(qw(hdiutil create -format UDBZ -srcfolder), $tmpdir,
+           catfile($self->{topdir}, $self->_output_filename));
 }
 
 sub _prepare_files {
