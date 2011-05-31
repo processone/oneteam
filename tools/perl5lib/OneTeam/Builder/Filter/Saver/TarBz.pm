@@ -11,7 +11,7 @@ use OneTeam::Utils;
 use Cwd;
 
 sub new {
-    my ($class, $topdir, $version, $buildid, $mar_options, $xulrunner_path) = @_;
+    my ($class, $topdir, $version, $buildid, $mar_options, $xulrunner_path, $xulapp_path) = @_;
 
     die "Please set XULRUNNER parameter" if not $xulrunner_path;
 
@@ -20,6 +20,7 @@ sub new {
         outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
         mar_options => $mar_options,
         xulrunner_path => $xulrunner_path,
+        xulapp_path => $xulapp_path,
         version => $version,
         buildid => $buildid,
     };
@@ -34,8 +35,8 @@ sub new {
 
 sub _make_package {
     my ($self, $tmpdir, $tmppfxdir) = @_;
-    system("tar -C '$tmpdir' -cjf ".catfile($self->{topdir}, $self->_output_filename).
-           " oneteam");
+    system("tar", "-C", $tmpdir, "-cjf",
+           catfile($self->{topdir}, $self->_output_filename), "oneteam");
 }
 
 sub _prepare_files {
@@ -65,6 +66,7 @@ sub _platform_files_to_skip {
 
     return ('platform/WINNT_x86-msvc/components/oneteam.dll',
             'platform/Darwin_x86-gcc3/components/liboneteam.dylib',
+            'platform/Darwin_x86_64-gcc3/components/liboneteam.dylib',
             grep({ index($_, $self->{abi}) < 0 }
                  ('platform/Linux_x86-gcc3/components/liboneteam.so',
                   'platform/Linux_x86_64-gcc3/components/liboneteam.so')));
