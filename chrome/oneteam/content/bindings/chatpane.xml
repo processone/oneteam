@@ -45,8 +45,6 @@
           this._lastNickMessageId = {};
           this._lastNickMessage = {};
 
-          this.stopEditingMessage();
-
           return val;
         ]]></setter>
       </property>
@@ -313,6 +311,7 @@
             for (var i = 0; i < account.style.smiles.length; i++)
               account.style.smiles[i].attachStyles(this._output.contentDocument);
 
+            var me = this;
             this._output.contentDocument.addEventListener("click", function(event) {
               if (event.button != 0)
                 return;
@@ -320,27 +319,16 @@
                 me._threadMarkerClick(event.target)
               else if (event.target.className.indexOf("fetch-more") >= 0)
                 me._prependMessages();
-              else if (event.target.className.indexOf("edit-message") >= 0)
-                me._editMessageClick(event.target);
               else if (event.target.className.indexOf("inline-command") >= 0)
                 me._inlineCommandClick(event.target);
               else
                 linkEventsRedirector(event);
-            }, true)
+            }, true);
 
             if (this._model)
               this._onMessageQueueChanged();
 
             var doc = this._output.contentDocument;
-            var me = this;
-
-            this._output.contentDocument.addEventListener("msgclick", function(event) {
-              var target = event.target;
-              var idx = me._msgElList.indexOf(target);
-
-              if (idx >= 0 && "onMsgClick" in me.model)
-                me.model.onMsgClick(me._msgList[idx]);
-            }, false);
 
             this._output.contentDocument.addEventListener("contactdblclick", function(event) {
               var target = event.target;
@@ -407,85 +395,6 @@
             return;
 
           var newMessages = arg ? arg.added : this._model.messages;
-
-          if (arg && arg.modified) {
-            for (var i = 0; i < arg.modified.length; i++) {
-              var msg = arg.modified[i][0];
-              var msgEl = this._msgElList[this._msgList.indexOf(msg)];
-
-              var op = arg.modified[i][1];
-              if (msgEl) {
-                var msgElBody = msgEl.lastChild.lastChild;
-
-                if ("delta" in op) {
-                  var replayer = this._deltaTracker && this._deltaTracker.root == msgElBody ?
-                    this._deltaTracker : new DeltaReplayer(msgElBody);
-                  this.lastReplayer = replayer;
-                  msg.blipLength += replayer.replayOps(op.delta);
-                }
-                if ("body" in op) {
-                  msgElBody.innerHTML = xmlEscape(op.body);
-                }
-                if ("addedParticipants" in op) {
-                  var h = msgEl.firstChild;
-                  var p = op.addedParticipants;
-
-                  mainAddLoop:
-                  for (var j = 0; j < p.length; j++) {
-                    for (var k = 0; k < h.childNodes.length; k++)
-                      if (h.childNodes[k].contact == p[j])
-                        continue mainAddLoop;
-
-                    var e = h.ownerDocument.createElement("img");
-                    e.setAttribute("src", p[j].avatar ||
-                                   "resource://oneteam-skin/avatar/imgs/default-avatar.png");
-                    e.setAttribute("class", "participant");
-                    e.setAttribute("title", p[j].visibleName);
-                    e.setAttribute("width", "18");
-                    e.contact = p[j];
-                    h.appendChild(e);
-                  }
-                }
-                if ("removedParticipants" in op) {
-                  var h = msgEl.firstChild;
-                  var p = op.removedParticipants;
-
-                  for (var j = 0; j < h.childNodes.length; j++) {
-                    if (p.indexOf(h.childNodes[j].contact) >= 0)
-                      h.removeChild(h.childNodes[j--]);
-                  }
-                }
-                if ("placement" in op) {
-                  var node, cn = msgEl.parentNode.childNodes;
-
-                  for (var j = 0; j < cn.length; j++)
-                    if (msg.placeBefore(this._msgList[this._msgElList.indexOf(cn[j])])) {
-                      node = cn[j];
-                      break;
-                    }
-                  msgEl.parentNode.insertBefore(msgEl, node);
-                }
-                if ("classes" in op) {
-                  msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
-                }
-                if ("date" in op) {
-                  msgEl.getElementsByClassName("date")[0].textContent =
-                    readableTimestamp(msg.time);
-                }
-              }
-            }
-          }
-          if (arg && arg.removed) {
-            for (var i = 0; i < arg.removed.length; i++) {
-              var idx = this._msgList.indexOf(arg.removed[i]);
-              if (idx >= 0) {
-                var msgEl = this._msgElList[idx];
-                this._msgList.splice(idx, 1);
-                this._msgElList.splice(idx, 1);
-                msgEl.parentNode.removeChild(msgEl);
-              }
-            }
-          }
 
           if (!this._msgs) {
             [this.archivedMsgToken, this._msgs, this._hasMoreArchivedMessages] =
@@ -692,22 +601,7 @@
             this._firstMsgEl = fragment.firstChild;
           }
 
-          if (msgs[0].placeBefore) {
-            for (var i = 0; i < msgs.length; i++) {
-              var node = null, cn = this._content.childNodes;
-
-              for (var j = 0; j < cn.length; j++)
-                if (msgs[i].placeBefore(this._msgList[this._msgElList.indexOf(cn[j])])) {
-                  node = cn[j];
-                  break;
-                }
-              try {
-                this._content.insertBefore(fragment.firstChild, node);
-              } catch (ex) { }
-            }
-            scrollToBottom = false;
-          } else
-            this._content.appendChild(fragment);
+          this._content.appendChild(fragment);
 
           this._model.removeMessages();
 
@@ -780,7 +674,7 @@
                 msgEl.setAttribute("starts-chunk", "true");
               }
 
-              if (msg.contact && !msg.participants) {
+              if (msg.contact) {
                 var e = doc.createElement("img");
                 e.setAttribute("class", "avatar")
                 e.setAttribute("src", msg.contact.avatar ||
@@ -792,11 +686,6 @@
               var h = doc.createElement("span");
               h.setAttribute("class", "header");
               msgEl.appendChild(h);
-
-              if ("onMsgClick" in this.model)
-                msgEl.setAttribute("onclick", "var ev = document.createEvent('Events');"+
-                              "ev.initEvent('msgclick', true, false);"+
-                              "this.dispatchEvent(ev)");
 
               var e = doc.createElement("span");
               e.setAttribute("class", "to-copy-paste");
@@ -813,7 +702,7 @@
               e.appendChild(doc.createTextNode("] "));
               h.appendChild(e);
 
-              if (!msg.isSystemMessage && !msg.participants) {
+              if (!msg.isSystemMessage) {
                 e = doc.createElement("span");
                 e.setAttribute("class", "author");
                 e.appendChild(doc.createTextNode(msg.nick));
@@ -823,19 +712,6 @@
                 e.setAttribute("class", "to-copy-paste");
                 e.appendChild(doc.createTextNode(": "));
                 h.appendChild(e);
-              }
-              if (msg.participants) {
-                h.setAttribute("withParticipants", "true")
-                for (var j = 0; j < msg.participants.length; j++) {
-                  var e = doc.createElement("img");
-                  e.setAttribute("src", msg.participants[j].avatar ||
-                                 "resource://oneteam-skin/avatar/imgs/default-avatar.png");
-                  e.setAttribute("class", "participant");
-                  e.setAttribute("title", msg.participants[j].visibleName);
-                  e.setAttribute("width", "18");
-                  e.contact = msg.participants[j];
-                  h.appendChild(e);
-                }
               }
 
               e = doc.createElement("span");
@@ -1046,100 +922,6 @@
         ]]></body>
       </method>
 
-      <method name="editMessage">
-        <parameter name="msgEl"/>
-        <body><![CDATA[
-          var msg = this._msgList[this._msgElList.indexOf(msgEl)];
-
-          if (this._editMessageHandler) {
-            var editedMsg = this._editMessageHandler.msg;
-
-            this.stopEditingMessage();
-
-            if (editedMsg == msg)
-              return;
-          }
-
-          msgEl = msgEl.lastChild.lastChild;
-          msgEl.previousSibling.setAttribute("edited", "true");
-
-          this._editMessageHandler = {
-            msgEl: msgEl,
-            msg: msg,
-            _this: this,
-            model: this.model,
-            timeout: function(_this) {
-              _this._timeout = null;
-            },
-            handleEvent: function(ev) {
-              if (ev.type.indexOf("DOM") == 0) {
-                if (!this._timeout) {
-                  this._timeout = window.setTimeout(this.timeout, 0, this);
-                }
-              }
-
-              if (ev.type == "keypress")
-                if (ev.keyCode == KeyEvent.DOM_VK_RETURN &&
-                    "onEnterAction" in this.model &&
-                    this.model.onEnterAction(ev.shiftKey, this._this))
-                  {
-                    ev.preventDefault();
-                  }
-
-              if (ev.type.indexOf("DOM") == 0 && "elementModified" in this.model)
-                this.model.elementModified(this.msgEl, ev);
-              ev.stopPropagation();
-            }
-          }
-          msgEl.addEventListener("keypress", this._editMessageHandler, true);
-          msgEl.addEventListener("keydown", this._editMessageHandler, true);
-          msgEl.addEventListener("keyup", this._editMessageHandler, true);
-/*          msgEl.addEventListener("DOMNodeInserted", this._editMessageHandler, false);
-          msgEl.addEventListener("DOMNodeRemoved", this._editMessageHandler, false);
-          msgEl.addEventListener("DOMAttrModified", this._editMessageHandler, false);
-          msgEl.addEventListener("DOMCharacterDataModified", this._editMessageHandler, false);*/
-
-          msgEl.contentEditable = true;
-
-          if (!msgEl.lastChild || msgEl.lastChild.nodeName.toLowerCase() != "br")
-            msgEl.appendChild(msgEl.ownerDocument.createElement("br"));
-
-          setTimeout(function(msgEl){try{msgEl.focus()}catch(ex){alert(ex)}}, 100, msgEl);
-
-          var callback = this.model.msgModified ?
-            new Callback(this.model.msgModified, this.model).addArgs(msg).fromCall() :
-            null;
-
-          return this._deltaTracker = new EditorDeltaTracker(this.editor, callback,
-                                                             msgEl);
-
-        ]]></body>
-      </method>
-
-      <method name="stopEditingMessage">
-        <body><![CDATA[
-          if (!this._editMessageHandler)
-            return;
-
-          this._deltaTracker.destroy();
-
-          var msgEl = this._editMessageHandler.msgEl;
-
-          msgEl.previousSibling.removeAttribute("edited");
-
-          msgEl.contentEditable = false;
-          msgEl.removeEventListener("keypress", this._editMessageHandler, true);
-          msgEl.removeEventListener("keydown", this._editMessageHandler, true);
-          msgEl.removeEventListener("keyup", this._editMessageHandler, true);
-/*          msgEl.removeEventListener("DOMNodeInserted", this._editMessageHandler, false);
-          msgEl.removeEventListener("DOMNodeRemoved", this._editMessageHandler, false);
-          msgEl.removeEventListener("DOMAttrModified", this._editMessageHandler, false);
-          msgEl.removeEventListener("DOMCharacterDataModified", this._editMessageHandler, false);*/
-          this._editMessageHandler = null;
-          msgEl.blur();
-        ]]></body>
-      </method>
-
       <method name="_onUpdateThreadsDisplay">
         <parameter name="thread"/>
         <parameter name="msgToken"/>
@@ -1207,15 +989,6 @@
         <body><![CDATA[
           if (this._input && !this._input.disabled)
             this._setInputReplyMsgId(el.parentNode.parentNode.msgId);
-        ]]></body>
-      </method>
-
-      <method name="_editMessageClick">
-        <parameter name="el"/>
-        <body><![CDATA[
-          var msgEl = el.parentNode.parentNode;
-
-          this.editMessage(msgEl);
         ]]></body>
       </method>
 
