@@ -564,6 +564,7 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
     this.contact = contact;
     this.type = type;
     this.myNick = myNick;
+    this.uid = generateUniqueId();
 
     if (body instanceof JSJaCMessage) {
         this._text = body.getBody();
@@ -770,6 +771,13 @@ _DECL_(Message).prototype =
                 replace(/\/me(\s|<)/, "<b>* "+xmlEscape(this.nick)+"</b>$1");
 
         this._formatedHtmlEpoch = Message.prototype.epoch
+    },
+
+    wrapper: function() {
+        return {
+            __proto__: this,
+            wrappedValue: this
+        };
     },
 
     addRepresentation: function(msgEl) {
@@ -1133,13 +1141,6 @@ _DECL_(Message).prototype =
         str = str.substring(last);
 
         return res + xmlEscape(str);
-    },
-
-    clone: function()
-    {
-        var F = function() {};
-        F.prototype = this;
-        return new F();
     },
 
     setContent: function(text, html)

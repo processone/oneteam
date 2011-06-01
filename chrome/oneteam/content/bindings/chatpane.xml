@@ -110,8 +110,7 @@
         this._lastNickMessageId = {};
         this._lastNickMessage = {};
 
-        this._msgList = [];
-        this._msgElList = [];
+        this._msgUidToMsg = {};
       ]]></constructor>
 
       <destructor><![CDATA[
@@ -635,7 +634,7 @@
           var fragment = doc.createDocumentFragment();
 
           for (var i = 0; i < msgs.length; i++) {
-            var msg = msgs[i].clone();
+            var msg = msgs[i].wrapper();
             var animRequired = false;
 
             if (!afterMsg) {
@@ -657,7 +656,7 @@
               }
             }
 
-            if (!msg.editCounter && !msg.msgEl) {
+            if (!msg.editCounter) {
               var msgEl = doc.createElement("div");
               msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
               msgEl.setAttribute("not-seen", "true");
@@ -786,16 +785,17 @@
               }
 
               msg.msgEl = msgEl;
+              msgEl.msgUid = msg.uid;
+
               fragment.appendChild(msgEl);
 
-              /*msg.addRepresentation(msgEl);
-              msg.markAsSeen(); // for wave companion extension*/
+              msg.wrappedValue.addRepresentation(msgEl);
+              msg.wrappedValue.markAsSeen();
 
               beforeMsg = msg;
               beforeMsgEl = msgEl;
 
-              this._msgList.push(msg);
-              this._msgElList.push(msgEl);
+              this._msgUidToMsg[msg.uid] = msg;
             }
 
             if (!msg.editCounter && msg.editMessage) {
@@ -997,10 +997,10 @@
         <body><![CDATA[
           var msgEl = el.parentNode.parentNode.parentNode;
 
-          var msg = this._msgList[this._msgElList.indexOf(msgEl)];
+          var msg = this._msgUidToMsg[msgEl.msgUid]
 
           if (msg)
-            msg.processInlineCommand(el, window);
+            msg.wrappedValue.processInlineCommand(el, window);
         ]]></body>
       </method>
 
