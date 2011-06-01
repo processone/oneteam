@@ -85,7 +85,7 @@ _DECL_(MessagesRouter).prototype =
             var cp = this.chatPanes[i];
             var thr = cp.thread;
 
-            if (!thr || thr.contact != contact || thr._lastActivity > borderDate)
+            if (!thr || thr.contact != contact || (thr._lastActivity > borderDate && !thr.gone))
                 continue;
             if (!oldestPane || thr._lastActivity < oldestPane.thread._lastActivity)
                 oldestPane = cp;
@@ -359,6 +359,11 @@ _DECL_(MessagesThread, Model).prototype =
         return val;
     },
 
+    get gone()
+    {
+        return this.chatState == "gone" || this.peerChatState == "gone";
+    },
+
     getContactID: function(contact)
     {
         if (contact.representsMe)
@@ -401,7 +406,7 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     set chatState(val) {
-        if (!this._afterFirstPeerMessage || val == this._chatState)
+        if (val == this._chatState || (!this._afterFirstPeerMessage && val != "gone"))
             return;
 
         this._chatState = val;
@@ -423,6 +428,8 @@ _DECL_(MessagesThread, Model).prototype =
         if (this.peerChatState != msg.chatState) {
             this.peerChatState = msg.chatState;
             this.modelUpdated("peerChatState");
+            if (msg.chatState == "gone")
+                this._onThreadDestroyed();
         }
 
         if (!msg._text && (msg._text == "" || msg.text == ""))
@@ -530,6 +537,13 @@ _DECL_(MessagesThread, Model).prototype =
             getLastMessagesFromContact(this.contact, count, token);
     },
 
+    _onThreadDestroyed: function() {
+        if (this._threadID && this._afterFirstMessage)
+            this.contact._onThreadDestroyed(this);
+
+        this._threadID = null;
+    },
+
     _onChatPaneClosed: function() {
         this.contact._onChatPaneClosed(this.chatPane);
         this.chatState = "gone";
@@ -537,8 +551,7 @@ _DECL_(MessagesThread, Model).prototype =
 
         this.visible = true;
 
-        if (this._threadID && !this._afterFirstMessage)
-            this.contact._onThreadDestroyed(this)
+        this._onThreadDestroyed();
 
         this._afterFirstMessage = false;
         this._afterFirstOurMessage = false;
