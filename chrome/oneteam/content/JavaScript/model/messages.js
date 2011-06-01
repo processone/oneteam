@@ -406,7 +406,8 @@ _DECL_(MessagesThread, Model).prototype =
     },
 
     set chatState(val) {
-        if (val == this._chatState || (!this._afterFirstPeerMessage && val != "gone"))
+        if (val == this._chatState || !this._afterFirstMessage ||
+            (!this._afterFirstPeerMessage && val != "gone"))
             return;
 
         this._chatState = val;
