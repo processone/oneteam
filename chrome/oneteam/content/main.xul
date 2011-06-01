@@ -208,25 +208,9 @@
       eventBoxHandler.init();
       document.getElementById("setPresence-avatar-image").model = account;
 
-      /* for web version of onetam => deprecated
-      var args = {};
-      for each (var part in document.location.toString().replace(/.*?\?/, "").split("&")) {
-        if (!part)
-          continue;
-        part = perlSplit(part, "=", 2);
-        args[decodeURIComponent(part[0])] = part.length == 1 ? null : decodeURIComponent(part[1]);
-      }*/
-
       var username = prefManager.getPref("chat.connection.user");
       var password = account.connectionInfo.pass;
       var savePass = account.connectionInfo.pass != null;
-
-      /* idem as previous comments
-      if (args.username) {
-        username = args.username;
-        password = args.password || ""
-        savePass = false;
-      }*/
 
       document.getElementById("login-user").value = username || "";
       document.getElementById("login-pass").value = password || "";
@@ -235,53 +219,6 @@
       account.resetPassInRoster = new Callback(function() {
         this.value = account.connectionInfo.pass;
       }, document.getElementById("login-pass"));
-
-      if (("login" in args || args.openchat || args.openconference) && username && password) {
-        connect();
-        if (args.openchat || args.openconference)
-          account.registerView(function() {
-            if (!account.connectionInitialized)
-              return;
-
-            if (args.openchat)
-              account.getOrCreateContact(args.openchat).onOpenChat();
-            if (args.openconference) {
-              var jid = new JID(args.openconference);
-              account.getOrCreateConference(jid.shortJID).joinRoom(function(){}, jid.resource || username);
-            }
-          }, null, "connectionInitialized", globalRegToken);
-      }
-
-/*
-      chatTabsController.addEventListener("tab-added", function(event) {
-        if (event.target.tabCount != 1)
-          return;
-
-        var splitter = document.getElementById("chats-splitter");
-        splitter.collapsed = false;
-        event.target.collapsed = false;
-        splitter.previousSibling.flex = "0";
-        splitter.previousSibling.setAttribute("width", self.innerWidth);
-        self.resizeTo(self.outerWidth+(+splitter.getAttribute("rightWidth") || 500),
-                      self.outerHeight);
-      }, false);
-
-      chatTabsController.addEventListener("tab-removed", function(event) {
-        if (event.target.tabCount != 0)
-          return;
-
-        var splitter = document.getElementById("chats-splitter");
-        var width = +splitter.previousSibling.getAttribute("width");
-
-        splitter.collapsed = true;
-        event.target.collapsed = true;
-
-        splitter.previousSibling.flex = "1";
-        splitter.setAttribute("rightWidth", self.outerWidth - width);
-
-        self.resizeTo(self.outerWidth - self.innerWidth + width, self.outerHeight);
-      }, false);
-*/
     }
 
     var origClose = window.close;

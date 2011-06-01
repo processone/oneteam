@@ -1063,28 +1063,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this.avatarRetrieved = false;
         this._initConnectionState = 0;
-/*
-        var groups = this.groups;
-        var conferences = this.conferences;
-        var contacts = [contact for each (contact in this.contacts)];
-        var resources = [resource for each (resource in this.resources)];
 
-        this._initialize();
-
-        this.modelUpdated("groups", {removed: groups});
-        this.modelUpdated("conferences", {removed: conferences});
-        this.modelUpdated("contacts", {removed: contacts});
-        this.modelUpdated("resources", {removed: resources});
-*/
         this.bookmarks._clean();
         servicesManager._clean();
 
         cleanDiscoCache();
-/*
-        for (var i = 0; i < groups.length; i++)
-            if (groups[i].builtinGroup)
-                groups[i]._clean();
-*/
 
         if (!userDisconnect) {
             if (this.connectionInfo.reconnect)
