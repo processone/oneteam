@@ -7,13 +7,13 @@ ML.importMod("utils.js");
 function highlightDiff (node1, node2) {
   /* find out the text differences between nodes node1 and node2,
    * the differences being highlighted in <span class="edit">,
-   * for example, 
+   * for example,
    * node1 = "we live all in a <span class="yellow">yellow</span> submarine"
    * node2 = "We all live in a grey <span class="grey">submarine</span>"
    * htmlDiff(node1, node2) => (
    *   "We live <span class="edit">all</span> in a <span class="yellow"><span class="edit">yellow</span><span> submarine",
    *   "We <span class="edit">all</span> live in a <span class="edit">grey</span> <span class="grey">submarine</span>"
-     ) 
+     )
 
      - turn spans class="edit" into textNodes
      - splits the text content of the nodes into arrays
@@ -96,7 +96,7 @@ function highlightDiff (node1, node2) {
       }
       return memo[x][y];
     }
-    
+
     return lcs(a1.length, a2.length);
   }
 
@@ -181,7 +181,7 @@ function displayEditButton(body, message, xulNode) {
     // at the same level, even if jth version's height <> ith version's height
     var messageHeight = body.clientHeight,
         scrollShift = doc.body.scrollTop - doc.body.scrollHeight - messageHeight;
-    // scrollHeightEnlarger is appended to doc.body to prevent doc.body's bottom to be 
+    // scrollHeightEnlarger is appended to doc.body to prevent doc.body's bottom to be
     // over the chatpane-view's bottom: else, the scroll is automatically readjusted,
     // that takes time and the result is not fluid anymore
     var scrollHeightEnlarger = doc.createElement("div");
@@ -210,30 +210,40 @@ function displayEditButton(body, message, xulNode) {
   }
 
   function _updateButtons() {
+    var tooltips = [];
+
     // 'See previous version' button
     if (currentMsg.previous) {
       previous.removeAttribute("disabled");
       previous.addEventListener("click", _displayPrevious, true);
-      mytooltip(previous, _('See version ') + currentMsg.editCounter
-                          + "/" + nbVersions + ", " + readableTimestamp(currentMsg.previous.time));
+      tooltips.push([true, previous, currentMsg.editCounter, currentMsg.previous.time]);
     } else {
       previous.setAttribute("disabled", "true");
       previous.removeEventListener("click", _displayPrevious, true);
-      mytooltip(previous, _('This is version ') + "1/" + nbVersions + ", "
-                          + readableTimestamp(currentMsg.time));
+      tooltips.push([false, previous, 1, currentMsg.time]);
     }
 
     // 'See next version' button
     if (currentMsg.editMessage) {
       next.removeAttribute("disabled");
       next.addEventListener("click", _displayNext, true);
-      mytooltip(next, _('See version ') + (currentMsg.editCounter ? currentMsg.editCounter+2 : 2)
-                      + "/" + nbVersions + ", " + readableTimestamp(currentMsg.editMessage.time));
+      tooltips.push([true, next, currentMsg.editCounter ? currentMsg.editCounter+2 : 2,
+                     currentMsg.editMessage.time]);
     } else {
       next.setAttribute("disabled", "true");
       next.removeEventListener("click", _displayNext, true);
-      mytooltip(next, _('This is version ') + nbVersions + "/" + nbVersions + ", "
-                      + readableTimestamp(currentMsg.time));
+      tooltips.push([false, next, nbVersions, currentMsg.time]);
+    }
+
+    for (var i = 0; i < tooltips.length; i++) {
+      var [enabled, tooltip, version, timestamp] = tooltips[i];
+
+      if (enabled)
+        mytooltip(tooltip, _("See version {0} (from {1}), {2}", version, nbVersions,
+                             readableTimestamp(timestamp)));
+      else
+        mytooltip(tooltip, _("This is version {0} (from {1}), {2}", version, nbVersions,
+                             readableTimestamp(timestamp)));
     }
   }
 
