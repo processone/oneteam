@@ -52,10 +52,6 @@
             bookmarksByJid[window.arguments[0]] : list.firstChild;
       else
         disableTextBoxes(true);
-
-      for (var i in selectedItem)
-      if (typeof selectedItem[i] != 'function')
-      dump(i + ": " + selectedItem[i] + ",\n");
     }
 
     function disableTextBoxes(val) {
@@ -163,11 +159,24 @@
         if (!verifier.isValid) {
           var wasValid = selectedItem.name && selectedItem.room
                       && selectedItem.server && selectedItem.nick;
-          var restore = confirm(wasValid ?
-            _('Entered informations are invalid.\nDo you want to forget entered informations and restore previous values ?\nClick "Cancel" if you want to correct values.'):
-            _('Entered informations are invalid.\nDo you want to forget this bookmark ?\nClick "Cancel" if you want to correct values.'));
+          var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+                        .getService(Components.interfaces.nsIPromptService);
+          var restore = prompts.confirmEx(
+            null,
+            _("Bookmark Manager"), // window's title
+            (wasValid ?
+            _('Entered informations are invalid.\nDo you want to correct entered informations,\nor to restore previous values instead ?'):
+            _('Entered informations are invalid.\nDo you want to correct entered informations,\nor to remove the bookmark you have just created ?')),
+            32639, // 32639 = prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_IS_STRING
+                   //       + prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_IS_STRING
+                   //       + prompts.BUTTON_POS_2 * 0  (third button is disabled)
+            wasValid ? _("Restore Previous Values") : _("Remove Bookmark"), // first button string
+            _("Correct Informations"),                                      // second button string
+            "",                                                             // third button string
+            null, {}                                                        // checkbox disabled
+          );
 
-          if (restore) {
+          if (restore == 0) {
             if (wasValid)
               selectedItem.label = selectedItem.name;
             else

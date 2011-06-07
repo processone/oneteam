@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
-"POT-Creation-Date: 2011-06-07 13:53+0200\n"
+"POT-Creation-Date: 2011-06-07 15:36+0200\n"
 "PO-Revision-Date: 2010-09-15 18:01+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -73,8 +73,6 @@ msgid "New Nick:"
 msgstr "Nuevo Apodo:"
 
 #: ../chrome/oneteam/content/status.xul:8
-#: ../chrome/oneteam/content/waveBrowser.xul:8
-#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr "Mensaje de Estado"
 
@@ -220,19 +218,19 @@ msgid "Bookmark"
 msgstr "Añadir a Marcadores"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:104
-#: ../chrome/oneteam/content/manageBookmarks.xul:208
+#: ../chrome/oneteam/content/manageBookmarks.xul:217
 msgid "Bookmark with that name already exists"
 msgstr "Ya tienes guardada en marcadores una sala con este nombre"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:75
 #: ../chrome/oneteam/content/joinRoom.xul:95
-#: ../chrome/oneteam/content/manageBookmarks.xul:264
+#: ../chrome/oneteam/content/manageBookmarks.xul:273
 msgid "Room:"
 msgstr "Sala:"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:82
 #: ../chrome/oneteam/content/joinRoom.xul:100
-#: ../chrome/oneteam/content/manageBookmarks.xul:271
+#: ../chrome/oneteam/content/manageBookmarks.xul:280
 msgid "Server:"
 msgstr "Servidor:"
 
@@ -240,14 +238,14 @@ msgstr "Servidor:"
 #: ../chrome/oneteam/content/bookmarkRoom.xul:92
 #: ../chrome/oneteam/content/joinRoom.xul:110
 #: ../chrome/oneteam/content/joinRoomError.xul:86
-#: ../chrome/oneteam/content/manageBookmarks.xul:285
+#: ../chrome/oneteam/content/manageBookmarks.xul:294
 msgid "Password:"
 msgstr "Contraseña:"
 
 #: ../chrome/oneteam/content/bindings/forms.xml:30
 #: ../chrome/oneteam/content/bookmarkRoom.xul:99
 #: ../chrome/oneteam/content/fileTransferRequest.xul:78
-#: ../chrome/oneteam/content/manageBookmarks.xul:256
+#: ../chrome/oneteam/content/manageBookmarks.xul:265
 msgid "Name:"
 msgstr "Nombre:"
 
@@ -430,7 +428,7 @@ msgstr "No hay comandos disponibles"
 msgid "Requesting command form"
 msgstr "Solicitando formulario de comandos"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:983
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:979
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:651
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:69
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:84
@@ -580,7 +578,7 @@ msgid "<b>{0}</b> wants to send you file"
 msgstr "<b>{0}</b> quiere enviarte un fichero"
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:111
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:894
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:890
 #: ../chrome/oneteam/content/fileTransferRequest.xul:45
 msgid "Select a File"
 msgstr "Seleccionar un FIchero"
@@ -590,6 +588,7 @@ msgid "Size:"
 msgstr "Tamaño:"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:10
+#: ../chrome/oneteam/content/manageBookmarks.xul:166
 msgid "Bookmark Manager"
 msgstr "Administrador de Marcadores"
 
@@ -598,23 +597,23 @@ msgstr "Administrador de Marcadores"
 msgid "Save"
 msgstr "Guardar"
 
-#: ../chrome/oneteam/content/manageBookmarks.xul:90
-#: ../chrome/oneteam/content/manageBookmarks.xul:93
+#: ../chrome/oneteam/content/manageBookmarks.xul:86
+#: ../chrome/oneteam/content/manageBookmarks.xul:89
 msgid "New Room"
 msgstr "Nueva Sala"
 
-#: ../chrome/oneteam/content/manageBookmarks.xul:243
+#: ../chrome/oneteam/content/manageBookmarks.xul:252
 msgid "New"
 msgstr "Nuevo"
 
 #: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:128
-#: ../chrome/oneteam/content/manageBookmarks.xul:244
+#: ../chrome/oneteam/content/manageBookmarks.xul:253
 #: ../chrome/oneteam/content/removeContact.xul:13
 msgid "Remove"
 msgstr "Borrar"
 
 #: ../chrome/oneteam/content/joinRoom.xul:128
-#: ../chrome/oneteam/content/manageBookmarks.xul:293
+#: ../chrome/oneteam/content/manageBookmarks.xul:302
 msgid "Always join this room at startup"
 msgstr "Siempre entrar en esta sala al conectar"
 
@@ -807,7 +806,7 @@ msgstr "Pulsa para desconectar de {0} ({1})"
 msgid "Click to connect to {0} ({1})"
 msgstr "Pulsa para conectar a {0} ({1})"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:982
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:978
 msgid "{0}/{1}"
 msgstr "{0}/{1}"
 
@@ -835,7 +834,7 @@ msgstr "Pulsa para ir al primer mensaje no leído"
 msgid "Offline"
 msgstr "Desconectado"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:518
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:487
 msgid "You have new message from <b>{0}</b>"
 msgstr "Tienes un mensaje nuevo de <b>{0}</b>"
 
@@ -1179,7 +1178,7 @@ msgstr "Nombre de usuario:"
 #: ../chrome/oneteam/content/bindings/forms.xml:22
 #: ../chrome/oneteam/content/bookmarkRoom.xul:87
 #: ../chrome/oneteam/content/joinRoom.xul:105
-#: ../chrome/oneteam/content/manageBookmarks.xul:278
+#: ../chrome/oneteam/content/manageBookmarks.xul:287
 #: ../chrome/oneteam/content/vcard.xul:92
 msgid "Nick:"
 msgstr "Apodo:"
@@ -1335,7 +1334,7 @@ msgstr "Esta sala solo puede ser accedida por usuarios registrados"
 msgid "You are not member of this room"
 msgstr "No eres miembro de esta sala"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:1018
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1014
 msgid "(Anonymous)"
 msgstr "(Anónimo)"
 
@@ -1343,11 +1342,11 @@ msgstr "(Anónimo)"
 msgid "You got subscription request from <b>{0}</b>"
 msgstr "Has recibido una petición de subsripción de <b>{0}</b>"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1068
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1031
 msgid "Click to load image"
 msgstr "Pulsa para cargar la imagen"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1070
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1033
 msgid "Always load images from that contact"
 msgstr "Siempre cargar las imágenes de este contacto"
 
@@ -1874,7 +1873,7 @@ msgstr "{0} Consola de comandos"
 msgid "{0} will try to connect again to server"
 msgstr "{0} intentará conectar de nuevo con el servidor"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:637
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:600
 msgid "Open console"
 msgstr "Abrir consola"
 
@@ -2076,7 +2075,7 @@ msgstr "Aceptar"
 msgid "Reject call"
 msgstr "Rechazar"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:1059
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1055
 #, fuzzy
 msgid "Statuses"
 msgstr "Estado"
@@ -2476,7 +2475,7 @@ msgstr "Entrar en Sala de Charla..."
 #: ../chrome/oneteam/content/main.xul:372
 #, fuzzy
 msgid "Show _Offline Contacts"
-msgstr "Ocultar Contactos Desconectados"
+msgstr "Mostrar Contactos Desconectados"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:42
 #, fuzzy
@@ -2487,17 +2486,7 @@ msgstr "Presencia"
 msgid "Restore Last Chat"
 msgstr ""
 
-#: ../chrome/oneteam/content/manageBookmarks.xul:167
-#, fuzzy
-msgid "Entered informations are invalid.\\nDo you want to forget entered informations and restore previous values ?\\nClick \"Cancel\" if you want to correct values."
-msgstr "La información proporcionada no es válida.\\n¿Quieres borrar la información proporcionada y restaurar los valores anteriores? (Pulsa \"Cancelar\" si quieres corregiar valores)"
-
-#: ../chrome/oneteam/content/manageBookmarks.xul:168
-#, fuzzy
-msgid "Entered informations are invalid.\\nDo you want to forget this bookmark ?\\nClick \"Cancel\" if you want to correct values."
-msgstr "La información proporcionada no es válida.\\n¿Quieres borrar este marcador? (Pulsa \"Cancelar\" si quieres corregir los valores)"
-
-#: ../chrome/oneteam/content/manageBookmarks.xul:220
+#: ../chrome/oneteam/content/manageBookmarks.xul:229
 msgid "You have already that chatroom in your bookmarks"
 msgstr ""
 
@@ -2508,6 +2497,35 @@ msgstr ""
 #: ../chrome/oneteam/content/JavaScript/edit.js:245
 msgid "This is version {0} (from {1}), {2}"
 msgstr ""
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:168
+#, fuzzy
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead ?"
+msgstr "La información proporcionada no es válida.\\n¿Quieres borrar la información proporcionada y restaurar los valores anteriores? (Pulsa \"Cancelar\" si quieres corregiar valores)"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:169
+#, fuzzy
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created ?"
+msgstr "La información proporcionada no es válida.\\n¿Quieres borrar la información proporcionada y restaurar los valores anteriores? (Pulsa \"Cancelar\" si quieres corregiar valores)"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:173
+#, fuzzy
+msgid "Restore Previous Values"
+msgstr "See Previous Version"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:173
+#, fuzzy
+msgid "Remove Bookmark"
+msgstr "Añadir a Marcadores"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:174
+#, fuzzy
+msgid "Correct Informations"
+msgstr "Detalles del contacto"
+
+#, fuzzy
+#~ msgid "Entered informations are invalid.\\nDo you want to forget this bookmark ?\\nClick \"Cancel\" if you want to correct values."
+#~ msgstr "La información proporcionada no es válida.\\n¿Quieres borrar este marcador? (Pulsa \"Cancelar\" si quieres corregir los valores)"
 
 #, fuzzy
 #~ msgid "See version "
@@ -2527,9 +2545,6 @@ msgstr ""
 
 #~ msgid "This message has been edited {0} times"
 #~ msgstr "This message has been edited {0} times"
-
-#~ msgid "See Previous Version"
-#~ msgstr "See Previous Version"
 
 #~ msgid "This is the first version of the message"
 #~ msgstr "This is the first version of the message"

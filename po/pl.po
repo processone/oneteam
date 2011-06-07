@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-06-07 13:53+0200\n"
+"POT-Creation-Date: 2011-06-07 15:36+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -72,8 +72,6 @@ msgid "New Nick:"
 msgstr "Nowy pseudonim:"
 
 #: ../chrome/oneteam/content/status.xul:8
-#: ../chrome/oneteam/content/waveBrowser.xul:8
-#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr "Komunikat stanu"
 
@@ -219,19 +217,19 @@ msgid "Bookmark"
 msgstr "Zakładka"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:104
-#: ../chrome/oneteam/content/manageBookmarks.xul:208
+#: ../chrome/oneteam/content/manageBookmarks.xul:217
 msgid "Bookmark with that name already exists"
 msgstr "Zakładka o tej nazwie istnieje"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:75
 #: ../chrome/oneteam/content/joinRoom.xul:95
-#: ../chrome/oneteam/content/manageBookmarks.xul:264
+#: ../chrome/oneteam/content/manageBookmarks.xul:273
 msgid "Room:"
 msgstr "Pokój:"
 
 #: ../chrome/oneteam/content/bookmarkRoom.xul:82
 #: ../chrome/oneteam/content/joinRoom.xul:100
-#: ../chrome/oneteam/content/manageBookmarks.xul:271
+#: ../chrome/oneteam/content/manageBookmarks.xul:280
 msgid "Server:"
 msgstr "Serwer:"
 
@@ -239,14 +237,14 @@ msgstr "Serwer:"
 #: ../chrome/oneteam/content/bookmarkRoom.xul:92
 #: ../chrome/oneteam/content/joinRoom.xul:110
 #: ../chrome/oneteam/content/joinRoomError.xul:86
-#: ../chrome/oneteam/content/manageBookmarks.xul:285
+#: ../chrome/oneteam/content/manageBookmarks.xul:294
 msgid "Password:"
 msgstr "Hasło:"
 
 #: ../chrome/oneteam/content/bindings/forms.xml:30
 #: ../chrome/oneteam/content/bookmarkRoom.xul:99
 #: ../chrome/oneteam/content/fileTransferRequest.xul:78
-#: ../chrome/oneteam/content/manageBookmarks.xul:256
+#: ../chrome/oneteam/content/manageBookmarks.xul:265
 msgid "Name:"
 msgstr "Nazwa:"
 
@@ -429,7 +427,7 @@ msgstr "Brak dostępnych komend"
 msgid "Requesting command form"
 msgstr "Oczekiwanie za formatkę komendy"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:983
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:979
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:651
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:69
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:84
@@ -579,7 +577,7 @@ msgid "<b>{0}</b> wants to send you file"
 msgstr "<b>{0}</b> chce przesłać Ci plik"
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:111
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:894
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:890
 #: ../chrome/oneteam/content/fileTransferRequest.xul:45
 msgid "Select a File"
 msgstr "Wybierz plik"
@@ -589,6 +587,7 @@ msgid "Size:"
 msgstr "Rozmiar:"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:10
+#: ../chrome/oneteam/content/manageBookmarks.xul:166
 msgid "Bookmark Manager"
 msgstr "Menedżer zakładek"
 
@@ -597,23 +596,23 @@ msgstr "Menedżer zakładek"
 msgid "Save"
 msgstr "Zapisz"
 
-#: ../chrome/oneteam/content/manageBookmarks.xul:90
-#: ../chrome/oneteam/content/manageBookmarks.xul:93
+#: ../chrome/oneteam/content/manageBookmarks.xul:86
+#: ../chrome/oneteam/content/manageBookmarks.xul:89
 msgid "New Room"
 msgstr "Nowy pokój"
 
-#: ../chrome/oneteam/content/manageBookmarks.xul:243
+#: ../chrome/oneteam/content/manageBookmarks.xul:252
 msgid "New"
 msgstr "Nowy"
 
 #: ../chrome/oneteam/content/JavaScript/views/filetransfers.js:128
-#: ../chrome/oneteam/content/manageBookmarks.xul:244
+#: ../chrome/oneteam/content/manageBookmarks.xul:253
 #: ../chrome/oneteam/content/removeContact.xul:13
 msgid "Remove"
 msgstr "Usuń"
 
 #: ../chrome/oneteam/content/joinRoom.xul:128
-#: ../chrome/oneteam/content/manageBookmarks.xul:293
+#: ../chrome/oneteam/content/manageBookmarks.xul:302
 msgid "Always join this room at startup"
 msgstr "Dołącz do tel konferencji na starcie"
 
@@ -806,7 +805,7 @@ msgstr "Kliknij aby wylogować z {0} ({1})"
 msgid "Click to connect to {0} ({1})"
 msgstr "Kliknij aby zalogować do {0} ({1})"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:982
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:978
 msgid "{0}/{1}"
 msgstr "{0}/{1}"
 
@@ -834,7 +833,7 @@ msgstr "Kliknij aby przewinąć do pierwszej nie widzianej wiadomości"
 msgid "Offline"
 msgstr "Rozłączony"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:518
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:487
 msgid "You have new message from <b>{0}</b>"
 msgstr "Masz nową wiadomość od <b>{0}</b>"
 
@@ -1178,7 +1177,7 @@ msgstr "Użytkownik:"
 #: ../chrome/oneteam/content/bindings/forms.xml:22
 #: ../chrome/oneteam/content/bookmarkRoom.xul:87
 #: ../chrome/oneteam/content/joinRoom.xul:105
-#: ../chrome/oneteam/content/manageBookmarks.xul:278
+#: ../chrome/oneteam/content/manageBookmarks.xul:287
 #: ../chrome/oneteam/content/vcard.xul:92
 msgid "Nick:"
 msgstr "Ksywa:"
@@ -1334,7 +1333,7 @@ msgstr "Do tego pokój mogą wejść tylko zarejestrowane osoby"
 msgid "You are not member of this room"
 msgstr "Nie jesteś członkiem tego pokoju"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:1018
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1014
 msgid "(Anonymous)"
 msgstr "(Anonim)"
 
@@ -1342,11 +1341,11 @@ msgstr "(Anonim)"
 msgid "You got subscription request from <b>{0}</b>"
 msgstr "Otrzymałeś prośbę o subskrypcje od <b>{0}</b>"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1068
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1031
 msgid "Click to load image"
 msgstr "Kliknij by załadować"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1070
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1033
 msgid "Always load images from that contact"
 msgstr "Zawsze wyświetlaj obrazki od tego kontaktu"
 
@@ -1873,7 +1872,7 @@ msgstr "Konsola komend {0}"
 msgid "{0} will try to connect again to server"
 msgstr "{0} spróbuje jeszcze raz zalogować się do serwera"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:637
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:600
 msgid "Open console"
 msgstr "Otwórz konsole"
 
@@ -2049,7 +2048,7 @@ msgstr "Akceptuj połączenie"
 msgid "Reject call"
 msgstr "Odrzuć połączenie"
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:1059
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1055
 msgid "Statuses"
 msgstr "Statusy"
 
@@ -2242,16 +2241,8 @@ msgid "Invitation into {0} chat room"
 msgstr "Zaproszenie do konferencji {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:227
-msgid ""
-"User *{0}* invited you to chat room *{1}*.\\n"
-"\\n"
-"To join this chat room please click on this link:\\n"
-"{2}\\n"
-msgstr ""
-"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n"
-"\\n"
-"Aby dołączyć do tej konferencji kliknij ten link:\\n"
-"{2}\\n"
+msgid "User *{0}* invited you to chat room *{1}*.\\n\\nTo join this chat room please click on this link:\\n{2}\\n"
+msgstr "Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n\\nAby dołączyć do tej konferencji kliknij ten link:\\n{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:469
 msgid "Chat room server can't be contacted or room reached maximum number of users"
@@ -2406,27 +2397,7 @@ msgstr "Historia statusów..."
 msgid "Restore Last Chat"
 msgstr "Przywróć ostatnią rozmowę"
 
-#: ../chrome/oneteam/content/manageBookmarks.xul:167
-msgid ""
-"Entered informations are invalid.\\n"
-"Do you want to forget entered informations and restore previous values ?\\n"
-"Click \"Cancel\" if you want to correct values."
-msgstr ""
-"Wprowadzone informacje są nieprawidłowe.\\n"
-"Czy chcesz przywrócić poprzednie wartości?\\n"
-"Kliknij \"Anuluj\" jeśli chcesz dokonać poprawek."
-
-#: ../chrome/oneteam/content/manageBookmarks.xul:168
-msgid ""
-"Entered informations are invalid.\\n"
-"Do you want to forget this bookmark ?\\n"
-"Click \"Cancel\" if you want to correct values."
-msgstr ""
-"Wprowadzone dane są nieprawidłowe.\\n"
-"Czy chcesz anulować dodawanie zakładki?\\n"
-"Kliknij \"Anuluj\" jeśli chcesz dokonać poprawek."
-
-#: ../chrome/oneteam/content/manageBookmarks.xul:220
+#: ../chrome/oneteam/content/manageBookmarks.xul:229
 msgid "You have already that chatroom in your bookmarks"
 msgstr "Masz już tą konferencję w zakładkach"
 
@@ -2437,6 +2408,34 @@ msgstr "Zobacz wersję {0} (z {1}), {2}"
 #: ../chrome/oneteam/content/JavaScript/edit.js:245
 msgid "This is version {0} (from {1}), {2}"
 msgstr "To jest wersja {0} (z {1}), {2}"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:168
+#, fuzzy
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead ?"
+msgstr "Wprowadzone informacje są nieprawidłowe.\\nCzy chcesz przywrócić poprzednie wartości?\\nKliknij \"Anuluj\" jeśli chcesz dokonać poprawek."
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:169
+#, fuzzy
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created ?"
+msgstr "Wprowadzone informacje są nieprawidłowe.\\nCzy chcesz przywrócić poprzednie wartości?\\nKliknij \"Anuluj\" jeśli chcesz dokonać poprawek."
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:173
+#, fuzzy
+msgid "Restore Previous Values"
+msgstr "See Previous Version"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:173
+#, fuzzy
+msgid "Remove Bookmark"
+msgstr "Zakładka"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:174
+#, fuzzy
+msgid "Correct Informations"
+msgstr "Dane kontaktu"
+
+#~ msgid "Entered informations are invalid.\\nDo you want to forget this bookmark ?\\nClick \"Cancel\" if you want to correct values."
+#~ msgstr "Wprowadzone dane są nieprawidłowe.\\nCzy chcesz anulować dodawanie zakładki?\\nKliknij \"Anuluj\" jeśli chcesz dokonać poprawek."
 
 #, fuzzy
 #~ msgid "See version "
@@ -2456,9 +2455,6 @@ msgstr "To jest wersja {0} (z {1}), {2}"
 
 #~ msgid "This message has been edited {0} times"
 #~ msgstr "This message has been edited {0} times"
-
-#~ msgid "See Previous Version"
-#~ msgstr "See Previous Version"
 
 #~ msgid "This is the first version of the message"
 #~ msgstr "This is the first version of the message"
