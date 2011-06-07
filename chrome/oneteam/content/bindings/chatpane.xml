@@ -656,7 +656,7 @@
               }
             }
 
-            if (!msg.editCounter) {
+            if (!msg.editCounter && !msg.msgEl) {
               var msgEl = doc.createElement("div");
               msgEl.setAttribute("class", "message "+msg.getClasses(this.model.isFromArchive));
               msgEl.setAttribute("not-seen", "true");
