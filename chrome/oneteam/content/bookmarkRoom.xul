@@ -25,8 +25,8 @@
     var room, server, nick, password, bookmarkName;
 
     function onLoad() {
-      for each (i in "room server nick password bookmarkName".split(" "))
-        eval(i+" = document.getElementById("+uneval(i)+")");
+      for each (var i in "room server nick password bookmarkName".split(" "))
+        self[i] = document.getElementById(i);
 
       if (conference) {
         room.value = conference.jid.node;
