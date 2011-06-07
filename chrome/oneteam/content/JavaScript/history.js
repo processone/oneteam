@@ -513,7 +513,7 @@ _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
         if (oldFormatEditMessage || msg.replaceMessageId) {
             var lastMsg = this.getLastMessageFromContact(msg.contact);
             if (msg.replaceMessageId && (!lastMsg || lastMsg.messageId != msg.replaceMessageId))
-                // an editMessage intended to edit a message which is not the last one from 
+                // an editMessage intended to edit a message which is not the last one from
                 // the contact is simply ignored, and not stored
                 return;
             if (oldFormatEditMessage && lastMsg)
@@ -719,6 +719,7 @@ _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
                 token.lastIndex = lastThread.allMessages.length-1;
             }
         }
+
 
         var msgs = [];
         while (msgs.length < count) {

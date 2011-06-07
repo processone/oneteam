@@ -336,10 +336,19 @@
     <implementation>
       <property name="thread" onget="return this._thread">
         <setter><![CDATA[
+          if (this._thread == val)
+            return;
+
+          if (this._thread && this._thread.unseenCount)
+            this._onUnseenCountChange(null, null, {diff: -this._thread.unseenCount});
+
           this._thread = val;
           this._chatpane.model = val;
 
-          if (val)
+          if (val && val.unseenCount)
+            this._onUnseenCountChange(null, null, {diff: val.unseenCount});
+
+          if (val && this._chatpane.visible)
             val.visible = true;
 
           this._onNameChange();

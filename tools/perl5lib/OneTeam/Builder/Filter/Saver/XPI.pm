@@ -7,6 +7,7 @@ use File::Path;
 use File::Find;
 use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy;
+use File::Basename;
 use OneTeam::Utils;
 use Cwd;
 
@@ -46,8 +47,7 @@ sub finalize {
     my $tmppfxdir = $self->_prefix ? catdir($tmpdir, $self->_prefix) : $tmpdir;
     my $chromedir = catdir($tmppfxdir, "chrome");
 
-    mkpath([$chromedir], 0);
-
+    $self->_prepare_files_for_packing($tmpdir, $tmppfxdir, $chromedir);
     $self->_prepare_files($tmpdir, $tmppfxdir, $chromedir);
     $self->_generate_install_rdf($tmpdir, $tmppfxdir);
     $self->_generate_update_rdf($tmpdir, $tmppfxdir);
@@ -63,8 +63,10 @@ sub _make_package {
     system("cd '$tmppfxdir'; zip -q -9 -r '".catfile($self->{topdir}, $self->_output_filename)."' .")
 }
 
-sub _prepare_files {
+sub _prepare_files_for_packing {
     my ($self, $tmpdir, $tmppfxdir, $chromedir) = @_;
+
+    mkpath([$chromedir], 0);
 
     my $d = catdir(qw(chrome icons default));
     dircopy($d, catdir($self->{outputdir}, qw(skin default icons)),
@@ -75,7 +77,21 @@ sub _prepare_files {
     dircopy(catdir($self->{outputdir}, "defaults"), catdir($tmppfxdir, 'defaults'),
             $self->{outputdir}, $self->_disabled_prefs);
     dircopy(catdir($self->{outputdir}, "components"), catdir($tmppfxdir, 'components'));
-    dircopy('platform', catdir($tmppfxdir, 'platform'), '', $self->_platform_files_to_skip);
+    dircopy('platform', catdir($tmppfxdir, 'platform'));
+}
+
+sub _prepare_files {
+    my ($self, $tmpdir, $tmppfxdir, $chromedir) = @_;
+
+    for ($self->_platform_files_to_skip) {
+        $_ = catfile($tmppfxdir, $_);
+
+        unlink($_);
+
+        do {
+            $_ = dirname($_);
+        } while (rmdir($_));
+    }
 
     find({ wanted => sub {
         my $path = $File::Find::name;
@@ -83,7 +99,7 @@ sub _prepare_files {
 
         $self->{platform_components}->{$2} = $1
             if $path =~ m!(?:^|/)(platform/([^/]+)/components/.*)!;
-    }, no_chdir => 1}, 'platform');
+    }, no_chdir => 1}, catdir($tmppfxdir, 'platform'));
 }
 
 sub _generate_install_rdf {
@@ -178,12 +194,8 @@ sub _generate_components_manifest {
             "{d2de57da-be3a-4ec2-86f7-c73049cc70ef}\n";
     print $fh "interfaces components/oneteam.xpt\n\n";
 
-    my %skip;
-    @skip{$self->_platform_files_to_skip()} = ();
-
     for (keys %{$self->{platform_components}}) {
         my $path = $self->{platform_components}->{$_};
-        next if exists $skip{$path};
         print $fh "binary-component $path ABI=$_\n";
     }
 }

@@ -263,7 +263,7 @@ var menuHandler = {
     },
 
     quit: function() {
-        if (account.connection  && prefManager.getPref("chat.general.ask_to_quit")) {
+        if (account.connected && prefManager.getPref("chat.general.ask_to_quit")) {
             var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
                 getService(Components.interfaces.nsIPromptService);
             var check = {value: true};
@@ -275,7 +275,7 @@ var menuHandler = {
                 return;
         }
 
-        if (window.account.connection)
+        if (account.connection)
             account.disconnect();
 
         Components.classes['@mozilla.org/toolkit/app-startup;1'].

@@ -60,13 +60,10 @@ expander[open="true"] .expanderButton {
   background-image: url(../chatpane/imgs/toolbar/send-file.png);
 }
 
-/*
- TODO: add icons for those events
-
-.counter-box[event="mucinvite"]
-.counter-box[event="mucerror"]
-
-*/
+.counter-box[event="mucinvite"],
+.counter-box[event="mucerror"] {
+  background-image: url(imgs/join-room.png);
+}
 
 .counter-box > vbox {
   background-color: #52affa;

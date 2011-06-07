@@ -11,11 +11,12 @@ use OneTeam::Utils;
 use Cwd;
 
 sub new {
-    my ($class, $topdir, $version, $buildid, $mar_options) = @_;
+    my ($class, $topdir, $version, $buildid, $mar_options, $xulapp_path) = @_;
     my $self = {
         topdir => $topdir,
         outputdir => tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1),
         mar_options => $mar_options,
+        xulapp_path => $xulapp_path,
         version => $version,
         buildid => $buildid,
     };
@@ -62,17 +63,19 @@ sub  _generate_update_rdf {
 sub _generate_chrome_manifest {
     my ($self, $tmpdir, $tmppfxdir) = @_;
 
-    $self->SUPER::_generate_chrome_manifest($tmppfxdir, $tmppfxdir);
+    if (not $self->{xulapp_path}) {
+        $self->SUPER::_generate_chrome_manifest($tmppfxdir, $tmppfxdir);
 
-    my $prefix = File::Spec->abs2rel("chrome", $self->_chrome_manifest_dir);
-    $prefix = $prefix eq "." ? "" : "$prefix/";
+        my $prefix = File::Spec->abs2rel("chrome", $self->_chrome_manifest_dir);
+        $prefix = $prefix eq "." ? "" : "$prefix/";
 
-    open($fh, ">>", catfile($tmppfxdir, $self->_chrome_manifest_dir, 'chrome.manifest')) or
-        die "Unable to create file: $!";
+        open($fh, ">>", catfile($tmppfxdir, $self->_chrome_manifest_dir, 'chrome.manifest')) or
+            die "Unable to create file: $!";
 
-    print $fh "locale branding en-US jar:oneteam.jar!/locale/branding/\n";
+        print $fh "locale branding en-US jar:oneteam.jar!/locale/branding/\n";
 
-    close $fh;
+        close $fh;
+    }
 
     open($fh, ">>", catfile($tmppfxdir, 'chrome.manifest')) or
         die "Unable to create file: $!";
@@ -81,6 +84,30 @@ sub _generate_chrome_manifest {
     $self->_generate_components_manifest($fh);
 
     close ($fh);
+}
+
+sub _prepare_files_for_packing {
+    my ($self, $tmpdir, $tmppfxdir, $chromedir) = @_;
+
+    if ($self->{xulapp_path}) {
+        mkpath([$tmppfxdir], 0);
+        system("unzip", "-q", $self->{xulapp_path}, "-d", $tmppfxdir);
+
+        unlink(catfile($tmppfxdir, "chrome.manifest"));
+
+        my $appinfo = slurp(catfile($tmppfxdir, "application.ini"));
+
+        $appinfo =~ /Version\s*=\s*(\S+)/i;
+        my $version = $1;
+
+        $appinfo =~ /BuildID\s*=\s*(\S+)/i;
+        my $buildid = $1;
+
+        $self->{version} = sub { return $version };
+        $self->{buildid} = sub { return $buildid };
+    } else {
+        $self->SUPER::_prepare_files_for_packing($tmppfxdir, $tmppfxdir, $chromedir);
+    }
 }
 
 sub _prepare_files {
