@@ -95,14 +95,6 @@ div.message.selectable:hover {
     -moz-border-right-colors: #C0CBDB #A6BADB #7ea1dc;
 }
 
-.participant {
-    border: 1px solid #ccc;
-    -moz-border-radius: 3px;
-    display: inline;
-    float: left;
-    margin: 0 2px;
-}
-
 .message[starts-chunk=true] > img,
 body[hide-not-marked=true] .message[starts-selected-chunk=true] > img
 {
@@ -128,10 +120,6 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
     margin-left: 30px;
 }
 
-.header[withParticipants="true"] {
-    margin-left: 0px;
-}
-
 .message-action {
     width: 30px;
     min-height: 14px;
@@ -145,25 +133,12 @@ body[hide-not-marked=true] .message[starts-selected-chunk=true] > .header
 
 .thread-marker-reply {
     background-image: url(imgs/add-thread.png);
-}
-
-.edit-message {
-    background-image: url(imgs/chat-edit.png);
+    cursor: pointer;
 }
 
 .thread-marker {
     -moz-user-select: none;
     cursor: default;
-}
-
-.thread-marker-reply,
-.edit-message
-{
-    cursor: pointer;
-}
-
-.edit-message[edited=true] {
-    background-image: url(imgs/chat-edit-active.png);
 }
 
 body[threadId]:before,
@@ -193,8 +168,7 @@ body[threadId]:before {
 }
 
 .message > span.body:hover > .message-action,
-.thread-marker[threadId],
-.edit-message[edited=true]
+.thread-marker[threadId]
 {
     display: block;
 }
@@ -217,14 +191,6 @@ body[threadId]:before {
 
 .archived {
     color: #565;
-}
-
-.modified > .body {
-    font-weight: bold;
-}
-
-.filtered-out {
-    display: none;
 }
 
 .directed > .body {
@@ -311,10 +277,10 @@ body[marked-thread=true] .message[in-marked-thread=true] {
     -moz-user-select: none;
 }
 
-.fetch-more:hover {
+/*.fetch-more:hover {
     background: red;
     color: #515151;
-}
+}*/
 
 .gradient {
     position: fixed;
