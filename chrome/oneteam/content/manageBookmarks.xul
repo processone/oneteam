@@ -23,11 +23,11 @@
     var textBoxes = {};
     var removedItems = [];
     var list;
+    var bookmarksByJid = {};
+    var bookmarksByName = {};
 
     function onLoad()
     {
-      var selectedIdx = -1;
-
       list = document.getElementById("list");
       for each (var id in "name room server nick pass autoJoin".split(/ /))
         textBoxes[id] = document.getElementById(id);
@@ -36,19 +36,31 @@
       for (var i = 0; i < bookmarks.length; i++) {
         var item = list.appendItem(bookmarks[i].bookmarkName);
         item.model = bookmarks[i];
-        item["val-room"] = bookmarks[i].jid.node;
-        item["val-server"] = bookmarks[i].jid.domain;
-        item["val-nick"] = bookmarks[i].bookmarkNick || "";
-        item["val-pass"] = bookmarks[i].bookmarkPassword || "";
-        item["val-autoJoin"] = bookmarks[i].autoJoin;
-        if (window.arguments && window.arguments[0] == bookmarks[i].jid.normalizedJID)
-          selectedIdx = i;
+        item.name = bookmarks[i].bookmarkName;
+        item.room = bookmarks[i].jid.node;
+        item.server = bookmarks[i].jid.domain;
+        item.nick = bookmarks[i].bookmarkNick || "";
+        item.pass = bookmarks[i].bookmarkPassword || "";
+        item.autoJoin = bookmarks[i].autoJoin;
+
+        registerBookmark(item);
       }
-      if (i)
-        list.selectedIndex = selectedIdx < 0 ? 0 : selectedIdx;
+
+      if (list.childNodes.length)
+        list.selectedItem =
+          window.arguments && bookmarksByJid[window.arguments[0]] ?
+            bookmarksByJid[window.arguments[0]] : list.firstChild;
       else
-        for each (var textbox in textBoxes)
-          textbox.disabled = textbox.previousSibling.disabled = true;
+        disableTextBoxes(true);
+
+      for (var i in selectedItem)
+      if (typeof selectedItem[i] != 'function')
+      dump(i + ": " + selectedItem[i] + ",\n");
+    }
+
+    function disableTextBoxes(val) {
+      for each (var textbox in textBoxes)
+        textbox.disabled = textbox.previousSibling.disabled = val;
     }
 
     function updateName(newName)
@@ -57,14 +69,36 @@
         selectedItem.label = newName;
     }
 
+    function registerBookmark(item)
+    {
+      bookmarksByJid[item.room+'@'+item.server] = item;
+      bookmarksByName[item.name] = item;
+    }
+
+    function unregisterBookmark(item)
+    {
+      delete bookmarksByJid[item.room+'@'+item.server];
+      delete bookmarksByName[item.name];
+    }
+
     function newRoom()
     {
-      for each (var textbox in textBoxes)
-        textbox.disabled = textbox.previousSibling.disabled = false;
+      if (!roomChange())
+        return;
+      disableTextBoxes(false);
 
-      var item = list.appendItem(_("New Room"));
+      var label = _("New Room"),
+        i = 1;
+      while (bookmarksByName[label]) {
+        label = _("New Room") + " " + i;
+        i += 1;
+      }
+
+      var item = list.appendItem(label);
+      item.name = label;
       for each (var id in "room server nick pass autoJoin".split(/ /))
-        item["val-"+id] = "";
+        item[id] = "";
+      registerBookmark(item);
       list.selectedItem = item;
       textBoxes.name.focus();
     }
@@ -74,17 +108,31 @@
       if (!selectedItem)
         return;
 
-      if (selectedItem.model)
-        removedItems.push(selectedItem.model);
-      list.removeChild(selectedItem);
-      if (!list.childNodes.length)
-        for each (var textbox in textBoxes)
-          textbox.disabled = textbox.previousSibling.disabled = true;
+      var itemToDelete = selectedItem;
+      selectedItem = null; // to skip checking values in roomChange()
+
+      if (list.childNodes.length > 1) {
+        if (list.selectedItem == itemToDelete)
+          // if the user has clicked on 'remove bookmark',
+          // the next selected bookmark should be the previous one in the list
+          list.selectedIndex = list.selectedIndex ? list.selectedIndex-1 : 0;
+      } else {
+        disableTextBoxes(true);
+        for each (id in "name room server nick pass autoJoin".split(/ /))
+          textBoxes[id].value = '';
+        textBoxes["autoJoin"].checked = false;
+      }
+
+      if (itemToDelete.model)
+        removedItems.push(itemToDelete.model);
+      unregisterBookmark(itemToDelete);
+      list.removeChild(itemToDelete);
     }
 
     function saveBookmarks()
     {
-      roomChange(list);
+      if (!roomChange())
+        return false;
 
       account.bookmarks.startBatchUpdate();
 
@@ -93,10 +141,10 @@
       for (i = 0; i < list.childNodes.length; i++) {
         var item = list.childNodes[i];
         var conference = account.
-          getOrCreateConference(item["val-room"]+"@"+item["val-server"]);
+          getOrCreateConference(item.room+"@"+item.server);
 
-        conference.bookmark(item["label"], item["val-autoJoin"],
-                            item["val-nick"] || null, item["val-pass"] || null);
+        conference.bookmark(item.label, item.autoJoin,
+                            item.nick || null, item.pass || null);
       }
       account.bookmarks.stopBatchUpdate();
 
@@ -104,51 +152,81 @@
     }
 
     var mutex;
-    function roomChange(list)
+    function roomChange()
     {
       if (mutex)
         return;
       mutex = 1;
 
-      var saveValues = true;
       if (selectedItem) {
         var verifier = document.getElementById("verifier");
         if (!verifier.isValid) {
-          var restore = confirm(selectedItem.model ?
-            _('Entered informations are invalid.\nDo you want to forget entered informations and restore previous values (click "Cancel" if you want to correct values)?'):
-            _('Entered informations are invalid.\nDo you want to forget this bookmark (click "Cancel" if you want to correct values)?'));
-
-          saveValues = false;
+          var wasValid = selectedItem.name && selectedItem.room
+                      && selectedItem.server && selectedItem.nick;
+          var restore = confirm(wasValid ?
+            _('Entered informations are invalid.\nDo you want to forget entered informations and restore previous values ?\nClick "Cancel" if you want to correct values.'):
+            _('Entered informations are invalid.\nDo you want to forget this bookmark ?\nClick "Cancel" if you want to correct values.'));
 
           if (restore) {
-            if (selectedItem.model)
-              selectedItem.label = selectedItem.model.bookmarkName;
+            if (wasValid)
+              selectedItem.label = selectedItem.name;
             else
               removeRoom();
           } else {
             list.selectedItem = selectedItem;
             verifier.focusInvalidWidget();
             mutex = 0;
-            return;
+            return false; // this is to prevent from exit on 'Save' click
           }
-        }
-      }
+        } else {
+          unregisterBookmark(selectedItem);
 
-      if (saveValues && selectedItem) {
-        for each (var id in "name room server nick pass".split(/ /))
-          selectedItem[id == "name" ? "label" : "val-"+id] = textBoxes[id].value;
-        selectedItem["val-autoJoin"] = textBoxes["autoJoin"].checked;
+          for each (var id in "name room server nick pass".split(/ /))
+            selectedItem[id] = textBoxes[id].value;
+          selectedItem.autoJoin = textBoxes.autoJoin.checked;
+
+          registerBookmark(selectedItem);
+        }
       }
 
       selectedItem = list.selectedItem;
       if (selectedItem) {
         for each (id in "name room server nick pass autoJoin".split(/ /))
-          textBoxes[id].value = selectedItem[id == "name" ? "label" : "val-"+id];
-        textBoxes["autoJoin"].checked = selectedItem["val-autoJoin"];
-      } else
+          textBoxes[id].value = selectedItem[id];
+        textBoxes.autoJoin.checked = selectedItem.autoJoin;
+        setTimeout("textBoxes.name.focus()", 0);
+      } else if (list.childNodes.length)
         setTimeout("list.selectedIndex = 0", 0);
-      setTimeout(function(a){a.focus()}, 0, textBoxes.name);
+
       mutex = 0;
+      return true;
+    }
+
+    function checkName() {
+      if (selectedItem && textBoxes.name.value != selectedItem.name
+          && bookmarksByName[textBoxes.name.value]) {
+        textBoxes.name.errortext=_('Bookmark with that name already exists');
+        return false;
+      }
+      delete textBoxes.name.errortext;
+      return textBoxes.name.value.length;
+    }
+
+    function checkRoom() {
+      if (selectedItem
+          && (   textBoxes.room.value   != selectedItem.room
+              || textBoxes.server.value != selectedItem.server)
+          && bookmarksByJid[textBoxes.room.value+'@'+textBoxes.server.value]) {
+        textBoxes.room.errortext = _('You have already that chatroom in your bookmarks');
+        return false;
+      }
+      delete textBoxes.room.errortext;
+      return !textBoxes.room.value.search(/^[^ \t\n"&'/:<>@]+$/);
+    }
+
+    function checkServer() {
+      textBoxes.room._checkCondition();
+      return !textBoxes.server.value.search(/^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/);
     }
   ]]></script>
 
@@ -160,7 +238,7 @@
 
   <hbox flex="1" style="padding-top: 20px;padding-left: 10px; padding-right: 10px; padding-bottom: 10px;">
     <vbox>
-      <listbox id="list" flex="1" onselect="roomChange(this)"/>
+      <listbox id="list" flex="1" onselect="roomChange()"/>
       <hbox>
         <button label="_('New')" oncommand="newRoom()"/>
         <button label="_('Remove')" oncommand="removeRoom()"/>
@@ -176,26 +254,22 @@
         <rows>
           <row>
             <label value="_('Name:')" control="name"/>
-            <textbox id="name" oninput="updateName(this.value)" type="verifiable" condition="
-              this.value == '' ?
-                (this.errortext=_('Bookmark name can\'t be empty'), false) :
-              (!selectedItem || !selectedItem.model || selectedItem.model.bookmarkName != this.value) &amp;&amp;
-                  account.bookmarks.getBookmarkByName(this.value) ?
-                (this.errortext=_('Bookmark with that name already exists'), false) : true"/>
+            <textbox id="name" type="verifiable" condition="checkName()"
+                     oninput="updateName(this.value)"/>
           </row>
 
           <spacer/>
 
           <row>
             <label value="_('Room:')" control="room"/>
-            <textbox id="room" type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"/>
+            <textbox id="room" type="verifiable" condition="checkRoom()"/>
           </row>
 
           <spacer/>
 
           <row>
             <label value="_('Server:')" control="server"/>
-            <textbox id="server" type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
+            <textbox id="server" type="verifiable" condition="checkServer()"/>
           </row>
 
           <spacer/>

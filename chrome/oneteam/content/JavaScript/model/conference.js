@@ -84,6 +84,9 @@ _DECL_(Conference, Contact).prototype =
 
     joinRoom: function(callback, nick, password)
     {
+        if (this.joined || this._joinRequested)
+            return;
+
         if (!nick)
             nick = prefManager.getPref('chat.muc.nickname') || account.myJID.node;
 
@@ -148,8 +151,8 @@ _DECL_(Conference, Contact).prototype =
                 OnModelStateCall(account, "connectionInitialized", IsTrue, function() {
                     conference.backgroundJoinRoom();
                 });
-            } else
-                account._onConferenceRemoved(this);
+            }
+            account._onConferenceRemoved(this);
             this._cpToken.unregisterFromAll();
             this._cpToken = null;
         }
@@ -858,22 +861,24 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
         this.bookmarks = [];
 
         for (var i = 0; i < bookmarksTags.length; i++) {
-            var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
-            var password = bookmarksTags[i].getElementsByTagName("password")[0];
-            let conference = account.
-                getOrCreateConference(bookmarksTags[i].getAttribute("jid"));
-
-            conference.bookmark(bookmarksTags[i].getAttribute("name"),
-                                bookmarksTags[i].getAttribute("autojoin") == "true",
-                                nick && nick.textContent,
-                                password && password.textContent,
-                                true);
-
-            this.bookmarks.push(conference);
-            if (conference.autoJoin)
-                OnModelStateCall(account, "connectionInitialized", IsTrue, function() {
-                    conference.backgroundJoinRoom();
-                });
+            var jid = bookmarksTags[i].getAttribute("jid");
+            if (!this.hasBookmarkForJid(jid)) {
+                var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
+                var password = bookmarksTags[i].getElementsByTagName("password")[0];
+                var conference = account.getOrCreateConference(jid);
+    
+                conference.bookmark(bookmarksTags[i].getAttribute("name"),
+                                    bookmarksTags[i].getAttribute("autojoin") == "true",
+                                    nick && nick.textContent,
+                                    password && password.textContent,
+                                    true);
+    
+                this.bookmarks.push(conference);
+                if (conference.autoJoin)
+                    OnModelStateCall(account, "connectionInitialized", IsTrue, function() {
+                        conference.backgroundJoinRoom();
+                    });
+            }
         }
         this.modelUpdated("bookmarks", {added: this.bookmarks});
     },
