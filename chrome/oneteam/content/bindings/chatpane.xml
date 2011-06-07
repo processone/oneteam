@@ -877,11 +877,11 @@
             this._attachEditButton();
             var messageDiv = this._editButton.parentNode.parentNode.parentNode;
             if (chatpane.editModeEnabled) {
-              //this._editButton.setAttribute("editing", true);
+              this._editButton.setAttribute("editing", true);
               tooltip(this._editButton, this._output, _("Cancel Edition"));
               messageDiv.setAttribute("editing", true);
             } else {
-              //this._editButton.removeAttribute("editing");
+              this._editButton.removeAttribute("editing");
               tooltip(this._editButton, this._output, _("Edit Last Message"));
               messageDiv.removeAttribute("editing");
             }

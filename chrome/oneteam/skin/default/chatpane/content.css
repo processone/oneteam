@@ -251,7 +251,7 @@ body[threadId]:before {
 .message > .body {
     position: relative;
     display: block;
-    padding: 3px 50px 3px 30px;
+    padding: 3px 40px 3px 30px;
 }
 
 .message[starts-chunk=true]::before {
@@ -334,8 +334,11 @@ div#editButton {
     height: 16px;
     width: 16px;
     float: right;
-    background: url(imgs/edit.png);
+    background: url(imgs/edit-inactive.png);
     cursor: pointer;
+}
+div#editButton[editing] {
+    background: url(imgs/edit-active.png);
 }
 
 div.right-div {
@@ -350,11 +353,11 @@ span.body[displayEdit] span.edit {
 }
 
 .previousMessage, .nextMessage {
-    width: 13px;
-    height: 14px;
+    width: 10px;
+    height: 10px;
     cursor: pointer;
     float: right;
-    margin: 2px 0 2px 2px;
+    margin: 4px 0 4px 2px;
     background: transparent no-repeat center;
 }
 .previousMessage[disabled], .nextMessage[disabled] {
