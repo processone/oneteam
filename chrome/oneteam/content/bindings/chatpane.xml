@@ -1084,7 +1084,6 @@
 
       <method name="clear">
         <body><![CDATA[
-          this.stopEditingMessage();
           this._threadingDriver.reset();
 
           if (this._content)
