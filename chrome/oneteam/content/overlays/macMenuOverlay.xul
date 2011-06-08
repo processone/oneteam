@@ -39,7 +39,7 @@
         </menupopup>
       </menu>
       <menuseparator insertbefore="close-menuseparator"/>
-      <menuitem label="_('_Presences archive...')" command="cmd_presences_tab" key="key_presences_tab"
+      <menuitem label="_('_Status Messages Overview...')" command="cmd_presences_tab" key="key_presences_tab"
                 insertbefore="close-menuseparator"/>
       <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"
                 insertbefore="close-menuseparator"/>

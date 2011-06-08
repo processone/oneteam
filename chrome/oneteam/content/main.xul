@@ -343,7 +343,7 @@
             command="cmd_initateChat"/>
       <toolbarbutton id="join-room-button" tooltiptext="_('Join chat room')"
             command="cmd_joinRoom"/>
-      <toolbarbutton id="presences-tab-button" tooltiptext="_('Presences archive')"
+      <toolbarbutton id="presences-tab-button" tooltiptext="_('Status messages overview')"
             command="cmd_presences_tab"/>
       <toolbarbutton id="add-user-button" tooltiptext="_('Add new contact')"
             command="cmd_addContact"/>

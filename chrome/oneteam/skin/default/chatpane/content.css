@@ -337,10 +337,10 @@ span.body[displayEdit] span.edit {
 
 /* 2px blue border around message being edited */
 .message[editing] {
-    -moz-border-top-colors: #c1c1c1 #7ea1dc #7ea1dc;
+    -moz-border-top-colors:    #c1c1c1 #7ea1dc #7ea1dc;
     -moz-border-bottom-colors: #c1c1c1 #7ea1dc #7ea1dc;
-    -moz-border-left-colors: #c1c1c1 #7ea1dc #7ea1dc;
-    -moz-border-right-colors: #c1c1c1 #7ea1dc #7ea1dc;
+    -moz-border-left-colors:   #c1c1c1 #7ea1dc #7ea1dc;
+    -moz-border-right-colors:  #c1c1c1 #7ea1dc #7ea1dc;
 }
 .message[editing]:not([starts-chunk]) {
     -moz-border-top-colors: #7ea1dc;

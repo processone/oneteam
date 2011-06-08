@@ -53,9 +53,9 @@
           <menuitem label="_('Last IQ')" oncommand="writeXMLIQLast();"/>
         </menupopup>
       </menulist>
-      <menulist label="_('Presence')">
+      <menulist label="_('Status')">
         <menupopup flex="1">
-          <menuitem label="_('Presence')" oncommand="writeXMLPresence();"/>
+          <menuitem label="_('Status')" oncommand="writeXMLPresence();"/>
           <menuitem label="_('Available')" oncommand="writeXMLPresenceA();"/>
           <menuitem label="_('Not available')" oncommand="writeXMLPresenceU();"/>
         </menupopup>

@@ -55,55 +55,34 @@ toolbar[type="chatpane-commands"] dropmarker {
   -moz-box-pack: center;
 }
 
-#boldButton, #boldButton[checked=true][disabled=true] {
-    list-style-image: url(imgs/toolbar/text-style-bold-inactive.png);
-}
-
-#boldButton[checked=true] {
+#boldButton {
     list-style-image: url(imgs/toolbar/text-style-bold.png);
 }
 
-#italicButton, #italicButton[checked=true][disabled=true] {
-    list-style-image: url(imgs/toolbar/text-style-italic-inactive.png);
-}
-
-#italicButton[checked=true] {
+#italicButton {
     list-style-image: url(imgs/toolbar/text-style-italic.png);
 }
 
-#underlineButton, #underlineButton[checked=true][disabled=true] {
-    list-style-image: url(imgs/toolbar/text-style-underline-inactive.png);
-}
-
-#underlineButton[checked=true] {
+#underlineButton {
     list-style-image: url(imgs/toolbar/text-style-underline.png);
 }
 
-#smallerFontButton[disabled=true] {
-    list-style-image: url(imgs/toolbar/text-size-smaller-inactive.png);
-}
-
-
 #smallerFontButton {
-    list-style-image: url(imgs/toolbar/text-size-smaller-inactive.png);
-}
-
-#biggerFontButton[disabled=true] {
-    list-style-image: url(imgs/toolbar/text-size-bigger-inactive.png);
+    list-style-image: url(imgs/toolbar/text-size-smaller.png);
 }
 
 #biggerFontButton {
-    list-style-image: url(imgs/toolbar/text-size-bigger-inactive.png);
+    list-style-image: url(imgs/toolbar/text-size-bigger.png);
 }
 
 #fontColorButton {
   -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
-  list-style-image: url(imgs/toolbar/text-font-color-inactive.png);
+  list-style-image: url(imgs/toolbar/text-font-color.png);
 }
 
 #fontBackgroundButton {
   -moz-binding: url("chrome://oneteam/content/bindings/colorpicker.xml#colorpicker-toolbarbutton");
-  list-style-image: url(imgs/toolbar/text-font-background-inactive.png);
+  list-style-image: url(imgs/toolbar/text-font-background.png);
 }
 
 #vcardButton, #sendFile, #jingleCall, #extraCmds, #editButton {
