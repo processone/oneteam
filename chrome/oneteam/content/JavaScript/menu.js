@@ -47,6 +47,9 @@ var menuHandler = {
                 windowsObserver.registerObserver(this, this._token);
             }
         } else {
+            e = document.getElementById("menu_edit");
+            e.hidden = true;
+
             e = document.getElementById("menu_window_keys");
             while (e && e.firstChild)
                 e.removeChild(e.firstChild);
@@ -63,13 +66,6 @@ var menuHandler = {
             if (node) {
                 if (isWin)
                     e.setAttribute("label", e.getAttribute("winlabel"));
-                else {
-                    var c = document.getElementById("menu_edit");
-                    if (c) {
-                        c.firstChild.appendChild(e.previousSibling);
-                        c.firstChild.appendChild(e);
-                    }
-                }
             }
         }
     },
