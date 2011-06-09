@@ -1299,7 +1299,7 @@ function updateMenuList(multipleItemsMenuList, singleItemMenuItem, items,
 
     multipleItemsMenuList.hidden = items.length <= 1;
 
-    if (hideWhenNoItems)
+    if (hideWhenNoItems && extraItems)
         for (var i = 0; i < extraItems.length; i++)
             extraItems[i].hidden = items.length == 0;
 
