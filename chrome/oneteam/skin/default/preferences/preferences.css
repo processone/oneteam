@@ -45,3 +45,12 @@ radio[pane=status] {
 radio[pane=notifications] {
   -moz-image-region: rect( 0px, 192px, 32px, 160px )
 }
+
+radio[pane=advanced] {
+  -moz-image-region: rect( 0px, 160px, 32px, 128px )
+}
+
+
+label.title {
+  font-weight: bold;
+}

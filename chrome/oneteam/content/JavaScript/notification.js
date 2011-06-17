@@ -506,7 +506,7 @@ _DECL_(NotificationScheme).prototype =
         "subjectChange": new NotificationProvider(false, true, false, "sent", false,
                                                   _("Chat room subject change"), false),
         "subscription": new NotificationProvider(false, false, true, "sent", false,
-                                                 _("Subscription request received"), false),
+                                                 _("Subscription accepted or denied"), false),
         "message": new NotificationProvider(false, false, false, "message2", true,
                                             _("Message received"), true),
         "firstMessage": new NotificationProvider(false, false, true, "message1", true,
@@ -533,188 +533,222 @@ _DECL_(NotificationScheme).prototype =
                                               _("Reconnected to server"), false)
     },
 
-    generateSettings: function(content, doc, instantApply) {
-        var list = doc.createElementNS(XULNS, "richlistbox");
-        var providers = [];
-        var prevItem;
-
-        list.setAttribute("class", "notificationsOptions");
-        list.contentObj = content;
-        list.addEventListener("select", function() {
-            if (prevItem)
-                prevItem.setAttribute("expanded", false);
-            list.selectedItem.setAttribute("expanded", true);
-            prevItem = list.selectedItem;
-        }, false);
-
-        for (var i in this.defaultProviders)
-            providers.push([this.findProvider(i, content), i]);
-
-        providers = providers.sort(function(a, b) {
-            return a[0].message > b[0].message ? 1 : a[0].message < b[0].message ? -1 : 0
-        });
-
-        for (i = 0; i < providers.length; i++) {
-            var provider = providers[i][0];
-            if (content && !provider.contactEvent)
-                continue;
-
-            var item = doc.createElementNS(XULNS, "richlistitem");
-            list.appendChild(item);
-            item.providerId = providers[i][1];
-
-            if (!prevItem) {
-                prevItem = item;
-                item.setAttribute("expanded", true);
-            }
-
-            var vb = doc.createElementNS(XULNS, "vbox");
-            item.appendChild(vb);
-
-            var e = doc.createElementNS(XULNS, "description");
-            e.textContent = provider.message;
-            vb.appendChild(e);
-
-            var hb = doc.createElementNS(XULNS, "hbox");
-            vb.appendChild(hb);
-
-            var globalSetting = false, cb;
-
-            var grid = doc.createElementNS(XULNS, "grid")
-            e = doc.createElementNS(XULNS, "cols");
-            hb.appendChild(grid);
-
-            var e2 = doc.createElementNS(XULNS, "col");
-            e2.setAttribute("flex", "1");
-            e.appendChild(e2);
-
-            e2 = doc.createElementNS(XULNS, "col");
-            e2.setAttribute("flex", "1");
-            e.appendChild(e2);
-
-            var rows = doc.createElementNS(XULNS, "rows");
-            grid.appendChild(rows);
-
-            if (content) {
-                globalSetting = provider.globalSetting;
-
-                cb = doc.createElementNS(XULNS, "checkbox");
-                cb.setAttribute("label", _("Use global settings"))
-                cb.setAttribute("checked", !!globalSetting);
-                rows.appendChild(cb);
-                cb.setAttribute("oncommand", "var cbs=this.parentNode.getElementsByTagName('checkbox');"+
-                                "for (var i = 1; i < 5; i++) cbs[i].disabled = this.checked");
-            }
-
-            var row = doc.createElementNS(XULNS, "row");
-            rows.appendChild(row);
-
-            cb = doc.createElementNS(XULNS, "checkbox");
-            cb.setAttribute("label", _("Display message in chat pane"))
-            cb.setAttribute("checked", !!provider.showInChatpane);
-            cb.setAttribute("disabled", !!globalSetting);
-            if (instantApply)
-                cb.setAttribute("oncommand", "account.notificationScheme.saveSingleSetting(this)");
-            row.appendChild(cb);
-
-            cb = doc.createElementNS(XULNS, "checkbox");
-            cb.setAttribute("label", _("Display message in chat room pane"))
-            cb.setAttribute("checked", !!provider.showInMucChatpane);
-            cb.setAttribute("disabled", !!globalSetting);
-            if (instantApply)
-                cb.setAttribute("oncommand", "account.notificationScheme.saveSingleSetting(this)");
-            row.appendChild(cb);
-
-            row = doc.createElementNS(XULNS, "row");
-            rows.appendChild(row);
-
-            cb = doc.createElementNS(XULNS, "checkbox");
-            cb.setAttribute("label", _("Display notification bubble"))
-            cb.setAttribute("checked", !!provider.showAlert);
-            cb.setAttribute("disabled", !!globalSetting);
-            if (instantApply)
-                cb.setAttribute("oncommand", "account.notificationScheme.saveSingleSetting(this)");
-            row.appendChild(cb);
-
-            cb = doc.createElementNS(XULNS, "checkbox");
-            cb.setAttribute("label", _("Play sound"))
-            cb.setAttribute("checked", !!provider.playSound);
-            cb.setAttribute("disabled", !!globalSetting);
-            if (instantApply)
-                cb.setAttribute("oncommand", "account.notificationScheme.saveSingleSetting(this)");
-            row.appendChild(cb);
-        }
-        return list;
+    providersCategories: {
+         "connection": {
+             "title": _("Connections to server"),
+             "providers": ["disconnect", "reconnect"]
+         },
+         "contactEvents": {
+             "title": _("Contact events"),
+             "providers": ["signIn", "signOut", "presence",
+                           "firstMessage", "message", "subscription"]
+         },
+         "roomEvents": {
+             "title": _("Chat room events"),
+             "providers": ["subjectChange", "mucSignIn", "mucSignOut", "nickChange",
+                           "mucPresence", "mucMessage", "mucDirectedMessage", "invitationDeclined"]
+         },
+         "fileTransfer": {
+             "title": _("File transfer"),
+             "providers": ["fileTransfer", "fileTransferAccepted", "fileTransferRejected"]
+         },
+         "voiceCall": {
+             "title": _("Voice call"),
+             "providers": ["jingleCall", "missedJingleCall"]
+         }
     },
 
-    saveSingleSetting: function(checkbox) {
-        var item = checkbox;
-        while (item && item.localName != "richlistitem") {
-            item = item.parentNode;
+    generateSettings: function(contact, doc, instantApply) {
+        var settings = doc.createElementNS(XULNS, "grid");
+        settings.setAttribute("id", "notifications");
+        var columns = doc.createElementNS(XULNS, "columns");
+        settings.appendChild(columns);
+
+        columns.appendChild(doc.createElementNS(XULNS, "column"));
+        columns.firstChild.setAttribute("flex", "3");
+
+        // COLUMN HEADERS
+        var headers = [_("Display message in chat pane"),
+                       _("Display message in chat room pane"),
+                       _("Display notification bubble"),
+                       _("Play sound")                        ];
+        if (contact)
+            headers.unshift(_("Use global settings"));
+
+        for (var i = 0; i < headers.length; i++) {
+            var column = doc.createElementNS(XULNS, "column");
+            column.setAttribute("flex", "1");
+            column.appendChild(doc.createElementNS(XULNS, "vbox"));
+            column.firstChild.setAttribute("align", "center");
+            column.firstChild.appendChild(doc.createElementNS(XULNS, "vbox"));
+            column.firstChild.firstChild.setAttribute("class", "col-head");
+            column.firstChild.firstChild.appendChild(doc.createElementNS(XULNS, "hbox"));
+            column.firstChild.firstChild.firstChild.setAttribute("align", "center");
+            column.firstChild.firstChild.firstChild.appendChild(doc.createElementNS(XULNS, "vbox"));
+            column.firstChild.firstChild.firstChild.firstChild.textContent = headers[i];
+ 
+            columns.appendChild(column);
         }
 
-        if (!item)
-            return;
-
-        var topEl = item;
-
-        while (topEl && topEl.localName != "richlistbox") {
-            topEl = topEl.parentNode;
+        settings.adjustColumns = function() {
+            var heads = doc.getElementsByClassName("col-head");
+            for (var i = 0; i < heads.length; i++)
+                heads[i].width = heads[i].firstChild.boxObject.height;
         }
+        // COLUMN HEADERS DONE
 
-        if (!topEl)
-            return;
+        var rows = doc.createElementNS(XULNS, "rows");
+        rows.appendChild(doc.createElementNS(XULNS, "row"));
+        settings.appendChild(rows);
 
-        var cid = topEl.contentObj ? topEl.contentObj.jid.normalizedJID.shortJID : null;
+        var notifs = ["showInChatpane", "showInMucChatpane", "showAlert", "playSound"];
+        var contactJID = contact ? contact.jid.normalizedJID.shortJID : null;
 
-        this._saveSetting(item.getElementsByTagNameNS(XULNS, "checkbox"),
-                          cid, item.providerId);
+        // PREF ROWS
+        for (var category in this.providersCategories) {
+             var categoryRow = doc.createElementNS(XULNS, "row");
+             rows.appendChild(categoryRow);
+             var cell = doc.createElementNS(XULNS, "vbox");
+             cell.setAttribute("class", "prefCategory");
+             cell.setAttribute("id", category);
+             cell.appendChild(doc.createElementNS(XULNS, "image"));
+             cell.firstChild.setAttribute("class", "expander");
+             cell.appendChild(doc.createTextNode(this.providersCategories[category].title));
+             categoryRow.appendChild(cell);
+             cell.prefs = [];
+
+             for (var i = 0; i < this.providersCategories[category].providers.length; i++) {
+                 var providerId = this.providersCategories[category].providers[i];
+                 var provider = this.findProvider(providerId, contact);
+
+                 if (!contact || provider.contactEvent) {
+
+                     var row = doc.createElementNS(XULNS, "row");
+                     row.setAttribute("class", "pref");
+                     row.appendChild(doc.createElementNS(XULNS, "label"));
+                     row.firstChild.setAttribute("crop", "end");
+                     row.firstChild.setAttribute("value", provider.message);
+                     row.providerId = providerId;
+                     row.contactJID = contactJID;
+                     cell.prefs.push(row);
+
+                     if (instantApply)
+                         row.setAttribute("oncommand",
+                             "account.notificationScheme.saveSingleSetting(this)")
+
+		     var checkboxes = [];
+                     for (var j = 0; j < notifs.length; j++) {
+                         var checkbox = doc.createElementNS(XULNS, "checkbox");
+                         checkbox.setAttribute("checked", provider[notifs[j]]);
+
+                         row.appendChild(doc.createElementNS(XULNS, "vbox"));
+                         row.lastChild.setAttribute("align", "center");
+                         row.lastChild.appendChild(checkbox);
+
+                         checkboxes.push(checkbox);
+                     }
+
+ 		     if (contact) {
+                         var globalSettingsCheckbox = doc.createElementNS(XULNS, "checkbox");
+
+                         globalSettingsCheckbox.checkboxes = checkboxes;
+                         globalSettingsCheckbox.globalProvider = this.findProvider(providerId, null);
+                         globalSettingsCheckbox.updateCheckboxes = new Callback(function() {
+                             for (var j = 0; j < checkboxes.length; j++)
+                                 if (this.hasAttribute("checked")) {
+                                     this.checkboxes[j].setAttribute("checked",
+                                         this.globalProvider[notifs[j]]);
+                                     this.checkboxes[j].setAttribute("disabled", "true");
+                                 } else
+                                     this.checkboxes[j].removeAttribute("disabled");
+                         }, globalSettingsCheckbox);
+                         globalSettingsCheckbox.setAttribute("oncommand", "this.updateCheckboxes()");
+
+                         if (provider.globalSetting)
+                             globalSettingsCheckbox.setAttribute("checked", "true");
+                         globalSettingsCheckbox.updateCheckboxes();
+
+                         var vbox = doc.createElementNS(XULNS, "vbox");
+                         vbox.setAttribute("align", "center");
+                         vbox.appendChild(globalSettingsCheckbox);
+                         row.insertBefore(vbox, checkboxes[0].parentNode);
+                     }
+
+                     rows.appendChild(row);
+                 }
+             }
+             if (cell.prefs.length) {
+                 cell.switchVisibility = function() {
+                     if (this.getAttribute("collapse")) {
+                         this.removeAttribute("collapse");
+                         for (var i = 0; i < this.prefs.length; i++)
+                             this.prefs[i].removeAttribute("collapse");
+                     } else {
+                         this.setAttribute("collapse", "true");
+                         for (var i = 0; i < this.prefs.length; i++)
+                             this.prefs[i].setAttribute("collapse", true);
+                     }
+                 };
+                 cell.setAttribute("onclick", "this.switchVisibility()");
+             } else {
+                 rows.removeChild(categoryRow);
+             }
+        }
+        // PREF ROWS DONE
+
+        doc.defaultView.setTimeout(settings.adjustColumns, 0);
+        return settings;
     },
 
-    _saveSetting: function(cbs, cid, id) {
-        var dp = cid ? this.findProvider(id) : this.defaultProviders[id];
 
-        if (cid) {
-            id = id + "-" + cid;
-            if (cbs[0].checked) {
+    saveSingleSetting: function(row) {
+        this._saveSetting(row.getElementsByTagNameNS(XULNS, "checkbox"),
+                          row.contactJID, row.providerId);
+    },
+
+    _saveSetting: function(checkboxes, contactJID, id) {
+        var dp = contactJID ? this.findProvider(id) : this.defaultProviders[id];
+
+        if (contactJID) {
+            id = id + "-" + contactJID;
+            if (checkboxes[0].checked) {
                 account.cache.removeValue("notifications-"+id);
                 delete this.providers[id];
                 return;
             }
-            cbs = Array.slice(cbs, 1);
+            checkboxes = Array.slice(checkboxes, 1);
         }
-        var data = [cbs[0].checked, cbs[1].checked, cbs[2].checked,
-                    dp.soundSample, cbs[3].checked];
+
+        var data = [checkboxes[0].checked, checkboxes[1].checked, checkboxes[2].checked,
+                    dp.soundSample, checkboxes[3].checked];
 
         if (data[0] != dp.showInChatpane || data[1] != dp.showInMucChatpane ||
             data[2] != dp.showAlert || data[4] != dp.playSound)
-        {
             account.cache.setValue("notifications-"+id, data);
-        } else {
+        else
             account.cache.removeValue("notifications-"+id);
-        }
 
         delete this.providers[id];
     },
 
-    saveSettings: function(fragment) {
-        var c = fragment.childNodes;
-        var cid = fragment.contentObj ? fragment.contentObj.jid.normalizedJID.shortJID : null;
+    saveSettings: function(grid) {
+        var rows = grid.getElementsByClassName("pref");
 
-        for (var i = 0; i < c.length; i++)
-            this._saveSetting(c[i].getElementsByTagNameNS(XULNS, "checkbox"),
-                              cid, c[i].providerId)
+        for (var i = 0; i < rows.length; i++)
+            this._saveSetting(rows[i].getElementsByTagNameNS(XULNS, "checkbox"),
+                              rows[i].contactJID, rows[i].providerId);
     },
 
-    findProvider: function(scope, content) {
-        var scopes = content ?
-            [scope+"-"+content.jid.normalizedJID.shortJID, scope] : [scope];
+    findProvider: function(scope, contact) {
+        var scopes = contact ?
+            [scope+"-"+contact.jid.normalizedJID.shortJID, scope] : [scope];
 
         var provider;
 
         for each (var id in scopes) {
+dump(id + "\n");
             if (this.providers[id]) {
-                provider = this.providers[id].getWrapperFor(content);
+                provider = this.providers[id].getWrapperFor(contact);
                 provider.globalSetting = id == scope;
                 return provider;
             }
@@ -732,7 +766,7 @@ _DECL_(NotificationScheme).prototype =
                     data[3] = dp.soundSample;
 
                 provider = (this.providers[id] = new NotificationProvider(data)).
-                    getWrapperFor(content);
+                    getWrapperFor(contact);
 
                 provider.globalSetting = id == scope;
                 return provider;
@@ -741,7 +775,7 @@ _DECL_(NotificationScheme).prototype =
 
         if (scope in this.defaultProviders) {
             this.providers[scope] = this.defaultProviders[scope];
-            provider = this.defaultProviders[scope].getWrapperFor(content);
+            provider = this.defaultProviders[scope].getWrapperFor(contact);
             provider.globalSetting = true;
             return provider;
         }

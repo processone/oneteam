@@ -88,18 +88,8 @@
     }
 
     function onBeforeAccept() {
-      account.notificationScheme.saveSettings(
-        document.getElementById("notifications").firstChild);
+      account.notificationScheme.saveSettings(document.getElementById("notifications"));
       saveUpdatePrefs();
-    }
-
-    function initGeneralPane() {
-// #ifndef XPI
-      var val = prefManager.getPref("app.partner.process-one") || prefManager.getPref("app.update.channel", true) || "release";
-      var el = document.getElementById("update_channel_selector");
-
-      el.selectedIndex = val == "release" ? 0 : 1;
-// #endif
     }
 
     function initAppearance() {
@@ -128,12 +118,6 @@
         }, 100);
     }
 
-    function initNotifications() {
-      var fragment = account.notificationScheme.generateSettings(null, document,
-          document.documentElement.instantApply);
-      document.getElementById("notifications").appendChild(fragment);
-    }
-
     function generateIconSetElement(iconSet) {
       var rli = document.createElement("richlistitem");
       rli.setAttribute("orient", "vertical");
@@ -157,6 +141,20 @@
       rli.appendChild(label);
       return rli;
     }
+
+    function initAdvancedPane() {
+// #ifndef XPI
+      var val = prefManager.getPref("app.partner.process-one") || prefManager.getPref("app.update.channel", true) || "release";
+      var el = document.getElementById("update_channel_selector");
+
+      el.selectedIndex = val == "release" ? 0 : 1;
+// #endif
+
+      var settings = account.notificationScheme.generateSettings(null, document,
+                             document.documentElement.instantApply);
+      document.getElementById("advanced").appendChild(settings);
+    }
+
   ]]></script>
 
   <group id="macMenu"/>
@@ -165,7 +163,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <prefpane id="general" label="_('General')" onpaneload="initGeneralPane()">
+  <prefpane id="general" label="_('General')">
     <preferences id="general-preferences">
       <preference id="showavatars" name="chat.general.showavatars" type="bool"/>
       <preference id="sortbystatus" name="chat.roster.sortbystatus" type="bool"/>
@@ -184,19 +182,6 @@
     <!-- #endif -->
     <checkbox label="_('Show icon in system tray')"
               preference="systray"/>
-    <!-- #ifndef XPI -->
-    <spacer/>
-
-    <hbox class="entry">
-      <label value="_('Offer updates from channel:')"/>
-      <menulist id="update_channel_selector" oncommand="updateUpdateChannel(this.value)">
-        <menupopup>
-          <menuitem label="_('Releases')" value="release"/>
-          <menuitem label="_('Test')" value="devel"/>
-        </menupopup>
-      </menulist>
-    </hbox>
-    <!-- #endif -->
   </prefpane>
 
   <prefpane id="connection" label="_('Connection')">
@@ -297,6 +282,7 @@
       </rows>
     </grid>
   </prefpane>
+
   <prefpane id="appearance" label="_('Appearance')" onpaneload="initAppearance()">
     <preferences id="appearance-preferences">
       <preference id="usegatewayicons" name="chat.general.usegatewayicons" type="bool"/>
@@ -315,7 +301,21 @@
                  onselect="this.parentNode.userChangedValue(this)"/>
   </prefpane>
 
-  <prefpane id="notifications" label="_('Notifications')" onpaneload="initNotifications()">
+  <prefpane id="advanced" label="_('Advanced')" onpaneload="initAdvancedPane()">
+    <!-- #ifndef XPI -->
+    <label class="title" value="_('Software updates')"/>
+    <hbox class="entry">
+      <label value="_('Offer updates from channel:')"/>
+      <menulist id="update_channel_selector" oncommand="updateUpdateChannel(this.value)">
+        <menupopup>
+          <menuitem label="_('Releases')" value="release"/>
+          <menuitem label="_('Test')" value="devel"/>
+        </menupopup>
+      </menulist>
+    </hbox>
+    <spacer/>
+    <!-- #endif -->
+    <label class="title" value="_('Notification global settings')"/>
   </prefpane>
 
 </prefwindow>

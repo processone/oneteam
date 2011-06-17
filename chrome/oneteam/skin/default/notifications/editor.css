@@ -1,13 +1,46 @@
-.notificationsOptions description {
-  font-weight: bold;
+#notifications {
+  padding-left: 3px;
+  border: 1px solid #aaa;
+  height: 400px;
+  overflow-y: scroll;
 }
 
-.notificationsOptions  grid {
-  margin-left: 2em;
+.col-head {
+  width: 50px;
+  height: 100px;
+  overflow: hidden;
+  margin: 0 8px;
+}
+.col-head > hbox {
+  height: 50px;
+  -moz-transform: rotate(-90deg);
+  -moz-transform-origin: 50px 50px;
+}
+.col-head > hbox > vbox {
+  max-width: 100px;
+}
+
+.prefCategory {
+  font-weight: bold;
+  padding: 10px 0 3px;
+  cursor: default;
+}
+image.expander {
+  height: 11px;
+  width: 11px;
+  margin-right: 5px;
+  background: transparent url(imgs/switch-open-black.png) center center;
+}
+.prefCategory[collapse] image.expander {
+  background-image: url(imgs/switch-close-black.png);
+}
+
+row[collapse] {
   visibility: collapse;
 }
 
-.notificationsOptions richlistitem[expanded=true] grid {
-  visibility: visible;
+#notifications checkbox .checkbox-label-box {
+  -moz-appearance: none;
+  border: none;
 }
 

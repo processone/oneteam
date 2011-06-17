@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-06-08 16:13+0200\n"
+"POT-Creation-Date: 2011-06-17 14:52+0200\n"
 "PO-Revision-Date: 2011-05-25 19:29+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
@@ -297,7 +297,7 @@ msgstr "Personnel"
 msgid "Work"
 msgstr "Travail"
 
-#: ../chrome/oneteam/content/preferences.xul:300
+#: ../chrome/oneteam/content/preferences.xul:286
 #: ../chrome/oneteam/content/vcardEdit.xul:273
 msgid "Appearance"
 msgstr "Apparence"
@@ -615,58 +615,58 @@ msgstr "Supprimer"
 msgid "Always join this room at startup"
 msgstr "Toujours rejoindre ce salon au démarrage"
 
-#: ../chrome/oneteam/content/preferences.xul:168
+#: ../chrome/oneteam/content/preferences.xul:166
 msgid "General"
 msgstr "Général"
 
-#: ../chrome/oneteam/content/preferences.xul:202
+#: ../chrome/oneteam/content/preferences.xul:187
 msgid "Connection"
 msgstr "Connexion"
 
 #: ../chrome/oneteam/content/console.xul:56
 #: ../chrome/oneteam/content/console.xul:58
-#: ../chrome/oneteam/content/preferences.xul:261
+#: ../chrome/oneteam/content/preferences.xul:246
 msgid "Status"
 msgstr "Statut"
 
-#: ../chrome/oneteam/content/preferences.xul:177
+#: ../chrome/oneteam/content/preferences.xul:175
 msgid "Sort contacts by status"
 msgstr "Trier les contacts par statut"
 
-#: ../chrome/oneteam/content/preferences.xul:178
+#: ../chrome/oneteam/content/preferences.xul:176
 msgid "Play sounds"
 msgstr "Lancer des signaux sonores"
 
-#: ../chrome/oneteam/content/preferences.xul:221
+#: ../chrome/oneteam/content/preferences.xul:206
 msgid "Host:"
 msgstr "Hôte :"
 
-#: ../chrome/oneteam/content/preferences.xul:226
-#: ../chrome/oneteam/content/preferences.xul:227
+#: ../chrome/oneteam/content/preferences.xul:211
+#: ../chrome/oneteam/content/preferences.xul:212
 msgid "Port:"
 msgstr "Port :"
 
-#: ../chrome/oneteam/content/preferences.xul:230
+#: ../chrome/oneteam/content/preferences.xul:215
 msgid "Resource:"
 msgstr "Ressource :"
 
-#: ../chrome/oneteam/content/preferences.xul:235
+#: ../chrome/oneteam/content/preferences.xul:220
 msgid "Priority:"
 msgstr "Priorité :"
 
-#: ../chrome/oneteam/content/preferences.xul:252
+#: ../chrome/oneteam/content/preferences.xul:237
 msgid "HTTP Base:"
 msgstr "Base HTTP :"
 
-#: ../chrome/oneteam/content/preferences.xul:306
+#: ../chrome/oneteam/content/preferences.xul:292
 msgid "Default icon set:"
 msgstr "Jeu d'icônes par défaut :"
 
-#: ../chrome/oneteam/content/preferences.xul:310
+#: ../chrome/oneteam/content/preferences.xul:296
 msgid "Use gateway specific icons"
 msgstr "Utiliser les icônes des passerelles"
 
-#: ../chrome/oneteam/content/preferences.xul:312
+#: ../chrome/oneteam/content/preferences.xul:298
 msgid "Default smiles set:"
 msgstr "Jeu d'émoticônes par défaut :"
 
@@ -1128,24 +1128,24 @@ msgstr "Identités :"
 msgid "Features:"
 msgstr "Fonctionnalités :"
 
-#: ../chrome/oneteam/content/preferences.xul:179
+#: ../chrome/oneteam/content/preferences.xul:177
 msgid "Notify about other clients with higher priority"
 msgstr "Notifier des clients de plus haute priorité"
 
-#: ../chrome/oneteam/content/preferences.xul:239
+#: ../chrome/oneteam/content/preferences.xul:224
 msgid "Connection Method:"
 msgstr "Méthode de connexion :"
 
-#: ../chrome/oneteam/content/preferences.xul:278
+#: ../chrome/oneteam/content/preferences.xul:263
 msgid "Automatically set status to 'away\\' after"
 msgstr "Passer le statut à 'absent' après"
 
-#: ../chrome/oneteam/content/preferences.xul:281
-#: ../chrome/oneteam/content/preferences.xul:291
+#: ../chrome/oneteam/content/preferences.xul:266
+#: ../chrome/oneteam/content/preferences.xul:276
 msgid "minutes idle"
 msgstr "minutes d'inactivité"
 
-#: ../chrome/oneteam/content/preferences.xul:288
+#: ../chrome/oneteam/content/preferences.xul:273
 msgid "Automatically set status to 'not available\\' after"
 msgstr "Passer le statut à 'non disponible' après"
 
@@ -1338,16 +1338,16 @@ msgstr "Cliquer pour charger l'image"
 msgid "Always load images from that contact"
 msgstr "Toujours charger les images pour ce contact"
 
-#: ../chrome/oneteam/content/preferences.xul:182
+#: ../chrome/oneteam/content/preferences.xul:180
 msgid "Ask to quit"
 msgstr "Demander avant de quitter"
 
-#: ../chrome/oneteam/content/preferences.xul:255
+#: ../chrome/oneteam/content/preferences.xul:240
 msgid "Automatically connect at startup"
 msgstr "Se connecter automatiquement au démarrage"
 
-#: ../chrome/oneteam/content/preferences.xul:284
-#: ../chrome/oneteam/content/preferences.xul:294
+#: ../chrome/oneteam/content/preferences.xul:269
+#: ../chrome/oneteam/content/preferences.xul:279
 msgid "And set status message to:"
 msgstr "Et le message de statut à :"
 
@@ -1533,15 +1533,14 @@ msgstr "Fermer l'onglet"
 msgid "Load more messages from history"
 msgstr "Messages plus anciens"
 
-#: ../chrome/oneteam/content/preferences.xul:256
+#: ../chrome/oneteam/content/preferences.xul:241
 msgid "Reconnect after loosing connection"
-msgstr "Se reconnecter après avoir perdu la connexion"
+msgstr "Se reconnecter automatiquement après avoir perdu la connexion"
 
 #: ../chrome/oneteam/content/main.xul:427
 msgid "Stop Connecting"
 msgstr "Stopper la connexion"
 
-#: ../chrome/oneteam/content/preferences.xul:318
 #: ../chrome/oneteam/content/vcard.xul:81
 msgid "Notifications"
 msgstr "Notifications"
@@ -1899,19 +1898,19 @@ msgstr "Souhaitez-vous élever la priorité de OneTeam Desktop pour en faire vot
 msgid "Ask me next time."
 msgstr "Me demander la prochaine fois."
 
-#: ../chrome/oneteam/content/preferences.xul:185
+#: ../chrome/oneteam/content/preferences.xul:183
 msgid "Show icon in system tray"
 msgstr "Afficher l'icône dans la zone de notification"
 
-#: ../chrome/oneteam/content/preferences.xul:223
+#: ../chrome/oneteam/content/preferences.xul:208
 msgid "This is not valid hostname"
 msgstr "Nom de domaine incorrect"
 
-#: ../chrome/oneteam/content/preferences.xul:231
+#: ../chrome/oneteam/content/preferences.xul:216
 msgid "Resource can not be empty"
 msgstr "La ressource ne peut pas être vide"
 
-#: ../chrome/oneteam/content/preferences.xul:249
+#: ../chrome/oneteam/content/preferences.xul:234
 msgid "Old Style SSL Encryption"
 msgstr "Chiffrement SSL ancien format"
 
@@ -1956,10 +1955,6 @@ msgstr "Un contact s'est connecté"
 msgid "Contact signed out"
 msgstr "Un contact s'est déconnecté"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:509
-msgid "Subscription request received"
-msgstr "Demande de souscription reçue"
-
 #: ../chrome/oneteam/content/JavaScript/notification.js:511
 msgid "Message received"
 msgstr "Message reçu"
@@ -1992,19 +1987,19 @@ msgstr "Connexion au serveur perdue"
 msgid "Reconnected to server"
 msgstr "À nouveau connecté au serveur"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:602
+#: ../chrome/oneteam/content/JavaScript/notification.js:576
 msgid "Use global settings"
 msgstr "Appliquer les paramètres généraux"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:613
+#: ../chrome/oneteam/content/JavaScript/notification.js:571
 msgid "Display message in chat pane"
 msgstr "L'annoncer dans la fenêtre de discussion"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:632
+#: ../chrome/oneteam/content/JavaScript/notification.js:573
 msgid "Display notification bubble"
 msgstr "L'annoncer dans une infobulle"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:640
+#: ../chrome/oneteam/content/JavaScript/notification.js:574
 msgid "Play sound"
 msgstr "Lancer un signal sonore"
 
@@ -2058,19 +2053,19 @@ msgstr "Rejoindre un salon de discussion"
 msgid "Error message:"
 msgstr "Message d'erreur :"
 
-#: ../chrome/oneteam/content/preferences.xul:242
+#: ../chrome/oneteam/content/preferences.xul:227
 msgid "Native"
 msgstr "Native"
 
-#: ../chrome/oneteam/content/preferences.xul:243
+#: ../chrome/oneteam/content/preferences.xul:228
 msgid "HTTP Bind"
 msgstr "HTTP Bind"
 
-#: ../chrome/oneteam/content/preferences.xul:244
+#: ../chrome/oneteam/content/preferences.xul:229
 msgid "HTTPS Bind"
 msgstr "HTTPS Bind"
 
-#: ../chrome/oneteam/content/preferences.xul:245
+#: ../chrome/oneteam/content/preferences.xul:230
 msgid "HTTP Polling"
 msgstr "HTTP Polling"
 
@@ -2272,7 +2267,7 @@ msgstr "Réception d'un message qui vous est adressé dans un salon"
 msgid "Invitation to chat room declined"
 msgstr "Invitation au salon rejetée"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:621
+#: ../chrome/oneteam/content/JavaScript/notification.js:572
 msgid "Display message in chat room pane"
 msgstr "L'annoncer dans la fenêtre du salon de discussion"
 
@@ -2284,15 +2279,15 @@ msgstr "Rejeter"
 msgid "Autospellchecker"
 msgstr "Vérification d'orthographe"
 
-#: ../chrome/oneteam/content/preferences.xul:191
+#: ../chrome/oneteam/content/preferences.xul:308
 msgid "Offer updates from channel:"
 msgstr "Mises à jour"
 
-#: ../chrome/oneteam/content/preferences.xul:194
+#: ../chrome/oneteam/content/preferences.xul:311
 msgid "Releases"
 msgstr "Versions majeures"
 
-#: ../chrome/oneteam/content/preferences.xul:195
+#: ../chrome/oneteam/content/preferences.xul:312
 msgid "Test"
 msgstr "Versions de test"
 
@@ -2361,20 +2356,20 @@ msgstr "Afficher les contacts _déconnectés"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:121
 msgid "Restore Last Chat"
-msgstr ""
+msgstr "Restaurer la dernière discussion"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:229
 msgid "You have already that chatroom in your bookmarks"
-msgstr ""
+msgstr "Ce salon est déjà dans vos marque-pages"
 
 #: ../chrome/oneteam/content/JavaScript/edit.js:242
 msgid "See version {0} (from {1}), {2}"
-msgstr ""
+msgstr "Version {0} / {1}, {2}"
 
 #: ../chrome/oneteam/content/JavaScript/edit.js:245
 #, fuzzy
 msgid "This is version {0} (from {1}), {2}"
-msgstr "Ceci est la version "
+msgstr "Ceci est la version {0} / {1}, {2}"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:168
 #, fuzzy
@@ -2439,6 +2434,45 @@ msgstr "Un membre du salon a modifié son statut"
 #, fuzzy
 msgid "My other connections"
 msgstr "Mes autres ressources"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:509
+#, fuzzy
+msgid "Subscription accepted or denied"
+msgstr "Souscription acceptée ou rejetée"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:538
+#, fuzzy
+msgid "Connections to server"
+msgstr "Connexion au serveur perdue"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:542
+#, fuzzy
+msgid "Contact events"
+msgstr "Informations sur un contact"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:547
+#, fuzzy
+msgid "Chat room events"
+msgstr "Serveur de salons de discussion"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:552
+#, fuzzy
+msgid "File transfer"
+msgstr "Transferts de fichier"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:556
+#, fuzzy
+msgid "Voice call"
+msgstr "Appeler..."
+
+#: ../chrome/oneteam/content/preferences.xul:306
+msgid "Software updates"
+msgstr "Mises à jour logicielles"
+
+#: ../chrome/oneteam/content/preferences.xul:318
+#, fuzzy
+msgid "Notification global settings"
+msgstr "Paramètres généraux de notification"
 
 #~ msgid "Authorize To See Me"
 #~ msgstr "L'autoriser à voir ma présence"
