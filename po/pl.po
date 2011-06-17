@@ -98,14 +98,14 @@ msgstr "Zajęty"
 #: ../chrome/oneteam/content/main.xul:449
 #: ../chrome/oneteam/content/status.xul:91
 msgid "Away"
-msgstr "Zajęty"
+msgstr "Nieobecny"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:133
 #: ../chrome/oneteam/content/console.xul:60
 #: ../chrome/oneteam/content/main.xul:451
 #: ../chrome/oneteam/content/status.xul:92
 msgid "Not available"
-msgstr "Niedostępne"
+msgstr "Niedostępny"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:135
 #: ../chrome/oneteam/content/main.xul:453
