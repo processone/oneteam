@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-05-27 15:03+0200\n"
+"POT-Creation-Date: 2011-06-20 14:50+0200\n"
 "PO-Revision-Date: 2010-06-16 16:56+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -44,5 +44,11 @@ msgstr "www.process-one.net"
 msgid "http://oneteam.im/"
 msgstr ""
 
-#~ msgid "http://www.process-one.net/en/oneteam/"
-#~ msgstr "http://www.process-one.net/en/oneteam/"
+#: ../chrome/oneteam/content/about.xul:57
+msgid "https://feedback.process-one.net/forums/120701-oneteam-desktop"
+msgstr ""
+
+#: ../chrome/oneteam/content/about.xul:55
+msgid "Participate and help us to improve OneTeam!"
+msgstr "Participez et aidez-nous à améliorer OneTeam !"
+

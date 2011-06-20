@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: oneteam\n"
-"POT-Creation-Date: 2011-05-27 15:03+0200\n"
+"POT-Creation-Date: 2011-06-20 14:50+0200\n"
 "PO-Revision-Date: 2010-09-14 13:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -46,5 +46,11 @@ msgstr "www.process-one.net"
 msgid "http://oneteam.im/"
 msgstr ""
 
-#~ msgid "http://www.process-one.net/en/oneteam/"
-#~ msgstr "http://www.process-one.net/en/oneteam/"
+#: ../chrome/oneteam/content/about.xul:57
+#, fuzzy
+msgid "https://feedback.process-one.net/forums/120701-oneteam-desktop"
+msgstr ""
+
+#: ../chrome/oneteam/content/about.xul:55
+msgid "Participate and help us to improve OneTeam!"
+msgstr ""

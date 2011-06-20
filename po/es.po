@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
-"POT-Creation-Date: 2011-06-17 14:52+0200\n"
+"POT-Creation-Date: 2011-06-20 14:28+0200\n"
 "PO-Revision-Date: 2010-09-15 18:01+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2556,6 +2556,11 @@ msgstr ""
 #, fuzzy
 msgid "Notification global settings"
 msgstr "Notificaciones"
+
+#: ../chrome/oneteam/content/preferences.xul:304
+#, fuzzy
+msgid "Advanced"
+msgstr "Cancelado"
 
 #~ msgid "Authorize To See Me"
 #~ msgstr "Autorizarle que pueda verte"

@@ -746,7 +746,6 @@ _DECL_(NotificationScheme).prototype =
         var provider;
 
         for each (var id in scopes) {
-dump(id + "\n");
             if (this.providers[id]) {
                 provider = this.providers[id].getWrapperFor(contact);
                 provider.globalSetting = id == scope;

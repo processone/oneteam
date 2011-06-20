@@ -22,7 +22,7 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <vbox style="background-color: white; -moz-border-radius: 5px; -moz-box-shadow: 1px 1px 10px grey; padding: 20px;">
+  <vbox style="background-color: white; -moz-border-radius: 5px; -moz-box-shadow: 1px 1px 10px grey; padding: 20px 20px 10px;">
     <hbox style="cursor: pointer" onclick="openLink(_('$$branding$$: http://oneteam.im/'));">
       <image src="chrome://oneteam-branding/locale/ot_logo.png" style="cursor: pointer"/>
       <vbox pack="center" align="center">
@@ -50,7 +50,11 @@
         </hbox>
       </vbox>
     </hbox>
+    <spacer height="20"/>
+    <vbox align="center">
+    <label value="_('$$branding$$:Participate and help us to improve OneTeam!')"
+           style="cursor: pointer; color: blue; text-decoration: underline"
+           onclick="openLink(_('$$branding$$: https://feedback.process-one.net/forums/120701-oneteam-desktop'));"/>
+    </vbox>
   </vbox>
 </dialog>
-
-

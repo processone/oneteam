@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-06-17 14:52+0200\n"
+"POT-Creation-Date: 2011-06-20 14:28+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -2471,6 +2471,11 @@ msgstr ""
 #, fuzzy
 msgid "Notification global settings"
 msgstr "Użyj wartości globalnych"
+
+#: ../chrome/oneteam/content/preferences.xul:304
+#, fuzzy
+msgid "Advanced"
+msgstr "Anulowano"
 
 #~ msgid "Authorize To See Me"
 #~ msgstr "Zezwól na widzenie statusu"

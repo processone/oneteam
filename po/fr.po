@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-06-17 14:52+0200\n"
+"POT-Creation-Date: 2011-06-20 14:28+0200\n"
 "PO-Revision-Date: 2011-05-25 19:29+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
@@ -2345,12 +2345,10 @@ msgid "Contacts lists"
 msgstr "Liste de contacts"
 
 #: ../chrome/oneteam/content/main.xul:342
-#, fuzzy
 msgid "Initiate new chat"
 msgstr "Ouvrir une discussion"
 
 #: ../chrome/oneteam/content/main.xul:372
-#, fuzzy
 msgid "Show _Offline Contacts"
 msgstr "Afficher les contacts _déconnectés"
 
@@ -2367,47 +2365,38 @@ msgid "See version {0} (from {1}), {2}"
 msgstr "Version {0} / {1}, {2}"
 
 #: ../chrome/oneteam/content/JavaScript/edit.js:245
-#, fuzzy
 msgid "This is version {0} (from {1}), {2}"
 msgstr "Ceci est la version {0} / {1}, {2}"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:168
-#, fuzzy
 msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead ?"
 msgstr "Les informations saisies sont incorrectes.\\nVoulez-vous corriger les informations saisies,\\nou restaurer les valeurs précédentes ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:169
-#, fuzzy
 msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created ?"
 msgstr "Les informations saisies sont incorrectes.\\nVoulez-vous corriger les informations saisies,\\nou supprimer le marque-page que vous venez de créer ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:173
-#, fuzzy
 msgid "Restore Previous Values"
 msgstr "Restaurer"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:173
-#, fuzzy
 msgid "Remove Bookmark"
 msgstr "Supprimer le marque-page"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:174
-#, fuzzy
 msgid "Correct Informations"
 msgstr "Corriger"
 
 #: ../chrome/oneteam/content/main.xul:346
-#, fuzzy
 msgid "Status messages overview"
 msgstr "Voir les messages de statut de mes contacts"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:42
-#, fuzzy
 msgid "_Status Messages Overview..."
 msgstr "Aperçu des messages de _statut..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:234
-#, fuzzy
 msgid "Ask to see his/her status"
 msgstr "Demander à voir son statut"
 
@@ -2416,63 +2405,56 @@ msgid "Allow him/her to see my status"
 msgstr "L'autoriser à voir mon statut"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:238
-#, fuzzy
 msgid "Cancel authorization"
 msgstr "Annuler l'autorisation de voir mon statut"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:501
-#, fuzzy
 msgid "Contact changed status"
 msgstr "Un contact a modifié son statut"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:503
-#, fuzzy
 msgid "Chat room participant changed status"
 msgstr "Un membre du salon a modifié son statut"
 
 #: ../chrome/oneteam/content/JavaScript/model/account.js:58
-#, fuzzy
 msgid "My other connections"
-msgstr "Mes autres ressources"
+msgstr "Mes autres connexions"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:509
-#, fuzzy
 msgid "Subscription accepted or denied"
 msgstr "Souscription acceptée ou rejetée"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:538
-#, fuzzy
 msgid "Connections to server"
-msgstr "Connexion au serveur perdue"
+msgstr "Connexions au serveur"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:542
-#, fuzzy
 msgid "Contact events"
-msgstr "Informations sur un contact"
+msgstr "Événements liés aux contacts"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:547
-#, fuzzy
 msgid "Chat room events"
-msgstr "Serveur de salons de discussion"
+msgstr "Événements liés aux salons de discussion"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:552
-#, fuzzy
 msgid "File transfer"
 msgstr "Transferts de fichier"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:556
-#, fuzzy
 msgid "Voice call"
-msgstr "Appeler..."
+msgstr "Appels jingle"
 
 #: ../chrome/oneteam/content/preferences.xul:306
 msgid "Software updates"
 msgstr "Mises à jour logicielles"
 
 #: ../chrome/oneteam/content/preferences.xul:318
-#, fuzzy
 msgid "Notification global settings"
 msgstr "Paramètres généraux de notification"
+
+#: ../chrome/oneteam/content/preferences.xul:304
+msgid "Advanced"
+msgstr "Avancé"
 
 #~ msgid "Authorize To See Me"
 #~ msgstr "L'autoriser à voir ma présence"
@@ -2489,11 +2471,9 @@ msgstr "Paramètres généraux de notification"
 #~ msgid "Chat room participant changed presence"
 #~ msgstr "Un membre du salon a modifié sa présence"
 
-#, fuzzy
 #~ msgid "_Presences archive..."
 #~ msgstr "Historique des présences"
 
-#, fuzzy
 #~ msgid "Entered informations are invalid.\\nDo you want to forget this bookmark ?\\nClick \"Cancel\" if you want to correct values."
 #~ msgstr "Les informations saisies sont incorrectes.\\nSouhaitez-vous oublier ce marque-page (cliquez \"Annuler\" si vous voulez corriger ces valeurs) ?"
 
