@@ -9,6 +9,7 @@ class nsIFrame;
 #include "imgIRequest.h"
 #include "nsIDOMHTMLImageElement.h"
 #include "nsIDOMHTMLImageElement1_9_2.h"
+#include "nsIDOMHTMLImageElement2_0.h"
 #include "nsIDOMHTMLCanvasElement.h"
 #include "nsICanvasRenderingContextInternal.h"
 #include "otPr0nObserver.h"
@@ -80,12 +81,19 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
     return NS_ERROR_NOT_AVAILABLE;
   }
 
-  nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
+  nsCOMPtr<nsIImageLoadingContent> loader;
+  nsCOMPtr<nsIDOMHTMLImageElement2_0> imgEl2_0 = do_QueryInterface(image);
+  if (imgEl2_0)
+    loader = do_QueryInterface(imgEl2_0);
+  else {
+    nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
 
-  if (!imgEl)
-    return NS_ERROR_NOT_AVAILABLE;
+    if (!imgEl)
+      return NS_ERROR_NOT_AVAILABLE;
 
-  nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
+    loader = do_QueryInterface(imgEl);
+  }
+
   if (loader) {
     nsCOMPtr<imgIRequest> imgRequest;
     rv = loader->GetRequest(nsIImageLoadingContent::CURRENT_REQUEST,
