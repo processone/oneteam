@@ -29,7 +29,7 @@ public:
               PRUint16 maxptime, PRUint16 weight, otCodecInfoAttribute** attrs,
               PRUint32 attrsCount);
 
-  ~otCodecInfo();
+  virtual ~otCodecInfo();
 
 private:
   nsCOMPtr<otICodecService> mService;

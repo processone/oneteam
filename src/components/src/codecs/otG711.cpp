@@ -54,6 +54,7 @@ otG711::GetMedias(PRInt16 *firstFreePayloadId NS_INOUTPARAM,
     nsMemory::Free(codecs);
     return NS_ERROR_OUT_OF_MEMORY;
   }
+  NS_ADDREF(codecs[1]);
 
   *medias = codecs;
   *count = 2;
