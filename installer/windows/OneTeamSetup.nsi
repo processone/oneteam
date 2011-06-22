@@ -2,6 +2,8 @@
 ;Start Menu Folder Selection Example Script
 ;Written by Joost Verburg
 
+SetCompressor /SOLID lzma
+
 !define MULTIUSER_EXECUTIONLEVEL Highest
 !define MULTIUSER_MUI
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
@@ -74,6 +76,7 @@ Section "OneTeam" SecDummy
 
   SetOutPath "$INSTDIR"
   File "application.ini"
+  File "chrome.manifest"
   File "default.ico"
   File "oneteam.exe"
   File /r "chrome"
@@ -117,6 +120,7 @@ SectionEnd
 Section "Uninstall"
 
   Delete "$INSTDIR\application.ini"
+  Delete "$INSTDIR\chrome.manifest"
   Delete "$INSTDIR\default.ico"
   Delete "$INSTDIR\oneteam.exe"
   RMDir /r "$INSTDIR\chrome"
