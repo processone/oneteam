@@ -48,8 +48,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader id="header" title="_('Invite Users')"/>
-
   <label value="_('Users:')" control="contacts"/>
   <contactselector id="contacts" rows="6"/>
 

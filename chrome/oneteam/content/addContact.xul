@@ -100,7 +100,7 @@
 
       var el = document.getElementById("gateway-id");
       el.previousSibling.value = map.prompt || _("ID:");
-      el = el.parentNode.nextSibling;
+      el = el.parentNode.nextSibling.lastChild;
       if (el.firstChild)
         el.removeChild(el.firstChild);
       el.appendChild(document.createTextNode(map.desc || ""));
@@ -182,71 +182,59 @@
   </vbox>
 
   <deck id="mode">
-    <vbox>
-      <vbox align="center">
-        <grid>
-          <columns>
-            <column/>
-            <column/>
-          </columns>
-          <rows>
-            <row id="gateway-entry" hidden="true">
-              <label control="gateway-id"/>
-              <textbox id="gateway-id"/>
-            </row>
-            <row>
-              <spacer/>
-              <description class="field-desc" hidden="true"/>
-            </row>
-
-            <row id="jabber-entry">
-              <label value="_('Jabber ID:')" control="jid"/>
-              <textbox id="jid" type="verifiable" condition="checkJid(val, this)"/>
-            </row>
-            <row>
-              <spacer/>
-              <description class="field-desc">_('For example: john@talkr.im')</description>
-            </row>
-
+    <vbox align="center">
+      <grid width="400">
+        <columns>
+          <column/>
+          <column/>
+        </columns>
+        <rows>
+          <row id="gateway-entry" hidden="true">
+            <label control="gateway-id"/>
+            <textbox id="gateway-id"/>
+          </row>
+          <row>
             <spacer/>
-            <row>
-              <label value="_('Nick:')" control="nick"/>
-              <textbox id="nick"/>
-            </row>
-            <row>
-              <spacer/>
-              <description class="field-desc">_("Optional, used to mark the contact")</description>
-            </row>
-          </rows>
-        </grid>
+            <description class="field-desc"/>
+          </row>
+
+          <row id="jabber-entry">
+            <label value="_('Jabber ID:')" control="jid"/>
+            <textbox id="jid" type="verifiable" condition="checkJid(val, this)" flex="1"/>
+          </row>
+          <row>
+            <spacer/>
+            <description class="field-desc">_('For example: john@talkr.im')</description>
+          </row>
+
+          <spacer/>
+          <row>
+            <label value="_('Nick:')" control="nick"/>
+            <textbox id="nick"/>
+          </row>
+          <row>
+            <spacer/>
+            <description class="field-desc">_("Optional, used to refer to the contact")</description>
+          </row>
+
+          <spacer/>
+          <spacer/>
+          <row align="top">
+            <label value="_('Groups:')" control="groups"/>
+            <groupselector id="groups" rows="4"/>
+          </row>
+        </rows>
+      </grid>
+
+      <spacer/>
+      <spacer/>
+      <vbox width="400">
+        <label value="_('Personal message')"/>
+        <textbox id="reason" multiline="true" rows="2"/>
+        <description class="field-desc">
+          _("Optional: this message will be sent together with your request to see the contact's status")
+        </description>
       </vbox>
-
-      <separator class="groove"/>
-
-      <spacer/>
-
-      <hbox flex="1">
-        <vbox flex="1">
-          <label value="_('Groups:')" control="groups"/>
-          <groupselector id="groups" rows="4"/>
-        </vbox>
-
-      <separator orient="vertical" class="groove"/>
-
-        <vbox flex="1">
-          <hbox align="center">
-            <label value="_('Reason:')" />
-            <spacer/>
-            <description class="field-desc">_('(Optional)')</description>
-          </hbox>
-          <textbox id="reason" multiline="true" rows="3"/>
-        </vbox>
-      </hbox>
-
-      <spacer/>
-
-      <separator class="groove"/>
-
     </vbox>
     <vbox>
       <description>

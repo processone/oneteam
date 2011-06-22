@@ -40,7 +40,12 @@
     function onLoad() {
       document.getElementById("contactJid").
         appendChild(document.createTextNode(contact.jid.toUserString()));
-      document.getElementById("reason").value = reason;
+      if (reason)
+        document.getElementById("reason").value = reason;
+      else {
+        var reasonTextbox = document.getElementById("reason").parentNode;
+        reasonTextbox.parentNode.removeChild(reasonTextbox);
+      }
     }
   ]]></script>
 
@@ -50,29 +55,30 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="Subscription Request"/>
-
   <vbox flex="1">
-    <description id="contactInfo">_('You got subscription request from:')
-      <html:span id="contactJid" style="font-weight: bold"></html:span></description>
+    <description id="contactInfo">
+      <html:span id="contactJid" style="font-weight: bold"></html:span>
+      _('would like to see to your status.')
+    </description>
 
-    <spacer/>
+    <vbox>
+      <spacer/>
+      <label value="_('Here is the message sent with the request:')"/>
+      <textbox id="reason" multiline="true" rows="4" flex="1" disabled="true"/>
+    </vbox>
 
-    <label value="_('The user provided this reason for the request:')"/>
-    <textbox id="reason" multiline="true" rows="4" flex="1" disabled="true"/>
+    <spacer style="height: 1.5em" flex="1"/>
 
-    <spacer style="height: 1.5em"/>
-
-    <hbox align="end" pack="end">
+    <hbox pack="end">
       <button dlgtype="extra1" label="_('Extra Actions')" type="menu">
         <menupopup>
           <menuitem label="_('Show Contact Details')" oncommand="contact.showVCard()"/>
           <menuitem label="_('Open Chat')" oncommand="contact.onOpenChat()"/>
         </menupopup>
       </button>
-      <button dlgtype="extra2" label="_('Deny Subscription')"/>
-      <button dlgtype="cancel" label="_('Cancel')"/>
-      <button dlgtype="accept" label="_('Subscribe')"/>
+      <button dlgtype="extra2" label="_('Deny')"/>
+      <button dlgtype="cancel" label="_('Ignore')"/>
+      <button dlgtype="accept" label="_('Accept')"/>
     </hbox>
   </vbox>
 </dialog>

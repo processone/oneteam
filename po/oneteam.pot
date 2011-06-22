@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-06-20 14:56+0200\n"
+"POT-Creation-Date: 2011-06-22 17:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,6 @@ msgstr ""
 #: ../chrome/oneteam/content/roomPermissions.xul:14
 #: ../chrome/oneteam/content/status.xul:11
 #: ../chrome/oneteam/content/subscribe.xul:12
-#: ../chrome/oneteam/content/subscribe.xul:74
 #: ../chrome/oneteam/content/vcardEdit.xul:13
 msgid "Cancel"
 msgstr ""
@@ -190,11 +189,11 @@ msgstr ""
 msgid "XMPP"
 msgstr ""
 
-#: ../chrome/oneteam/content/addContact.xul:203
+#: ../chrome/oneteam/content/addContact.xul:202
 msgid "Jabber ID:"
 msgstr ""
 
-#: ../chrome/oneteam/content/addContact.xul:230
+#: ../chrome/oneteam/content/addContact.xul:223
 #: ../chrome/oneteam/content/vcard.xul:98
 msgid "Groups:"
 msgstr ""
@@ -423,7 +422,7 @@ msgstr ""
 msgid "Requesting command form"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:979
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:978
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:651
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:69
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:84
@@ -517,7 +516,6 @@ msgstr ""
 msgid "Invite"
 msgstr ""
 
-#: ../chrome/oneteam/content/addContact.xul:238
 #: ../chrome/oneteam/content/invite.xul:58
 #: ../chrome/oneteam/content/inviteToRoom.xul:57
 msgid "Reason:"
@@ -558,6 +556,7 @@ msgstr ""
 #: ../chrome/oneteam/content/fileTransferRequest.xul:14
 #: ../chrome/oneteam/content/invitation.xul:13
 #: ../chrome/oneteam/content/jingleCall.xul:177
+#: ../chrome/oneteam/content/subscribe.xul:83
 msgid "Accept"
 msgstr ""
 
@@ -573,7 +572,7 @@ msgid "<b>{0}</b> wants to send you file"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/filetransfer.js:111
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:890
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:889
 #: ../chrome/oneteam/content/fileTransferRequest.xul:45
 msgid "Select a File"
 msgstr ""
@@ -803,7 +802,7 @@ msgstr ""
 msgid "Click to connect to {0} ({1})"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:978
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:977
 msgid "{0}/{1}"
 msgstr ""
 
@@ -983,11 +982,11 @@ msgstr ""
 msgid "Registering in Service"
 msgstr ""
 
-#: ../chrome/oneteam/content/addContact.xul:253
+#: ../chrome/oneteam/content/addContact.xul:241
 msgid "Before adding contacts from this network, you need to register in this network's gateway."
 msgstr ""
 
-#: ../chrome/oneteam/content/addContact.xul:255
+#: ../chrome/oneteam/content/addContact.xul:243
 msgid "Registration Gateway"
 msgstr ""
 
@@ -1032,32 +1031,17 @@ msgstr ""
 msgid "Searching returned errors."
 msgstr ""
 
+#: ../chrome/oneteam/content/subscribe.xul:58
 #: ../chrome/oneteam/content/subscribe.xul:8
 msgid "Subscription Request"
 msgstr ""
 
-#: ../chrome/oneteam/content/subscribe.xul:56
-msgid "You got subscription request from:"
-msgstr ""
-
-#: ../chrome/oneteam/content/subscribe.xul:61
-msgid "The user provided this reason for the request:"
-msgstr ""
-
-#: ../chrome/oneteam/content/subscribe.xul:67
+#: ../chrome/oneteam/content/subscribe.xul:75
 msgid "Extra Actions"
 msgstr ""
 
-#: ../chrome/oneteam/content/subscribe.xul:70
+#: ../chrome/oneteam/content/subscribe.xul:78
 msgid "Open Chat"
-msgstr ""
-
-#: ../chrome/oneteam/content/subscribe.xul:73
-msgid "Deny Subscription"
-msgstr ""
-
-#: ../chrome/oneteam/content/subscribe.xul:75
-msgid "Subscribe"
 msgstr ""
 
 #: ../chrome/oneteam/content/disco.xul:11
@@ -1158,7 +1142,7 @@ msgstr ""
 msgid "Username:"
 msgstr ""
 
-#: ../chrome/oneteam/content/addContact.xul:213
+#: ../chrome/oneteam/content/addContact.xul:212
 #: ../chrome/oneteam/content/bindings/forms.xml:182
 #: ../chrome/oneteam/content/bindings/forms.xml:22
 #: ../chrome/oneteam/content/bookmarkRoom.xul:87
@@ -1319,12 +1303,8 @@ msgstr ""
 msgid "You are not member of this room"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:1014
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1013
 msgid "(Anonymous)"
-msgstr ""
-
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1099
-msgid "You got subscription request from <b>{0}</b>"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/messages.js:1031
@@ -1333,10 +1313,6 @@ msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/messages.js:1033
 msgid "Always load images from that contact"
-msgstr ""
-
-#: ../chrome/oneteam/content/preferences.xul:180
-msgid "Ask to quit"
 msgstr ""
 
 #: ../chrome/oneteam/content/preferences.xul:240
@@ -1542,12 +1518,8 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-#: ../chrome/oneteam/content/addContact.xul:208
+#: ../chrome/oneteam/content/addContact.xul:207
 msgid "For example: john@talkr.im"
-msgstr ""
-
-#: ../chrome/oneteam/content/addContact.xul:240
-msgid "(Optional)"
 msgstr ""
 
 #: ../chrome/oneteam/content/disco.xul:43
@@ -1660,15 +1632,15 @@ msgstr ""
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1272
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1271
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1281
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1280
 msgid "Invalid username or password"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1283
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1282
 msgid "Invalid response from server"
 msgstr ""
 
@@ -1879,7 +1851,7 @@ msgid "Refer to this Conversation"
 msgstr ""
 
 #: ../chrome/oneteam/content/search.xul:221
-#: ../chrome/oneteam/content/subscribe.xul:69
+#: ../chrome/oneteam/content/subscribe.xul:77
 msgid "Show Contact Details"
 msgstr ""
 
@@ -2016,7 +1988,7 @@ msgstr ""
 msgid "Reject call"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/roster.js:1055
+#: ../chrome/oneteam/content/JavaScript/model/roster.js:1054
 msgid "Statuses"
 msgstr ""
 
@@ -2222,10 +2194,6 @@ msgstr ""
 
 #: ../chrome/oneteam/content/removeContact.xul:37
 msgid "Do you want to remove this contact from your contact list?"
-msgstr ""
-
-#: ../chrome/oneteam/content/addContact.xul:218
-msgid "Optional, used to mark the contact"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/account.js:56
@@ -2451,5 +2419,45 @@ msgstr ""
 
 #: ../chrome/oneteam/content/preferences.xul:304
 msgid "Advanced"
+msgstr ""
+
+#: ../chrome/oneteam/content/subscribe.xul:81
+msgid "Deny"
+msgstr ""
+
+#: ../chrome/oneteam/content/subscribe.xul:82
+msgid "Ignore"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1099
+msgid "<b>{0}</b> would like to see your status."
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:217
+msgid "Optional, used to refer to the contact"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:232
+msgid "Personal message"
+msgstr ""
+
+#: ../chrome/oneteam/content/addContact.xul:235
+msgid "Optional: this message will be sent together with your request to see the contact's status"
+msgstr ""
+
+#: ../chrome/oneteam/content/preferences.xul:180
+msgid "Ask before quitting while connected"
+msgstr ""
+
+#: ../chrome/oneteam/content/subscribe.xul:63
+msgid "would like to see to your status."
+msgstr ""
+
+#: ../chrome/oneteam/content/subscribe.xul:68
+msgid "Here is the message sent with the request:"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/menu.js:268
+msgid "Do not ask me next time"
 msgstr ""
 

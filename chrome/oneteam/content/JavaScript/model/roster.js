@@ -405,8 +405,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     askForSubscription: function(reason)
     {
         // TODO use string bundle.
-        this._sendPresence(new Presence("subscribe",
-            reason || "I would like to add you in my contacts list"));
+        this._sendPresence(new Presence("subscribe", reason));
     },
 
     onRename: function(externalDialog)

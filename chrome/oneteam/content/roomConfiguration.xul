@@ -48,8 +48,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Room Configuration')"/>
-
   <spacer/>
 
 </dialog>
