@@ -7,24 +7,29 @@ IF("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 ENDIF("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
 
-IF(UNIX)
-    find_package(PkgConfig)
-    pkg_check_modules(GLIB REQUIRED glib-2.0 gobject-2.0)
-ENDIF(UNIX)
-
-IF(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    SET(GLIB_DIR "/usr/local")
-    SET(GLIB_INCLUDE_DIRS "${GLIB_DIR}/include/glib-2.0" "${GLIB_DIR}/lib/glib-2.0/include")
-    SET(GLIB_STATIC_LIBRARY_DIRS "${GLIB_DIR}/lib")
-    SET(GLIB_BIN_DIR "${GLIB_DIR}/bin/")
-ENDIF(CMAKE_SYSTEM_NAME MATCHES "Darwin")
-
 IF(WIN32)
-    SET(GLIB_DIR "${PROJECT_SOURCE_DIR}/../extra/libglib2")
+    IF(NOT GLIB_DIR)
+        SET(GLIB_DIR "${PROJECT_SOURCE_DIR}/libs/extra/libglib2" CACHE PATH "Glib library location")
+    ENDIF(NOT GLIB_DIR)
     SET(GLIB_INCLUDE_DIRS "${GLIB_DIR}/include/glib-2.0" "${GLIB_DIR}/lib/glib-2.0/include")
     SET(GLIB_LIBRARIES glib-2.24s gobject-2.24s gthread-2.24s intl)
-    SET(GLIB_LIBRARY_DIRS "${GLIB_DIR}/lib")
+    SET(GLIB_STATIC_LIBRARY_DIRS "${GLIB_DIR}/lib")
     SET(GLIB_BIN_DIR "${GLIB_DIR}/bin/")
+ELSEIF(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    IF(NOT GLIB_DIR)
+        SET(GLIB_DIR "/opt/local" CACHE PATH "Glib library location")
+    ENDIF(NOT GLIB_DIR)
+    SET(GLIB_INCLUDE_DIRS "${GLIB_DIR}/include/glib-2.0" "${GLIB_DIR}/lib/glib-2.0/include")
+    SET(GLIB_STATIC_LIBRARY_DIRS "")
+    SET(GLIB_BIN_DIR "${GLIB_DIR}/bin/")
+    SET(GLIB_LIBRARIES ${GLIB_DIR}/lib/libglib-2.0.a
+		       ${GLIB_DIR}/lib/libgobject-2.0.a
+		       ${GLIB_DIR}/lib/libgthread-2.0.a
+		       ${GLIB_DIR}/lib/libintl.a
+		       -liconv)
+ELSE(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    FIND_PACKAGE(PkgConfig)
+    PKG_CHECK_MODULES(GLIB REQUIRED glib-2.0 gobject-2.0 gthread-2.0)
 ENDIF(WIN32)
 
 GET_FILENAME_COMPONENT(_signals_marshal_list "agent/agent-signals-marshal.list" ABSOLUTE)
