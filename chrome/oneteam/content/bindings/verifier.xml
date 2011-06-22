@@ -80,8 +80,8 @@
             if (this._condition != this.condition) {
               this._condition = this.condition;
               try {
-                this._conditionFun = new Function("val", "function(val){try{return !!("+
-                                          this._condition+")}catch(e){return false}}");
+                this._conditionFun = new Function("val", "try{return !!("+
+                                          this._condition+")}catch(e){return false}");
               } catch(e) {
                 this._conditionFun = function(){return false};
               }
