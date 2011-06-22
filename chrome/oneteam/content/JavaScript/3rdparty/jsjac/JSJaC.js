@@ -65,7 +65,6 @@ ML.importMod("3rdparty/jsjac/JSJaCPacket.js");
 ML.importMod("3rdparty/jsjac/JSJaCError.js");
 ML.importMod("3rdparty/jsjac/JSJaCKeys.js");
 ML.importMod("3rdparty/jsjac/JSJaCConnection.js");
-ML.importMod("3rdparty/jsjac/JSJaCHttpPollingConnection.js");
 ML.importMod("3rdparty/jsjac/JSJaCHttpBindingConnection.js");
 ML.importMod("3rdparty/jsjac/JSJaCMozillaConnection.js");
 ML.importMod("3rdparty/jsjac/JSJaCConsoleLogger.js");
