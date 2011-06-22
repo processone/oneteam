@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-06-20 14:28+0200\n"
+"POT-Creation-Date: 2011-06-22 16:05+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -72,6 +72,8 @@ msgid "New Nick:"
 msgstr "Nowy pseudonim:"
 
 #: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr "Komunikat stanu"
 
@@ -2209,8 +2211,16 @@ msgid "Invitation into {0} chat room"
 msgstr "Zaproszenie do konferencji {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:227
-msgid "User *{0}* invited you to chat room *{1}*.\\n\\nTo join this chat room please click on this link:\\n{2}\\n"
-msgstr "Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n\\nAby dołączyć do tej konferencji kliknij ten link:\\n{2}\\n"
+msgid ""
+"User *{0}* invited you to chat room *{1}*.\\n"
+"\\n"
+"To join this chat room please click on this link:\\n"
+"{2}\\n"
+msgstr ""
+"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n"
+"\\n"
+"Aby dołączyć do tej konferencji kliknij ten link:\\n"
+"{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:469
 msgid "Chat room server can't be contacted or room reached maximum number of users"
@@ -2370,112 +2380,104 @@ msgid "This is version {0} (from {1}), {2}"
 msgstr "To jest wersja {0} (z {1}), {2}"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:168
-#, fuzzy
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead ?"
-msgstr "Wprowadzone informacje są nieprawidłowe.\\nCzy chcesz przywrócić poprzednie wartości?\\nKliknij \"Anuluj\" jeśli chcesz dokonać poprawek."
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to correct entered informations,\\n"
+"or to restore previous values instead ?"
+msgstr ""
+"Wprowadzone informacje nie są prawidłowe.\\n"
+"Czy chcesz poprawić wprowadzone dane,\\n"
+"czy przywrócić poprzednie wartości?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:169
-#, fuzzy
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created ?"
-msgstr "Wprowadzone informacje są nieprawidłowe.\\nCzy chcesz przywrócić poprzednie wartości?\\nKliknij \"Anuluj\" jeśli chcesz dokonać poprawek."
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to correct entered informations,\\n"
+"or to remove the bookmark you have just created ?"
+msgstr ""
+"Wprowadzone informacje nie są prawidłowe.\\n"
+"Czy chcesz poprawić wprowadzone dane,\\n"
+"czy usunąć właśnie utworzoną zakładkę?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:173
-#, fuzzy
 msgid "Restore Previous Values"
-msgstr "See Previous Version"
+msgstr "Przywróć poprzednią wersję"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:173
-#, fuzzy
 msgid "Remove Bookmark"
-msgstr "Zakładka"
+msgstr "Usuń zakładkę"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:174
-#, fuzzy
 msgid "Correct Informations"
-msgstr "Dane kontaktu"
+msgstr "Popraw wiadomości"
 
 #: ../chrome/oneteam/content/main.xul:346
-#, fuzzy
 msgid "Status messages overview"
-msgstr "Komunikat stanu"
+msgstr "Zestawienie komunikatów stanu"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:42
-#, fuzzy
 msgid "_Status Messages Overview..."
-msgstr "Komunikat stanu"
+msgstr "_Zestawienie komunikatów stanu"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:234
-#, fuzzy
 msgid "Ask to see his/her status"
-msgstr "{0} zezwolił Ci na widzenie jej/jego statusu"
+msgstr "Poproś o widzenie jej/jego statusu"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:236
 msgid "Allow him/her to see my status"
-msgstr ""
+msgstr "Zezwól na widzenie mojego statusu"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:238
-#, fuzzy
 msgid "Cancel authorization"
-msgstr "Anuluj subskrypcję"
+msgstr "Anululowano subskrypcję"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:501
-#, fuzzy
 msgid "Contact changed status"
-msgstr "Zmiana statusu kontaktu"
+msgstr "Kontakt zmienił status"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:503
-#, fuzzy
 msgid "Chat room participant changed status"
-msgstr "Zmiana pseudonimu uczestnika konferencji"
+msgstr "Uczestnik konferencji zmienił status"
 
 #: ../chrome/oneteam/content/JavaScript/model/account.js:58
-#, fuzzy
 msgid "My other connections"
-msgstr "Moje inne zasoby"
+msgstr "Moje inne połączenia"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:509
-#, fuzzy
 msgid "Subscription accepted or denied"
-msgstr "Otrzymano prośbę o subskrypcję"
+msgstr "Subskrybcje"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:538
-#, fuzzy
 msgid "Connections to server"
-msgstr "Utracono połączenie z serwerem"
+msgstr "Połączenie z serwerem"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:542
-#, fuzzy
 msgid "Contact events"
-msgstr "Szczegóły kontaktu"
+msgstr "Kontakty"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:547
-#, fuzzy
 msgid "Chat room events"
-msgstr "Serwer konferencji"
+msgstr "Konferencje"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:552
-#, fuzzy
 msgid "File transfer"
 msgstr "Transmisja plików"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:556
-#, fuzzy
 msgid "Voice call"
-msgstr "Połączenie głosowe..."
+msgstr "Połączenie głosowe"
 
 #: ../chrome/oneteam/content/preferences.xul:306
 msgid "Software updates"
-msgstr ""
+msgstr "Aktualizacja oprogramowania"
 
 #: ../chrome/oneteam/content/preferences.xul:318
-#, fuzzy
 msgid "Notification global settings"
-msgstr "Użyj wartości globalnych"
+msgstr "Globalne ustawienia powiadomień"
 
 #: ../chrome/oneteam/content/preferences.xul:304
-#, fuzzy
 msgid "Advanced"
-msgstr "Anulowano"
+msgstr "Zaawansowane"
 
 #~ msgid "Authorize To See Me"
 #~ msgstr "Zezwól na widzenie statusu"
