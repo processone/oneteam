@@ -80,12 +80,8 @@ otPr0nObserver::Load(nsISupports *image, otSystrayBase *listener)
     return NS_ERROR_NOT_AVAILABLE;
   }
 
-  nsCOMPtr<nsIDOMHTMLImageElement> imgEl = do_QueryInterface(image);
+  nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(image);
 
-  if (!imgEl)
-    return NS_ERROR_NOT_AVAILABLE;
-
-  nsCOMPtr<nsIImageLoadingContent> loader = do_QueryInterface(imgEl);
   if (loader) {
     nsCOMPtr<imgIRequest> imgRequest;
     rv = loader->GetRequest(nsIImageLoadingContent::CURRENT_REQUEST,

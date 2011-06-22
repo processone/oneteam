@@ -80,8 +80,8 @@
             if (this._condition != this.condition) {
               this._condition = this.condition;
               try {
-                this._conditionFun = eval("(function(val){try{return !!("+
-                                          this._condition+")}catch(e){return false}})");
+                this._conditionFun = new Function("val", "function(val){try{return !!("+
+                                          this._condition+")}catch(e){return false}}");
               } catch(e) {
                 this._conditionFun = function(){return false};
               }
@@ -91,7 +91,8 @@
             if (this._regex != this.regex) {
               this._regex = this.regex;
               try {
-                this._conditionFun = new RegExp(this._regex);
+                var rx = new RegExp(this._regex);
+                this._conditionFun = function(val) {return rx.exec(val)};
               } catch(e) {
                 this._conditionFun = function(){return false};
               }

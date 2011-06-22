@@ -67,6 +67,8 @@ msgid "New Nick:"
 msgstr ""
 
 #: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr ""
 
