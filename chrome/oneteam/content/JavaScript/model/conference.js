@@ -214,11 +214,13 @@ _DECL_(Conference, Contact).prototype =
             var iq = new JSJaCIQ();
             iq.setIQ(account.jid, "get");
 
-            var node = iq.getDoc().createElementNS(ns, "invite");
-            iq.getNode().appendChild(node);
-            node.setAttribute("email", email);
-            node.setAttribute("url", url);
-            node.setAttribute("nick", this.myResource.jid.resource);
+            iq.appendNode("invite", {
+                xmlns: "http://oneteam.im/invitations",
+                email: email,
+                url: url,
+                nick: this.myResource.jid.resource
+            });
+
             account.connection.send(iq);
         } else {
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
@@ -235,15 +237,13 @@ _DECL_(Conference, Contact).prototype =
     {
         const ns = "http://jabber.org/protocol/muc#user";
         var pkt = new JSJaCMessage();
-        var x = pkt.getNode().appendChild(pkt.getDoc().createElementNS(ns, "x"));
-        var node = x.appendChild(pkt.getDoc().createElementNS(ns, "decline"));
+        pkt.setTo(this.jid);
 
         from = new JID(from);
 
-        pkt.setTo(this.jid);
-        node.setAttribute('to', from.shortJID);
-        node.appendChild(pkt.getDoc().createElementNS(ns, "reason")).
-            appendChild(pkt.getDoc().createTextNode(reason || "Sorry i can't join now"));
+        pkt.appendNode("x", {xmlns: "http://jabber.org/protocol/muc#user"},
+                             [["decline", {to: from.shortJID},
+                              [["reason", [reason || "Sorry i can't join now"]]]]]);
 
         account.connection.send(pkt);
     },
@@ -273,17 +273,19 @@ _DECL_(Conference, Contact).prototype =
 
     destroyRoom: function(alternateRoom, reason)
     {
-        const ns = "http://jabber.org/protocol/muc#owner";
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, "get");
-        var query = iq.setQuery(ns);
-        var destroy = query.appendChild(iq.getDoc().createElementNS(ns, "destroy"));
+
+        var destroy = ["destroy", {}, []];
 
         if (alternateRoom)
-            destroy.setAttribute("jid", alternateRoom);
+            destroy[1].jid = alternateRoom;
         if (reason)
-            destroy.appendChild(iq.getDoc().createElementNS(ns, reason)).
-                appendChild(iq.getDoc().createTextNode(reason));
+            destroy[2].push(["reason", {}, reason]);
+
+        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#owner"},
+                      [destroy]);
+
         account.connection.send(iq, callback);
     },
 
@@ -295,13 +297,11 @@ _DECL_(Conference, Contact).prototype =
 
     requestUsersList: function(affiliation, callback)
     {
-        const ns = "http://jabber.org/protocol/muc#admin";
         var iq = new JSJaCIQ();
         iq.setIQ(this.jid, "get");
 
-        var query = iq.setQuery(ns);
-        query.appendChild(iq.getDoc().createElementNS(ns, "item")).
-            setAttribute("affiliation", affiliation);
+        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#admin"},
+                      [["item", {affiliation: affiliation}]]);
 
         account.connection.send(iq, new Callback(this._requestUsersListCb, this).
                         addArgs(callback).fromCall());
@@ -610,46 +610,42 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     setAffiliation: function(affiliation, reason)
     {
-        const ns = "http://jabber.org/protocol/muc#admin";
-
         var iq = new JSJaCIQ();
         iq.setIQ(this.contact.jid, "set");
 
-        var item = iq.getDoc().createElementNS(ns, "item");
-        item.setAttribute("affiliation", affiliation);
+        var item = ["item", {affiliation: affiliation}, []];
 
         if (this.realJID)
-            item.setAttribute("jid", this.realJID);
+            item[1].jid = this.realJID;
         else
-            item.setAttribute("nick", this.jid.resource);
+            item[1].nick == this.jid.resource;
 
         if (reason)
-            item.appendChild(iq.getDoc().createElementNS(ns, "reason")).
-                appendChild(iq.getDoc().createTextNode(reason));
-        iq.setQuery(ns).appendChild(item);
+            item[2].push(["reason", {}, reason]);
+
+        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#admin"},
+                      [item]);
 
         account.connection.send(iq);
     },
 
     setRole: function(role, reason)
     {
-        const ns = "http://jabber.org/protocol/muc#admin";
-
         var iq = new JSJaCIQ();
         iq.setIQ(this.contact.jid, "set");
 
-        var item = iq.getDoc().createElementNS(ns, "item");
-        item.setAttribute("role", role);
+        var item = ["item", {role: role}, []];
 
         if (this.realJID)
-            item.setAttribute("jid", this.realJID);
+            item[1].jid = this.realJID;
         else
-            item.setAttribute("nick", this.jid.resource);
+            item[1].nick == this.jid.resource;
 
         if (reason)
-            item.appendChild(iq.getDoc().createElementNS(ns, "reason")).
-                appendChild(iq.getDoc().createTextNode(reason));
-        iq.setQuery(ns).appendChild(item);
+            item[2].push(["reason", {}, reason]);
+
+        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#admin"},
+                      [item]);
 
         account.connection.send(iq);
     },
@@ -866,13 +862,13 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
                 var nick = bookmarksTags[i].getElementsByTagName("nick")[0];
                 var password = bookmarksTags[i].getElementsByTagName("password")[0];
                 var conference = account.getOrCreateConference(jid);
-    
+
                 conference.bookmark(bookmarksTags[i].getAttribute("name"),
                                     bookmarksTags[i].getAttribute("autojoin") == "true",
                                     nick && nick.textContent,
                                     password && password.textContent,
                                     true);
-    
+
                 this.bookmarks.push(conference);
                 if (conference.autoJoin)
                     OnModelStateCall(account, "connectionInitialized", IsTrue, function() {
