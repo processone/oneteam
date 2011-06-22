@@ -358,7 +358,7 @@
           <menu id="menu-file">
             <menupopup id="file-popup">
               <menuseparator id="close-menuseparator"/>
-              <menuitem label="_('Close')" command="cmd_closeWindow" key="key_closeWindow"/>
+              <menuitem label="_('Close Window')" command="cmd_closeWindow" key="key_closeWindow"/>
             </menupopup>
           </menu>
 <!-- #ifndef XPI -->

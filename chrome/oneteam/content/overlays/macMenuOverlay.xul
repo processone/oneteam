@@ -230,7 +230,7 @@
     <menu id="menu-file">
       <menupopup id="file-popup">
         <menuseparator id="close-menuseparator"/>
-        <menuitem label="_('Close')" command="cmd_closeWindow" key="key_closeWindow"/>
+        <menuitem label="_('Close Window')" command="cmd_closeWindow" key="key_closeWindow"/>
       </menupopup>
     </menu>
     <menu id="menu_edit"/>
@@ -260,7 +260,7 @@
     <menu id="menu-file">
       <menupopup id="file-popup">
         <menuseparator id="close-menuseparator"/>
-        <menuitem label="_('Close')" command="cmd_closeWindow" key="key_closeWindow"/>
+        <menuitem label="_('Close Window')" command="cmd_closeWindow" key="key_closeWindow"/>
         <menuitem label="_('Close Tab')" command="cmd_closeTab" key="key_closeTab"/>
       </menupopup>
     </menu>
