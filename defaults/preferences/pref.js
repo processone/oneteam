@@ -45,3 +45,5 @@ pref("chat.status.autoxa.status", "");
 
 pref("oneteam.onlyJingleNodes", false);
 pref("extensions.oneteam.firstrun", true);
+
+pref("app.update.channel", "devel");

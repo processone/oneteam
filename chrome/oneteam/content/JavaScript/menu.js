@@ -262,11 +262,11 @@ var menuHandler = {
         if (account.connected && prefManager.getPref("chat.general.ask_to_quit")) {
             var promptSrv = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].
                 getService(Components.interfaces.nsIPromptService);
-            var check = {value: true};
+            var check = {value: false};
             var result = promptSrv.confirmCheck(window, _("Quit prompt"),
                                                 _("You are connected, do you really want to quit?"),
-                                                "Ask me again", check);
-            prefManager.setPref("chat.general.ask_to_quit", check.value);
+                                                _("Do not ask me next time"), check);
+            prefManager.setPref("chat.general.ask_to_quit", !check.value);
             if (!result)
                 return;
         }

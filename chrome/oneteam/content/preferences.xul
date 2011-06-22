@@ -177,7 +177,7 @@
     <checkbox label="_('Notify about other clients with higher priority')"
               preference="bumppriority"/>
     <!-- #ifndef XPI -->
-    <checkbox label="_('Ask to quit')"
+    <checkbox label="_('Ask before quitting while connected')"
               preference="ask_to_quit"/>
     <!-- #endif -->
     <checkbox label="_('Show icon in system tray')"

@@ -1096,8 +1096,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             }
 
             this.addEvent(sender, "subscription",
-                          _xml("You got subscription request from <b>{0}</b>",
-                               sender),
+                          _xml("<b>{0}</b> would like to see your status.", sender),
                           new Callback(openDialogUniq, null).
                           addArgs(null, "chrome://oneteam/content/subscribe.xul",
                                   "chrome,centerscreen,resizable",

@@ -88,8 +88,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Edit Permissions')"/>
-
   <spacer/>
 
   <tabbox flex="1">

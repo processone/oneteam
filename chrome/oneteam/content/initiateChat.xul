@@ -36,8 +36,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Initiate Chat')"/>
-
   <description>_('Please enter Jabber ID of the contact you would like to chat:')</description>
   <spacer/>
   <textbox id="jid" type="autocomplete" autocompletepopup="oneteam-contacts-autocomplete-popup"

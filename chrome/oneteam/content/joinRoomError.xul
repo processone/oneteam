@@ -69,8 +69,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Joining Room Error')"/>
-
   <vbox flex="1">
     <description id="errorInfo">_('Error occured during joining room:')
       <html:span id="jid" style="font-weight: bold"/></description>

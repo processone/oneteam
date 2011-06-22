@@ -48,8 +48,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader id="header" title="_('Invite users by mail')"/>
-
   <label value="_('E-mails:')" control="emails"/>
   <listeditor id="emails" flex="1" regex="^(?:[^@]+@)(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
 </dialog>

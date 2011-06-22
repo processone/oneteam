@@ -261,8 +261,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('My vCard')"/>
-
   <spacer style="height: 0.6em"/>
 
   <vbox flex="1">

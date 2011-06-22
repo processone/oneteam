@@ -36,8 +36,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Change Chat Room Subject')"/>
-
   <hbox class="entry">
     <description value="_('New Subject:')"/>
     <textbox id="subject"/>

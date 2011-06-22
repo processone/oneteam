@@ -60,8 +60,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <dialogheader title="_('Invitation to a Chat Room')"/>
-
   <description><span id="msg" xmlns="http://www.w3.org/1999/xhtml"/></description>
   <spacer/>
   <textbox multiline="true" rows="4" id="reason" disabled="true"/>
