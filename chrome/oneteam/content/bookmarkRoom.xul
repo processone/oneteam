@@ -5,6 +5,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/bookmarkForm.xul"?>
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
 <dialog id="oneteam" windowtype="ot:bookmarkRoom" title="_('Bookmark Room')"
@@ -20,39 +21,35 @@
     ML.importMod("model/account.js");
 
     var conference = window.arguments && window.arguments[0];
-    var conf;
 
-    var room, server, nick, password, bookmarkName;
+    function onLoad()
+    {
+      for each (var id in "name room server nick pass autoJoin".split(/ /))
+        textBoxes[id] = document.getElementById(id);
 
-    function onLoad() {
-      for each (var i in "room server nick password bookmarkName".split(" "))
-        self[i] = document.getElementById(i);
+      var bookmarks = account.bookmarks.bookmarks;
+      for (var i = 0; i < bookmarks.length; i++)
+        bookmarksByJid[bookmarks[i].jid.node + '@' + bookmarks[i].jid.domain]
+          = bookmarksByName[bookmarks[i].bookmarkName] = true;
 
       if (conference) {
-        room.value = conference.jid.node;
-        server.value = conference.jid.domain;
-        nick.value = conference.bookmarkNick || "";
-        password.value = conference.bookmarkPassword || "";
-
-        bookmarkName.value = conference.bookmarkName || "";
-        room.disabled = room.previousSibling.disabled =
-        server.disabled = server.previousSibling.disabled = true;
+        textBoxes.name.value   = newName(conference.jid.node);
+        textBoxes.room.value   = conference.jid.node;
+        textBoxes.server.value = conference.jid.domain;
+        textBoxes.nick.value   = conference.myResourceJID.resource || "";
+        textBoxes.pass.value   = conference._password || "";
+        textBoxes.room.disabled = textBoxes.room.previousSibling.disabled
+          = textBoxes.server.disabled = textBoxes.server.previousSibling.disabled = true;
       } else {
-        server.value = account.defaultConferenceServer || "";
+        textBoxes.server.value = account.defaultConferenceServer || "";
       }
-
-      document.getElementById('nick').value =
-        prefManager.getPref('chat.muc.nickname');
     }
 
     function bookmarkRoom() {
-      conf = conference;
-
       if (!conference)
-        conf = account.getOrCreateConference(room.value+"@"+server.value);
-
-      conf.bookmark(bookmarkName.value || conf.jid.node, false, nick.value, password.value);
-
+        conference = account.getOrCreateConference(textBoxes.room.value+"@"+textBoxes.server.value);
+      conference.bookmark(textBoxes.name.value, textBoxes.autoJoin.checked,
+                          textBoxes.nick.value, textBoxes.pass.value);
       return true;
     }
   ]]></script>
@@ -63,45 +60,6 @@
     <menubar id="macMenuBar"/>
   </toolbox>
 
-  <grid>
-    <columns>
-      <column/>
-      <column flex="1"/>
-    </columns>
-    <rows>
-      <row align="center">
-        <label value="_('Room:')" control="room"/>
-        <textbox id="room" type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"
-                 errortext="_('Room name can\'t be empty and can\'t contain any of
-                            [&quot;&amp;\&apos;/:&lt;&gt;@] or blank characters')"/>
-      </row>
-
-      <row align="center">
-        <label value="_('Server:')" control="server"/>
-        <textbox id="server" type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
-      </row>
-
-      <row align="center">
-        <label value="_('Nick:')" control="nick"/>
-        <textbox id="nick" type="verifiable" regex="."/>
-      </row>
-
-      <row align="center">
-        <label value="_('Password:')" control="password"/>
-        <textbox id="password" type="password"/>
-      </row>
-
-      <spacer/>
-
-      <row align="center">
-        <label value="_('Name:')" control="bookmarkName"/>
-        <textbox id="bookmarkName" type="verifiable" condition="
-          this.value == '' ?
-            (this.errortext=_('Bookmark name can\'t be empty'), false) :
-          !conference &amp;&amp; account.bookmarks.getBookmarkByName(this.value) ?
-            (this.errortext=_('Bookmark with that name already exists'), false) : true"/>
-      </row>
-    </rows>
-  </grid>
+  <grid id="bookmark-form"></grid>
   <spacer/>
 </dialog>

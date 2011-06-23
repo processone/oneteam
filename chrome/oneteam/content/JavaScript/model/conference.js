@@ -87,7 +87,9 @@ _DECL_(Conference, Contact).prototype =
         if (this.joined || this._joinRequested)
             return;
 
-        if (!nick)
+        if (nick)
+            prefManager.setPref('chat.muc.nickname', nick);
+        else
             nick = prefManager.getPref('chat.muc.nickname') || account.myJID.node;
 
         this._myResourceJID = this.jid.createFullJID(nick);

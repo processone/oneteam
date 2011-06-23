@@ -5,6 +5,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/bookmarkForm.xul"?>
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
 <dialog id="oneteam" windowtype="ot:manageBookmarks" title="_('Bookmark Manager')"
@@ -19,12 +20,8 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("model/account.js");
 
-    var selectedItem;
-    var textBoxes = {};
     var removedItems = [];
     var list;
-    var bookmarksByJid = {};
-    var bookmarksByName = {};
 
     function onLoad()
     {
@@ -83,12 +80,7 @@
         return;
       disableTextBoxes(false);
 
-      var label = _("New Room"),
-        i = 1;
-      while (bookmarksByName[label]) {
-        label = _("New Room") + " " + i;
-        i += 1;
-      }
+      var label = newName();
 
       var item = list.appendItem(label);
       item.name = label;
@@ -210,33 +202,6 @@
       mutex = 0;
       return true;
     }
-
-    function checkName() {
-      if (selectedItem && textBoxes.name.value != selectedItem.name
-          && bookmarksByName[textBoxes.name.value]) {
-        textBoxes.name.errortext=_('Bookmark with that name already exists');
-        return false;
-      }
-      delete textBoxes.name.errortext;
-      return textBoxes.name.value.length;
-    }
-
-    function checkRoom() {
-      if (selectedItem
-          && (   textBoxes.room.value   != selectedItem.room
-              || textBoxes.server.value != selectedItem.server)
-          && bookmarksByJid[textBoxes.room.value+'@'+textBoxes.server.value]) {
-        textBoxes.room.errortext = _('You have already that chatroom in your bookmarks');
-        return false;
-      }
-      delete textBoxes.room.errortext;
-      return !textBoxes.room.value.search(/^[^ \t\n"&'/:<>@]+$/);
-    }
-
-    function checkServer() {
-      textBoxes.room._checkCondition();
-      return !textBoxes.server.value.search(/^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/);
-    }
   ]]></script>
 
   <group id="macMenu"/>
@@ -255,54 +220,7 @@
     </vbox>
 
     <verifier flex="1" id="verifier">
-      <grid flex="1">
-        <columns>
-          <column/>
-          <column flex="1"/>
-        </columns>
-        <rows>
-          <row>
-            <label value="_('Name:')" control="name"/>
-            <textbox id="name" type="verifiable" condition="checkName()"
-                     oninput="updateName(this.value)"/>
-          </row>
-
-          <spacer/>
-
-          <row>
-            <label value="_('Room:')" control="room"/>
-            <textbox id="room" type="verifiable" condition="checkRoom()"/>
-          </row>
-
-          <spacer/>
-
-          <row>
-            <label value="_('Server:')" control="server"/>
-            <textbox id="server" type="verifiable" condition="checkServer()"/>
-          </row>
-
-          <spacer/>
-
-          <row>
-            <label value="_('Nick:')" control="nick"/>
-            <textbox id="nick" type="verifiable" regex="."/>
-          </row>
-
-          <spacer/>
-
-          <row>
-            <label value="_('Password:')" control="pass"/>
-            <textbox id="pass" type="password"/>
-          </row>
-
-          <spacer/>
-          
-          <row>
-            <box/>
-            <checkbox label="_('Always join this room at startup')" id="autoJoin"/>
-          </row>
-        </rows>
-      </grid>
+      <grid id="bookmark-form"></grid>
     </verifier>
   </hbox>
 </dialog>

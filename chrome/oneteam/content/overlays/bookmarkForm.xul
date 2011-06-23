@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<overlay id="bookmark-form" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script><![CDATA[
+    var selectedItem;
+    var textBoxes = {};
+    var bookmarksByJid = {};
+    var bookmarksByName = {};
+
+    function newName(defaultName) {
+      var baseName = defaultName || _("New Room");
+      var name = baseName;
+      var i = 1;
+      while (bookmarksByName[name]) {
+        name = baseName + " " + i;
+        i += 1;
+      }
+      return name
+    }
+
+    function checkName() {
+      if (bookmarksByName[textBoxes.name.value]
+          && (!selectedItem || textBoxes.name.value != selectedItem.name)) {
+        textBoxes.name.errortext=_('Bookmark with that name already exists');
+        return false;
+      }
+      delete textBoxes.name.errortext;
+      return textBoxes.name.value.length;
+    }
+
+    function checkRoom() {
+      if (bookmarksByJid[textBoxes.room.value+'@'+textBoxes.server.value]
+          && (!selectedItem || textBoxes.room.value != selectedItem.room
+                          || textBoxes.server.value != selectedItem.server)) {
+        textBoxes.room.errortext = _('You have already that chatroom in your bookmarks');
+        return false;
+      }
+      delete textBoxes.room.errortext;
+      return !textBoxes.room.value.search(/^[^ \t\n"&'/:<>@]+$/);
+    }
+
+    function checkServer() {
+      textBoxes.room._checkCondition();
+      return !textBoxes.server.value.search(/^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/);
+    }
+  ]]></script>
+  <grid flex="1" id="bookmark-form">
+    <columns>
+      <column/>
+      <column flex="1"/>
+    </columns>
+    <rows>
+      <row>
+        <label value="_('Name:')" control="name"/>
+        <textbox id="name" type="verifiable" condition="checkName()"
+                 oninput="updateName(this.value)"/>
+      </row>
+
+      <spacer/>
+
+      <row>
+        <label value="_('Room:')" control="room"/>
+        <textbox id="room" type="verifiable" condition="checkRoom()"/>
+      </row>
+
+      <spacer/>
+
+      <row>
+        <label value="_('Server:')" control="server"/>
+        <textbox id="server" type="verifiable" condition="checkServer()"/>
+      </row>
+
+      <spacer/>
+
+      <row>
+        <label value="_('Nick:')" control="nick"/>
+        <textbox id="nick" type="verifiable" regex="."/>
+      </row>
+
+      <spacer/>
+
+      <row>
+        <label value="_('Password:')" control="pass"/>
+        <textbox id="pass" type="password"/>
+      </row>
+
+      <spacer/>
+
+      <row>
+        <box/>
+        <checkbox label="_('Always join this room at startup')" id="autoJoin"/>
+      </row>
+    </rows>
+  </grid>
+</overlay>
