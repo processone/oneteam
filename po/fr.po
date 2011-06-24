@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
 "POT-Creation-Date: 2011-06-24 09:56+0200\n"
-"PO-Revision-Date: 2011-05-25 19:29+0100\n"
+"PO-Revision-Date: 2011-06-24 10:08+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
 "Language: \n"
@@ -2164,8 +2164,16 @@ msgid "Invitation into {0} chat room"
 msgstr "Invitation au salon {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:229
-msgid "User *{0}* invited you to chat room *{1}*.\\n\\nTo join this chat room please click on this link:\\n{2}\\n"
-msgstr "*{0}* vous a invité au salon de discussion *{1}*.\\n\\nPour rejoindre ce salon de discussion, veuillez cliquer sur ce lien :\\n{2}\\n"
+msgid ""
+"User *{0}* invited you to chat room *{1}*.\\n"
+"\\n"
+"To join this chat room please click on this link:\\n"
+"{2}\\n"
+msgstr ""
+"*{0}* vous a invité au salon de discussion *{1}*.\\n"
+"\\n"
+"Pour rejoindre ce salon de discussion, veuillez cliquer sur ce lien :\\n"
+"{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:469
 msgid "Chat room server can't be contacted or room reached maximum number of users"
@@ -2320,12 +2328,24 @@ msgid "This is version {0} (from {1}), {2}"
 msgstr "Ceci est la version {0} / {1}, {2}"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:168
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead ?"
-msgstr "Les informations saisies sont incorrectes.\\nVoulez-vous corriger les informations saisies,\\nou restaurer les valeurs précédentes ?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to correct entered informations,\\n"
+"or to restore previous values instead ?"
+msgstr ""
+"Les informations saisies sont incorrectes.\\n"
+"Voulez-vous corriger les informations saisies,\\n"
+"ou restaurer les valeurs précédentes ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:169
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created ?"
-msgstr "Les informations saisies sont incorrectes.\\nVoulez-vous corriger les informations saisies,\\nou supprimer le marque-page que vous venez de créer ?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to correct entered informations,\\n"
+"or to remove the bookmark you have just created ?"
+msgstr ""
+"Les informations saisies sont incorrectes.\\n"
+"Voulez-vous corriger les informations saisies,\\n"
+"ou supprimer le marque-page que vous venez de créer ?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:173
 msgid "Restore Previous Values"
@@ -2444,15 +2464,14 @@ msgid "Here is the message sent with the request:"
 msgstr "Voici le message joint à cette demande :"
 
 #: ../chrome/oneteam/content/JavaScript/menu.js:268
-#, fuzzy
 msgid "Do not ask me next time"
-msgstr "Ne plus demander confirmation"
+msgstr "Ne plus demander la prochaine fois"
 
 #: ../chrome/oneteam/content/main.xul:361
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:233
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:263
 msgid "Close Window"
-msgstr ""
+msgstr "Fermer la fenêtre"
 
 #~ msgid "HTTP Polling"
 #~ msgstr "HTTP Polling"
