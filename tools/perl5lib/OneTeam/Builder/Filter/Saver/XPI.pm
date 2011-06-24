@@ -142,7 +142,7 @@ sub  _generate_update_rdf {
               <RDF:Description>
                 <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
                 <em:minVersion>3.5</em:minVersion>
-                <em:maxVersion>4.0.*</em:maxVersion>
+                <em:maxVersion>5.*</em:maxVersion>
                 <em:updateLink>$xpi_url</em:updateLink>
               </RDF:Description>
             </em:targetApplication>
