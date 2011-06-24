@@ -35,9 +35,19 @@ _DECL_(ContactsAutoComplete).prototype =
                     function(c, s) {
                          return !(c.jid.normalizedJID in s);
                     }, skip,
-                    function(a, b) {
-                         return a.cmp(b);
-                    }))
+                    new Callback(function(a, b) {
+                        // this sort method is aimed to present first the contacts
+                        // whose nick or jid starts with searchString
+                        var aFirst = !a.visibleName.toLowerCase().indexOf(this);
+                        var bFirst = !b.visibleName.toLowerCase().indexOf(this);
+                        var aJidFirst = !a.jid.shortJID.indexOf(this);
+                        var bJidFirst = !b.jid.shortJID.indexOf(this);
+                        return aFirst && !bFirst ? -1 :
+                              !aFirst &&  bFirst ?  1 :
+                               aJidFirst && !bJidFirst ? -1 :
+                              !aJidFirst &&  bJidFirst ?  1 : a.cmp(b);
+                      }, searchString)
+             ))
         {
             if (first)
                 res.setSearchResult(res.RESULT_SUCCESS);
