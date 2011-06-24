@@ -5,7 +5,14 @@
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/bookmarkForm.xul"?>
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
+
+<!-- This window is opened by account.onJoinRoom(), in 2 cases:
+     * on selecting 'Chat Rooms' > 'Join Chat Room' in the 'File' menu, without argument
+     * or on being invited to a chat room, the argument is a conference representing the room.
+     Some methods are shared with manageBookmarks.xul and bookmarkRoom.xul,
+     in the overlay bookmarkForm.xul.                                                  -->
 
 <dialog id="oneteam" windowtype="ot:joinRoom" title="_('Join Room')"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -21,54 +28,54 @@
     var conference = window.arguments && window.arguments[0];
     var conf;
 
-    var room, server, nick, password, bookmark, bookmarkName, progressmeter, autoJoin;
-
     function onLoad() {
-      for each (var i in "room server nick password bookmark bookmarkName progressmeter autoJoin".split(" "))
-        self[i] = document.getElementById(i);
+      populateBookmarks();
+
+      for each (var id in "room server nick pass bookmark name autoJoin progressmeter".split(" "))
+        input[id] = document.getElementById(id);
 
       if (conference instanceof Conference) {
-        room.value = conference.jid.node;
-        server.value = conference.jid.domain;
-        nick.value = conference.bookmarkNick ||
-          prefManager.getPref('chat.muc.nickname') ||
-          account.myJID.node;
-        password.value = conference.bookmarkPassword || "";
+        input.room.value   = conference.jid.node;
+        input.server.value = conference.jid.domain;
+        input.nick.value   = conference.bookmarkNick
+                             || prefManager.getPref('chat.muc.nickname')
+                             || account.myJID.node;
+        input.pass.value   = conference.bookmarkPassword || "";
+        input.name.value   = conference.bookmarkName || "";
+        input.autoJoin.checked = !!conference.autoJoin;
 
-        bookmarkName.value = conference.bookmarkName || "";
-        autoJoin.checked = !!conference.autoJoin;
+        input.room.disabled = input.room.previousSibling.disabled =
+            input.server.disabled = input.server.previousSibling.disabled = true;
 
-        room.disabled = room.previousSibling.disabled =
-            server.disabled = server.previousSibling.disabled = true;
+        autocomplete();
       } else {
-        server.value = conference || account.defaultConferenceServer || "";
-        nick.value = prefManager.getPref('chat.muc.nickname') ||
-            account.myJID.node;
+        input.server.value = conference || account.defaultConferenceServer || "";
+        input.nick.value = prefManager.getPref('chat.muc.nickname') || account.myJID.node;
         conference = null;
       }
     }
 
     function joinRoom() {
-      conf = conference || account.getOrCreateConference(
-        new JID(room.value, server.value));
+      conf = conference
+             || account.getOrCreateConference(new JID(input.room.value, input.server.value));
 
-      if (bookmark.checked)
-        conf.bookmark(bookmarkName.value, autoJoin.checked, nick.value, password.value);
+      if (input.bookmark.checked)
+        conf.bookmark(input.name.value, input.autoJoin.checked,
+                      input.nick.value, input.pass.value);
 
-      progressmeter.style.visibility = "visible";
-      conf.joinRoom(joinRoomResponse, nick.value, password.value);
+      input.progressmeter.style.visibility = "visible";
+      conf.joinRoom(joinRoomResponse, input.nick.value, input.pass.value);
 
       return false;
     }
 
-    function cleanup()
-    {
+    function cleanup() {
       if (conf)
         conf.exitRoom();
     }
 
     function joinRoomResponse(pkt, errorTag, errorMsg) {
-      progressmeter.style.visibility = "hidden";
+      input.progressmeter.style.visibility = "hidden";
 
       if (pkt.getType() == "error") {
         alert(errorMsg);
@@ -76,6 +83,38 @@
       }
       conf = null;
       window.close();
+    }
+
+    var backup = null;
+    function autocomplete() {
+      if (bookmarksByJid[input.room.value+'@'+input.server.value]) {
+        if (!backup) {
+          backup = {
+            nick: input.nick.value,
+            pass: input.pass.value,
+            name: input.name.value,
+            bookmark: input.bookmark.checked,
+            autoJoin: input.autoJoin.checked
+          };
+        }
+        var bookmark = bookmarksByJid[input.room.value+'@'+input.server.value];
+        input.nick.value = bookmark.nick;
+        input.pass.value = bookmark.pass;
+        input.name.value = bookmark.name;
+        input.autoJoin.checked = bookmark.autoJoin;
+        input.bookmark.checked = true;
+        input.bookmark.disabled = input.name.disabled = true;
+        input.autoJoin.disabled = false;
+      } else if (backup) {
+        input.nick.value = backup.nick;
+        input.pass.value = backup.pass;
+        input.name.value = backup.name;
+        input.bookmark.checked = backup.bookmark;
+        input.autoJoin.checked = backup.autoJoin;
+        input.bookmark.disabled = false;
+        input.autoJoin.disabled = input.name.disabled = !input.autoJoin.checked;
+        backup = null;
+      }
     }
   ]]></script>
 
@@ -93,12 +132,14 @@
     <rows>
       <row align="center">
         <label value="_('Room:')" control="room"/>
-        <textbox type="verifiable" id="room" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"/>
+        <textbox id="room" oninput="autocomplete()"
+                 type="verifiable" regex="^[^ \t\n&quot;&amp;&apos;/:&lt;&gt;@]+$"/>
       </row>
 
       <row align="center">
         <label value="_('Server:')" control="server"/>
-        <textbox type="verifiable" id="server" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
+        <textbox id="server" oninput="autocomplete()"
+                 type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
       </row>
 
       <row align="center">
@@ -107,8 +148,8 @@
       </row>
 
       <row align="center">
-        <label value="_('Password:')" control="password"/>
-        <textbox id="password" type="password"/>
+        <label value="_('Password:')" control="pass"/>
+        <textbox id="pass" type="password"/>
       </row>
 
     </rows>
@@ -122,8 +163,8 @@
 
   <hbox>
     <checkbox label="_('Bookmark this room as')" id="bookmark"
-            oncommand="autoJoin.disabled = bookmarkName.disabled = !this.checked"/>
-    <textbox type="verifiable" regex="." flex="1" id="bookmarkName" disabled="true"/>
+            oncommand="input.autoJoin.disabled = input.name.disabled = !this.checked"/>
+    <textbox type="verifiable" condition="checkName()" flex="1" id="name" disabled="true"/>
   </hbox>
   <checkbox style="margin-left: 2em" label="_('Always join this room at startup')" id="autoJoin" disabled="true"/>
 

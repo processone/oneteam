@@ -20,101 +20,76 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("model/account.js");
 
-    var removedItems = [];
-    var list;
+    var removedBookmarks = [];
 
     function onLoad()
     {
       list = document.getElementById("list");
+      populateBookmarks();
+
       for each (var id in "name room server nick pass autoJoin".split(/ /))
-        textBoxes[id] = document.getElementById(id);
-
-      var bookmarks = account.bookmarks.bookmarks;
-      for (var i = 0; i < bookmarks.length; i++) {
-        var item = list.appendItem(bookmarks[i].bookmarkName);
-        item.model = bookmarks[i];
-        item.name = bookmarks[i].bookmarkName;
-        item.room = bookmarks[i].jid.node;
-        item.server = bookmarks[i].jid.domain;
-        item.nick = bookmarks[i].bookmarkNick || "";
-        item.pass = bookmarks[i].bookmarkPassword || "";
-        item.autoJoin = bookmarks[i].autoJoin;
-
-        registerBookmark(item);
-      }
+        input[id] = document.getElementById(id);
 
       if (list.childNodes.length)
         list.selectedItem =
           window.arguments && bookmarksByJid[window.arguments[0]] ?
             bookmarksByJid[window.arguments[0]] : list.firstChild;
       else
-        disableTextBoxes(true);
+        disableInput(true);
     }
 
-    function disableTextBoxes(val) {
-      for each (var textbox in textBoxes)
-        textbox.disabled = textbox.previousSibling.disabled = val;
+    function disableInput(val) {
+      for each (var i in input)
+        i.disabled = i.previousSibling.disabled = val;
     }
 
     function updateName(newName)
     {
-      if (selectedItem)
-        selectedItem.label = newName;
-    }
-
-    function registerBookmark(item)
-    {
-      bookmarksByJid[item.room+'@'+item.server] = item;
-      bookmarksByName[item.name] = item;
-    }
-
-    function unregisterBookmark(item)
-    {
-      delete bookmarksByJid[item.room+'@'+item.server];
-      delete bookmarksByName[item.name];
+      if (selectedBookmark)
+        selectedBookmark.label = newName;
     }
 
     function newRoom()
     {
       if (!roomChange())
         return;
-      disableTextBoxes(false);
+      disableInput(false);
 
       var label = newName();
 
-      var item = list.appendItem(label);
-      item.name = label;
+      var bookmark = list.appendItem(label);
+      bookmark.name = label;
       for each (var id in "room server nick pass autoJoin".split(/ /))
-        item[id] = "";
-      registerBookmark(item);
-      list.selectedItem = item;
-      textBoxes.name.focus();
+        bookmark[id] = "";
+      registerBookmark(bookmark);
+      list.selectedItem = bookmark;
+      input.name.focus();
     }
 
     function removeRoom()
     {
-      if (!selectedItem)
+      if (!selectedBookmark)
         return;
 
-      var itemToDelete = selectedItem;
-      selectedItem = null; // to skip checking values in roomChange()
+      var bookmarkToDelete = selectedBookmark;
+      selectedBookmark = null; // to skip checking values in roomChange()
 
       if (list.childNodes.length > 1) {
-        if (list.selectedItem == itemToDelete)
+        if (list.selectedItem == bookmarkToDelete)
           // if the user has clicked on 'remove bookmark',
           // the next selected bookmark should be the previous one in the list
           list.selectedIndex = list.selectedIndex ? list.selectedIndex-1 : 0;
       } else {
-        disableTextBoxes(true);
+        disableInput(true);
         for each (id in "name room server nick pass autoJoin".split(/ /))
-          textBoxes[id].value = '';
-        textBoxes["autoJoin"].checked = false;
+          input[id].value = '';
+        input["autoJoin"].checked = false;
       }
 
-      if (itemToDelete.model)
-        removedItems.push(itemToDelete.model);
-      unregisterBookmark(itemToDelete);
-      list.removeChild(itemToDelete);
+      if (bookmarkToDelete.model)
+        removedBookmarks.push(bookmarkToDelete.model);
+      unregisterBookmark(bookmarkToDelete);
+      list.removeChild(bookmarkToDelete);
     }
 
     function saveBookmarks()
@@ -124,15 +99,15 @@
 
       account.bookmarks.startBatchUpdate();
 
-      for (var i = 0; i < removedItems.length; i++)
-        removedItems[i].bookmark();
+      for (var i = 0; i < removedBookmarks.length; i++)
+        removedBookmarks[i].bookmark();
       for (i = 0; i < list.childNodes.length; i++) {
-        var item = list.childNodes[i];
+        var bookmark = list.childNodes[i];
         var conference = account.
-          getOrCreateConference(item.room+"@"+item.server);
+          getOrCreateConference(bookmark.room+"@"+bookmark.server);
 
-        conference.bookmark(item.label, item.autoJoin,
-                            item.nick || null, item.pass || null);
+        conference.bookmark(bookmark.label, bookmark.autoJoin,
+                            bookmark.nick || null, bookmark.pass || null);
       }
       account.bookmarks.stopBatchUpdate();
 
@@ -146,11 +121,11 @@
         return;
       mutex = 1;
 
-      if (selectedItem) {
+      if (selectedBookmark) {
         var verifier = document.getElementById("verifier");
         if (!verifier.isValid) {
-          var wasValid = selectedItem.name && selectedItem.room
-                      && selectedItem.server && selectedItem.nick;
+          var wasValid = selectedBookmark.name && selectedBookmark.room
+                      && selectedBookmark.server && selectedBookmark.nick;
           var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
                         .getService(Components.interfaces.nsIPromptService);
           var restore = prompts.confirmEx(
@@ -170,32 +145,32 @@
 
           if (restore == 0) {
             if (wasValid)
-              selectedItem.label = selectedItem.name;
+              selectedBookmark.label = selectedBookmark.name;
             else
               removeRoom();
           } else {
-            list.selectedItem = selectedItem;
+            list.selectedItem = selectedBookmark;
             verifier.focusInvalidWidget();
             mutex = 0;
             return false; // this is to prevent from exit on 'Save' click
           }
         } else {
-          unregisterBookmark(selectedItem);
+          unregisterBookmark(selectedBookmark);
 
           for each (var id in "name room server nick pass".split(/ /))
-            selectedItem[id] = textBoxes[id].value;
-          selectedItem.autoJoin = textBoxes.autoJoin.checked;
+            selectedBookmark[id] = input[id].value;
+          selectedBookmark.autoJoin = input.autoJoin.checked;
 
-          registerBookmark(selectedItem);
+          registerBookmark(selectedBookmark);
         }
       }
 
-      selectedItem = list.selectedItem;
-      if (selectedItem) {
+      selectedBookmark = list.selectedItem;
+      if (selectedBookmark) {
         for each (id in "name room server nick pass autoJoin".split(/ /))
-          textBoxes[id].value = selectedItem[id];
-        textBoxes.autoJoin.checked = selectedItem.autoJoin;
-        setTimeout("textBoxes.name.focus()", 0);
+          input[id].value = selectedBookmark[id];
+        input.autoJoin.checked = selectedBookmark.autoJoin;
+        setTimeout("input.name.focus()", 0);
       } else if (list.childNodes.length)
         setTimeout("list.selectedIndex = 0", 0);
 

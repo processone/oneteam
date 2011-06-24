@@ -25,31 +25,28 @@
     function onLoad()
     {
       for each (var id in "name room server nick pass autoJoin".split(/ /))
-        textBoxes[id] = document.getElementById(id);
+        input[id] = document.getElementById(id);
 
-      var bookmarks = account.bookmarks.bookmarks;
-      for (var i = 0; i < bookmarks.length; i++)
-        bookmarksByJid[bookmarks[i].jid.node + '@' + bookmarks[i].jid.domain]
-          = bookmarksByName[bookmarks[i].bookmarkName] = true;
+      populateBookmarks();
 
       if (conference) {
-        textBoxes.name.value   = newName(conference.jid.node);
-        textBoxes.room.value   = conference.jid.node;
-        textBoxes.server.value = conference.jid.domain;
-        textBoxes.nick.value   = conference.myResourceJID.resource || "";
-        textBoxes.pass.value   = conference._password || "";
-        textBoxes.room.disabled = textBoxes.room.previousSibling.disabled
-          = textBoxes.server.disabled = textBoxes.server.previousSibling.disabled = true;
+        input.name.value   = newName(conference.jid.node);
+        input.room.value   = conference.jid.node;
+        input.server.value = conference.jid.domain;
+        input.nick.value   = conference.myResourceJID.resource || "";
+        input.pass.value   = conference._password || "";
+        input.room.disabled = input.room.previousSibling.disabled
+          = input.server.disabled = input.server.previousSibling.disabled = true;
       } else {
-        textBoxes.server.value = account.defaultConferenceServer || "";
+        input.server.value = account.defaultConferenceServer || "";
       }
     }
 
     function bookmarkRoom() {
       if (!conference)
-        conference = account.getOrCreateConference(textBoxes.room.value+"@"+textBoxes.server.value);
-      conference.bookmark(textBoxes.name.value, textBoxes.autoJoin.checked,
-                          textBoxes.nick.value, textBoxes.pass.value);
+        conference = account.getOrCreateConference(input.room.value+"@"+input.server.value);
+      conference.bookmark(input.name.value, input.autoJoin.checked,
+                          input.nick.value, input.pass.value);
       return true;
     }
   ]]></script>

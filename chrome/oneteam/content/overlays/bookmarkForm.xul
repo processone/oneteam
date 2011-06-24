@@ -3,10 +3,36 @@
 <overlay id="bookmark-form" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <script><![CDATA[
-    var selectedItem;
-    var textBoxes = {};
+    var selectedBookmark, list; // only for 'Bookmark manager' window
+    var input = {};
     var bookmarksByJid = {};
     var bookmarksByName = {};
+
+    function populateBookmarks() {
+      var bookmarks = account.bookmarks.bookmarks;
+      for (var i = 0; i < bookmarks.length; i++) {
+        var bookmark = list ? list.appendItem(bookmarks[i].bookmarkName) : {};
+        bookmark.model  = bookmarks[i];
+        bookmark.name   = bookmarks[i].bookmarkName;
+        bookmark.room   = bookmarks[i].jid.node;
+        bookmark.server = bookmarks[i].jid.domain;
+        bookmark.nick   = bookmarks[i].bookmarkNick || "";
+        bookmark.pass   = bookmarks[i].bookmarkPassword || "";
+        bookmark.autoJoin = bookmarks[i].autoJoin;
+
+        registerBookmark(bookmark);
+      }
+    }
+
+    function registerBookmark(bookmark) {
+      bookmarksByJid[bookmark.room+'@'+bookmark.server] = bookmark;
+      bookmarksByName[bookmark.name] = bookmark;
+    }
+
+    function unregisterBookmark(bookmark) {
+      delete bookmarksByJid[bookmark.room+'@'+bookmark.server];
+      delete bookmarksByName[bookmark.name];
+    }
 
     function newName(defaultName) {
       var baseName = defaultName || _("New Room");
@@ -20,29 +46,29 @@
     }
 
     function checkName() {
-      if (bookmarksByName[textBoxes.name.value]
-          && (!selectedItem || textBoxes.name.value != selectedItem.name)) {
-        textBoxes.name.errortext=_('Bookmark with that name already exists');
+      if (bookmarksByName[input.name.value]
+          && (!selectedBookmark || input.name.value != selectedBookmark.name)) {
+        input.name.errortext=_('Bookmark with that name already exists');
         return false;
       }
-      delete textBoxes.name.errortext;
-      return textBoxes.name.value.length;
+      delete input.name.errortext;
+      return input.name.value.length;
     }
 
     function checkRoom() {
-      if (bookmarksByJid[textBoxes.room.value+'@'+textBoxes.server.value]
-          && (!selectedItem || textBoxes.room.value != selectedItem.room
-                          || textBoxes.server.value != selectedItem.server)) {
-        textBoxes.room.errortext = _('You have already that chatroom in your bookmarks');
+      if (bookmarksByJid[input.room.value+'@'+input.server.value]
+          && (!selectedBookmark || input.room.value != selectedBookmark.room
+                          || input.server.value != selectedBookmark.server)) {
+        input.room.errortext = _('You have already that chatroom in your bookmarks');
         return false;
       }
-      delete textBoxes.room.errortext;
-      return !textBoxes.room.value.search(/^[^ \t\n"&'/:<>@]+$/);
+      delete input.room.errortext;
+      return !input.room.value.search(/^[^ \t\n"&'/:<>@]+$/);
     }
 
     function checkServer() {
-      textBoxes.room._checkCondition();
-      return !textBoxes.server.value.search(/^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/);
+      input.room._checkCondition();
+      return !input.server.value.search(/^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$/);
     }
   ]]></script>
   <grid flex="1" id="bookmark-form">
