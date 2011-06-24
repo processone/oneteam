@@ -69,13 +69,8 @@
       } else if (el.value == "native" && port.value == "5280")
         fieldChanged(port, portVal);
 
-      if (el.value == "http-bind" || el.value == "https-bind")
-        fieldChanged(httpBase, httpBase.value.replace(/http-poll/, "http-bind"));
-      else if (el.value == "http-polling")
-        fieldChanged(httpBase, httpBase.value.replace(/http-bind/, "http-poll"));
-
       prevType = el.value;
-      }
+    }
 
     function saveUpdatePrefs() {
 // #ifndef XPI
@@ -227,7 +222,6 @@
               <menuitem label="_('Native')" value="native"/>
               <menuitem label="_('HTTP Bind')" value="http-bind"/>
               <menuitem label="_('HTTPS Bind')" value="https-bind"/>
-              <menuitem label="_('HTTP Polling')" value="http-polling"/>
             </menupopup>
           </menulist>
         </row>

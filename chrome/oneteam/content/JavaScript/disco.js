@@ -283,15 +283,19 @@ _DECL_(DiscoCacheEntry).prototype =
 
     _gotDiscoItems: function(pkt)
     {
-        var items = pkt.getQuery().
-            getElementsByTagNameNS("http://jabber.org/protocol/disco#items", "item");
+        var query = pkt.getQuery();
 
         this.discoItems = [];
-        for (var i = 0; i < items.length; i++)
-            this.discoItems.push(new DiscoItem(items[i].getAttribute("jid"),
-                                               items[i].getAttribute("name"),
-                                               items[i].getAttribute("node"),
-                                               this.cacheableInherit));
+
+        if (query) {
+            var items = query.getElementsByTagNameNS("http://jabber.org/protocol/disco#items", "item");
+
+            for (var i = 0; i < items.length; i++)
+                this.discoItems.push(new DiscoItem(items[i].getAttribute("jid"),
+                                                   items[i].getAttribute("name"),
+                                                   items[i].getAttribute("node"),
+                                                   this.cacheableInherit));
+        }
 
         for (var i = 0; i < this.discoItemsCallbacks.length; i++) {
             var [callback, discoInfo] = this.discoItemsCallbacks[i];

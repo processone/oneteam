@@ -189,8 +189,6 @@ _DECL_(ServicesManager).prototype =
                 response = <query/>;
 
                 if (!node) {
-                    if (node)
-                        response.@node = node;
                     identities = this._identities[""];
                     nodes = [""];
                 } else if (node.indexOf(this._capsPrefix+"#") == 0) {
