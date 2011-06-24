@@ -259,7 +259,7 @@ JSJaCConnection.prototype.getPollInterval = function() {
  * <li>onStatusChanged - connection status has changed, current
  * status as being passed argument to handler. See {@link #status}.</li>
 
- * <li>onError - an error has occured, error node is supplied as
+ * <li>onError - an error has occurred, error node is supplied as
  * argument, like this:<br><code>&lt;error code='404' type='cancel'&gt;<br>
  * &lt;item-not-found xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/&gt;<br>
  * &lt;/error&gt;</code></li>
