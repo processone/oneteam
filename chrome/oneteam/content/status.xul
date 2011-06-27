@@ -35,15 +35,13 @@
         messages = ["Sleeping", "Working", "Eating"];
       }
       listControl.appendItem("", "");
-      for (var i = 0; i < messages.length; i++) {
-        var pos = messages[i].lastIndexOf(" ", 31);
-        listControl.appendItem(messages[i].length < 33? messages[i] :
-          messages[i].slice(0, ~(~pos||~30))+"...", messages[i]);
-      }
-      listControl.selectedIndex = 0;
-      typeControl.selectedIndex = 0;
-      textControl.value = unescape(account.cache.getValue("statusMessage"));
+      for (var i = 0; i < messages.length; i++)
+        listControl.appendItem(messages[i], messages[i]);
 
+      listControl.selectedIndex = 0;
+      textControl.value = account.userPresence.status;
+
+      typeControl.selectedIndex = 0;
       var items = typeControl.firstChild.childNodes;
       for (i = 0; i < items.length; i++)
         if (items[i].value == window.arguments[0]) {
@@ -64,7 +62,6 @@
       var profile = account.userPresence;
       profile = profile && profile.profile;
 
-      account.cache.setValue("statusMessage", escape(textControl.value));
       account.setPresence(typeControl.value, textControl.value, null, profile, true);
 
       return true;
