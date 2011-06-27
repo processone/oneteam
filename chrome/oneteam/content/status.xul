@@ -29,8 +29,7 @@
       if (messages) {
         messages = messages.split(/\n/);
         for (var i = 0; i < messages.length; i++)
-          messages[i] = messages[i].replace(/([^\\]|(?:\\\\)+)\\n/g, "$1\n").
-            replace(/\\\\/g,"\\")
+          messages[i] = unescape(messages[i]);
       } else {
         // XXX pfx: use string bundle.
         messages = ["Sleeping", "Working", "Eating"];
@@ -43,6 +42,7 @@
       }
       listControl.selectedIndex = 0;
       typeControl.selectedIndex = 0;
+      textControl.value = unescape(account.cache.getValue("statusMessage"));
 
       var items = typeControl.firstChild.childNodes;
       for (i = 0; i < items.length; i++)
@@ -58,12 +58,13 @@
       if (document.getElementById("saveMessage").checked) {
         messages.push(textControl.value.replace(/^\s+|\s+$/g, ""));
         for (var i = 0; i < messages.length; i++)
-          messages[i] = messages[i].replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
+          messages[i] = escape(messages[i]);
         account.cache.setValue("statusMessages", messages.join("\n"));
       }
       var profile = account.userPresence;
       profile = profile && profile.profile;
 
+      account.cache.setValue("statusMessage", escape(textControl.value));
       account.setPresence(typeControl.value, textControl.value, null, profile, true);
 
       return true;
@@ -72,6 +73,13 @@
     function onSelect() {
       textControl.value = listControl.value;
       textControl.focus();
+    }
+
+    function unescape(str) {
+      return str.replace(/([^\\]|(?:\\\\)+)\\n/g, "$1\n").replace(/\\\\/g,"\\");
+    }
+    function escape(str) {
+      return str.replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
     }
   ]]></script>
 

@@ -186,8 +186,7 @@
           if (this.model) {
             this._statusDesc.value = this.model.presence;
             if (!modelIsConference)
-              this._statusText.textContent = this.model.presence.status ?
-                this.model.presence.status : "(none)";
+              this._statusText.textContent = this.model.presence.status || "";
           } else {
             this._statusDesc.value = this._unavailablePresence;
             if (!modelIsConference)
