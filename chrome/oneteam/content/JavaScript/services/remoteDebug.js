@@ -41,29 +41,32 @@ var remoteDebug = {
             return;
         }
 
-        var iq = new JSJaCIQ();
-        iq.setIQ(where, "get");
-        iq.appendNode("eval", {xmlns: "http://oneteam.im/remote-debug"}, [expr]);
-        account.connection.send(iq, this._remoteEvalCallback,
-                                Array.slice(arguments, 2));
+        servicesManager.sendIq({
+            to: where,
+            type: "get",
+            domBuilder: ["eval", {xmlns: "http://oneteam.im/remote-debug"}, expr]
+        }, new Callback(this._remoteEvalCallback, this).
+            addArgs(Array.slice(arguments, 2)).fromCall())
     },
 
     completions: function(where, expr, prefix, callback) {
-        var iq = new JSJaCIQ();
-        iq.setIQ(where, "get");
-        iq.appendNode("completions", {xmlns: "http://oneteam.im/remote-debug",
-                                      prefix: prefix}, [expr]);
-        account.connection.send(iq, this._remoteEvalCallback,
-                                Array.slice(arguments, 3));
+        servicesManager.sendIq({
+            to: where,
+            type: "get",
+            domBuilder: ["completions", {
+                    xmlns: "http://oneteam.im/remote-debug",
+                    prefix: prefix
+                }, expr]
+        }, new Callback(this._remoteEvalCallback, this).
+            addArgs(Array.slice(arguments, 3)).fromCall())
     },
 
     substituteChromeFile: function(where, url, file) {
         var data = slurpFile(file);
-        this._sendSubstitution(null, [where, url, Math.ceil(data.length/2048), 0, data]);
+        this._sendSubstitution(where, url, Math.ceil(data.length/2048), 0, data);
     },
 
-    _sendSubstitution: function(pkt, [where, url, parts, part, data]) {
-        globDat = data;
+    _sendSubstitution: function(where, url, parts, part, data, pkt) {
         if ((pkt && pkt.getType() != "result") || part == parts)
             return;
 
@@ -71,15 +74,17 @@ var remoteDebug = {
 
         part++;
 
-        var iq = new JSJaCIQ();
-        iq.setIQ(where, "set");
-        iq.appendNode("substitute", {xmlns: "http://oneteam.im/remote-debug",
-                                     url: url,
-                                     part: part,
-                                     parts: parts}, [btoa(fragment)]);
-
-        account.connection.send(iq, arguments.callee,
-                                [where, url, parts, part, data])
+        servicesManager.sendIq({
+            to: where,
+            type: "set",
+            domBuilder: ["substitute", {
+                    xmlns: "http://oneteam.im/remote-debug",
+                    url: url,
+                    part: part,
+                    parts: parts
+                }, btoa(fragment)]
+        }, new Callback(this._sendSubstitution, this).
+            addArgs(where, url, parts, part, data))
     },
 
     _substitutions: {},
@@ -193,7 +198,7 @@ var remoteDebug = {
         cr.checkForNewChrome();
     },
 
-    _remoteEvalCallback: function(pkt, token) {
+    _remoteEvalCallback: function(token, pkt) {
         var res = pkt.getChild("result");
         if (res)
             res = {result: eval(res.textContent)};
@@ -317,12 +322,14 @@ var remoteDebug = {
                                           idx: _this._dumpValues.length},
                                           "", true);
 
-                var iq = new JSJaCIQ();
-                iq.setIQ(jid, "set");
-                iq.appendNode("dump", {xmlns: "http://oneteam.im/remote-debug",
-                                       idx: _this._dumpValues.length},
-                                       [uneval(_this._simplifyValue(value, true))]);
-                account.connection.send(iq, function(){});
+                servicesManager.sendIq({
+                    to: jid,
+                    type: "set",
+                    domBuilder: ["dump", {
+                            xmlns: "http://oneteam.im/remote-debug",
+                            idx: _this._dumpValues.length
+                        }, [uneval(_this._simplifyValue(value, true))]]
+                });
 
                 _this._dumpValues.push(value);
             }
