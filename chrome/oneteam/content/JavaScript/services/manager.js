@@ -364,7 +364,7 @@ _DECL_(ServicesManager).prototype =
         }
         this._sendResponse(struct, {
             getFrom: function() {
-                throw new Error("No 'to' in struct");
+                return null;
             },
             getID: function() {
                 return null;
