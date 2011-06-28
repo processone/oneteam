@@ -212,18 +212,16 @@ _DECL_(Conference, Contact).prototype =
         var url = prefManager.getPref('chat.muc.anonymousUrl').
                               replace(/%s/, this.myResource.jid.shortJID);
         if (account._hasInvitationsService) {
-            const ns = "http://oneteam.im/invitations";
-            var iq = new JSJaCIQ();
-            iq.setIQ(account.jid, "get");
-
-            iq.appendNode("invite", {
-                xmlns: "http://oneteam.im/invitations",
-                email: email,
-                url: url,
-                nick: this.myResource.jid.resource
+            serviceManager.sendIq({
+                to: account.jid,
+                type: "get",
+                domBuilder: ["invite", {
+                    xmlns: "http://oneteam.im/invitations",
+                    email: email,
+                    url: url,
+                    nick: this.myResource.jid.resource
+                }]
             });
-
-            account.connection.send(iq);
         } else {
             openLink("mailto:"+encodeURIComponent(email)+"?subject="+
                      encodeURIComponent(_("Invitation into {0} chat room", this.jid.toUserString()))+
@@ -258,26 +256,25 @@ _DECL_(Conference, Contact).prototype =
 
     requestRoomConfiguration: function(callback)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "get");
-        iq.setQuery("http://jabber.org/protocol/muc#owner");
-        account.connection.send(iq, callback);
+        servicesManager.sendIq({
+            to: this.jid,
+            type: "get",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/muc#owner"}]
+        }, callback)
     },
 
     changeRoomConfiguration: function(payload)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "set");
-        iq.setQuery("http://jabber.org/protocol/muc#owner").
-            appendChild(E4XtoDOM(payload, iq.getDoc()));
-        account.connection.send(iq);
+        servicesManager.sendIq({
+            to: this.jid,
+            type: "set",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/muc#owner"},
+                         payload]
+        })
     },
 
     destroyRoom: function(alternateRoom, reason)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "get");
-
         var destroy = ["destroy", {}, []];
 
         if (alternateRoom)
@@ -285,10 +282,12 @@ _DECL_(Conference, Contact).prototype =
         if (reason)
             destroy[2].push(["reason", {}, reason]);
 
-        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#owner"},
-                      [destroy]);
-
-        account.connection.send(iq, callback);
+        servicesManager.sendIq({
+            to: this.jid,
+            type: "set",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/muc#owner"},
+                         [destroy]]
+        })
     },
 
     onEditPermissions: function()
@@ -299,13 +298,12 @@ _DECL_(Conference, Contact).prototype =
 
     requestUsersList: function(affiliation, callback)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "get");
-
-        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#admin"},
-                      [["item", {affiliation: affiliation}]]);
-
-        account.connection.send(iq, new Callback(this._requestUsersListCb, this).
+        servicesManager.sendIq({
+            to: this.jid,
+            type: "get",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/muc#admin"},
+                         [["item", {affiliation: affiliation}]]]
+        }, new Callback(this._requestUsersListCb, this).
                         addArgs(callback).fromCall());
     },
 
@@ -337,11 +335,12 @@ _DECL_(Conference, Contact).prototype =
 
     changeUsersList: function(payload)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "set");
-        iq.setQuery("http://jabber.org/protocol/muc#admin").
-            appendChild(E4XtoDOM(payload, iq.getDoc()));
-        account.connection.send(iq);
+        servicesManager.sendIq({
+            to: this.jid,
+            type: "set",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/muc#admin"},
+                         payload]
+        });
     },
 
     onBookmark: function()
@@ -612,9 +611,6 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     setAffiliation: function(affiliation, reason)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.contact.jid, "set");
-
         var item = ["item", {affiliation: affiliation}, []];
 
         if (this.realJID)
@@ -625,17 +621,16 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         if (reason)
             item[2].push(["reason", {}, reason]);
 
-        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#admin"},
-                      [item]);
-
-        account.connection.send(iq);
+        servicesManager.sendIq({
+            to: this.contact.jid,
+            type: "set",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/muc#admin"},
+                         [item]]
+        });
     },
 
     setRole: function(role, reason)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.contact.jid, "set");
-
         var item = ["item", {role: role}, []];
 
         if (this.realJID)
@@ -646,10 +641,12 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
         if (reason)
             item[2].push(["reason", {}, reason]);
 
-        iq.appendNode("query", {xmlns: "http://jabber.org/protocol/muc#admin"},
-                      [item]);
-
-        account.connection.send(iq);
+        servicesManager.sendIq({
+            to: this.contact.jid,
+            type: "set",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/muc#admin"},
+                         [item]]
+        });
     },
 
     showVCard: function()
@@ -813,27 +810,27 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
 
     _syncServerBookmarks: function()
     {
-        var iq = new JSJaCIQ();
-        iq.setType("set");
-        query = iq.setQuery("jabber:iq:private");
-        var storage = query.appendChild(iq.getDoc().createElementNS(
-            "storage:bookmarks", "storage"));
+        var bookmarks = ["storage", {xmlns: "storage:bookmarks"}, []];
 
         for (var i = 0; i < this.bookmarks.length; i++) {
-            var bookmark = storage.appendChild(iq.getDoc().createElementNS(
-                "storage:bookmarks", "conference"));
-            bookmark.setAttribute("name", this.bookmarks[i].bookmarkName);
-            bookmark.setAttribute("jid", this.bookmarks[i].jid);
-            if (this.bookmarks[i].autoJoin)
-                bookmark.setAttribute("autojoin", "true");
+            var bookmark = ["conference", {
+                name: this.bookmarks[i].bookmarkName,
+                jid: this.bookmarks[i].jid
+            }, [["nick", {}, this.bookmarks[i].bookmarkNick]]];
 
-            bookmark.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "nick")).
-                appendChild(iq.getDoc().createTextNode(this.bookmarks[i].bookmarkNick));
+            if (this.bookmarks[i].autoJoin)
+                bookmark[1].autojoin = "true"
+
             if (this.bookmarks[i].bookmarkPassword)
-                bookmark.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "password")).
-                    appendChild(iq.getDoc().createTextNode(this.bookmarks[i].bookmarkPassword));
+                bookmark[2].push(["password", {}, this.bookmarks[i].bookmarkPassword]);
+
+            bookmarks[2].push(bookmark);
         }
-        account.connection.send(iq);
+
+        servicesManager.sendIq({
+            type: "set",
+            domBuilder: ["query", {xmlns: "jabber:iq:private"}, [bookmarks]]
+        });
     },
 
     _clean: function()
@@ -845,11 +842,11 @@ _DECL_(ConferenceBookmarks, null, Model).prototype =
 
     retrieve: function()
     {
-        var iq = new JSJaCIQ();
-        iq.setType("get");
-        query = iq.setQuery("jabber:iq:private");
-        query.appendChild(iq.getDoc().createElementNS("storage:bookmarks", "storage"));
-        account.connection.send(iq, new Callback(this.onBookmarkRetrieved, this));
+        servicesManager.sendIq({
+            type: "get",
+            domBuilder: ["query", {xmlns: "jabber:iq:private"},
+                         [["storage", {xmlns: "storage:bookmarks"}]]]
+        }, new Callback(this.onBookmarkRetrieved, this));
     },
 
     onBookmarkRetrieved: function(pkt)
