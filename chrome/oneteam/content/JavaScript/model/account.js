@@ -315,11 +315,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     setVCard: function(vcardE4X)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(null, 'set');
-        iq.getNode().appendChild(E4XtoDOM(vcardE4X, iq.getDoc()));
+        serviceManager.sendIq({
+            type: "set",
+            e4x: vcardE4X
+        });
 
-        account.connection.send(iq);
         this._storeXMPPData("_vCardAccessorState", null, this._handleVCard, iq);
     },
 
@@ -475,28 +475,28 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     changePassword: function(password, callback)
     {
-        const ns = "jabber:iq:register";
-        var iq = new JSJaCIQ();
-
-        iq.setIQ(null, 'set');
-        var query = iq.setQuery(ns);
-
-        query.appendChild(iq.getDoc().createElementNS(ns, "username")).
-            appendChild(iq.getDoc().createTextNode(this.myJID.node));
-        query.appendChild(iq.getDoc().createElementNS(ns, "password")).
-            appendChild(iq.getDoc().createTextNode(password));
-
         if (prefManager.getPref("chat.connection.pass") != null)
             callback = new Callback(this._changePasswordResult, this).
                 addArgs(callback, password).fromCall();
 
-        account.connection.send(iq, callback);
+        serviceManager.sendIq({
+            type: "set",
+            domBuilder: ["query", {xmlns: "jabber:iq:register"},
+                         [["username", {}, this.myJID.node],
+                          ["password", {}, password]]]
+        }, callback)
     },
 
-    _changePasswordResult: function(callback, password, pkt)
+    _changePasswordResult: function(callback, pass, pkt)
     {
-        if (pkt.getType() == "result")
-            prefManager.setPref("chat.connection.pass", password);
+        if (pkt.getType() == "result") {
+            this.connectionInfo.pass = pass;
+            this.modelUpdated("connectionInfo");
+            thisunt.resetPassInRoster();
+            if (this.storedPassword())
+                this.setUserAndPass(prefManager.getPref("chat.connection.user"), pass, true);
+        }
+
         callback(pkt);
     },
 
@@ -723,25 +723,21 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         this.userDisconnect = true;
 
         if (presence.show != "unavailable") {
-            var ns = "oneteam:presence";
-            var iq = new JSJaCIQ();
-            iq.setType("set")
+            var saved = ["saved", {show: presence.show}];
 
-            var query = iq.setQuery("jabber:iq:private");
-            var node = query.appendChild(iq.getDoc().createElementNS(ns, "presence"));
-            var node2 = iq.getDoc().createElementNS(ns, "saved");
-
-            node2.setAttribute("show", presence.show);
             if (presence.status)
-                node2.setAttribute("status", presence.status);
+                saved[1].status = presence.status;
             if (presence.priority != null)
-                node2.setAttribute("priority", presence.priority);
+                saved[1].priority = presence.priority;
 
             if (presence.profile)
-                node2.setAttribute("profile", presence.profile.name);
+                saved[1].profile = presence.profile.name;
 
-            node.appendChild(node2);
-            account.connection.send(iq);
+            servicesManager.sendIq({
+                type: "set",
+                domBuilder: ["query", {xmlns: "jabber:iq:private"},
+                             [["presence", {xmlns: "oneteam:presence"}, [saved]]]]
+            });
         }
 
         account.connection.disconnect();
@@ -762,20 +758,22 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             var ver = this.connection.hasRosterVersioning ?
                 this.cache.getValue("rosterVersion-"+this.myJID.shortJID)||"" : null;
 
-            var pkt = new JSJaCIQ();
-            pkt.setIQ(null, 'get');
-            pkt.setQuery('jabber:iq:roster');
-            if (ver != null)
-                pkt.getQuery().setAttribute("ver", ver);
+            var attrs = {xmlns: "jabber:iq:roster"};
 
-            account.connection.send(pkt, this._initialRosterFetch, this);
+            if (ver != null)
+                attrs.ver = ver;
+
+            servicesManager.sendIq({
+                type: "get",
+                domBuilder: ["query", attrs]
+            }, new Callback(this._initialRosterFetch, this));
         }
 
         this.connected = true;
         this.connectedAt = new Date();
 
         if (this.mucMode) {
-            this._initialRosterFetch(null, this);
+            this._initialRosterFetch(null);
             this.modelUpdated("connected");
             return;
         }
@@ -814,14 +812,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                              function (account, value) {
                                 if (!value)
                                     return;
-                                var pkt = new JSJaCIQ();
-                                pkt.setIQ(account.jid, "set");
-                                var auto = pkt.getDoc().
-                                    createElementNS("http://www.xmpp.org/extensions/xep-0136.html#ns",
-                                                    "auto");
-                                auto.setAttribute("save", "true");
-                                pkt.getNode().appendChild(auto);
-                                account.connection.send(pkt);
+
+                                servicesManager.sendIq({
+                                    to: account.jid,
+                                    type: "set",
+                                    domBuilder: ["auto", {
+                                        xmlns: "http://www.xmpp.org/extensions/xep-0136.html#ns",
+                                        save: "true"
+                                    }]
+                                })
                             });
         this.hasDiscoFeature("http://oneteam.im/invitations", false,
                              function(account, val) {
@@ -832,13 +831,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     },
 
     _getSavedPresence: function() {
-        var iq = new JSJaCIQ();
-        iq.setType("get")
-
-        var query = iq.setQuery("jabber:iq:private");
-        var node = query.appendChild(iq.getDoc().createElementNS("oneteam:presence", "presence"));
-
-        account.connection.send(iq, new Callback(this._gotSavedPresence, this));
+        servicesManager.sendIq({
+            type: "get",
+            domBuilder: ["query", {xmlns: "jabber:iq:private"},
+                         [["presence", {xmlns: "oneteam:presence"}]]]
+        }, new Callback(this._gotSavedPresence, this));
     },
 
     _gotSavedPresence: function(pkt)
@@ -888,6 +885,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 if (profiles[i].name == profile)
                     this._savedPresence.profile = profiles[i];
         }
+
 
         this.setPresence(this._savedPresence || new Presence(), true);
         this.connectionInitialized = true;
@@ -947,15 +945,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         }
     },
 
-    _initialRosterFetch: function(pkt, _this)
+    _initialRosterFetch: function(pkt)
     {
         if (pkt)
             if (pkt.getNode().childNodes.length)
-                _this.onRosterIQ(pkt, true);
+                this.onRosterIQ(pkt, true);
             else
-                _this._restoreContactsFromCache()
+                this._restoreContactsFromCache()
 
-        _this._initConnectionStep(1);
+        this._initConnectionStep(1);
     },
 
     _initialize: function()
@@ -1258,8 +1256,8 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     _generateVCardPkt: function()
     {
         var iq = new JSJaCIQ();
-        iq.setIQ(null, 'get');
-        iq.getNode().appendChild(iq.getDoc().createElementNS('vcard-temp', 'vCard'));
+        iq.setIQ(null, "get");
+        iq.getNode().appendChild(iq.getDoc().createElementNS("vcard-temp", "vCard"));
         return iq;
     },
 
