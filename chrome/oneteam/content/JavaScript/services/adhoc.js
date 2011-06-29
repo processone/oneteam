@@ -28,13 +28,13 @@ var adhocCmds = {
             var status = query..ns::field.(@var == "status").ns::value.toString() || null;
 
             if (show == "unavailable") {
-                var iq = new JSJaCIQ();
-                iq.setIQ(pkt.getFrom(), "result", pkt.getID());
-                iq.getNode().appendChild(E4XtoDOM(
-                    <command xmlns="http://jabber.org/protocol/commands"
-                        node={query.@node} sessionid={query.@sessionid} status="completed"/>,
-                    iq.getDoc()));
-                account.connection.send(iq);
+                servicesManager.sendIq({
+                  id: pkt.getID(),
+                  to: pkt.getFrom(),
+                  type: "result",
+                  e4x: <command xmlns="http://jabber.org/protocol/commands" node={query.@node}
+                                sessionid={query.@sessionid} status="completed"/>
+                });
                 account.disconnect();
                 return;
             }

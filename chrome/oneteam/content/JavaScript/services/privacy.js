@@ -11,21 +11,21 @@ var privacyService =
 
     activateList: function(name)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(null, "set");
-        var list = iq.getDoc().createElementNS("jabber:iq:privacy", "active");
+        var list = ["active", {xmlns: "jabber:iq:privacy"}];
         if (name)
-            list.setAttribute("name", name);
-        iq.setQuery("jabber:iq:privacy").appendChild(list);
-        account.connection.send(iq);
+          list[1].name = name;
+        servicesManager.sendIq({
+          type: "set",
+          domBuilder: ["query", {xmlns: "jabber:iq:privacy"}, list]
+        });
     },
 
     fetchLists: function(name)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(null, "get");
-        iq.setQuery("jabber:iq:privacy");
-        account.connection.send(iq, this._fetchListRecv);
+        servicesManager.sendIq({
+          type: "get",
+          e4x: <query xmlns="jabber:iq:privacy"/>
+        }, this._fetchListRecv);
     },
 
     _fetchListRecv: function(pkt)
@@ -55,12 +55,11 @@ var privacyService =
 
     sendList: function(e4x)
     {
-        iq = new JSJaCIQ();
-        iq.setIQ(null, "set");
-        iq.setQuery("jabber:iq:privacy").appendChild(E4XtoDOM(e4x, iq.getDoc()));
         this.lists[e4x.@name] = 2;
-
-        account.connection.send(iq);
+        servicesManager.sendIq({
+          type: "set",
+          e4x: <query xmlns="jabber:iq:privacy">{e4x}</query>
+        });
     }
 };
 

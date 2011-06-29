@@ -201,60 +201,53 @@ _DECL_(PresenceProfiles, null, Model).prototype =
 
     loadFromServer: function(callback)
     {
-        const ns = "oneteam:presence-profiles";
-
         if (this.profiles.length) {
             var p = this.profiles;
             this.profiles = [];
             this.modelUpdated("profiles", {removed: p});
         }
 
-        var iq = new JSJaCIQ();
-        iq.setType("get")
-        var query = iq.setQuery("jabber:iq:private");
-        query.appendChild(iq.getDoc().createElementNS(ns, "profiles"));
-
-        account.connection.send(iq, new Callback(this._onPresenceProfiles, this).
-                        addArgs(callback).fromCall());
+        servicesManager.sendIq({
+          type: "get",
+          e4x: <query xmlns="jabber:iq:private">
+                 <profiles xmlns="oneteam:presence-profiles"/>
+               </query>
+        }, new Callback(this._onPresenceProfiles, this).addArgs(callback).fromCall());
     },
 
     storeOnServer: function()
     {
         const ns = "oneteam:presence-profiles";
-
-        var iq = new JSJaCIQ();
-        iq.setType("set")
-        var query = iq.setQuery("jabber:iq:private");
-        var profiles = query.appendChild(iq.getDoc().createElementNS(ns, "profiles"));
+        var profiles = ["profiles", {xmlns: ns}, []];
 
         for (var i = 0; i < this.profiles.length; i++) {
             var profile = this.profiles[i];
-            var profileTag = profiles.appendChild(iq.getDoc().createElementNS(ns, "profile"));
-            profileTag.setAttribute("name", profile.name);
+            var tags = [];
 
             for (var j = 0; j < profile.presences.length; j++) {
                 var presence = profile.presences[j];
-                var presenceTag = profileTag.appendChild(
-                    iq.getDoc().createElementNS(ns, "presence"));
 
-                if (presence.presence) {
-                    if (presence.presence.show)
-                        presenceTag.setAttribute("show", presence.presence.show);
-                    if (presence.presence.priority != null)
-                        presenceTag.setAttribute("priority", presence.presence.priority);
-                    if (presence.presence.status)
-                        presenceTag.setAttribute("status", presence.presence.status);
-                }
+                var attrs = {xmlns: ns};
+                if (presence.presence)
+                    for each (var attr in "show priority status".split(" "))
+                        if (presence.presence[attr])
+                            attrs[attr] = presence.presence[attr];
+
+                var elts = [];
                 for (k = 0; k < presence.groups.length; k++)
-                    presenceTag.appendChild(iq.getDoc().createElementNS(ns, "group")).
-                        appendChild(iq.getDoc().createTextNode(presence.groups[k]));
+                    elts.push(["group", {xmlns: ns}, [presence.groups[k]]]);
                 for (k = 0; k < presence.jids.length; k++)
-                    presenceTag.appendChild(iq.getDoc().createElementNS(ns, "jid")).
-                        appendChild(iq.getDoc().createTextNode(presence.jids[k]));
+                    elts.push(["jid", {xmlns: ns}, [presence.jids[k]]]);
+
+                tags.push(["presence", attrs, elts]);
             }
+            profiles[2].push(["profile", {xmlns: ns, name: profile.name}, tags]);
         }
 
-        account.connection.send(iq);
+        servicesManager.sendIq({
+          type: "set",
+          domBuilder: ["query", {xmlns: "jabber:iq:private"}, [profiles]]
+        });
     },
 
     update: function(addedProfiles, removedProfiles)

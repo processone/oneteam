@@ -12,10 +12,11 @@ _DECL_(SOCKS5Service).prototype =
 
     registerProxy: function(jid)
     {
-        var bsp = new JSJaCIQ();
-        bsp.setIQ(jid, "get");
-        bsp.setQuery("http://jabber.org/protocol/bytestreams");
-        account.connection.send(bsp, new Callback(this._onProxyAddress, this));
+        servicesManager.sendIq({
+          to: jid,
+          type: "get",
+          e4x: <query xmlns="http://jabber.org/protocol/bytestreams"/>
+        }, new Callback(this._onProxyAddress, this));
     },
 
     _onProxyAddress: function(pkt)
@@ -210,14 +211,14 @@ _DECL_(SOCKS5Service).prototype =
             delete token.bytestreams;
             token.bytestream = initiator;
 
-            var pkt = new JSJaCIQ();
-            pkt.setIQ(token.fileTransfer.jid, "result", token.id);
-            pkt.getNode().appendChild(E4XtoDOM(
-                <query xmlns='http://jabber.org/protocol/bytestreams'>
-                    <streamhost-used jid={initiator._jid}/>
-                </query>, pkt.getDoc()));
-
-            account.connection.send(pkt);
+            servicesManager.sendIq({
+              id: token.id,
+              to: token.fileTransfer.jid,
+              type: "result",
+              e4x: <query xmlns='http://jabber.org/protocol/bytestreams'>
+                     <streamhost-used jid={initiator._jid}/>
+                   </query>
+            });
 
             token.fileTransfer.file.open(null, 0x2|0x8|0x20);
             token.bytestream.recvFile(token.fileTransfer.file);

@@ -246,11 +246,11 @@ _DECL_(FileTransfer, null, Model).prototype =
         if (this.description)
             node.child(0).ftNS::desc = this.description;
 
-        var pkt = new JSJaCIQ();
-        pkt.setIQ(this.jid, "set");
-        pkt.getNode().appendChild(E4XtoDOM(node, pkt.getDoc()));
-
-        account.connection.send(pkt, new Callback(this._sendOfferStep, this));
+        servicesManager.sendIq({
+          to: this.jid,
+          type: "set",
+          e4x: node
+        }, new Callback(this._sendOfferStep, this));
     },
 
     _sendOfferStep: function(pkt)
@@ -275,19 +275,20 @@ _DECL_(FileTransfer, null, Model).prototype =
 
     accept: function(path)
     {
-        var pkt = new JSJaCIQ();
-        pkt.setIQ(this.jid, "result", this.offerID);
-        pkt.getNode().appendChild(E4XtoDOM(
-            <si xmlns='http://jabber.org/protocol/si' id={this.streamID}>
-                <feature xmlns='http://jabber.org/protocol/feature-neg'>
-                    <x xmlns='jabber:x:data' type='submit'>
-                        <field var='stream-method' type='list-single'>
-                            <value>{this.method}</value>
-                        </field>
-                    </x>
-                </feature>
-            </si>, pkt.getDoc()));
-        account.connection.send(pkt);
+        servicesManager.sendIq({
+          id: this.offerID,
+          to: this.jid,
+          type: "result",
+          e4x: <si xmlns='http://jabber.org/protocol/si' id={this.streamID}>
+                  <feature xmlns='http://jabber.org/protocol/feature-neg'>
+                      <x xmlns='jabber:x:data' type='submit'>
+                          <field var='stream-method' type='list-single'>
+                              <value>{this.method}</value>
+                          </field>
+                      </x>
+                  </feature>
+              </si>
+        });
 
         if (path)
             this.file = new File(path)
@@ -302,14 +303,15 @@ _DECL_(FileTransfer, null, Model).prototype =
 
     reject: function(fileTransfer)
     {
-        var pkt = new JSJaCIQ();
-        pkt.setIQ(this.jid, "error", this.offerID);
-        pkt.getNode().appendChild(E4XtoDOM(
-            <error code='403' type='cancel'>
-                <forbidden xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
-                <text xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'>Offer Declined</text>
-            </error>, pkt.getDoc()));
-        account.connection.send(pkt);
+        servicesManager.sendIq({
+          id: this.offerID,
+          to: this.jid,
+          type: "error",
+          e4x: <error code='403' type='cancel'>
+                 <forbidden xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
+                 <text xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'>Offer Declined</text>
+               </error>
+        });
     },
 
     cancel: function()

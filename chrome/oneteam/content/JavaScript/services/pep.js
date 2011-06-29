@@ -45,29 +45,22 @@ _DECL_(PEPNodeHandler).prototype = {
     },
 
     publishItem: function(id, data) {
-        var pkt = new JSJaCIQ();
         var ns = "http://jabber.org/protocol/pubsub"
-
-        pkt.setType('set');
-
-        pkt.appendNode("pubsub", {xmlns: ns}, 
-                       [["publish", {node: this._node},
-                         [["item", id ? {xmlns:ns, id: id} : {xmlns:ns}, data]]]]);
-
-        account.connection.send(pkt);
+        servicesManager.sendIq({
+          type: "set",
+          domBuilder: ["pubsub", {xmlns: ns},
+                        [["publish", {node: this._node},
+                          [["item", id ? {xmlns:ns, id: id} : {xmlns:ns}, data]]]]]
+        });
     },
 
     retractItem: function(id) {
-        var pkt = new JSJaCIQ();
         var ns = "http://jabber.org/protocol/pubsub"
-
-        pkt.setType('set');
-
-        pkt.appendNode("retract", {xmlns: ns, node: this._node}, [
-            ["item", {xmlns: ns, id: id}, data]
-        ])
-
-        account.connection.send(pkt);
+        servicesManager.sendIq({
+          type: "set",
+          domBuilder: ["retract", {xmlns: ns, node: this._node},
+                        [["item", {xmlns: ns, id: id}, data]]]
+        });
     }
 }
 

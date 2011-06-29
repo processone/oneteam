@@ -125,10 +125,12 @@
       if (form)
         response.* += buildResponseDataFormFromXUL(form);
 
-      var iq = new JSJaCIQ();
-      iq.setIQ(contact.jid, "set", id);
-      iq.getNode().appendChild(E4XtoDOM(response, iq.getDoc()))
-      account.connection.send(iq, onForm);
+      servicesManager.sendIq({
+        id: id,
+        to: contact.jid,
+        type: "set",
+        e4x: response
+      }, onForm);
     }
 
     function onDiscoItems(di, items) {
