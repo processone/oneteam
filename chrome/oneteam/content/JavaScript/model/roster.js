@@ -179,35 +179,33 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     _updateRoster: function(callback)
     {
-        var iq = new JSJaCIQ();
-        iq.setType('set');
-        var query = iq.setQuery('jabber:iq:roster');
-        var item = query.appendChild(iq.getDoc().createElement('item'));
-        item.setAttribute('jid', this.jid);
+        var item = ["item", {jid: this.jid}, []];
 
         if (this._subscription != "remove") {
             if (this._name || this.name)
-                item.setAttribute('name', this._name || this.name);
+                item[1].name = this._name || this.name;
             var groups = this._groups || this.groups;
             for (var i = 0; i < groups.length; i++) {
                 var groupName = typeof(groups[i]) == "string" ? groups[i] : groups[i]._name || groups[i].name;
                 if (!groupName) continue;
-                var group = item.appendChild(iq.getDoc().createElement('group'));
-                group.appendChild(iq.getDoc().createTextNode(groupName));
+                item[2].push(["group", {}, groupName]);
             }
             this._inRoster = true;
         } else
             this._inRoster = false;
 
         if (this._subscription || this.subscription)
-            item.setAttribute('subscription', this._subscription || this.subscription);
+            item[1].subscription = this._subscription || this.subscription;
 
         delete this._name;
         delete this._subscription;
         delete this._subscriptionAsk;
         delete this._groups;
 
-        account.connection.send(iq, callback);
+        servicesManager.sendIq({
+          type: "set",
+          domBuilder: ["query", {xmlns: "jabber:iq:roster"}, [item]]
+        }, callback);
     },
 
     _updateFromServer: function(node) {
@@ -542,19 +540,19 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     requestRegistrationForm: function(callback)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "get");
-        iq.setQuery('jabber:iq:register');
-        account.connection.send(iq, callback);
+        servicesManager.sendIq({
+          type: "get",
+          e4x: <query xmlns="jabber:iq:register"/>
+        }, callback);
     },
 
     register: function(payload, callback)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "set");
-        iq.setQuery("jabber:iq:register").
-            appendChild(E4XtoDOM(payload, iq.getDoc()));
-        account.connection.send(iq, callback);
+        servicesManager.sendIq({
+          to: this.jid,
+          type: "set",
+          e4x: <query xmlns="jabber:iq:register">{payload}</query>
+        }, callback);
     },
 
     unregister: function(callback)
@@ -570,19 +568,20 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     requestSearchForm: function(callback)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "get");
-        iq.setQuery("jabber:iq:search");
-        account.connection.send(iq, callback);
+        servicesManager.sendIq({
+          to: this.jid,
+          type: "get",
+          e4x: <query xmlns="jabber:iq:search"/>
+        }, callback);
     },
 
     search: function(payload, callback)
     {
-        var iq = new JSJaCIQ();
-        iq.setIQ(this.jid, "set");
-        iq.setQuery("jabber:iq:search").
-            appendChild(E4XtoDOM(payload, iq.getDoc()));
-        account.connection.send(iq, callback);
+        servicesManager.sendIq({
+          to: this.jid,
+          type: "set",
+          e4x: <query xmlns="jabber:iq:search">{payload}</query>
+        }, callback);
     },
 
     _onResourceUpdated: function(resource)

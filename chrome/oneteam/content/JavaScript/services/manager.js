@@ -362,14 +362,7 @@ _DECL_(ServicesManager).prototype =
             state.timeout = setTimeout(callback, timeout, null, null, null,
                                        origCallback, state, true);
         }
-        this._sendResponse(struct, {
-            getFrom: function() {
-                return null;
-            },
-            getID: function() {
-                return null;
-            }
-        }, callback);
+        this._sendResponse(struct, null, callback);
     },
 
     _sendResponse: function(response, packet, callback)
