@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xbl="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <binding id="fontSizeMeter">
+    <content>
+      <xul:vbox>
+        <xul:hbox id="sizeDecreasedSensor" style="overflow-y: hidden" height="0">X</xul:hbox>
+        <xul:hbox id="sizeIncreasedSensor" style="overflow-y: hidden" height="0">X</xul:hbox>
+        <xul:hbox id="fontSizeMeter">X</xul:hbox>
+      </xul:vbox>
+      <spacer/>
+    </content>
+
+    <implementation>
+      <constructor><![CDATA[
+        this.sizeDecreasedSensor = document.getElementById("sizeDecreasedSensor");
+        this.sizeIncreasedSensor = document.getElementById("sizeIncreasedSensor");
+        this.fontSizeMeter       = document.getElementById("fontSizeMeter");
+        
+        var updateFontSize = new Callback(function() {this.updateFontSize()}, this);
+        this.sizeIncreasedSensor.addEventListener("overflow", updateFontSize, false);
+        this.sizeDecreasedSensor.addEventListener("underflow", updateFontSize, false);
+      ]]></constructor>
+
+      <method name="updateFontSize">
+        <body><![CDATA[
+          var height = this.fontSizeMeter.boxObject.height;
+          this.sizeDecreasedSensor.height = height - 1;
+          this.sizeIncreasedSensor.height = height;
+
+          fontSizeManager.setSize(height);
+        ]]></body>
+      </method>
+    </implementation>
+  </binding>
+</bindings>

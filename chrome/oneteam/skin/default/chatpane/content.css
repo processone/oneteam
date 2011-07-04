@@ -15,7 +15,7 @@ body {
 body[hasSendButton=true] {
     background: transparent !important;
     padding-right: 50px;
-    min-height: 19px;
+    min-height: 1.3em;
 }
 
 body[hasSendButton=true]:after {

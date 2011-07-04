@@ -363,6 +363,8 @@
             this._output.contentWindow.addEventListener("scroll", function() {
               me._syncMarkers();
             }, false);
+
+            fontSizeManager.register(this._output)
           ]]>
         </body>
       </method>
@@ -1203,7 +1205,7 @@
           <xul:label id="_counter" value="0"/>
         </xul:hbox>
         <xul:vbox class="inputBox textbox-input-box" flex="1" xbl:inherits="context,spellcheck">
-          <html:iframe id="_input" style="height: 1.4em"/>
+          <html:iframe id="_input"/>
         </xul:vbox>
       </xul:stack>
     </content>
@@ -1553,6 +1555,8 @@
             doc.body.setAttribute("disabled", true);
           else
             this._enableInput();
+
+          fontSizeManager.register(this._input);
         ]]></body>
       </method>
 

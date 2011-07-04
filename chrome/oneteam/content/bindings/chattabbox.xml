@@ -412,6 +412,9 @@
           if (this.thread && this.thread.contact instanceof Conference)
             this.thread.contact.exitRoom();
 
+          fontSizeManager.unregister(this._chatpane._output._output);
+          fontSizeManager.unregister(this._chatpane._input._input);
+
           this._tabbox._removeTab(this);
         ]]></body>
       </method>

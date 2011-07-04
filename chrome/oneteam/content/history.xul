@@ -109,6 +109,9 @@
       contactsList.destroy();
       conferencesList.destroy();
       regToken.unregisterFromAll();
+
+      for each (var chatpaneView in [searchMessages, contactsMessages, conferencesMessages])
+        fontSizeManager.unregister(chatpaneView._output);
     }
 
     var lastSearch;

@@ -22,7 +22,7 @@
   <script type="application/javascript" src="chrome://global/content/macWindowMenu.js"/>
   <script type="application/javascript" src="../JavaScript/menu.js"/>
 
-  <menu id="menu-file" label="_('_File')">
+  <menu id="menu-file" label="_('_Actions')">
     <menupopup id="file-popup">
       <menuitem label="_('_Initiate Chat...')" command="cmd_initateChat" key="key_initiateChat"
                 insertbefore="close-menuseparator"/>
@@ -69,10 +69,10 @@
       <menuitem id="disco-menuitem" label="_('Service _Discovery')" command="cmd_disco" key="key_disco"/>
       <menuitem label="_('_Server Commands...')" command="cmd_adhoc" key="key_adhoc"/>
       <menuseparator/>
-      <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
-      <menuseparator/>
       <menuitem id="menu_preferences" label="_('_Preferences...')" command="cmd_prefs" key="key_prefs"
                 winlabel="_('_Options...')"/>
+      <menuseparator/>
+      <menuitem label="_('Disconnect')" command="cmd_disconnect"/>
     </menupopup>
   </menu>
 

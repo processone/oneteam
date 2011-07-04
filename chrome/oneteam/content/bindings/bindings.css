@@ -160,3 +160,7 @@ commandconsole {
 expander {
   -moz-binding: url("chrome://oneteam/content/bindings/expander.xml#expander");
 }
+
+fontSizeMeter {
+  -moz-binding: url("chrome://oneteam/content/bindings/fontSizeMeter.xml#fontSizeMeter");
+}
