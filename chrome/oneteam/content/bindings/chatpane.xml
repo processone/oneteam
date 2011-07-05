@@ -12,7 +12,7 @@
 
     <content>
       <xul:hbox flex="1">
-        <xul:iframe src="about:blank" id="output" flex="1" type="content"/>
+        <xul:iframe src="data:text/html;base64,PCFET0NUWVBFIEhUTUw+PGh0bWw+PGJvZHk+PC9ib2R5PjwvaHRtbD4K" id="output" flex="1" type="content"/>
         <xul:stack id="markersContainer">
           <xul:vbox class="marker-arrow"/>
         </xul:stack>
@@ -256,7 +256,7 @@
 
       <method name="scrollPageUp">
         <body><![CDATA[
-          var el = this._output.contentDocument.body;
+          var el = this._output.contentDocument.documentElement;
 
           if (this._scrollAnimation)
             this._scrollAnimation.stop();
@@ -270,7 +270,7 @@
 
       <method name="scrollPageDown">
         <body><![CDATA[
-          var el = this._output.contentDocument.body;
+          var el = this._output.contentDocument.documentElement;
 
           if (this._scrollAnimation)
             this._scrollAnimation.stop();
@@ -359,7 +359,7 @@
 
             win.addEventListener("resize", function() {
               me._syncMarkers();
-              doc.body.scrollTop = doc.body.scrollHeight;
+              doc.documentElement.scrollTop = doc.documentElement.scrollHeight;
             }, false);
 
             win.addEventListener("scroll", function() {
@@ -496,7 +496,7 @@
             this._fetchMoreArrow.style.display = "none";
 
           var doc = this._output.contentDocument;
-          var pos = doc.body.clientHeight - doc.body.scrollTop;
+          var pos = doc.documentElement.clientHeight - doc.documentElement.scrollTop;
 
           var fragment = this._genDocFragmentFromMsgs(msgs, doc, null, null,
                                                       this._firstMsg, this._firstMsgEl);
@@ -540,7 +540,7 @@
           this._firstMsg = msgs[0];
           this._firstMsgEl = firstMsgEl;
 
-          doc.body.scrollTop = 0;
+          doc.documentElement.scrollTop = 0;
         ]]></body>
       </method>
 
@@ -555,12 +555,13 @@
             }, 50, this, initial);
             return
           }
-          var scrEl = doc.body;
+          var scrEl = doc.documentElement;
 
           if (!this._fetchMoreArrow && this._hasMoreArchivedMessages) {
             this._fetchMoreArrow = doc.createElement("div");
             this._fetchMoreArrow.setAttribute("class", "fetch-more");
             this._fetchMoreArrow.textContent = _("Load more messages from history");
+            this._fetchMoreArrow.setAttribute("title", "fetch-more");
 
             doc.body.appendChild(this._fetchMoreArrow);
           }
@@ -612,7 +613,7 @@
 
           if (this.scrollToBottom && scrollToBottom && msgEl)
             if (initial)
-              doc.body.scrollTop = doc.body.scrollHeight;
+              doc.documentElement.scrollTop = doc.documentElement.scrollHeight;
             else
               this._scrollToBottomAnimation = this.scrollToElement(msgEl);
 
@@ -2446,18 +2447,25 @@
 
       <method name="_preMaybeResize">
         <body><![CDATA[
-          if (!this._output || !this._output._output || !this._output._output.contentDocument)
+          var el;
+
+          if (!(el = this._output) || !(el = el._output) ||
+              !(el = el.contentDocument) || !(el = el.documentElement))
             return;
 
-          var outputBody = this._output._output.contentDocument.body;
-          this._outputScrollPos = outputBody.scrollTop + outputBody.clientHeight;
+          this._outputScrollPos = el.scrollTop + el.clientHeight;
         ]]></body>
       </method>
 
       <method name="_postMaybeResize">
         <body><![CDATA[
-          var outputBody = this._output._output.contentDocument.body;
-          outputBody.scrollTop = this._outputScrollPos - outputBody.clientHeight;
+          var el;
+
+          if (!(el = this._output) || !(el = el._output) ||
+              !(el = el.contentDocument) || !(el = el.documentElement))
+            return;
+
+          el.scrollTop = this._outputScrollPos - el.clientHeight;
         ]]></body>
       </method>
 
