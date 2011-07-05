@@ -365,10 +365,6 @@
             win.addEventListener("scroll", function() {
               me._syncMarkers();
             }, false);
-
-            var cs = window.getComputedStyle(this);
-            doc.body.style.fontFamily = cs.fontFamily;
-            doc.body.style.fontSize = cs.fontSize;
           ]]>
         </body>
       </method>
@@ -1520,10 +1516,6 @@
 
           if (this._toolbar)
             this._toolbar._updateState();
-
-          var cs = window.getComputedStyle(this);
-          doc.body.style.fontFamily = cs.fontFamily;
-          doc.body.style.fontSize = cs.fontSize;
 
           var chatpane = this.parentNode.parentNode.parentNode;
           for (var nick in this._output._lastNickMessage) {

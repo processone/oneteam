@@ -5,7 +5,7 @@ html {
 
 body {
     background: #c7c7c7 !important;
-    font-family: sans-serif;
+    font: -moz-document;
     margin: 0px;
     padding: 2px;
     min-height: 17px;
