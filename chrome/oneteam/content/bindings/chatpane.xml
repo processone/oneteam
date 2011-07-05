@@ -287,28 +287,31 @@
           <![CDATA[
             this._initialized = true;
 
-            var link = this._output.contentDocument.createElement("link");
+            var doc = this._output.contentDocument;
+            var win = this._output.contentWindow;
+
+            var link = doc.createElement("link");
             if (!("_frames" in window))
               window._frames = [];
-            window._frames.push(this._output.contentWindow);
-            this._output.contentWindow._frameElement = this._output;
+            window._frames.push(win);
+            win._frameElement = this._output;
 
             link.setAttribute("rel", "stylesheet");
             link.setAttribute("href", "resource://oneteam-skin/chatpane/content.css");
-            this._output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
+            doc.getElementsByTagName("HEAD")[0].appendChild(link);
 
             var colorScheme = ".message { opacity: 1 }\n.message[not-seen=\"true\"] { opacity: 1 }\n";
 
-            var colorSchemeTag = this._output.contentDocument.createElement("style");
-            colorSchemeTag.setAttribute("type", "text/css");
-            colorSchemeTag.appendChild(this._output.contentDocument.createTextNode(colorScheme));
-            this._output.contentDocument.getElementsByTagName("HEAD")[0].
-              appendChild(colorSchemeTag);
+            var colorSchemeTag = doc.createElement("style");
 
-            this._output.contentDocument.body.className = "smiles-enabled";
+            colorSchemeTag.setAttribute("type", "text/css");
+            colorSchemeTag.appendChild(doc.createTextNode(colorScheme));
+            doc.getElementsByTagName("HEAD")[0].appendChild(colorSchemeTag);
+
+            doc.body.className = "smiles-enabled";
 
             for (var i = 0; i < account.style.smiles.length; i++)
-              account.style.smiles[i].attachStyles(this._output.contentDocument);
+              account.style.smiles[i].attachStyles(doc);
 
             var me = this;
             this._output.contentDocument.addEventListener("click", function(event) {
@@ -327,15 +330,13 @@
             if (this._model)
               this._onMessageQueueChanged();
 
-            var doc = this._output.contentDocument;
-
-            this._output.contentDocument.addEventListener("contactdblclick", function(event) {
+            doc.addEventListener("contactdblclick", function(event) {
               var target = event.target;
               if (target && target.contact)
                 target.contact.onOpenChat();
             }, false);
 
-            this._output.contentDocument.addEventListener("replacewithimage", function(event) {
+            doc.addEventListener("replacewithimage", function(event) {
               var target = event.target;
               var checked = target.getElementsByTagName("input")[0].checked;
 
@@ -356,15 +357,18 @@
                 me._replaceWithImage(event.target);
             }, false);
 
-            this._output.contentWindow.addEventListener("resize", function() {
+            win.addEventListener("resize", function() {
               me._syncMarkers();
               doc.body.scrollTop = doc.body.scrollHeight;
             }, false);
-            this._output.contentWindow.addEventListener("scroll", function() {
+
+            win.addEventListener("scroll", function() {
               me._syncMarkers();
             }, false);
 
-            fontSizeManager.register(this._output)
+            var cs = window.getComputedStyle(this);
+            doc.body.style.fontFamily = cs.fontFamily;
+            doc.body.style.fontSize = cs.fontSize;
           ]]>
         </body>
       </method>
@@ -1516,6 +1520,9 @@
           if (this._toolbar)
             this._toolbar._updateState();
 
+          var cs = window.getComputedStyle(this);
+          doc.body.style.fontFamily = cs.fontFamily;
+          doc.body.style.fontSize = cs.fontSize;
 
           var chatpane = this.parentNode.parentNode.parentNode;
           for (var nick in this._output._lastNickMessage) {
@@ -1555,8 +1562,6 @@
             doc.body.setAttribute("disabled", true);
           else
             this._enableInput();
-
-          fontSizeManager.register(this._input);
         ]]></body>
       </method>
 

@@ -10,7 +10,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
                         "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
                         "updateMenuList", "alertEx", "tooltip", "removeTooltip",
-                        "tooltipLinks", "fontSizeManager"];
+                        "tooltipLinks"];
 
 ML.importMod("roles.js");
 
@@ -1370,32 +1370,4 @@ function tooltipLinks(htmlNode, xulNode) {
     var n;
     while ((n = iterator.nextNode()))
         tooltip(n, xulNode, n.getAttribute("href"));
-}
-
-var fontSizeManager = {
-     // functions to apply the OS preferred font size to html elements
-
-    _size: 0,
-    _htmlElementStyles: {},// set of html elements' stylesheets whose font size may change
-    _index: 0,
-
-    setSize: function (height) {
-        this._size = height;
-        for (var i in this._htmlElementStyles)
-            this._htmlElementStyles[i].fontSize = height;
-    },
-
-    register: function (htmlElement) {
-        var style = htmlElement.contentDocument.body.style;
-        if (this._size)
-            style.fontSize = this._size;
-        this._htmlElementStyles[this._index] = style;
-        style._index = this._index;
-        this._index++;
-    },
-
-    unregister: function (htmlElement) {
-        var style = htmlElement.contentDocument.body.style;
-        delete this._htmlElementStyles[style._index];
-    }
 }

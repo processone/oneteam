@@ -386,9 +386,6 @@
              defaultset="initiate-chat-button,join-room-button,presences-tab-button,separator,add-user-button,separator,prefs-button,gateways-separator" hidden="true"/>
   </toolbox>
 
-<stack flex="1">
-<fontSizeMeter style="visibility: hidden"/>
-<vbox>
   <vbox id="main-box" flex="1">
     <hbox flex="1">
       <vbox id="roster-box" flex="1">
@@ -480,6 +477,4 @@
   <vbox id="hiddenContainer" collapsed="true">
     <html:iframe id="hiddenFrame"/>
   </vbox>
-</vbox>
-</stack>
 </window>
