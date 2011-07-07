@@ -203,7 +203,7 @@
   ]]></script>
 
   <popupset>
-    <popup id="contact-contextmenu" onpopupshowing="updateContextMenu(this, event)">
+    <menupopup id="contact-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="contact-chat-single" label="_('Open Chat...')"
           oncommand="menuModel.onOpenChat()"/>
       <menu id="contact-chat-multi" label="_('Open Chat...')" hidden="true">
@@ -246,14 +246,14 @@
 
       <menuitem label="_('Show Details...')" oncommand="menuModel.showVCard()"/>
       <menuitem label="_('Show History...')" oncommand="menuModel.onShowHistory()"/>
-    </popup>
+    </menupopup>
 
-    <popup id="group-contextmenu" onpopupshowing="updateContextMenu(this, event)">
+    <menupopup id="group-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem label="_('Rename...')" id="group-rename" oncommand="menuModel.onRename()"/>
       <menuitem label="_('Remove...')" id="group-remove" oncommand="menuModel.onRemove()"/>
-    </popup>
+    </menupopup>
 
-    <popup id="resource-contextmenu" onpopupshowing="updateContextMenu(this, event)">
+    <menupopup id="resource-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem label="_('Open Chat...')" oncommand="menuModel.onOpenChat()"/>
       <menuitem id="resource-call" label="_('Voice Call...')" oncommand="menuModel.onJingleCall()"/>
       <menu id="resource-invite" label="_('Invite To')" hidden="true">
@@ -268,9 +268,9 @@
         oncommand="menuModel.onShowHistory()"/>
       <menuitem id="resource-send-file" label="_('Send File...')"
         oncommand="menuModel.onSendFile()"/>
-    </popup>
+    </menupopup>
 
-    <popup id="conference-contextmenu" onpopupshowing="updateContextMenu(this, event)">
+    <menupopup id="conference-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="conference-invite" label="_('Invite Users To This Room...')"
           oncommand="menuModel.onInvite()"/>
       <menuitem id="conference-changeNick" label="_('Change Nick...')"
@@ -298,9 +298,9 @@
 
       <menuitem id="conference-leave" label="_('Leave Chat Room')"
           oncommand="menuModel.exitRoom()"/>
-    </popup>
+    </menupopup>
 
-    <popup id="conferencemember-contextmenu" onpopupshowing="updateContextMenu(this, event)">
+    <menupopup id="conferencemember-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="conferencemember-chat-single" label="_('Open Chat...')"
           oncommand="menuModel.onOpenChat()"/>
 
@@ -352,9 +352,9 @@
         oncommand="menuModel.onShowHistory()"/>
       <menuitem id="conferencemember-send-file" label="_('Send File...')"
         oncommand="menuModel.onSendFile()"/>
-    </popup>
+    </menupopup>
 
-    <popup id="gateway-contextmenu" onpopupshowing="updateContextMenu(this, event)">
+    <menupopup id="gateway-contextmenu" onpopupshowing="updateContextMenu(this, event)">
       <menuitem id="gateway-chat-single" label="_('Open Chat...')"
           oncommand="menuModel.onOpenChat()"/>
 
@@ -376,9 +376,9 @@
 
       <menuitem label="_('Remove...')"
         oncommand="menuModel.onRemove()"/>
-    </popup>
+    </menupopup>
 
-    <popup id="inputContext" onpopuphidden="spellcheck.onHiddenSuggestionsMenu(this);"
+    <menupopup id="inputContext" onpopuphidden="spellcheck.onHiddenSuggestionsMenu(this);"
            onpopupshowing="spellcheck.onShowSuggestionsMenu(this);">
       <menuitem id="spellCheckNoSuggestions" label="_('No Suggestions')" disabled="true"/>
       <menuseparator id="suggestions-separator"/>
@@ -392,6 +392,6 @@
       <menuitem id="menu_delete_cm" label="_('Delete')" accesskey="" command="cmd_delete"/>
       <menuseparator id="edit-separator"/>
       <menuitem id="menu_selectAll_cm" label="_('Select All')" accesskey="" command="cmd_selectAll"/>
-    </popup>
+    </menupopup>
   </popupset>
 </overlay>
