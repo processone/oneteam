@@ -24,6 +24,9 @@
       typeControl = document.getElementById("presenceType");
       textControl = document.getElementById("statusText");
 
+      if (account.currentPresence.status)
+        textControl.value = account.currentPresence.status;
+
       messages = account.cache.getValue("statusMessages");
 
       if (messages) {
