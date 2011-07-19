@@ -1511,8 +1511,6 @@
 
           this.focus(true);
 
-          this.maybeResize()
-
           if (this._toolbar)
             this._toolbar._updateState();
 
@@ -1554,6 +1552,8 @@
             doc.body.setAttribute("disabled", true);
           else
             this._enableInput();
+
+          this.maybeResize();
         ]]></body>
       </method>
 
@@ -2438,25 +2438,19 @@
 
       <method name="_preMaybeResize">
         <body><![CDATA[
-          var el;
-
-          if (!(el = this._output) || !(el = el._output) ||
-              !(el = el.contentDocument) || !(el = el.documentElement))
-            return;
-
-          this._outputScrollPos = el.scrollTop + el.clientHeight;
+          try {
+            var el = this._output._output.contentDocument.documentElement;
+            this._outputScrollPos = el.scrollTop + el.clientHeight;
+          } catch (ex) {}
         ]]></body>
       </method>
 
       <method name="_postMaybeResize">
         <body><![CDATA[
-          var el;
-
-          if (!(el = this._output) || !(el = el._output) ||
-              !(el = el.contentDocument) || !(el = el.documentElement))
-            return;
-
-          el.scrollTop = this._outputScrollPos - el.clientHeight;
+          try {
+            var el = this._output._output.contentDocument.documentElement;
+            el.scrollTop = this._outputScrollPos - el.clientHeight;
+          } catch (ex) {}
         ]]></body>
       </method>
 
