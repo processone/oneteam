@@ -213,7 +213,11 @@
         </row>
         <row>
           <label value="_('Priority:')"/>
-          <textbox preference="priority" type="number"/>
+          <textbox preference="priority" type="number" min="-128" max="127"
+                   onchange="account.setPresence(account.currentPresence.show,
+                                                 account.currentPresence.status,
+                                                 this.value,
+                                                 account.currentPresence.profile)"/>
         </row>
         <row>
           <label value="_('Connection Method:')"/>

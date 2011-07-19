@@ -92,7 +92,6 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         // XXXpfx: invisibility by using privacy lists removed, will be
         //  added again during rewriting presenceProfiles to use privacy lists.
 
-
         var presence;
         if (show instanceof Object) {
             presence = show;
@@ -853,9 +852,10 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         }
 
         this._savedPresence = new Presence(node.getAttribute("show") || "available",
-                                             node.getAttribute("status"),
-                                             node.getAttribute("priority"),
-                                             node.getAttribute("profile"));
+                                           node.getAttribute("status"),
+                                    prefManager.getPref("chat.connection.priority") ? null : 
+                                           node.getAttribute("priority"),
+                                           node.getAttribute("profile"));
         if (this._savedPresence.show == "unavailable") {
             this._savedPresence = null;
             this._initConnectionStep(6)
