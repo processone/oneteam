@@ -146,10 +146,6 @@ function highlightDiff (node1, node2) {
 function displayEditButton(body, message, xulNode) {
   // xulNode is used only to attach the tooltips to a xul element
 
-  function mytooltip(htmlNode, text) {
-    tooltip(htmlNode, xulNode, text);
-  }
-
   var doc = body.ownerDocument;
   var rightDiv = message.rightDiv;
 
@@ -210,40 +206,33 @@ function displayEditButton(body, message, xulNode) {
   }
 
   function _updateButtons() {
-    var tooltips = [];
-
     // 'See previous version' button
     if (currentMsg.previous) {
       previous.removeAttribute("disabled");
       previous.addEventListener("click", _displayPrevious, true);
-      tooltips.push([true, previous, currentMsg.editCounter, currentMsg.previous.time]);
+      setTooltip(previous, true, currentMsg.editCounter, currentMsg.previous.time);
     } else {
       previous.setAttribute("disabled", "true");
       previous.removeEventListener("click", _displayPrevious, true);
-      tooltips.push([false, previous, 1, currentMsg.time]);
+      setTooltip(previous, false, 1, currentMsg.time);
     }
 
     // 'See next version' button
     if (currentMsg.editMessage) {
       next.removeAttribute("disabled");
       next.addEventListener("click", _displayNext, true);
-      tooltips.push([true, next, currentMsg.editCounter ? currentMsg.editCounter+2 : 2,
-                     currentMsg.editMessage.time]);
+      setTooltip(next, true, currentMsg.editCounter ? currentMsg.editCounter+2 : 2,
+                 currentMsg.editMessage.time)
     } else {
       next.setAttribute("disabled", "true");
       next.removeEventListener("click", _displayNext, true);
-      tooltips.push([false, next, nbVersions, currentMsg.time]);
+      setTooltip(next, false, nbVersions, currentMsg.time);
     }
 
-    for (var i = 0; i < tooltips.length; i++) {
-      var [enabled, tooltip, version, timestamp] = tooltips[i];
-
-      if (enabled)
-        mytooltip(tooltip, _("See version {0} (from {1}), {2}", version, nbVersions,
-                             readableTimestamp(timestamp)));
-      else
-        mytooltip(tooltip, _("This is version {0} (from {1}), {2}", version, nbVersions,
-                             readableTimestamp(timestamp)));
+    function setTooltip(element, enabled, version, timestamp) {
+      element.title = 
+        _(enabled ? "See version {0} (from {1}), {2}" : "This is version {0} (from {1}), {2}",
+          version, nbVersions, readableTimestamp(timestamp));
     }
   }
 

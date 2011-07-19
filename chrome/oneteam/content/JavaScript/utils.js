@@ -9,8 +9,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
                         "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
-                        "updateMenuList", "alertEx", "tooltip", "removeTooltip",
-                        "tooltipLinks"];
+                        "updateMenuList", "alertEx", "fillTooltip"];
 
 ML.importMod("roles.js");
 
@@ -1332,42 +1331,23 @@ function alertEx(title, text) {
     ps.alert(findCallerWindow(), title == null ? "Alert" : ""+title, ""+text);
 }
 
-function tooltip(htmlNode, xulNode, text) {
-    /* this is to remedy the fact that in html elements embedded in xul, neither the
-       html attribute 'title', nor the xul attributes 'tooltip' and 'tooltiptext' work.
-       The solution consists in changing the attribute 'tooltiptext' of xulNode, which
-       is logically an ancestor of htmlNode, when hovering or leaving htmlNode */
 
-    removeTooltip(htmlNode);
-
-    htmlNode.xulNode = xulNode;
-    htmlNode.tooltiptext = text;
-    htmlNode.mouseover = function() {
-        xulNode.setAttribute("tooltiptext", text);
+/* Adds tooltip support to xul:iframes containing html:
+   displays html elements' title attribute and links' href attribute in tooltip
+   borrowed and modified from 
+   http://mxr.mozilla.org/mozilla-central/source/testing/mozmill/mozmill/mozmill/extension/content/chrome.js
+ */
+function fillTooltip(tipElement, tipNode) {
+    var title = null;
+    while (!title && tipElement) {
+        if (tipElement.nodeType == Node.ELEMENT_NODE)
+            title = tipElement.tagName.toUpperCase() == "A" ? tipElement.getAttribute("href") :
+                    tipElement.title;
+        tipElement = tipElement.parentNode;
     }
-    htmlNode.mouseout = function() {
-        if (xulNode.getAttribute("tooltiptext") == text)
-            xulNode.removeAttribute("tooltiptext");
+    if (title && /\S/.test(title)) {
+        tipNode.label = title;
+        return true;
     }
-    htmlNode.addEventListener("mouseover", htmlNode.mouseover, true);
-    htmlNode.addEventListener("mouseout", htmlNode.mouseout, true);
-}
-
-function removeTooltip(htmlNode) {
-    htmlNode.removeEventListener("mouseover", htmlNode.mouseover, true);
-    htmlNode.removeEventListener("mouseout", htmlNode.mouseout, true);
-    if (htmlNode.xulNode &&
-            htmlNode.xulNode.getAttribute("tooltiptext") == htmlNode.tooltiptext)
-        htmlNode.xulNode.removeAttribute("tooltiptext");
-}
-
-function tooltipLinks(htmlNode, xulNode) {
-    var iterator = document.createNodeIterator(htmlNode, 1, {
-        acceptNode: function(node) {
-            return node.tagName.toUpperCase() == "A" && node.getAttribute("href") ? 1 : 0;
-        }
-    }, true);
-    var n;
-    while ((n = iterator.nextNode()))
-        tooltip(n, xulNode, n.getAttribute("href"));
+    return false;
 }

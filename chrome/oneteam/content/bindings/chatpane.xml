@@ -11,8 +11,9 @@
     </resources>
 
     <content>
+      <xul:tooltip id="mozmill-tooltip" onpopupshowing="return fillTooltip(document.tooltipNode, this)"/>
       <xul:hbox flex="1">
-        <xul:iframe src="data:text/html;base64,PCFET0NUWVBFIEhUTUw+PGh0bWw+PGJvZHk+PC9ib2R5PjwvaHRtbD4K" id="output" flex="1" type="content"/>
+        <xul:iframe src="data:text/html;base64,PCFET0NUWVBFIEhUTUw+PGh0bWw+PGJvZHk+PC9ib2R5PjwvaHRtbD4K" id="output" flex="1" type="content" tooltip="mozmill-tooltip"/>
         <xul:stack id="markersContainer">
           <xul:vbox class="marker-arrow"/>
         </xul:stack>
@@ -720,7 +721,6 @@
               e.setAttribute("class", "body");
               msg.contentNode = doc.createElement("div");
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
-              tooltipLinks(msg.contentNode, this._output);
               e.appendChild(msg.contentNode);
 
               msgEl.appendChild(e);
@@ -756,7 +756,7 @@
                                     // archived message, until release of beta2
                       && xMessageId && this._input ? " thread-marker-reply" : ""));
                   if (this._input)
-                    tooltip(im, this._output, _("Refer to this Message"));
+                    im.title = _("Refer to this Message");
 
                   var handler = {
                     _this: this,
@@ -818,7 +818,6 @@
               msg = msg.editMessage;
               msg.contentNode = doc.createElement("div");
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
-              tooltipLinks(msg.contentNode, this._output);
             } // now, msg is the last edit message, or the original message if not edited
             if (msg.displayEditButton)
               msg.displayEditButton.reload(msg);
@@ -881,11 +880,11 @@
             var messageDiv = this._editButton.parentNode.parentNode.parentNode;
             if (chatpane.editModeEnabled) {
               this._editButton.setAttribute("editing", true);
-              tooltip(this._editButton, this._output, _("Cancel Edition"));
+              this._editButton.title = _("Cancel Edition");
               messageDiv.setAttribute("editing", true);
             } else {
               this._editButton.removeAttribute("editing");
-              tooltip(this._editButton, this._output, _("Edit Last Message"));
+              this._editButton.title = _("Edit Last Message");
               messageDiv.removeAttribute("editing");
             }
           } else
@@ -917,7 +916,7 @@
               im.addEventListener("click", new Callback (function() {
                 this.parentNode.parentNode.parentNode.parentNode.switchEditMode();
               }, this), true);
-              tooltip(im, this._output, _("Edit Last Message"));
+              im.title= _("Edit Last Message");
               this._editButton = im;
               rightDiv.appendChild(im);
             }
@@ -948,13 +947,13 @@
               var marker = token[1].lastChild.firstChild;
               marker.setAttribute("threadId", thread.age+1);
               if (this._input)
-                tooltip(marker, this._output, _("Refer to this Conversation"));
+                marker.title = _("Refer to this Conversation");
             }
           } else {
             var marker = msgToken[1].lastChild.firstChild;
             marker.setAttribute("threadId", thread.age+1);
             if (this._input)
-              tooltip(marker, this._output, _("Refer to this Conversation"));
+              marker.title = _("Refer to this Conversation");
           }
         ]]></body>
       </method>
@@ -966,7 +965,7 @@
               var marker = token[1].lastChild.firstChild;
               marker.removeAttribute("threadId");
               if (this._input)
-                tooltip(marker, this._output, _("Refer to this Message"));
+                marker.title = _("Refer to this Message");
           }
         ]]></body>
       </method>
