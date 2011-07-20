@@ -88,23 +88,30 @@ var notificationAlerts = {
     }
 };
 
-function NotificationProvider(showInChatpane, showInMucChatpane, showAlert, soundSample, playSound,
-                              message, contactEvent)
+function NotificationProvider(event, settings)
 {
-    if (typeof(showInChatpane) == "object")
-        [showInChatpane, showInMucChatpane, showAlert, soundSample,
-         playSound, message, contactEvent] = showInChatpane;
+    var providerModel = NotificationScheme.prototype.providersList[event],
+        defaultSettings = NotificationScheme.prototype.defaultSettings[event];
 
-    this.showInChatpane = showInChatpane;
-    this.showInMucChatpane = showInMucChatpane;
-    this.showAlert = showAlert;
-    this.soundSample = soundSample;
-    this.playSound = playSound;
-    this.message = message;
-    this.contactEvent = contactEvent;
+    this.message      = providerModel[0];
+    this.contactEvent = providerModel[1];
+    this.soundSample  = providerModel[2];
+
+    if (settings) {
+        this.showInChatpane    = settings[0] || defaultSettings[0];
+        this.showInMucChatpane = settings[1] || defaultSettings[1];
+        this.showAlert         = settings[2] || defaultSettings[2];
+        this.playSound         = settings[3] || defaultSettings[3];
+    } else {
+        this.showInChatpane    = defaultSettings[0];
+        this.showInMucChatpane = defaultSettings[1];
+        this.showAlert         = defaultSettings[2];
+        this.playSound         = defaultSettings[3];
+    }
 }
 
 _DECL_(NotificationProvider).prototype = {
+
     show: function(chatpaneMessage, alertTitle, alertMsg, alertIcon, alertAnim,
                    callback, inlineCommands)
     {
@@ -488,74 +495,64 @@ _DECL_(NotificationScheme).prototype =
                              null, callback);
     },
 
-    defaultProviders: {
-        "signIn": new NotificationProvider(true, false, true, "connected", true,
-                                           _("Contact signed in"), true),
-        "signOut": new NotificationProvider(true, false, true, "disconnected", true,
-                                            _("Contact signed out"), true),
-        "mucSignIn": new NotificationProvider(true, true, false, "connected", false,
-                                              _("Chat room participant signed in"), false),
-        "mucSignOut": new NotificationProvider(true, true, false, "disconnected", false,
-                                               _("Chat room participant signed out"), false),
-        "presence": new NotificationProvider(true, false, false, "sent", false,
-                                             _("Contact changed status"), true),
-        "mucPresence": new NotificationProvider(false, false, false, "sent", false,
-                                                _("Chat room participant changed status"), false),
-        "nickChange": new NotificationProvider(false, true, false, "sent", false,
-                                               _("Chat room participant changed nick"), false),
-        "subjectChange": new NotificationProvider(false, true, false, "sent", false,
-                                                  _("Chat room subject change"), false),
-        "subscription": new NotificationProvider(false, false, true, "sent", false,
-                                                 _("Subscription accepted or denied"), false),
-        "message": new NotificationProvider(false, false, false, "message2", true,
-                                            _("Message received"), true),
-        "firstMessage": new NotificationProvider(false, false, true, "message1", true,
-                                                 _("Message received (initial)"), true),
-        "mucMessage": new NotificationProvider(false, false, false, "message2", false,
-                                               _("Chat room message received"), false),
-        "mucDirectedMessage": new NotificationProvider(false, false, true, "message2", true,
-                                                       _("Chat room nick: message received"), false),
-        "jingleCall": new NotificationProvider(true, false, true, "ring", false,
-                                               _("Voice call request received"), true),
-        "missedJingleCall": new NotificationProvider(true, false, true, "ring", false,
-                                                     _("Missed voice call"), true),
-        "fileTransfer": new NotificationProvider(true, false, true, "sent", false,
-                                                 _("File transfer request received"), true),
-        "fileTransferAccepted": new NotificationProvider(true, false, false, "sent", false,
-                                                         _("File transfer accepted"), true),
-        "fileTransferRejected": new NotificationProvider(true, false, false, "sent", false,
-                                                         _("File transfer rejected"), true),
-        "invitationDeclined": new NotificationProvider(true, false, false, "sent", false,
-                                                       _("Invitation to chat room declined"), true),
-        "disconnect": new NotificationProvider(false, false, true, "sent", false,
-                                               _("Connection to server lost"), false),
-        "reconnect": new NotificationProvider(false, false, false, "sent", false,
-                                              _("Reconnected to server"), false)
+    providersCategories: {
+         connection   : [ _("Connections to server"), "disconnect", "reconnect"                 ],
+         contactEvents: [ _("Contact events")       , "signIn", "signOut", "presence",
+                                                        "firstMessage", "message", "subscription" ],
+         roomEvents   : [ _("Chat room events")     , "subjectChange", "mucSignIn", "mucSignOut",
+                                                        "nickChange", "mucPresence", "mucMessage",
+                                                        "mucDirectedMessage", "invitationDeclined"],
+         fileTransfer : [ _("File transfer")        , "fileTransfer", "fileTransferAccepted",
+                                                        "fileTransferRejected"                    ],
+         voiceCall    : [ _("Voice call")           , "jingleCall", "missedJingleCall"          ],
     },
 
-    providersCategories: {
-         "connection": {
-             "title": _("Connections to server"),
-             "providers": ["disconnect", "reconnect"]
-         },
-         "contactEvents": {
-             "title": _("Contact events"),
-             "providers": ["signIn", "signOut", "presence",
-                           "firstMessage", "message", "subscription"]
-         },
-         "roomEvents": {
-             "title": _("Chat room events"),
-             "providers": ["subjectChange", "mucSignIn", "mucSignOut", "nickChange",
-                           "mucPresence", "mucMessage", "mucDirectedMessage", "invitationDeclined"]
-         },
-         "fileTransfer": {
-             "title": _("File transfer"),
-             "providers": ["fileTransfer", "fileTransferAccepted", "fileTransferRejected"]
-         },
-         "voiceCall": {
-             "title": _("Voice call"),
-             "providers": ["jingleCall", "missedJingleCall"]
-         }
+    providersList: {           /*    Wording        , true if linked to a contact, sound sample  */
+        signIn               : [ _("Contact signed in")                   , true , "connected"   ],
+        signOut              : [ _("Contact signed out")                  , true , "disconnected"],
+        mucSignIn            : [ _("Chat room participant signed in")     , false, "connected"   ],
+        mucSignOut           : [ _("Chat room participant signed out")    , false, "disconnected"],
+        presence             : [ _("Contact changed status")              , true , "sent"        ],
+        mucPresence          : [ _("Chat room participant changed status"), false, "sent"        ],
+        nickChange           : [ _("Chat room participant changed nick")  , false, "sent"        ],
+        subjectChange        : [ _("Chat room subject change")            , false, "sent"        ],
+        subscription         : [ _("Subscription accepted or denied")     , false, "sent"        ],
+        message              : [ _("Message received")                    , true , "message2"    ],
+        firstMessage         : [ _("Message received (initial)")          , true , "message1"    ],
+        mucMessage           : [ _("Chat room message received")          , false, "message2"    ],
+        mucDirectedMessage   : [ _("Chat room nick: message received")    , false, "message2"    ],
+        jingleCall           : [ _("Voice call request received")         , true , "ring"        ],
+        missedJingleCall     : [ _("Missed voice call")                   , true , "ring"        ],
+        fileTransfer         : [ _("File transfer request received")      , true , "sent"        ],
+        fileTransferAccepted : [ _("File transfer accepted")              , true , "sent"        ],
+        fileTransferRejected : [ _("File transfer rejected")              , true , "sent"        ],
+        invitationDeclined   : [ _("Invitation to chat room declined")    , true , "sent"        ],
+        disconnect           : [ _("Connection to server lost")           , false, "sent"        ],
+        reconnect            : [ _("Reconnected to server")               , false, "sent"        ]
+    },
+
+    defaultSettings: { /*columns: showInChatpane, showInMucChatpane, showAlert, playSound*/
+        signIn               : [ true , false, true , true  ],
+        signOut              : [ true , false, true , true  ],
+        mucSignIn            : [ true , true , false, false ],
+        mucSignOut           : [ true , true , false, false ],
+        presence             : [ true , false, false, false ],
+        mucPresence          : [ false, false, false, false ],
+        nickChange           : [ false, true , false, false ],
+        subjectChange        : [ false, true , false, false ],
+        subscription         : [ false, false, true , false ],
+        message              : [ false, false, false, true  ],
+        firstMessage         : [ false, false, true , true  ],
+        mucMessage           : [ false, false, false, false ],
+        mucDirectedMessage   : [ false, false, true , true  ],
+        jingleCall           : [ true , false, true , false ],
+        missedJingleCall     : [ true , false, true , false ],
+        fileTransfer         : [ true , false, true , false ],
+        fileTransferAccepted : [ true , false, false, false ],
+        fileTransferRejected : [ true , false, false, false ],
+        invitationDeclined   : [ true , false, false, false ],
+        disconnect           : [ false, false, true , false ],
+        reconnect            : [ false, false, false, false ]
     },
 
     generateSettings: function(contact, doc, instantApply) {
@@ -613,12 +610,12 @@ _DECL_(NotificationScheme).prototype =
              cell.setAttribute("id", category);
              cell.appendChild(doc.createElementNS(XULNS, "image"));
              cell.firstChild.setAttribute("class", "expander");
-             cell.appendChild(doc.createTextNode(this.providersCategories[category].title));
+             cell.appendChild(doc.createTextNode(this.providersCategories[category][0]));
              categoryRow.appendChild(cell);
              cell.prefs = [];
 
-             for (var i = 0; i < this.providersCategories[category].providers.length; i++) {
-                 var providerId = this.providersCategories[category].providers[i];
+             for (var i = 1; i < this.providersCategories[category].length; i++) {
+                 var providerId = this.providersCategories[category][i];
                  var provider = this.findProvider(providerId, contact);
 
                  if (!contact || provider.contactEvent) {
@@ -706,29 +703,34 @@ _DECL_(NotificationScheme).prototype =
                           row.contactJID, row.providerId);
     },
 
-    _saveSetting: function(checkboxes, contactJID, id) {
-        var dp = contactJID ? this.findProvider(id) : this.defaultProviders[id];
+    _saveSetting: function(checkboxes, contactJID, event) {
+        var settings, refSettings;
 
         if (contactJID) {
-            id = id + "-" + contactJID;
+            var globalProvider = this.findProvider(event);
+            event = event + "-" + contactJID;
             if (checkboxes[0].checked) {
-                account.cache.removeValue("notifications-"+id);
-                delete this.providers[id];
+                account.cache.removeValue("notifications-"+event);
+                delete this.providers[event];
                 return;
             }
-            checkboxes = Array.slice(checkboxes, 1);
+            settings = [checkboxes[1].checked, checkboxes[2].checked,
+                        checkboxes[3].checked, checkboxes[4].checked];
+            refSettings = [globalProvider.showInChatpane, globalProvider.showInMucChatpane,
+                           globalProvider.showAlert     , globalProvider.playSound];
+        } else {
+            settings = [checkboxes[0].checked, checkboxes[1].checked,
+                        checkboxes[2].checked, checkboxes[3].checked];
+            refSettings = this.defaultSettings[event];
         }
 
-        var data = [checkboxes[0].checked, checkboxes[1].checked, checkboxes[2].checked,
-                    dp.soundSample, checkboxes[3].checked];
-
-        if (data[0] != dp.showInChatpane || data[1] != dp.showInMucChatpane ||
-            data[2] != dp.showAlert || data[4] != dp.playSound)
-            account.cache.setValue("notifications-"+id, data);
+        if (settings[0] != refSettings[0] || settings[1] != refSettings[1] ||
+            settings[2] != refSettings[2] || settings[3] != refSettings[3])
+            account.cache.setValue("notifications-"+event, settings);
         else
-            account.cache.removeValue("notifications-"+id);
+            account.cache.removeValue("notifications-"+event);
 
-        delete this.providers[id];
+        delete this.providers[event];
     },
 
     saveSettings: function(grid) {
@@ -752,33 +754,22 @@ _DECL_(NotificationScheme).prototype =
                 return provider;
             }
 
-            var data = account.cache.getValue("notifications-"+id);
-            if (data) {
-                var dp = this.defaultProviders[scope];
-                if (data.length < 5)
-                    data[4] = !!data[3];
+            var settings = account.cache.getValue("notifications-"+id);
+            if (settings) {
+                if (settings.length == 5)
+                    settings[3] = settings[4]; // for retro-compatibility
 
-                data[5] = dp.message;
-                data[6] = dp.contactEvent;
-
-                if (!data[3])
-                    data[3] = dp.soundSample;
-
-                provider = (this.providers[id] = new NotificationProvider(data)).
-                    getWrapperFor(contact);
+                this.providers[id] = new NotificationProvider(scope, settings);
+                provider = this.providers[id].getWrapperFor(contact);
 
                 provider.globalSetting = id == scope;
                 return provider;
             }
         }
 
-        if (scope in this.defaultProviders) {
-            this.providers[scope] = this.defaultProviders[scope];
-            provider = this.defaultProviders[scope].getWrapperFor(contact);
-            provider.globalSetting = true;
-            return provider;
-        }
-
-        return null;
+        this.providers[scope] = new NotificationProvider(scope);
+        provider = this.providers[scope].getWrapperFor(contact);
+        provider.globalSetting = true;
+        return provider;
     }
 }
