@@ -230,9 +230,12 @@ function displayEditButton(body, message, xulNode) {
     }
 
     function setTooltip(element, enabled, version, timestamp) {
-      element.title = 
-        _(enabled ? "See version {0} (from {1}), {2}" : "This is version {0} (from {1}), {2}",
-          version, nbVersions, readableTimestamp(timestamp));
+      element.title =
+        enabled ?
+          _("See version {0} (from {1}), {2}",
+            version, nbVersions, readableTimestamp(timestamp)) :
+          _("This is version {0} (from {1}), {2}",
+            version, nbVersions, readableTimestamp(timestamp));
     }
   }
 
