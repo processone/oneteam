@@ -98,10 +98,10 @@ function NotificationProvider(event, settings)
     this.soundSample  = providerModel[2];
 
     if (settings) {
-        this.showInChatpane    = settings[0] || defaultSettings[0];
-        this.showInMucChatpane = settings[1] || defaultSettings[1];
-        this.showAlert         = settings[2] || defaultSettings[2];
-        this.playSound         = settings[3] || defaultSettings[3];
+        this.showInChatpane    = settings[0];
+        this.showInMucChatpane = settings[1];
+        this.showAlert         = settings[2];
+        this.playSound         = settings[3];
     } else {
         this.showInChatpane    = defaultSettings[0];
         this.showInMucChatpane = defaultSettings[1];
@@ -558,34 +558,33 @@ _DECL_(NotificationScheme).prototype =
     generateSettings: function(contact, doc, instantApply) {
         var settings = doc.createElementNS(XULNS, "grid");
         settings.setAttribute("id", "notifications");
-        var columns = doc.createElementNS(XULNS, "columns");
-        settings.appendChild(columns);
-
-        columns.appendChild(doc.createElementNS(XULNS, "column"));
-        columns.firstChild.setAttribute("flex", "3");
 
         // COLUMN HEADERS
-        var headers = [_("Display message in chat pane"),
+        var headers = [ contact ? _("Use global settings") : _("Use default settings"),
+                       _("Display message in chat pane"),
                        _("Display message in chat room pane"),
                        _("Display notification bubble"),
                        _("Play sound")                        ];
-        if (contact)
-            headers.unshift(_("Use global settings"));
 
+        var columns = <></>;
         for (var i = 0; i < headers.length; i++) {
-            var column = doc.createElementNS(XULNS, "column");
-            column.setAttribute("flex", "1");
-            column.appendChild(doc.createElementNS(XULNS, "vbox"));
-            column.firstChild.setAttribute("align", "center");
-            column.firstChild.appendChild(doc.createElementNS(XULNS, "vbox"));
-            column.firstChild.firstChild.setAttribute("class", "col-head");
-            column.firstChild.firstChild.appendChild(doc.createElementNS(XULNS, "hbox"));
-            column.firstChild.firstChild.firstChild.setAttribute("align", "center");
-            column.firstChild.firstChild.firstChild.appendChild(doc.createElementNS(XULNS, "vbox"));
-            column.firstChild.firstChild.firstChild.firstChild.textContent = headers[i];
- 
-            columns.appendChild(column);
+            columns +=
+              <column flex="1" xmlns={XULNS}>
+                <vbox align="center">
+                  <vbox class="col-head">
+                    <hbox align="center">
+                      <vbox>{headers[i]}</vbox>
+                    </hbox>
+                  </vbox>
+                </vbox>
+              </column>;
         }
+        columns =
+            <columns xmlns={XULNS}>
+              <column flex="3" xmlns={XULNS}/>
+              {columns}
+            </columns>
+        settings.appendChild(E4XtoDOM(columns, doc));
 
         settings.adjustColumns = function() {
             var heads = doc.getElementsByClassName("col-head");
@@ -612,7 +611,7 @@ _DECL_(NotificationScheme).prototype =
              cell.firstChild.setAttribute("class", "expander");
              cell.appendChild(doc.createTextNode(this.providersCategories[category][0]));
              categoryRow.appendChild(cell);
-             cell.prefs = [];
+             cell.rows = [];
 
              for (var i = 1; i < this.providersCategories[category].length; i++) {
                  var providerId = this.providersCategories[category][i];
@@ -620,70 +619,65 @@ _DECL_(NotificationScheme).prototype =
 
                  if (!contact || provider.contactEvent) {
 
-                     var row = doc.createElementNS(XULNS, "row");
-                     row.setAttribute("class", "pref");
-                     row.appendChild(doc.createElementNS(XULNS, "label"));
-                     row.firstChild.setAttribute("crop", "end");
-                     row.firstChild.setAttribute("value", provider.message);
+                     var row = E4XtoDOM(
+                       <row xmlns={XULNS} class="pref">
+                         <label xmlns={XULNS} crop="end" value={provider.message}/>
+                         <vbox xmlns={XULNS} align="center">
+                           <checkbox checked={provider.isSetToDefault}
+                                     oncommand="this.updateCheckboxes()"/>
+                         </vbox>
+                         <vbox xmlns={XULNS} align="center">
+                           <checkbox checked={provider["showInChatpane"]}/>
+                         </vbox>
+                         <vbox xmlns={XULNS} align="center">
+                           <checkbox checked={provider["showInMucChatpane"]}/>
+                         </vbox>
+                         <vbox xmlns={XULNS} align="center">
+                           <checkbox checked={provider["showAlert"]}/>
+                         </vbox>
+                         <vbox xmlns={XULNS} align="center">
+                           <checkbox checked={provider["playSound"]}/>
+                         </vbox>
+                       </row>, doc);
+
+                     var resetCheckbox = row.getElementsByTagNameNS(XULNS, "checkbox")[0];
+                     resetCheckbox.updateCheckboxes = (function(row, refSettings) {
+                         return function() {
+                             var checkboxes = row.getElementsByTagNameNS(XULNS, "checkbox");
+                             if (checkboxes[0].getAttribute("checked") == "true")
+                                 for (var j = 1; j < checkboxes.length; j++) {
+                                     checkboxes[j].setAttribute("disabled", "true");
+                                     checkboxes[j].setAttribute("checked", refSettings[j-1]);
+                                 }
+                             else
+                                 for (var j = 1; j < checkboxes.length; j++)
+                                     checkboxes[j].removeAttribute("disabled");
+                         }
+                     }) (row, contact ? this._getGlobalSetting(providerId)
+                                      : this.defaultSettings[providerId]);
+
+                     resetCheckbox.updateCheckboxes();
+
                      row.providerId = providerId;
                      row.contactJID = contactJID;
-                     cell.prefs.push(row);
-
                      if (instantApply)
                          row.setAttribute("oncommand",
-                             "account.notificationScheme.saveSingleSetting(this)")
-
-		     var checkboxes = [];
-                     for (var j = 0; j < notifs.length; j++) {
-                         var checkbox = doc.createElementNS(XULNS, "checkbox");
-                         checkbox.setAttribute("checked", provider[notifs[j]]);
-
-                         row.appendChild(doc.createElementNS(XULNS, "vbox"));
-                         row.lastChild.setAttribute("align", "center");
-                         row.lastChild.appendChild(checkbox);
-
-                         checkboxes.push(checkbox);
-                     }
-
- 		     if (contact) {
-                         var globalSettingsCheckbox = doc.createElementNS(XULNS, "checkbox");
-
-                         globalSettingsCheckbox.checkboxes = checkboxes;
-                         globalSettingsCheckbox.globalProvider = this.findProvider(providerId, null);
-                         globalSettingsCheckbox.updateCheckboxes = new Callback(function() {
-                             for (var j = 0; j < checkboxes.length; j++)
-                                 if (this.hasAttribute("checked")) {
-                                     this.checkboxes[j].setAttribute("checked",
-                                         this.globalProvider[notifs[j]]);
-                                     this.checkboxes[j].setAttribute("disabled", "true");
-                                 } else
-                                     this.checkboxes[j].removeAttribute("disabled");
-                         }, globalSettingsCheckbox);
-                         globalSettingsCheckbox.setAttribute("oncommand", "this.updateCheckboxes()");
-
-                         if (provider.globalSetting)
-                             globalSettingsCheckbox.setAttribute("checked", "true");
-                         globalSettingsCheckbox.updateCheckboxes();
-
-                         var vbox = doc.createElementNS(XULNS, "vbox");
-                         vbox.setAttribute("align", "center");
-                         vbox.appendChild(globalSettingsCheckbox);
-                         row.insertBefore(vbox, checkboxes[0].parentNode);
-                     }
+                             "account.notificationScheme.saveSingleSetting(this)");
 
                      rows.appendChild(row);
+                     cell.rows.push(row);
                  }
              }
-             if (cell.prefs.length) {
+             if (cell.rows.length) {
                  cell.switchVisibility = function() {
                      if (this.getAttribute("collapse")) {
                          this.removeAttribute("collapse");
-                         for (var i = 0; i < this.prefs.length; i++)
-                             this.prefs[i].removeAttribute("collapse");
+                         for (var i = 0; i < this.rows.length; i++)
+                             this.rows[i].removeAttribute("collapse");
                      } else {
                          this.setAttribute("collapse", "true");
-                         for (var i = 0; i < this.prefs.length; i++)
-                             this.prefs[i].setAttribute("collapse", true);
+                         for (var i = 0; i < this.rows.length; i++)
+                             this.rows[i].setAttribute("collapse", true);
                      }
                  };
                  cell.setAttribute("onclick", "this.switchVisibility()");
@@ -697,6 +691,11 @@ _DECL_(NotificationScheme).prototype =
         return settings;
     },
 
+    _getGlobalSetting: function(event) {
+        var globalProvider = this.findProvider(event);
+        return [globalProvider.showInChatpane, globalProvider.showInMucChatpane,
+                globalProvider.showAlert     , globalProvider.playSound];
+    },
 
     saveSingleSetting: function(row) {
         this._saveSetting(row.getElementsByTagNameNS(XULNS, "checkbox"),
@@ -704,33 +703,25 @@ _DECL_(NotificationScheme).prototype =
     },
 
     _saveSetting: function(checkboxes, contactJID, event) {
-        var settings, refSettings;
+        var fullEvent = event + (contactJID ? "-" + contactJID : "");
 
-        if (contactJID) {
-            var globalProvider = this.findProvider(event);
-            event = event + "-" + contactJID;
-            if (checkboxes[0].checked) {
-                account.cache.removeValue("notifications-"+event);
-                delete this.providers[event];
-                return;
-            }
-            settings = [checkboxes[1].checked, checkboxes[2].checked,
-                        checkboxes[3].checked, checkboxes[4].checked];
-            refSettings = [globalProvider.showInChatpane, globalProvider.showInMucChatpane,
-                           globalProvider.showAlert     , globalProvider.playSound];
-        } else {
-            settings = [checkboxes[0].checked, checkboxes[1].checked,
-                        checkboxes[2].checked, checkboxes[3].checked];
-            refSettings = this.defaultSettings[event];
+        if (checkboxes[0].checked) {
+            account.cache.removeValue("notifications-"+fullEvent);
+            delete this.providers[fullEvent];
+            return;
         }
+
+        var settings = [checkboxes[1].checked, checkboxes[2].checked,
+                        checkboxes[3].checked, checkboxes[4].checked],
+            refSettings = contactJID ? this._getGlobalSetting(event) : this.defaultSettings[event];
 
         if (settings[0] != refSettings[0] || settings[1] != refSettings[1] ||
             settings[2] != refSettings[2] || settings[3] != refSettings[3])
-            account.cache.setValue("notifications-"+event, settings);
+            account.cache.setValue("notifications-"+fullEvent, settings);
         else
-            account.cache.removeValue("notifications-"+event);
+            account.cache.removeValue("notifications-"+fullEvent);
 
-        delete this.providers[event];
+        delete this.providers[fullEvent];
     },
 
     saveSettings: function(grid) {
@@ -750,7 +741,7 @@ _DECL_(NotificationScheme).prototype =
         for each (var id in scopes) {
             if (this.providers[id]) {
                 provider = this.providers[id].getWrapperFor(contact);
-                provider.globalSetting = id == scope;
+                provider.isSetToDefault = (!!contact && scope == id);
                 return provider;
             }
 
@@ -759,17 +750,17 @@ _DECL_(NotificationScheme).prototype =
                 if (settings.length == 5)
                     settings[3] = settings[4]; // for retro-compatibility
 
+
                 this.providers[id] = new NotificationProvider(scope, settings);
                 provider = this.providers[id].getWrapperFor(contact);
-
-                provider.globalSetting = id == scope;
+                provider.isSetToDefault = (!!contact && scope == id);
                 return provider;
             }
         }
 
         this.providers[scope] = new NotificationProvider(scope);
         provider = this.providers[scope].getWrapperFor(contact);
-        provider.globalSetting = true;
+        provider.isSetToDefault = true;
         return provider;
     }
 }
