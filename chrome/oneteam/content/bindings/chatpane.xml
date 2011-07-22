@@ -678,12 +678,16 @@
               }
 
               if (msg.contact) {
-                var e = doc.createElement("img");
-                e.setAttribute("class", "avatar")
-                e.setAttribute("src", msg.contact.avatar ||
-                               "resource://oneteam-skin/avatar/imgs/default-avatar.png");
-                e.setAttribute("width", "18")
-                msgEl.appendChild(e);
+                var e = doc.createElement("div");
+                e.setAttribute("class", "avatar-image")
+                e.setAttribute("style", "background-image: url("+
+                                 (msg.contact.avatar ||
+                                 "resource://oneteam-skin/avatar/imgs/default-avatar.png")+
+                               ")");
+                var e2 = doc.createElement("div");
+                e2.setAttribute("class", "avatar")
+                e2.appendChild(e);
+                msgEl.appendChild(e2);
               }
 
               var h = doc.createElement("span");
