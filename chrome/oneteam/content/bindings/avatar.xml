@@ -85,70 +85,7 @@
 
       <method name="onImageLoad">
         <body><![CDATA[
-          var width = this.boxObject.width;
-          var height = this.boxObject.height;
-          var url = this._imageObj.src;
-
-          var cs = this.ownerDocument.defaultView.getComputedStyle(this, "");
-
-          width -= (parseInt(cs.marginLeft)||0) + (parseInt(cs.marginRight)||0) +
-            (parseInt(cs.borderLeftWidth)||0) + (parseInt(cs.borderRightWidth)||0);
-
-          height -= (parseInt(cs.marginTop)||0) + (parseInt(cs.marginBottom)||0) +
-            (parseInt(cs.borderTopWidth)||0) + (parseInt(cs.borderBottomWidth)||0);
-
-          if (account.cache.getValue("avatarEpoch") < 1) {
-            account.cache.setValue("avatarEpoch", 1);
-
-            var toRemove = [];
-            for (i in account.cache.iterator("avatar-"))
-              if (/avatar-.*-/.exec(i))
-                toRemove.push(i);
-
-            for (var i = 0; i < toRemove.length; i++)
-              account.cache.removeValue(toRemove[i]);
-          }
-
-          if (width < this._imageObj.naturalWidth || height < this._imageObj.naturalHeight)
-          {
-            var cacheKey = "avatar-"+(this.model.avatarHash||"default")+"-"+width+"-"+height;
-            var val = account.cache.getValue(cacheKey, true);
-
-            if (val)
-              account.cache.bumpExpirationDate(cacheKey, new Date(Date.now()+30*24*60*60*1000));
-            else {
-              if (!this._canvas)
-                this._canvas = this.ownerDocument.createElementNS(HTMLNS, "canvas");
-
-              this._canvas.width = width;
-              this._canvas.height = height;
-              var ctx = this._canvas.getContext("2d");
-
-              var scaledWidth = this._imageObj.naturalWidth;
-              var naturalWidth = scaledWidth;
-              var scaledHeight = this._imageObj.naturalHeight;
-
-              if (scaledWidth*height < width*scaledHeight)
-                scaledHeight = parseInt(height*scaledWidth/width);
-              else
-                scaledWidth = parseInt(width*scaledHeight/height);
-
-              ctx.drawImage(this._imageObj,
-                            parseInt((naturalWidth-scaledWidth)/2),
-                            0,
-                            scaledWidth, scaledHeight,
-                            0, 0, width, height);
-
-              var data = atob(this._canvas.toDataURL().replace(/^.*,/, ""));
-              account.cache.setValue(cacheKey, data,
-                                     new Date(Date.now()+30*24*60*60*1000),
-                                     true);
-              val = account.cache.getValue(cacheKey, true);
-            }
-            url = val;
-          }
-
-          this.style.backgroundImage = "url("+url+")";
+          this.style.backgroundImage = "url("+this._imageObj.src+")";
         ]]></body>
       </method>
     </implementation>
