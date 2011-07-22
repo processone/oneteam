@@ -20,9 +20,7 @@ function DiscoCacheEntry(jid, node, isCapsNode, cacheable)
     this.node = node;
     this._cacheable = cacheable;
     this._isCapsNode = isCapsNode;
-
-    if (!this.discoInfo)
-        this.discoInfo = account.cache.getValue("disco2-"+id);
+    this.discoInfo = account.cache.getValue("disco2-"+id);
 
     return this;
 }
@@ -34,13 +32,14 @@ _DECL_(DiscoCacheEntry).prototype =
 
     requestDiscoInfo: function(returnType, forceUpdate, callback, discoItem)
     {
-        if (!this.discoInfo)
+        if (!this.discoInfo) {
             if (this.capsNode) {
                 this._populateDiscoInfoFromCaps(returnType, callback, discoItem);
                 if (!this.discoInfo)
                     return null;
             } else if (this._isCapsNode)
                 this._populateDiscoInfoFromCapsCache();
+        }
 
         if (!callback)
             return this._parseReturnType(returnType);

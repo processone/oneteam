@@ -84,8 +84,22 @@ body[hide-not-marked=true] .message[ends-selected-chunk=true]
     border-bottom-width: 3px;
 }
 
-.message > img {
+.avatar {
     display: none;
+    float: left;
+    margin-left: 4px;
+    border: 1px solid #ccc;
+    -moz-border-radius: 3px;
+}
+
+.avatar-image {
+    background: top center no-repeat;
+    -moz-background-size: cover;
+    background-size: cover;
+    width: 18px;
+    height: 18px;
+    margin: 1px;
+    -moz-border-radius: 3px;
 }
 
 div.message.selectable:hover {
@@ -95,14 +109,10 @@ div.message.selectable:hover {
     -moz-border-right-colors: #C0CBDB #A6BADB #7ea1dc;
 }
 
-.message[starts-chunk=true] > img,
-body[hide-not-marked=true] .message[starts-selected-chunk=true] > img
+.message[starts-chunk=true] > .avatar ,
+body[hide-not-marked=true] .message[starts-selected-chunk=true] > .avatar
 {
-    border: 1px solid #ccc;
-    -moz-border-radius: 3px;
-    display: inline;
-    float: left;
-    margin-left: 6px;
+    display: block;
 }
 
 .message[starts-chunk=true] > .header,
@@ -181,7 +191,7 @@ body[threadId]:before {
     font-size: 85%;
 }
 
-.systemMessage > .header, .systemMessage > img {
+.systemMessage > .header, .systemMessage > .avatar {
     display: none !important;
 }
 

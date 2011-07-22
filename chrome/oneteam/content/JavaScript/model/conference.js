@@ -212,7 +212,7 @@ _DECL_(Conference, Contact).prototype =
         var url = prefManager.getPref('chat.muc.anonymousUrl').
                               replace(/%s/, this.myResource.jid.shortJID);
         if (account._hasInvitationsService) {
-            serviceManager.sendIq({
+            servicesManager.sendIq({
                 to: account.jid,
                 type: "get",
                 domBuilder: ["invite", {

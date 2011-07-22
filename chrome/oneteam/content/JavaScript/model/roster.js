@@ -836,11 +836,13 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
     _onDiscoInfoUpdated: function()
     {
         var features = this.getDiscoFeatures(), notify = false;
-        var jingleResource = jingleService.enabled && features &&
-            features["urn:xmpp:jingle:1"] &&
-            features["urn:xmpp:jingle:transports:ice-udp:1"] &&
-            features["urn:xmpp:jingle:apps:rtp:1"] &&
-            features["urn:xmpp:jingle:apps:rtp:audio"] ? this : null;
+        var jingleResource = jingleService.enabled && features && (
+            ( features["urn:xmpp:jingle:1"]
+           && features["urn:xmpp:jingle:transports:ice-udp:1"]
+           && features["urn:xmpp:jingle:apps:rtp:1"]
+           && features["urn:xmpp:jingle:apps:rtp:audio"] )
+        // || features["http://www.google.com/xmpp/protocol/voice/v1"]
+           ) ? this : null;
 
         if (this.jingleResource != jingleResource)
             notify = true;
