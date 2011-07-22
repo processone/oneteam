@@ -362,13 +362,13 @@ _DECL_(ServicesManager).prototype =
             state.timeout = setTimeout(callback, timeout, null, null, null,
                                        origCallback, state, true);
         }
-        this._sendResponse(struct, null, callback);
+        return this._sendResponse(struct, null, callback);
     },
 
     _sendResponse: function(response, packet, callback)
     {
         if (!response)
-            return;
+            return null;
 
         if (typeof(response) == "xml")
             response = {e4x: response};
@@ -400,6 +400,8 @@ _DECL_(ServicesManager).prototype =
         else {
             account.connection.send(pkt, cb);
         }
+
+        return pkt;
     },
 
     _parseResultCallback: function(packet, callback)

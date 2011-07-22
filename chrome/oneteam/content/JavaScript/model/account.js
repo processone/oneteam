@@ -314,7 +314,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     setVCard: function(vcardE4X)
     {
-        servicesManager.sendIq({
+        var iq = servicesManager.sendIq({
             type: "set",
             e4x: vcardE4X
         });
