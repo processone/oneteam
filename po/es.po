@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
-"POT-Creation-Date: 2011-07-04 19:41+0200\n"
+"POT-Creation-Date: 2011-07-22 18:03+0200\n"
 "PO-Revision-Date: 2011-06-24 16:51+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -77,51 +77,51 @@ msgstr "Mensaje de Estado"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:129
 #: ../chrome/oneteam/content/console.xul:59
-#: ../chrome/oneteam/content/main.xul:446
-#: ../chrome/oneteam/content/status.xul:91
+#: ../chrome/oneteam/content/main.xul:443
+#: ../chrome/oneteam/content/status.xul:94
 msgid "Available"
 msgstr "Disponible"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:130
-#: ../chrome/oneteam/content/main.xul:448
-#: ../chrome/oneteam/content/status.xul:93
+#: ../chrome/oneteam/content/main.xul:445
+#: ../chrome/oneteam/content/status.xul:96
 msgid "Available for chat"
 msgstr "Disponible para charlar"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:131
-#: ../chrome/oneteam/content/main.xul:450
-#: ../chrome/oneteam/content/status.xul:95
+#: ../chrome/oneteam/content/main.xul:447
+#: ../chrome/oneteam/content/status.xul:98
 msgid "Busy"
 msgstr "Ocupado"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:132
-#: ../chrome/oneteam/content/main.xul:452
-#: ../chrome/oneteam/content/status.xul:96
+#: ../chrome/oneteam/content/main.xul:449
+#: ../chrome/oneteam/content/status.xul:99
 msgid "Away"
 msgstr "Ausente"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:133
 #: ../chrome/oneteam/content/console.xul:60
-#: ../chrome/oneteam/content/main.xul:454
-#: ../chrome/oneteam/content/status.xul:97
+#: ../chrome/oneteam/content/main.xul:451
+#: ../chrome/oneteam/content/status.xul:100
 msgid "Not available"
 msgstr "No disponible"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:135
-#: ../chrome/oneteam/content/main.xul:456
-#: ../chrome/oneteam/content/status.xul:98
+#: ../chrome/oneteam/content/main.xul:453
+#: ../chrome/oneteam/content/status.xul:101
 msgid "Invisible"
 msgstr "Invisible"
 
-#: ../chrome/oneteam/content/main.xul:409
+#: ../chrome/oneteam/content/main.xul:406
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: ../chrome/oneteam/content/main.xul:413
+#: ../chrome/oneteam/content/main.xul:410
 msgid "Password"
 msgstr "Contraseña"
 
-#: ../chrome/oneteam/content/main.xul:420
+#: ../chrome/oneteam/content/main.xul:417
 msgid "Sign In"
 msgstr "Conectar"
 
@@ -141,7 +141,7 @@ msgstr "_Quitar"
 msgid "_Report Bug"
 msgstr "_Avisar de un error"
 
-#: ../chrome/oneteam/content/main.xul:459
+#: ../chrome/oneteam/content/main.xul:456
 msgid "Status message"
 msgstr "Mensaje de estado"
 
@@ -291,7 +291,7 @@ msgstr "Personal"
 msgid "Work"
 msgstr "Trabajo"
 
-#: ../chrome/oneteam/content/preferences.xul:280
+#: ../chrome/oneteam/content/preferences.xul:284
 #: ../chrome/oneteam/content/vcardEdit.xul:271
 msgid "Appearance"
 msgstr "Apariencia"
@@ -608,7 +608,7 @@ msgstr "Conexión"
 
 #: ../chrome/oneteam/content/console.xul:56
 #: ../chrome/oneteam/content/console.xul:58
-#: ../chrome/oneteam/content/preferences.xul:240
+#: ../chrome/oneteam/content/preferences.xul:244
 msgid "Status"
 msgstr "Estado"
 
@@ -637,19 +637,19 @@ msgstr "Recurso:"
 msgid "Priority:"
 msgstr "Prioridad:"
 
-#: ../chrome/oneteam/content/preferences.xul:231
+#: ../chrome/oneteam/content/preferences.xul:235
 msgid "HTTP Base:"
 msgstr "Base HTTP:"
 
-#: ../chrome/oneteam/content/preferences.xul:286
+#: ../chrome/oneteam/content/preferences.xul:290
 msgid "Default icon set:"
 msgstr "Conjunto de iconos por defecto:"
 
-#: ../chrome/oneteam/content/preferences.xul:290
+#: ../chrome/oneteam/content/preferences.xul:294
 msgid "Use gateway specific icons"
 msgstr "Usar iconos específicos del transporte"
 
-#: ../chrome/oneteam/content/preferences.xul:292
+#: ../chrome/oneteam/content/preferences.xul:296
 msgid "Default smiles set:"
 msgstr "Conjunto de smileys por defecto:"
 
@@ -658,78 +658,78 @@ msgid "Rooms:"
 msgstr "Salas:"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1110
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1901
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1898
 msgid "Bold"
 msgstr "Negrita"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1111
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1902
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1899
 msgid "Italic"
 msgstr "Itálica"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1112
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1903
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1900
 msgid "Underline"
 msgstr "Subrayado"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1114
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1907
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1904
 msgid "Increase font size"
 msgstr "Aumentar tamaño de la fuente"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1115
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1908
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1905
 msgid "Decrease font size"
 msgstr "Reducir tamaño de la fuente"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1117
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1912
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1909
 msgid "Font color"
 msgstr "Color de la fuente"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1118
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1913
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1910
 msgid "Background color"
 msgstr "Color del fondo"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1858
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1855
 msgid "Send file"
 msgstr "Enviar fichero"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1879
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1876
 msgid "Invite contact"
 msgstr "Invitar a contacto"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1882
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1879
 msgid "Invite user by mail"
 msgstr "Invitar a usuario por correo"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1868
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1865
 msgid "Toggle smiles visibility/select smile"
 msgstr "Cambiar visibilidad de smileys/seleccionar smiley"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:284
-#: ../chrome/oneteam/content/JavaScript/notification.js:296
+#: ../chrome/oneteam/content/JavaScript/notification.js:282
+#: ../chrome/oneteam/content/JavaScript/notification.js:294
 msgid "{0} is now {1}"
 msgstr "{0} es ahora {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:224
+#: ../chrome/oneteam/content/JavaScript/notification.js:222
 msgid "{0} has joined this room"
 msgstr "{0} ha entrado en esta sala"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:254
+#: ../chrome/oneteam/content/JavaScript/notification.js:252
 msgid "{0} has left this room"
 msgstr "{0} ha salido de la sala"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:332
+#: ../chrome/oneteam/content/JavaScript/notification.js:330
 msgid "{0} changed nick to {1}"
 msgstr "{0} ha cambiado el apodo a {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:347
+#: ../chrome/oneteam/content/JavaScript/notification.js:345
 msgid "{0} changed subject to {1}"
 msgstr "{0} ha puesto el asunto {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:386
+#: ../chrome/oneteam/content/JavaScript/notification.js:384
 msgid "New message from <b>{0}</b>"
 msgstr "Nuevo mensaje de <b>{0}</b>"
 
@@ -801,11 +801,11 @@ msgstr "Contactos"
 msgid "You have been invited to room <b>{0}</b> by <b>{1}</b>"
 msgstr "Has sido invitado a la sala <b>{0}</b> por <b>{1}</b>"
 
-#: ../chrome/oneteam/content/main.xul:417
+#: ../chrome/oneteam/content/main.xul:414
 msgid "Remember password"
 msgstr "Recordar la contraseña"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:444
+#: ../chrome/oneteam/content/bindings/chatpane.xml:445
 msgid "Click to scroll to first non-seen message"
 msgstr "Pulsa para ir al primer mensaje no leído"
 
@@ -935,28 +935,28 @@ msgstr "Borrar..."
 msgid "History Manager"
 msgstr "Administración de historial"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:2036
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2033
 #: ../chrome/oneteam/content/disco.xul:75
-#: ../chrome/oneteam/content/history.xul:169
-#: ../chrome/oneteam/content/history.xul:178
-#: ../chrome/oneteam/content/main.xul:467
+#: ../chrome/oneteam/content/history.xul:166
+#: ../chrome/oneteam/content/history.xul:175
+#: ../chrome/oneteam/content/main.xul:464
 #: ../chrome/oneteam/content/search.xul:12
 msgid "Search"
 msgstr "Buscar"
 
 #: ../chrome/oneteam/content/chats.xul:14
-#: ../chrome/oneteam/content/history.xul:170
+#: ../chrome/oneteam/content/history.xul:167
 msgid "Chats"
 msgstr "Charlas"
 
-#: ../chrome/oneteam/content/history.xul:183
-#: ../chrome/oneteam/content/history.xul:203
+#: ../chrome/oneteam/content/history.xul:180
+#: ../chrome/oneteam/content/history.xul:200
 msgid "Contact"
 msgstr "Contacto"
 
-#: ../chrome/oneteam/content/history.xul:185
-#: ../chrome/oneteam/content/history.xul:205
-#: ../chrome/oneteam/content/history.xul:225
+#: ../chrome/oneteam/content/history.xul:182
+#: ../chrome/oneteam/content/history.xul:202
+#: ../chrome/oneteam/content/history.xul:222
 msgid "Date"
 msgstr "Fecha"
 
@@ -1095,28 +1095,28 @@ msgstr "Características:"
 msgid "Notify about other clients with higher priority"
 msgstr "Notificar acerca de otros clientes tuyos con mayor prioridad"
 
-#: ../chrome/oneteam/content/preferences.xul:219
+#: ../chrome/oneteam/content/preferences.xul:223
 msgid "Connection Method:"
 msgstr "Método de conexión:"
 
-#: ../chrome/oneteam/content/preferences.xul:257
+#: ../chrome/oneteam/content/preferences.xul:261
 msgid "Automatically set status to 'away\\' after"
 msgstr "Cambiar estado a Ausente automáticamente despues de"
 
-#: ../chrome/oneteam/content/preferences.xul:260
-#: ../chrome/oneteam/content/preferences.xul:270
+#: ../chrome/oneteam/content/preferences.xul:264
+#: ../chrome/oneteam/content/preferences.xul:274
 msgid "minutes idle"
 msgstr "minutos de inactividad"
 
-#: ../chrome/oneteam/content/preferences.xul:267
+#: ../chrome/oneteam/content/preferences.xul:271
 msgid "Automatically set status to 'not available\\' after"
 msgstr "Cambiar estado a Desconectado automáticamente después de"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1872
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1869
 msgid "Additional commands"
 msgstr "Comandos adicionales"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1886
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1883
 msgid "Show characters counter"
 msgstr "Mostrar contador de caracteres"
 
@@ -1184,15 +1184,15 @@ msgstr "Misc:"
 msgid "Text:"
 msgstr "Texto:"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:315
+#: ../chrome/oneteam/content/JavaScript/notification.js:313
 msgid "<b>{0}</b> authorized you to see his/her status"
 msgstr "<b>{0}</b> te autorizó a ver su estado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:321
+#: ../chrome/oneteam/content/JavaScript/notification.js:319
 msgid "<b>{0}</b> doesn't authorized you to see his/her status"
 msgstr "<b>{0}</b> no te autorizó a ver su estado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:426
+#: ../chrome/oneteam/content/JavaScript/notification.js:424
 msgid "File transfer request"
 msgstr "Petición de transferencia de fichero"
 
@@ -1240,23 +1240,23 @@ msgstr "Faltan unos pocos segundos"
 msgid "{0} remaining"
 msgstr "Faltan {0}"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:58
+#: ../chrome/oneteam/content/JavaScript/utils.js:57
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:80
+#: ../chrome/oneteam/content/JavaScript/utils.js:79
 msgid "{0} {0, plurals, second, seconds}"
 msgstr "{0} {0, plurals, segundo, segundos}"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:74
+#: ../chrome/oneteam/content/JavaScript/utils.js:73
 msgid "{0} {0, plurals, day, days}, {1} {1, plurals, hour, hours}"
 msgstr "{0} {0, plurals, día, días}, {1} {1, plurals, hora, horas}"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:76
+#: ../chrome/oneteam/content/JavaScript/utils.js:75
 msgid "{0} {0, plurals, hour, hours}, {1} {1, plurals, minute, minutes}"
 msgstr "{0} {0, plurals, hora, horas}, {1} {1, plurals, minuto, minutos}"
 
-#: ../chrome/oneteam/content/JavaScript/utils.js:78
+#: ../chrome/oneteam/content/JavaScript/utils.js:77
 msgid "{0} {0, plurals, minute, minutes}, {1} {1, plurals, second, seconds}"
 msgstr "{0} {0, plurals, minuto, minutos}, {1} {1, plurals, segundo, segundos}"
 
@@ -1296,12 +1296,12 @@ msgstr "Pulsa para cargar la imagen"
 msgid "Always load images from that contact"
 msgstr "Siempre cargar las imágenes de este contacto"
 
-#: ../chrome/oneteam/content/preferences.xul:234
+#: ../chrome/oneteam/content/preferences.xul:238
 msgid "Automatically connect at startup"
 msgstr "Conectar automáticamente al iniciarse"
 
-#: ../chrome/oneteam/content/preferences.xul:263
-#: ../chrome/oneteam/content/preferences.xul:273
+#: ../chrome/oneteam/content/preferences.xul:267
+#: ../chrome/oneteam/content/preferences.xul:277
 msgid "And set status message to:"
 msgstr "Y poner mensaje de estado a:"
 
@@ -1335,7 +1335,7 @@ msgid "Waiting for Accept"
 msgstr "Esperanto para aceptar"
 
 #: ../chrome/oneteam/content/jingleCall.xul:119
-#: ../chrome/oneteam/content/main.xul:427
+#: ../chrome/oneteam/content/main.xul:424
 #: ../chrome/oneteam/content/main.xul:90
 msgid "Connecting"
 msgstr "Conectando"
@@ -1392,24 +1392,24 @@ msgstr "Inactivo"
 msgid "Gone"
 msgstr "Ausente"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1863
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1860
 msgid "Jingle call"
 msgstr "Llamada Jingle"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:2040
-#: ../chrome/oneteam/content/bindings/chatpane.xml:2044
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2037
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2041
 msgid "THREAD"
 msgstr "THREAD"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:2057
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2054
 msgid "BOOKMARK"
 msgstr "BOOKMARK"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:387
+#: ../chrome/oneteam/content/JavaScript/notification.js:385
 msgid "Message from <b>{0}</b>"
 msgstr "Mensaje de <b>{0}</b>"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:399
+#: ../chrome/oneteam/content/JavaScript/notification.js:397
 msgid "Call request received"
 msgstr "Se ha recibido una petición de llamada"
 
@@ -1483,15 +1483,15 @@ msgstr "Seleccionar todo"
 msgid "Close Tab"
 msgstr "Cerrar pestaña"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:559
+#: ../chrome/oneteam/content/bindings/chatpane.xml:560
 msgid "Load more messages from history"
 msgstr "Cargar más mensajes del historial"
 
-#: ../chrome/oneteam/content/preferences.xul:235
+#: ../chrome/oneteam/content/preferences.xul:239
 msgid "Reconnect after loosing connection"
 msgstr "Reconectar después de haber perdido la conexión"
 
-#: ../chrome/oneteam/content/main.xul:430
+#: ../chrome/oneteam/content/main.xul:427
 msgid "Stop Connecting"
 msgstr "Detener la conexión"
 
@@ -1519,93 +1519,93 @@ msgstr "Servidor de Wave"
 msgid "Create a group:"
 msgstr "Crear un grupo:"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:225
+#: ../chrome/oneteam/content/JavaScript/notification.js:223
 msgid "<b>{0}</b> has joined room {1}"
 msgstr "<b>{0}</b> ha entrado en la sala {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:227
-#: ../chrome/oneteam/content/JavaScript/notification.js:244
-#: ../chrome/oneteam/content/JavaScript/notification.js:257
-#: ../chrome/oneteam/content/JavaScript/notification.js:274
-#: ../chrome/oneteam/content/JavaScript/notification.js:289
-#: ../chrome/oneteam/content/JavaScript/notification.js:300
-#: ../chrome/oneteam/content/JavaScript/notification.js:316
-#: ../chrome/oneteam/content/JavaScript/notification.js:322
-#: ../chrome/oneteam/content/JavaScript/notification.js:335
-#: ../chrome/oneteam/content/JavaScript/notification.js:350
+#: ../chrome/oneteam/content/JavaScript/notification.js:225
+#: ../chrome/oneteam/content/JavaScript/notification.js:242
+#: ../chrome/oneteam/content/JavaScript/notification.js:255
+#: ../chrome/oneteam/content/JavaScript/notification.js:272
+#: ../chrome/oneteam/content/JavaScript/notification.js:287
+#: ../chrome/oneteam/content/JavaScript/notification.js:298
+#: ../chrome/oneteam/content/JavaScript/notification.js:314
+#: ../chrome/oneteam/content/JavaScript/notification.js:320
+#: ../chrome/oneteam/content/JavaScript/notification.js:333
+#: ../chrome/oneteam/content/JavaScript/notification.js:348
 msgid "{0}<br/>{1}"
 msgstr "{0}<br/>{1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:242
+#: ../chrome/oneteam/content/JavaScript/notification.js:240
 msgid "{0} signed in"
 msgstr "{0} ha conectado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:243
+#: ../chrome/oneteam/content/JavaScript/notification.js:241
 msgid "<b>{0}</b> signed in"
 msgstr "<b>{0}<b> ha conectado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:255
+#: ../chrome/oneteam/content/JavaScript/notification.js:253
 msgid "<b>{0}</b> has left room {1}"
 msgstr "<b>{0}</b> ha salido de la sala {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:272
+#: ../chrome/oneteam/content/JavaScript/notification.js:270
 msgid "{0} signed out"
 msgstr "{0} ha desconectado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:273
+#: ../chrome/oneteam/content/JavaScript/notification.js:271
 msgid "<b>{0}</b> signed out"
 msgstr "<b>{0}<b> ha desconectado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:286
+#: ../chrome/oneteam/content/JavaScript/notification.js:284
 msgid "<b>{0}</b> from {1} is now {2}"
 msgstr "<b>{0}<b> de {1} es ahora {2}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:298
+#: ../chrome/oneteam/content/JavaScript/notification.js:296
 msgid "<b>{0}</b> is now {1}"
 msgstr "<b>{0}<b> es ahora {1}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:314
+#: ../chrome/oneteam/content/JavaScript/notification.js:312
 msgid "{0} authorized you to see his/her status"
 msgstr "{0} he ha autorizado a ver su estado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:320
+#: ../chrome/oneteam/content/JavaScript/notification.js:318
 msgid "{0} doesn't authorized you to see his/her status"
 msgstr "{0} no te ha autorizado a ver su estado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:333
+#: ../chrome/oneteam/content/JavaScript/notification.js:331
 msgid "<b>{0}</b> from {1} changed nick to <b>{2}</b>"
 msgstr "<b>{0}</b> de {1} cambió su apodo a <b>{2}</b>"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:348
+#: ../chrome/oneteam/content/JavaScript/notification.js:346
 msgid "{0} from {1} changed subject to {2}"
 msgstr "{0} de {1} cambió el asunto a {2}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:398
+#: ../chrome/oneteam/content/JavaScript/notification.js:396
 msgid "{0} requests a call"
 msgstr "{0} solicita una llamada"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:438
+#: ../chrome/oneteam/content/JavaScript/notification.js:436
 msgid "{0} doesn't want to receive your file \"{1}\\\""
 msgstr "{0} no quiere recibir tu fichero \"{1}\\\""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:440
+#: ../chrome/oneteam/content/JavaScript/notification.js:438
 msgid "File transfer aborted"
 msgstr "Transferencia de fichero abortada"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:441
+#: ../chrome/oneteam/content/JavaScript/notification.js:439
 msgid "User <b>{0}</b> doesn't want to receive your <b>\"{1}\\\"</b> file"
 msgstr "El usuario <b>{0}</b> no quiere recibir tu fichero <b>\"{1}\\\"</b>"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:452
+#: ../chrome/oneteam/content/JavaScript/notification.js:450
 msgid "{0} accepted your file \"{1}\\\""
 msgstr "{0} ha aceptado tu fichero \"{1}\\\""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:454
-#: ../chrome/oneteam/content/JavaScript/notification.js:525
+#: ../chrome/oneteam/content/JavaScript/notification.js:452
+#: ../chrome/oneteam/content/JavaScript/notification.js:518
 msgid "File transfer accepted"
 msgstr "Transferencia de fichero aceptada"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:455
+#: ../chrome/oneteam/content/JavaScript/notification.js:453
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr "El usuario <b>{0}</b> ha aceptado tu fichero <b>\"{1}\\\"</b>"
 
@@ -1739,21 +1739,21 @@ msgstr "Charla"
 msgid "Headline"
 msgstr "Cabecera"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:470
-#: ../chrome/oneteam/content/JavaScript/notification.js:482
+#: ../chrome/oneteam/content/JavaScript/notification.js:468
+#: ../chrome/oneteam/content/JavaScript/notification.js:480
 msgid "Connection with server lost"
 msgstr "Se ha perdido la conexión con el servidor"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:471
-#: ../chrome/oneteam/content/JavaScript/notification.js:483
+#: ../chrome/oneteam/content/JavaScript/notification.js:469
+#: ../chrome/oneteam/content/JavaScript/notification.js:481
 msgid "Lost connection with server"
 msgstr "Se ha perdido la conexión con el servidor"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:485
+#: ../chrome/oneteam/content/JavaScript/notification.js:483
 msgid "Reconnecting was not successfull, please try to connect manually"
 msgstr "La reconexión no fue exitosa, puedes intentar a reconectar manualmente"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:486
+#: ../chrome/oneteam/content/JavaScript/notification.js:484
 msgid "Please try to connect manually"
 msgstr "Por favor intenta reconectar manualmente"
 
@@ -1801,7 +1801,7 @@ msgstr "url"
 msgid "{0} Commands Console"
 msgstr "{0} Consola de comandos"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:472
+#: ../chrome/oneteam/content/JavaScript/notification.js:470
 msgid "{0} will try to connect again to server"
 msgstr "{0} intentará conectar de nuevo con el servidor"
 
@@ -1809,19 +1809,19 @@ msgstr "{0} intentará conectar de nuevo con el servidor"
 msgid "Open console"
 msgstr "Abrir consola"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1846
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1982
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1843
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1979
 #: ../chrome/oneteam/content/bindings/chatpane.xml:887
 #: ../chrome/oneteam/content/bindings/chatpane.xml:919
 msgid "Edit Last Message"
 msgstr "Edit Last Message"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1982
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1979
 #: ../chrome/oneteam/content/bindings/chatpane.xml:883
 msgid "Cancel Edition"
 msgstr "Cancel Edition"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:758
+#: ../chrome/oneteam/content/bindings/chatpane.xml:759
 #: ../chrome/oneteam/content/bindings/chatpane.xml:968
 msgid "Refer to this Message"
 msgstr "Refer to this Message"
@@ -1860,11 +1860,11 @@ msgstr "Este dominio no es válido"
 msgid "Resource can not be empty"
 msgstr "El recurso no puede estar vacío"
 
-#: ../chrome/oneteam/content/preferences.xul:228
+#: ../chrome/oneteam/content/preferences.xul:232
 msgid "Old Style SSL Encryption"
 msgstr "Cifrado SSL del viejo estilo"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:412
+#: ../chrome/oneteam/content/JavaScript/notification.js:410
 #: ../chrome/oneteam/content/jingleCall.xul:42
 msgid "Missed call"
 msgstr "Llamada perdida"
@@ -1889,19 +1889,19 @@ msgstr "Informaciones del contacto"
 msgid "Contact editing"
 msgstr "Edición del contacto"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:411
+#: ../chrome/oneteam/content/JavaScript/notification.js:409
 msgid "Missed call from {0}"
 msgstr "Llamada perdida de {0}"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:413
+#: ../chrome/oneteam/content/JavaScript/notification.js:411
 msgid "You missed call from user <b>{0}</b>"
 msgstr "Tienes una llamada perdida del usuario <b>{0}</b>"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:493
+#: ../chrome/oneteam/content/JavaScript/notification.js:502
 msgid "Contact signed in"
 msgstr "El contacto ha conectado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:495
+#: ../chrome/oneteam/content/JavaScript/notification.js:503
 msgid "Contact signed out"
 msgstr "El contacto se ha desconectado"
 
@@ -1909,47 +1909,43 @@ msgstr "El contacto se ha desconectado"
 msgid "Message received"
 msgstr "Mensaje recibido"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:513
+#: ../chrome/oneteam/content/JavaScript/notification.js:512
 msgid "Message received (initial)"
 msgstr "Mensaje recibido (inicial)"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:519
+#: ../chrome/oneteam/content/JavaScript/notification.js:515
 msgid "Voice call request received"
 msgstr "Se ha recibido una petición de llamada"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:521
+#: ../chrome/oneteam/content/JavaScript/notification.js:516
 msgid "Missed voice call"
 msgstr "Llamada perdida"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:523
+#: ../chrome/oneteam/content/JavaScript/notification.js:517
 msgid "File transfer request received"
 msgstr "Se ha recibido una petición de transferencia de fichero"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:527
+#: ../chrome/oneteam/content/JavaScript/notification.js:519
 msgid "File transfer rejected"
 msgstr "Se ha rechazado la petición de transferencia de fichero"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:531
+#: ../chrome/oneteam/content/JavaScript/notification.js:521
 msgid "Connection to server lost"
 msgstr "Se ha perdido la conexión con el servidor"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:533
+#: ../chrome/oneteam/content/JavaScript/notification.js:522
 msgid "Reconnected to server"
 msgstr "Se ha reconectado al servidor"
-
-#: ../chrome/oneteam/content/JavaScript/notification.js:576
-msgid "Use global settings"
-msgstr "Usar configuración global"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:571
 msgid "Display message in chat pane"
 msgstr "Mostrar mensaje en el panel de charla"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:573
+#: ../chrome/oneteam/content/JavaScript/notification.js:572
 msgid "Display notification bubble"
 msgstr "Mostrar burbuja de notificación"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:574
+#: ../chrome/oneteam/content/JavaScript/notification.js:573
 msgid "Play sound"
 msgstr "Reproducir sonido"
 
@@ -1981,7 +1977,7 @@ msgstr "Estados"
 msgid "Show Details..."
 msgstr "Mostar detalles..."
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1853
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1850
 msgid "Show contact details"
 msgstr "Mostar detalles del contacto"
 
@@ -2002,15 +1998,15 @@ msgstr "Entrar en la sala"
 msgid "Error message:"
 msgstr "Mensaje de error:"
 
-#: ../chrome/oneteam/content/preferences.xul:222
+#: ../chrome/oneteam/content/preferences.xul:226
 msgid "Native"
 msgstr "Nativo"
 
-#: ../chrome/oneteam/content/preferences.xul:223
+#: ../chrome/oneteam/content/preferences.xul:227
 msgid "HTTP Bind"
 msgstr "HTTP Bind"
 
-#: ../chrome/oneteam/content/preferences.xul:224
+#: ../chrome/oneteam/content/preferences.xul:228
 msgid "HTTPS Bind"
 msgstr "HTTPS Bind"
 
@@ -2054,15 +2050,15 @@ msgstr "Entrar"
 msgid "Bookmark this room as"
 msgstr "Añadir es sala a marcadores como"
 
-#: ../chrome/oneteam/content/status.xul:102
+#: ../chrome/oneteam/content/status.xul:105
 msgid "Status message:"
 msgstr "Mensaje de estado:"
 
-#: ../chrome/oneteam/content/status.xul:105
+#: ../chrome/oneteam/content/status.xul:108
 msgid "Save message"
 msgstr "Guardar mensaje"
 
-#: ../chrome/oneteam/content/status.xul:109
+#: ../chrome/oneteam/content/status.xul:112
 msgid "Saved messages:"
 msgstr "Mensajes guardados:"
 
@@ -2070,11 +2066,11 @@ msgstr "Mensajes guardados:"
 msgid "Room Configuration"
 msgstr "Configuración de la sala"
 
-#: ../chrome/oneteam/content/history.xul:171
+#: ../chrome/oneteam/content/history.xul:168
 msgid "Chat Rooms"
 msgstr "Salas de charla"
 
-#: ../chrome/oneteam/content/history.xul:223
+#: ../chrome/oneteam/content/history.xul:220
 msgid "Chat Room"
 msgstr "Sala de charla"
 
@@ -2099,7 +2095,7 @@ msgstr "Invitación a sala de charla"
 msgid "You have been invited to chat room <b>{0}</b> by <b>{1}</b>"
 msgstr "Has sido invitado a la sala <b>{0}</b> por <b>{1}</b>"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1874
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1871
 #: ../chrome/oneteam/content/inviteToRoom.xul:10
 msgid "Invite to chat room"
 msgstr "Invitar a sala de charla"
@@ -2124,15 +2120,15 @@ msgstr "Abrir charla..."
 msgid "Leave Chat Room"
 msgstr "Salir de la sala de charla"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:400
+#: ../chrome/oneteam/content/JavaScript/notification.js:398
 msgid "User <b>{0}</b> wants to initiate call with you"
 msgstr "El usuario <b>{0}</b> quiere iniciar una llamada contigo"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:424
+#: ../chrome/oneteam/content/JavaScript/notification.js:422
 msgid "{0} wants to send you file \"{1}\\\""
 msgstr "{0} quiere enviarte el fichero \"{1}\\\""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:427
+#: ../chrome/oneteam/content/JavaScript/notification.js:425
 msgid "User <b>{0}</b> wants to send you <b>\"{1}\\\"</b> file"
 msgstr "El usuario <b>{0}</b> quiere enviarte el fichero <b>\"{1}\\\"</b>"
 
@@ -2172,55 +2168,51 @@ msgstr "No está en la lista de contactos "
 msgid "Your nick is already used, try another nick"
 msgstr "Ese apodo ya está siendo usado, por favor inténtalo con otro apodo"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:497
+#: ../chrome/oneteam/content/JavaScript/notification.js:504
 msgid "Chat room participant signed in"
 msgstr "El participante ha conectado a la sala de charla"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:499
+#: ../chrome/oneteam/content/JavaScript/notification.js:505
 msgid "Chat room participant signed out"
 msgstr "El participant de la sala de charla ha desconectado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:505
+#: ../chrome/oneteam/content/JavaScript/notification.js:508
 msgid "Chat room participant changed nick"
 msgstr "El participant de la sala de charla se ha cambiado el apodo"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:507
+#: ../chrome/oneteam/content/JavaScript/notification.js:509
 msgid "Chat room subject change"
 msgstr "Cambiar el asunto de la sala de charla"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:515
+#: ../chrome/oneteam/content/JavaScript/notification.js:513
 msgid "Chat room message received"
 msgstr "Se ha recibido un mensaje de la sala de charla"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:517
+#: ../chrome/oneteam/content/JavaScript/notification.js:514
 msgid "Chat room nick: message received"
 msgstr "Apodo en la sala de charla: se ha recibido el mensaje"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:529
+#: ../chrome/oneteam/content/JavaScript/notification.js:520
 msgid "Invitation to chat room declined"
 msgstr "Invitación a la sala declinada"
-
-#: ../chrome/oneteam/content/JavaScript/notification.js:572
-msgid "Display message in chat room pane"
-msgstr "Mostrar mensaje en el panel de la sala de charla"
 
 #: ../chrome/oneteam/content/invitation.xul:13
 msgid "Decline"
 msgstr "Declinar"
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1893
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1890
 msgid "Autospellchecker"
 msgstr "AutoCorrectorOrtográfico"
 
-#: ../chrome/oneteam/content/preferences.xul:302
+#: ../chrome/oneteam/content/preferences.xul:306
 msgid "Offer updates from channel:"
 msgstr "Ofrecer actualizaciones del canal:"
 
-#: ../chrome/oneteam/content/preferences.xul:305
+#: ../chrome/oneteam/content/preferences.xul:309
 msgid "Releases"
 msgstr "Versiones"
 
-#: ../chrome/oneteam/content/preferences.xul:306
+#: ../chrome/oneteam/content/preferences.xul:310
 msgid "Test"
 msgstr "Prueba"
 
@@ -2288,21 +2280,13 @@ msgstr "Restaurar última charla"
 msgid "You have already that chatroom in your bookmarks"
 msgstr "Ya tienes esta sala de charla en tus marcadores"
 
-#: ../chrome/oneteam/content/JavaScript/edit.js:242
+#: ../chrome/oneteam/content/JavaScript/edit.js:234
 msgid "See version {0} (from {1}), {2}"
 msgstr "Ver versión {0} (de {1}), {2}"
 
-#: ../chrome/oneteam/content/JavaScript/edit.js:245
+#: ../chrome/oneteam/content/JavaScript/edit.js:235
 msgid "This is version {0} (from {1}), {2}"
 msgstr "Esta es la versión {0} (de {1}), {2}"
-
-#: ../chrome/oneteam/content/manageBookmarks.xul:135
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead ?"
-msgstr "La información proporcionada no es válida.\\n¿Quieres corregir la información proporcionada,\\n o restaurar los valores anteriores?"
-
-#: ../chrome/oneteam/content/manageBookmarks.xul:136
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created ?"
-msgstr "La información proporcionada no es válida.\\n¿Quieres corregir la información proporcionada,\\n o borrar el marcador que acabas de crear?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:140
 msgid "Restore Previous Values"
@@ -2336,11 +2320,11 @@ msgstr "Permitirle ver mi estado"
 msgid "Cancel authorization"
 msgstr "Cancelar autorización"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:501
+#: ../chrome/oneteam/content/JavaScript/notification.js:506
 msgid "Contact changed status"
 msgstr "El contacto ha cambiado su estado"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:503
+#: ../chrome/oneteam/content/JavaScript/notification.js:507
 msgid "Chat room participant changed status"
 msgstr "El participante de la sala de charla ha cambiado su estado"
 
@@ -2348,39 +2332,39 @@ msgstr "El participante de la sala de charla ha cambiado su estado"
 msgid "My other connections"
 msgstr "Mis otras conexiones"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:509
+#: ../chrome/oneteam/content/JavaScript/notification.js:510
 msgid "Subscription accepted or denied"
 msgstr "Subscripción aceptada o rechazada"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:538
+#: ../chrome/oneteam/content/JavaScript/notification.js:490
 msgid "Connections to server"
 msgstr "Conexiones al servidor"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:542
+#: ../chrome/oneteam/content/JavaScript/notification.js:491
 msgid "Contact events"
 msgstr "Eventos del contacto"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:547
+#: ../chrome/oneteam/content/JavaScript/notification.js:493
 msgid "Chat room events"
 msgstr "Eventos de la sala de charla"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:552
+#: ../chrome/oneteam/content/JavaScript/notification.js:496
 msgid "File transfer"
 msgstr "Transferencia de fichero"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:556
+#: ../chrome/oneteam/content/JavaScript/notification.js:498
 msgid "Voice call"
 msgstr "Llamada de voz"
 
-#: ../chrome/oneteam/content/preferences.xul:300
+#: ../chrome/oneteam/content/preferences.xul:304
 msgid "Software updates"
 msgstr "Actualizaciones del programa"
 
-#: ../chrome/oneteam/content/preferences.xul:312
+#: ../chrome/oneteam/content/preferences.xul:317
 msgid "Notification global settings"
 msgstr "Configuración global de notificaciones"
 
-#: ../chrome/oneteam/content/preferences.xul:298
+#: ../chrome/oneteam/content/preferences.xul:302
 msgid "Advanced"
 msgstr "Avanzado"
 
@@ -2438,6 +2422,41 @@ msgstr "Ha ocurrido un error al entrar en la sala:"
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:25
 msgid "_Actions"
 msgstr "_Acciones"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:567
+#: ../chrome/oneteam/content/JavaScript/notification.js:712
+#, fuzzy
+msgid "Reset Settings"
+msgstr "Usar configuración global"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:713
+msgid "Are you sure you want to use global\\nsettings for all event notifications?"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:714
+msgid "Are you sure you want to use default\\nsettings for all event notifications?"
+msgstr ""
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:135
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead?"
+msgstr "La información proporcionada no es válida.\\n¿Quieres corregir la información proporcionada,\\n o restaurar los valores anteriores?"
+
+#: ../chrome/oneteam/content/manageBookmarks.xul:136
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created?"
+msgstr "La información proporcionada no es válida.\\n¿Quieres corregir la información proporcionada,\\n o borrar el marcador que acabas de crear?"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:574
+#, fuzzy
+msgid "Reset to global settings"
+msgstr "Usar configuración global"
+
+#: ../chrome/oneteam/content/JavaScript/notification.js:574
+#, fuzzy
+msgid "Reset to default settings"
+msgstr "Usar configuración global"
+
+#~ msgid "Display message in chat room pane"
+#~ msgstr "Mostrar mensaje en el panel de la sala de charla"
 
 #~ msgid "Room name can't be empty and can\\'t contain any of [\"&\\'/:<>@] or blank characters"
 #~ msgstr "El nombre de la sala no puede estar vacío ni contener los caracteres [\"&\\'/:<>@] o caracteres blancos"

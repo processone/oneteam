@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: oneteam\n"
-"POT-Creation-Date: 2011-06-20 14:50+0200\n"
+"POT-Creation-Date: 2011-07-22 18:03+0200\n"
 "PO-Revision-Date: 2010-09-14 13:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -13,7 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n==1 ? 0 : 1;\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:472
+#: ../chrome/oneteam/content/JavaScript/notification.js:470
 #: ../chrome/oneteam/content/about.xul:8
 #: ../chrome/oneteam/content/command.xul:10
 #: ../chrome/oneteam/content/main.xul:13
@@ -47,7 +47,6 @@ msgid "http://oneteam.im/"
 msgstr ""
 
 #: ../chrome/oneteam/content/about.xul:57
-#, fuzzy
 msgid "https://feedback.process-one.net/forums/120701-oneteam-desktop"
 msgstr ""
 

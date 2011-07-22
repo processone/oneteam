@@ -132,8 +132,8 @@
             null,
             _("Bookmark Manager"), // window's title
             (wasValid ?
-            _('Entered informations are invalid.\nDo you want to correct entered informations,\nor to restore previous values instead ?'):
-            _('Entered informations are invalid.\nDo you want to correct entered informations,\nor to remove the bookmark you have just created ?')),
+            _('Entered informations are invalid.\nDo you want to correct entered informations,\nor to restore previous values instead?'):
+            _('Entered informations are invalid.\nDo you want to correct entered informations,\nor to remove the bookmark you have just created?')),
             32639, // 32639 = prompts.BUTTON_POS_0 * prompts.BUTTON_TITLE_IS_STRING
                    //       + prompts.BUTTON_POS_1 * prompts.BUTTON_TITLE_IS_STRING
                    //       + prompts.BUTTON_POS_2 * 0  (third button is disabled)

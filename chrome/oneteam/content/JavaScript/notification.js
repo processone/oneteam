@@ -88,26 +88,18 @@ var notificationAlerts = {
     }
 };
 
-function NotificationProvider(event, settings)
+function NotificationProvider(eventId, settings)
 {
-    var providerModel = NotificationScheme.prototype.providersList[event],
-        defaultSettings = NotificationScheme.prototype.defaultSettings[event];
+    var providerModel = NotificationScheme.prototype.providersList[eventId],
+        defaultSettings = NotificationScheme.prototype.defaultSettings[eventId];
 
     this.message      = providerModel[0];
     this.contactEvent = providerModel[1];
     this.soundSample  = providerModel[2];
 
-    if (settings) {
-        this.showInChatpane    = settings[0];
-        this.showInMucChatpane = settings[1];
-        this.showAlert         = settings[2];
-        this.playSound         = settings[3];
-    } else {
-        this.showInChatpane    = defaultSettings[0];
-        this.showInMucChatpane = defaultSettings[1];
-        this.showAlert         = defaultSettings[2];
-        this.playSound         = defaultSettings[3];
-    }
+    [this.showInChatpane, this.showAlert, this.playSound] =
+        settings ? [settings[0], settings[1], settings[2]]
+                 : [defaultSettings[0], defaultSettings[1], defaultSettings[2]];
 }
 
 _DECL_(NotificationProvider).prototype = {
@@ -121,7 +113,7 @@ _DECL_(NotificationProvider).prototype = {
         if (this.soundSample && this.playSound)
             soundsPlayer.playSound(this.soundSample);
 
-        if (this.showInChatpane || this.showInMucChatpane)
+        if (this.showInChatpane)
             this._showInChatPane(chatpaneMessage, inlineCommands, this._canceler);
 
         if (this.showAlert)
@@ -154,7 +146,7 @@ _DECL_(NotificationProvider).prototype = {
 
     _showInChatPane: function(msg, inlineCommands, canceler)
     {
-        if (this.showInMucChatpane) {
+        if (this.showInChatpane) {
             var c = this.contact instanceof Conference ? this.contact :
                 (this.contact instanceof ConferenceMember &&
                     this.contact.contact.myResource != this.contact) ?
@@ -162,12 +154,11 @@ _DECL_(NotificationProvider).prototype = {
             if (c)
                 c.showSystemMessage(this._genMessageObject(msg, c, inlineCommands,
                                                            canceler));
-        }
 
-        if (this.showInChatpane && !(this.contact instanceof Conference))
-            this.contact.showSystemMessage(this._genMessageObject(msg, this.contact,
-                                                                  inlineCommands,
-                                                                  canceler));
+            if (!(this.contact instanceof Conference))
+                this.contact.showSystemMessage(
+                    this._genMessageObject(msg, this.contact, inlineCommands, canceler));
+        }
     },
 
     getWrapperFor: function(contact) {
@@ -531,205 +522,203 @@ _DECL_(NotificationScheme).prototype =
         reconnect            : [ _("Reconnected to server")               , false, "sent"        ]
     },
 
-    defaultSettings: { /*columns: showInChatpane, showInMucChatpane, showAlert, playSound*/
-        signIn               : [ true , false, true , true  ],
-        signOut              : [ true , false, true , true  ],
-        mucSignIn            : [ true , true , false, false ],
-        mucSignOut           : [ true , true , false, false ],
-        presence             : [ true , false, false, false ],
-        mucPresence          : [ false, false, false, false ],
-        nickChange           : [ false, true , false, false ],
-        subjectChange        : [ false, true , false, false ],
-        subscription         : [ false, false, true , false ],
-        message              : [ false, false, false, true  ],
-        firstMessage         : [ false, false, true , true  ],
-        mucMessage           : [ false, false, false, false ],
-        mucDirectedMessage   : [ false, false, true , true  ],
-        jingleCall           : [ true , false, true , false ],
-        missedJingleCall     : [ true , false, true , false ],
-        fileTransfer         : [ true , false, true , false ],
-        fileTransferAccepted : [ true , false, false, false ],
-        fileTransferRejected : [ true , false, false, false ],
-        invitationDeclined   : [ true , false, false, false ],
-        disconnect           : [ false, false, true , false ],
-        reconnect            : [ false, false, false, false ]
+    defaultSettings: { /*columns: showInChatpane, showAlert, playSound*/
+        signIn               : [ true , true , true  ],
+        signOut              : [ true , true , true  ],
+        mucSignIn            : [ true , false, false ],
+        mucSignOut           : [ true , false, false ],
+        presence             : [ true , false, false ],
+        mucPresence          : [ false, false, false ],
+        nickChange           : [ true , false, false ],
+        subjectChange        : [ true , false, false ],
+        subscription         : [ false, true , false ],
+        message              : [ false, false, true  ],
+        firstMessage         : [ false, true , true  ],
+        mucMessage           : [ false, false, false ],
+        mucDirectedMessage   : [ false, true , true  ],
+        jingleCall           : [ true , true , false ],
+        missedJingleCall     : [ true , true , false ],
+        fileTransfer         : [ true , true , false ],
+        fileTransferAccepted : [ true , false, false ],
+        fileTransferRejected : [ true , false, false ],
+        invitationDeclined   : [ true , false, false ],
+        disconnect           : [ false, true , false ],
+        reconnect            : [ false, false, false ]
     },
 
     generateSettings: function(contact, doc, instantApply) {
-        var settings = doc.createElementNS(XULNS, "grid");
-        settings.setAttribute("id", "notifications");
+        var settings = E4XtoDOM(
+          <grid xmlns={XULNS} id="notifications">
+            <columns>
+              <column flex="3"/>
+              <column flex="1"/>
+              <column flex="1"/>
+              <column flex="1"/>
+              <column flex="1"/>
+            </columns>
+          </grid>
+        , doc);
 
         // COLUMN HEADERS
-        var headers = [ contact ? _("Use global settings") : _("Use default settings"),
-                       _("Display message in chat pane"),
-                       _("Display message in chat room pane"),
-                       _("Display notification bubble"),
-                       _("Play sound")                        ];
+        var e4x = <vbox><spacer flex="1"/><hbox><spacer flex="1"/>
+                    <button oncommand={"account.notificationScheme.resetSettings"
+                                      +"(document.getElementById('notifications'))"}>
+                      <image class="reset"/>
+                      {_("Reset Settings")}
+                    </button>
+                  <spacer flex="1"/></hbox><spacer flex="1"/></vbox>;
 
-        var columns = <></>;
+        var headers = [_("Display message in chat pane"),
+                       _("Display notification bubble"),
+                       _("Play sound"),
+                       contact ? _("Reset to global settings") : _("Reset to default settings")];
+
         for (var i = 0; i < headers.length; i++) {
-            columns +=
-              <column flex="1" xmlns={XULNS}>
+            e4x +=
                 <vbox align="center">
                   <vbox class="col-head">
                     <hbox align="center">
                       <vbox>{headers[i]}</vbox>
                     </hbox>
                   </vbox>
-                </vbox>
-              </column>;
+                </vbox>;
         }
-        columns =
-            <columns xmlns={XULNS}>
-              <column flex="3" xmlns={XULNS}/>
-              {columns}
-            </columns>
-        settings.appendChild(E4XtoDOM(columns, doc));
-
-        settings.adjustColumns = function() {
-            var heads = doc.getElementsByClassName("col-head");
-            for (var i = 0; i < heads.length; i++)
-                heads[i].width = heads[i].firstChild.boxObject.height;
-        }
+        rows = E4XtoDOM(<rows xmlns={XULNS}><row>{e4x}</row></rows>, doc);
         // COLUMN HEADERS DONE
 
-        var rows = doc.createElementNS(XULNS, "rows");
-        rows.appendChild(doc.createElementNS(XULNS, "row"));
-        settings.appendChild(rows);
-
-        var notifs = ["showInChatpane", "showInMucChatpane", "showAlert", "playSound"];
+        var notifs = ["showInChatpane", "showAlert", "playSound"];
         var contactJID = contact ? contact.jid.normalizedJID.shortJID : null;
 
         // PREF ROWS
         for (var category in this.providersCategories) {
-             var categoryRow = doc.createElementNS(XULNS, "row");
-             rows.appendChild(categoryRow);
-             var cell = doc.createElementNS(XULNS, "vbox");
-             cell.setAttribute("class", "prefCategory");
-             cell.setAttribute("id", category);
-             cell.appendChild(doc.createElementNS(XULNS, "image"));
-             cell.firstChild.setAttribute("class", "expander");
-             cell.appendChild(doc.createTextNode(this.providersCategories[category][0]));
-             categoryRow.appendChild(cell);
-             cell.rows = [];
+            var categoryRow = E4XtoDOM(
+              <row xmlns={XULNS}>
+                <vbox class="prefCategory" id="connection"
+                      onclick="this.parentNode.switchVisibility()">
+                  <image class="expander"/>
+                  {this.providersCategories[category][0]}
+                </vbox>
+              </row>
+            , doc);
+            categoryRow.rows = [];
+            rows.appendChild(categoryRow);
 
-             for (var i = 1; i < this.providersCategories[category].length; i++) {
-                 var providerId = this.providersCategories[category][i];
-                 var provider = this.findProvider(providerId, contact);
+            for (var i = 1; i < this.providersCategories[category].length; i++) {
+                var providerId = this.providersCategories[category][i];
+                var provider = this.findProvider(providerId, contact);
 
-                 if (!contact || provider.contactEvent) {
+                if (!contact || provider.contactEvent) {
 
-                     var row = E4XtoDOM(
-                       <row xmlns={XULNS} class="pref">
-                         <label xmlns={XULNS} crop="end" value={provider.message}/>
-                         <vbox xmlns={XULNS} align="center">
-                           <checkbox checked={provider.isSetToDefault}
-                                     oncommand="this.updateCheckboxes()"/>
-                         </vbox>
-                         <vbox xmlns={XULNS} align="center">
-                           <checkbox checked={provider["showInChatpane"]}/>
-                         </vbox>
-                         <vbox xmlns={XULNS} align="center">
-                           <checkbox checked={provider["showInMucChatpane"]}/>
-                         </vbox>
-                         <vbox xmlns={XULNS} align="center">
-                           <checkbox checked={provider["showAlert"]}/>
-                         </vbox>
-                         <vbox xmlns={XULNS} align="center">
-                           <checkbox checked={provider["playSound"]}/>
-                         </vbox>
-                       </row>, doc);
+                    var row = E4XtoDOM(
+                      <row xmlns={XULNS} class="pref">
+                        <label crop="end" value={provider.message}/>
+                        <vbox align="center">
+                          <checkbox checked={provider["showInChatpane"]}/>
+                        </vbox>
+                        <vbox align="center">
+                          <checkbox checked={provider["showAlert"]}/>
+                        </vbox>
+                        <vbox align="center">
+                          <checkbox checked={provider["playSound"]}/>
+                        </vbox>
+                        <vbox align="center">
+                          <image class="reset" onclick="account.notificationScheme.resetRow(this.parentNode.parentNode)"/>
+                        </vbox>
+                      </row>, doc);
 
-                     var resetCheckbox = row.getElementsByTagNameNS(XULNS, "checkbox")[0];
-                     resetCheckbox.updateCheckboxes = (function(row, refSettings) {
-                         return function() {
-                             var checkboxes = row.getElementsByTagNameNS(XULNS, "checkbox");
-                             if (checkboxes[0].getAttribute("checked") == "true")
-                                 for (var j = 1; j < checkboxes.length; j++) {
-                                     checkboxes[j].setAttribute("disabled", "true");
-                                     checkboxes[j].setAttribute("checked", refSettings[j-1]);
-                                 }
-                             else
-                                 for (var j = 1; j < checkboxes.length; j++)
-                                     checkboxes[j].removeAttribute("disabled");
-                         }
-                     }) (row, contact ? this._getGlobalSetting(providerId)
-                                      : this.defaultSettings[providerId]);
+                    row.providerId = providerId;
+                    row.contactJID = contactJID;
+                    if (instantApply)
+                        row.setAttribute("oncommand",
+                            "account.notificationScheme.saveSingleSetting(this)");
 
-                     resetCheckbox.updateCheckboxes();
-
-                     row.providerId = providerId;
-                     row.contactJID = contactJID;
-                     if (instantApply)
-                         row.setAttribute("oncommand",
-                             "account.notificationScheme.saveSingleSetting(this)");
-
-                     rows.appendChild(row);
-                     cell.rows.push(row);
-                 }
-             }
-             if (cell.rows.length) {
-                 cell.switchVisibility = function() {
-                     if (this.getAttribute("collapse")) {
-                         this.removeAttribute("collapse");
-                         for (var i = 0; i < this.rows.length; i++)
-                             this.rows[i].removeAttribute("collapse");
-                     } else {
-                         this.setAttribute("collapse", "true");
-                         for (var i = 0; i < this.rows.length; i++)
-                             this.rows[i].setAttribute("collapse", true);
-                     }
-                 };
-                 cell.setAttribute("onclick", "this.switchVisibility()");
-             } else {
-                 rows.removeChild(categoryRow);
-             }
+                    rows.appendChild(row);
+                    categoryRow.rows.push(row);
+                }
+            }
+            if (categoryRow.rows.length) {
+                categoryRow.switchVisibility = function() {
+                    if (this.getAttribute("collapseRows")) {
+                        this.removeAttribute("collapseRows");
+                        for (var i = 0; i < this.rows.length; i++)
+                            this.rows[i].removeAttribute("collapse");
+                    } else {
+                        this.setAttribute("collapseRows", "true");
+                        for (var i = 0; i < this.rows.length; i++)
+                            this.rows[i].setAttribute("collapse", true);
+                    }
+                };
+            } else {
+                rows.removeChild(categoryRow);
+            }
         }
         // PREF ROWS DONE
 
-        doc.defaultView.setTimeout(settings.adjustColumns, 0);
+        settings.appendChild(rows);
+
+        doc.defaultView.setTimeout(function() {
+            var heads = doc.getElementsByClassName("col-head");
+            for (var i = 0; i < heads.length; i++)
+                heads[i].width = heads[i].childNodes[1].boxObject.height;
+        }, 0); // to have column width adjusted to column heads
+
         return settings;
     },
 
     _getGlobalSetting: function(event) {
         var globalProvider = this.findProvider(event);
-        return [globalProvider.showInChatpane, globalProvider.showInMucChatpane,
-                globalProvider.showAlert     , globalProvider.playSound];
+        return [globalProvider.showInChatpane, globalProvider.showAlert, globalProvider.playSound];
     },
 
     saveSingleSetting: function(row) {
-        this._saveSetting(row.getElementsByTagNameNS(XULNS, "checkbox"),
-                          row.contactJID, row.providerId);
-    },
+        var checkboxes = row.getElementsByTagNameNS(XULNS, "checkbox"),
+            eventId = row.providerId + (row.contactJID ? "-" + row.contactJID : "");
 
-    _saveSetting: function(checkboxes, contactJID, event) {
-        var fullEvent = event + (contactJID ? "-" + contactJID : "");
+        var settings = [checkboxes[0].checked, checkboxes[1].checked, checkboxes[2].checked],
+            refSettings = row.contactJID ? this._getGlobalSetting(row.providerId)
+                                         : this.defaultSettings[row.providerId];
 
-        if (checkboxes[0].checked) {
-            account.cache.removeValue("notifications-"+fullEvent);
-            delete this.providers[fullEvent];
-            return;
-        }
-
-        var settings = [checkboxes[1].checked, checkboxes[2].checked,
-                        checkboxes[3].checked, checkboxes[4].checked],
-            refSettings = contactJID ? this._getGlobalSetting(event) : this.defaultSettings[event];
-
-        if (settings[0] != refSettings[0] || settings[1] != refSettings[1] ||
-            settings[2] != refSettings[2] || settings[3] != refSettings[3])
-            account.cache.setValue("notifications-"+fullEvent, settings);
+        if (settings[0]!=refSettings[0] || settings[1]!=refSettings[1] || settings[2]!=refSettings[2])
+            account.cache.setValue("notifications-"+eventId, settings);
         else
-            account.cache.removeValue("notifications-"+fullEvent);
+            account.cache.removeValue("notifications-"+eventId);
 
-        delete this.providers[fullEvent];
+        delete this.providers[eventId];
     },
 
     saveSettings: function(grid) {
         var rows = grid.getElementsByClassName("pref");
-
         for (var i = 0; i < rows.length; i++)
-            this._saveSetting(rows[i].getElementsByTagNameNS(XULNS, "checkbox"),
-                              rows[i].contactJID, rows[i].providerId);
+            this.saveSingleSetting(rows[i]);
+    },
+
+    resetRow: function(row) {
+        var checkboxes = row.getElementsByTagNameNS(XULNS, "checkbox"),
+            refSettings = row.contactJID ? this._getGlobalSetting(row.providerId)
+                                         : this.defaultSettings[row.providerId];
+        for (var i = 0; i < checkboxes.length; i++)
+            checkboxes[i].setAttribute("checked", refSettings[i]);
+
+        var eventId = row.providerId + (row.contactJID ? "-" + row.contactJID : "");
+        account.cache.removeValue("notifications-"+eventId);
+        delete this.providers[eventId];
+    },
+
+    resetSettings: function(grid) {
+        var rows = grid.getElementsByClassName("pref");
+
+        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+            .getService(Components.interfaces.nsIPromptService);
+        if (!prompts.confirm(null, _("Reset Settings"), rows[0].contactJID ?
+            _("Are you sure you want to use global\nsettings for all event notifications?") :
+            _("Are you sure you want to use default\nsettings for all event notifications?")))
+            return;
+
+        for (var i = 0; i < rows.length; i++) {
+            this.resetRow(rows[i]);
+            if (rows[i].getAttribute("oncommand"))
+                this.saveSingleSetting(rows[i]);
+        }
     },
 
     findProvider: function(scope, contact) {
@@ -741,26 +730,23 @@ _DECL_(NotificationScheme).prototype =
         for each (var id in scopes) {
             if (this.providers[id]) {
                 provider = this.providers[id].getWrapperFor(contact);
-                provider.isSetToDefault = (!!contact && scope == id);
                 return provider;
             }
 
             var settings = account.cache.getValue("notifications-"+id);
             if (settings) {
-                if (settings.length == 5)
-                    settings[3] = settings[4]; // for retro-compatibility
-
+                if (settings.length == 5) { // for retro-compatibility
+                    settings[1] = settings[2];
+                    settings[2] = settings[4];
+                }
 
                 this.providers[id] = new NotificationProvider(scope, settings);
                 provider = this.providers[id].getWrapperFor(contact);
-                provider.isSetToDefault = (!!contact && scope == id);
                 return provider;
             }
         }
 
-        this.providers[scope] = new NotificationProvider(scope);
-        provider = this.providers[scope].getWrapperFor(contact);
-        provider.isSetToDefault = true;
+        provider = new NotificationProvider(scope).getWrapperFor(contact);
         return provider;
     }
 }

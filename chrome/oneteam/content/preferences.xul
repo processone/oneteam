@@ -310,6 +310,7 @@
           <menuitem label="_('Test')" value="devel"/>
         </menupopup>
       </menulist>
+      <spacer/>
     </hbox>
     <spacer/>
     <!-- #endif -->
