@@ -2,7 +2,7 @@
   background: top center no-repeat;
   -moz-background-clip: padding;
   -moz-background-size: 100%;
-  background-size: 100%;
+  background-size: cover;
 }
 
 .avatarContainer, .avatarIcon img {

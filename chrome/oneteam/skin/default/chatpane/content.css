@@ -95,7 +95,7 @@ body[hide-not-marked=true] .message[ends-selected-chunk=true]
 .avatar-image {
     background: top center no-repeat;
     -moz-background-size: 100%;
-    background-size: 100%;
+    background-size: cover;
     width: 18px;
     height: 18px;
     margin: 1px;
