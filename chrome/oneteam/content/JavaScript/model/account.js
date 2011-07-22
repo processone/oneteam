@@ -314,7 +314,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     setVCard: function(vcardE4X)
     {
-        serviceManager.sendIq({
+        servicesManager.sendIq({
             type: "set",
             e4x: vcardE4X
         });
@@ -478,7 +478,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
             callback = new Callback(this._changePasswordResult, this).
                 addArgs(callback, password).fromCall();
 
-        serviceManager.sendIq({
+        servicesManager.sendIq({
             type: "set",
             domBuilder: ["query", {xmlns: "jabber:iq:register"},
                          [["username", {}, this.myJID.node],
@@ -853,7 +853,7 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
         this._savedPresence = new Presence(node.getAttribute("show") || "available",
                                            node.getAttribute("status"),
-                                    prefManager.getPref("chat.connection.priority") ? null : 
+                                           prefManager.getPref("chat.connection.priority") ? null :
                                            node.getAttribute("priority"),
                                            node.getAttribute("profile"));
         if (this._savedPresence.show == "unavailable") {
