@@ -36,6 +36,12 @@ _DECL_(ArchivedMessagesThreadBase, MessagesThread).prototype =
         var contact = account.getContactOrResource(jid);
         if (contact)
             return contact;
+
+        jid = new JID(jid).shortJID;
+        contact = account.getContactOrResource(jid);
+        if (contact)
+            return contact;
+
         if (nick)
             if (this._nicksHash[nick])
                 return this._nicksHash[nick];
