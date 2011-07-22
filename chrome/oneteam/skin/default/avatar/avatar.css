@@ -1,7 +1,7 @@
 .container {
   background: top center no-repeat;
   -moz-background-clip: padding;
-  -moz-background-size: 100%;
+  -moz-background-size: cover;
   background-size: cover;
 }
 
