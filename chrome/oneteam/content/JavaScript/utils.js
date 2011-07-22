@@ -15,14 +15,14 @@ ML.importMod("roles.js");
 
 function E4XtoDOM(xml, targetDoc)
 {
-    var dp = new DOMParser(null, null, null);
-    var el = dp.parseFromString("<x>"+xml.toXMLString()+"</x>", "text/xml").documentElement;
-    var els = el.childNodes;
+    var dp = new DOMParser();
+    var doc = dp.parseFromString(xml.toXMLString(), "text/xml");
+    var els = doc.childNodes;
 
     // adoptNode throws exception on gecko 1.8
     if (els.length == 1)
         try {
-            return targetDoc ? targetDoc.importNode(els[0],true) : els[0];
+            return targetDoc ? targetDoc.importNode(els[0], true) : els[0];
         } catch (ex) {
             return els[0];
         }
@@ -1334,7 +1334,7 @@ function alertEx(title, text) {
 
 /* Adds tooltip support to xul:iframes containing html:
    displays html elements' title attribute and links' href attribute in tooltip
-   borrowed and modified from 
+   borrowed and modified from
    http://mxr.mozilla.org/mozilla-central/source/testing/mozmill/mozmill/mozmill/extension/content/chrome.js
  */
 function fillTooltip(tipElement, tipNode) {

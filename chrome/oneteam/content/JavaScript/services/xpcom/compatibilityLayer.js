@@ -177,8 +177,12 @@ function openDialog(url, name, flags)
 }
 
 function DOMParser() {
-    return Components.classes["@mozilla.org/xmlextras/domparser;1"].
+    var dp = Components.classes["@mozilla.org/xmlextras/domparser;1"].
         createInstance(Components.interfaces.nsIDOMParser);
+
+    dp.init();
+
+    return dp;
 }
 
 var screen = {

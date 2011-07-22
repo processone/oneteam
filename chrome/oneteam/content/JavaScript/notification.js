@@ -495,7 +495,7 @@ _DECL_(NotificationScheme).prototype =
                                                         "mucDirectedMessage", "invitationDeclined"],
          fileTransfer : [ _("File transfer")        , "fileTransfer", "fileTransferAccepted",
                                                         "fileTransferRejected"                    ],
-         voiceCall    : [ _("Voice call")           , "jingleCall", "missedJingleCall"          ],
+         voiceCall    : [ _("Voice call")           , "jingleCall", "missedJingleCall"          ]
     },
 
     providersList: {           /*    Wording        , true if linked to a contact, sound sample  */
@@ -547,8 +547,9 @@ _DECL_(NotificationScheme).prototype =
     },
 
     generateSettings: function(contact, doc, instantApply) {
+        default xml namespace = new Namespace(XULNS);
         var settings = E4XtoDOM(
-          <grid xmlns={XULNS} id="notifications">
+          <grid id="notifications">
             <columns>
               <column flex="3"/>
               <column flex="1"/>
@@ -583,7 +584,7 @@ _DECL_(NotificationScheme).prototype =
                   </vbox>
                 </vbox>;
         }
-        rows = E4XtoDOM(<rows xmlns={XULNS}><row>{e4x}</row></rows>, doc);
+        rows = E4XtoDOM(<rows><row>{e4x}</row></rows>, doc);
         // COLUMN HEADERS DONE
 
         var notifs = ["showInChatpane", "showAlert", "playSound"];
@@ -592,7 +593,7 @@ _DECL_(NotificationScheme).prototype =
         // PREF ROWS
         for (var category in this.providersCategories) {
             var categoryRow = E4XtoDOM(
-              <row xmlns={XULNS}>
+              <row>
                 <vbox class="prefCategory" id="connection"
                       onclick="this.parentNode.switchVisibility()">
                   <image class="expander"/>
@@ -608,9 +609,8 @@ _DECL_(NotificationScheme).prototype =
                 var provider = this.findProvider(providerId, contact);
 
                 if (!contact || provider.contactEvent) {
-
                     var row = E4XtoDOM(
-                      <row xmlns={XULNS} class="pref">
+                      <row class="pref">
                         <label crop="end" value={provider.message}/>
                         <vbox align="center">
                           <checkbox checked={provider["showInChatpane"]}/>
