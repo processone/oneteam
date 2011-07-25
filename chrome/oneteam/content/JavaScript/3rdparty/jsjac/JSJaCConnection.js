@@ -1091,6 +1091,8 @@ JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
     this.hasRosterVersioning = true;
 
   this._parseMechanisms(doc.getElementsByTagName("mechanisms"));
+  if (!this.mechs.length)
+    return false;
 
   return true;
 };
