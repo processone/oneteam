@@ -437,14 +437,14 @@ function ContactTooltip(model, parentView)
             <rows>
               <label class="contact-tooltip-name"/>
               <row>
-                <label value="_('Jabber ID:')"/>
+                <label value={_("Jabber ID:")}/>
                 <label value={this.model.jid.toUserString()}/>
               </row>
               <row>
-                <label value="_('Subscription:')"/>
+                <label value={_("Subscription:")}/>
                 <label/>
               </row>
-              <label value="_('Resources:')"/>
+              <label value={_("Resources:")}/>
               <vbox class="contact-tooltip-resources"/>
             </rows>
           </grid>
@@ -546,7 +546,7 @@ function ResourceTooltip(model, parentView)
                 <label class="resource-tooltip-resource-show"/>
               </hbox>
               <row>
-                <label value="_('Jabber ID:')"/>
+                <label value={_('Jabber ID:')}/>
                 <label value={this.model.jid}/>
               </row>
               <description class="resource-tooltip-resource-status" style="margin-left: 1em;"/>
