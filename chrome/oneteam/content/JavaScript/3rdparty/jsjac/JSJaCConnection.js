@@ -166,38 +166,6 @@ JSJaCConnection.prototype.connected = function() { return this._connected; };
 /**
  * Disconnects from jabber server and terminates session (if applicable)
  */
-// HERE IS THE ORIGINAL FUNCTION
-/*JSJaCConnection.prototype.disconnect = function() {
-  this._setStatus('disconnecting');
-
-  if (!this.connected())
-    return;
-  this._connected = false;
-
-  clearInterval(this._interval);
-  clearInterval(this._inQto);
-
-  if (this._timeout)
-    clearTimeout(this._timeout); // remove timer
-
-  var slot = this._getFreeSlot();
-  // Intentionally synchronous
-  this._req[slot] = this._setupRequest(false);
-
-  request = this._getRequestString(false, true);
-
-  this.oDbg.log("Disconnecting: " + request,4);
-  this._req[slot].r.send(request);
-
-  try {
-    JSJaCCookie.read('JSJaC_State').erase();
-  } catch (e) {}
-
-  this.oDbg.log("Disconnected: "+this._req[slot].r.responseText,2);
-  this._handleEvent('ondisconnect');
-};*/
-
-// HERE IS THE MODIFIED FUNCTION, TO ALLOW STOP CONNECTING
 JSJaCConnection.prototype.disconnect = function() {
   if (!this.connected() && this._status != "connecting")
     return;
@@ -1123,6 +1091,8 @@ JSJaCConnection.prototype._parseStreamFeatures = function(doc) {
     this.hasRosterVersioning = true;
 
   this._parseMechanisms(doc.getElementsByTagName("mechanisms"));
+  if (!this.mechs.length)
+    return false;
 
   return true;
 };

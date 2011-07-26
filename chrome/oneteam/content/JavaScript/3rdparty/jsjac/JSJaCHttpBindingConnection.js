@@ -228,8 +228,10 @@ JSJaCHttpBindingConnection.prototype._getStreamID = function(slot) {
   this._timeout = setTimeout(JSJaC.bind(this._process, this),
                              this.getPollInterval());
 
-  if (!this._parseStreamFeatures(body))
+  if (!this._parseStreamFeatures(body)) {
+    this._sendEmpty(JSJaC.bind(this._getStreamID, this));
     return;
+  }
 
   if (this.register)
     this._doInBandReg();
@@ -435,6 +437,8 @@ JSJaCHttpBindingConnection.prototype._reInitStream = function(to,cb,arg) {
 
   // tell http binding to reinit stream with/before next request
   this._reinit = true;
+  this._sendEmpty();
+
   cb.call(this,arg); // proceed with next callback
 
   /* [TODO] make sure that we're checking for new stream features when
