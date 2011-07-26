@@ -107,6 +107,7 @@ tabpanels {
 
 /* taken from roster.css: .avatar-box > avatar */
 #setPresence-avatar-image {
+  background-color: white;
   border: 2px solid transparent;
   -moz-border-radius: 5px;
 }
