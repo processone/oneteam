@@ -1,8 +1,6 @@
 .container {
-  background: top center no-repeat;
+  background: center center no-repeat;
   -moz-background-clip: padding;
-  -moz-background-size: cover;
-  background-size: cover;
 }
 
 .avatarContainer, .avatarIcon img {

@@ -473,18 +473,19 @@ function ContactTooltip(model, parentView)
               <vbox class="contact-tooltip-resources"/>
             </rows>
           </grid>
-          <image/>
+          <avatar side="128" minimize="true"/>
         </hbox>
       </tooltip>
     , this.doc);
 
-    this.avatar         = this.node.getElementsByTagName("image")[0];
+    this.avatar         = this.node.getElementsByTagName("avatar")[0];
     this.subscription   = this.node.getElementsByTagName("label")[4];
     this.resourcesLabel = this.node.getElementsByTagName("label")[5];
     this.name               = this.node.getElementsByClassName("contact-tooltip-name")[0];
     this.resourcesContainer = this.node.getElementsByClassName("contact-tooltip-resources")[0];
 
     //this.node.model = this.model; // seems to be never used
+    this.avatar.model = this.model;
     this.node.view = this;
 }
 
@@ -494,7 +495,6 @@ _DECL_(ContactTooltip).prototype =
     {
         default xml namespace = new Namespace(XULNS);
 
-        this.avatar.setAttribute("src", this.model.avatar);
         this.name.setAttribute("value", this.model.visibleName);
         this.subscription.setAttribute("value", this.model.subscription);
 
@@ -572,18 +572,19 @@ function ResourceTooltip(model, parentView)
               <description class="resource-tooltip-resource-status" style="margin-left: 1em;"/>
             </rows>
           </grid>
-          <image/>
+          <avatar side="128" minimize="true"/>
         </hbox>
       </tooltip>
     , this.doc);
 
     this.icon   = this.node.getElementsByTagName("image")[0];
-    this.avatar = this.node.getElementsByTagName("image")[1];
+    this.avatar = this.node.getElementsByTagName("avatar")[0];
     this.name      = this.node.getElementsByClassName("resource-tooltip-name")[0];
     this.showLabel = this.node.getElementsByClassName("resource-tooltip-resource-show")[0];
     this.status    = this.node.getElementsByClassName("resource-tooltip-resource-status")[0];
 
     //this.node.model = this.model; // seems to be never used
+    this.avatar.model = this.model;
     this.node.view = this;
 }
 
@@ -591,7 +592,6 @@ _DECL_(ResourceTooltip).prototype =
 {
     onTooltipShowing: function()
     {
-        this.avatar.setAttribute("src", this.model.avatar);
         this.name.setAttribute("value", _("{0} ({1})", this.model.visibleName,
                                           this.model.activeResource.presence.priority || 0));
         this.icon.setAttribute("src", this.model.activeResource.getStatusIcon());

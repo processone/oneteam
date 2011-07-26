@@ -42,6 +42,9 @@
       </property>
 
       <constructor><![CDATA[
+        this._side = parseInt(this.getAttribute("side")) || this.boxObject.width;
+        this._minimize = this.getAttribute("minimize") == "true";
+
         if (!this._imageObj) {
           this._imageObj = new Image();
           var _this = this;
@@ -86,6 +89,29 @@
 
       <method name="onImageLoad">
         <body><![CDATA[
+          if (this._side && (
+                this._imageObj.height > this._side
+             || this._imageObj.width  > this._side
+          )) {
+            this.style.backgroundSize = this.style.MozBackgroundSize = "contain";
+            if (this._minimize) {
+              if (this._imageObj.height > this._imageObj.width) {
+                this.height = this._side;
+                this.width  = this._side * this._imageObj.width / this._imageObj.height;
+              } else {
+                this.width  = this._side;
+                this.height = this._side * this._imageObj.height / this._imageObj.width;
+              }
+            }
+          } else {
+            delete this.style.backgroundSize;
+            delete this.style.MozBackgroundSize;
+            if (this._minimize) {
+              this.height = this._imageObj.height;
+              this.width  = this._imageObj.width;
+            }
+          }
+
           this.style.backgroundImage = "url("+this._imageObj.src+")";
         ]]></body>
       </method>
