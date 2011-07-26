@@ -48,9 +48,12 @@
     }
 
     var setPresenceUpdater = {
+
       onPresenceChange: function() {
         this.chooser.value = account.currentPresence.show || "available";
         this.profile = account.currentPresence.profile;
+        this.statusText.value = account.currentPresence.status;
+        this.statusText.hidden = !this.statusText.value;
         this.onIconSetChange();
       },
 
@@ -174,6 +177,7 @@
 
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.systray = document.getElementById("systray");
+        this.statusText = document.getElementById("status-text");
         this.presence = this.chooser.value;
 
         this.rosterView = new RosterView(document.getElementById("contacts-list"));
@@ -431,32 +435,37 @@
           </vbox>
           <vbox id="setPresence-box">
             <hbox id="setPresence-presence-box" align="center">
-              <avatar flex="0" id="setPresence-avatar-image" showBlankAvatar="true"/>
-              <hbox flex="1" align="end">
-                <vbox flex="1">
-                  <label id="setPresence-jid" flex="1" crop="end"/>
-                  <label id="setPresence-nick" flex="1" crop="end"/>
-                </vbox>
-                <menulist id="setPresence-type-chooser" flex="0" sizetopopup="none"
-                          oncommand="setPresenceUpdater.onCommand()">
-                  <menupopup>
-                    <menuitem id="setPresence-type-available" label="_('Available')"
-                        selected="true" value="available" class="menuitem-iconic-noaccel"/>
-                    <menuitem id="setPresence-type-chat" label="_('Available for chat')"
-                        value="chat" class="menuitem-iconic-noaccel"/>
-                    <menuitem id="setPresence-type-dnd" label="_('Busy')"
-                        value="dnd" class="menuitem-iconic-noaccel"/>
-                    <menuitem id="setPresence-type-away" label="_('Away')"
-                        value="away" class="menuitem-iconic-noaccel"/>
-                    <menuitem id="setPresence-type-xa" label="_('Not available')"
-                        value="xa" class="menuitem-iconic-noaccel"/>
-                    <menuitem id="setPresence-type-invisible" label="_('Invisible')"
-                        value="invisible" class="menuitem-iconic-noaccel"/>
-                    <menuseparator/>
-                    <menuitem id="setPresence-type-custom" label="_('Status message')"/>
-                  </menupopup>
-                </menulist>
-              </hbox>
+              <vbox id="setPresence-avatar-box">
+                <avatar flex="1" id="setPresence-avatar-image" showBlankAvatar="true" side="48"/>
+              </vbox>
+              <vbox flex="1">
+                <hbox flex="1" align="center">
+                  <vbox flex="1">
+                    <label id="setPresence-jid" flex="1" crop="end"/>
+                    <label id="setPresence-nick" flex="1" crop="end"/>
+                  </vbox>
+                  <menulist id="setPresence-type-chooser" flex="0" sizetopopup="none"
+                            oncommand="setPresenceUpdater.onCommand()">
+                    <menupopup>
+                      <menuitem id="setPresence-type-available" label="_('Available')"
+                          selected="true" value="available" class="menuitem-iconic-noaccel"/>
+                      <menuitem id="setPresence-type-chat" label="_('Available for chat')"
+                          value="chat" class="menuitem-iconic-noaccel"/>
+                      <menuitem id="setPresence-type-dnd" label="_('Busy')"
+                          value="dnd" class="menuitem-iconic-noaccel"/>
+                      <menuitem id="setPresence-type-away" label="_('Away')"
+                          value="away" class="menuitem-iconic-noaccel"/>
+                      <menuitem id="setPresence-type-xa" label="_('Not available')"
+                          value="xa" class="menuitem-iconic-noaccel"/>
+                      <menuitem id="setPresence-type-invisible" label="_('Invisible')"
+                          value="invisible" class="menuitem-iconic-noaccel"/>
+                      <menuseparator/>
+                      <menuitem id="setPresence-type-custom" label="_('Status message')"/>
+                    </menupopup>
+                  </menulist>
+                </hbox>
+                <label crop="end" id="status-text"/>
+              </vbox>
             </hbox>
           </vbox>
         </deck>

@@ -105,13 +105,29 @@ tabpanels {
 /*  -moz-appearance: menulist*/
 }
 
+/* taken from roster.css: .avatar-box > avatar */
 #setPresence-avatar-image {
-  border: 1px solid #b7b7b7;
-  background-color: #e5e5e5;
+  border: 2px solid transparent;
   -moz-border-radius: 5px;
-  margin-right: 4px;
-  width: 34px;
-  height: 34px;
+}
+/* inspired from roster.css: .label-box */
+#setPresence-avatar-box {
+  width: 48px;
+  height: 48px;
+  margin: 2px 6px 0 2px;
+  background: #e5e5e5;
+  -moz-border-radius: 5px;
+  -moz-box-shadow: 0 0 3px 1px #909090;
+}
+
+/* inspired from contactinfo.css: .status-text */
+#status-text {
+  margin: 0 !important;
+  padding: 0 !important;
+  color: #515151;
+  text-shadow: #eee 0 1px 0;
+  font-style: italic;
+  font-size: 85%;
 }
 
 #eventBox {
