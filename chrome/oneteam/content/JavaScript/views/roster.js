@@ -81,31 +81,27 @@ _DECL_(RosterView, null, ContainerView).prototype =
 
 function GroupView(model, parentView)
 {
+    default xml namespace = new Namespace(XULNS);
+
     this.model = model;
     this.parentView = parentView;
     this.doc = parentView.containerNode.ownerDocument;
     this.contacts = [];
 
-    this.node = this.doc.createElementNS(XULNS, "expander");
-    this.node.setAttribute("open", this.model.name ?
-                                account.cache.getValue("groupExpand-"+this.model.name) != "false" :
-                                true);
-    this.node.setAttribute("onexpand", "this.view.onExpand(val)")
+    var open = this.model.name ? // doesn't work !!
+               account.cache.getValue("groupExpand-"+this.model.name) != "false" : true;
+    this.node = E4XtoDOM(
+      <expander open={open} showOffline={this.model == account.myEventsGroup}
+                onexpand="this.view.onExpand(val)"
+                context="group-contextmenu" class="group-view">
+        <description flex="1" class="icons-box"/>
+      </expander>
+    , this.doc);
+    this.box = this.node.getElementsByTagName("description")[0];
 
-    this.node.setAttribute("context", "group-contextmenu");
-    this.node.setAttribute("class", "group-view");
-    this.node.model = this.model;
+    //this.node.model = this.model; // seems to be never used
     this.node.menuModel = this.model;
     this.node.view = this;
-    if (this.model == account.myEventsGroup)
-        this.node.setAttribute("showOffline", "true");
-
-    this.box = this.doc.createElementNS(XULNS, "description");
-
-    this.box.setAttribute("flex", "1");
-    this.box.setAttribute("class", "icons-box");
-
-    this.node.appendChild(this.box);
 
     this.onAvailUpdated();
 
@@ -220,80 +216,59 @@ _DECL_(GroupView, null, ContainerView).prototype =
 
 function ContactView(model, parentView)
 {
+    default xml namespace = new Namespace(XULNS);
+
     this.model = model;
     this.parentView = parentView;
     this.doc = parentView.containerNode.ownerDocument;
 
-    this.statusIcon = this.doc.createElementNS(XULNS, "image");
-    this.label = this.doc.createElementNS(XULNS, "label");
-    this.avatar = this.doc.createElementNS(XULNS, "avatar");
-    this.messagesCounter = this.doc.createElementNS(XULNS, "label");
+    this.tooltip = model instanceof MyResourcesContact ?
+                       new ResourceTooltip(model, this.parentView) :
+                       new ContactTooltip(model, this.parentView);
 
-    this.node = this.doc.createElementNS(XULNS, "hbox");
-    this.iconContainer = this.doc.createElementNS(XULNS, "vbox");
-    var stack = this.doc.createElementNS(XULNS, "stack");
-    var stack2 = this.doc.createElementNS(XULNS, "stack");
-    var hbox = this.doc.createElementNS(XULNS, "hbox");
-    var hbox2 = this.doc.createElementNS(XULNS, "hbox");
-    var vbox = this.doc.createElementNS(XULNS, "vbox");
-    var vbox2 = this.doc.createElementNS(XULNS, "vbox");
-    var image = this.doc.createElementNS(XULNS, "image");
-    var box = this.doc.createElementNS(XULNS, "vbox");
+    this.node = E4XtoDOM(
+      <hbox class="contact-view" ondblclick="this.model.onDblClick()"
+            context={model instanceof MyResourcesContact ?
+                     "resource-contextmenu" : "contact-contextmenu"}
+            tooltip={this.tooltip.id}>
+        <vbox class="icon-container">
+          <image class="status-icon"/>
+        </vbox>
+        <stack flex="1">
+          <stack class="label-box" overflowed="false">
+            <hbox align="center" pack="center">
+              <label value={model.visibleName || model.jid.node}/>
+            </hbox>
+            <vbox>
+              <image/>
+            </vbox>
+          </stack>
+          <vbox class="avatar-box">
+            <avatar showBlankAvatar="false" flex="1"/>
+          </vbox>
+          <hbox class="counter-box">
+            <vbox>
+              <label/>
+            </vbox>
+          </hbox>
+        </stack>
+      </hbox>
+    , this.doc);
 
-    stack.setAttribute("flex", "1");
-
-    this.avatar.setAttribute("showBlankAvatar", "false")
-
-    this.iconContainer.appendChild(this.statusIcon);
-
-    hbox.appendChild(this.label);
-    hbox.setAttribute("align", "center");
-    hbox.setAttribute("pack", "center");
-    stack2.appendChild(hbox);
-    vbox2.appendChild(image);
-    stack2.appendChild(vbox2);
-    stack2.setAttribute("class", "label-box");
-
-    this.avatar.setAttribute("flex", "1");
-
-    box.appendChild(this.avatar);
-    box.setAttribute("class", "avatar-box");
-
-    vbox.appendChild(this.messagesCounter);
-    hbox2.setAttribute("class", "counter-box");
-    hbox2.appendChild(vbox);
-
-    this.iconContainer.setAttribute("class", "icon-container");
-
-    stack.appendChild(stack2)
-    stack.appendChild(box);
-    stack.appendChild(hbox2);
-
-    this.node.appendChild(this.iconContainer);
-    this.node.appendChild(stack);
+    this.statusIcon = this.node.getElementsByClassName("status-icon")[0];
+    this.label = this.node.getElementsByTagName("label")[0];
+    this.messagesCounter = this.node.getElementsByTagName("label")[1];
+    this.avatar = this.node.getElementsByTagName("avatar")[0];
+    this.iconContainer = this.node.getElementsByClassName("icon-container")[0];
 
     this.avatar.model = model;
 
-    if (model instanceof MyResourcesContact) {
-        this.tooltip = new ResourceTooltip(model, this.parentView);
-        this.node.setAttribute("context", "resource-contextmenu");
-    } else {
-        this.tooltip = new ContactTooltip(model, this.parentView);
-        this.node.setAttribute("context", "contact-contextmenu");
-    }
-
-    this.node.setAttribute("tooltip", this.tooltip.id);
-    this.node.setAttribute("class", "contact-view");
-    this.node.setAttribute("ondblclick", "this.model.onDblClick()");
-    this.label.parentNode.parentNode.setAttribute("overflowed", "false");
     this.label.parentNode.addEventListener("overflow", function(ev) {
         ev.target.parentNode.setAttribute("overflowed", "true");
     }, true);
     this.label.parentNode.addEventListener("underflow", function(ev) {
         ev.target.parentNode.setAttribute("overflowed", "false");
     }, true);
-    this.label.setAttribute("value", model.visibleName || model.jid.node);
-    this.statusIcon.setAttribute("class", "status-icon");
 
     this.label.view = this;
     this.node.model = this.model;
@@ -462,14 +437,14 @@ function ContactTooltip(model, parentView)
             <rows>
               <label class="contact-tooltip-name"/>
               <row>
-                <label value="Jabber ID:"/>
+                <label value="_('Jabber ID:')"/>
                 <label value={this.model.jid.toUserString()}/>
               </row>
               <row>
-                <label value="Subscription:"/>
+                <label value="_('Subscription:')"/>
                 <label/>
               </row>
-              <label value="Resources:"/>
+              <label value="_('Resources:')"/>
               <vbox class="contact-tooltip-resources"/>
             </rows>
           </grid>
@@ -496,7 +471,12 @@ _DECL_(ContactTooltip).prototype =
         default xml namespace = new Namespace(XULNS);
 
         this.name.setAttribute("value", this.model.visibleName);
-        this.subscription.setAttribute("value", this.model.subscription);
+        this.subscription.setAttribute("value", 
+            this.model.subscription == "both" ? _("in two ways") :
+            this.model.subscription == "from" ? _("he/she can see your status") :
+            this.model.subscription == "to"   ? _("you can see his/her status") :
+                                                _("none")
+        );
 
         while (this.resourcesContainer.firstChild)
             this.resourcesContainer.removeChild(this.resourcesContainer.firstChild);
@@ -566,7 +546,7 @@ function ResourceTooltip(model, parentView)
                 <label class="resource-tooltip-resource-show"/>
               </hbox>
               <row>
-                <label value="Jabber ID:"/>
+                <label value="_('Jabber ID:')"/>
                 <label value={this.model.jid}/>
               </row>
               <description class="resource-tooltip-resource-status" style="margin-left: 1em;"/>
