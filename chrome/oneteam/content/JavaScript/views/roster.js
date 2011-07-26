@@ -444,69 +444,47 @@ _DECL_(ContactView).prototype =
 
 function ContactTooltip(model, parentView)
 {
+    default xml namespace = new Namespace(XULNS);
+
     this.model = model;
     this.parentView = parentView;
     this.doc = parentView.containerNode.ownerDocument;
 
-    this.node = this.doc.createElementNS(XULNS, "tooltip");
-    this.avatar = this.doc.createElementNS(XULNS, "image");
-    this.name = this.doc.createElementNS(XULNS, "label");
-    this.subscription = this.doc.createElementNS(XULNS, "label");
-    this.resourcesLabel = this.doc.createElementNS(XULNS, "label");
-
     this.id = generateUniqueId();
+    this.node = E4XtoDOM(
+      <tooltip onpopupshowing="this.view.onTooltipShowing()" id={this.id} class="contact-tooltip">
+        <hbox flex="1" align="start">
+          <grid>
+            <columns>
+              <column/>
+              <column flex="1"/>
+            </columns>
+            <rows>
+              <label class="contact-tooltip-name"/>
+              <row>
+                <label value="Jabber ID:"/>
+                <label value={this.model.jid.toUserString()}/>
+              </row>
+              <row>
+                <label value="Subscription:"/>
+                <label/>
+              </row>
+              <label value="Resources:"/>
+              <vbox class="contact-tooltip-resources"/>
+            </rows>
+          </grid>
+          <image/>
+        </hbox>
+      </tooltip>
+    , this.doc);
 
-    this.node.setAttribute("onpopupshowing", "this.view.onTooltipShowing()");
-    this.node.setAttribute("id", this.id);
-    this.node.setAttribute("class", "contact-tooltip");
-    this.name.setAttribute("class", "contact-tooltip-name");
+    this.avatar         = this.node.getElementsByTagName("image")[0];
+    this.subscription   = this.node.getElementsByTagName("label")[4];
+    this.resourcesLabel = this.node.getElementsByTagName("label")[5];
+    this.name               = this.node.getElementsByClassName("contact-tooltip-name")[0];
+    this.resourcesContainer = this.node.getElementsByClassName("contact-tooltip-resources")[0];
 
-    this.resourcesLabel.setAttribute("value", "Resources:");
-
-    var box = this.doc.createElementNS(XULNS, "hbox");
-    box.setAttribute("flex", "1");
-    box.setAttribute("align", "start");
-    this.node.appendChild(box);
-
-    var grid = this.doc.createElementNS(XULNS, "grid");
-    box.appendChild(grid);
-    box.appendChild(this.avatar);
-
-    var cols = this.doc.createElementNS(XULNS, "columns");
-    grid.appendChild(cols);
-    var col = this.doc.createElementNS(XULNS, "column");
-    cols.appendChild(col);
-    col = this.doc.createElementNS(XULNS, "column");
-    col.setAttribute("flex", "1");
-    cols.appendChild(col);
-
-    var rows = this.doc.createElementNS(XULNS, "rows");
-    grid.appendChild(rows);
-    rows.appendChild(this.name);
-
-    var row = this.doc.createElementNS(XULNS, "row");
-    rows.appendChild(row);
-    var label = this.doc.createElementNS(XULNS, "label");
-    label.setAttribute("value", "Jabber ID:");
-    row.appendChild(label);
-    label = this.doc.createElementNS(XULNS, "label");
-    label.setAttribute("value", this.model.jid.toUserString());
-    row.appendChild(label);
-
-    row = this.doc.createElementNS(XULNS, "row");
-    rows.appendChild(row);
-    label = this.doc.createElementNS(XULNS, "label");
-    label.setAttribute("value", "Subscription:");
-    row.appendChild(label);
-    row.appendChild(this.subscription);
-
-    rows.appendChild(this.resourcesLabel);
-
-    grid = this.resourcesContainer = this.doc.createElementNS(XULNS, "vbox");
-    grid.setAttribute("class", "contact-tooltip-resources");
-    rows.appendChild(grid);
-
-    this.node.model = this.model;
+    //this.node.model = this.model; // seems to be never used
     this.node.view = this;
 }
 
@@ -514,6 +492,8 @@ _DECL_(ContactTooltip).prototype =
 {
     onTooltipShowing: function()
     {
+        default xml namespace = new Namespace(XULNS);
+
         this.avatar.setAttribute("src", this.model.avatar);
         this.name.setAttribute("value", this.model.visibleName);
         this.subscription.setAttribute("value", this.model.subscription);
@@ -528,36 +508,23 @@ _DECL_(ContactTooltip).prototype =
                 this.resourcesContainer.appendChild(this.doc.createElementNS(XULNS, "spacer"));
             firstResource = false;
 
-            var box = this.doc.createElementNS(XULNS, "hbox");
-            box.setAttribute("align", "center");
-            this.resourcesContainer.appendChild(box);
+            this.resourcesContainer.appendChild(E4XtoDOM(
+                <hbox align="center">
+                  <image src={resource.getStatusIcon()}/>
+                  <label class="contact-tooltip-resource-name"
+                         value={resource.jid.resource+" ("+resource.presence.priority+")"}/>
+                  <label value="-"/>
+                  <label class="contact-tooltip-resource-show"
+                         value={resource.presence}
+                         style={resource.presence.getStyle(resource.msgsInQueue)}/>
+                </hbox>
+            , this.doc));
 
-            var icon = this.doc.createElementNS(XULNS, "image");
-            icon.setAttribute("src", resource.getStatusIcon());
-            box.appendChild(icon);
-
-            var label = this.doc.createElementNS(XULNS, "label");
-            label.setAttribute("class", "contact-tooltip-resource-name");
-            label.setAttribute("value", resource.jid.resource+" ("+resource.presence.priority+")");
-            box.appendChild(label);
-
-            label = this.doc.createElementNS(XULNS, "label");
-            label.setAttribute("value", "-");
-            box.appendChild(label);
-
-            label = this.doc.createElementNS(XULNS, "label");
-            label.setAttribute("value", resource.presence);
-            label.setAttribute("class", "contact-tooltip-resource-show");
-            label.setAttribute("style", resource.presence.getStyle(resource.msgsInQueue));
-            box.appendChild(label);
-
-            if (resource.presence.status) {
-                label = this.doc.createElementNS(XULNS, "description");
-                label.setAttribute("class", "contact-tooltip-resource-status");
-                label.setAttribute("value", resource.presence.status);
-                label.setAttribute("crop", "end");
-                this.resourcesContainer.appendChild(label);
-            }
+            if (resource.presence.status)
+                this.resourcesContainer.appendChild(E4XtoDOM(
+                    <description class="contact-tooltip-resource-status" crop="end"
+                                 value={resource.presence.status}/>
+                , this.doc));
         }
         this.resourcesLabel.setAttribute("hidden", firstResource);
     },
@@ -576,70 +543,47 @@ _DECL_(ContactTooltip).prototype =
 
 function ResourceTooltip(model, parentView)
 {
+    default xml namespace = new Namespace(XULNS);
+
     this.model = model;
     this.parentView = parentView;
     this.doc = parentView.containerNode.ownerDocument;
 
-    this.node = this.doc.createElementNS(XULNS, "tooltip");
-    this.avatar = this.doc.createElementNS(XULNS, "image");
-    this.icon = this.doc.createElementNS(XULNS, "image");
-    this.name = this.doc.createElementNS(XULNS, "label");
-    this.showLabel = this.doc.createElementNS(XULNS, "label");
-    this.status = this.doc.createElementNS(XULNS, "description");
-
     this.id = generateUniqueId();
+    this.node = E4XtoDOM(
+      <tooltip onpopupshowing="this.view.onTooltipShowing()" id={this.id} class="resource-tooltip">
+        <hbox flex="1" align="start">
+          <grid>
+            <columns>
+              <column/>
+              <column flex="1"/>
+            </columns>
+            <rows>
+              <hbox class="resource-tooltip-name-container" align="center">
+                <image/>
+                <label class="resource-tooltip-name"/>
+                <label value="-"/>
+                <label class="resource-tooltip-resource-show"/>
+              </hbox>
+              <row>
+                <label value="Jabber ID:"/>
+                <label value={this.model.jid}/>
+              </row>
+              <description class="resource-tooltip-resource-status" style="margin-left: 1em;"/>
+            </rows>
+          </grid>
+          <image/>
+        </hbox>
+      </tooltip>
+    , this.doc);
 
-    this.node.setAttribute("onpopupshowing", "this.view.onTooltipShowing()");
-    this.node.setAttribute("id", this.id);
-    this.node.setAttribute("class", "resource-tooltip");
-    this.name.setAttribute("class", "resource-tooltip-name");
+    this.icon   = this.node.getElementsByTagName("image")[0];
+    this.avatar = this.node.getElementsByTagName("image")[1];
+    this.name      = this.node.getElementsByClassName("resource-tooltip-name")[0];
+    this.showLabel = this.node.getElementsByClassName("resource-tooltip-resource-show")[0];
+    this.status    = this.node.getElementsByClassName("resource-tooltip-resource-status")[0];
 
-    var box = this.doc.createElementNS(XULNS, "hbox");
-    box.setAttribute("flex", "1");
-    box.setAttribute("align", "start");
-    this.node.appendChild(box);
-
-    var grid = this.doc.createElementNS(XULNS, "grid");
-    box.appendChild(grid);
-    box.appendChild(this.avatar);
-
-    var cols = this.doc.createElementNS(XULNS, "columns");
-    grid.appendChild(cols);
-    var col = this.doc.createElementNS(XULNS, "column");
-    cols.appendChild(col);
-    col = this.doc.createElementNS(XULNS, "column");
-    col.setAttribute("flex", "1");
-    cols.appendChild(col);
-
-    var rows = this.doc.createElementNS(XULNS, "rows");
-    grid.appendChild(rows);
-    var box = this.doc.createElementNS(XULNS, "hbox");
-    box.setAttribute("class", "resource-tooltip-name-container");
-    box.setAttribute("align", "center");
-    rows.appendChild(box);
-
-    box.appendChild(this.icon);
-    box.appendChild(this.name);
-    var label = this.doc.createElementNS(XULNS, "label");
-    label.setAttribute("value", "-");
-    box.appendChild(label);
-    box.appendChild(this.showLabel);
-    this.showLabel.setAttribute("class", "resource-tooltip-resource-show");
-
-    var row = this.doc.createElementNS(XULNS, "row");
-    rows.appendChild(row);
-    var label = this.doc.createElementNS(XULNS, "label");
-    label.setAttribute("value", "Jabber ID:");
-    row.appendChild(label);
-    label = this.doc.createElementNS(XULNS, "label");
-    label.setAttribute("value", this.model.jid);
-    row.appendChild(label);
-
-    rows.appendChild(this.status);
-    this.status.setAttribute("class", "resource-tooltip-resource-status");
-    this.status.setAttribute("style", "margin-left: 1em");
-
-    this.node.model = this.model;
+    //this.node.model = this.model; // seems to be never used
     this.node.view = this;
 }
 
