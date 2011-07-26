@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-07-22 18:03+0200\n"
+"POT-Creation-Date: 2011-07-26 19:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -72,51 +72,51 @@ msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:129
 #: ../chrome/oneteam/content/console.xul:59
-#: ../chrome/oneteam/content/main.xul:443
+#: ../chrome/oneteam/content/main.xul:449
 #: ../chrome/oneteam/content/status.xul:94
 msgid "Available"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:130
-#: ../chrome/oneteam/content/main.xul:445
+#: ../chrome/oneteam/content/main.xul:451
 #: ../chrome/oneteam/content/status.xul:96
 msgid "Available for chat"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:131
-#: ../chrome/oneteam/content/main.xul:447
+#: ../chrome/oneteam/content/main.xul:453
 #: ../chrome/oneteam/content/status.xul:98
 msgid "Busy"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:132
-#: ../chrome/oneteam/content/main.xul:449
+#: ../chrome/oneteam/content/main.xul:455
 #: ../chrome/oneteam/content/status.xul:99
 msgid "Away"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:133
 #: ../chrome/oneteam/content/console.xul:60
-#: ../chrome/oneteam/content/main.xul:451
+#: ../chrome/oneteam/content/main.xul:457
 #: ../chrome/oneteam/content/status.xul:100
 msgid "Not available"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:135
-#: ../chrome/oneteam/content/main.xul:453
+#: ../chrome/oneteam/content/main.xul:459
 #: ../chrome/oneteam/content/status.xul:101
 msgid "Invisible"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:406
+#: ../chrome/oneteam/content/main.xul:410
 msgid "Username"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:410
+#: ../chrome/oneteam/content/main.xul:414
 msgid "Password"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:417
+#: ../chrome/oneteam/content/main.xul:421
 msgid "Sign In"
 msgstr ""
 
@@ -136,7 +136,7 @@ msgstr ""
 msgid "_Report Bug"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:456
+#: ../chrome/oneteam/content/main.xul:462
 msgid "Status message"
 msgstr ""
 
@@ -189,6 +189,8 @@ msgstr ""
 msgid "XMPP"
 msgstr ""
 
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:440
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:549
 #: ../chrome/oneteam/content/addContact.xul:202
 msgid "Jabber ID:"
 msgstr ""
@@ -416,7 +418,7 @@ msgid "Requesting command form"
 msgstr ""
 
 #: ../chrome/oneteam/content/JavaScript/model/roster.js:979
-#: ../chrome/oneteam/content/JavaScript/views/roster.js:651
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:575
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:101
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:71
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:86
@@ -443,11 +445,11 @@ msgstr ""
 msgid "File _Transfers..."
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:367
+#: ../chrome/oneteam/content/main.xul:371
 msgid "_View"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:369
+#: ../chrome/oneteam/content/main.xul:373
 msgid "Show _Actions Toolbar"
 msgstr ""
 
@@ -475,11 +477,11 @@ msgstr ""
 msgid "About..."
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:348
+#: ../chrome/oneteam/content/main.xul:352
 msgid "Add new contact"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:350
+#: ../chrome/oneteam/content/main.xul:354
 #: ../chrome/oneteam/content/preferences.xul:12
 msgid "Preferences"
 msgstr ""
@@ -652,54 +654,54 @@ msgstr ""
 msgid "Rooms:"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1110
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1898
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1114
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1902
 msgid "Bold"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1111
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1899
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1115
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1903
 msgid "Italic"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1112
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1900
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1116
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1904
 msgid "Underline"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1114
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1904
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1118
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1908
 msgid "Increase font size"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1115
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1905
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1119
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1909
 msgid "Decrease font size"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1117
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1909
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1121
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1913
 msgid "Font color"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1118
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1910
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1122
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1914
 msgid "Background color"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1855
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1859
 msgid "Send file"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1876
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1880
 msgid "Invite contact"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1879
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1883
 msgid "Invite user by mail"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1865
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1869
 msgid "Toggle smiles visibility/select smile"
 msgstr ""
 
@@ -796,7 +798,7 @@ msgstr ""
 msgid "You have been invited to room <b>{0}</b> by <b>{1}</b>"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:414
+#: ../chrome/oneteam/content/main.xul:418
 msgid "Remember password"
 msgstr ""
 
@@ -930,11 +932,11 @@ msgstr ""
 msgid "History Manager"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:2033
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2037
 #: ../chrome/oneteam/content/disco.xul:75
 #: ../chrome/oneteam/content/history.xul:166
 #: ../chrome/oneteam/content/history.xul:175
-#: ../chrome/oneteam/content/main.xul:464
+#: ../chrome/oneteam/content/main.xul:471
 #: ../chrome/oneteam/content/search.xul:12
 msgid "Search"
 msgstr ""
@@ -1107,11 +1109,11 @@ msgstr ""
 msgid "Automatically set status to 'not available\\' after"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1869
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1873
 msgid "Additional commands"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1883
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1887
 msgid "Show characters counter"
 msgstr ""
 
@@ -1330,8 +1332,8 @@ msgid "Waiting for Accept"
 msgstr ""
 
 #: ../chrome/oneteam/content/jingleCall.xul:119
-#: ../chrome/oneteam/content/main.xul:424
-#: ../chrome/oneteam/content/main.xul:90
+#: ../chrome/oneteam/content/main.xul:428
+#: ../chrome/oneteam/content/main.xul:93
 msgid "Connecting"
 msgstr ""
 
@@ -1387,16 +1389,16 @@ msgstr ""
 msgid "Gone"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1860
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1864
 msgid "Jingle call"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:2037
 #: ../chrome/oneteam/content/bindings/chatpane.xml:2041
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2045
 msgid "THREAD"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:2054
+#: ../chrome/oneteam/content/bindings/chatpane.xml:2058
 msgid "BOOKMARK"
 msgstr ""
 
@@ -1408,7 +1410,7 @@ msgstr ""
 msgid "Call request received"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/views/roster.js:142
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:138
 msgid "{0} ({1}/{2})"
 msgstr ""
 
@@ -1486,7 +1488,7 @@ msgstr ""
 msgid "Reconnect after loosing connection"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:427
+#: ../chrome/oneteam/content/main.xul:431
 msgid "Stop Connecting"
 msgstr ""
 
@@ -1804,25 +1806,25 @@ msgstr ""
 msgid "Open console"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1843
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1979
-#: ../chrome/oneteam/content/bindings/chatpane.xml:887
-#: ../chrome/oneteam/content/bindings/chatpane.xml:919
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1847
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1983
+#: ../chrome/oneteam/content/bindings/chatpane.xml:891
+#: ../chrome/oneteam/content/bindings/chatpane.xml:923
 msgid "Edit Last Message"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1979
-#: ../chrome/oneteam/content/bindings/chatpane.xml:883
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1983
+#: ../chrome/oneteam/content/bindings/chatpane.xml:887
 msgid "Cancel Edition"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:759
-#: ../chrome/oneteam/content/bindings/chatpane.xml:968
+#: ../chrome/oneteam/content/bindings/chatpane.xml:763
+#: ../chrome/oneteam/content/bindings/chatpane.xml:972
 msgid "Refer to this Message"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:950
-#: ../chrome/oneteam/content/bindings/chatpane.xml:956
+#: ../chrome/oneteam/content/bindings/chatpane.xml:954
+#: ../chrome/oneteam/content/bindings/chatpane.xml:960
 msgid "Refer to this Conversation"
 msgstr ""
 
@@ -1932,15 +1934,15 @@ msgstr ""
 msgid "Reconnected to server"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:571
+#: ../chrome/oneteam/content/JavaScript/notification.js:572
 msgid "Display message in chat pane"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:572
+#: ../chrome/oneteam/content/JavaScript/notification.js:573
 msgid "Display notification bubble"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:573
+#: ../chrome/oneteam/content/JavaScript/notification.js:574
 msgid "Play sound"
 msgstr ""
 
@@ -1972,7 +1974,7 @@ msgstr ""
 msgid "Show Details..."
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1850
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1854
 msgid "Show contact details"
 msgstr ""
 
@@ -2078,7 +2080,7 @@ msgstr ""
 msgid "Nick"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:344
+#: ../chrome/oneteam/content/main.xul:348
 msgid "Join chat room"
 msgstr ""
 
@@ -2090,7 +2092,7 @@ msgstr ""
 msgid "You have been invited to chat room <b>{0}</b> by <b>{1}</b>"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1871
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1875
 #: ../chrome/oneteam/content/inviteToRoom.xul:10
 msgid "Invite to chat room"
 msgstr ""
@@ -2195,7 +2197,7 @@ msgstr ""
 msgid "Decline"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/chatpane.xml:1890
+#: ../chrome/oneteam/content/bindings/chatpane.xml:1894
 msgid "Autospellchecker"
 msgstr ""
 
@@ -2259,11 +2261,11 @@ msgstr ""
 msgid "Contacts lists"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:342
+#: ../chrome/oneteam/content/main.xul:346
 msgid "Initiate new chat"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:372
+#: ../chrome/oneteam/content/main.xul:376
 msgid "Show _Offline Contacts"
 msgstr ""
 
@@ -2295,7 +2297,7 @@ msgstr ""
 msgid "Correct Informations"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:346
+#: ../chrome/oneteam/content/main.xul:350
 msgid "Status messages overview"
 msgstr ""
 
@@ -2403,7 +2405,7 @@ msgstr ""
 msgid "Do not ask me next time"
 msgstr ""
 
-#: ../chrome/oneteam/content/main.xul:361
+#: ../chrome/oneteam/content/main.xul:365
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:233
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:263
 msgid "Close Window"
@@ -2417,7 +2419,7 @@ msgstr ""
 msgid "_Actions"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:567
+#: ../chrome/oneteam/content/JavaScript/notification.js:568
 #: ../chrome/oneteam/content/JavaScript/notification.js:712
 msgid "Reset Settings"
 msgstr ""
@@ -2438,11 +2440,43 @@ msgstr ""
 msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created?"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:574
+#: ../chrome/oneteam/content/JavaScript/notification.js:575
 msgid "Reset to global settings"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/notification.js:574
+#: ../chrome/oneteam/content/JavaScript/notification.js:575
 msgid "Reset to default settings"
+msgstr ""
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:398
+msgid "Edit personal info..."
+msgstr ""
+
+#: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:399
+msgid "Status message..."
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:444
+msgid "Subscription:"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:447
+msgid "Resources:"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:475
+msgid "in two ways"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:476
+msgid "he/she can see your status"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:477
+msgid "you can see his/her status"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/views/roster.js:478
+msgid "none"
 msgstr ""
 
