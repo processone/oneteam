@@ -393,5 +393,11 @@
       <menuseparator id="edit-separator"/>
       <menuitem id="menu_selectAll_cm" label="_('Select All')" accesskey="" command="cmd_selectAll"/>
     </menupopup>
+
+    <menupopup id="user-contextmenu">
+      <menuitem label="_('Edit personal info...')" command="cmd_ourVCard"/>
+      <menuitem label="_('Status message...')"
+                oncommand="account.onCustomPresence(account.currentPresence.show)"/>
+    </menupopup>
   </popupset>
 </overlay>
