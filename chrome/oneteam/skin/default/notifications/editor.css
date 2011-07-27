@@ -20,30 +20,11 @@
   max-width: 100px;
 }
 
-.prefCategory {
-  font-weight: bold;
-  padding: 10px 0 3px;
-  cursor: default;
-}
 image.reset {
   height: 12px;
   width: 12px;
   background: transparent url(imgs/reset.png) center center;
   cursor: pointer;
-}
-
-image.expander {
-  height: 11px;
-  width: 11px;
-  margin-right: 5px;
-  background: transparent url(imgs/switch-open-black.png) center center;
-}
-row[collapseRows] image.expander {
-  background-image: url(imgs/switch-close-black.png);
-}
-
-row[collapse] {
-  visibility: collapse;
 }
 
 #notifications checkbox .checkbox-label-box {

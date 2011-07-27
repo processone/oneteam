@@ -592,17 +592,15 @@ _DECL_(NotificationScheme).prototype =
 
         // PREF ROWS
         for (var category in this.providersCategories) {
-            var categoryRow = E4XtoDOM(
-              <row>
-                <vbox class="prefCategory" id="connection"
-                      onclick="this.parentNode.switchVisibility()">
-                  <image class="expander"/>
-                  {this.providersCategories[category][0]}
-                </vbox>
-              </row>
+            var rowsGroup = E4XtoDOM(
+              <rows class="collapsableRowsGroup">
+                <hbox onclick="this.parentNode.setAttribute('collapse', this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+                  <image/>
+                  <label value={this.providersCategories[category][0]}/>
+                </hbox>
+              </rows>
             , doc);
-            categoryRow.rows = [];
-            rows.appendChild(categoryRow);
+            rows.appendChild(rowsGroup);
 
             for (var i = 1; i < this.providersCategories[category].length; i++) {
                 var providerId = this.providersCategories[category][i];
@@ -610,7 +608,7 @@ _DECL_(NotificationScheme).prototype =
 
                 if (!contact || provider.contactEvent) {
                     var row = E4XtoDOM(
-                      <row class="pref">
+                      <row>
                         <label crop="end" value={provider.message}/>
                         <vbox align="center">
                           <checkbox checked={provider["showInChatpane"]}/>
@@ -632,25 +630,11 @@ _DECL_(NotificationScheme).prototype =
                         row.setAttribute("oncommand",
                             "account.notificationScheme.saveSingleSetting(this)");
 
-                    rows.appendChild(row);
-                    categoryRow.rows.push(row);
+                    rowsGroup.appendChild(row);
                 }
             }
-            if (categoryRow.rows.length) {
-                categoryRow.switchVisibility = function() {
-                    if (this.getAttribute("collapseRows")) {
-                        this.removeAttribute("collapseRows");
-                        for (var i = 0; i < this.rows.length; i++)
-                            this.rows[i].removeAttribute("collapse");
-                    } else {
-                        this.setAttribute("collapseRows", "true");
-                        for (var i = 0; i < this.rows.length; i++)
-                            this.rows[i].setAttribute("collapse", true);
-                    }
-                };
-            } else {
-                rows.removeChild(categoryRow);
-            }
+            if (rowsGroup.getElementsByTagName("row").length == 0)
+                rows.removeChild(rowsGroup);
         }
         // PREF ROWS DONE
 

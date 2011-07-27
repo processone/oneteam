@@ -3,6 +3,7 @@
 <?xml-stylesheet href="chrome://oneteam/skin/preferences/preferences.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/notifications/editor.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/collapseRows/collapseRows.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>

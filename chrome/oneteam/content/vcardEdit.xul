@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/collapseRows/collapseRows.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
@@ -267,25 +268,30 @@
     <tabbox flex="1" id="tabs">
       <tabs>
         <tab label="_('Personal')"/>
-        <tab label="_('Work')"/>
         <tab label="_('Appearance')"/>
       </tabs>
       <tabpanels flex="1">
-        <tabpanel orient="vertical">
-          <hbox>
-            <label value="_('Name')" control="name" style="width: 10em"/>
-            <textbox id="name" flex="1"/>
-          </hbox>
-          <groupbox>
-            <caption label="_('Name Details')"/>
-            <grid>
-              <columns>
-                <column style="width: 10em"/>
-                <column flex="1"/>
-                <column style="width: 10em"/>
-                <column flex="1"/>
-              </columns>
-              <rows>
+        <tabpanel>
+          <grid flex="1" style="overflow-y: auto">
+            <columns>
+              <column/>
+              <column flex="1"/>
+              <column/>
+              <column flex="1"/>
+            </columns>
+            <rows>
+              <row>
+                <label value="_('Name')" control="name"/>
+                <textbox id="name" flex="1"/>
+                <box/><box/>
+              </row>
+
+              <rows class="collapsableRowsGroup" collapse="true">
+                <hbox onclick="this.parentNode.setAttribute('collapse',
+                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+                  <image/>
+                  <label value="_('Name Details')"/>
+                </hbox>
                 <row>
                   <label value="_('First Name')" control="firstName"/>
                   <textbox id="firstName"/>
@@ -305,40 +311,13 @@
                   <textbox id="suffix"/>
                 </row>
               </rows>
-            </grid>
-          </groupbox>
-          <grid style="margin: 0.5em">
-            <columns>
-              <column style="width: 10em"/>
-              <column flex="1"/>
-              <column style="width: 10em"/>
-              <column flex="1"/>
-            </columns>
-            <rows>
-              <row>
-                <label value="_('Homepage')" control="homepage"/>
-                <textbox id="homepage"/>
-                <label value="_('E-Mail')" control="email"/>
-                <textbox id="email"/>
-              </row>
-              <row>
-                <label value="_('Birthday')" control="birthday"/>
-                <textbox id="birthday"/>
-                <label value="_('Phone')" control="phone"/>
-                <textbox id="phone"/>
-              </row>
-            </rows>
-          </grid>
-          <groupbox>
-            <caption label="_('Address')"/>
-            <grid>
-              <columns>
-                <column style="width: 10em"/>
-                <column flex="1"/>
-                <column style="width: 10em"/>
-                <column flex="1"/>
-              </columns>
-              <rows>
+
+              <rows class="collapsableRowsGroup" collapse="true">
+                <hbox onclick="this.parentNode.setAttribute('collapse',
+                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+                  <image/>
+                  <label value="_('Address')"/>
+                </hbox>
                 <row>
                   <label value="_('Street')" control="street"/>
                   <textbox id="street"/>
@@ -358,48 +337,59 @@
                   <textbox id="country"/>
                 </row>
               </rows>
-            </grid>
-          </groupbox>
-        </tabpanel>
-        <tabpanel orient="vertical">
-          <grid style="margin: 0.5em">
-            <columns>
-              <column style="width: 10em"/>
-              <column flex="1"/>
-              <column style="width: 10em"/>
-              <column flex="1"/>
-            </columns>
-            <rows>
-              <row>
-                <label value="_('Company')" control="company"/>
-                <textbox id="company"/>
-                <label value="_('Department')" control="department"/>
-                <textbox id="department"/>
-              </row>
-              <row>
-                <label value="_('Position')" control="position"/>
-                <textbox id="position"/>
-                <label value="_('Role')" control="role"/>
-                <textbox id="role"/>
-              </row>
-              <row>
-                <label value="_('E-Mail')" control="workEmail"/>
-                <textbox id="workEmail"/>
-                <label value="_('Phone')" control="workPhone"/>
-                <textbox id="workPhone"/>
-              </row>
-            </rows>
-          </grid>
-          <groupbox>
-            <caption label="_('Address')"/>
-            <grid>
-              <columns>
-                <column style="width: 10em"/>
-                <column flex="1"/>
-                <column style="width: 10em"/>
-                <column flex="1"/>
-              </columns>
-              <rows>
+
+              <rows class="collapsableRowsGroup">
+                <hbox onclick="this.parentNode.setAttribute('collapse',
+                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+                  <image/>
+                  <label value="_('Personal informations')"/>
+                </hbox>
+                <row>
+                  <label value="_('Homepage')" control="homepage"/>
+                  <textbox id="homepage"/>
+                  <label value="_('E-Mail')" control="email"/>
+                  <textbox id="email"/>
+                </row>
+                <row>
+                  <label value="_('Birthday')" control="birthday"/>
+                  <textbox id="birthday"/>
+                  <label value="_('Phone')" control="phone"/>
+                  <textbox id="phone"/>
+                </row>
+              </rows>
+
+              <rows class="collapsableRowsGroup" collapse="true">
+                <hbox onclick="this.parentNode.setAttribute('collapse',
+                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+                  <image/>
+                  <label value="_('Work')"/>
+                </hbox>
+                <row>
+                  <label value="_('Company')" control="company"/>
+                  <textbox id="company"/>
+                  <label value="_('Department')" control="department"/>
+                  <textbox id="department"/>
+                </row>
+                <row>
+                  <label value="_('Position')" control="position"/>
+                  <textbox id="position"/>
+                  <label value="_('Role')" control="role"/>
+                  <textbox id="role"/>
+                </row>
+                <row>
+                  <label value="_('E-Mail')" control="workEmail"/>
+                  <textbox id="workEmail"/>
+                  <label value="_('Phone')" control="workPhone"/>
+                  <textbox id="workPhone"/>
+                </row>
+              </rows>
+
+              <rows class="collapsableRowsGroup" collapse="true">
+                <hbox onclick="this.parentNode.setAttribute('collapse',
+                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+                  <image/>
+                  <label value="_('Working address')"/>
+                </hbox>
                 <row>
                   <label value="_('Street')" control="street"/>
                   <textbox id="workStreet"/>
@@ -419,8 +409,8 @@
                   <textbox id="workCountry"/>
                 </row>
               </rows>
-            </grid>
-          </groupbox>
+            </rows>
+          </grid>
         </tabpanel>
         <tabpanel orient="vertical">
           <groupbox flex="1">

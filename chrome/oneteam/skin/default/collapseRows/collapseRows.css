@@ -1,0 +1,20 @@
+rows.collapsableRowsGroup > hbox > label {
+  font-weight: bold;
+  padding: 10px 0 3px;
+  cursor: default;
+}
+
+rows.collapsableRowsGroup > hbox > image {
+  height: 11px;
+  width: 11px;
+  margin-right: 5px;
+  background: transparent url(imgs/switch-open-black.png) no-repeat center center;
+}
+
+rows.collapsableRowsGroup[collapse="true"] > hbox > image {
+  background-image: url(imgs/switch-close-black.png);
+}
+
+rows[collapse="true"] row {
+  visibility: collapse;
+}
