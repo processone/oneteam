@@ -42,7 +42,8 @@
               </xul:vbox>
             </xul:stack>
             <xul:vbox class="avatar-box">
-              <xul:avatar id="avatar" showBlankAvatar="false" flex="1"/>
+              <xul:avatar id="avatar" showBlankAvatar="false"
+                          side="48" squareBordered="true"/>
             </xul:vbox>
             <xul:hbox class="counter-box">
               <xul:vbox hidden="true">
@@ -190,7 +191,7 @@
           } else {
             this._statusDesc.value = this._unavailablePresence;
             if (!modelIsConference)
-              this._statusText.textContent = "(none)";
+              this._statusText.textContent = "";
           }
           this._container.setAttribute("offlineContact",
             !this.model || this.model.presence.show == "unavailable");

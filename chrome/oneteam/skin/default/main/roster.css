@@ -84,35 +84,20 @@ expander[open="true"] .expanderButton {
   padding: 0 2px;
 }
 
-.avatar-box {
+.avatar-box, .label-box {
   margin: 6px 6px 0px 0px;
-}
-
-.avatar-box > avatar {
-  border: 2px solid transparent;
-  -moz-border-radius: 5px;
-}
-
-.contact-view[hasAvatar="true"] .avatar-box > avatar {
-  border-color: #e5e5e5;
 }
 
 .label-box {
   width: 48px;
   height: 48px;
-  margin: 6px 6px 0px 0px;
   background: #e5e5e5;
   -moz-border-radius: 5px;
   -moz-box-shadow: 0 0 3px 1px #909090;
-  text-align: center;
-  font-weight: bold;
-  font-size: 11px;
-  color: #808080;
-  text-shadow: white -1px -1px, white 1px 1px, white -1px 1px, white 1px -1px;
 }
 
 .contact-view[hasAvatar="true"] .label-box {
-  background: #fff;
+  background: white;
 }
 
 .label-box > hbox {
@@ -125,6 +110,10 @@ expander[open="true"] .expanderButton {
 .label-box > hbox > label {
   margin: 0;
   padding: 0;
+  font-weight: bold;
+  font-size: 11px;
+  color: #808080;
+  text-shadow: white -1px -1px, white 1px 1px, white -1px 1px, white 1px -1px;
 }
 
 .label-box > vbox {

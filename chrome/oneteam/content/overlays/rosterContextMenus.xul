@@ -399,5 +399,9 @@
       <menuitem label="_('Status message...')"
                 oncommand="account.onCustomPresence(account.currentPresence.show)"/>
     </menupopup>
+
+    <menupopup id="image-contextmenu" onpopupshowing="updateContextMenu(this, event)">
+      <menuitem label="_('Remove from list')" oncommand="menuModel.removeImage()"/>
+    </menupopup>
   </popupset>
 </overlay>

@@ -244,7 +244,7 @@ function ContactView(model, parentView)
             </vbox>
           </stack>
           <vbox class="avatar-box">
-            <avatar showBlankAvatar="false" flex="1"/>
+            <avatar side="48" squareBordered="true"/>
           </vbox>
           <hbox class="counter-box">
             <vbox>
@@ -448,7 +448,7 @@ function ContactTooltip(model, parentView)
               <vbox class="contact-tooltip-resources"/>
             </rows>
           </grid>
-          <avatar side="128" minimize="true"/>
+          <avatar side="128" squareBordered="false"/>
         </hbox>
       </tooltip>
     , this.doc);
@@ -552,7 +552,7 @@ function ResourceTooltip(model, parentView)
               <description class="resource-tooltip-resource-status" style="margin-left: 1em;"/>
             </rows>
           </grid>
-          <avatar side="128" minimize="true"/>
+          <avatar side="128" squareBordered="false"/>
         </hbox>
       </tooltip>
     , this.doc);

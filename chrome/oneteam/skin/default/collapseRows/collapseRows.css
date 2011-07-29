@@ -1,7 +1,7 @@
 rows.collapsableRowsGroup > hbox > label {
   font-weight: bold;
   padding: 10px 0 3px;
-  cursor: default;
+  cursor: pointer;
 }
 
 rows.collapsableRowsGroup > hbox > image {
@@ -9,6 +9,7 @@ rows.collapsableRowsGroup > hbox > image {
   width: 11px;
   margin-right: 5px;
   background: transparent url(imgs/switch-open-black.png) no-repeat center center;
+  cursor: pointer;
 }
 
 rows.collapsableRowsGroup[collapse="true"] > hbox > image {

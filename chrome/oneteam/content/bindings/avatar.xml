@@ -17,11 +17,7 @@
 
     <implementation>
 
-      <property name="model">
-        <getter><![CDATA[
-          return this._model;
-        ]]></getter>
-
+      <property name="model" onget="return this._model">
         <setter><![CDATA[
           if (this._model == val)
             return val;
@@ -41,36 +37,48 @@
         ]]></setter>
       </property>
 
+      <property name="src" onget="return this._imageObj.src">
+        <setter><![CDATA[
+          if (val) {
+            this._imageObj.src = val;
+            this.setAttribute("filled", "true")
+          } else if (this.getAttribute("showBlankAvatar") == "true") {
+            this._imageObj.src = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
+            this.setAttribute("filled", "true")
+          } else {
+            delete this.style.backgroundImage;
+            this._imageObj.src = null;
+            this.removeAttribute("filled")
+          }
+        ]]></setter>
+      </property>
+
       <constructor><![CDATA[
         this._side = parseInt(this.getAttribute("side")) || this.boxObject.width;
-        this._minimize = this.getAttribute("minimize") == "true";
+        this._squareBordered = this.getAttribute("squareBordered") == "true";
+        if (this._side && this._squareBordered)
+          this.width = this.height = this._side;
 
-        if (!this._imageObj) {
-          this._imageObj = new Image();
-          var _this = this;
-          this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
-        }
+        this._imageObj = new Image();
+        var _this = this;
+        this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
+
         recoverSetters(this);
       ]]></constructor>
 
+      <!-- what is the point ??? -->
       <destructor><![CDATA[
         this.model = null;
       ]]></destructor>
 
       <method name="onAvatarChange">
         <body><![CDATA[
-        if (this._model && this._model.avatar) {
-          this._imageObj.src = this._model.avatar;
-        } else if (this.getAttribute("showBlankAvatar") == "true") {
-          this._imageObj.src = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
-        } else {
-          this.style.backgroundImage = "";
-          this._imageObj.src = null;
-        }
+          this.src = this._model ? this._model.avatar : null;
         ]]></body>
       </method>
 
-      <method name="_normalize_url">
+      <!-- this method is never used -->
+      <!--method name="_normalize_url">
         <parameter name="url"/>
         <body><![CDATA[
           var tmp;
@@ -85,7 +93,7 @@
             url = tmp;
           return tmp.replace(/\\/g, "/");
         ]]></body>
-      </method>
+      </method-->
 
       <method name="onImageLoad">
         <body><![CDATA[
@@ -93,8 +101,9 @@
                 this._imageObj.height > this._side
              || this._imageObj.width  > this._side
           )) {
-            this.style.backgroundSize = this.style.MozBackgroundSize = "contain";
-            if (this._minimize) {
+            this.style.backgroundSize = this.style.MozBackgroundSize = "cover";
+            this.style.backgroundPosition = "top center";
+            if (!this._squareBordered) {
               if (this._imageObj.height > this._imageObj.width) {
                 this.height = this._side;
                 this.width  = this._side * this._imageObj.width / this._imageObj.height;
@@ -104,9 +113,9 @@
               }
             }
           } else {
-            delete this.style.backgroundSize;
-            delete this.style.MozBackgroundSize;
-            if (this._minimize) {
+            this.style.backgroundSize = this.style.MozBackgroundSize
+              = this.style.backgroundPosition = null;
+            if (!this._squareBordered) {
               this.height = this._imageObj.height;
               this.width  = this._imageObj.width;
             }
@@ -127,107 +136,122 @@
     </resources>
 
     <content>
-      <xul:vbox flex="1">
-        <div flex="1" id="container" xmlns="http://www.w3.org/1999/xhtml" style="overflow: auto"/>
+      <xul:vbox width="150" align="center">
+        <xul:avatar id="selectedAvatar" showBlankAvatar="true"
+                    side="128" squareBordered="true"/>
+        <xul:button label="_('No avatar')" 
+                    oncommand="this.parentNode.parentNode.selectedAvatar = null"/>
+        <xul:vbox flex="1" style="overflow-y: auto">
+          <vbox id="container" style="overflow: auto"/>
+        </xul:vbox>
+        <xul:button label="_('Add image...')"
+                    oncommand="this.parentNode.parentNode.addImage()"/>
       </xul:vbox>
     </content>
 
     <implementation>
 
-      <property name="selectedAvatarHash">
-        <getter><![CDATA[
-          if (!this._selectedItem)
-            return null;
-          if (!this._selectedItem.firstChild.avatarHash) {
-            var data = atob(this._selectedItem.firstChild.src.
-                            slice("data:image/png;base64,".length));
-            var hash = hex_sha1(data);
-            account.cache.setValue("avatar-"+hash, data,
-                                   new Date(Date.now()+30*24*60*60*1000), true);
+      <property name="selectedAvatar" onget="return this._selectedAvatar">
+        <setter><![CDATA[
+          if (this._selectedAvatar)
+            this._selectedAvatar.removeAttribute("selected");
 
-            this._selectedItem.firstChild.avatarHash = hash;
+          if (val) {
+            this._selectedAvatar = val;
+            this._selectedAvatar.setAttribute("selected", "true");
+            this._avatar.src = this.selectedAvatar.getElementsByTagName("avatar")[0].src;
+            this._avatar.setAttribute("context", "image-contextmenu");
+            this._avatar.menuModel = val.menuModel;
+          } else {
+            delete this._selectedAvatar;
+            delete this._avatar.menuModel;
+            this._avatar.src = null;
+            this._avatar.removeAttribute("context");
           }
-          return this._selectedItem.firstChild.avatarHash;
-        ]]></getter>
+        ]]></setter>
       </property>
 
       <constructor>
         <![CDATA[
-          this._container = document.getAnonymousElementByAttribute(this, "id", "container")
+          this._container = document.getAnonymousElementByAttribute(this, "id", "container");
+          this._avatar    = document.getAnonymousElementByAttribute(this, "id", "selectedAvatar");
 
-          for (var key in account.cache.iterator("avatar-", true))
-            if (!/-.*-/.exec(key))
-              this.addAvatar(account.cache.getValue(key, true), key.slice(7));
-         ]]>
+          this.myAvatars = account.cache.getValue("myAvatars") || {};
+          for (var key in this.myAvatars)
+            this._addAvatar(key);
+        ]]>
       </constructor>
+
+      <destructor>
+        <![CDATA[
+          account.cache.setValue("myAvatars", this.myAvatars)
+        ]]>
+      </destructor>
 
       <method name="selectAvatar">
         <parameter name="hash"/>
-        <parameter name="data"/>
         <body><![CDATA[
-          if (this._selectedItem) {
-            if (this._selectedItem.firstChild.avatarHash == hash)
+          if (this.myAvatars[hash]) {
+            for (var i = 0; i < this._container.childNodes.length; i++)
+              if (this._container.childNodes[i].hash == hash) {
+                this.selectedAvatar = this._container.childNodes[i];
               return;
-            this._selectedItem.removeAttribute("selected");
+              }
+          } else {
+            var avatarData = account.cache.getValue("avatar-"+hash);
+            this.myAvatars[hash] = avatarData.length;
+            this._addAvatar(hash, true);
           }
-
-          for (var i = 0; i < this._container.childNodes.length; i++)
-            if (this._container.childNodes[i].firstChild.avatarHash == hash) {
-              this._selectedItem = this._container.childNodes[i];
-              this._selectedItem.setAttribute("selected", "true");
-              return;
-            }
-          if (data)
-            this.addAvatar(data, hash);
         ]]></body>
       </method>
 
-      <method name="addAvatar">
-        <parameter name="data"/>
-        <parameter name="hash"/>
+      <method name="addImage">
         <body><![CDATA[
-          const xulNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-          const htmlNS = "http://www.w3.org/1999/xhtml"
-
-          var el = document.createElementNS(htmlNS, "div");
-          var img = document.createElementNS(htmlNS, "img");
-          var size = document.createElementNS(htmlNS, "div");
-
-          el.setAttribute("class", "avatarIcon");
-          el.setAttribute("selected", "true");
-          el.appendChild(img);
-          el.appendChild(size);
-
-          var fileSize;
-          if (/^(\w+):/.test(data) && !/^data:/.test(data)) {
-            var file = new File(data);
-            fileSize = file.size;
-
-            img.setAttribute("src", data);
-            img.avatarHash = hash;
-          } else {
-            if (hash) {
-              img.setAttribute("src", data);
-              img.avatarHash = hash;
-
-              fileSize = data.length;
-              var pad = 0;
-              while (data[fileSize-pad-1] == "=")
-                pad++;
-              fileSize = (fileSize-22)/4*3-pad;
+          var path = pickFile(_("Select avatar image"), false, "images", false, window);
+          if (path) {
+            var data = slurpFile(path);
+            var hash = hex_sha1(data);
+            if (!this.myAvatars[hash]) {
+              this.myAvatars[hash] = data.length;
+              account.cache.setValue("avatar-"+hash, data,
+                                     new Date(Date.now()+30*24*60*60*1000),
+                                     true);
+              this._addAvatar(hash, true);
             } else {
-              img.setAttribute("src", "data:image/png;base64,"+btoa(data));
-              fileSize = data.length;
+              this.selectAvatar(hash);
             }
           }
+        ]]></body>
+      </method>
 
-          size.setAttribute("class", "size");
-          size.appendChild(document.createTextNode(ppFileSize(fileSize)));
+      <method name="_addAvatar">
+        <parameter name="hash"/>
+        <parameter name="select"/>
+        <body><![CDATA[
+          var fileSize = this.myAvatars[hash];
+          var src = account.cache.getValue("avatar-"+hash, true);
 
-          if (this._selectedItem)
-            this._selectedItem.removeAttribute("selected", "true");
-          this._selectedItem = el;
+          var el = E4XtoDOM(
+            <vbox class="avatarIcon" xmlns={XULNS} align="center" style="1px solid blue">
+              <avatar side="48" squareBordered="true" context="image-contextmenu"/>
+              <label value={ppFileSize(this.myAvatars[hash])}/>
+            </vbox>
+          , document);
+          el.hash = hash;
+          el.getElementsByTagName("avatar")[0].src = src;
+          el.menuModel = el;
+          el.removeImage = (function(avatarList) {
+            return function() {
+              avatarList._container.removeChild(this);
+              delete avatarList.myAvatars[hash];
+              if (this == avatarList.selectedAvatar)
+                avatarList.selectedAvatar = null;
+            }
+          })(this);
           this._container.appendChild(el);
+
+          if (select)
+            this.selectedAvatar = el;
         ]]></body>
       </method>
     </implementation>
@@ -239,10 +263,8 @@
         while (target && target.className != "avatarIcon")
           target = target.parentNode;
 
-        if (target && target != this._selectedItem) {
-          this._selectedItem.removeAttribute("selected");
-          target.setAttribute("selected", "true");
-          this._selectedItem = target;
+        if (target) {
+          this.selectedAvatar = target;
         }
       ]]></handler>
     </handlers>

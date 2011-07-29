@@ -5,10 +5,11 @@
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
+<?xul-overlay href="chrome://oneteam/content/overlays/rosterContextMenus.xul"?>
 <?xul-overlay href="chrome://oneteam/content/overlays/macMenuOverlay.xul"?>
 
 <dialog id="oneteam" windowtype="ot:vcardEdit" title="_('My vCard')"
-  width="800" height="640"
+  width="600" height="400"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   buttonlabelaccept="_('OK')" buttonlabelcancel="_('Cancel')"
@@ -22,8 +23,6 @@
     var avatarList;
 
     function onLoad() {
-//      if (window.arguments[0] == 1)
-//        document.getElementById("tabs").selectedIndex = 2;
       avatarList = document.getElementById("avatarList");
       fetchVCard(true);
     }
@@ -32,10 +31,13 @@
     {
       if (generateResult) {
         var ns = new Namespace("vcard-temp");
-        var avatarUrl = account.cache.
-          getValue("avatar-"+avatarList.selectedAvatarHash, true);
-        var avatarData = account.cache.
-          getValue("avatar-"+avatarList.selectedAvatarHash);
+        if (!avatarList.selectedAvatar)
+          return <></>
+
+        var hash = avatarList.selectedAvatar.hash;
+
+        var avatarUrl  = account.cache.getValue("avatar-"+hash, true);
+        var avatarData = account.cache.getValue("avatar-"+hash);
         var mimeType = getMimeTypeForFile(avatarUrl);
 
         default xml namespace = ns;
@@ -44,7 +46,10 @@
         else
           return <><BINVAL>{btoa(avatarData)}</BINVAL></>;
       } else {
-        avatarList.selectAvatar(account.avatarHash, account.avatar);
+        if (account.avatarHash)
+          avatarList.selectAvatar(account.avatarHash);
+        else
+          avatarList.selectedAvatar = null;
       }
     }
 
@@ -194,38 +199,40 @@
       parse(DOMtoE4X(pkt.getNode()).elements(), map);
     }
 
-    var avatarFetchState = false;
+    //var avatarFetchState = false; // this var is used in unused methods
 
-    function submitAvatar(tag) {
+    /*function submitAvatar(tag) { // this method is never used
       tag.parentNode.collapsed = true; // form box
       tag.parentNode.nextSibling.hidden = false;
       avatarFetchState = true;
       return true;
-    }
+    }*/
 
-    function _addImage(data) {
+    /*function _addImage(data) { // moved to avatarList
       var hash = hex_sha1(data);
+      var myAvatars = account.cache.getValue("myAvatars");
+      account.cache.setValue("myAvatars", myAvatars ? myAvatars + " " + hash : hash);
 
       account.cache.setValue("avatar-"+hash, data,
                              new Date(Date.now()+30*24*60*60*1000),
                              true);
       data = account.cache.getValue("avatar-"+hash, true);
 
-      avatarList.addAvatar(data, hash);
+      avatarList.addAvatar(data, hash, true);
     }
 
     function addImage() {
       var path = pickFile(_("Select avatar image"), false, "images", false, window);
       if (path)
         _addImage(slurpFile(path));
-    }
+    }*/
 
-    function avatarSelected(field) {
+    /*function avatarSelected(field) { // this method is never used
       if (field.files && field.files[0])
         _addImage(field.files[0].getAsBinary())
-    }
+    }*/
 
-    function avatarSubmited(tag) {
+    /*function avatarSubmited(tag) { // this method is never used
       tag.parentNode.collapsed = false; // form box
       tag.parentNode.nextSibling.hidden = true;
 
@@ -253,7 +260,7 @@
         _addImage(data);
       else
         alert(_("Can't read your avatar image data"));
-    }
+    }*/
   ]]></script>
 
   <group id="macMenu"/>
@@ -264,168 +271,150 @@
 
   <spacer style="height: 0.6em"/>
 
-  <vbox flex="1">
-    <tabbox flex="1" id="tabs">
-      <tabs>
-        <tab label="_('Personal')"/>
-        <tab label="_('Appearance')"/>
-      </tabs>
-      <tabpanels flex="1">
-        <tabpanel>
-          <grid flex="1" style="overflow-y: auto">
-            <columns>
-              <column/>
-              <column flex="1"/>
-              <column/>
-              <column flex="1"/>
-            </columns>
-            <rows>
-              <row>
-                <label value="_('Name')" control="name"/>
-                <textbox id="name" flex="1"/>
-                <box/><box/>
-              </row>
+  <hbox flex="1">
+    <avatarlist id="avatarList"/>
+    <separator class="groove" orient="vertical"/>
+    <grid flex="1" style="overflow-y: auto">
+      <columns>
+        <column/>
+        <column flex="1"/>
+        <column/>
+        <column flex="1"/>
+      </columns>
+      <rows>
+        <row>
+          <label value="_('Name')" control="name"/>
+          <textbox id="name" flex="1"/>
+          <box/><box/>
+        </row>
 
-              <rows class="collapsableRowsGroup" collapse="true">
-                <hbox onclick="this.parentNode.setAttribute('collapse',
-                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
-                  <image/>
-                  <label value="_('Name Details')"/>
-                </hbox>
-                <row>
-                  <label value="_('First Name')" control="firstName"/>
-                  <textbox id="firstName"/>
-                  <label value="_('Last Name')" control="lastName"/>
-                  <textbox id="lastName"/>
-                </row>
-                <row>
-                  <label value="_('Second Name')" control="secondName"/>
-                  <textbox id="secondName"/>
-                  <label value="_('Nick')" control="nickName"/>
-                  <textbox id="nickName"/>
-                </row>
-                <row>
-                  <label value="_('Prefix')" control="prefix"/>
-                  <textbox id="prefix"/>
-                  <label value="_('Suffix')" control="suffix"/>
-                  <textbox id="suffix"/>
-                </row>
-              </rows>
-
-              <rows class="collapsableRowsGroup" collapse="true">
-                <hbox onclick="this.parentNode.setAttribute('collapse',
-                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
-                  <image/>
-                  <label value="_('Address')"/>
-                </hbox>
-                <row>
-                  <label value="_('Street')" control="street"/>
-                  <textbox id="street"/>
-                  <label value="_('ExtAdd')" control="extadd"/>
-                  <textbox id="extadd"/>
-                </row>
-                <row>
-                  <label value="_('City')" control="city"/>
-                  <textbox id="city"/>
-                  <label value="_('Postal code')" control="postalCode"/>
-                  <textbox id="postalCode"/>
-                </row>
-                <row>
-                  <label value="_('Region')" control="region"/>
-                  <textbox id="region"/>
-                  <label value="_('Country')" control="country"/>
-                  <textbox id="country"/>
-                </row>
-              </rows>
-
-              <rows class="collapsableRowsGroup">
-                <hbox onclick="this.parentNode.setAttribute('collapse',
-                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
-                  <image/>
-                  <label value="_('Personal informations')"/>
-                </hbox>
-                <row>
-                  <label value="_('Homepage')" control="homepage"/>
-                  <textbox id="homepage"/>
-                  <label value="_('E-Mail')" control="email"/>
-                  <textbox id="email"/>
-                </row>
-                <row>
-                  <label value="_('Birthday')" control="birthday"/>
-                  <textbox id="birthday"/>
-                  <label value="_('Phone')" control="phone"/>
-                  <textbox id="phone"/>
-                </row>
-              </rows>
-
-              <rows class="collapsableRowsGroup" collapse="true">
-                <hbox onclick="this.parentNode.setAttribute('collapse',
-                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
-                  <image/>
-                  <label value="_('Work')"/>
-                </hbox>
-                <row>
-                  <label value="_('Company')" control="company"/>
-                  <textbox id="company"/>
-                  <label value="_('Department')" control="department"/>
-                  <textbox id="department"/>
-                </row>
-                <row>
-                  <label value="_('Position')" control="position"/>
-                  <textbox id="position"/>
-                  <label value="_('Role')" control="role"/>
-                  <textbox id="role"/>
-                </row>
-                <row>
-                  <label value="_('E-Mail')" control="workEmail"/>
-                  <textbox id="workEmail"/>
-                  <label value="_('Phone')" control="workPhone"/>
-                  <textbox id="workPhone"/>
-                </row>
-              </rows>
-
-              <rows class="collapsableRowsGroup" collapse="true">
-                <hbox onclick="this.parentNode.setAttribute('collapse',
-                      this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
-                  <image/>
-                  <label value="_('Working address')"/>
-                </hbox>
-                <row>
-                  <label value="_('Street')" control="street"/>
-                  <textbox id="workStreet"/>
-                  <label value="_('ExtAdd')" control="extadd"/>
-                  <textbox id="workExtadd"/>
-                </row>
-                <row>
-                  <label value="_('City')" control="city"/>
-                  <textbox id="workCity"/>
-                  <label value="_('Postal code')" control="postalCode"/>
-                  <textbox id="workPostalCode"/>
-                </row>
-                <row>
-                  <label value="_('Region')" control="region"/>
-                  <textbox id="workRegion"/>
-                  <label value="_('Country')" control="country"/>
-                  <textbox id="workCountry"/>
-                </row>
-              </rows>
-            </rows>
-          </grid>
-        </tabpanel>
-        <tabpanel orient="vertical">
-          <groupbox flex="1">
-            <caption label="_('Avatar')"/>
-            <avatarlist id="avatarList" flex="1"/>
-          </groupbox>
-          <hbox>
-            <spacer flex="1"/>
-            <button label="_('Add image...')" oncommand="addImage()"/>
+        <rows class="collapsableRowsGroup" collapse="true">
+          <hbox onclick="this.parentNode.setAttribute('collapse',
+                this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+            <image/>
+            <label value="_('Name Details')"/>
           </hbox>
-        </tabpanel>
-      </tabpanels>
-    </tabbox>
+          <row>
+            <label value="_('First Name')" control="firstName"/>
+            <textbox id="firstName"/>
+            <label value="_('Last Name')" control="lastName"/>
+            <textbox id="lastName"/>
+          </row>
+          <row>
+            <label value="_('Second Name')" control="secondName"/>
+            <textbox id="secondName"/>
+            <label value="_('Nick')" control="nickName"/>
+            <textbox id="nickName"/>
+          </row>
+          <row>
+            <label value="_('Prefix')" control="prefix"/>
+            <textbox id="prefix"/>
+            <label value="_('Suffix')" control="suffix"/>
+            <textbox id="suffix"/>
+          </row>
+        </rows>
+
+        <rows class="collapsableRowsGroup" collapse="true">
+          <hbox onclick="this.parentNode.setAttribute('collapse',
+                this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+            <image/>
+            <label value="_('Address')"/>
+          </hbox>
+          <row>
+            <label value="_('Street')" control="street"/>
+            <textbox id="street"/>
+            <label value="_('ExtAdd')" control="extadd"/>
+            <textbox id="extadd"/>
+          </row>
+          <row>
+            <label value="_('City')" control="city"/>
+            <textbox id="city"/>
+            <label value="_('Postal code')" control="postalCode"/>
+            <textbox id="postalCode"/>
+          </row>
+          <row>
+            <label value="_('Region')" control="region"/>
+            <textbox id="region"/>
+            <label value="_('Country')" control="country"/>
+            <textbox id="country"/>
+          </row>
+        </rows>
+
+        <rows class="collapsableRowsGroup" collapse="true">
+          <hbox onclick="this.parentNode.setAttribute('collapse',
+                this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+            <image/>
+            <label value="_('Personal informations')"/>
+          </hbox>
+          <row>
+            <label value="_('Homepage')" control="homepage"/>
+            <textbox id="homepage"/>
+            <label value="_('E-Mail')" control="email"/>
+            <textbox id="email"/>
+          </row>
+          <row>
+            <label value="_('Birthday')" control="birthday"/>
+            <textbox id="birthday"/>
+            <label value="_('Phone')" control="phone"/>
+            <textbox id="phone"/>
+          </row>
+        </rows>
+
+        <rows class="collapsableRowsGroup" collapse="true">
+          <hbox onclick="this.parentNode.setAttribute('collapse',
+                this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+            <image/>
+            <label value="_('Work')"/>
+          </hbox>
+          <row>
+            <label value="_('Company')" control="company"/>
+            <textbox id="company"/>
+            <label value="_('Department')" control="department"/>
+            <textbox id="department"/>
+          </row>
+          <row>
+            <label value="_('Position')" control="position"/>
+            <textbox id="position"/>
+            <label value="_('Role')" control="role"/>
+            <textbox id="role"/>
+          </row>
+          <row>
+            <label value="_('E-Mail')" control="workEmail"/>
+            <textbox id="workEmail"/>
+            <label value="_('Phone')" control="workPhone"/>
+            <textbox id="workPhone"/>
+          </row>
+        </rows>
+
+        <rows class="collapsableRowsGroup" collapse="true">
+          <hbox onclick="this.parentNode.setAttribute('collapse',
+                this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
+            <image/>
+            <label value="_('Working address')"/>
+          </hbox>
+          <row>
+            <label value="_('Street')" control="street"/>
+            <textbox id="workStreet"/>
+            <label value="_('ExtAdd')" control="extadd"/>
+            <textbox id="workExtadd"/>
+          </row>
+          <row>
+            <label value="_('City')" control="city"/>
+            <textbox id="workCity"/>
+            <label value="_('Postal code')" control="postalCode"/>
+            <textbox id="workPostalCode"/>
+          </row>
+          <row>
+            <label value="_('Region')" control="region"/>
+            <textbox id="workRegion"/>
+            <label value="_('Country')" control="country"/>
+            <textbox id="workCountry"/>
+          </row>
+        </rows>
+      </rows>
+    </grid>
     <hbox>
       <progressmeter id="updateProgress" mode="undetermined" hidden="true" flex="1"/>
     </hbox>
-  </vbox>
+  </hbox>
 </dialog>

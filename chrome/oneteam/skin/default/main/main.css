@@ -69,12 +69,6 @@ tabpanels {
   padding: 3px 0;
 }
 
-/*#setPresence-box > spacer {
-  margin: 4px 0;
-  padding: 0;
-  border-top: 1px solid #afafaf;
-}*/
-
 #setPresence-jid {
   margin: 0 !important;
   padding-left: 0 !important;
@@ -105,18 +99,9 @@ tabpanels {
 /*  -moz-appearance: menulist*/
 }
 
-/* taken from roster.css: .avatar-box > avatar */
-#setPresence-avatar-image {
-  background-color: white;
-  border: 2px solid transparent;
-  -moz-border-radius: 5px;
-}
 /* inspired from roster.css: .label-box */
 #setPresence-avatar-box {
-  width: 48px;
-  height: 48px;
   margin: 2px 6px 0 2px;
-  background: #e5e5e5;
   -moz-border-radius: 5px;
   -moz-box-shadow: 0 0 3px 1px #909090;
 }

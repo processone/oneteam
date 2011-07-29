@@ -435,7 +435,8 @@
           </vbox>
           <hbox id="setPresence-box" context="user-contextmenu" align="center">
             <vbox id="setPresence-avatar-box">
-              <avatar flex="1" id="setPresence-avatar-image" showBlankAvatar="true" side="48"/>
+              <avatar id="setPresence-avatar-image" showBlankAvatar="true"
+                      side="48" squareBordered="true"/>
             </vbox>
             <vbox flex="1">
               <hbox flex="1" align="center">
