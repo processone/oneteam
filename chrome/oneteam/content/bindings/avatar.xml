@@ -66,7 +66,6 @@
         recoverSetters(this);
       ]]></constructor>
 
-      <!-- what is the point ??? -->
       <destructor><![CDATA[
         this.model = null;
       ]]></destructor>
@@ -76,24 +75,6 @@
           this.src = this._model ? this._model.avatar : null;
         ]]></body>
       </method>
-
-      <!-- this method is never used -->
-      <!--method name="_normalize_url">
-        <parameter name="url"/>
-        <body><![CDATA[
-          var tmp;
-
-          if (/^file:/.test(url))
-            return url.replace(/.*[\\\/]/, "");
-
-          if (!/^\w+:/.test(url))
-            url = document.location.href.replace(/[^\/]+$/, "/")+url;
-
-          while ((tmp = url.replace(/\/[^\/]\/\.\.\//g, "/")) != url)
-            url = tmp;
-          return tmp.replace(/\\/g, "/");
-        ]]></body>
-      </method-->
 
       <method name="onImageLoad">
         <body><![CDATA[

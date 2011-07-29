@@ -198,69 +198,6 @@
       document.getElementById("updateProgress").style.visibility = "hidden";
       parse(DOMtoE4X(pkt.getNode()).elements(), map);
     }
-
-    //var avatarFetchState = false; // this var is used in unused methods
-
-    /*function submitAvatar(tag) { // this method is never used
-      tag.parentNode.collapsed = true; // form box
-      tag.parentNode.nextSibling.hidden = false;
-      avatarFetchState = true;
-      return true;
-    }*/
-
-    /*function _addImage(data) { // moved to avatarList
-      var hash = hex_sha1(data);
-      var myAvatars = account.cache.getValue("myAvatars");
-      account.cache.setValue("myAvatars", myAvatars ? myAvatars + " " + hash : hash);
-
-      account.cache.setValue("avatar-"+hash, data,
-                             new Date(Date.now()+30*24*60*60*1000),
-                             true);
-      data = account.cache.getValue("avatar-"+hash, true);
-
-      avatarList.addAvatar(data, hash, true);
-    }
-
-    function addImage() {
-      var path = pickFile(_("Select avatar image"), false, "images", false, window);
-      if (path)
-        _addImage(slurpFile(path));
-    }*/
-
-    /*function avatarSelected(field) { // this method is never used
-      if (field.files && field.files[0])
-        _addImage(field.files[0].getAsBinary())
-    }*/
-
-    /*function avatarSubmited(tag) { // this method is never used
-      tag.parentNode.collapsed = false; // form box
-      tag.parentNode.nextSibling.hidden = true;
-
-      if (!avatarFetchState)
-        return;
-
-      avatarFetchState = false;
-
-      var data;
-      try {
-        data = tag.contentDocument.documentElement.textContent;
-      } catch(ex) {
-        report("developer", "error", ex)
-      }
-
-      try {
-        if (data)
-          data = atob(data.replace(/\s/g, ""));
-      } catch (ex) {
-        data = null;
-      }
-
-
-      if (data)
-        _addImage(data);
-      else
-        alert(_("Can't read your avatar image data"));
-    }*/
   ]]></script>
 
   <group id="macMenu"/>
@@ -285,7 +222,6 @@
         <row>
           <label value="_('Name')" control="name"/>
           <textbox id="name" flex="1"/>
-          <box/><box/>
         </row>
 
         <rows class="collapsableRowsGroup" collapse="true">

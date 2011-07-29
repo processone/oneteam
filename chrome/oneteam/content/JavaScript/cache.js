@@ -190,7 +190,7 @@ _DECL_(PersistentCache).prototype =
         this.clearStmt.execute();
     },
 
-    iterator: function(prefix, asFile)
+    /*iterator: function(prefix, asFile)
     {
         return {
             prefix: prefix+"%",
@@ -228,7 +228,7 @@ _DECL_(PersistentCache).prototype =
                     }
             }
         };
-    }
+    }*/
 }
 
 function StorageFunctionDelete()
