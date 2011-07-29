@@ -191,10 +191,8 @@
 
   <wizardpage pageid="form">
     <deck id="formDeck" flex="1">
-      <vbox>
-        <label value="_('Requesting search form')"/>
-        <spacer/>
-        <progressmeter mode="undetermined"/>
+      <vbox flex="1" style="cursor: wait">
+        <label value="_('Requesting search form')" style="cursor: wait"/>
       </vbox>
       <vbox flex="1">
         <searchform id="form" flex="1"/>
@@ -202,12 +200,10 @@
     </deck>
   </wizardpage>
 
-  <wizardpage pageid="results" onpageshow="this.firstChild.selectedIndex = 0">
+  <wizardpage pageid="results">
     <deck id="resultsDeck" flex="1">
-      <vbox>
-        <label value="_('Requesting search results')"/>
-        <spacer/>
-        <progressmeter mode="undetermined"/>
+      <vbox flex="1" style="cursor: wait">
+        <label value="_('Requesting search results')" style="cursor: wait"/>
       </vbox>
       <vbox flex="1">
         <tree flex="1" id="results" hidecolumnpicker="true"

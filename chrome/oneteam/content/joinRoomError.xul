@@ -46,7 +46,7 @@
     }
 
     function joinRoom() {
-      document.getElementById("progressmeter").style.visibility = "visible";
+      document.getElementById("oneteam").style.cursor = "wait";
       conference.joinRoom(joinRoomResponse, nick.value, password.value || null);
 
       return false;
@@ -55,7 +55,7 @@
     function joinRoomResponse(pkt, errorTag, errorMsgArg) {
       if (!errorTag)
         window.close();
-      document.getElementById("progressmeter").style.visibility = "hidden";
+      document.getElementById("oneteam").style.cursor = "";
       errorMsg = errorMsgArg;
       errorCode = +errorTag.getAttribute("code");
       updateState();
@@ -85,8 +85,6 @@
       <textbox id="password" type="password"/>
     </hbox>
 
-    <progressmeter id="progressmeter" style="visibility: hidden; margin: 1em; 0" mode="undetermined"/>
     <spacer/>
   </vbox>
-
 </dialog>

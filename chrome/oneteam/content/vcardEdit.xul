@@ -190,12 +190,12 @@
     }
 
     function fetchVCard(force) {
-      document.getElementById("updateProgress").style.visibility = "visible";
+      document.getElementById("oneteam").style.cursor = "wait";
       account.getVCard(force, fetchDone);
     }
 
     function fetchDone(pkt) {
-      document.getElementById("updateProgress").style.visibility = "hidden";
+      document.getElementById("oneteam").style.cursor = "";
       parse(DOMtoE4X(pkt.getNode()).elements(), map);
     }
   ]]></script>
@@ -349,8 +349,5 @@
         </rows>
       </rows>
     </grid>
-    <hbox>
-      <progressmeter id="updateProgress" mode="undetermined" hidden="true" flex="1"/>
-    </hbox>
   </hbox>
 </dialog>

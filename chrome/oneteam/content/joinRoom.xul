@@ -31,7 +31,7 @@
     function onLoad() {
       populateBookmarks();
 
-      for each (var id in "room server nick pass bookmark name autoJoin progressmeter".split(" "))
+      for each (var id in "room server nick pass bookmark name autoJoin".split(" "))
         input[id] = document.getElementById(id);
 
       if (conference instanceof Conference) {
@@ -63,7 +63,7 @@
         conf.bookmark(input.name.value, input.autoJoin.checked,
                       input.nick.value, input.pass.value);
 
-      input.progressmeter.style.visibility = "visible";
+      document.getElementById("oneteam").style.cursor = "wait";
       conf.joinRoom(joinRoomResponse, input.nick.value, input.pass.value);
 
       return false;
@@ -75,7 +75,7 @@
     }
 
     function joinRoomResponse(pkt, errorTag, errorMsg) {
-      input.progressmeter.style.visibility = "hidden";
+      document.getElementById("oneteam").style.cursor = "";
 
       if (pkt.getType() == "error") {
         alert(errorMsg);
@@ -167,10 +167,6 @@
     <textbox type="verifiable" condition="checkName()" flex="1" id="name" disabled="true"/>
   </hbox>
   <checkbox style="margin-left: 2em" label="_('Always join this room at startup')" id="autoJoin" disabled="true"/>
-
-  <spacer/>
-
-  <progressmeter id="progressmeter" style="visibility: hidden" mode="undetermined"/>
 
   <spacer/>
 </dialog>

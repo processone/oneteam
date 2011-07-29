@@ -24,18 +24,17 @@
     var generateXULFromDataForm = generateXULFromDataForm;
     var buildResponseDataFormFromXUL = buildResponseDataFormFromXUL;
 
-    var form, progressmeter;
+    var form;
 
     function onLoad() {
       form = document.getElementById("form");
-      progressmeter = document.getElementById("progressmeter");
 
-      progressmeter.style.visibility = "visible";
+      document.getElementById("oneteam").style.cursor = "wait";
       service.requestRegistrationForm(onFormRecv);
     }
 
     function onFormRecv(pkt) {
-      progressmeter.style.visibility = "hidden";
+      document.getElementById("oneteam").style.cursor = "";
 
       if (pkt.getType() == "error") {
         alert("Can't fetch registration form.")
@@ -47,13 +46,13 @@
 
     function onAccept() {
       service.register(form.result, onRegisterResponse);
-      progressmeter.style.visibility = "visible";
+      document.getElementById("oneteam").style.cursor = "wait";
       return false;
     }
 
     function onRegisterResponse(pkt)
     {
-      progressmeter.style.visibility = "hidden";
+      document.getElementById("oneteam").style.cursor = "";
       if (pkt.getType() != "error") {
         if (service.newItem)
           service.subscribe("", true);
@@ -74,7 +73,5 @@
 
   <registrationform id="form" flex="1"/>
 
-  <spacer/>
-  <progressmeter id="progressmeter" style="visibility: hidden" mode="undetermined"/>
   <spacer/>
 </dialog>

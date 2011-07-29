@@ -20,11 +20,10 @@
     ML.importMod("model/account.js");
 
     var contact = window.arguments && window.arguments[0];
-    var currentGateway, progressmeter;
+    var currentGateway;
     var gatewaysRegToken, regToken;
 
     function onLoad() {
-      progressmeter = document.getElementById("progressmeter");
       if (contact) {
         var jid = document.getElementById("jid");
 
@@ -85,18 +84,18 @@
       if (gateway) {
         _mapNameFormReady(gateway, gateway._mapNameForm || {});
         if (!gateway._mapNameForm) {
-          progressmeter.style.visibility = "visible";
+          document.getElementById("oneteam").style.cursor = "wait";
           gateway.requestMapNameForm(_mapNameFormReady);
         }
       } else
-        progressmeter.style.visibility = "hidden";
+        document.getElementById("oneteam").style.cursor = "";
     }
 
     function _mapNameFormReady(gateway, map) {
       if (currentGateway != gateway)
         return;
 
-      progressmeter.style.visibility = "hidden";
+      document.getElementById("oneteam").style.cursor = "";
 
       var el = document.getElementById("gateway-id");
       el.previousSibling.value = map.prompt || _("ID:");
@@ -108,7 +107,7 @@
 
     function addContact(internal) {
       if (currentGateway && !internal) {
-        progressmeter.style.visibility = "visible";
+        document.getElementById("oneteam").style.cursor = "wait";
         document.documentElement.getButton("accept").disabled = true;
         currentGateway.mapName(document.getElementById("gateway-id").value,
                                _mapNameReady);
@@ -150,7 +149,7 @@
     }
 
     function _mapNameReady(jid) {
-      progressmeter.style.visibility = "hidden";
+      document.getElementById("oneteam").style.cursor = "";
       if (!jid) {
         alert(_("Gateway can't convert ID into Jabber ID"));
         document.documentElement.getButton("accept").disabled = false;
@@ -243,6 +242,4 @@
       <button label="_('Registration Gateway')" oncommand="currentGateway.onRegister()"/>
     </vbox>
   </deck>
-
-  <progressmeter id="progressmeter" style="visibility: hidden" mode="undetermined"/>
 </dialog>

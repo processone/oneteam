@@ -47,15 +47,14 @@
     }
 
     function fetchVCard(force) {
-      document.getElementById("updateProgress").style.visibility = "visible";
+      document.getElementById("oneteam").style.cursor = "wait";
       contact.getVCard(force, fetchDone);
     }
 
     function fetchDone(pkt, obj) {
+      document.getElementById("oneteam").style.cursor = "";
+
       var details = document.getElementById("details");
-
-      document.getElementById("updateProgress").style.visibility = "hidden";
-
       details.firstChild.innerHTML = obj ? obj.toHtml() :
         "<div class='name'>"+xmlEscape(contact.visibleName)+"</div>";
     }
@@ -105,8 +104,5 @@
         </tabpanel>
       </tabpanels>
     </tabbox>
-    <hbox>
-      <progressmeter id="updateProgress" mode="undetermined" style="visibility: hidden" flex="1"/>
-    </hbox>
   </vbox>
 </dialog>

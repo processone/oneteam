@@ -213,11 +213,9 @@
   </toolbox>
 
   <wizardpage onpageshow="sessionid=null" pageid="first">
-    <deck id="main-deck">
-      <vbox>
-        <label value="_('Requesting remote commands descriptions')"/>
-        <spacer/>
-        <progressmeter mode="undetermined"/>
+    <deck id="main-deck" flex="1">
+      <vbox flex="1" style="cursor: wait">
+        <label value="_('Requesting remote commands descriptions')" style="cursor: wait"/>
       </vbox>
       <vbox>
         <radiogroup id="commands">
@@ -230,11 +228,9 @@
   </wizardpage>
 
   <wizardpage pageid="page1">
-    <deck>
-      <vbox>
-        <label value="_('Requesting command form')"/>
-        <spacer/>
-        <progressmeter mode="undetermined"/>
+    <deck flex="1">
+      <vbox flex="1" style="cursor: wait">
+        <label value="_('Requesting command form')" style="cursor: wait"/>
       </vbox>
       <vbox/>
     </deck>
