@@ -1,11 +1,12 @@
 html {
     margin: 0;
     padding: 0;
+    font: -moz-document;
 }
 
 body {
     background: #c7c7c7 !important;
-    font: -moz-document;
+    font-size: 120%;
     margin: 0px;
     padding: 2px;
     min-height: 17px;
