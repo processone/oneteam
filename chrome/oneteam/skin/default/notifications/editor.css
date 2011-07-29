@@ -21,8 +21,8 @@
 }
 
 image.reset {
-  height: 12px;
-  width: 12px;
+  height: 16px;
+  width: 16px;
   background: transparent url(imgs/reset.png) center center;
   cursor: pointer;
 }
