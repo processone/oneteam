@@ -744,7 +744,7 @@ _DECL_(Message).prototype =
         if (this._rawHtml) {
             if (typeof(this._rawHtml) == "string") {
                 var dp = new DOMParser();
-                var doc = dp.parseFromString("<body xmlns='http://www.w3.org/1999/xhtml'>"+
+                var doc = dp.parseFromString("<body xmlns='"+HTMLNS+"'>"+
                                              this._rawHtml.replace(/&nbsp;/g, "\xa0")+"</body>", "text/xml");
                 this._rawHtml = doc.documentElement;
             }
@@ -842,7 +842,7 @@ _DECL_(Message).prototype =
             (this.forceXhtmlIM || this.html != this.text))
         {
             var dp = new DOMParser();
-            var doc = dp.parseFromString("<body xmlns='http://www.w3.org/1999/xhtml'>"+
+            var doc = dp.parseFromString("<body xmlns='"+HTMLNS+"'>"+
                                          this.sanitizedHtml+"</body>", "text/xml")
 
             var html = pkt.getDoc().createElementNS("http://jabber.org/protocol/xhtml-im", "html");

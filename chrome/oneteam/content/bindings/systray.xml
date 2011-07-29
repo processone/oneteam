@@ -48,7 +48,7 @@
 
             if (val && this._systray) {
               try{
-                var img = document.createElementNS("http://www.w3.org/1999/xhtml", "img");
+                var img = document.createElementNS(HTMLNS, "img");
                 img.src = val;
                 this._systray.icon = img;
                 this.hidden = this._hidden;

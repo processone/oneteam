@@ -2,7 +2,6 @@ var EXPORTED_SYMBOLS = ["generateXULFromDataForm", "buildResponseDataFormFromXUL
 
 function generateXULFromDataForm(data, doc)
 {
-    const XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
     const ns = new Namespace("jabber:x:data");
 
     var container = doc.createElementNS(XULNS, "vbox");

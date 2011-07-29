@@ -62,10 +62,9 @@ function FileTransferView(model, parentView)
     this.deck.appendChild(c2);
 
     if (model.type == "send" && model.file == null) {
-        const ns = "http://www.w3.org/1999/xhtml";
         var id = generateUniqueId();
 
-        this.form = doc.createElementNS(ns, "form");
+        this.form = doc.createElementNS(HTMLNS, "form");
         this.form.setAttribute("flex", "1");
         this.form.setAttribute("target", id);
         this.form.setAttribute("method", "POST");
@@ -75,7 +74,7 @@ function FileTransferView(model, parentView)
         e.setAttribute("value", "Please choose file to send");
         this.form.appendChild(e);
 
-        e = doc.createElementNS(ns, "input")
+        e = doc.createElementNS(HTMLNS, "input")
         e.setAttribute("type", "file")
         e.setAttribute("name", "FILE");
         e.setAttribute("onchange", "this.view.onFileChoosen(this)");
@@ -84,7 +83,7 @@ function FileTransferView(model, parentView)
 
         this.deck.appendChild(this.form);
 
-        this.frame = doc.createElementNS(ns, "iframe");
+        this.frame = doc.createElementNS(HTMLNS, "iframe");
         this.frame.setAttribute("id", id);
         this.frame.setAttribute("onload", "if (this.model.state == 'started')"+
                                               "this.model.onTransferCompleted()");
