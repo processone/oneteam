@@ -180,6 +180,15 @@ function DOMParser() {
     var dp = Components.classes["@mozilla.org/xmlextras/domparser;1"].
         createInstance(Components.interfaces.nsIDOMParser);
 
+    var ss = Components.classes["@mozilla.org/scriptsecuritymanager;1"].
+        getService(Components.interfaces.nsIScriptSecurityManager);
+
+    if (ss.getSystemPrincipal) {
+        var principal = ss.getSystemPrincipal();
+
+        dp.init(principal, null, null);
+    }
+
     return dp;
 }
 

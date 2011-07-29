@@ -584,7 +584,7 @@ _DECL_(NotificationScheme).prototype =
                   </vbox>
                 </vbox>;
         }
-        rows = E4XtoDOM(<rows><row>{e4x}</row></rows>, doc);
+        var rows = E4XtoDOM(<rows><row>{e4x}</row></rows>, doc);
         // COLUMN HEADERS DONE
 
         var notifs = ["showInChatpane", "showAlert", "playSound"];

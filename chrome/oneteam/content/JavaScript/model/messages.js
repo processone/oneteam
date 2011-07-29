@@ -842,15 +842,15 @@ _DECL_(Message).prototype =
             (this.forceXhtmlIM || this.html != this.text))
         {
             var dp = new DOMParser();
-            var doc = dp.parseFromString("<body xmlns='"+HTMLNS+"'>"+
-                                         this.sanitizedHtml+"</body>", "text/xml")
+            var node = dp.parseFromString("<body xmlns='"+HTMLNS+"'>"+
+                this.sanitizedHtml+"</body>", "text/xml").documentElement;
 
             var html = pkt.getDoc().createElementNS("http://jabber.org/protocol/xhtml-im", "html");
             try {
-                html.appendChild(pkt.getDoc().adoptNode(doc.documentElement));
+                node = pkt.getDoc().adoptNode(node);
             } catch (ex) {
-                html.appendChild(doc.documentElement);
             }
+            html.appendChild(node);
             pkt.getNode().appendChild(html);
         }
 
