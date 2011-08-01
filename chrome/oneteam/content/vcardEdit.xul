@@ -222,6 +222,8 @@
         <row>
           <label value="_('Name')" control="name"/>
           <textbox id="name" flex="1"/>
+          <label/>
+          <textbox flex="1" style="visibility: hidden"/>
         </row>
 
         <rows class="collapsableRowsGroup" collapse="true">
