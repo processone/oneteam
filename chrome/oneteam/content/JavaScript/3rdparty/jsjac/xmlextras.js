@@ -170,7 +170,7 @@ XmlDocument.getPrefix = function() {
 */
 function loadXML(s) {
   // parse the string to a new doc
-  var doc2 = (new DOMParser()).parseFromString(s, "text/xml");
+  var doc2 = (new DOMParser(true)).parseFromString(s, "text/xml");
 
   // remove all initial children
   while (this.hasChildNodes())
