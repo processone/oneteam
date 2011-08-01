@@ -47,12 +47,12 @@
     }
 
     function fetchVCard(force) {
-      document.getElementById("oneteam").style.cursor = "wait";
+      document.getElementById("details").style.cursor = "wait";
       contact.getVCard(force, fetchDone);
     }
 
     function fetchDone(pkt, obj) {
-      document.getElementById("oneteam").style.cursor = "";
+      document.getElementById("details").style.cursor = "";
 
       var details = document.getElementById("details");
       details.firstChild.innerHTML = obj ? obj.toHtml() :
