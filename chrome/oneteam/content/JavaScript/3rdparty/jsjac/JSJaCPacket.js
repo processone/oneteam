@@ -649,7 +649,7 @@ JSJaCMessage.prototype.getSubject = function() {
 };
 
 JSJaCPacket.parseXmlString = function(node) {
-    var dp = new DOMParser();
+    var dp = new DOMParser(true);
     return dp.parseFromString("<q xmlns='jabber:client'>"+node+"</q>", "text/xml").
         firstChild.childNodes;
 }
