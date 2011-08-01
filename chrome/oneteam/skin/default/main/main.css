@@ -99,11 +99,8 @@ tabpanels {
 /*  -moz-appearance: menulist*/
 }
 
-/* inspired from roster.css: .label-box */
 #setPresence-avatar-box {
   margin: 2px 6px 0 2px;
-  -moz-border-radius: 5px;
-  -moz-box-shadow: 0 0 3px 1px #909090;
 }
 
 /* inspired from contactinfo.css: .status-text */
