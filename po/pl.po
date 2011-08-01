@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-08-01 10:57+0200\n"
+"POT-Creation-Date: 2011-08-01 18:44+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -280,7 +280,7 @@ msgstr "Serwer nie pozwala na zmiany hasła"
 msgid "My vCard"
 msgstr "Mój vCard"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:303
+#: ../chrome/oneteam/content/vcardEdit.xul:322
 msgid "Work"
 msgstr "Praca"
 
@@ -288,102 +288,102 @@ msgstr "Praca"
 msgid "Appearance"
 msgstr "Wygląd"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:223
+#: ../chrome/oneteam/content/vcardEdit.xul:240
 msgid "Name"
 msgstr "Nazwa"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:231
+#: ../chrome/oneteam/content/vcardEdit.xul:250
 msgid "Name Details"
 msgstr "Szczegóły nazwy"
 
 #: ../chrome/oneteam/content/search.xul:89
-#: ../chrome/oneteam/content/vcardEdit.xul:234
+#: ../chrome/oneteam/content/vcardEdit.xul:253
 msgid "First Name"
 msgstr "Imię"
 
 #: ../chrome/oneteam/content/search.xul:92
-#: ../chrome/oneteam/content/vcardEdit.xul:236
+#: ../chrome/oneteam/content/vcardEdit.xul:255
 msgid "Last Name"
 msgstr "Nazwisko"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:240
+#: ../chrome/oneteam/content/vcardEdit.xul:259
 msgid "Second Name"
 msgstr "Drugie imię"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:246
+#: ../chrome/oneteam/content/vcardEdit.xul:265
 msgid "Prefix"
 msgstr "Przedrostek"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:248
+#: ../chrome/oneteam/content/vcardEdit.xul:267
 msgid "Suffix"
 msgstr "Przyrostek"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:286
+#: ../chrome/oneteam/content/vcardEdit.xul:305
 msgid "Homepage"
 msgstr "Strona domowa"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:288
-#: ../chrome/oneteam/content/vcardEdit.xul:318
+#: ../chrome/oneteam/content/vcardEdit.xul:307
+#: ../chrome/oneteam/content/vcardEdit.xul:337
 msgid "E-Mail"
 msgstr "E-mail"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:292
+#: ../chrome/oneteam/content/vcardEdit.xul:311
 msgid "Birthday"
 msgstr "Data urodzenia"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:294
-#: ../chrome/oneteam/content/vcardEdit.xul:320
+#: ../chrome/oneteam/content/vcardEdit.xul:313
+#: ../chrome/oneteam/content/vcardEdit.xul:339
 msgid "Phone"
 msgstr "Telefon"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:257
+#: ../chrome/oneteam/content/vcardEdit.xul:276
 msgid "Address"
 msgstr "Adres"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:260
-#: ../chrome/oneteam/content/vcardEdit.xul:332
+#: ../chrome/oneteam/content/vcardEdit.xul:279
+#: ../chrome/oneteam/content/vcardEdit.xul:351
 msgid "Street"
 msgstr "Ulica"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:262
-#: ../chrome/oneteam/content/vcardEdit.xul:334
+#: ../chrome/oneteam/content/vcardEdit.xul:281
+#: ../chrome/oneteam/content/vcardEdit.xul:353
 msgid "ExtAdd"
 msgstr "Dom"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:266
-#: ../chrome/oneteam/content/vcardEdit.xul:338
+#: ../chrome/oneteam/content/vcardEdit.xul:285
+#: ../chrome/oneteam/content/vcardEdit.xul:357
 msgid "City"
 msgstr "Miasto"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:268
-#: ../chrome/oneteam/content/vcardEdit.xul:340
+#: ../chrome/oneteam/content/vcardEdit.xul:287
+#: ../chrome/oneteam/content/vcardEdit.xul:359
 msgid "Postal code"
 msgstr "Kod pocztowy"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:272
-#: ../chrome/oneteam/content/vcardEdit.xul:344
+#: ../chrome/oneteam/content/vcardEdit.xul:291
+#: ../chrome/oneteam/content/vcardEdit.xul:363
 msgid "Region"
 msgstr "Region"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:274
-#: ../chrome/oneteam/content/vcardEdit.xul:346
+#: ../chrome/oneteam/content/vcardEdit.xul:293
+#: ../chrome/oneteam/content/vcardEdit.xul:365
 msgid "Country"
 msgstr "Kraj"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:306
+#: ../chrome/oneteam/content/vcardEdit.xul:325
 msgid "Company"
 msgstr "Firma"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:308
+#: ../chrome/oneteam/content/vcardEdit.xul:327
 msgid "Department"
 msgstr "Dział"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:312
+#: ../chrome/oneteam/content/vcardEdit.xul:331
 msgid "Position"
 msgstr "Stanowisko"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:330
-#: ../chrome/oneteam/content/vcardEdit.xul:314
+#: ../chrome/oneteam/content/vcardEdit.xul:333
 msgid "Role"
 msgstr "Rola"
 
@@ -1596,19 +1596,19 @@ msgstr "Prośba przesłania pliku zaakceptowana"
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr "Kontakt <b>{0}</b> zaakceptował twój plik <b>\"{1}\\\"</b>"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:983
+#: ../chrome/oneteam/content/JavaScript/model/account.js:994
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr "Ponowne łączenia za {0} {0, plurals, sekunda, sekundy, sekund}"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1268
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1279
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr "Konflikt (klient z tym samym zasobem zalogował się)"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1277
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1288
 msgid "Invalid username or password"
 msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1279
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1290
 msgid "Invalid response from server"
 msgstr "Nieprawidłowa odpowiedz z serwera"
 
@@ -2066,7 +2066,7 @@ msgid "Change Chat Room Subject"
 msgstr "Zmiana tematu konferencji"
 
 #: ../chrome/oneteam/content/search.xul:95
-#: ../chrome/oneteam/content/vcardEdit.xul:242
+#: ../chrome/oneteam/content/vcardEdit.xul:261
 msgid "Nick"
 msgstr "Pseudonim:"
 
@@ -2363,7 +2363,7 @@ msgstr "Odmów"
 msgid "Ignore"
 msgstr "Ignoruj"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1096
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1107
 msgid "<b>{0}</b> would like to see your status."
 msgstr "<b>{0}</b> chciałby widzieć twój status"
 
@@ -2481,12 +2481,12 @@ msgstr "Poproś o widzenie jej/jego statusu"
 msgid "none"
 msgstr ""
 
-#: ../chrome/oneteam/content/vcardEdit.xul:283
+#: ../chrome/oneteam/content/vcardEdit.xul:302
 #, fuzzy
 msgid "Personal informations"
 msgstr "Dane kontaktu"
 
-#: ../chrome/oneteam/content/vcardEdit.xul:329
+#: ../chrome/oneteam/content/vcardEdit.xul:348
 #, fuzzy
 msgid "Working address"
 msgstr "adres"
@@ -2500,6 +2500,31 @@ msgstr "Awatar"
 #, fuzzy
 msgid "Remove from list"
 msgstr "Usuń kontakt"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:200
+#, fuzzy
+msgid "vCard error"
+msgstr "Błąd wyszukiwania"
+
+#: ../chrome/oneteam/content/vcardEdit.xul:201
+msgid "The server failed to register your vCard."
+msgstr ""
+
+#: ../chrome/oneteam/content/vcardEdit.xul:203
+msgid "The server failed to register your avatar image,\\nmaybe it is too big (indicatively, it should be\\na few tens of kB; your is {0})."
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:52
+msgid "GB"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:54
+msgid "MB"
+msgstr ""
+
+#: ../chrome/oneteam/content/JavaScript/utils.js:56
+msgid "kB"
+msgstr ""
 
 #~ msgid "Can't read your avatar image data"
 #~ msgstr "Nie można odczytać obrazka z awatarem"
