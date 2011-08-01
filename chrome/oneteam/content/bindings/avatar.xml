@@ -46,7 +46,7 @@
             this._imageObj.src = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
             this.setAttribute("filled", "true")
           } else {
-            delete this.style.backgroundImage;
+            this.style.backgroundImage = "";
             this._imageObj.src = null;
             this.removeAttribute("filled")
           }
@@ -56,12 +56,15 @@
       <constructor><![CDATA[
         this._side = parseInt(this.getAttribute("side")) || this.boxObject.width;
         this._squareBordered = this.getAttribute("squareBordered") == "true";
+
         if (this._side && this._squareBordered)
           this.width = this.height = this._side;
 
-        this._imageObj = new Image();
-        var _this = this;
-        this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
+        if (!this._imageObj) {
+          this._imageObj = new Image();
+          var _this = this;
+          this._imageObj.onload = function() {try{_this.onImageLoad()}catch(ex){}};
+        }
 
         recoverSetters(this);
       ]]></constructor>
@@ -120,7 +123,7 @@
       <xul:vbox width="150" align="center">
         <xul:avatar id="selectedAvatar" showBlankAvatar="true"
                     side="128" squareBordered="true"/>
-        <xul:button label="_('No avatar')" 
+        <xul:button label="_('No avatar')"
                     oncommand="this.parentNode.parentNode.selectedAvatar = null"/>
         <xul:vbox flex="1" style="overflow-y: auto">
           <vbox id="container" style="overflow: auto"/>
