@@ -2128,8 +2128,16 @@ msgid "Invitation into {0} chat room"
 msgstr "Zaproszenie do konferencji {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:229
-msgid "User *{0}* invited you to chat room *{1}*.\\n\\nTo join this chat room please click on this link:\\n{2}\\n"
-msgstr "Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n\\nAby dołączyć do tej konferencji kliknij ten link:\\n{2}\\n"
+msgid ""
+"User *{0}* invited you to chat room *{1}*.\\n"
+"\\n"
+"To join this chat room please click on this link:\\n"
+"{2}\\n"
+msgstr ""
+"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n"
+"\\n"
+"Aby dołączyć do tej konferencji kliknij ten link:\\n"
+"{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:470
 msgid "Chat room server can't be contacted or room reached maximum number of users"
@@ -2402,129 +2410,139 @@ msgid "Close Window"
 msgstr "Zamknij okno"
 
 #: ../chrome/oneteam/content/joinRoomError.xul:73
-#, fuzzy
 msgid "Error occurred during joining room:"
-msgstr "Błąd przy dołączaniu do konferencji:"
+msgstr "Wystąpił błąd przy dołączaniu do konferencji:"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:25
-#, fuzzy
 msgid "_Actions"
-msgstr "Dodatkowe komendy"
+msgstr "_Akcje"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:568
 #: ../chrome/oneteam/content/JavaScript/notification.js:696
-#, fuzzy
 msgid "Reset Settings"
-msgstr "Ustawienia"
+msgstr "Przywróć ustawienia"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:697
-msgid "Are you sure you want to use global\\nsettings for all event notifications?"
+msgid ""
+"Are you sure you want to use global\\n"
+"settings for all event notifications?"
 msgstr ""
+"Czy jesteś pewien że chcesz użyć\\n"
+"wartości globalnych dla ustawień potwierdzeń?"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:698
-msgid "Are you sure you want to use default\\nsettings for all event notifications?"
+msgid ""
+"Are you sure you want to use default\\n"
+"settings for all event notifications?"
 msgstr ""
+"Czy jesteś pewien że chcesz przywrócić\\n"
+"wartości domyślne dla ustawień potwierdzeń?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:135
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead?"
-msgstr "Wprowadzone informacje nie są prawidłowe.\\nCzy chcesz poprawić wprowadzone dane,\\nczy przywrócić poprzednie wartości?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to correct entered informations,\\n"
+"or to restore previous values instead?"
+msgstr ""
+"Wprowadzone informacje nie są prawidłowe.\\n"
+"Czy chcesz poprawić wprowadzone dane,\\n"
+"czy przywrócić poprzednie wartości?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:136
-msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created?"
-msgstr "Wprowadzone informacje nie są prawidłowe.\\nCzy chcesz poprawić wprowadzone dane,\\nczy usunąć właśnie utworzoną zakładkę?"
+msgid ""
+"Entered informations are invalid.\\n"
+"Do you want to correct entered informations,\\n"
+"or to remove the bookmark you have just created?"
+msgstr ""
+"Wprowadzone informacje nie są prawidłowe.\\n"
+"Czy chcesz poprawić wprowadzone dane,\\n"
+"czy usunąć właśnie utworzoną zakładkę?"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:575
-#, fuzzy
 msgid "Reset to global settings"
 msgstr "Użyj wartości globalnych"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:575
-#, fuzzy
 msgid "Reset to default settings"
-msgstr "Użyj wartości globalnych"
+msgstr "Przywróć wartości domyślne"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:398
-#, fuzzy
 msgid "Edit personal info..."
-msgstr "_Edytuj ustawienia osobiste..."
+msgstr "_Edytuj informacje osobiste..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:399
-#, fuzzy
 msgid "Status message..."
-msgstr "Komunikat stanu"
+msgstr "Komunikat stanu..."
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:444
-#, fuzzy
 msgid "Subscription:"
-msgstr "Odmów subskrybcję"
+msgstr "Subskrypcja:"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:447
-#, fuzzy
 msgid "Resources:"
 msgstr "Zasób:"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:475
 msgid "in two ways"
-msgstr ""
+msgstr "w obie strony"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:476
-#, fuzzy
 msgid "he/she can see your status"
-msgstr "Zezwól na widzenie mojego statusu"
+msgstr "on/ona widzi twój status"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:477
-#, fuzzy
 msgid "you can see his/her status"
-msgstr "Poproś o widzenie jej/jego statusu"
+msgstr "widzisz jej/jego statusu"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:478
 msgid "none"
-msgstr ""
+msgstr "brak"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:302
-#, fuzzy
 msgid "Personal informations"
-msgstr "Dane kontaktu"
+msgstr "Dane osobiste"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:348
-#, fuzzy
 msgid "Working address"
-msgstr "adres"
+msgstr "Adres pracy"
 
 #: ../chrome/oneteam/content/bindings/avatar.xml:123
-#, fuzzy
 msgid "No avatar"
-msgstr "Awatar"
+msgstr "Brak awatara"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:404
-#, fuzzy
 msgid "Remove from list"
-msgstr "Usuń kontakt"
+msgstr "Usuń z listy"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:200
-#, fuzzy
 msgid "vCard error"
-msgstr "Błąd wyszukiwania"
+msgstr "Błąd wczytywania wizytówki"
 
 #: ../chrome/oneteam/content/vcardEdit.xul:201
 msgid "The server failed to register your vCard."
-msgstr ""
+msgstr "Serwer nie zapisał twoje awatara."
 
 #: ../chrome/oneteam/content/vcardEdit.xul:203
-msgid "The server failed to register your avatar image,\\nmaybe it is too big (indicatively, it should be\\na few tens of kB; your is {0})."
+msgid ""
+"The server failed to register your avatar image,\\n"
+"maybe it is too big (indicatively, it should be\\n"
+"a few tens of kB; your is {0})."
 msgstr ""
+"Serwer nie zapisał twoje awatara,\\n"
+"prawdopodobnie był on zbyt wielki (zwykle limity\\n"
+"ustawione są na kilkadziesiąt kB; twój ma {0})."
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:52
 msgid "GB"
-msgstr ""
+msgstr "GB"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:54
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:56
 msgid "kB"
-msgstr ""
+msgstr "kB"
 
 #~ msgid "Can't read your avatar image data"
 #~ msgstr "Nie można odczytać obrazka z awatarem"
