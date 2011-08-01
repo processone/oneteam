@@ -49,11 +49,11 @@ function DOMtoE4X(dom)
 function ppFileSize(size)
 {
     if (size > 1024*1024*1024)
-        return (size/(1024*1024*1024)).toFixed(2)+"GB";
+        return (size/(1024*1024*1024)).toFixed(2)+_("GB");
     else if (size > 1024*1024)
-        return (size/(1024*1024)).toFixed(2)+"MB";
+        return (size/(1024*1024)).toFixed(2)+_("MB");
     else if (size > 1024)
-        return (size/1024).toFixed(1)+"kB";
+        return (size/1024).toFixed(1)+_("kB");
     return _("{0} bytes", size);
 }
 

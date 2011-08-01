@@ -312,14 +312,24 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         return null;
     },
 
-    setVCard: function(vcardE4X)
+    setVCard: function(vcardE4X, callback)
     {
         var iq = servicesManager.sendIq({
             type: "set",
             e4x: vcardE4X
-        });
+        }, new Callback(this._checkVCard, this).addArgs(vcardE4X, callback));
 
-        this._storeXMPPData("_vCardAccessorState", null, this._handleVCard, iq);
+        //this._storeXMPPData("_vCardAccessorState", null, this._handleVCard, iq);
+    },
+
+    _checkVCard: function(pkt, arg1, arg2, vcardE4X, callback) {
+        if (pkt.getType() != "result") {
+            callback(false)
+        } else {
+            this.getVCard(true, new Callback(function(pkt, arg1, vcardE4X, callback) {
+                callback(vcardE4X == DOMtoE4X(pkt.getNode()).elements())
+            }, null).addArgs(vcardE4X, callback));
+        }
     },
 
     _handleVCard: function(pkt, value)

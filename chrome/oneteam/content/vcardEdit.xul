@@ -184,9 +184,26 @@
       var vcard = <vCard/>
       vcard.appendChild(generate(map, ns));
 
-      account.setVCard(vcard);
+      document.getElementById("oneteam").style.cursor = "wait";
+      account.setVCard(vcard, closeOrDisplayError);
 
-      return true;
+      return false;
+    }
+
+    function closeOrDisplayError(success) {
+      if (success)
+        window.close();
+      else {
+        document.getElementById("oneteam").style.cursor = "";
+        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
+          .getService(Components.interfaces.nsIPromptService);
+        prompts.alert(null, _("vCard error"),
+          _("The server failed to register your vCard.") + (
+            avatarList.selectedAvatar.hash == account.avatarHash ? "" :
+            "\n\n" + _("The server failed to register your avatar image,\nmaybe it is too big (indicatively, it should be\na few tens of kB; your is {0}).",
+            ppFileSize(avatarList.myAvatars[avatarList.selectedAvatar.hash]))
+        ));
+      }
     }
 
     function fetchVCard(force) {
