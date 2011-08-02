@@ -120,13 +120,14 @@
     </resources>
 
     <content>
-      <xul:vbox width="150" align="center">
+      <xul:vbox width="150" align="center" style="overflow: hidden"
+          onoverflow="this.childNodes[2].flex=1; this.childNodes[2].style.overflowY = 'scroll'">
         <xul:avatar id="selectedAvatar" showBlankAvatar="true"
                     side="128" squareBordered="true"/>
         <xul:button label="_('No avatar')"
                     oncommand="this.parentNode.parentNode.selectedAvatar = null"/>
-        <xul:vbox flex="1" style="overflow-y: auto">
-          <vbox id="container" style="overflow: auto"/>
+        <xul:vbox onunderflow="this.style.overflowY = ''; this.flex = 0">
+          <vbox id="container"/>
         </xul:vbox>
         <xul:button label="_('Add image...')"
                     oncommand="this.parentNode.parentNode.addImage()"/>
