@@ -22,6 +22,7 @@
                        onselect="if (event.originalTarget==this) this.selectedPanel.controller.focus()"/>
       </xul:tabbox>
     </content>
+
     <implementation>
       <property name="tabCount" onget="return this._tabs.childNodes.length"
                 readonly="true"/>
@@ -36,12 +37,10 @@
 
           this._unseenCount = val;
 
-          var doc = document;
-
           if (val)
             window.getAttention();
 
-          doc.title = doc.title.replace(/^(?:\* |\[\d+\] )?/,
+          document.title = document.title.replace(/^(?:\* |\[\d+\] )?/,
             val == 0 ? "" : val == 1 ? "* " : "["+val+"] ");
 
           if (window.top.changeFavIcon)
@@ -55,7 +54,6 @@
         this._tabs = document.getAnonymousElementByAttribute(this, "anonid", "tabs");
         this._tabpanels = document.getAnonymousElementByAttribute(this, "anonid", "tabpanels");
         this._inSelectTab = 0;
-        this._detachedTabs = [];
 
         var _this = this;
 
@@ -81,30 +79,12 @@
         }, false);
       ]]></constructor>
 
-      <method name="getTab">
-        <parameter name="thread"/>
-        <body><![CDATA[
-          var cn = this._detachedTabs;
-          for (var i = 0; i < cn.length; i++)
-            if (cn[i].jid == thread.contact.jid.normalizedJID) {
-              cn[i].thread = thread;
-              this._detachedTabs.splice(i, 1);
-              return cn[i];
-            }
-            return null;
-        ]]></body>
-      </method>
-
       <method name="openTab">
         <parameter name="thread"/>
         <body><![CDATA[
           // Search for tab with this same jid (contact may lost track of chatpane
           //  after resource disconnection/connection
           var tab, tabpanel;
-
-          if ((tab = this.getTab(thread)))
-            return tab;
-
           var content = document.createElementNS(XULNS, "chattab-content");
 
           content._tabbox = this;
@@ -168,10 +148,6 @@
 
           content.destroy();
 
-          var idx = this._detachedTabs.indexOf(content)
-          if (idx >= 0)
-            this._detachedTabs.splice(idx, 1);
-
           if (this._inCloseTabs) {
             content._tabpanel.parentNode.removeChild(content._tabpanel);
             content._tab.parentNode.removeChild(content._tab);
@@ -210,16 +186,6 @@
           var ev = document.createEvent("Events");
           ev.initEvent("tab-removed", true, false);
           this.dispatchEvent(ev);
-        ]]></body>
-      </method>
-
-      <method name="_detachTab">
-        <parameter name="content"/>
-        <body><![CDATA[
-          if (!content._tab.parentNode)
-            return;
-
-          this._detachedTabs.push(content);
         ]]></body>
       </method>
 
