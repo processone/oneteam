@@ -96,13 +96,12 @@ var menuHandler = {
 
         idx += Array.indexOf(m.childNodes, this._tabsSep)+1;
 
-        var mi = document.createElementNS(XULNS, "menuitem");
-        mi.setAttribute("label", cp._thread.contact.visibleName);
-        mi.setAttribute("class", "menu-iconic");
-        mi.setAttribute("name", "windows");
-        mi.setAttribute("image", cp._thread.contact.avatar ||
-                        "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
-        mi.setAttribute("oncommand", "menuHandler.showChatPane(this)");
+        var mi = E4XtoDOM(
+          <menuitem name="windows" class="menu-iconic"
+                    label={cp._thread.contact.visibleName}
+                    image={cp._thread.contact.avatar || defaultAvatar}
+                    oncommand="menuHandler.showChatPane(this)"/>
+        , document);
 
         if (idx >= m.childNodes.length)
             m.appendChild(mi);

@@ -9,7 +9,8 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "iteratorEx", "findMax", "sanitizeDOM", "bsearch",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
                         "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
-                        "updateMenuList", "alertEx", "fillTooltip"];
+                        "updateMenuList", "alertEx", "fillTooltip", "XULNS",
+                        "HTMLNS"];
 
 ML.importMod("roles.js");
 
@@ -1351,3 +1352,7 @@ function fillTooltip(tipElement, tipNode) {
     }
     return false;
 }
+
+var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+var HTMLNS = "http://www.w3.org/1999/xhtml";
+

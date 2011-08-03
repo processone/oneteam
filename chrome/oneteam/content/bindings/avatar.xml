@@ -43,7 +43,7 @@
             this._imageObj.src = val;
             this.setAttribute("filled", "true")
           } else if (this.getAttribute("showBlankAvatar") == "true") {
-            this._imageObj.src = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
+            this._imageObj.src = defaultAvatar;
             this.setAttribute("filled", "true")
           } else {
             this.style.backgroundImage = "";

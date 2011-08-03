@@ -53,9 +53,7 @@ _DECL_(ContactsAutoComplete).prototype =
                 res.setSearchResult(res.RESULT_SUCCESS);
             first = false;
 
-            res.appendMatch(contact.jid, contact.visibleName,
-                            contact.avatar ||
-                            "chrome://oneteam/skin/avatar/imgs/default-avatar.png");
+            res.appendMatch(contact.jid, contact.visibleName, contact.avatar || defaultAvatar);
         }
         if (first)
             res.setSearchResult(res.RESULT_NOMATCH);

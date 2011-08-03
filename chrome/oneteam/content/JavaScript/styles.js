@@ -1,5 +1,7 @@
 var EXPORTED_SYMBOLS = ["StylesRegistry", "IconStyle", "SmilesIconStyle",
-                        "StatusIconStyle"];
+                        "StatusIconStyle", "defaultAvatar"];
+
+var defaultAvatar = "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
 
 function StylesRegistry(cache)
 {
