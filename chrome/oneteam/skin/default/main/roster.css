@@ -41,8 +41,8 @@ expander[open="true"] .expanderButton {
 }
 
 .counter-box {
-  -moz-box-align: start;
-  -moz-box-pack: end;
+  -moz-box-align: end;
+  -moz-box-pack: start;
   background: no-repeat top right transparent;
 }
 
@@ -77,6 +77,7 @@ expander[open="true"] .expanderButton {
   -moz-box-align: center;
   -moz-box-pack: center;
   text-align: center;
+  margin: 0 0 -5px 0; /*for icons to overlap*/
 }
 
 .counter-box > vbox > label {

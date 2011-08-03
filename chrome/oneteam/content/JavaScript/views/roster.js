@@ -246,11 +246,11 @@ function ContactView(model, parentView)
           <vbox class="avatar-box">
             <avatar side="48" squareBordered="true"/>
           </vbox>
-          <hbox class="counter-box">
+          <vbox class="counter-box">
             <vbox>
               <label/>
             </vbox>
-          </hbox>
+          </vbox>
         </stack>
       </hbox>
     , this.doc);
