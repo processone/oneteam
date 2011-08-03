@@ -31,29 +31,22 @@
     ML.importMod("edit.js");
 
     function onLoad() {
-      if (window.arguments)
-        callWindowOpened();
+      callWindowOpened();
     }
 
     function callWindowOpened() {
       if (document.getElementById("chats").openTab)
-        window.arguments[0]._onChatWindowOpened();
+        chatTabsController._onChatWindowOpened();
       else
         setTimeout(callWindowOpened, 100);
     }
 
     function onUnload() {
-      if (window.arguments)
-        window.arguments[0]._onChatWindowClosed();
+      chatTabsController._onChatWindowClosed();
     }
 
     function closeTab() {
-      var c = document.getElementById("chats");
-
-      if (c.tabCount == 1)
-        window.close();
-      else
-        c.selectedTab.controller.close();
+      document.getElementById("chats").selectedTab.controller.close();
     }
   ]]></script>
 
@@ -66,7 +59,5 @@
     <menubar id="macMenuBarTabbed"/>
   </toolbox>
 
-  <vbox flex="1">
-    <chattabbox id="chats" flex="1"/>
-  </vbox>
+  <chattabbox id="chats" flex="1"/>
 </window>
