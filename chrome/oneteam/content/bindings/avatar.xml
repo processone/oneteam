@@ -126,7 +126,7 @@
                     side="128" squareBordered="true"/>
         <xul:button label="_('No avatar')"
                     oncommand="this.parentNode.parentNode.selectedAvatar = null"/>
-        <xul:vbox onunderflow="this.style.overflowY = ''; this.flex = 0">
+        <xul:vbox id="containerVbox" onunderflow="this.style.overflowY = ''; this.flex = 0">
           <vbox id="container"/>
         </xul:vbox>
         <xul:button label="_('Add image...')"
