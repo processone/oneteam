@@ -70,35 +70,37 @@ _DECL_(WindowsObserver, null, CallbacksList).prototype = {
     },
 
     onChatPanesUpdated: function(model, type, data) {
-        for (var i = 0; data.added && i < data.added.length; i++) {
-            if (!data.added[i]._content)
-                continue;
-
-            var idx = bsearchEx(this._tabs, 0, this._tabs.length-1,
-                    data.added[i]._thread.contact.visibleName.toLowerCase(),
-                    function(v, c, i) {
-                        return v.localeCompare(c[i]._thread.contact.
-                                               visibleName.toLowerCase());
-                    });
-            this._tabs.splice(idx, 0, data.added[i]);
-
-            for (var c in this._iterateCallbacks())
-                try {
-                    c.onChatPaneAdded(data.added[i], idx);
-                } catch (ex) {dump("1"+ex) }
-        }
-
-        for (i = 0; data.removed && i < data.removed.length; i++) {
-            var idx = this._tabs.indexOf(data.removed[i]);
-            if (idx < 0)
-                continue;
-
-            this._tabs.splice(idx, 1);
-            for (var c in this._iterateCallbacks())
-                try {
-                    c.onChatPaneRemoved(data.removed[i], idx);
-                } catch (ex) { dump(ex) }
-        }
+        if (data.added)
+            for each (var addedData in data.added) {
+                if (!addedData._content)
+                    continue;
+    
+                var idx = bsearchEx(this._tabs, 0, this._tabs.length-1,
+                        addedData._thread.contact.visibleName.toLowerCase(),
+                        function(v, c, i) {
+                            return v.localeCompare(c[i]._thread.contact.
+                                                   visibleName.toLowerCase());
+                        });
+                this._tabs.splice(idx, 0, addedData);
+    
+                for (var c in this._iterateCallbacks())
+                    try {
+                        c.onChatPaneAdded(addedData, idx);
+                    } catch (ex) {dump("1"+ex) }
+            }
+    
+        if (data.removed)
+            for each (var removedData in data.removed) {
+                var idx = this._tabs.indexOf(removedData);
+                if (idx < 0)
+                    continue;
+    
+                this._tabs.splice(idx, 1);
+                for (var c in this._iterateCallbacks())
+                    try {
+                        c.onChatPaneRemoved(removedData, idx);
+                    } catch (ex) { dump(ex) }
+            }
     },
 
     get windowMediator() {

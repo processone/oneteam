@@ -7,7 +7,7 @@ function GatewaysMenuView(menuItem)
     this.items = [];
     this.model = account;
 
-    this.onModelUpdated(null, "gateways", {added: [gateway for each (gateway in account.gateways)]});
+    this.onModelUpdated(null, "gateways", {added: account.gateways});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "gateways");
 }
 
@@ -28,22 +28,24 @@ _DECL_(GatewaysMenuView, null, ContainerView).prototype =
     {
         var doc = this.containerNode.ownerDocument;
 
-        for (var i = 0; data.added && i < data.added.length; i++) {
-            var node = doc.createElementNS(XULNS, "menuitem");
+        if (data.added)
+            for each (var addedData in data.added) {
+                var node = doc.createElementNS(XULNS, "menuitem");
 
-            node.setAttribute("class", "gateway-view");
-            node.setAttribute("oncommand", "this.model.onRegister()");
-            node.setAttribute("label", _("Register in '{0} ({1})'",
-                                         data.added[i].gatewayName,
-                                         data.added[i].jid.domain));
+                node.setAttribute("class", "gateway-view");
+                node.setAttribute("oncommand", "this.model.onRegister()");
+                node.setAttribute("label", _("Register in '{0} ({1})'",
+                                             addedData.gatewayName,
+                                             addedData.jid.domain));
 
-            node.model = data.added[i];
+                node.model = addedData;
 
-            this.onItemAdded(node);
-        }
+                this.onItemAdded(node);
+            }
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
 
         for (i in account.gateways) {
             this.menuItem.hidden = false;
@@ -67,7 +69,7 @@ function GatewaysToolbarButtons(gatewaysSeparator)
     this._visibleItems = [];
     this.model = account;
 
-    this.onModelUpdated(null, "gateways", {added: [gateway for each (gateway in account.gateways)]});
+    this.onModelUpdated(null, "gateways", {added: account.gateways});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "gateways");
 }
 
@@ -86,11 +88,13 @@ _DECL_(GatewaysToolbarButtons, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new GatewayToolbarButton(data.added[i], this));
+        if (data.added)
+            for each (var addedData in data.added)
+                this.onItemAdded(new GatewayToolbarButton(addedData, this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
     },
 
     _updateVisibleItems: function(item, visible)

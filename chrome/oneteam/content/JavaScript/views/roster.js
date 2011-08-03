@@ -62,15 +62,17 @@ _DECL_(RosterView, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++)
-            if (this.matchGroups.indexOf(data.added[i]) >= 0 ?
-                this.negativeMatch : !this.negativeMatch)
-                this.onItemAdded(new GroupView(data.added[i], this));
+        if (data.added)
+            for each (var addedData in data.added)
+                if (this.matchGroups.indexOf(addedData) >= 0 ?
+                    this.negativeMatch : !this.negativeMatch)
+                    this.onItemAdded(new GroupView(addedData, this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            if (this.matchGroups.indexOf(data.removed[i]) >= 0 ?
-                this.negativeMatch : !this.negativeMatch)
-                this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                if (this.matchGroups.indexOf(removedData) >= 0 ?
+                    this.negativeMatch : !this.negativeMatch)
+                    this.onItemRemoved(removedData);
     },
 
     destroy: function() {
@@ -155,11 +157,13 @@ _DECL_(GroupView, null, ContainerView).prototype =
         if (!this.items)
             return;
 
-        for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new ContactView(data.added[i], this));
+        if (data.added)
+            for each (var addedData in data.added)
+                this.onItemAdded(new ContactView(addedData, this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
 
         this.onAvailUpdated();
     },
@@ -644,15 +648,14 @@ _DECL_(ContactsListView, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++) {
-            this.onItemAdded(new ContactsListItemView(data.added[i], this,
-                                                 this.node.ownerDocument,
-                                                 this.flags));
-        }
+        if (data.added)
+            for each (var addedData in data.added)
+                this.onItemAdded(new ContactsListItemView(addedData,
+                                 this, this.node.ownerDocument, this.flags));
 
-        for (i = 0; data.removed && i < data.removed.length; i++) {
-            this.onItemRemoved(data.removed[i]);
-        }
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
     },
 
     destroy: function()
@@ -748,11 +751,13 @@ _DECL_(PresenceProfilesView, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new PresenceProfileView(data.added[i], this));
+        if (data.added)
+            for each (var addedData in data.added)
+                this.onItemAdded(new PresenceProfileView(addedData, this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
 
         if (this.model.profiles.length == 0) {
             this.containerNode.insertBefore(this.dummyNode, this.afterLastItemNode);

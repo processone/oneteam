@@ -25,11 +25,13 @@ _DECL_(FileTransfersView, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new FileTransferView(data.added[i], this));
+        if (data.added)
+            for each (var addedData in data.added)
+                this.onItemAdded(new FileTransferView(addedData, this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
     },
 
     destroy: function()

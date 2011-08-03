@@ -26,11 +26,13 @@ _DECL_(BookmarksMenuView, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new BookmarkMenuItemView(data.added[i], this));
+        if (data.added)
+            for each (var addedData in data.added)
+                this.onItemAdded(new BookmarkMenuItemView(addedData, this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
 
         this.afterLastItemNode.hidden = this.model.bookmarks.length < 1;
     },
@@ -107,12 +109,13 @@ _DECL_(ConferencesView, null, ContainerView).prototype =
 
     onModelUpdated: function(model, type, data)
     {
-        for (var i = 0; data.added && i < data.added.length; i++)
-            this.onItemAdded(new ConferenceView(data.added[i], this.containerNode,
-                                                this));
+        if (data.added)
+            for each (var addedData in data.added)
+                this.onItemAdded(new ConferenceView(addedData, this.containerNode, this));
 
-        for (i = 0; data.removed && i < data.removed.length; i++)
-            this.onItemRemoved(data.removed[i]);
+        if (data.removed)
+            for each (var removedData in data.removed)
+                this.onItemRemoved(removedData);
     },
 
     destroy: function() {
@@ -226,16 +229,18 @@ _DECL_(ConferenceView, null, ContainerView).prototype =
         if (!this.items)
             return;
 
-        for (var i = 0; data.added && i < data.added.length; i++) {
-            this.updateRoleNode(data.added[i].role, 1)
-            this.onItemAdded(new ConferenceMemberView(data.added[i], this,
-                                                      this.node.ownerDocument));
-        }
+        if (data.added)
+            for each (var addedData in data.added) {
+                this.updateRoleNode(addedData.role, 1)
+                this.onItemAdded(new ConferenceMemberView(addedData, this,
+                                                          this.node.ownerDocument));
+            }
 
-        for (i = 0; data.removed && i < data.removed.length; i++) {
-            this.updateRoleNode(data.removed[i].role, -1)
-            this.onItemRemoved(data.removed[i]);
-        }
+        if (data.removed)
+            for each (var removedData in data.removed) {
+                this.updateRoleNode(removedData.role, -1)
+                this.onItemRemoved(removedData);
+            }
 
         if (this.invite) {
             var jids = [];

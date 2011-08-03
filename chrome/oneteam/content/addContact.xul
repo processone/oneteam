@@ -31,8 +31,7 @@
         jid.value = contact.jid;
         jid.disabled = true;
       } else {
-        updateProtoList(account, "gateways",
-                        {added: [gateway for each (gateway in account.gateways)]});
+        updateProtoList(account, "gateways", {added: account.gateways});
         gatewaysRegToken = account.registerView(updateProtoList, null, "gateways");
       }
     }
@@ -49,12 +48,13 @@
     {
       var protoList = document.getElementById("protocol").firstChild;
 
-      for (var i = 0; data.added && i < data.added.length; i++) {
-        var el = document.createElement("menuitem");
-        el.setAttribute("label", data.added[i].gatewayName);
-        el.model = data.added[i];
-        protoList.appendChild(el);
-      }
+      if (data.added)
+        for each (var addedData in data.added) {
+          var el = document.createElement("menuitem");
+          el.setAttribute("label", addedData.gatewayName);
+          el.model = addedData;
+          protoList.appendChild(el);
+        }
 
       if (protoList.childNodes.length > 1)
         protoList.parentNode.parentNode.parentNode.hidden = false;

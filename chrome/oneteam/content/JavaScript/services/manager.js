@@ -444,14 +444,14 @@ _DECL_(ServicesManager).prototype =
     _onResourcesChanged: function(data) {
         var discoInfo;
 
-        for (var i = 0; i < data.removed; i++) {
-            if (!(discoInfo = data.removed[i].getDiscoInfo()))
+        for each (var removedData in data.removed) {
+            if (!(discoInfo = removedData.getDiscoInfo()))
                 continue;
 
             for (var f in this._contactHandlers)
                 if (discoInfo.features[f])
                     try {
-                        this._contactHandlers[f](data.removed[i].jid, f,
+                        this._contactHandlers[f](removedData.jid, f,
                                                  false, discoInfo);
                     } catch (ex) {
                         dump("Disco contact handler ex: "+ex);
