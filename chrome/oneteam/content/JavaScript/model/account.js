@@ -571,19 +571,11 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     _uniqEventId: 0,
 
-    addEvent: function(jid, type, msg, action, key)
+    addEvent: function(jid, type, msg, action)
     {
-        if (!key)
-            key = "autogen"+(++this._uniqEventId);
-
-        var contact;
-
-        if (jid instanceof Contact)
-            contact = jid;
-        else {
-            jid = new JID(jid);
-            contact = this.getOrCreateContact(jid.shortJID, true, null, []);
-        }
+        var key = ""+(++this._uniqEventId);
+        var contact = jid instanceof Contact ? jid:
+                      this.getOrCreateContact(new JID(jid).shortJID, true, null, []);
 
         contact.addEvent({
             type: type,
@@ -595,24 +587,24 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 return this._action();
             }
         });
-        if (contact.events.length == 1)
+        if (contact.events.length == 1) {
             this.contactsWithEvents.push(contact);
+            contact._addToGroup(this.myEventsGroup);
+        }
 
         this.modelUpdated("contactsWithEvents");
 
         return key;
     },
 
-    removeEventsByKey: function()
+    removeEventsByKey: function(key)
     {
-        var keys = {}
-        for (var i = 0; i < arguments.length; i++)
-            keys[arguments[i]] = 1;
-
         for (var i = this.contactsWithEvents.length-1; i >= 0; i--)
-            if (this.contactsWithEvents[i].removeEventsWithKeys(keys) &&
-                this.contactsWithEvents[i].events.length == 0)
+            if (this.contactsWithEvents[i].removeEventsByKey(key) &&
+                this.contactsWithEvents[i].events.length == 0) {
+                this.contactsWithEvents[i]._removeFromGroup(this.myEventsGroup);
                 this.contactsWithEvents.splice(i, 1);
+            }
 
         this.modelUpdated("contactsWithEvents");
     },

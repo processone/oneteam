@@ -466,32 +466,18 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
     addEvent: function(info)
     {
         this.events.push(info);
-        if (this.events.length == 1)
-            this._addToGroup(account.myEventsGroup);
         this.modelUpdated("events", {added: [info]});
     },
 
-    removeEventsWithKeys: function(keys)
+    removeEventsByKey: function(key)
     {
-        var retVal = false;
-        var removed = [];
-
         for (var i = this.events.length-1; i >= 0; i--)
-            if (this.events[i].key in keys) {
-                retVal = true;
-                removed.push(this.events[i]);
+            if (this.events[i].key == key) {
+                this.modelUpdated("events", {removed: [this.events[i]]});
                 this.events.splice(i, 1);
-                if (this.events.length == 0) {
-                    this._removeFromGroup(account.myEventsGroup);
-                    this.modelUpdated("events", {removed: removed});
-                    return true;
-                }
+                return true;
             }
-
-        if (removed.length)
-            this.modelUpdated("events", {removed: removed});
-
-        return retVal;
+        return false;
     },
 
     onJingleCall: function(session)
