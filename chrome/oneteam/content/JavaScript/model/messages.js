@@ -1,29 +1,21 @@
-var EXPORTED_SYMBOLS = ["ContactInfo", "MessagesRouter", "MessagesThread",
-                        "Message", "ReplyGroups"];
+var EXPORTED_SYMBOLS = ["MessagesRouter", "MessagesThread", "Message", "ReplyGroups"];
 
 ML.importMod("roles.js");
 ML.importMod("modeltypes.js");
 ML.importMod("dateutils.js");
 ML.importMod("views/chattabs.js");
 
-function ContactInfo(jid, visibleName, representsMe)
-{
-    this.jid = jid;
-    this.visibleName = visibleName;
-    this.representsMe = representsMe;
-}
-
 function MessagesRouter(parentRouter)
 {
-    this.parentRouter = parentRouter;
+    this.parentRouter = parentRouter; // defined for resources: parentRouter is the Contact
     this.threads = {};
     this.newThreads = {};
     this.chatPanes = [];
     this.msgsInQueue = 0;
-}
 
 _DECL_(MessagesRouter).prototype =
 {
+    // used to route received messages
     routeMessage: function(msg, contact)
     {
         var thread;
@@ -118,31 +110,6 @@ _DECL_(MessagesRouter).prototype =
         thread.chatPane.focus();
     },
 
-    _cycleNextTab: function(contact)
-    {
-        return false;
-        var paneToActivate;
-        var activePane = chatTabsController._selectedTab &&
-            chatTabsController._selectedTab.controller;
-
-        if (!activePane || !activePane.thread ||
-            activePane.thread.contact != (contact || this.activeResource || this))
-            return false;
-
-        for (var i = 0; i < this.chatPanes.length; i++) {
-            if (contact && !this.chatPanes[i].thread ||
-                contact != this.chatPanes[i].thread.contact)
-                continue;
-            if (!activePane || !paneToActivate)
-                paneToActivate = this.chatPanes[i];
-            if (this.chatPanes[i] == activePane)
-                activePane = null;
-        }
-        paneToActivate.focus();
-
-        return true;
-    },
-
     _selectOrCreateTab: function(contact, thread)
     {
         if (!thread)
@@ -189,11 +156,9 @@ _DECL_(MessagesRouter).prototype =
             return;
 
         if (this.parentRouter)
-            this.parentRouter._cycleNextTab(this) ||
-                this.parentRouter._selectOrCreateTab(this, thread);
+            this.parentRouter._selectOrCreateTab(this, thread);
         else
-            this._cycleNextTab(this) ||
-                this._selectOrCreateTab(this, thread);
+            this._selectOrCreateTab(this, thread);
     },
 
     showSystemMessage: function(msg, contact)

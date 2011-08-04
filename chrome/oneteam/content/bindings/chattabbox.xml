@@ -24,9 +24,6 @@
     </content>
 
     <implementation>
-      <property name="tabCount" onget="return this._tabs.childNodes.length"
-                readonly="true"/>
-
       <property name="selectedTab" onget="return this._selectedTab"
                 readonly="true"/>
 
@@ -349,15 +346,6 @@
         <body><![CDATA[
           this._regBundle.unregister();
           this._chatpane.model = null;
-        ]]></body>
-      </method>
-
-      <method name="detach">
-        <body><![CDATA[
-          this._tabbox._deremoveTab(this);
-          this.thread.chatPane = null;
-          this.thread = null;
-          this._updateChatState("gone");
         ]]></body>
       </method>
 
