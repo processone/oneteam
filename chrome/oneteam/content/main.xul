@@ -246,7 +246,7 @@
       //return;
       var width = self.outerWidth;
 
-      /*if (window.chatTabsController && chatTabsController.tabCount) {
+      /*if (!chatTabsController.isEmpty) {
         var splitter = document.getElementById("chats-splitter");
         var w = +splitter.previousSibling.getAttribute("width");
         splitter.setAttribute("rightWidth", self.outerWidth - w);
