@@ -12,6 +12,7 @@ function MessagesRouter(parentRouter)
     this.newThreads = {};
     this.chatPanes = [];
     this.msgsInQueue = 0;
+}
 
 _DECL_(MessagesRouter).prototype =
 {
