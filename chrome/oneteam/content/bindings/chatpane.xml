@@ -729,13 +729,6 @@
 
               msgEl.appendChild(e);
 
-              if (this.model.allowsModifications) {
-                var im = doc.createElement("div");
-
-                im.setAttribute("class", "message-action edit-message");
-                e.insertBefore(im, e.firstChild);
-              }
-
               if (!msg.isSystemMessage) {
                 msg.rightDiv = doc.createElement("div");
                 msg.rightDiv.setAttribute("class", "right-div");
