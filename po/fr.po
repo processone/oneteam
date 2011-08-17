@@ -71,7 +71,7 @@ msgstr "Nouveau pseudo :"
 
 #: ../chrome/oneteam/content/status.xul:8
 msgid "Status Message"
-msgstr "Message de statut"
+msgstr "Message d'état"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:129
 #: ../chrome/oneteam/content/console.xul:59
@@ -141,7 +141,7 @@ msgstr "_Rapporter un bug"
 
 #: ../chrome/oneteam/content/main.xul:463
 msgid "Status message"
-msgstr "Message de statut"
+msgstr "Message d'état"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:229
 msgid "Remove Contact..."
@@ -600,7 +600,7 @@ msgstr "Statut"
 
 #: ../chrome/oneteam/content/preferences.xul:171
 msgid "Sort contacts by status"
-msgstr "Trier les contacts par statut"
+msgstr "Trier les contacts par état"
 
 #: ../chrome/oneteam/content/preferences.xul:172
 msgid "Play sounds"
@@ -1087,7 +1087,7 @@ msgstr "Méthode de connexion :"
 
 #: ../chrome/oneteam/content/preferences.xul:262
 msgid "Automatically set status to 'away\\' after"
-msgstr "Passer le statut à 'absent' après"
+msgstr "Positionner l'état à 'absent' après"
 
 #: ../chrome/oneteam/content/preferences.xul:265
 #: ../chrome/oneteam/content/preferences.xul:275
@@ -1096,7 +1096,7 @@ msgstr "minutes d'inactivité"
 
 #: ../chrome/oneteam/content/preferences.xul:272
 msgid "Automatically set status to 'not available\\' after"
-msgstr "Passer le statut à 'non disponible' après"
+msgstr "Positionner l'état à \"non disponible\" après"
 
 #: ../chrome/oneteam/content/bindings/chatpane.xml:1873
 msgid "Additional commands"
@@ -1172,11 +1172,11 @@ msgstr "Texte :"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:313
 msgid "<b>{0}</b> authorized you to see his/her status"
-msgstr "<b>{0}</b> vous a autorisé à voir son statut"
+msgstr "<b>{0}</b> vous a autorisé à voir son état"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:319
 msgid "<b>{0}</b> doesn't authorized you to see his/her status"
-msgstr "<b>{0}</b> ne vous a pas autorisé à voir son statut"
+msgstr "<b>{0}</b> ne vous a pas autorisé à voir son état"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:424
 msgid "File transfer request"
@@ -1289,7 +1289,7 @@ msgstr "Se connecter automatiquement au démarrage"
 #: ../chrome/oneteam/content/preferences.xul:268
 #: ../chrome/oneteam/content/preferences.xul:278
 msgid "And set status message to:"
-msgstr "Et le message de statut à :"
+msgstr "Et le message d'état à :"
 
 #: ../chrome/oneteam/content/jingleCall.xul:11
 msgid "Jingle Call"
@@ -1552,11 +1552,11 @@ msgstr "<b>{0}</b> est désormais {1}"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:312
 msgid "{0} authorized you to see his/her status"
-msgstr "{0} vous a autorisé à voir son statut"
+msgstr "{0} vous a autorisé à voir son état"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:318
 msgid "{0} doesn't authorized you to see his/her status"
-msgstr "{0} ne vous a pas autorisé à voir son statut"
+msgstr "{0} ne vous a pas autorisé à voir son état"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:331
 msgid "<b>{0}</b> from {1} changed nick to <b>{2}</b>"
@@ -2038,7 +2038,7 @@ msgstr "Retenir ce salon sous le nom"
 
 #: ../chrome/oneteam/content/status.xul:105
 msgid "Status message:"
-msgstr "Message de statut :"
+msgstr "Message d'état :"
 
 #: ../chrome/oneteam/content/status.xul:108
 msgid "Save message"
@@ -2288,31 +2288,31 @@ msgstr "Corriger"
 
 #: ../chrome/oneteam/content/main.xul:350
 msgid "Status messages overview"
-msgstr "Voir les messages de statut de mes contacts"
+msgstr "Voir les messages d'état de mes contacts"
 
 #: ../chrome/oneteam/content/overlays/macMenuOverlay.xul:42
 msgid "_Status Messages Overview..."
-msgstr "Aperçu des messages de _statut..."
+msgstr "Aperçu des messages d'état..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:236
 msgid "Ask to see his/her status"
-msgstr "Demander à voir son statut"
+msgstr "Demander à voir son état"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:238
 msgid "Allow him/her to see my status"
-msgstr "L'autoriser à voir mon statut"
+msgstr "L'autoriser à voir mon état"
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:240
 msgid "Cancel authorization"
-msgstr "Annuler l'autorisation de voir mon statut"
+msgstr "Annuler l'autorisation de voir mon état"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:506
 msgid "Contact changed status"
-msgstr "Un contact a modifié son statut"
+msgstr "Un contact a modifié son état"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:507
 msgid "Chat room participant changed status"
-msgstr "Un membre du salon a modifié son statut"
+msgstr "Un membre du salon a modifié son état"
 
 #: ../chrome/oneteam/content/JavaScript/model/account.js:57
 msgid "My other connections"
@@ -2364,7 +2364,7 @@ msgstr "Ignorer"
 
 #: ../chrome/oneteam/content/JavaScript/model/account.js:1107
 msgid "<b>{0}</b> would like to see your status."
-msgstr "<b>{0}</b> souhaite s'abonner à votre statut."
+msgstr "<b>{0}</b> souhaite voir votre état."
 
 #: ../chrome/oneteam/content/addContact.xul:216
 msgid "Optional, used to refer to the contact"
@@ -2384,7 +2384,7 @@ msgstr "Demander confirmation avant de quitter si je suis connecté"
 
 #: ../chrome/oneteam/content/subscribe.xul:61
 msgid "would like to see to your status."
-msgstr "souhaite voir votre statut."
+msgstr "souhaite voir votre état."
 
 #: ../chrome/oneteam/content/subscribe.xul:66
 msgid "Here is the message sent with the request:"
@@ -2443,7 +2443,7 @@ msgstr "Ma carte de visite..."
 
 #: ../chrome/oneteam/content/overlays/rosterContextMenus.xul:399
 msgid "Status message..."
-msgstr "Message de statut..."
+msgstr "Message d'état..."
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:444
 msgid "Subscription:"
@@ -2459,11 +2459,11 @@ msgstr "dans les deux sens"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:476
 msgid "he/she can see your status"
-msgstr "il/elle peut voir votre statut"
+msgstr "il/elle peut voir votre état"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:477
 msgid "you can see his/her status"
-msgstr "vous pouvez voir son statut"
+msgstr "vous pouvez voir son état"
 
 #: ../chrome/oneteam/content/JavaScript/views/roster.js:478
 msgid "none"
