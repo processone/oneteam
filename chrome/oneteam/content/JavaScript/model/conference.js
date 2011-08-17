@@ -363,7 +363,7 @@ _DECL_(Conference, Contact).prototype =
         this.joinRoom(null, newNick);
     },
 
-    sendMessage: function(msg)
+    /*sendMessage: function(msg)
     {
         if (!msg)
             return;
@@ -374,7 +374,7 @@ _DECL_(Conference, Contact).prototype =
         msg.fillPacket(message);
 
         account.connection.send(message);
-    },
+    },*/
 
     changeSubject: function(subject)
     {
@@ -530,10 +530,10 @@ _DECL_(Conference, Contact).prototype =
         subject = pkt.getChild("subject");
         if (!subject)
             return true;
-        if ((subject = subject.textContent) == this.subject)
+        if (subject.textContent == this.subject)
             return false;
 
-        this.subject = subject;
+        this.subject = subject.textContent;
 
         if (!pkt.getBody() || (new JID(pkt.getFrom())).resource) {
             var resource = this.getOrCreateResource(pkt.getFrom());

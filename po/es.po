@@ -71,7 +71,9 @@ msgstr "Cambiar Apodo"
 msgid "New Nick:"
 msgstr "Nuevo Apodo:"
 
-#: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/status.xul:8 ../chrome/oneteam/content/test.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr "Mensaje de Estado"
 
@@ -1273,11 +1275,11 @@ msgstr "No eres miembro de esta sala"
 msgid "(Anonymous)"
 msgstr "(Anónimo)"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1000
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1030
 msgid "Click to load image"
 msgstr "Pulsa para cargar la imagen"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1002
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1032
 msgid "Always load images from that contact"
 msgstr "Siempre cargar las imágenes de este contacto"
 
@@ -1594,19 +1596,19 @@ msgstr "Transferencia de fichero aceptada"
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr "El usuario <b>{0}</b> ha aceptado tu fichero <b>\"{1}\\\"</b>"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:982
+#: ../chrome/oneteam/content/JavaScript/model/account.js:993
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr "Reconectando en {0} {0, plurals, segundo,segundos}"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1267
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr "Conflicto (otro cliente está conectado a la misma cuenta y recurso)"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1276
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1287
 msgid "Invalid username or password"
 msgstr "El nombre de usuario o la contraseña no son válidos"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1289
 msgid "Invalid response from server"
 msgstr "Respuesta del servidor no válida"
 
@@ -2361,7 +2363,7 @@ msgstr "Rechazar"
 msgid "Ignore"
 msgstr "Ignorar"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1095
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1106
 msgid "<b>{0}</b> would like to see your status."
 msgstr "<b>{0}</b> quiere ver tu estado."
 

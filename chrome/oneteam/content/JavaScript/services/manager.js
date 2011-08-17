@@ -314,12 +314,12 @@ _DECL_(ServicesManager).prototype =
         }
 
         var item;
-        if (from.resource) {
+        /*if (from.resource) {
             item = account.getOrCreateResource(from);
             if (!item && pkt.getType() != "groupchat")
                 item = account.getOrCreateContact(from.getShortJID(), true).
                     createResource(from);
-        } else
+        } else*/
             item = account.getOrCreateContact(from);
 
         if (item)

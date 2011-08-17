@@ -70,7 +70,9 @@ msgstr "Zmień pseudonim"
 msgid "New Nick:"
 msgstr "Nowy pseudonim:"
 
-#: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/status.xul:8 ../chrome/oneteam/content/test.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr "Komunikat stanu"
 
@@ -85,7 +87,7 @@ msgstr "Dostępny"
 #: ../chrome/oneteam/content/main.xul:452
 #: ../chrome/oneteam/content/status.xul:96
 msgid "Available for chat"
-msgstr "Chciałby pogadać"
+msgstr "Chce porozmawiać"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:131
 #: ../chrome/oneteam/content/main.xul:454
@@ -1272,11 +1274,11 @@ msgstr "Nie jesteś członkiem tego pokoju"
 msgid "(Anonymous)"
 msgstr "(Anonim)"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1000
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1030
 msgid "Click to load image"
 msgstr "Kliknij by załadować"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1002
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1032
 msgid "Always load images from that contact"
 msgstr "Zawsze wyświetlaj obrazki od tego kontaktu"
 
@@ -1593,19 +1595,19 @@ msgstr "Prośba przesłania pliku zaakceptowana"
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr "Kontakt <b>{0}</b> zaakceptował twój plik <b>\"{1}\\\"</b>"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:982
+#: ../chrome/oneteam/content/JavaScript/model/account.js:993
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr "Ponowne łączenia za {0} {0, plurals, sekunda, sekundy, sekund}"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1267
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr "Konflikt (klient z tym samym zasobem zalogował się)"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1276
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1287
 msgid "Invalid username or password"
 msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1289
 msgid "Invalid response from server"
 msgstr "Nieprawidłowa odpowiedz z serwera"
 
@@ -2360,7 +2362,7 @@ msgstr "Odmów"
 msgid "Ignore"
 msgstr "Ignoruj"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1095
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1106
 msgid "<b>{0}</b> would like to see your status."
 msgstr "<b>{0}</b> chciałby widzieć twój status"
 

@@ -389,14 +389,15 @@
       </method>
 
       <method name="_onMessageQueueChanged">
-        <parameter name="model"/>
+        <!--parameter name="model"/>
         <parameter name="name"/>
-        <parameter name="arg"/>
+        <parameter name="arg"/-->
         <body><![CDATA[
           if (!this._initialized)
             return;
 
-          var newMessages = arg ? arg.added : this._model.messages;
+          //var newMessages = arg ? arg.added : this._model.messages;
+          var newMessages = this._model.messages;
 
           if (!this._msgs) {
             [this.archivedMsgToken, this._msgs, this._hasMoreArchivedMessages] =
@@ -417,7 +418,8 @@
 
           this._appendTimeout = window.setTimeout(function(t, initial){
             t._appendMessages(initial)
-          }, 50, this, !model);
+//          }, 50, this, !model);
+          }, 50, this, true);
         ]]></body>
       </method>
 
@@ -2073,16 +2075,16 @@
 
       <property name="model" onget="return this._model">
         <setter><![CDATA[
-          var isConference = val && val.contact instanceof Conference;
-          var hasRoster = val && val.contact && val.contact.ViewConstructor;
+          var isConference = val instanceof Conference;
+          var hasRoster = val && val.ViewConstructor;
 
           this._model = val;
-          this._contactInfo.model = val && val.contact;
+          this._contactInfo.model = val;
           this._output.model = val;
           this._output._input = this._input;
           this._input._output = this._output;
-          this._chatpaneCommands.model = val && val.contact;
-          this.completionEngine = val && val.contact.createCompletionEngine();
+          this._chatpaneCommands.model = val;
+          this.completionEngine = val && val.createCompletionEngine();
 
           if (this._regToken) {
             this._regToken.unregisterFromAll();
@@ -2094,12 +2096,12 @@
             this._rosterView = null;
           }
 
-          if (val && val.contact) {
-            this._contactInfo.parentNode.menuModel = val.contact;
+          if (val) {
+            this._contactInfo.parentNode.menuModel = val;
             this._contactInfo.parentNode.setAttribute("context",
               (isConference ? "conference" : "contact")+"-contextmenu");
             if (hasRoster)
-              this._rosterView = new val.contact.ViewConstructor(val.contact, this._roster);
+              this._rosterView = new val.ViewConstructor(val, this._roster);
 
             if (isConference) {
               this._regToken = account.bookmarks.registerView(this._onBookmarksUpdated, this,

@@ -5,6 +5,8 @@ ML.importMod("modeltypes.js");
 ML.importMod("dateutils.js");
 ML.importMod("views/chattabs.js");
 
+ML.importMod("model/messagesManager.js"); // temporary
+
 function MessagesRouter(parentRouter)
 {
     this.parentRouter = parentRouter; // defined for resources: parentRouter is the Contact
@@ -186,7 +188,7 @@ _DECL_(MessagesRouter).prototype =
         return shown;
     },
 
-    recoverResourceThreads: function(resource)
+    /*recoverResourceThreads: function(resource)
     {
         for each (var thr in this.threads) {
             if (thr.contact.jid == resource.jid) {
@@ -200,7 +202,7 @@ _DECL_(MessagesRouter).prototype =
             if (thr.chatPane)
                 thr.chatPane.thread = thr;
         }
-    },
+    },*/
 
     _markThreadAsActive: function(thread, contact)
     {
@@ -257,7 +259,7 @@ function MessagesThread(threadID, contact)
 
     this.messages = [];
     this._threadID = threadID;
-    this._contactIds = [];
+    //this._contactIds = [];
     this.unseenCount = 0;
     this.contact = contact;
     if (contact && contact.hasDiscoFeature) {
@@ -330,7 +332,7 @@ _DECL_(MessagesThread, Model).prototype =
         return this.chatState == "gone" || this.peerChatState == "gone";
     },
 
-    getContactID: function(contact)
+    /*getContactID: function(contact)
     {
         if (contact.representsMe)
             return 0;
@@ -341,7 +343,7 @@ _DECL_(MessagesThread, Model).prototype =
 
         this._contactIds.push(contact);
         return this._contactIds.length;
-    },
+    },*/
 
     get peerHandlesHtmlIM() {
         if (this.contact instanceof Conference)
@@ -424,7 +426,7 @@ _DECL_(MessagesThread, Model).prototype =
 
         var len = this.messages.length;
 
-        msg.queues.push(this);
+        //msg.queues.push(this);
         this.messages.push(msg);
         this.modelUpdated("messages", {added: [msg]});
         account.historyMgr.addMessage(msg);
@@ -490,7 +492,7 @@ _DECL_(MessagesThread, Model).prototype =
         this._afterFirstOurMessage = true;
 
         if (!(this.contact instanceof Conference) && msg.text) {
-            msg.queues.push(this);
+            //msg.queues.push(this);
             this.messages.push(msg);
             this.modelUpdated("messages", {added: [msg]});
             account.historyMgr.addMessage(msg);
@@ -526,7 +528,7 @@ _DECL_(MessagesThread, Model).prototype =
     }
 }
 
-function Message(body, body_html, contact, type, time, thread, chatState, myNick, messageId)
+function Message(body, body_html, contact, type, time, threadID, chatState, myNick, messageId)
 {
     this.contact = contact;
     this.type = type;
@@ -556,8 +558,8 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
             "http://jabber.org/protocol/chatstates", "*")[0];
         if (cs)
             this.chatState = cs.localName;
-        if (!thread)
-            thread = body.getThread();
+        if (!threadID)
+            threadID = body.getThread();
 
         var remoteDebug = body.getNode().
             getElementsByTagNameNS("http://process-one.net/remote-debug", "enabled")[0];
@@ -606,12 +608,13 @@ function Message(body, body_html, contact, type, time, thread, chatState, myNick
         this.messageId = messageId ? messageId : generateRandomName(12);
     }
 
-    if (thread instanceof MessagesThread)
+    /*if (thread instanceof MessagesThread)
         this.thread = thread;
     else
-        this._threadID = thread;
+        this._threadID = thread;*/
+    this.threadID = threadID;
 
-    this.queues = [];
+    //this.queues = [];
     this.unseen = true;
 }
 
@@ -620,18 +623,18 @@ _DECL_(Message).prototype =
     epoch: 0,
     dontGroup: false,
 
-    get contactId() {
+    /*get contactId() {
         if (this._contactId == null)
             this._contactId = this.thread.getContactID(this.contact)
 
         return this._contactId;
-    },
+    },*/
 
-    get threadID() {
+    /*get threadID() {
         if (!this._threadID && this.thread)
             this._threadID = this.thread.threadID;
         return this._threadID;
-    },
+    },*/
 
     get isNormalMessage() {
         return (this.type & 3) == 0;
@@ -779,12 +782,12 @@ _DECL_(Message).prototype =
         delete this._msgEl;
     },
 
-    msgDelivered: function()
+    /*msgDelivered: function()
     {
         for (var i = 0; i < this.queues.length; i++)
             this.queues[i].removeMessage(this);
         this.queues = [];
-    },
+    },*/
 
     markAsSeen: function()
     {
@@ -793,7 +796,8 @@ _DECL_(Message).prototype =
 
     fillPacket: function(pkt)
     {
-        if (!this.isMucMessage && (this.thread || this._threadID))
+        //if (!this.isMucMessage && (this.thread || this._threadID))
+        if (!this.isMucMessage && this.threadID)
             pkt.setThread(this.threadID);
 
         if (this.chatState)
