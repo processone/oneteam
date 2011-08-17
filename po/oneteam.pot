@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-08-01 18:44+0200\n"
+"POT-Creation-Date: 2011-08-17 11:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -67,6 +67,9 @@ msgid "New Nick:"
 msgstr ""
 
 #: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/test.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr ""
 
@@ -968,11 +971,11 @@ msgstr ""
 msgid "Users:"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:191
+#: ../chrome/oneteam/content/bindings/avatar.xml:195
 msgid "Select avatar image"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:128
+#: ../chrome/oneteam/content/bindings/avatar.xml:132
 msgid "Add image..."
 msgstr ""
 
@@ -1271,11 +1274,11 @@ msgstr ""
 msgid "(Anonymous)"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1031
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1030
 msgid "Click to load image"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1033
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1032
 msgid "Always load images from that contact"
 msgstr ""
 
@@ -1592,19 +1595,19 @@ msgstr ""
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:994
+#: ../chrome/oneteam/content/JavaScript/model/account.js:993
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1279
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1288
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1287
 msgid "Invalid username or password"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1290
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1289
 msgid "Invalid response from server"
 msgstr ""
 
@@ -2359,7 +2362,7 @@ msgstr ""
 msgid "Ignore"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1107
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1106
 msgid "<b>{0}</b> would like to see your status."
 msgstr ""
 
@@ -2474,7 +2477,7 @@ msgstr ""
 msgid "Working address"
 msgstr ""
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:123
+#: ../chrome/oneteam/content/bindings/avatar.xml:127
 msgid "No avatar"
 msgstr ""
 

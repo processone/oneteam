@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-08-01 18:44+0200\n"
+"POT-Creation-Date: 2011-08-17 11:19+0200\n"
 "PO-Revision-Date: 2011-06-24 10:08+0100\n"
 "Last-Translator: Nicolas Vérité <nicolas.verite@gmail.com>\n"
 "Language-Team: LANGUAGE <nverite@process-one.net>\n"
@@ -69,7 +69,9 @@ msgstr "Changer le pseudo"
 msgid "New Nick:"
 msgstr "Nouveau pseudo :"
 
-#: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/status.xul:8 ../chrome/oneteam/content/test.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr "Message de statut"
 
@@ -971,11 +973,11 @@ msgstr "Inviter des utilisateurs"
 msgid "Users:"
 msgstr "Utilisateurs :"
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:191
+#: ../chrome/oneteam/content/bindings/avatar.xml:195
 msgid "Select avatar image"
 msgstr "Sélectionner une image d'avatar"
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:128
+#: ../chrome/oneteam/content/bindings/avatar.xml:132
 msgid "Add image..."
 msgstr "Ajouter une image..."
 
@@ -1274,11 +1276,11 @@ msgstr "Vous n'êtes pas membre de ce salon"
 msgid "(Anonymous)"
 msgstr "(Anonyme)"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1031
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1030
 msgid "Click to load image"
 msgstr "Cliquer pour charger l'image"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1033
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1032
 msgid "Always load images from that contact"
 msgstr "Toujours charger les images pour ce contact"
 
@@ -1595,19 +1597,19 @@ msgstr "Transfert de fichier accepté"
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr "L'utilisateur <b>{0}</b> a accepté votre fichier <b>\"{1}\\\"</b>"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:994
+#: ../chrome/oneteam/content/JavaScript/model/account.js:993
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr "Reconnexion dans {0} {0, plurals, seconde, secondes}"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1279
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr "Conflit (le même compte/ressource s'est connecté depuis un autre client)"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1288
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1287
 msgid "Invalid username or password"
 msgstr "Identifiant ou mot de passe incorrect"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1290
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1289
 msgid "Invalid response from server"
 msgstr "Réponse invalide du serveur"
 
@@ -2362,7 +2364,7 @@ msgstr "Refuser"
 msgid "Ignore"
 msgstr "Ignorer"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1107
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1106
 msgid "<b>{0}</b> would like to see your status."
 msgstr "<b>{0}</b> souhaite s'abonner à votre statut."
 
@@ -2477,7 +2479,7 @@ msgstr "Informations personnelles"
 msgid "Working address"
 msgstr "Adresse professionelle"
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:123
+#: ../chrome/oneteam/content/bindings/avatar.xml:127
 msgid "No avatar"
 msgstr "Pas d'avatar"
 

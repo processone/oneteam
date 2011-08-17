@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: OneTeam 1.0\n"
-"POT-Creation-Date: 2011-08-01 18:44+0200\n"
+"POT-Creation-Date: 2011-08-17 11:19+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Paweł Chmielowski <pchmielowski@process-one.net>\n"
 "Language-Team: \n"
@@ -70,7 +70,9 @@ msgstr "Zmień pseudonim"
 msgid "New Nick:"
 msgstr "Nowy pseudonim:"
 
-#: ../chrome/oneteam/content/status.xul:8
+#: ../chrome/oneteam/content/status.xul:8 ../chrome/oneteam/content/test.xul:8
+#: ../chrome/oneteam/content/waveBrowser.xul:8
+#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr "Komunikat stanu"
 
@@ -85,7 +87,7 @@ msgstr "Dostępny"
 #: ../chrome/oneteam/content/main.xul:452
 #: ../chrome/oneteam/content/status.xul:96
 msgid "Available for chat"
-msgstr "Chciałby pogadać"
+msgstr "Chce porozmawiać"
 
 #: ../chrome/oneteam/content/JavaScript/model/presence.js:131
 #: ../chrome/oneteam/content/main.xul:454
@@ -972,11 +974,11 @@ msgstr "Zaproś kontakty"
 msgid "Users:"
 msgstr "Kontakty:"
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:191
+#: ../chrome/oneteam/content/bindings/avatar.xml:195
 msgid "Select avatar image"
 msgstr "Wybierz avatar"
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:128
+#: ../chrome/oneteam/content/bindings/avatar.xml:132
 msgid "Add image..."
 msgstr "Dodaj obrazek..."
 
@@ -1275,11 +1277,11 @@ msgstr "Nie jesteś członkiem tego pokoju"
 msgid "(Anonymous)"
 msgstr "(Anonim)"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1031
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1030
 msgid "Click to load image"
 msgstr "Kliknij by załadować"
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1033
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1032
 msgid "Always load images from that contact"
 msgstr "Zawsze wyświetlaj obrazki od tego kontaktu"
 
@@ -1596,19 +1598,19 @@ msgstr "Prośba przesłania pliku zaakceptowana"
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr "Kontakt <b>{0}</b> zaakceptował twój plik <b>\"{1}\\\"</b>"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:994
+#: ../chrome/oneteam/content/JavaScript/model/account.js:993
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr "Ponowne łączenia za {0} {0, plurals, sekunda, sekundy, sekund}"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1279
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr "Konflikt (klient z tym samym zasobem zalogował się)"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1288
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1287
 msgid "Invalid username or password"
 msgstr "Nieprawidłowa nazwa użytkownika lub hasło"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1290
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1289
 msgid "Invalid response from server"
 msgstr "Nieprawidłowa odpowiedz z serwera"
 
@@ -2128,16 +2130,8 @@ msgid "Invitation into {0} chat room"
 msgstr "Zaproszenie do konferencji {0}"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:229
-msgid ""
-"User *{0}* invited you to chat room *{1}*.\\n"
-"\\n"
-"To join this chat room please click on this link:\\n"
-"{2}\\n"
-msgstr ""
-"Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n"
-"\\n"
-"Aby dołączyć do tej konferencji kliknij ten link:\\n"
-"{2}\\n"
+msgid "User *{0}* invited you to chat room *{1}*.\\n\\nTo join this chat room please click on this link:\\n{2}\\n"
+msgstr "Użytkownik *{0}* zaprosił Cię do konferencji *{1}*.\\n\\nAby dołączyć do tej konferencji kliknij ten link:\\n{2}\\n"
 
 #: ../chrome/oneteam/content/JavaScript/model/conference.js:470
 msgid "Chat room server can't be contacted or room reached maximum number of users"
@@ -2371,7 +2365,7 @@ msgstr "Odmów"
 msgid "Ignore"
 msgstr "Ignoruj"
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1107
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1106
 msgid "<b>{0}</b> would like to see your status."
 msgstr "<b>{0}</b> chciałby widzieć twój status"
 
@@ -2423,40 +2417,20 @@ msgid "Reset Settings"
 msgstr "Przywróć ustawienia"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:697
-msgid ""
-"Are you sure you want to use global\\n"
-"settings for all event notifications?"
-msgstr ""
-"Czy jesteś pewien że chcesz użyć\\n"
-"wartości globalnych dla ustawień potwierdzeń?"
+msgid "Are you sure you want to use global\\nsettings for all event notifications?"
+msgstr "Czy jesteś pewien że chcesz użyć\\nwartości globalnych dla ustawień potwierdzeń?"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:698
-msgid ""
-"Are you sure you want to use default\\n"
-"settings for all event notifications?"
-msgstr ""
-"Czy jesteś pewien że chcesz przywrócić\\n"
-"wartości domyślne dla ustawień potwierdzeń?"
+msgid "Are you sure you want to use default\\nsettings for all event notifications?"
+msgstr "Czy jesteś pewien że chcesz przywrócić\\nwartości domyślne dla ustawień potwierdzeń?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:135
-msgid ""
-"Entered informations are invalid.\\n"
-"Do you want to correct entered informations,\\n"
-"or to restore previous values instead?"
-msgstr ""
-"Wprowadzone informacje nie są prawidłowe.\\n"
-"Czy chcesz poprawić wprowadzone dane,\\n"
-"czy przywrócić poprzednie wartości?"
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to restore previous values instead?"
+msgstr "Wprowadzone informacje nie są prawidłowe.\\nCzy chcesz poprawić wprowadzone dane,\\nczy przywrócić poprzednie wartości?"
 
 #: ../chrome/oneteam/content/manageBookmarks.xul:136
-msgid ""
-"Entered informations are invalid.\\n"
-"Do you want to correct entered informations,\\n"
-"or to remove the bookmark you have just created?"
-msgstr ""
-"Wprowadzone informacje nie są prawidłowe.\\n"
-"Czy chcesz poprawić wprowadzone dane,\\n"
-"czy usunąć właśnie utworzoną zakładkę?"
+msgid "Entered informations are invalid.\\nDo you want to correct entered informations,\\nor to remove the bookmark you have just created?"
+msgstr "Wprowadzone informacje nie są prawidłowe.\\nCzy chcesz poprawić wprowadzone dane,\\nczy usunąć właśnie utworzoną zakładkę?"
 
 #: ../chrome/oneteam/content/JavaScript/notification.js:575
 msgid "Reset to global settings"
@@ -2506,7 +2480,7 @@ msgstr "Dane osobiste"
 msgid "Working address"
 msgstr "Adres pracy"
 
-#: ../chrome/oneteam/content/bindings/avatar.xml:123
+#: ../chrome/oneteam/content/bindings/avatar.xml:127
 msgid "No avatar"
 msgstr "Brak awatara"
 
@@ -2523,14 +2497,8 @@ msgid "The server failed to register your vCard."
 msgstr "Serwer nie zapisał twoje awatara."
 
 #: ../chrome/oneteam/content/vcardEdit.xul:203
-msgid ""
-"The server failed to register your avatar image,\\n"
-"maybe it is too big (indicatively, it should be\\n"
-"a few tens of kB; your is {0})."
-msgstr ""
-"Serwer nie zapisał twoje awatara,\\n"
-"prawdopodobnie był on zbyt wielki (zwykle limity\\n"
-"ustawione są na kilkadziesiąt kB; twój ma {0})."
+msgid "The server failed to register your avatar image,\\nmaybe it is too big (indicatively, it should be\\na few tens of kB; your is {0})."
+msgstr "Serwer nie zapisał twoje awatara,\\nprawdopodobnie był on zbyt wielki (zwykle limity\\nustawione są na kilkadziesiąt kB; twój ma {0})."
 
 #: ../chrome/oneteam/content/JavaScript/utils.js:52
 msgid "GB"
