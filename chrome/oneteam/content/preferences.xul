@@ -170,7 +170,7 @@
     </preferences>
     <checkbox label="_('Sort contacts by status')" preference="sortbystatus"/>
     <checkbox label="_('Play sounds')" preference="sounds"/>
-    <checkbox label="_('Notify about other clients with higher priority')"
+    <checkbox label="_('Notify if I am connected from another client with higher priority')"
               preference="bumppriority"/>
     <!-- #ifndef XPI -->
     <checkbox label="_('Ask before quitting while connected')"
