@@ -105,8 +105,7 @@ _DECL_(Group, null, Model).prototype =
 function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
 {
     this.init();
-    //MessagesRouter.call(this);
-    MessagesManager.call(this);
+    MessagesRouter.call(this);
 
     if (jid instanceof Node)
         [jid, name, subscription, subscriptionAsk, groups] = this._parseNode(jid);
@@ -145,12 +144,10 @@ function Contact(jid, name, groups, subscription, subscriptionAsk, newItem)
     this._checkForJingleResource();
 
     account.allContacts[this.jid.normalizedJID] = this;
-dump("new Contact: account.allContacts["+this.jid.normalizedJID+"] = " + this + "\n");
     this.gateway = account.gateways[this.jid.normalizedJID.domain];
 }
 
-//_DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesRouter).prototype =
-_DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesManager).prototype =
+_DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesRouter).prototype =
 {
     contactContainer: false,
     avatar: null,
@@ -351,7 +348,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesM
         return this.createResource(jid);
     },
 
-    /*sendMessage: function(msg)
+    sendMessage: function(msg)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
@@ -360,14 +357,14 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesM
             msg.fillPacket(message);
 
         account.connection.send(message);
-    },*/
+    },
 
     onMessage: function(packet)
     {
         if (packet.getType() == "error")
             return;
 
-        this.receiveMessage(new Message(packet, null, this));
+        this.routeMessage(new Message(packet, null, this));
     },
 
     subscribe: function(reason, allowToSeeMe)
@@ -586,7 +583,7 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesM
         var notifyGroups = !this.activeResource;
         var oldActiveResource = this.activeResource;
 
-        //this.recoverResourceThreads(resource);
+        this.recoverResourceThreads(resource);
 
         this.resources.push(resource);
 
@@ -740,7 +737,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
                 version: version && version.textContent,
                 os: os && os.textContent
             }
-       }), MessagesManager).prototype =
+       }), MessagesRouter).prototype =
 {
     _registered: false,
     presence: new Presence("unavailable"),
@@ -849,7 +846,7 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
         delete account.resources[this.jid.normalizedJID];
     },
 
-    /*sendMessage: function(msg)
+    sendMessage: function(msg)
     {
         var message = new JSJaCMessage();
         message.setTo(this.jid);
@@ -858,14 +855,14 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
             msg.fillPacket(message);
 
         account.connection.send(message);
-    },*/
+    },
 
     onMessage: function(packet)
     {
         if (packet.getType() == "error")
             return;
 
-        this.receiveMessage(new Message(packet, null, this));
+        this.routeMessage(new Message(packet, null, this));
     },
 
     onAdHocCommand: function()
@@ -946,7 +943,7 @@ _DECL_(MyResourcesContact, Contact).prototype =
         if (packet.getType() == "error")
             return;
 
-        this.receiveMessage(new Message(packet, null, this.resources[0]), this.resources[0]);
+        this.routeMessage(new Message(packet, null, this.resources[0]), this.resources[0]);
     },
 
     onPresence: function() {

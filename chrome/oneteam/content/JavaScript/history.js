@@ -515,7 +515,6 @@ _DECL_(HistoryManager, null, CallbacksList, Model).prototype =
 
     addMessage: function(msg)
     {
-dump("addMessage:\n");
         var oldFormatEditMessage = !!oldFormatEditMessageRegex.test(msg.text);
         if (oldFormatEditMessage || msg.replaceMessageId) {
             var lastMsg = this.getLastMessageFromContact(msg.contact);
@@ -527,11 +526,10 @@ dump("addMessage:\n");
                 tryToConvertOldFormatEditMessage(msg, lastMsg);
         }
 
-        var archivedThread, idx = this._sessionThreads.indexOf(msg.threadID);
+        var archivedThread, idx = this._sessionThreads.indexOf(msg.thread);
         if (idx < 0) {
             var stmt = this.addThreadStmt;
-            //var threadContact = msg.thread.contact;
-            var threadContact = msg.messagesManager;
+            var threadContact = msg.thread.contact;
             if (threadContact.contact && (!threadContact.contact.exitRoom || !msg.isMucMessage))
                 threadContact = threadContact.contact;
 
@@ -543,7 +541,7 @@ dump("addMessage:\n");
 
             archivedThread = this._archivedThreads[rowId] =
                 new ArchivedMessagesThread(threadContact, rowId, msg.time);
-            this._sessionThreads.push(msg.threadID);
+            this._sessionThreads.push(msg.thread);
             this._sessionArchivedThreads.push(archivedThread)
 
             for (var observer in this._iterateCallbacks("threads-"+threadContact.jid))
@@ -695,7 +693,6 @@ dump("addMessage:\n");
     },
 
     getLastMessagesFromContact: function(contact, count, token) {
-dump("getLastMessagesFromContact:("+contact.jid+", "+count+", "+token+")\n");
         var olderThan = Infinity;
 
         if (typeof(token) == "number") {
@@ -724,7 +721,6 @@ dump("getLastMessagesFromContact:("+contact.jid+", "+count+", "+token+")\n");
 
             var lastThread = token.threads[token.threads.length-1];
             if (lastThread) {
-dump("lastThread = " + lastThread + "\n");
                 lastThread.getNewMessages();
                 token.lastIndex = lastThread.allMessages.length-1;
             }

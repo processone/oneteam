@@ -35,20 +35,7 @@ ML.importMod("filetransfer.js");
 
 function Account()
 {
-    this.groups = []
-    this.allGroups = {}
-    this.contacts = {};
-    this.allContacts = {};
-    this.resources = {};
-    this.myResources = {};
-    this.conferences = [];
-    this.allConferences = {};
-    this.gateways = {};
-    this._presenceObservers = [];
-    this.avatarHash = this.avatar = null;
-    this.avatarRetrieved = false;
-    this._initConnectionState = 0;
-    this.reconnectStep = 0;
+    this._initialize();
     this.currentPresence = {show: "unavailable"};
 
     this.cache = new PersistentCache("oneteamCache");
@@ -222,25 +209,20 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
 
     getOrCreateContact: function(jid, showInRoster, name, groups)
     {
-try {
         jid = new JID(jid);
+        var normalizedJID = jid.normalizedJID;
 
-        if (jid.resource && this.allConferences[jid.shortJID])
-            return this.allContacts[jid.longJID] || new ConferenceMember(jid)
-
-        if (this.allContacts[jid.shortJID])
-            return this.allContacts[jid.shortJID];
-        if (this.allConferences[jid.shortJID])
-            return this.allConferences[jid.shortJID];
-
+        if (this.allContacts[normalizedJID])
+            return this.allContacts[normalizedJID];
+        if (this.allConferences[normalizedJID])
+            return this.allConferences[normalizedJID];
         if (showInRoster) {
             var contact = new Contact(jid, name, groups||[this.notInRosterGroup],
                                       null, null);
             contact.newItem = true;
             return contact;
-        }
-        return new Contact(jid, name, groups, null, null, true);
-} catch(ex) {dump("account.getOrCreateContact: " + ex + "\n");}
+        } else
+            return new Contact(jid, name, groups, null, null, true);
     },
 
     getOrCreateResource: function(jid)
@@ -971,6 +953,24 @@ try {
                 this._restoreContactsFromCache()
 
         this._initConnectionStep(1);
+    },
+
+    _initialize: function()
+    {
+        this.groups = []
+        this.allGroups = {}
+        this.contacts = {};
+        this.allContacts = {};
+        this.resources = {};
+        this.myResources = {};
+        this.conferences = [];
+        this.allConferences = {};
+        this.gateways = {};
+        this._presenceObservers = [];
+        this.avatarHash = this.avatar = null;
+        this.avatarRetrieved = false;
+        this._initConnectionState = 0;
+        this.reconnectStep = 0;
     },
 
     _reconnectTimeoutFun: function(token) {

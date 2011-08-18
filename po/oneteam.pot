@@ -67,9 +67,6 @@ msgid "New Nick:"
 msgstr ""
 
 #: ../chrome/oneteam/content/status.xul:8
-#: ../chrome/oneteam/content/test.xul:8
-#: ../chrome/oneteam/content/waveBrowser.xul:8
-#: ../chrome/oneteam/content/waveTest.xul:8
 msgid "Status Message"
 msgstr ""
 
@@ -1271,11 +1268,11 @@ msgstr ""
 msgid "(Anonymous)"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1030
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1000
 msgid "Click to load image"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/messages.js:1032
+#: ../chrome/oneteam/content/JavaScript/model/messages.js:1002
 msgid "Always load images from that contact"
 msgstr ""
 
@@ -1592,19 +1589,19 @@ msgstr ""
 msgid "User <b>{0}</b> accepted your <b>\"{1}\\\"</b> file"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:993
+#: ../chrome/oneteam/content/JavaScript/model/account.js:982
 msgid "Reconnecting in {0} {0, plurals, second,seconds}"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1267
 msgid "Conflict (same account/resource signed in from another client)"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1287
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1276
 msgid "Invalid username or password"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1289
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1278
 msgid "Invalid response from server"
 msgstr ""
 
@@ -2359,7 +2356,7 @@ msgstr ""
 msgid "Ignore"
 msgstr ""
 
-#: ../chrome/oneteam/content/JavaScript/model/account.js:1106
+#: ../chrome/oneteam/content/JavaScript/model/account.js:1095
 msgid "<b>{0}</b> would like to see your status."
 msgstr ""
 

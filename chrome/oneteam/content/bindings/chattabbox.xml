@@ -77,12 +77,10 @@
       ]]></constructor>
 
       <method name="openTab">
-        <parameter name="contact"/>
+        <parameter name="thread"/>
         <body><![CDATA[
           // Search for tab with this same jid (contact may lost track of chatpane
           //  after resource disconnection/connection
-dump("openTab\n");
-try {
           var tab, tabpanel;
           var content = document.createElementNS(XULNS, "chattab-content");
 
@@ -109,7 +107,7 @@ try {
           else
             tab.previousSibling.removeAttribute("last-tab");
 
-          content.contact = contact;
+          content.thread = thread;
 
           tabpanel.controller = content;
           tab.controller = content;
@@ -123,7 +121,6 @@ try {
           content.focus();
 
           return content;
-} catch (ex) {dump("openTab: " + ex + "\n")}
         ]]></body>
       </method>
 
@@ -300,15 +297,15 @@ try {
     </content>
 
     <implementation>
-      <property name="contact" onget="return this._contact">
+      <property name="thread" onget="return this._thread">
         <setter><![CDATA[
-          if (this._contact == val)
+          if (this._thread == val)
             return;
 
-          if (this._contact && this._contact.unseenCount)
-            this._onUnseenCountChange(null, null, {diff: -this._contact.unseenCount});
+          if (this._thread && this._thread.unseenCount)
+            this._onUnseenCountChange(null, null, {diff: -this._thread.unseenCount});
 
-          this._contact = val;
+          this._thread = val;
           this._chatpane.model = val;
 
           if (val && val.unseenCount)
@@ -323,7 +320,7 @@ try {
           this._regBundle.unregister();
 
           if (val) {
-            this._regBundle.register(val, this._onNameChange, "visibleName");
+            this._regBundle.register(val.contact, this._onNameChange, "visibleName");
             this._regBundle.register(val, this._onUnseenCountChange, "unseenCount");
             this._regBundle.register(val, this._onPeerChatStateChange, "peerChatState");
           }
@@ -354,7 +351,6 @@ try {
 
       <method name="close">
         <body><![CDATA[
-try {
           this.closed = true;
 
           if (this._activateTimer) {
@@ -362,16 +358,15 @@ try {
             delete this._activateTimer;
           }
 
-          if (this.contact)
-            this.contact._onChatPaneClosed();
+          if (this.thread)
+            this.thread._onChatPaneClosed();
 
           this._updateChatState("gone");
 
-          if (this.contact instanceof Conference)
-            this.contact.exitRoom();
+          if (this.thread && this.thread.contact instanceof Conference)
+            this.thread.contact.exitRoom();
 
           this._tabbox._removeTab(this);
-} catch(ex) {dump("chattab-content.close: " + ex);}
         ]]></body>
       </method>
 
@@ -448,7 +443,7 @@ try {
           if (!_this)
             _this = this;
 
-          if (!_this.contact || !_this.contact.peerHandlesChatState)
+          if (!_this.thread || !_this.thread.peerHandlesChatState)
             return;
 
           if (_this._chatStateTimeout) {
@@ -460,14 +455,14 @@ try {
           if (state == "active" || state == "paused")
             _this._chatStateTimeout = setTimeout(_this._updateChatState, 30000, "inactive", _this);
 
-          _this.contact.chatState = state;
+          _this.thread.chatState = state;
         ]]></body>
       </method>
 
       <method name="_onPeerChatStateChange">
         <body><![CDATA[
           if (this._chatpane._contactInfo && this._chatpane._contactInfo.updateChatState)
-            this._chatpane._contactInfo.updateChatState((this._contact && this._contact.peerChatState) || "");
+            this._chatpane._contactInfo.updateChatState((this._thread && this._thread.peerChatState) || "");
           this._syncTabColor();
         ]]></body>
       </method>
@@ -488,19 +483,19 @@ try {
 
       <method name="_onNameChange">
         <body><![CDATA[
-          var count = this._contact ? this._contact.unseenCount : 0;
+          var count = this._thread ? this._thread.unseenCount : 0;
           var countStr = !count ? "" : count == 1 ?
             "* " : "["+count+"] ";
 
-          this._tab.setAttribute("label", countStr + (this._contact ? this._contact.visibleName : ""));
+          this._tab.setAttribute("label", countStr + (this._thread ? this._thread.contact.visibleName : ""));
         ]]></body>
       </method>
 
       <method name="_syncTabColor">
         <body><![CDATA[
-          if (this._contact.unseenCount)
+          if (this._thread.unseenCount)
             this._tab.setAttribute("chatstate", "modified");
-          else if (this._contact.peerChatState == "composing")
+          else if (this._thread.peerChatState == "composing")
             this._tab.setAttribute("chatstate", "composing");
           else
             this._tab.removeAttribute("chatstate");
