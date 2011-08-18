@@ -115,7 +115,7 @@
 
         if (this.chooser.value) {
           this.presence = this.chooser.value;
-          account.setPresence(this.presence, null, null, null, true);
+          account.setPresence(this.presence, account.currentPresence.status, null, null, true);
         } else {
           this._skip = true;
           this.chooser.value = this.presence;
@@ -196,6 +196,7 @@
           this.onConnect();
           this.onIconSetChange();
           this.onNickChange();
+          this.onPresenceChange();
         }
       },
 
