@@ -18,7 +18,7 @@ ML.importMod("roles.js");
  * @tparam String domain Domain part of jid.
  * @tparam String resource Resource part of jid. <em>(optional)</em>
  */
-function JID(node, domain, resource)
+function JID(node, domain, resource, escaped)
 {
     if (arguments.length == 1) {
         if (node instanceof JID)
@@ -36,7 +36,7 @@ function JID(node, domain, resource)
             this._maybeEscape(node.substring(0, atIdx)),
             node.substring(atIdx+1, slashIdx),
             node.substring(slashIdx+1)];
-    } else {
+    } else if (!escaped) {
         node = this._escape(node);
     }
 
@@ -173,12 +173,12 @@ JID.prototype =
     {
         if (!this.resource)
             return this;
-        return new JID(this.node, this.domain);
+        return new JID(this.node, this.domain, null, true);
     },
 
     createFullJID: function(resource)
     {
-        return new JID(this.node, this.domain, resource);
+        return new JID(this.node, this.domain, resource, true);
     },
 
     get normalizedJID()
@@ -188,7 +188,8 @@ JID.prototype =
 
         this.normalizedJID = new JID(this.node && this.node.toLowerCase(),
                                      this.domain.toLowerCase(),
-                                     this.resource && this.resource.toLowerCase());
+                                     this.resource && this.resource.toLowerCase(),
+                                     true);
         this.__proto__ = p;
 
         return this.normalizedJID;
