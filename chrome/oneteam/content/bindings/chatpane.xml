@@ -344,14 +344,14 @@
               if (checked) {
                 account.cache.setValue("loadimage-"+me.model.contact.jid.normalizedJID.shortJID, true);
                 for each (var thread in me.model.contact.threads)
-                  if (thread.chatPane)
+                  if (thread.chatpane)
                     try {
-                      thread.chatPane._content._chatpane._output._replaceWithImage();
+                      thread.chatpane._content._chatpane._output._replaceWithImage();
                     } catch (ex) {alert(ex)}
                 for each (var thread in me.model.contact.newThreads)
-                  if (thread.chatPane)
+                  if (thread.chatpane)
                     try {
-                      thread.chatPane._content._chatpane._output._replaceWithImage();
+                      thread.chatpane._content._chatpane._output._replaceWithImage();
                     } catch (ex) {alert(ex)}
                 Message.prototype.epoch++;
               } else

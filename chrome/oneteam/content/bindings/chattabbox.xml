@@ -359,7 +359,7 @@
           }
 
           if (this.thread)
-            this.thread._onChatPaneClosed();
+            this.thread._onChatpaneClosed();
 
           this._updateChatState("gone");
 

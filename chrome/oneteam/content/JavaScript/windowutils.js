@@ -17,7 +17,7 @@ _DECL_(WindowsObserver, null, CallbacksList).prototype = {
 
         try {
             for (var i = 0; i < this._tabs.length; i++)
-                callback.onChatPaneAdded(this._tabs[i], i);
+                callback.onChatpaneAdded(this._tabs[i], i);
         } catch (ex) {dump(ex) }
 
         return token;
@@ -69,7 +69,7 @@ _DECL_(WindowsObserver, null, CallbacksList).prototype = {
             } catch (ex) {dump(ex) }
     },
 
-    onChatPanesUpdated: function(model, type, data) {
+    onChatpanesUpdated: function(model, type, data) {
         if (data.added)
             for each (var addedData in data.added) {
                 if (!addedData._content)
@@ -85,7 +85,7 @@ _DECL_(WindowsObserver, null, CallbacksList).prototype = {
     
                 for (var c in this._iterateCallbacks())
                     try {
-                        c.onChatPaneAdded(addedData, idx);
+                        c.onChatpaneAdded(addedData, idx);
                     } catch (ex) {dump("1"+ex) }
             }
     
@@ -98,7 +98,7 @@ _DECL_(WindowsObserver, null, CallbacksList).prototype = {
                 this._tabs.splice(idx, 1);
                 for (var c in this._iterateCallbacks())
                     try {
-                        c.onChatPaneRemoved(removedData, idx);
+                        c.onChatpaneRemoved(removedData, idx);
                     } catch (ex) { dump(ex) }
             }
     },
@@ -111,16 +111,16 @@ _DECL_(WindowsObserver, null, CallbacksList).prototype = {
 
     onStartWatching: function() {
         this.windowMediator.addListener(this);
-        this._token = chatTabsController.registerView(this.onChatPanesUpdated,
-                                                      this, "_chatPanes");
+        this._token = chatTabsController.registerView(this.onChatpanesUpdated,
+                                                      this, "_chatpanes");
 
         var e = this.windowMediator.getEnumerator(null);
         while (e.hasMoreElements())
             this._onWindowLoaded(e.getNext(), true);
 
-        if (chatTabsController._chatPanes.length)
-            this.onChatPanesUpdated(chatTabsController, "_chatPanes",
-                                    {added: chatTabsController._chatPanes});
+        if (chatTabsController._chatpanes.length)
+            this.onChatpanesUpdated(chatTabsController, "_chatpanes",
+                                    {added: chatTabsController._chatpanes});
     },
 
     onStopWatching: function() {

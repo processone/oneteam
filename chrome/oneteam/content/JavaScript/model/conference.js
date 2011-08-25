@@ -138,9 +138,9 @@ _DECL_(Conference, Contact).prototype =
 
         this._sendMucPresence(new Presence("unavailable", reason));
 
-        if (this.chatPanes.length)
-            for (var i = 0; i < this.chatPanes.length; i++)
-                this.chatPanes[i].close();
+        if (this.chatpanes.length)
+            for (var i = 0; i < this.chatpanes.length; i++)
+                this.chatpanes[i].close();
 
         this._exitRoomCleanup();
     },
@@ -538,8 +538,8 @@ _DECL_(Conference, Contact).prototype =
         if (!pkt.getBody() || (new JID(pkt.getFrom())).resource) {
             var resource = this.getOrCreateResource(pkt.getFrom());
             account.notificationScheme.onSubjectChange(resource, subject);
-        } else if (this.chatPane && !this.chatPane.closed)
-            this.chatPane.thread.addMessage(new Message(pkt.getBody(), null, this, 4));
+        } else if (this.chatpane && !this.chatpane.closed)
+            this.chatpane.thread.addMessage(new Message(pkt.getBody(), null, this, 4));
 
         this.modelUpdated("subject");
 

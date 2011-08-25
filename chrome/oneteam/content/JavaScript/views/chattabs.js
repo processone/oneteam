@@ -1,14 +1,14 @@
 var EXPORTED_SYMBOLS = ["chatTabsController"];
 
-function ChatPane(thread, controller) {
+function Chatpane(thread, controller) {
     this._thread = thread;
     this._controller = controller;
 
-    thread._onChatPaneClosed =
-        META.after(new Callback(this._onChatPaneClosed, this));
+    thread._onChatpaneClosed =
+        META.after(new Callback(this._onChatpaneClosed, this));
 }
 
-_DECL_(ChatPane).prototype = {
+_DECL_(Chatpane).prototype = {
     get thread() {
         return this._thread;
     },
@@ -17,8 +17,8 @@ _DECL_(ChatPane).prototype = {
         if (this._content)
             this._content.thread = thread;
         if (thread) {
-            thread._onChatPaneClosed =
-                META.after(new Callback(this._onChatPaneClosed, this));
+            thread._onChatpaneClosed =
+                META.after(new Callback(this._onChatpaneClosed, this));
         }
         return this._thread = thread;
     },
@@ -32,8 +32,8 @@ _DECL_(ChatPane).prototype = {
             this._content.close();
     },
 
-    _onChatPaneClosed: function() {
-        this._controller._onChatPaneClosed(this);
+    _onChatpaneClosed: function() {
+        this._controller._onChatpaneClosed(this);
     },
 
     focus: function() {
@@ -55,7 +55,7 @@ function ChatTabsController() {
 /*  this._chatWindow: window containing chatpanes
     this._controller: XUL element chattabbox contained in this._chatWindow
 */
-    this._chatPanes = {}; // list of opened chatPanes indexed by contact.jid
+    this._chatpanes = {}; // list of opened chatpanes indexed by contact.jid
     this._pastChats = []; // list of contacts of closed chatpane that might be re-opened
     this.init();
 }
@@ -66,12 +66,12 @@ _DECL_(ChatTabsController, null, Model).prototype = {
     },
 
     openTab: function(thread) {
-        var chatPane = new ChatPane(thread, this);
+        var chatpane = new Chatpane(thread, this);
 
         if (this._controller && !this._chatWindow.closed) {
-            this._chatPanes[thread.contact.jid] = chatPane;
-            chatPane._attach(this._controller);
-            this.modelUpdated("_chatPanes", {added: [chatPane]});
+            this._chatpanes[thread.contact.jid] = chatpane;
+            chatpane._attach(this._controller);
+            this.modelUpdated("_chatpanes", {added: [chatpane]});
 
             // remove contact from this._pastChats
             var idx = this._pastChats.indexOf(thread.contact);
@@ -80,13 +80,13 @@ _DECL_(ChatTabsController, null, Model).prototype = {
         } else {
             if (this._chatWindow && this._chatWindow.closed)
                 this._onChatWindowClosed();
-            this._chatPanes[thread.contact.jid] = chatPane;
+            this._chatpanes[thread.contact.jid] = chatpane;
             if (!this._chatWindow)
                 this._chatWindow = openDialogUniq("ot:chats",
                                                   "chrome://oneteam/content/chats.xul",
                                                   "chrome,centerscreen", this);
         }
-        return chatPane;
+        return chatpane;
     },
 
     undoCloseTab: function() {
@@ -104,46 +104,46 @@ _DECL_(ChatTabsController, null, Model).prototype = {
                 c.backgroundJoinRoom(c._lastNick, c._lastPass);
             else
                 this.undoCloseTab();
-        } else if (!c.chatPane)
+        } else if (!c.chatpane)
             c.openChatTab();
         else
             this.undoCloseTab();
     },
 
-    _onChatPaneClosed: function(chatPane) {
+    _onChatpaneClosed: function(chatpane) {
         if (this._inClose)
             return;
 
-        delete this._chatPanes[chatPane.thread.contact.jid];
+        delete this._chatpanes[chatpane.thread.contact.jid];
 
-        this.modelUpdated("_chatPanes", {removed: [chatPane]});
+        this.modelUpdated("_chatpanes", {removed: [chatpane]});
 
-        this._pastChats.push(chatPane.thread.contact);
+        this._pastChats.push(chatpane.thread.contact);
 
-        for (var key in this._chatPanes)
-            return; // in order to skip this._chatWindow.close() if there remains chatPanes
+        for (var key in this._chatpanes)
+            return; // in order to skip this._chatWindow.close() if there remains chatpanes
 
         this._chatWindow.close();
     },
 
     _onChatWindowOpened: function() {
         this._controller = this._chatWindow.document.getElementById("chats");
-        for each (var chatPane in this._chatPanes)
-            chatPane._attach(this._controller);
+        for each (var chatpane in this._chatpanes)
+            chatpane._attach(this._controller);
 
-        this.modelUpdated("_chatPanes", {added: this._chatPanes});
+        this.modelUpdated("_chatpanes", {added: this._chatpanes});
     },
 
     _onChatWindowClosed: function() {
         this._inClose = true;
 
-        for each (var chatPane in this._chatPanes) {
-            this._pastChats.push(chatPane.thread.contact);
-            chatPane.close();
+        for each (var chatpane in this._chatpanes) {
+            this._pastChats.push(chatpane.thread.contact);
+            chatpane.close();
         }
-        this.modelUpdated("_chatPanes", {removed: this._chatPanes});
+        this.modelUpdated("_chatpanes", {removed: this._chatpanes});
 
-        this._chatPanes = {};
+        this._chatpanes = {};
         this._chatWindow = null;
         this._controller = null;
 

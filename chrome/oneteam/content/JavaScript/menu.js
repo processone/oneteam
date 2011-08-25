@@ -81,7 +81,7 @@ var menuHandler = {
         this.bookmarksMenuView = this.gatewaysMenuView = this._token = null;
     },
 
-    showChatPane: function(mi) {
+    showChatpane: function(mi) {
         var m = this._windowsSep.parentNode;
         var idx = Array.indexOf(m.childNodes, mi) -
             Array.indexOf(m.childNodes, this._tabsSep)-1;
@@ -89,7 +89,7 @@ var menuHandler = {
         var win = windowsObserver._tabs[idx].focus();
     },
 
-    onChatPaneAdded: function(cp, idx) {
+    onChatpaneAdded: function(cp, idx) {
         var m = this._windowsSep.parentNode;
 
         this._tabsSep.hidden = false;
@@ -100,7 +100,7 @@ var menuHandler = {
           <menuitem name="windows" class="menu-iconic"
                     label={cp._thread.contact.visibleName}
                     image={cp._thread.contact.avatar || defaultAvatar}
-                    oncommand="menuHandler.showChatPane(this)"/>
+                    oncommand="menuHandler.showChatpane(this)"/>
         , document);
 
         if (idx >= m.childNodes.length)
@@ -109,7 +109,7 @@ var menuHandler = {
             m.insertBefore(mi, m.childNodes[idx]);
     },
 
-    onChatPaneRemoved: function(cp, idx) {
+    onChatpaneRemoved: function(cp, idx) {
         var m = this._windowsSep.parentNode;
 
         idx += Array.indexOf(m.childNodes, this._tabsSep)+1;

@@ -114,7 +114,7 @@ _DECL_(NotificationProvider).prototype = {
             soundsPlayer.playSound(this.soundSample);
 
         if (this.showInChatpane)
-            this._showInChatPane(chatpaneMessage, inlineCommands, this._canceler);
+            this._showInChatpane(chatpaneMessage, inlineCommands, this._canceler);
 
         if (this.showAlert)
             notificationAlerts.showAlert(alertTitle, alertMsg, alertIcon,
@@ -144,7 +144,7 @@ _DECL_(NotificationProvider).prototype = {
         return newMsg;
     },
 
-    _showInChatPane: function(msg, inlineCommands, canceler)
+    _showInChatpane: function(msg, inlineCommands, canceler)
     {
         if (this.showInChatpane) {
             var c = this.contact instanceof Conference ? this.contact :

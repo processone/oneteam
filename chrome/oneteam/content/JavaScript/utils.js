@@ -29,7 +29,7 @@ function E4XtoDOM(xml, targetDoc)
         }
 
     var fragment = targetDoc ? targetDoc.createDocumentFragment() :
-        el.ownerDocument.createDocumentFragment();
+        el.ownerDocument.createDocumentFragment(); // el not defined ?
 
     for (var i = 0; i < els.length; i++)
         try {

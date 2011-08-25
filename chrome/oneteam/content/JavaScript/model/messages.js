@@ -10,7 +10,7 @@ function MessagesRouter(parentRouter)
     this.parentRouter = parentRouter; // defined for resources: parentRouter is the Contact
     this.threads = {};
     this.newThreads = {};
-    this.chatPanes = [];
+    this.chatpanes = [];
     this.msgsInQueue = 0;
 }
 
@@ -74,8 +74,8 @@ _DECL_(MessagesRouter).prototype =
         var oldestPane;
         var borderDate = Date.now() - 2*60*1000;
 
-        for (var i = 0; i < this.chatPanes.length; i++) {
-            var cp = this.chatPanes[i];
+        for (var i = 0; i < this.chatpanes.length; i++) {
+            var cp = this.chatpanes[i];
             var thr = cp.thread;
 
             if (!thr || thr.contact != contact || (thr._lastActivity > borderDate && !thr.gone))
@@ -87,8 +87,8 @@ _DECL_(MessagesRouter).prototype =
         if (!oldestPane)
             return false;
 
-        oldestPane.thread.chatPane = null;
-        thread.chatPane = oldestPane;
+        oldestPane.thread.chatpane = null;
+        thread.chatpane = oldestPane;
         oldestPane.thread = thread;
 
         return true;
@@ -101,14 +101,14 @@ _DECL_(MessagesRouter).prototype =
             return;
         }
 
-        if (!thread.chatPane) {
+        if (!thread.chatpane) {
             if (!this._findUnusedTab(contact, thread)) {
-                thread.chatPane = chatTabsController.openTab(thread)
-                this.chatPanes.push(thread.chatPane);
+                thread.chatpane = chatTabsController.openTab(thread)
+                this.chatpanes.push(thread.chatpane);
             }
         }
 
-        thread.chatPane.focus();
+        thread.chatpane.focus();
     },
 
     _selectOrCreateTab: function(contact, thread)
@@ -172,13 +172,13 @@ _DECL_(MessagesRouter).prototype =
         if (!contact)
             contact = this;
 
-        for (var i = 0; i < this.chatPanes.length; i++) {
-            if (this.chatPanes[i].thread &&
-                (this.chatPanes[i].thread.contact == contact ||
-                 this.chatPanes[i].thread.contact == contact.contact ||
-                 this.chatPanes[i].thread.contact == contact.activeResource))
+        for (var i = 0; i < this.chatpanes.length; i++) {
+            if (this.chatpanes[i].thread &&
+                (this.chatpanes[i].thread.contact == contact ||
+                 this.chatpanes[i].thread.contact == contact.contact ||
+                 this.chatpanes[i].thread.contact == contact.activeResource))
             {
-                this.chatPanes[i].thread.addMessage(msg);
+                this.chatpanes[i].thread.addMessage(msg);
                 shown = true;
             }
         }
@@ -191,14 +191,14 @@ _DECL_(MessagesRouter).prototype =
         for each (var thr in this.threads) {
             if (thr.contact.jid == resource.jid) {
                 thr.contact = resource;
-                if (thr.chatPane)
-                    thr.chatPane.thread = thr;
+                if (thr.chatpane)
+                    thr.chatpane.thread = thr;
             }
         }
         if ((thr = this.newThreads[resource.jid])) {
             thr.contact = resource;
-            if (thr.chatPane)
-                thr.chatPane.thread = thr;
+            if (thr.chatpane)
+                thr.chatpane.thread = thr;
         }
     },
 
@@ -238,16 +238,16 @@ _DECL_(MessagesRouter).prototype =
         thread.unregisterView(thread._msgThreadsToken);
     },
 
-    _onChatPaneClosed: function(chatPane)
+    _onChatpaneClosed: function(chatpane)
     {
         if (this.parentRouter) {
-            this.parentRouter._onChatPaneClosed(chatPane);
+            this.parentRouter._onChatpaneClosed(chatpane);
             return;
         }
 
-        var idx = this.chatPanes.indexOf(chatPane);
+        var idx = this.chatpanes.indexOf(chatpane);
         if (idx >= 0)
-            this.chatPanes.splice(idx, 1);
+            this.chatpanes.splice(idx, 1);
     }
 }
 
@@ -511,10 +511,10 @@ _DECL_(MessagesThread, Model).prototype =
         this._threadID = null;
     },
 
-    _onChatPaneClosed: function() {
-        this.contact._onChatPaneClosed(this.chatPane);
+    _onChatpaneClosed: function() {
+        this.contact._onChatpaneClosed(this.chatpane);
         this.chatState = "gone";
-        this.chatPane = null;
+        this.chatpane = null;
 
         this.visible = true;
 
