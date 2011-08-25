@@ -196,11 +196,8 @@ body[threadId]:before {
     display: none !important;
 }
 
-.offline, .archived {
-    font-size: 0.85em;
-}
-
 .archived {
+    font-size: 0.85em;
     color: #565;
 }
 
