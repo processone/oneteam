@@ -1249,6 +1249,9 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         if (sender.normalizedJID == this.myJID.normalizedJID)
             return;
 
+        if (packet.getType() == "error")
+            return;
+
         servicesManager.dispatchMessage(packet, sender);
     },
 

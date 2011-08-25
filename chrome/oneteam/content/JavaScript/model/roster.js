@@ -361,9 +361,6 @@ _DECL_(Contact, null, Model, vCardDataAccessor, Comparator, DiscoItem, MessagesR
 
     onMessage: function(packet)
     {
-        if (packet.getType() == "error")
-            return;
-
         this.routeMessage(new Message(packet, null, this));
     },
 
@@ -859,9 +856,6 @@ _DECL_(Resource, null, Model, DiscoItem, Comparator,
 
     onMessage: function(packet)
     {
-        if (packet.getType() == "error")
-            return;
-
         this.routeMessage(new Message(packet, null, this));
     },
 
@@ -940,9 +934,6 @@ _DECL_(MyResourcesContact, Contact).prototype =
     },
 
     onMessage: function(pkt) {
-        if (packet.getType() == "error")
-            return;
-
         this.routeMessage(new Message(packet, null, this.resources[0]), this.resources[0]);
     },
 

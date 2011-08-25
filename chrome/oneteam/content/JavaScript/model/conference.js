@@ -489,9 +489,6 @@ _DECL_(Conference, Contact).prototype =
 
     onMessage: function(packet)
     {
-        if (packet.getType() == "error")
-            return;
-
         if (this._checkForSubject(packet, this.jid) && packet.getBody()) {
             var resource = this.getOrCreateResource(packet.getFrom());
             var message = new Message(packet, null, this, 4);
@@ -714,9 +711,6 @@ _DECL_(ConferenceMember, Resource, vCardDataAccessor).prototype =
 
     onMessage: function(packet)
     {
-        if (packet.getType() == "error")
-            return;
-
         if (this.contact.myResource == this) {
             var decline = packet.getNode().
                 getElementsByTagNameNS("http://jabber.org/protocol/muc#user", "decline")[0];
