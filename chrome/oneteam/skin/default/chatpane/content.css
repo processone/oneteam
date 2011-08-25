@@ -88,19 +88,14 @@ body[hide-not-marked=true] .message[ends-selected-chunk=true]
 .avatar {
     display: none;
     float: left;
-    margin-left: 4px;
     border: 1px solid #ccc;
     -moz-border-radius: 3px;
-}
-
-.avatar-image {
     background: top center no-repeat;
     -moz-background-size: contain;
     background-size: contain;
     width: 18px;
     height: 18px;
-    margin: 1px;
-    -moz-border-radius: 3px;
+    margin: 1px 1px 1px 4px;
 }
 
 div.message.selectable:hover {
