@@ -52,7 +52,7 @@
       onPresenceChange: function() {
         this.chooser.value = account.currentPresence.show || "available";
         this.profile = account.currentPresence.profile;
-        this.statusText.value = account.currentPresence.status;
+        this.statusText.value = account.currentPresence.status || "";
         this.statusText.hidden = !this.statusText.value;
         this.onIconSetChange();
       },
