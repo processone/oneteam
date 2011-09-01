@@ -24,9 +24,6 @@
       typeControl = document.getElementById("presenceType");
       textControl = document.getElementById("statusText");
 
-      if (account.currentPresence.status)
-        textControl.value = account.currentPresence.status;
-
       messages = account.cache.getValue("statusMessages");
 
       if (messages) {
@@ -42,7 +39,7 @@
         listControl.appendItem(messages[i], messages[i]);
 
       listControl.selectedIndex = 0;
-      textControl.value = account.userPresence.status;
+      textControl.value = account.userPresence.status || "";
 
       typeControl.selectedIndex = 0;
       var items = typeControl.firstChild.childNodes;
