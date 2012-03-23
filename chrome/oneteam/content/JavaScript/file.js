@@ -226,7 +226,7 @@ function Reader(uriString)
 
                 this.__inputStream.init(bs);
             } catch (ex) {
-        	    throw new IOError("Reader: Initialization error", ex);
+                    throw new IOError("Reader: Initialization error", ex);
             }
 
             return;
@@ -238,12 +238,12 @@ function Reader(uriString)
             }
             uriString = tmp;
         }
-	if (uriString[0] == "/")
-	    uriString = "file://"+uriString;
+        if (uriString[0] == "/")
+            uriString = "file://"+uriString;
         try {
             this.uri = ios.newURI(uriString, null, null);
         } catch (ex) {
-    	    throw new IOError("Reader: invalid uri", ex);
+            throw new IOError("Reader: invalid uri", ex);
         }
     }
 }
@@ -374,6 +374,14 @@ _DECL_(Reader).prototype =
         if (this.__inputStream)
             this.__inputStream.close();
         this.__inputStream = null;
+    },
+
+    slurp: function() {
+        this.open(null, 1);
+        var data = this.read();
+        this.close();
+
+        return data;
     }
 }
 
@@ -721,13 +729,11 @@ _DECL_(File, Reader).prototype =
 function slurpFile()
 {
     var file = new Reader(Array.slice(arguments, 0));
-
-    file.open(null, 1);
-    return file.read();
+    return file.slurp();
 }
 
 function makeDataUrlFromFile()
 {
-	var data = slurpFile.apply(null, arguments);
-	return "data:image/png;base64,"+btoa(data)
+    var data = slurpFile.apply(null, arguments);
+    return "data:image/png;base64,"+btoa(data)
 }
