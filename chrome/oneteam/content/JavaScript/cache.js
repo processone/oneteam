@@ -1,7 +1,58 @@
-var EXPORTED_SYMBOLS = ["PersistentCache"];
+var EXPORTED_SYMBOLS = ["PersistentCache", "FilesCache"];
 
 ML.importMod("roles.js");
 ML.importMod("file.js");
+
+function FilesCache(name, resName) {
+    var file = Components.classes["@mozilla.org/file/directory_service;1"].
+        getService(Components.interfaces.nsIProperties).
+        get("ProfD", Components.interfaces.nsIFile);
+
+    var fileCacheDir = file.clone();
+    fileCacheDir.append(name);
+    this.fileCacheDir = new File(fileCacheDir);
+
+    if (!this.fileCacheDir.exists)
+        this.fileCacheDir.createDirectory();
+
+    // if path was not directory at creation time, url wont't have / at end
+    // which nsResProtocol can't handle, so we need to create new url after
+    // directory is created
+    this.fileCacheDir = new File(fileCacheDir);
+
+    if (resName) {
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"].
+            getService(Components.interfaces.nsIIOService);
+        var resProt = ioService.getProtocolHandler("resource").
+            QueryInterface(Components.interfaces.nsIResProtocolHandler);
+
+        resProt.setSubstitution("oneteam-cache", this.fileCacheDir.uri);
+    }
+}
+
+_DECL_(FilesCache).prototype =
+{
+    addFromString: function(data) {
+        var file;
+
+        do {
+            file = new File(this.fileCacheDir, generateRandomName(10));
+            try {
+                file.open(null, 0x02|0x08|0x80);
+            } catch (ex) { file = null; }
+        } while (!file);
+
+        file.write(data);
+        var value = file.path;
+        file.close();
+
+        return value;
+    },
+
+    addFromFile: function(file) {
+        return this.addFromString(file.slurp());
+    }
+}
 
 function PersistentCache(name)
 {
@@ -190,7 +241,7 @@ _DECL_(PersistentCache).prototype =
         this.clearStmt.execute();
     },
 
-    /*iterator: function(prefix, asFile)
+    iterator: function(prefix, asFile)
     {
         return {
             prefix: prefix+"%",
@@ -228,7 +279,7 @@ _DECL_(PersistentCache).prototype =
                     }
             }
         };
-    }*/
+    }
 }
 
 function StorageFunctionDelete()
