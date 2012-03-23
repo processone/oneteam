@@ -13,7 +13,7 @@ function StylesRegistry(cache)
 
     this.init();
 
-    var styles = (cache.getValue["iconStyles"] || "").split(/\n/);
+    var styles = cache.getValue("iconStyles") || [];
     var stylesUrls = {};
 
     for (var i = 0; i < styles.length; i++) {
@@ -128,22 +128,51 @@ _DECL_(StylesRegistry, null, Model).prototype =
         return this.defaultSmilesSet.processSmiles(str, nextFilter, flags);
     },
 
+    addIconSetFromFile: function(file) {
+        try {
+            var zipFile = Components.classes["@mozilla.org/libjar/zip-reader;1"].
+                createInstance(Components.interfaces.nsIZipReader);
+            zipFile.open(file.file);
+            var e = zipFile.findEntries("*/icondef.xml");
+            account.ite = e;
+            if (!e.hasMore())
+                throw "no-style";
+            var dir = e.getNext().replace(/[\/\\].*/, "");
+
+            if (!this.filesCache)
+                this.filesCache = new FilesCache("iconStyles");
+
+            var path = this.filesCache.addFromFile(file);
+            var styles = this.cache.getValue("iconStyles") || [];
+            var finalPath = "jar:file://"+path+"!/"+dir;
+
+            if (!this._registerIconSetFromUrl(finalPath, true))
+                return false;
+
+            styles.push(finalPath);
+            this.cache.setValue("iconStyles", styles);
+
+        } catch (ex) {
+            alert(ex);
+            return false;
+        }
+        return true;
+    },
+
     _registerIconSetFromUrl: function(url, notify)
     {
         var iconDefData = "";
 
         try {
             var reader = new Reader(url+"/icondef.xml");
-            reader.open();
-            iconDefData = reader.read();
-            reader.close();
+            iconDefData = reader.slurp();
 
-            iconDefData = iconDefData.replace(/<\?xml.*\?>/, "");
+            iconDefData = iconDefData.replace(/.*<\?xml.*\?>/, "");
             iconDefData = new XML(iconDefData);
-        } catch (ex) { return }
+        } catch (ex) { return false }
 
         if (iconDefData.name() != "icondef")
-            return;
+            return false;
 
         var ns = new Namespace("name");
 
@@ -154,6 +183,7 @@ _DECL_(StylesRegistry, null, Model).prototype =
             if (notify)
                 this.modelUpdated("iconStyles", {added: [set]});
                 this.modelUpdated("smiles", {added: [set]});
+            return true;
         } else if (iconDefData..ns::x.(function::text().toString().
                                        indexOf("status") == 0).length()) {
             var set = new StatusIconStyle(url, iconDefData);
@@ -162,7 +192,9 @@ _DECL_(StylesRegistry, null, Model).prototype =
             if (notify)
                 this.modelUpdated("iconStyles", {added: [set]});
                 this.modelUpdated("statusIcons", {added: [set]});
+            return true;
         }
+        return false;
     }
 }
 

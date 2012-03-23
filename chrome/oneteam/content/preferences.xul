@@ -88,10 +88,25 @@
       saveUpdatePrefs();
     }
 
+    function addNewIconSet() {
+      var file = pickFile(_("Please choose file containing icon set"), false,
+                          "", null, window);
+      if (!file)
+        return;
+      if (!account.style.addIconSetFromFile(new File(file)))
+        alertEx(_("Adding icon set failed"), _("Unable to process selected file"));
+      else
+        initAppearance();
+    }
+
     function initAppearance() {
       var style = account.style;
 
       var iconsContainer = document.getElementById("iconsSet");
+
+      while(iconsContainer.firstChild)
+        iconsContainer.removeChild(iconsContainer.firstChild);
+
       for (var i = 0; i < style.statusIcons.length; i++)
         iconsContainer.appendChild(generateIconSetElement(style.statusIcons[i]));
 
@@ -103,6 +118,10 @@
         }, 100);
 
       var smilesContainer = document.getElementById("smilesSet");
+
+      while(smilesContainer.firstChild)
+        smilesContainer.removeChild(smilesContainer.firstChild);
+
       for (i = 0; i < style.smiles.length; i++)
         smilesContainer.appendChild(generateIconSetElement(style.smiles[i]));
 
@@ -140,7 +159,8 @@
 
     function initAdvancedPane() {
 // #ifndef XPI
-      var val = prefManager.getPref("app.partner.process-one") || prefManager.getPref("app.update.channel", true) || "release";
+      var val = prefManager.getPref("app.partner.process-one") ||
+        prefManager.getPref("app.update.channel", true) || "release";
       var el = document.getElementById("update_channel_selector");
 
       el.selectedIndex = val == "release" ? 0 : 1;
@@ -298,6 +318,11 @@
     <richlistbox id="smilesSet" preference="smilesset"
                  onsynctopreference="return this.value"
                  onselect="this.parentNode.userChangedValue(this)"/>
+    <spacer/>
+    <hbox>
+      <spacer flex="1"/>
+      <button label="_('Add new icon set')" oncommand="addNewIconSet()"/>
+    </hbox>
   </prefpane>
 
   <prefpane id="advanced" label="_('Advanced')" onpaneload="initAdvancedPane()">
