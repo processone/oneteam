@@ -13,7 +13,7 @@ var handlers =
             div.setAttribute("class", "to-copy-paste send");
             div.innerHTML = "<br/>&lt;-- "+
                 _xml("Out: {0}", formatDate(new Date(), null, "short", "long"))+
-                "--&gt;"
+                " --&gt;"
             console.contentDocument.body.appendChild(div);
 
             var msg = prettyPrintDOM(p.getNode());
@@ -34,7 +34,7 @@ var handlers =
             div.setAttribute("class", "to-copy-paste send");
             div.innerHTML = "<br/>&lt;-- "+
                 _xml("In: {0}", formatDate(new Date(), null, "short", "long"))+
-                "--&gt;"
+                " --&gt;"
             console.contentDocument.body.appendChild(div);
 
             var msg = prettyPrintDOM(p.getNode());
