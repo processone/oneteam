@@ -9,6 +9,13 @@ var handlers =
     onPacketRecv: function(p)
     {
         try {
+            var div = console.contentDocument.createElement("div");
+            div.setAttribute("class", "to-copy-paste send");
+            div.innerHTML = "<br/>&lt;-- "+
+                _xml("Out: {0}", formatDate(new Date(), null, "short", "long"))+
+                "--&gt;"
+            console.contentDocument.body.appendChild(div);
+
             var msg = prettyPrintDOM(p.getNode());
             var div = console.contentDocument.createElement("div");
             div.setAttribute("class", "message recv");
@@ -23,8 +30,15 @@ var handlers =
     onPacketSend: function(p)
     {
         try {
-            var msg = prettyPrintDOM(p.getNode());
             var div = console.contentDocument.createElement("div");
+            div.setAttribute("class", "to-copy-paste send");
+            div.innerHTML = "<br/>&lt;-- "+
+                _xml("In: {0}", formatDate(new Date(), null, "short", "long"))+
+                "--&gt;"
+            console.contentDocument.body.appendChild(div);
+
+            var msg = prettyPrintDOM(p.getNode());
+            div = console.contentDocument.createElement("div");
             div.setAttribute("class", "message send");
 
             //msg = msg.replace(/([^\s<>&'"]{60})(?=[^\s<>&'"]{10})/g, "$1<span class='wrap'></span>");

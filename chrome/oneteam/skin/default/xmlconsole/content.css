@@ -75,5 +75,5 @@ body {
 }
 
 .to-copy-paste {
-    display: none;
+    font-size: 0px;
 }
