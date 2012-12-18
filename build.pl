@@ -49,6 +49,9 @@ my $saver =
     exists $defs{DMG} ?
         new OneTeam::Builder::Filter::Saver::Dmg($topdir, \&get_version_str, \&get_buildid,
                                                  \%mar_options, $defs{XULRUNNER}, $defs{XULAPP_PATH}) :
+    exists $defs{WXI} ?
+        new OneTeam::Builder::Filter::Saver::Wxi($topdir, \&get_version_str, \&get_buildid,
+                                                 \%mar_options, $defs{XULRUNNER}, $defs{XULAPP_PATH}) :
     exists $defs{TARBZ} ?
         new OneTeam::Builder::Filter::Saver::TarBz($topdir, \&get_version_str, \&get_buildid,
                                                    \%mar_options, $defs{XULRUNNER}, $defs{XULAPP_PATH}) :
