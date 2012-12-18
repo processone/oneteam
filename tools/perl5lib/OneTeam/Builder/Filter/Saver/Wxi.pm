@@ -9,7 +9,6 @@ use File::Spec::Functions qw(splitpath catfile catpath splitdir catdir);
 use File::Copy qw(copy cp);
 use OneTeam::Utils;
 use Cwd;
-use UUID;
 
 sub new {
     my ($class, $topdir, $version, $buildid, $mar_options, $xulrunner_path, $xulapp_path) = @_;
@@ -57,11 +56,18 @@ sub _prepare_files {
 }
 
 sub uuid {
-    my ($uuid, $str);
-    UUID::generate($uuid);
-    UUID::unparse($uuid, $str);
+    eval {
+        my ($uuid, $str);
+        require UUID;
 
-    return $str;
+        UUID::generate($uuid);
+        UUID::unparse($uuid, $str);
+
+        return $str;
+    };
+    if ($@) {
+        return qx{c:\\Program Files\\Microsoft SDKs\\Windows\\v6.0\\Bin\\Uuidgen.Exe};
+    }
 }
 
 sub _generate_wix {
