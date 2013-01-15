@@ -1,9 +1,10 @@
 #include "nsISupports.idl"
 
-[scriptable, uuid(fbf58533-8472-4e2c-b094-df8d23a83fb5)]
+[scriptable, uuid(62c5b706-84f1-4026-bfff-c7ed3eafa69f)]
 interface otIIdleCallback : nsISupports
 {
   void onScreenLock();
+  void onScreenUnlock();
   void onIdleTimeout(in unsigned long timeout);
   void onUserActive();
 };

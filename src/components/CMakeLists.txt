@@ -89,7 +89,7 @@ ELSEIF(WIN32)
         src/systray/otPr0nObserver.cpp src/systray/otSystrayBase.cpp)
 
     SET(oneteam_extra_LIBS
-        shell32.lib dnsapi.lib iphlpapi.lib ws2_32.lib ole32.lib winmm.lib)
+        shell32.lib dnsapi.lib iphlpapi.lib ws2_32.lib ole32.lib winmm.lib wtsapi32.lib)
 
     SET(oneteam_extra_DEFS
         -DOT_HAS_IDLE_WIN -DOT_HAS_SYSTRAY_WIN -DOT_HAS_DNS_WIN
