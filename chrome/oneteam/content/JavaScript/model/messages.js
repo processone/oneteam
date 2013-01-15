@@ -716,6 +716,7 @@ _DECL_(Message).prototype =
             }
             [this._html, this._text, this._sanitizedHtml, this._formatedHtml] =
                 this._processDOM(this._rawHtml, {
+                    myMessage: this.contact.representsMe,
                     substituteImages: !this.contact.representsMe &&
                         !account.cache.getValue("loadimage-"+this.contact.jid.normalizedJID.shortJID)
                 }, false, "");
@@ -964,11 +965,22 @@ _DECL_(Message).prototype =
                 }
                 if (nodeName == "li")
                     textContent += "\n";
-            } else if (nodeName == "img")
-                if (!/^(?:https?|ftp):/.exec(attrs.src||""))
+            } else if (nodeName == "img") {
+                var proto;
+                if ((proto = /^(?:https?|ftp|cid|data):/.exec(attrs.src||""))) {
+                    if (proto == "data:") {
+                        if (flags.myMessage) {
+                            var cid = bobService.serveData(new DataUrlFile(attrs.src));
+                            attrs.src = "cid:"+cid.cid;
+                        } else
+                            nodeName = null;
+                    }
+
+                    if (nodeName && dom.getAttribute("alt"))
+                        textContent += " ["+dom.getAttribute("alt")+"] ";
+                } else
                     nodeName = null;
-                else if (dom.getAttribute("alt"))
-                    textContent += " ["+dom.getAttribute("alt")+"] ";
+            }
 
             if (nodeName) {
                 if (nodeName == "br") {

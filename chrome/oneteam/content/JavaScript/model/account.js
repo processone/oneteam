@@ -30,6 +30,7 @@ ML.importMod("services/invitations.js");
 ML.importMod("services/pep.js");
 ML.importMod("services/jingle.js");
 ML.importMod("services/jinglenodes.js");
+ML.importMod("services/bob.js");
 ML.importMod("socks5.js");
 ML.importMod("filetransfer.js");
 

@@ -1,7 +1,7 @@
 var EXPORTED_SYMBOLS = ["CharsetConverter", "detectXMLCharset",
                         "convertCharsetOfXMLData", "CharsetConvertError",
                         "Reader", "IOError", "File", "slurpFile",
-                        "makeDataUrlFromFile"];
+                        "DataUrlFile", "makeDataUrlFromFile"];
 
 ML.importMod("roles.js");
 ML.importMod("exceptions.js");
@@ -723,6 +723,47 @@ _DECL_(File, Reader).prototype =
         } catch (ex) {
             throw new IOError("File.remove: Unable to create directory", ex);
         }
+    }
+}
+
+function DataUrlFile(url) {
+    var r;
+
+    if ((r = url.match(/^data:(.*?);base64,/))) {
+        this._mimeType = r[1];
+        this._content = atob(url.substr(r[0].length));
+        this._pos = null;
+    } else
+        throw new IOError("DataUrlFile: invalid data url format");
+}
+
+_DECL_(DataUrlFile, Reader).prototype =
+{
+    get available() {
+        return this._content.length - this._pos;
+    },
+
+    get size() {
+        return this._content.length;
+    },
+
+    open: function() {
+        if (this._pos == null)
+            this._pos = 0;
+    },
+
+    close: function() {
+        this._pos = null;
+    },
+
+    read: function(length) {
+        if (this._pos == null)
+          throw new IOError("DataUrlFile: file not open");
+
+        var r = this._content.substr(this._pos, length);
+        this._pos += r.length;
+
+        return r;
     }
 }
 

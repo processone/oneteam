@@ -627,6 +627,21 @@
         ]]></body>
       </method>
 
+      <method name="_loadCidImages">
+        <parameter name="topEl"/>
+        <parameter name="jid"/>
+        <body><![CDATA[
+          var imgs = topEl.getElementsByTagName("img");
+          var cidImgs = [];
+          for (var i = 0; i < imgs.length; i++)
+            if (/^cid:/.exec(imgs[i].src))
+              bobService.requestData(imgs[i].src.substr(4), jid,
+                                     new Callback(function(url, jid, cid, img) {
+                                      img.src = url;
+                                     }).addArgs(imgs[i]), true);
+        ]]></body>
+      </method>
+
       <method name="_genDocFragmentFromMsgs">
         <parameter name="msgs"/>
         <parameter name="doc"/>
@@ -707,6 +722,9 @@
               msg.contentNode = doc.createElement("div");
               msg.contentNode.innerHTML = msg.formatedHtml || "<br/>";
               e.appendChild(msg.contentNode);
+
+              this._loadCidImages(msg.contentNode, msg.contact.representsMe ?
+                                  null : msg.contact.jid);
 
               msgEl.appendChild(e);
 
