@@ -60,7 +60,11 @@ sub finalize {
 
 sub _make_package {
     my ($self, $tmpdir, $tmppfxdir) = @_;
-    system("cd '$tmppfxdir'; zip -q -9 -r '".catfile($self->{topdir}, $self->_output_filename)."' .")
+    my $cwd = getcwd();
+
+	chdir("$self->{outputdir}/chrome");
+    system(qw(zip -q -9 -r), catfile($self->{topdir}, $self->_output_filename), ".");
+    chdir($cwd);
 }
 
 sub _prepare_files_for_packing {
@@ -72,7 +76,10 @@ sub _prepare_files_for_packing {
     dircopy($d, catdir($self->{outputdir}, qw(skin default icons)),
             $d, qw(default.ico default.xpm));
 
-    system("cd '$self->{outputdir}/chrome'; zip -q -0 -r '".catfile($chromedir, 'oneteam.jar')."' .");
+    my $cwd = getcwd();
+    chdir("$self->{outputdir}/chrome");
+    system(qw(zip -q -0 -r), catfile($chromedir, 'oneteam.jar'), ".");
+    chdir($cwd);
 
     dircopy(catdir($self->{outputdir}, "defaults"), catdir($tmppfxdir, 'defaults'),
             $self->{outputdir}, $self->_disabled_prefs);

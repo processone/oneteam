@@ -39,6 +39,22 @@ sub _make_package {
     @files = map {substr($_, $tmpdirlen)} @files;
 
     _generate_wix($self, $tmppfxdir, @files);
+
+    cp(catfile(qw(installer windows bitmap-left.bmp)),
+         catfile($tmppfxdir, qw(bitmap-left.bmp)));
+
+	cp(catfile(qw(installer windows bitmap-top.bmp)),
+         catfile($tmppfxdir, qw(bitmap-top.bmp)));
+
+	my $cwd = cwd();
+	chdir($tmppfxdir);
+
+	system("c:\\Program Files\\Windows Installer XML v3.5\\bin\\candle.exe",
+		"oneteam.wix");
+	system("c:\\Program Files\\Windows Installer XML v3.5\\bin\\light.exe",
+		"-ext", "WixUIExtension", "-o", catfile($cwd, "OneTeam.msi"),
+		"oneteam.wixobj");
+	chdir($cwd);
 }
 
 sub _prepare_files {
@@ -66,7 +82,9 @@ sub uuid {
         return $str;
     };
     if ($@) {
-        return qx{c:\\Program Files\\Microsoft SDKs\\Windows\\v6.0\\Bin\\Uuidgen.Exe};
+        my $r = qx{c:\\Program Files\\Microsoft SDKs\\Windows\\v6.0\\Bin\\Uuidgen.Exe};
+		chomp($r);
+		return $r;
     }
 }
 
@@ -85,8 +103,11 @@ sub _generate_wix {
         Version="$buildid" Manufacturer="Process-One"
         UpgradeCode="c51144df-a887-4440-b501-89534b8733bd" >
 
-      <Package Description="OneTeam Package"
+	  <Package Description="OneTeam Package"
                Manufacturer="Process-One" InstallerVersion="200" Compressed="yes" />
+
+	  <WixVariable Id="WixUIDialogBmp" Value="bitmap-left.bmp" />
+	  <WixVariable Id="WixUIBannerBmp" Value="bitmap-top.bmp" />
 
       <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 

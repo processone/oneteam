@@ -14,7 +14,11 @@ sub slurp {
     my $file = shift;
     local $/;
     open(my $fh, "<", $file) or die "Can't slurp file '$file' : $!";
+	binmode($fh);
     my $res = <$fh>;
+
+	print STDERR "SLURP!!! ",-s $file, " - ", length($res), "\n"
+		if -s $file != length($res);
     close $fh;
     return defined $res ? $res : "";
 }
@@ -22,6 +26,7 @@ sub slurp {
 sub print_to_file {
     my ($file, $content) = @_;
     open(my $fh, ">", $file) or die "Can't save file '$file' : $!";
+	binmode($fh);
     print $fh $content;
     close $fh;
 }

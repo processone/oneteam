@@ -21,7 +21,11 @@ sub process {
 
     mkpath(catpath($vol, $dir));
     open my $fh, ">", $path or die "Unable to save temporary file $path: $!";
-    binmode($fh, ":encoding(utf8)") if is_utf8($content);
+    if (is_utf8($content)) {
+		binmode($fh, ":encoding(utf8)");
+	} else {
+		binmode($fh);
+	}
     print $fh $content;
     close $fh;
 
