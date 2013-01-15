@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["formatData", "dateToUTCString", "utcStringToDate",
+var EXPORTED_SYMBOLS = ["formatDate", "dateToUTCString", "utcStringToDate",
                         "dateToISO8601Timestamp","iso8601TimestampToDate",
                         "readableTimestamp"];
 function formatDate(date, locale, dateFormat, timeFormat)
