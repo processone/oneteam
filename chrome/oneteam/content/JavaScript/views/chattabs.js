@@ -62,7 +62,9 @@ function ChatTabsController() {
 
 _DECL_(ChatTabsController, null, Model).prototype = {
     isEmpty: function() {
-        return !this._controller
+        for (var i in _chatpanes)
+            return true;
+        return false;
     },
 
     openTab: function(thread) {
@@ -78,13 +80,18 @@ _DECL_(ChatTabsController, null, Model).prototype = {
             if (idx >= 0)
                 this._pastChats.splice(idx, 1);
         } else {
-            if (this._chatWindow && this._chatWindow.closed)
-                this._onChatWindowClosed();
+/*            if (this._chatWindow && this._chatWindow.closed)
+                this._onChatWindowClosed();*/
             this._chatpanes[thread.contact.jid] = chatpane;
-            if (!this._chatWindow)
-                this._chatWindow = openDialogUniq("ot:chats",
-                                                  "chrome://oneteam/content/chats.xul",
-                                                  "chrome,centerscreen", this);
+            if (prefManager.getPref("chat.tabbedMode")) {
+                if (!this._chatWindow)
+                    this._chatWindow = openDialogUniq("ot:chats",
+                                                      "chrome://oneteam/content/chats.xul",
+                                                      "chrome,centerscreen", this);
+            } else
+                openDialogUniq(null,
+                               "chrome://oneteam/content/chats.xul",
+                               "chrome,centerscreen", this);
         }
         return chatpane;
     },
@@ -114,36 +121,55 @@ _DECL_(ChatTabsController, null, Model).prototype = {
         if (this._inClose)
             return;
 
+        var chattab = chatpane._content._tabbox;
+
         delete this._chatpanes[chatpane.thread.contact.jid];
 
         this.modelUpdated("_chatpanes", {removed: [chatpane]});
 
         this._pastChats.push(chatpane.thread.contact);
 
-        for (var key in this._chatpanes)
-            return; // in order to skip this._chatWindow.close() if there remains chatpanes
-
-        this._chatWindow.close();
+        if (chattab.numTabs == 1)
+          chattab.window.close();
     },
 
-    _onChatWindowOpened: function() {
-        this._controller = this._chatWindow.document.getElementById("chats");
-        for each (var chatpane in this._chatpanes)
-            chatpane._attach(this._controller);
+    _onChatWindowOpened: function(win) {
+        if (prefManager.getPref("chat.tabbedMode")) {
+            this._controller = this._chatWindow.document.getElementById("chats");
 
-        this.modelUpdated("_chatpanes", {added: this._chatpanes});
+            for each (var chatpane in this._chatpanes)
+                chatpane._attach(this._controller);
+
+            this.modelUpdated("_chatpanes", {added: this._chatpanes});
+        } else {
+            for each (var chatpane in this._chatpanes)
+                if (!chatpane._content) {
+                    chatpane._attach(win.document.getElementById("chats"));
+                    this.modelUpdated("_chatpanes", {added: [chatpane]});
+                }
+        }
     },
 
-    _onChatWindowClosed: function() {
+    _onChatWindowClosed: function(win) {
         this._inClose = true;
 
+        var removed = [];
+        var newChatpanes = {};
+
         for each (var chatpane in this._chatpanes) {
+            if (chatpane._content._tabbox.window != win) {
+                newChatpanes[chatpane.thread.contact.jid] = chatpane;
+                continue;
+            }
+
+            removed.push(chatpane);
+
             this._pastChats.push(chatpane.thread.contact);
             chatpane.close();
         }
-        this.modelUpdated("_chatpanes", {removed: this._chatpanes});
+        this.modelUpdated("_chatpanes", {removed: removed});
 
-        this._chatpanes = {};
+        this._chatpanes = newChatpanes;
         this._chatWindow = null;
         this._controller = null;
 

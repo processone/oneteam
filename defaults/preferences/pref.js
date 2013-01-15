@@ -22,6 +22,8 @@ pref("chat.general.sounds",true);
 
 pref("chat.systray", true);
 
+pref("chat.tabbedMode", true);
+
 pref("chat.muc.nickname", "");
 
 pref("chat.general.showavatars", true);

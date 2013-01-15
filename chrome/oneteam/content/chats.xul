@@ -36,13 +36,13 @@
 
     function callWindowOpened() {
       if (document.getElementById("chats").openTab)
-        chatTabsController._onChatWindowOpened();
+        chatTabsController._onChatWindowOpened(window);
       else
         setTimeout(callWindowOpened, 100);
     }
 
     function onUnload() {
-      chatTabsController._onChatWindowClosed();
+      chatTabsController._onChatWindowClosed(window);
     }
 
     function closeTab() {

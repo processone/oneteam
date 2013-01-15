@@ -27,6 +27,12 @@
       <property name="selectedTab" onget="return this._selectedTab"
                 readonly="true"/>
 
+      <property name="window" onget="return window"
+                readonly="true"/>
+
+      <property name="numTabs" onget="return this._tabs.childNodes.length"
+                readonly="true"/>
+
       <property name="unseenCount" onget="return this._unseenCount || 0">
         <setter><![CDATA[
           if (val == this._unseenCount)
@@ -37,8 +43,7 @@
           if (val)
             window.getAttention();
 
-          document.title = document.title.replace(/^(?:\* |\[\d+\] )?/,
-            val == 0 ? "" : val == 1 ? "* " : "["+val+"] ");
+          this._updateTitle();
 
           if (window.top.changeFavIcon)
             window.top.changeFavIcon(val ? account.style.defaultSet.iconsMap["psi/message"] : null);
@@ -75,6 +80,22 @@
           }
         }, false);
       ]]></constructor>
+
+      <method name="_updateTitle">
+        <body><![CDATA[
+          var uc = this.unseenCount;
+          uc = uc == 0 ? "" : uc == 1 ? "* " : "["+uc+"] ";
+
+          if (prefManager.getPref("chat.tabbedMode"))
+            document.title = uc + _("Chats");
+          else {
+            var name = this._tabs.childNodes.length ? this._tabs.childNodes[0] : null;
+            name = name.controller ? name.controller._thread.contact.visibleName : "";
+
+            document.title = uc + _("Chat with {0}", name);
+          }
+        ]]></body>
+      </method>
 
       <method name="openTab">
         <parameter name="thread"/>
@@ -119,6 +140,8 @@
           this.dispatchEvent(ev);
 
           content.focus();
+
+          this._updateTitle();
 
           return content;
         ]]></body>
@@ -488,6 +511,8 @@
             "* " : "["+count+"] ";
 
           this._tab.setAttribute("label", countStr + (this._thread ? this._thread.contact.visibleName : ""));
+
+          this._tabbox._updateTitle();
         ]]></body>
       </method>
 
