@@ -16,29 +16,15 @@ ML.importMod("roles.js");
 
 function E4XtoDOM(xml, targetDoc)
 {
-    var dp = new DOMParser();
-    var doc = dp.parseFromString(xml.toXMLString(), "text/xml");
-    var els = doc.childNodes;
+    var r = targetDoc.createRange();
+    var frag = r.createContextualFragment(xml.toXMLString());
 
-    // adoptNode throws exception on gecko 1.8
-    if (els.length == 1)
-        try {
-            return targetDoc ? targetDoc.importNode(els[0], true) : els[0];
-        } catch (ex) {
-            return els[0];
-        }
+    if (frag.childNodes.length == 1)
+        frag = frag.removeChild(frag.firstChild);
 
-    var fragment = targetDoc ? targetDoc.createDocumentFragment() :
-        el.ownerDocument.createDocumentFragment(); // el not defined ?
+    r.detach();
 
-    for (var i = 0; i < els.length; i++)
-        try {
-            fragment.appendChild(targetDoc ? targetDoc.adoptNode(els[i]) : els[i]);
-        } catch (ex) {
-            fragment.appendChild(els[i]);
-        }
-
-    return fragment;
+    return frag;
 }
 
 function DOMtoE4X(dom)
@@ -1355,4 +1341,3 @@ function fillTooltip(tipElement, tipNode) {
 
 var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 var HTMLNS = "http://www.w3.org/1999/xhtml";
-
