@@ -1,15 +1,40 @@
-.conference-view > richlistitem:nth-child(2n+1):not([selected=true]) {
+.conference-view > richlistitem:nth-child(2n+1):not([selected=true]),
+.list-contact-view:nth-child(2n+1):not([selected=true])
+{
   background: #cfcfcf !important;
 }
 
-.conference-view, .conference-role-view, .conferencemember-view {
-  margin: 0px;
+.list-roster-view {
+  -moz-appearance: none;
+  border: none;
   padding: 0;
+  margin: 2px;
+  background: transparent;
 }
 
 .conference-view,
 .conference-role-view,
-.conferencemember-view {
+.conferencemember-view,
+.list-contact-view,
+.list-group-view
+{
+  margin: 0;
+  padding: 0;
+}
+
+.list-group-view {
+  font-size: 1.1em;
+  font-style: italic;
+  font-weight : bold;
+  border: none;
+  color: #515151;
+  text-shadow: #eee 0 1px 0;
+}
+
+.conference-view,
+.conference-role-view,
+.conferencemember-view,
+.list-contact-view {
   background: #c7c7c7;
   border: none;
   color: #515151;
@@ -17,17 +42,22 @@
 }
 
 .conference-view,
-.conference-role-view {
+.conference-role-view,
+.list-contact-view {
   font-weight : bold;
 }
 
 .conference-view[selected=true],
 .conference-role-view[selected=true],
-.conferencemember-view[selected=true] {
+.conferencemember-view[selected=true],
+.list-contact-view[selected=true],
+.list-group-view[selected=true]
+{
   background: #dadada;
 }
 
-.conferencemember-view > avatar {
+.conferencemember-view > avatar,
+.list-contact-view > avatar {
   -moz-box-flex: 0;
   border: 1px solid #ccc;
   -moz-border-radius: 3px;
@@ -39,7 +69,8 @@
   padding-left: 2px;
 }
 
-.conferencemember-view {
+.conferencemember-view,
+.list-contact-view {
   -moz-box-pack: center;
   -moz-box-align: center;
   padding-left: 2px;
@@ -57,4 +88,35 @@
 
 .conferencemember-tooltip-grid {
   margin-left: 1em;
+}
+
+.list-contact-view[offlineContact=true] > label,
+.list-contact-view[offlineContact=true] > avatar
+{
+  opacity: 0.5;
+}
+
+
+.list-contact-view > .counter {
+  background-color: #52affa;
+  border: 3px solid white;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  -moz-border-radius: 20px;
+  min-width: 20px;
+  height: 20px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+  text-align: center;
+}
+
+#contacts-list[hideOffline=true][connected=true]
+  .list-group-view[onlyOfflineContacts=true]:not([showOffline=true]),
+#contacts-list[hideOffline=true][connected=true]
+  .list-contact-view[offlineContact=true],
+.list-group-view[onlyNonMatchingContacts=true],
+.list-contact-view[nonMatchingContact=true]
+{
+  display: none
 }

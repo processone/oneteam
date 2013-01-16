@@ -99,9 +99,9 @@ function GroupView(model, parentView)
         <description flex="1" class="icons-box"/>
       </expander>
     , this.doc);
+
     this.box = this.node.getElementsByTagName("description")[0];
 
-    //this.node.model = this.model; // seems to be never used
     this.node.menuModel = this.model;
     this.node.view = this;
 
@@ -265,6 +265,8 @@ function ContactView(model, parentView)
     this.avatar = this.node.getElementsByTagName("avatar")[0];
     this.iconContainer = this.node.getElementsByClassName("icon-container")[0];
 
+    this.messagesCounterContainer = this.messagesCounter.parentNode;
+
     this.avatar.model = model;
 
     this.label.parentNode.addEventListener("overflow", function(ev) {
@@ -365,8 +367,7 @@ _DECL_(ContactView).prototype =
         this.statusIcon.setAttribute("src", icon);
 
         this.messagesCounter.setAttribute("value", this.model.msgsInQueue);
-        if (this.messagesCounter.parentNode)
-            this.messagesCounter.parentNode.hidden = !this.model.msgsInQueue;
+        this.messagesCounterContainer.hidden = !this.model.msgsInQueue;
     },
 
     onSearchTermChanged: function(term)
@@ -475,7 +476,7 @@ _DECL_(ContactTooltip).prototype =
         default xml namespace = new Namespace(XULNS);
 
         this.name.setAttribute("value", this.model.visibleName);
-        this.subscription.setAttribute("value", 
+        this.subscription.setAttribute("value",
             this.model.subscription == "both" ? _("in two ways") :
             this.model.subscription == "from" ? _("he/she can see your status") :
             this.model.subscription == "to"   ? _("you can see his/her status") :

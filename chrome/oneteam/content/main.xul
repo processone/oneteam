@@ -21,6 +21,7 @@
   <script type="text/javascript;version=1.7"><![CDATA[
     ML.importMod("prefs.js");
     ML.importMod("model/account.js");
+    ML.importMod("views/listroster.js");
     ML.importMod("views/roster.js");
     ML.importMod("views/gateway.js");
     ML.importMod("views/chattabs.js");
@@ -180,7 +181,10 @@
         this.statusText = document.getElementById("status-text");
         this.presence = this.chooser.value;
 
-        this.rosterView = new RosterView(document.getElementById("contacts-list"));
+        var rosterClass = prefManager.getPref("chat.roster.asicons") ?
+          RosterView : ListRosterView;
+
+        this.rosterView = new rosterClass(document.getElementById("contacts-list"));
         this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
 
         toggleShowOffline(!prefManager.getPref("chat.roster.showoffline"));
