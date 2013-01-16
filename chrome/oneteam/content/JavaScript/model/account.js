@@ -1127,6 +1127,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
     },
 
     _setupAutoAway: function(type) {
+        if (!this._lockObserverSetup) {
+            try {
+                this._lockObserverSvc = Components.classes["@process-one.net/idle;1"].
+                    createInstance(Components.interfaces.otIIdleService);
+                this._lockObserverSvc.init(this);
+            } catch (ex) {
+            }
+            this._lockObserverSetup = true;
+        }
         try {
             var srv = Components.classes["@mozilla.org/widget/idleservice;1"].
                 getService(Components.interfaces.nsIIdleService);
@@ -1140,6 +1149,25 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
                 srv.addIdleObserver(this, this.autoAway[type].time);
             }
         } catch (ex) {}
+    },
+
+    onScreenLock: function() {
+        var presence;
+
+        if (this.autoAway.xa.enabled)
+            presence = new Presence("xa", this.autoAway.xa.status,
+                                    null, null);
+        else if (this.autoAway.away.enabled)
+            presence = new Presence("away", this.autoAway.away.status,
+                                    null, null);
+
+        if (!presence.equal(this.currentPresence))
+            this.setPresence(presence)
+    },
+
+    onScreenUnlock: function() {
+        if (this.currentPresence != this.userPresence)
+            this.setPresence(this.userPresence);
     },
 
     observe: function(subject, topic, data) {
