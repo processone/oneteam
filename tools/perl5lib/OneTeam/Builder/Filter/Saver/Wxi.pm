@@ -46,6 +46,9 @@ sub _make_package {
 	cp(catfile(qw(installer windows bitmap-top.bmp)),
          catfile($tmppfxdir, qw(bitmap-top.bmp)));
 
+	cp(catfile(qw(installer windows MPL.rtf)),
+         catfile($tmppfxdir, qw(MPL.rtf)));
+
 	my $cwd = cwd();
 	chdir($tmppfxdir);
 
@@ -108,6 +111,7 @@ sub _generate_wix {
 
 	  <WixVariable Id="WixUIDialogBmp" Value="bitmap-left.bmp" />
 	  <WixVariable Id="WixUIBannerBmp" Value="bitmap-top.bmp" />
+      <WixVariable Id="WixUILicenseRtf" Value="MPL.rtf" />
 
       <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 
