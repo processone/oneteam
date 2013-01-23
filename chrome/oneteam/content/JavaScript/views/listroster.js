@@ -20,6 +20,8 @@ function ListRosterView(node, matchGroups, negativeMatch)
 
     this.rootNode.appendChild(this.containerNode);
 
+    this.dragHandler = new DragDropHandler(this);
+
     this.onModelUpdated(null, "groups", {added: account.groups});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "groups");
     this._hideOffline = node.getAttribute("hideOffline") == "true";
@@ -62,6 +64,7 @@ function ListGroupView(model, parentView)
 
     this.model = model;
     this.parentView = parentView;
+    this.root = this.parentView;
     this.doc = parentView.containerNode.ownerDocument;
     this.contacts = [];
 
@@ -88,6 +91,10 @@ function ListGroupView(model, parentView)
     this._bundle.register(this.model, this.onModelUpdated, "contacts");
     this._bundle.register(this.model, this.onAvailUpdated, "availContacts");
     this._matchingCount = 0;
+
+    this.node.addEventListener("dragover", this.root.dragHandler, false);
+    this.node.addEventListener("dragleave", this.root.dragHandler, false);
+    this.node.addEventListener("drop", this.root.dragHandler, false);
 }
 
 _DECL_(ListGroupView, null, GroupView).prototype =
@@ -137,6 +144,27 @@ _DECL_(ListGroupView, null, GroupView).prototype =
             this.items = [];
             this.onModelUpdated(this.model, "contacts", {added: this.model.contacts});
         }
+    },
+
+    onDrop: function(ev) {
+        var jid = ev.dataTransfer.getData("text/xmpp-jid");
+        ev.preventDefault();
+
+        var contact = account.getContactOrResource(jid);
+
+        if (!contact) {
+            account.getOrCreateContact(jid, false, null, [this.model]);
+        } else if (ev.dataTransfer.dropEffect == "copy") {
+            for (var i = 0; i < contact.groups.length; i++)
+                if (contact.groups[i] == this.model)
+                    return;
+            contact.editContact(contact.name, [this.model].concat(contact.groups));
+        } else {
+            if (contact.groups.length == 1 && contact.groups[0] == this.model)
+                return;
+
+            contact.editContact(contact.name, [this.model]);
+        }
     }
 }
 
@@ -144,6 +172,7 @@ function ListContactView(model, parentView)
 {
     this.model = model;
     this.parentView = parentView;
+    this.root = this.parentView.root;
     this.doc = parentView.containerNode.ownerDocument;
 
     this.tooltip = model instanceof MyResourcesContact ?
@@ -155,6 +184,7 @@ function ListContactView(model, parentView)
           "xmlns": XULNS,
           "class": "list-contact-view",
           "ondblclick": "this.model.onDblClick()",
+          "draggable": true,
           "context": model instanceof MyResourcesContact ?
               "resource-contextmenu" : "contact-contextmenu",
           "tooltip": this.tooltip.id
@@ -189,6 +219,11 @@ function ListContactView(model, parentView)
     this.node.menuModel = model;
     this.node.view = this;
 
+    this.node.addEventListener("dragstart", this.root.dragHandler, false);
+    this.node.addEventListener("dragover", this.root.dragHandler, false);
+    this.node.addEventListener("dragleave", this.root.dragHandler, false);
+    this.node.addEventListener("drop", this.root.dragHandler, false);
+
     this._prefToken = new Callback(this.onPrefChange, this);
     prefManager.registerChangeCallback(this._prefToken, "chat.general.showavatars");
 
@@ -213,6 +248,7 @@ function ListContactView(model, parentView)
 
 _DECL_(ListContactView, null, ContactView).prototype =
 {
+
     onActiveResourceChange: function() {
         this.onPresenceChanged();
         ContactView.prototype.onActiveResourceChange.apply(this, arguments);
@@ -227,5 +263,133 @@ _DECL_(ListContactView, null, ContactView).prototype =
 
     onPresenceChanged: function() {
         this.statusText.setAttribute("value", this.model.presence.status || "");
+    },
+
+    onDrop: function(ev) {
+      this.parentView.onDrop(ev);
+    }
+}
+
+function DragDropHandler(root) {
+    this.root = root;
+}
+
+_DECL_(DragDropHandler).prototype =
+{
+    handleEvent: function(ev) {
+        var view = ev.currentTarget.view;
+
+        if (ev.type == "dragstart") {
+            ev.dataTransfer.setData("text/uri-list", "xmpp:"+view.model.jid);
+            ev.dataTransfer.setData("text/xmpp-jid", view.model.jid);
+            ev.dataTransfer.setData("text/plain", view.model.visibleName);
+            ev.dataTransfer.effectAllowed = "copyMove";
+            this.createDragImage(ev, view);
+        } else if (ev.type == "dragover") {
+            if (!ev.dataTransfer.types.contains("text/xmpp-jid"))
+                return;
+
+            var l = view.root.containerNode._scrollbox;
+            var r = l.getBoundingClientRect();
+
+            if (r.top > ev.clientY - 30 && l.scrollTop > 0) {
+                this.scrollDir = 1;
+                this.animScroll();
+            } else if (r.bottom < ev.clientY + 30 && l.scrollTop+l.clientHeight < l.scrollHeight) {
+                this.scrollDir = -1;
+                this.animScroll();
+            } else
+                this.scrollDir = 0;
+
+            ev.preventDefault();
+        } else if (ev.type == "dragleave") {
+            this.scrollDir = 0;
+        } else if (ev.type == "drop") {
+            if (!ev.dataTransfer.types.contains("text/xmpp-jid"))
+                return;
+
+            this.scrollDir = 0;
+
+            view.onDrop(ev);
+        }
+    },
+
+    animScroll: function() {
+        if (!this.scrollDir || (this._anim && this._anim.running))
+            return;
+
+        var l = this.root.containerNode._scrollbox;
+
+        this._anim = Animator.animateScroll({
+            element: l,
+            time: 200,
+            stopCallback: new Callback(this.animScroll, this)
+        }, 0, l.scrollTop + (this.scrollDir < 0 ? 30 : -30));
+    },
+
+    createRoundedRectPath: function(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.moveTo(r, 0);
+        ctx.lineTo(w-r, 0);
+        ctx.arc(w-r, r, r, 3*Math.PI/2, Math.PI*2);
+        ctx.lineTo(w, h-r);
+        ctx.arc(w-r, h-r, r, Math.PI*2, Math.PI/2);
+        ctx.lineTo(r, h);
+        ctx.arc(r, h-r, r, Math.PI/2, Math.PI);
+        ctx.lineTo(0, r);
+        ctx.arc(r, r, r, Math.PI, 3*Math.PI/2);
+        ctx.closePath();
+        ctx.restore();
+    },
+
+    createDragImage: function(event, view) {
+        var canvas = view.node.ownerDocument.createElementNS(HTMLNS, "canvas");
+
+        var ctx = canvas.getContext("2d");
+        var txt = view.model.visibleName;
+        var tw;
+
+        var s = view.label.ownerDocument.defaultView.getComputedStyle(view.label, "");
+
+        ctx.font = s.fontSize+" "+s.fontFamily;
+
+        tw = ctx.measureText(txt).width;
+        var ft = true;
+
+        while (tw > 500) {
+            if (ft)
+                txt = txt.substr(0, txt.length-1);
+            else
+                txt = txt.substr(0, txt.length-4);
+            ft = false;
+            txt += "...";
+            tw = ctx.measureText(txt).width;
+        }
+
+        canvas.width = 44 + tw;
+        canvas.height = 40;
+        ctx.font = s.fontSize+" "+s.fontFamily;
+
+        this.createRoundedRectPath(ctx, 0.5, 0.5, 38, 38, 5);
+        ctx.fillStyle = "#444";
+        ctx.stroke();
+
+        ctx.fillStyle = "white";
+        ctx.fill();
+
+        var iw = view.avatar._imageObj.width;
+        var ih = view.avatar._imageObj.height;
+        var idiv = iw > ih ? 1/iw : 1/ih;
+
+        ctx.drawImage(view.avatar._imageObj, 2, 2+18*(1-ih*idiv),
+                      36*iw*idiv, 36*ih*idiv);
+
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black";
+        ctx.fillText(txt, 44, 20);
+
+        event.dataTransfer.setDragImage(canvas, 20, 20);
     }
 }
