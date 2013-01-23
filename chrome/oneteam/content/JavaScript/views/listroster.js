@@ -174,8 +174,6 @@ function ListContactView(model, parentView)
 
     var h = this.node.childNodes[0];
 
-    dump(h.childNodes[1].childNodes[1].nodeName+"\n")
-
     this.avatar = h.childNodes[0];
     this.statusIcon = h.childNodes[1].childNodes[0]
     this.label = h.childNodes[1].childNodes[1].childNodes[0];
