@@ -39,6 +39,10 @@ tabpanels {
   list-style-image: url(imgs/prefs.png);
 }
 
+#search-button {
+  list-style-image: url(../disco/imgs/search.png);
+}
+
 #presences-tab-button {
   list-style-image: url(imgs/presences-tab.png);
 }

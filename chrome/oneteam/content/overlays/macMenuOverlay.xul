@@ -167,6 +167,8 @@
       <command id="cmd_adhoc" oncommand="account.onAdHocCommand()" observes="isOffline"/>
       <command id="cmd_disconnect" oncommand="account.disconnect()" observes="isOffline"/>
       <command id="cmd_quit" key="key_quit" oncommand="menuHandler.quit()"/>
+      <command id="cmd_search" oncommand="account.showSearchUsers()"
+               observes="isOffline"/>
 
       <command id="cmd_ourVCard" key="key_ourVCard" oncommand="account.showVCard()" observes="isOffline"/>
       <command id="cmd_changePassword" oncommand="account.onChangePassword()" observes="isOffline"/>

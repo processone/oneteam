@@ -450,6 +450,17 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         openDialogUniq("ot:disco", "chrome://oneteam/content/disco.xul", "chrome,centerscreen,dialog=no");
     },
 
+    showSearchUsers: function() {
+        var items = account.getDiscoItemsByFeature("jabber:iq:search", false);
+        if (!items || !items.length)
+            return;
+
+        var jid = items[0].discoJID || items[0].jid;
+        var contact = account.getOrCreateContact(jid);
+
+        contact.onSearch();
+    },
+
     onCustomPresence: function(presence)
     {
         openDialogUniq("ot:status", "chrome://oneteam/content/status.xul", "chrome,centerscreen",
