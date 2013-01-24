@@ -92,10 +92,15 @@
           if (prefManager.getPref("chat.tabbedMode"))
             document.title = uc + _("Chats");
           else {
-            var name = this._tabs.childNodes.length ? this._tabs.childNodes[0] : null;
-            name = name.controller ? name.controller._thread.contact.visibleName : "";
+            var contact = this._tabs.childNodes.length ? this._tabs.childNodes[0] : null;
+            contact = contact && contact.controller ? contact.controller._thread.contact : null;
 
-            document.title = uc + _("Chat with {0}", name);
+            if (!contact)
+              document.title = uc + _("Chat");
+            else if (contact instanceof Conference)
+              document.title = uc + _("Chat room {0}", contact.visibleName);
+            else
+              document.title = uc + _("Chat with {0}", contact.visibleName);
           }
         ]]></body>
       </method>
