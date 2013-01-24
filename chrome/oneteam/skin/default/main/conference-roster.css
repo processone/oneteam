@@ -97,7 +97,7 @@
 }
 
 
-.list-contact-view > .counter {
+.list-contact-view .counter {
   background-color: #52affa;
   border: 3px solid white;
   color: white;

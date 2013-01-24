@@ -189,8 +189,8 @@ function ListContactView(model, parentView)
               "resource-contextmenu" : "contact-contextmenu",
           "tooltip": this.tooltip.id
         }, [
-            ["hbox", {"flex": "1"}, [
-                ["avatar", {"showBlankAvatar": "true", "side": "32"}],
+            ["hbox", {"flex": "1", "align": "start"}, [
+                ["avatar", {"showBlankAvatar": "true", "squareBordered": "true", "side": "32"}],
                 ["hbox", {"flex": "1", "align": "start"}, [
                     ["image", {"class": "status-icon"}],
                     ["vbox", {"flex": "1"}, [
