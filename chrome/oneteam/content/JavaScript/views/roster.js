@@ -107,11 +107,13 @@ function GroupView(model, parentView)
 
     this.onAvailUpdated();
 
-    this._prefToken = new Callback(this.onPrefChange, this);
-    prefManager.registerChangeCallback(this._prefToken, "chat.roster.sortbystatus");
     this._regToken =
     this.model.registerView(this.onModelUpdated, this, "contacts");
     this.model.registerView(this.onModelUpdated, this, "availContacts", this._regToken);
+
+    prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
+                                       "chat.roster.sortbystatus", false,
+                                       this._regToken);
 
     this._matchingCount = 0;
 }
@@ -206,7 +208,6 @@ _DECL_(GroupView, null, ContainerView).prototype =
         if (this.animation)
             this.animation.stop();
 
-        prefManager.unregisterChangeCallback(this._prefToken, "chat.roster.sortbystatus");
         this._regToken.unregisterFromAll();
 
         if (!this.items)
@@ -280,9 +281,6 @@ function ContactView(model, parentView)
     this.node.menuModel = model;
     this.node.view = this;
 
-    this._prefToken = new Callback(this.onPrefChange, this);
-    prefManager.registerChangeCallback(this._prefToken, "chat.general.showavatars");
-
     this._regToken = this.model.registerView(this.onNameChange, this, "name");
     this.model.registerView(this.onActiveResourceChange, this, "activeResource", this._regToken);
     this.model.registerView(this.onMsgsInQueueChanged, this, "msgsInQueue", this._regToken);
@@ -301,9 +299,6 @@ function ContactView(model, parentView)
 
 _DECL_(ContactView).prototype =
 {
-    onPrefChange: function(name, value) {
-    },
-
     onEventsChanged: function() {
         if (this.model.events.length && !this.model.msgsInQueue) {
             this.messagesCounter.parentNode.parentNode.
@@ -412,8 +407,6 @@ _DECL_(ContactView).prototype =
             clearInterval(this._blinkingTimeout);
         this._blinkingTimeout = null;
 
-
-        prefManager.unregisterChangeCallback(this._prefToken, "chat.general.showavatars");
         this._regToken.unregisterFromAll();
 
         if (this._matches)

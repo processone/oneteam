@@ -90,12 +90,14 @@ function ListGroupView(model, parentView)
 
     this.onAvailUpdated();
 
-    this._prefToken = new Callback(this.onPrefChange, this);
-    prefManager.registerChangeCallback(this._prefToken, "chat.roster.sortbystatus");
 
     this._regToken =
     this.model.registerView(this.onModelUpdated, this, "contacts");
     this.model.registerView(this.onModelUpdated, this, "availContacts", this._regToken);
+
+    prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
+                                       "chat.roster.sortbystatus", false,
+                                       this._regToken);
 
     this._matchingCount = 0;
 
@@ -253,9 +255,12 @@ function ListContactView(model, parentView, virtual)
     this.node.addEventListener("dragleave", this.root.dragHandler, false);
     this.node.addEventListener("drop", this.root.dragHandler, false);
 
-    this._prefToken = new Callback(this.onPrefChange, this);
-    prefManager.registerChangeCallback(this._prefToken, "chat.general.showavatars");
-
+    this._regToken = this.model.registerView(this.onNameChange, this, "name");
+    this.model.registerView(this.onActiveResourceChange, this, "activeResource", this._regToken);
+    this.model.registerView(this.onMsgsInQueueChanged, this, "msgsInQueue", this._regToken);
+    this.model.registerView(this.onAvatarChanged, this, "avatar", this._regToken);
+    this.model.registerView(this.onEventsChanged, this, "events", this._regToken);
+    account.style.registerView(this.onModelUpdated, this, "defaultSet", this._regToken);
 
     this._matches = false;
 
@@ -273,9 +278,6 @@ _DECL_(ListContactView, null, ContactView).prototype =
     onActiveResourceChange: function() {
         this.onPresenceChanged();
         ContactView.prototype.onActiveResourceChange.apply(this, arguments);
-    },
-
-    onPrefChange: function(name, value) {
     },
 
     onEventsChanged: function() {

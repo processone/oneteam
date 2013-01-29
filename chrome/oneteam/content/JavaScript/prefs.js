@@ -7,47 +7,33 @@ function PrefManager() {
     this.srv = Components.classes["@mozilla.org/preferences;1"].getService(Components.interfaces.nsIPrefBranch2);
     this.defaultSrv = ps.getDefaultBranch(null);
 
+    CallbacksList.call(this, true, this, this);
+
     this.callbacks = {};
 }
 
-_DECL_(PrefManager).prototype =
+_DECL_(PrefManager, null, CallbacksList).prototype =
 {
-    registerChangeCallback: function(callback, branch, notifyNow)
+    registerChangeCallback: function(callback, branch, notifyNow, token)
     {
-        if (!this.callbacks[branch]) {
-            this.callbacks[branch] = [callback];
-            this.srv.addObserver(branch, this, false);
-        } else if (this.callbacks[branch].indexOf(callback) < 0)
-            this.callbacks[branch].push(callback);
+        var newToken = this._registerCallback(callback, token, branch)
 
-        if (!notifyNow)
-            return;
+        if (notifyNow) {
+            var list = this.srv.getChildList(branch, {});
 
-        var list = this.srv.getChildList(branch, {});
+            for (var i = 0; i < list.length; i++)
+                callback(list[i], this.getPref(list[i]));
+        }
 
-        for (var i = 0; i < list.length; i++)
-            callback(list[i], this.getPref(list[i]));
+        return newToken;
     },
 
-    unregisterChangeCallback: function(callback, branch)
-    {
-        if (branch != null) {
-            var r = {};
-            r[branch] = 1;
-            branch = r;
-        } else
-            branch = Iterator(this.callbacks, true);
+    onStartWatching: function(branch) {
+        this.srv.addObserver(branch, this, false);
+    },
 
-        for (i in branch) {
-            var idx = this.callbacks[i] && this.callbacks[i].indexOf(callback);
-            if (idx != null && idx >= 0) {
-                this.callbacks[i].splice(idx, 1);
-                if (this.callbacks[i].length == 0) {
-                    this.srv.removeObserver(i, this)
-                    delete this.callbacks[i];
-                }
-            }
-        }
+    onStopWatching: function(branch) {
+        this.srv.removeObserver(branch, this);
     },
 
     getPref: function(name, inDefaults) {
@@ -103,11 +89,11 @@ _DECL_(PrefManager).prototype =
 
         for (var i = value.length-1; i > 0; i--) {
             var branch = parts.slice(0, i).join(".");
-            if (!this.callbacks[branch])
+            if (!this._hasCallbacks(branch))
                 continue;
 
-            for (var j = 0; j < this.callbacks[branch].length; j++)
-                this.callbacks[branch][j].call(null, value, prefVal);
+            for (var c in this._iterateCallbacks(branch))
+                c.call(null, value, prefVal);
         }
     }
 }
