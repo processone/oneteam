@@ -167,6 +167,16 @@
         document.getElementById("setPresence-nick").value = account.myResource.visibleName;
       },
 
+      onRosterTypeChanged: function() {
+        if (this.rosterView)
+          this.rosterView.destroy();
+
+        var rosterClass = prefManager.getPref("chat.roster.asicons") ?
+          RosterView : ListRosterView;
+
+        this.rosterView = new rosterClass(document.getElementById("contacts-list"));
+      },
+
       init: function()
       {
         account.registerView(this.onConnect, this, "connected", globalRegToken);
@@ -176,15 +186,14 @@
         account.myResource.registerView(this.onNickChange, this, "visibleName", globalRegToken);
         account.style.registerView(this.onIconSetChange, this, "defaultSet", globalRegToken);
 
+        prefManager.registerChangeCallback(new Callback(this.onRosterTypeChanged, this),
+                                           "chat.roster.asicons", true);
+
         this.chooser = document.getElementById("setPresence-type-chooser");
         this.systray = document.getElementById("systray");
         this.statusText = document.getElementById("status-text");
         this.presence = this.chooser.value;
 
-        var rosterClass = prefManager.getPref("chat.roster.asicons") ?
-          RosterView : ListRosterView;
-
-        this.rosterView = new rosterClass(document.getElementById("contacts-list"));
         this.gatewaysButtonsView = new GatewaysToolbarButtons(document.getElementById("gateways-separator"));
 
         toggleShowOffline(!prefManager.getPref("chat.roster.showoffline"));
