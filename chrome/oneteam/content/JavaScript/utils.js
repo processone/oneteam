@@ -259,6 +259,9 @@ _DECL_(CallbacksList).prototype =
                     var watchers = this._watchers[contexts[i]];
                     if (watchers && watchers.onStartWatching)
                         watchers.onStartWatching.call(this._watchersBase, contexts[i]);
+
+                    if (this._watchers.onStartWatching)
+                        this._watchers.onStartWatching.call(this._watchersBase, contexts[i]);
                 }
             }
         }
@@ -303,6 +306,9 @@ _DECL_(CallbacksList).prototype =
                         var watchers = this._watchers[prop];
                         if (watchers && watchers.onStopWatching)
                             watchers.onStopWatching.call(this._watchersBase, prop);
+
+                        if (this._watchers.onStopWatching)
+                            this._watchers.onStopWatching.call(this._watchersBase, prop);
                     }
                 }
             }
