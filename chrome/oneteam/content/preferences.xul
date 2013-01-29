@@ -187,6 +187,7 @@
       <preference id="bumppriority" name="chat.general.bumppriority" type="bool"/>
       <preference id="ask_to_quit" name="chat.general.ask_to_quit" type="bool"/>
       <preference id="systray" name="chat.systray" type="bool"/>
+      <preference id="rosterAsIcons" name="chat.roster.asicons" type="bool"/>
     </preferences>
     <checkbox label="_('Sort contacts by status')" preference="sortbystatus"/>
     <checkbox label="_('Play sounds')" preference="sounds"/>
@@ -198,6 +199,8 @@
     <!-- #endif -->
     <checkbox label="_('Show icon in system tray')"
               preference="systray"/>
+    <checkbox label="_('Display roster as icons')"
+              preference="rosterAsIcons"/>
   </prefpane>
 
   <prefpane id="connection" label="_('Connection')">
