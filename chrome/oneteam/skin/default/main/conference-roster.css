@@ -96,6 +96,9 @@
   opacity: 0.5;
 }
 
+.list-contact-view.virtual {
+  opacity: 0.3;
+}
 
 .list-contact-view .counter {
   background-color: #52affa;

@@ -29,6 +29,13 @@ _DECL_(Group, null, Model).prototype =
             yield x;
     },
 
+    contains: function(contact) {
+        for (var i = 0; i < this.contacts.length; i++)
+            if (this.contacts[i] == contact)
+                return true;
+        return false;
+    },
+
     onRename: function(externalDialog)
     {
         openDialogUniq("ot:renameGroup", "chrome://oneteam/content/renameGroup.xul",

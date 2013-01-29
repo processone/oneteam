@@ -9,9 +9,11 @@ function ListRosterView(node, matchGroups, negativeMatch)
     this.rootNode = node;
     this.doc = node.ownerDocument;
 
-    this.containerNode = E4XtoDOM(
-      <richlistbox flex="1" class="list-roster-view"/>
-    , this.doc);
+    this.containerNode = JSJaCBuilder.buildNode(this.doc,
+        "richlistbox", {
+          flex: "1",
+          "class": "list-roster-view"
+        });
 
     this.items = [];
     this.model = account;
@@ -70,13 +72,17 @@ function ListGroupView(model, parentView)
 
     var open = this.model.name ? // doesn't work !!
                account.cache.getValue("groupExpand-"+this.model.name) != "false" : true;
-    this.node = E4XtoDOM(
-      <richlistitem open={open} showOffline={this.model == account.myEventsGroup}
-                onexpand="this.view.onExpand(val)"
-                context="group-contextmenu" class="list-group-view">
-        <label/>
-      </richlistitem>
-    , this.doc);
+    this.node = JSJaCBuilder.buildNode(this.doc,
+        "richlistitem", {
+          open: open,
+          showOffline: this.model == account.myEventsGroup,
+          onexpand: "this.view.onExpand(val)",
+          context: "group-contextmenu",
+          "class": "list-group-view"
+        }, [
+            ["label"]
+           ]
+    );
 
     this.node.menuModel = this.model;
     this.node.view = this;
@@ -146,11 +152,33 @@ _DECL_(ListGroupView, null, GroupView).prototype =
         }
     },
 
-    onDrop: function(ev) {
-        var jid = ev.dataTransfer.getData("text/xmpp-jid");
-        ev.preventDefault();
+    onDragOver: function(contact) {
+        if (this.model.contains(contact))
+            return;
 
-        var contact = account.getContactOrResource(jid);
+        if (this.dragLeaveTimeout)
+            clearTimeout(this.dragLeaveTimeout);
+        this.dragLeaveTimeout = null;
+
+        if (this.dragContact != contact)
+            this.onItemAdded(new ListContactView(contact, this, true));
+        this.dragContact = contact;
+    },
+
+    onDragLeave: function(contact) {
+        if (this.model.contains(contact))
+            return;
+
+        var _this = this;
+        this.dragLeaveTimeout = setTimeout(function() {
+            _this.dragContact = null;
+            _this.onItemRemoved(contact);
+            _this.dragLeaveTimeout = null
+        }, 0);
+    },
+
+    onDrop: function(contact, ev) {
+        var jid = ev.dataTransfer.getData("text/xmpp-jid");
 
         if (!contact) {
             account.getOrCreateContact(jid, false, null, [this.model]);
@@ -168,7 +196,7 @@ _DECL_(ListGroupView, null, GroupView).prototype =
     }
 }
 
-function ListContactView(model, parentView)
+function ListContactView(model, parentView, virtual)
 {
     this.model = model;
     this.parentView = parentView;
@@ -182,7 +210,7 @@ function ListContactView(model, parentView)
     this.node = JSJaCBuilder.buildNode(this.doc,
       "richlistitem", {
           "xmlns": XULNS,
-          "class": "list-contact-view",
+          "class": "list-contact-view" + (virtual ? " virtual" : ""),
           "ondblclick": "this.model.onDblClick()",
           "draggable": true,
           "context": model instanceof MyResourcesContact ?
@@ -265,8 +293,16 @@ _DECL_(ListContactView, null, ContactView).prototype =
         this.statusText.setAttribute("value", this.model.presence.status || "");
     },
 
-    onDrop: function(ev) {
-      this.parentView.onDrop(ev);
+    onDrop: function(model, ev) {
+      this.parentView.onDrop(model, ev);
+    },
+
+    onDragOver: function(c) {
+      this.parentView.onDragOver(c);
+    },
+
+    onDragLeave: function(c) {
+      this.parentView.onDragLeave(c);
     }
 }
 
@@ -285,10 +321,16 @@ _DECL_(DragDropHandler).prototype =
             ev.dataTransfer.setData("text/plain", view.model.visibleName);
             ev.dataTransfer.effectAllowed = "copyMove";
             this.createDragImage(ev, view);
-        } else if (ev.type == "dragover") {
-            if (!ev.dataTransfer.types.contains("text/xmpp-jid"))
-                return;
 
+            return;
+        }
+
+        if (!ev.dataTransfer.types.contains("text/xmpp-jid"))
+            return;
+
+        var model = this.getModelForEv(ev);
+
+        if (ev.type == "dragover") {
             var l = view.root.containerNode._scrollbox;
             var r = l.getBoundingClientRect();
 
@@ -301,17 +343,31 @@ _DECL_(DragDropHandler).prototype =
             } else
                 this.scrollDir = 0;
 
-            ev.preventDefault();
+            if (view.onDragOver)
+                view.onDragOver(model);
         } else if (ev.type == "dragleave") {
             this.scrollDir = 0;
+            if (view.onDragLeave)
+                view.onDragLeave(model);
         } else if (ev.type == "drop") {
-            if (!ev.dataTransfer.types.contains("text/xmpp-jid"))
-                return;
-
             this.scrollDir = 0;
 
-            view.onDrop(ev);
+            if (view.onDragLeave)
+                view.onDragLeave(model);
+            view.onDrop(model, ev);
         }
+
+        ev.preventDefault();
+    },
+
+    getModelForEv: function(ev) {
+        var jid = ev.dataTransfer.getData("text/xmpp-jid");
+        var contact = account.getContactOrResource(jid);
+
+        if (!contact)
+            return account.getOrCreateContact(jid, false, null, [this.model]);
+
+        return contact;
     },
 
     animScroll: function() {
