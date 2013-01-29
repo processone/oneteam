@@ -57,6 +57,11 @@ _DECL_(ListRosterView, null, RosterView).prototype =
                 if (this.matchGroups.indexOf(removedData) >= 0 ?
                     this.negativeMatch : !this.negativeMatch)
                     this.onItemRemoved(removedData);
+    },
+
+    destroy: function() {
+        RosterView.prototype.destroy.call(this);
+        this.rootNode.removeChild(this.containerNode);
     }
 }
 
