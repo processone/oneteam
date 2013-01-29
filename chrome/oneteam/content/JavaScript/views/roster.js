@@ -76,7 +76,7 @@ _DECL_(RosterView, null, ContainerView).prototype =
     },
 
     destroy: function() {
-        this.model.unregisterView(this._regToken);
+        this._regToken.unregisterFromAll();
         ContainerView.prototype.destroy.call(this);
     }
 }
@@ -109,10 +109,10 @@ function GroupView(model, parentView)
 
     this._prefToken = new Callback(this.onPrefChange, this);
     prefManager.registerChangeCallback(this._prefToken, "chat.roster.sortbystatus");
+    this._regToken =
+    this.model.registerView(this.onModelUpdated, this, "contacts");
+    this.model.registerView(this.onModelUpdated, this, "availContacts", this._regToken);
 
-    this._bundle = new RegsBundle(this);
-    this._bundle.register(this.model, this.onModelUpdated, "contacts");
-    this._bundle.register(this.model, this.onAvailUpdated, "availContacts");
     this._matchingCount = 0;
 }
 
@@ -206,9 +206,8 @@ _DECL_(GroupView, null, ContainerView).prototype =
         if (this.animation)
             this.animation.stop();
 
-        this._bundle.unregister();
-
         prefManager.unregisterChangeCallback(this._prefToken, "chat.roster.sortbystatus");
+        this._regToken.unregisterFromAll();
 
         if (!this.items)
             return;
@@ -284,13 +283,12 @@ function ContactView(model, parentView)
     this._prefToken = new Callback(this.onPrefChange, this);
     prefManager.registerChangeCallback(this._prefToken, "chat.general.showavatars");
 
-    this._bundle = new RegsBundle(this);
-    this._bundle.register(this.model, this.onNameChange, "name");
-    this._bundle.register(this.model, this.onActiveResourceChange, "activeResource");
-    this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
-    this._bundle.register(this.model, this.onMsgsInQueueChanged, "msgsInQueue");
-    this._bundle.register(this.model, this.onAvatarChanged, "avatar");
-    this._bundle.register(this.model, this.onEventsChanged, "events");
+    this._regToken = this.model.registerView(this.onNameChange, this, "name");
+    this.model.registerView(this.onActiveResourceChange, this, "activeResource", this._regToken);
+    this.model.registerView(this.onMsgsInQueueChanged, this, "msgsInQueue", this._regToken);
+    this.model.registerView(this.onAvatarChanged, this, "avatar", this._regToken);
+    this.model.registerView(this.onEventsChanged, this, "events", this._regToken);
+    account.style.registerView(this.onModelUpdated, this, "defaultSet", this._regToken);
 
     this._matches = false;
 
@@ -324,10 +322,11 @@ _DECL_(ContactView).prototype =
     onActiveResourceChange: function()
     {
         if (this._activeResource)
-            this._bundle.unregisterFromModel(this._activeResource);
+            this._regToken.unregister(this._activeResource);
 
         if (this.model.activeResource)
-            this._bundle.register(this.model.activeResource, this.onModelUpdated, "presence");
+            this.model.activeResource.registerView(this.onModelUpdated, this,
+                                                   "presence", this._regToken);
 
         this.node.setAttribute("offlineContact", this.model.activeResource == null);
         this._activeResource = this.model.activeResource;
@@ -413,9 +412,9 @@ _DECL_(ContactView).prototype =
             clearInterval(this._blinkingTimeout);
         this._blinkingTimeout = null;
 
-        this._bundle.unregister();
 
         prefManager.unregisterChangeCallback(this._prefToken, "chat.general.showavatars");
+        this._regToken.unregisterFromAll();
 
         if (this._matches)
             this.parentView.onMatchingCountChanged(-1);
@@ -691,11 +690,9 @@ function ContactsListItemView(model, parentView, doc, flags)
 
     this.node.appendChild(this.label);
 
-    this._bundle = new RegsBundle(this);
-
     var field = this.parentView._getItemNameField(model);
     if (field)
-        this._bundle.register(this.model, this.onNameChange, field);
+        this._regToken = this.model.registerView(this.onNameChange, this, field);
 }
 
 _DECL_(ContactsListItemView).prototype =
@@ -719,7 +716,8 @@ _DECL_(ContactsListItemView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        this._bundle.unregister();
+        if (this._regToken)
+            this._regToken.unregister();
     }
 }
 

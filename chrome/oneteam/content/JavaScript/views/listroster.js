@@ -93,9 +93,10 @@ function ListGroupView(model, parentView)
     this._prefToken = new Callback(this.onPrefChange, this);
     prefManager.registerChangeCallback(this._prefToken, "chat.roster.sortbystatus");
 
-    this._bundle = new RegsBundle(this);
-    this._bundle.register(this.model, this.onModelUpdated, "contacts");
-    this._bundle.register(this.model, this.onAvailUpdated, "availContacts");
+    this._regToken =
+    this.model.registerView(this.onModelUpdated, this, "contacts");
+    this.model.registerView(this.onModelUpdated, this, "availContacts", this._regToken);
+
     this._matchingCount = 0;
 
     this.node.addEventListener("dragover", this.root.dragHandler, false);
@@ -255,14 +256,6 @@ function ListContactView(model, parentView, virtual)
     this._prefToken = new Callback(this.onPrefChange, this);
     prefManager.registerChangeCallback(this._prefToken, "chat.general.showavatars");
 
-    this._bundle = new RegsBundle(this);
-    this._bundle.register(this.model, this.onNameChange, "name");
-    this._bundle.register(this.model, this.onActiveResourceChange, "activeResource");
-    this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
-    this._bundle.register(this.model, this.onMsgsInQueueChanged, "msgsInQueue");
-    this._bundle.register(this.model, this.onAvatarChanged, "avatar");
-    this._bundle.register(this.model, this.onEventsChanged, "events");
-    this._bundle.register(this.model, this.onPresenceChanged, "presence");
 
     this._matches = false;
 
