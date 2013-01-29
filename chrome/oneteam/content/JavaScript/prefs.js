@@ -87,10 +87,12 @@ _DECL_(PrefManager, null, CallbacksList).prototype =
         var parts = value.split(/\./);
         var prefVal = this.getPref(value);
 
-        for (var i = value.length-1; i > 0; i--) {
+        for (var i = parts.length; i > 0; i--) {
             var branch = parts.slice(0, i).join(".");
+
             if (!this._hasCallbacks(branch))
                 continue;
+
 
             for (var c in this._iterateCallbacks(branch))
                 c.call(null, value, prefVal);
