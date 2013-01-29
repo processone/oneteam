@@ -135,9 +135,8 @@ function FileTransferView(model, parentView)
     this.node.model = this.model;
     this.node.view = this;
 
-    this._bundle = new RegsBundle(this);
-    this._bundle.register(this.model, this.onStateChange, "state");
-    this._bundle.register(this.model, this.onTransferProgress, "sent");
+    this._regToken = this.model.registerView(this.onStateChange, this, "state");
+    this.model.registerView(this.onTransferProgress, this, "sent", this._regToken);
 }
 
 _DECL_(FileTransferView).prototype =
@@ -213,6 +212,6 @@ _DECL_(FileTransferView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        this._bundle.unregister();
+        this._regToken.unregisterFromAll();
     }
 }

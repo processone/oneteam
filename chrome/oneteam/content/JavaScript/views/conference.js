@@ -338,11 +338,10 @@ function ConferenceMemberView(model, parentView, doc)
     this.tooltip = new ConferenceMemberTooltip(model, this.parentNode, doc);
     this.node.setAttribute("tooltip", this.tooltip.id);
 
-    this._bundle = new RegsBundle(this);
-    this._bundle.register(this.model, this.onNameChange, "name");
-    this._bundle.register(this.model, this.onModelUpdated, "presence");
-    this._bundle.register(this.model, this.onRoleChange, "role");
-    this._bundle.register(account.style, this.onModelUpdated, "defaultSet");
+    this._regToken = this.model.registerView(this.onNameChange, this, "name");
+    this.model.registerView(this.onModelUpdated, this, "presence", this._regToken);
+    this.model.registerView(this.onRoleChange, this, "role", this._regToken);
+    account.style.registerView(this.onModelUpdated, this, "defaultSet", this._regToken);
 
     this.onModelUpdated();
     this._oldRole = this.model.role;
@@ -384,7 +383,7 @@ _DECL_(ConferenceMemberView).prototype =
         if (this.node.parentNode)
             this.node.parentNode.removeChild(this.node);
 
-        this._bundle.unregister();
+        this._regToken.unregisterFromAll();
     }
 }
 

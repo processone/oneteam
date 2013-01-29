@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ["View", "ContainerView", "Model", "RegsBundle",
+var EXPORTED_SYMBOLS = ["View", "ContainerView", "Model",
                         "OnModelStateCall", "IsTrue", "modelPropTracer"];
 
 ML.importMod("utils.js");
@@ -173,39 +173,6 @@ function OnModelStateCall(model, prop, stateFun, fun)
 
 function IsTrue(model, prop) {
     return model[prop];
-}
-
-function RegsBundle(view)
-{
-    this._view = view;
-    this._tokens = [];
-}
-
-_DECL_(RegsBundle).prototype =
-{
-    register: function(model, method)
-    {
-        var args = Array.slice(arguments, 2);
-        args.unshift(method, this._view);
-
-        this._tokens.push([model, model.registerView.apply(model, args)]);
-    },
-
-    unregister: function()
-    {
-        for (var i = 0; i < this._tokens.length; i++)
-            this._tokens[i][0].unregisterView(this._tokens[i][1]);
-        this._tokens = [];
-    },
-
-    unregisterFromModel: function(model)
-    {
-        for (var i = this._tokens.length-1; i >= 0; i--)
-            if (this._tokens[i][0] == model) {
-                this._tokens[i][0].unregisterView(this._tokens[i][1]);
-                this._tokens.splice(i, 1);
-            }
-    }
 }
 
 function modelPropTracer(baseModel, baseProp, model, prop, reflect, extraOps) {

@@ -133,9 +133,8 @@ function GatewayToolbarButton(model, parentView)
     this.node.menuModel = this.model;
     this.node.view = this;
 
-    this._bundle = new RegsBundle(this);
-    this._bundle.register(this.model, this.onPresenceUpdated, "presence");
-    this._bundle.register(this.model, this.onNewItemChange, "newItem");
+    this._regToken = this.model.registerView(this.onPresenceUpdated, this, "presence");
+    this.model.registerView(this.onNewItemChange, this, "newItem", this._regToken);
 
     this.onNewItemChange();
 }
@@ -174,6 +173,6 @@ _DECL_(GatewayToolbarButton).prototype =
 
         this.parentView._updateVisibleItems(this, false);
 
-        this._bundle.unregister();
+        this._regToken.unregisterFromAll();
     }
 }

@@ -85,19 +85,20 @@
           //  windows
           var modelIsConference = !!(val && val.joinRoom);
 
-          this._regBundle.unregister();
+          if (this._regToken)
+            this._regToken.unregisterFromAll();
 
           this._model = val;
 
           if (val) {
-            this._regBundle.register(val, this.onNameChange, "visibleName");
+            this._regToken = val.registerView(this.onNameChange, this, "visibleName");
             if (modelIsConference) {
-              this._regBundle.register(val, this.onSubjectChanged, "subject");
-              this._regBundle.register(val, this.onMsgsInQueueChanged, "msgsInQueue");
+              val.registerView(this.onSubjectChanged, this, "subject", this._regToken);
+              val.registerView(this.onMsgsInQueueChanged, this, "msgsInQueue", this._regToken);
             } else {
-              this._regBundle.register(val, this.onPresenceChange, "presence");
-              this._regBundle.register(val, this.onMsgsInQueueChanged, "msgsInQueue");
-              this._regBundle.register(val, this.onAvatarChanged, "avatar");
+              val.registerView(this.onPresenceChange, this, "presence", this._regToken);
+              val.registerView(this.onMsgsInQueueChanged, this, "msgsInQueue", this._regToken);
+              val.registerView(this.onAvatarChanged, this, "avatar", this._regToken);
             }
           }
 
@@ -133,8 +134,6 @@
 
           while (!root.account)
             root = root.opener;
-
-          this._regBundle = new root.RegsBundle(this);
 
           this._unavailablePresence = new root.Presence("unavailable");
 

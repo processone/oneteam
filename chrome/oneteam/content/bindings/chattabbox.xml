@@ -348,19 +348,18 @@
           this._onNameChange();
           this._onPeerChatStateChange();
 
-          this._regBundle.unregister();
+          if (this._regToken)
+            this._regToken.unregisterFromAll();
 
           if (val) {
-            this._regBundle.register(val.contact, this._onNameChange, "visibleName");
-            this._regBundle.register(val, this._onUnseenCountChange, "unseenCount");
-            this._regBundle.register(val, this._onPeerChatStateChange, "peerChatState");
+            this._regToken = val.contact.registerView(this._onNameChange, this, "visibleName");
+            val.registerView(this._onUnseenCountChange, this, "unseenCount", this._regToken);
+            val.registerView(this._onPeerChatStateChange, this, "peerChatState", this._regToken);
           }
         ]]></setter>
       </property>
 
       <constructor><![CDATA[
-        this._regBundle = new RegsBundle(this);
-
         this._chatpane = document.getAnonymousElementByAttribute(this, "anonid", "chatpane");
         this._chatpane.focusHandler = this._tabbox;
 
@@ -375,7 +374,8 @@
 
       <method name="destroy">
         <body><![CDATA[
-          this._regBundle.unregister();
+          if (this._regToken)
+            this._regToken.unregisterFromAll();
           this._chatpane.model = null;
         ]]></body>
       </method>
