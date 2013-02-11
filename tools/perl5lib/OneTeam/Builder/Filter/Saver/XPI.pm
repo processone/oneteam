@@ -43,7 +43,7 @@ sub path_convert {
 
 sub finalize {
     my $self = shift;
-    my $tmpdir = catdir(tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => 1), "OneTeam");
+    my $tmpdir = catdir(tempdir('otXXXXXX', TMPDIR => 1, CLEANUP => ), "OneTeam");
     my $tmppfxdir = $self->_prefix ? catdir($tmpdir, $self->_prefix) : $tmpdir;
     my $chromedir = catdir($tmppfxdir, "chrome");
 
@@ -62,7 +62,7 @@ sub _make_package {
     my ($self, $tmpdir, $tmppfxdir) = @_;
     my $cwd = getcwd();
 
-	chdir("$self->{outputdir}/chrome");
+    chdir($tmppfxdir);
     system(qw(zip -q -9 -r), catfile($self->{topdir}, $self->_output_filename), ".");
     chdir($cwd);
 }
@@ -77,6 +77,7 @@ sub _prepare_files_for_packing {
             $d, qw(default.ico default.xpm));
 
     my $cwd = getcwd();
+
     chdir("$self->{outputdir}/chrome");
     system(qw(zip -q -0 -r), catfile($chromedir, 'oneteam.jar'), ".");
     chdir($cwd);
