@@ -87,7 +87,7 @@ function setPrototype(obj, oldProto, newProto)
     if (!newProto)
         return oldProto;
 
-    for (i in newProto)
+    for each (i in Object.keys(newProto))
         if (newProto.hasOwnProperty(i)) {
             if ((g = newProto.__lookupGetter__(i)))
                 oldProto.__defineGetter__(i, g);
@@ -146,7 +146,7 @@ function mixProto(cons, exclusions, aliases, objProto, mixedProps,
     proto = cons.prototype;
     name = cons.name;
 
-    for (i in proto) {
+    for each (i in Object.keys(proto)) {
         j = aliases[i] == null ? i : aliases[i];
         if (i in exclusions || !proto.hasOwnProperty(i))
             continue;
