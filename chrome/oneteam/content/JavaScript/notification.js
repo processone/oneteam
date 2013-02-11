@@ -548,43 +548,53 @@ _DECL_(NotificationScheme).prototype =
 
     generateSettings: function(contact, doc, instantApply) {
         default xml namespace = new Namespace(XULNS);
-        var settings = E4XtoDOM(
-          <grid id="notifications">
-            <columns>
-              <column flex="3"/>
-              <column flex="1"/>
-              <column flex="1"/>
-              <column flex="1"/>
-              <column flex="1"/>
-            </columns>
-          </grid>
-        , doc);
+        var settings = JSJaCBuilder.buildNode(document,
+            "grid", {id: "notifications", xmlns: XULNS},
+            [
+                ["columns", {}, [
+                    ["column", {flex: "3"}],
+                    ["column", {flex: "1"}],
+                    ["column", {flex: "1"}],
+                    ["column", {flex: "1"}],
+                    ["column", {flex: "1"}],
+                ]]
+            ]);
+
+        var rows = [
+            ["vbox", {}, [
+                ["spacer", {flex: "1"}],
+                ["hbox", {}, [
+                    ["spacer", {flex: "1"}],
+                    ["button", {oncommand: "account.notificationScheme.resetSettings"+
+                            "(document.getElementById('notifications'))"}, [
+                        ["image", {"class": "reset"}],
+                        _("Reset Settings")
+                    ]],
+                    ["spacer", {flex: "1"}]
+                ]],
+                ["spacer", {flex: "1"}]
+            ]]
+        ];
 
         // COLUMN HEADERS
-        var e4x = <vbox><spacer flex="1"/><hbox><spacer flex="1"/>
-                    <button oncommand={"account.notificationScheme.resetSettings"
-                                      +"(document.getElementById('notifications'))"}>
-                      <image class="reset"/>
-                      {_("Reset Settings")}
-                    </button>
-                  <spacer flex="1"/></hbox><spacer flex="1"/></vbox>;
-
         var headers = [_("Display message in chat pane"),
                        _("Display notification bubble"),
                        _("Play sound"),
                        contact ? _("Reset to global settings") : _("Reset to default settings")];
 
         for (var i = 0; i < headers.length; i++) {
-            e4x +=
-                <vbox align="center">
-                  <vbox class="col-head">
-                    <hbox align="center">
-                      <vbox>{headers[i]}</vbox>
-                    </hbox>
-                  </vbox>
-                </vbox>;
+            rows.push(["vbox", {align: "center"}, [
+                ["vbox", {"class": "col-head"}, [
+                    ["hbox", {align: "center"}, [
+                        ["vbox", {}, [headers[i]]]
+                    ]]
+                ]]
+            ]]);
         }
-        var rows = E4XtoDOM(<rows><row>{e4x}</row></rows>, doc);
+        rows = JSJaCBuilder.buildNode(document,
+            "rows", {xmlns: XULNS}, [
+                ["row", {}, rows]
+            ]);
         // COLUMN HEADERS DONE
 
         var notifs = ["showInChatpane", "showAlert", "playSound"];
@@ -592,14 +602,16 @@ _DECL_(NotificationScheme).prototype =
 
         // PREF ROWS
         for (var category in this.providersCategories) {
-            var rowsGroup = E4XtoDOM(
-              <rows class="collapsableRowsGroup">
-                <hbox onclick="this.parentNode.setAttribute('collapse', this.parentNode.getAttribute('collapse') == 'true' ? 'false' : 'true')">
-                  <image/>
-                  <label value={this.providersCategories[category][0]}/>
-                </hbox>
-              </rows>
-            , doc);
+            var rowsGroup = JSJaCBuilder.buildNode(document,
+                "rows", {"class": "collapsableRowsGroup", xmlns: XULNS}, [
+                    ["hbox", {onclick: "this.parentNode.setAttribute"+
+                            "('collapse', this.parentNode.getAttribute"+
+                            "('collapse') == 'true' ? 'false' : 'true')"}, [
+                        ["image"],
+                        ["label", {value: this.providersCategories[category][0]}]
+                    ]]
+                ]);
+
             rows.appendChild(rowsGroup);
 
             for (var i = 1; i < this.providersCategories[category].length; i++) {
@@ -607,22 +619,23 @@ _DECL_(NotificationScheme).prototype =
                 var provider = this.findProvider(providerId, contact);
 
                 if (!contact || provider.contactEvent) {
-                    var row = E4XtoDOM(
-                      <row>
-                        <label crop="end" value={provider.message}/>
-                        <vbox align="center">
-                          <checkbox checked={provider["showInChatpane"]}/>
-                        </vbox>
-                        <vbox align="center">
-                          <checkbox checked={provider["showAlert"]}/>
-                        </vbox>
-                        <vbox align="center">
-                          <checkbox checked={provider["playSound"]}/>
-                        </vbox>
-                        <vbox align="center">
-                          <image class="reset" onclick="account.notificationScheme.resetRow(this.parentNode.parentNode)"/>
-                        </vbox>
-                      </row>, doc);
+                    var row = JSJaCBuilder.buildNode(document,
+                        "row", {xmlns: XULNS}, [
+                            ["label", {crop: "end", value: provider.message}],
+                            ["vbox", {align: "center"}, [
+                                ["checkbox", {checked: provider["showInChatpane"]}]
+                            ]],
+                            ["vbox", {align: "center"}, [
+                                ["checkbox", {checked: provider["showAlert"]}]
+                            ]],
+                            ["vbox", {align: "center"}, [
+                                ["checkbox", {checked: provider["playSound"]}]
+                            ]],
+                            ["vbox", {align: "center"}, [
+                                ["image", {"class": "reset",
+                                 onclick: "account.notificationScheme.resetRow(this.parentNode.parentNode)"}]
+                            ]]
+                        ]);
 
                     row.providerId = providerId;
                     row.contactJID = contactJID;
@@ -643,7 +656,7 @@ _DECL_(NotificationScheme).prototype =
         doc.defaultView.setTimeout(function() {
             var heads = doc.getElementsByClassName("col-head");
             for (var i = 0; i < heads.length; i++)
-                heads[i].width = heads[i].childNodes[1].boxObject.height;
+                heads[i].width = heads[i].childNodes[0].boxObject.height;
         }, 0); // to have column width adjusted to column heads
 
         return settings;
