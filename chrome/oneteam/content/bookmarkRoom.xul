@@ -33,7 +33,7 @@
         input.name.value   = newName(conference.jid.node);
         input.room.value   = conference.jid.node;
         input.server.value = conference.jid.domain;
-        input.nick.value   = conference.myResourceJID.resource || "";
+        input.nick.value   = conference.myResourceJID && conference.myResourceJID.resource || "";
         input.pass.value   = conference._password || "";
         input.room.disabled = input.room.previousSibling.disabled
           = input.server.disabled = input.server.previousSibling.disabled = true;
