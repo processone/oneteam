@@ -486,7 +486,7 @@
   </toolbox>
 
   <vbox flex="1">
-    <html:iframe flex="1" id="output"/>
+    <iframe flex="1" id="output"/>
     <textbox type="resizable" id="input" multiline="true"/>
   </vbox>
 </window>
