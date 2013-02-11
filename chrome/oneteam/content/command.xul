@@ -47,6 +47,8 @@
 
     input = document.getElementById("input");
 
+    input.history = account.cache.getValue("command-history") || [];
+
     var link = output.contentDocument.createElement("link");
     link.setAttribute("href", document.location.href.replace(/content\/.*?$/,
       "skin/command/content.css"));
@@ -58,8 +60,18 @@
     input._send = function(withEnter) {
       if (!withEnter)
         return null;
+
       var val = this._input.value.replace(/\n$/, '');
+
+      if (!val)
+        return "";
+
       exec(val);
+
+      setTimeout(function() {
+        account.cache.setValue("command-history", input.history.slice(-50));
+      }, 0)
+
       return val;
     }
 

@@ -31,12 +31,17 @@
       <property name="selectionEnd" onget="return this._input.selectionEnd"
                 onset="return this._input.selectionEnd = val"/>
 
+      <property name="history" onget="return this._history"
+                onset="this._history = val; this._historyPosition = val.length-1"/>
+
       <constructor><![CDATA[
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
         this._inputClone = document.getAnonymousElementByAttribute(this, "id", "_inputClone");
 
         this._history = [];
         this._historyPosition = 0;
+
+        recoverSetters(this);
 
         var me = this;
         this._input.addEventListener("keypress",
