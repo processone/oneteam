@@ -98,7 +98,7 @@ function ListGroupView(model, parentView)
 
     this._regToken =
     this.model.registerView(this.onModelUpdated, this, "contacts");
-    this.model.registerView(this.onModelUpdated, this, "availContacts", this._regToken);
+    this.model.registerView(this.onAvailUpdated, this, "availContacts", this._regToken);
 
     prefManager.registerChangeCallback(new Callback(this.onPrefChange, this),
                                        "chat.roster.sortbystatus", false,
