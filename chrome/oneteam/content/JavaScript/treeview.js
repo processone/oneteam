@@ -57,7 +57,7 @@ TreeView.prototype = {
     },
 
     getCellText : function(row, column) {
-        if (row > this._results.length)
+        if (row >= this._results.length)
             return "ERROR";
 
         if (this.sortColumn < 0)
