@@ -133,7 +133,11 @@
 
         if ("length" in value && typeof(value.length) == "number") {
           if (!topLevel)
-            return "<span class='value-array'>[<span class='value-continue'>...</span>]</span>";
+            if (value.length)
+              return "<span class='value-array'>[<span class='value-continue'>...</span>]</span>";
+            else
+              return "<span class='value-array'>[]</span>";
+
           var res = "<span class='value-array'>[";
           for (var i = 0; i < value.length; i++)
             if (i > 8) {
