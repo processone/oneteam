@@ -755,25 +755,21 @@ function findMax(iterator, sortFun, predicateFun) {
     return max;
 }
 
-function evalInWindow(expr, win, scope) {
-    var val;
-    if (!win || win.closed)
-        win = window;
+function evalInWindow(expr, win, scope, sandbox) {
+    if (!sandbox) {
+        sandbox = Components.utils.Sandbox(win, {sandboxPrototype: win});
 
-    if (win.wrappedJSObject)
-        win = win.wrappedJSObject;
+        for (var i in scope)
+            sandbox[i] = scope[i];
+    }
 
     try {
-        win.__CONSOLE_ARGS__ = {
-            scope: scope || {},
-            expr: expr
+        return {
+          result: Components.utils.evalInSandbox(expr, sandbox, "1.8"),
+          sandbox: sandbox
         };
-
-        val = eval("with(win){with(win.__CONSOLE_ARGS__.scope){(function(){"+
-                       "return eval(expr)}).call(window)}}");
-        return {result: val};
     } catch (ex) {
-        return {exception: ex}
+        return {exception: ex, sandbox: sandbox}
     }
 }
 
@@ -852,7 +848,10 @@ function enumerateMatchingProps(value, pattern) {
                 r("toFixed", "toExponential", "toPrecision");
                 break;
         }
-        for (var i in value)
+        var value2 = "__iterator__" in value ?
+            {__iterator__: null, __proto__: value} : value;
+
+        for (var i in value2)
             t(i);
 
         value = "__proto__" in value ? value.__proto__ : undefined;

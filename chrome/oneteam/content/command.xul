@@ -25,6 +25,7 @@
   ML.importMod("services/remoteDebug.js");
 
   var [remoteJID] = window.arguments;
+  var sandbox;
 
   var input;
   var dumpValues = [];
@@ -332,10 +333,11 @@
       remoteDebug.completions(remoteJID, expr || "this", indexPrefix,
                               doFindCompletions, expr, indexPrefix, prefixLength,
                               prevEntry, cursPos, suffix, str);
-    } else
-      doFindCompletions(evalInWindow(expr || "this", window.opener, extraProps),
-                        expr, indexPrefix, prefixLength, prevEntry, cursPos,
+    } else {
+      var res = evalInWindow(expr || "this", window.opener, extraProps, sandbox);
+      doFindCompletions(res, expr, indexPrefix, prefixLength, prevEntry, cursPos,
                         suffix, str);
+    }
   }
 
   function doFindCompletions(val, expr, indexPrefix, prefixLength, prevEntry,
@@ -415,8 +417,11 @@
 
     if (local == expr && remoteJID)
       remoteDebug.eval(remoteJID, expr, showExecResult, expr, true);
-    else
-      showExecResult(evalInWindow(local, window.opener, extraProps), expr);
+    else {
+      var res = evalInWindow(local, window.opener, extraProps, sandbox);
+      sandbox = res.sandbox;
+      showExecResult(res, expr);
+    }
   }
 
   function appendToOutput(val, expr, flags) {
