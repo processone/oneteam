@@ -230,11 +230,9 @@ var navigator = {
 
 {
     let global = getGlobalObjectFor(this);
-    let di = Components.classesByID["{3a9cd622-264d-11d4-ba06-0060b0fc76dd}"].
-        createInstance(Components.interfaces.nsIDOMDOMImplementation);
+    let dp = new DOMParser();
 
-    global.document = di.createDocument(null, null, null);
-
+    global.document = dp.parseFromString("<a/>", "text/xml");
     global.Window = Components.interfaces.nsIDOMWindow;
     global.Document = Components.interfaces.nsIDOMDocument;
     global.XMLDocument = Components.interfaces.nsIDOMXMLDocument;
