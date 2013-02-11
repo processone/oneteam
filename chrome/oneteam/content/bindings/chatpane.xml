@@ -695,27 +695,27 @@
                 msgEl.setAttribute("starts-chunk", "true");
               }
 
-              if (msg.contact)
-                msgEl.appendChild(E4XtoDOM(
-                  <div class="avatar"
-                    style={"background-image: url("+(msg.contact.avatar || defaultHtmlAvatar)+")"}/>
-                , doc));
+              msgEl.appendChild(JSJaCBuilder.buildNode(doc,
+                  "div", {
+                    "class": "avatar",
+                    style: "background-image: url("+(msg.contact.avatar || defaultHtmlAvatar)+")"
+                  }
+              ));
 
-              msgEl.appendChild(E4XtoDOM(
-                msg.isSystemMessage ?
-                <span class="header">
-                  <span class="to-copy-paste">{"["}</span>
-                  <span class="date">{readableTimestamp(msg.time)}</span>
-                  <span class="to-copy-paste">] </span>
-                </span> :
-                <span class="header">
-                  <span class="to-copy-paste">[</span>
-                  <span class="date">{readableTimestamp(msg.time)}</span>
-                  <span class="to-copy-paste">] </span>
-                  <span class="author">{msg.nick}</span>
-                  <span class="to-copy-paste">: </span>
-                </span>
-              , doc));
+              msgEl.appendChild(JSJaCBuilder.buildNode(doc,
+                "span", {"class": "header"},
+                (msg.isSystemMessage ? [
+                  ["span", {"class": "to-copy-paste"}, ["["]],
+                  ["span", {"class": "date"}, [readableTimestamp(msg.time)]],
+                  ["span", {"class": "to-copy-paste"}, ["] "]],
+                ] : [
+                  ["span", {"class": "to-copy-paste"}, ["["]],
+                  ["span", {"class": "date"}, [readableTimestamp(msg.time)]],
+                  ["span", {"class": "to-copy-paste"}, ["] "]],
+                  ["span", {"class": "author"}, [msg.nick||""]],
+                  ["span", {"class": "to-copy-paste"}, [": "]]
+                ])
+              ));
 
               var e = doc.createElement("span");
               e.setAttribute("class", "body");

@@ -216,12 +216,16 @@
           var fileSize = this.myAvatars[hash];
           var src = account.cache.getValue("avatar-"+hash, true);
 
-          var el = E4XtoDOM(
-            <vbox class="avatarIcon" xmlns={XULNS} align="center" style="1px solid blue">
-              <avatar side="48" squareBordered="true" context="image-contextmenu"/>
-              <label value={ppFileSize(this.myAvatars[hash])}/>
-            </vbox>
-          , document);
+          var el = JSJaCBuilder.buildNode(document,
+              "vbox", {
+                "class": "avatarIcon",
+                xmlns: XULNS,
+                align: "center",
+                style: "1px solid blue"
+              }, [
+                ["avatar", {side: 48, squareBordered: "true", context: "image-contextmenu"}],
+                ["label", {value: ppFileSize(this.myAvatars[hash])}]
+              ]);
           el.hash = hash;
           el.getElementsByTagName("avatar")[0].src = src;
           el.menuModel = el;

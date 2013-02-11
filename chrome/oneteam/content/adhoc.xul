@@ -116,20 +116,23 @@
     function sendFormResults(action, sessionid, form)
     {
       var command = document.getElementById("commands").value;
-      var response = <command xmlns="http://jabber.org/protocol/commands" node={command}/>
+      var response = ["command", {
+        xmlns: "http://jabber.org/protocol/commands",
+        node: command
+      }, []];
 
       if (action)
-        response.@action = action;
+        response[1].action = action;
       if (sessionid)
-        response.@sessionid = sessionid;
+        response[1].sessionid = sessionid;
       if (form)
-        response.* += buildResponseDataFormFromXUL(form);
+        response[2] = buildResponseDataFormFromXUL(form);
 
       servicesManager.sendIq({
         id: id,
         to: contact.jid,
         type: "set",
-        e4x: response
+        domBuilder: response
       }, onForm);
     }
 
