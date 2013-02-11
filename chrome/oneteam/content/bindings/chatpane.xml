@@ -13,7 +13,7 @@
     <content>
       <xul:tooltip id="mozmill-tooltip" onpopupshowing="return fillTooltip(document.tooltipNode, this)"/>
       <xul:hbox flex="1">
-        <xul:iframe src="data:text/html;base64,PCFET0NUWVBFIEhUTUw+PGh0bWw+PGJvZHk+PC9ib2R5PjwvaHRtbD4K" id="output" flex="1" type="content" tooltip="mozmill-tooltip"/>
+        <xul:iframe src="data:text/html;base64,PCFET0NUWVBFIEhUTUw+PGh0bWw+PGhlYWQ+PG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0L2h0bWw7Y2hhcnNldD11dGYtOCIgLz48L2hlYWQ+PGJvZHk+PC9ib2R5PjwvaHRtbD4K" id="output" flex="1" type="content" tooltip="mozmill-tooltip"/>
         <xul:stack id="markersContainer">
           <xul:vbox class="marker-arrow"/>
         </xul:stack>
