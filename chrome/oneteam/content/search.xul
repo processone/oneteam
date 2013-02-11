@@ -155,11 +155,57 @@
 
           treeView.addValue(value);
         }
+        resizeColumns(treeView);
       } else {
         resultsDeck.selectedIndex = 2;
         return;
       }
       resultsDeck.selectedIndex = 1;
+    }
+
+    function resizeColumns(tree) {
+      var cropped = [];
+      var bo = tree._tree;
+
+      for (var i = 0; i < bo.columns.length; i++) {
+        var col = bo.columns[i];
+        var rowsCropped = {};
+        var hasCropped = false;
+
+        for (var j = 0; j < tree.rowCount; j++)
+          if (bo.isCellCropped(j, col)) {
+            rowsCropped[j] = true;
+            hasCropped = true;
+          }
+
+        var min = col.element.scrollWidth, max = 0
+        var cur = min;
+
+        while (hasCropped || (max > min && max - min > 20)) {
+          if (!max)
+            cur = cur + 100;
+          else
+            cur = min + (max-min)/2;
+          col.element.width = cur;
+          col.element.scrollWidth;
+
+          hasCropped = false;
+          var newRowsCropped = {};
+
+          for (var r in rowsCropped)
+            if (bo.isCellCropped(r, col)) {
+              newRowsCropped[r] = true;
+              hasCropped = true;
+            }
+
+          if (hasCropped) {
+            rowsCropped = newRowsCropped;
+            min = cur;
+          } else {
+            max = cur;
+          }
+        }
+      }
     }
 
     function selectionUpdated(tree) {
@@ -214,7 +260,7 @@
           <treecols/>
           <treechildren/>
         </tree>
-          <spacer/>
+        <spacer/>
         <hbox id="itemButtons">
           <spacer flex="1"/>
           <button id="showVCard" label="_('Show Contact Details')" oncommand="showVCard()" disabled="true"/>
