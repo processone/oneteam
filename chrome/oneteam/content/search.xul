@@ -132,9 +132,12 @@
           getElementsByTagNameNS("jabber:x:data", "field");
 
         for (var i = 0; i < labelFields.length; i++) {
-          if (tree.firstChild.firstChild)
-            tree.firstChild.appendChild(document.createElement("splitter")).
-              setAttribute("class", "tree-splitter");
+          if (tree.firstChild.firstChild) {
+            var splitter = document.createElement("splitter");
+            splitter.setAttribute("class", "tree-splitter");
+            splitter.setAttribute("resizeafter", "grow");
+            tree.firstChild.appendChild(splitter);
+          }
 
           var treecol = document.createElement("treecol");
           treecol.setAttribute("label", labelFields[i].getAttribute("label"));
