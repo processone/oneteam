@@ -450,6 +450,15 @@ _DECL_(Account, null, Model, DiscoItem, vCardDataAccessor).prototype =
         openDialogUniq("ot:disco", "chrome://oneteam/content/disco.xul", "chrome,centerscreen,dialog=no");
     },
 
+    showConferencesBrowser: function(server, selectedFun) {
+      if (!server)
+        server = account.defaultConferenceServer;
+
+      if (server)
+        openDialogUniq("ot:roomsBrowser", "chrome://oneteam/content/roomsBrowser.xul",
+                       "chrome,centerscreen", server, selectedFun);
+    },
+
     showSearchUsers: function() {
         var items = account.getDiscoItemsByFeature("jabber:iq:search", false);
         if (!items || !items.length)

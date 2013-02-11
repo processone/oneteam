@@ -3,6 +3,7 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/content/bindings/bindings.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam/skin/dialog.css" type="text/css"?>
+<?xml-stylesheet href="chrome://oneteam/skin/joinroom/joinroom.css" type="text/css"?>
 <?xml-stylesheet href="chrome://oneteam-branding/locale/branding.css" type="text/css"?>
 
 <?xul-overlay href="chrome://oneteam/content/overlays/bookmarkForm.xul"?>
@@ -27,6 +28,7 @@
 
     var conference = window.arguments && window.arguments[0];
     var conf;
+    var input = {};
 
     function onLoad() {
       populateBookmarks();
@@ -53,6 +55,17 @@
         input.nick.value = prefManager.getPref('chat.muc.nickname') || account.myJID.node;
         conference = null;
       }
+    }
+
+    function lookupRooms() {
+      account.showConferencesBrowser(input.server.value, fillFromBrowser);
+    }
+
+    function fillFromBrowser(jid, bookmark) {
+      input.room.value = jid.node;
+      input.server.value = jid.domain;
+      input.bookmark.checked = !!bookmark;
+      updateBookmarkUIState();
     }
 
     function joinRoom() {
@@ -83,6 +96,10 @@
       }
       conf = null;
       window.close();
+    }
+
+    function updateBookmarkUIState() {
+      input.autoJoin.disabled = input.name.disabled = !input.bookmark.checked
     }
 
     var backup = null;
@@ -138,8 +155,11 @@
 
       <row align="center">
         <label value="_('Server:')" control="server"/>
-        <textbox id="server" oninput="autocomplete()"
-                 type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
+        <hbox>
+          <textbox id="server" oninput="autocomplete()" flex="1"
+                   type="verifiable" regex="^(?:\w(?:[\w-]*\w)?\.)*[^\W\d](?:[\w-]*\w)?$"/>
+          <button class="search-action" oncommand="lookupRooms()"/>
+        </hbox>
       </row>
 
       <row align="center">
@@ -163,7 +183,7 @@
 
   <hbox>
     <checkbox label="_('Bookmark this room as')" id="bookmark"
-            oncommand="input.autoJoin.disabled = input.name.disabled = !this.checked"/>
+            oncommand="updateBookmarkUIState()"/>
     <textbox type="verifiable" condition="checkName()" flex="1" id="name" disabled="true"/>
   </hbox>
   <checkbox style="margin-left: 2em" label="_('Always join this room at startup')" id="autoJoin" disabled="true"/>

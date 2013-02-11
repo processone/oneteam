@@ -1,0 +1,29 @@
+button.join-action, button.bookmark-action, button.search-action {
+  -moz-binding: url(chrome://global/content/bindings/button.xml#button-image);
+  min-width: 0;
+  width: 32px;
+  height: 32px;
+  -moz-box-align: center;
+  -moz-box-pack: center;
+}
+
+button.join-action {
+  list-style-image: url(../disco/imgs/join-conference.png);
+}
+
+button.bookmark-action {
+  list-style-image: url(../chatpane/imgs/star.png);
+}
+
+button.search-action {
+  list-style-image: url(../disco/imgs/search.png);
+}
+
+.throbber {
+  list-style-image: url(chrome://global/skin/icons/loading_16.png);
+}
+
+.top-header {
+  margin-left: 28px;
+  font-weight: bold;
+}
