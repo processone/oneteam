@@ -2407,7 +2407,7 @@
             var st = this._output._selectedThread;
 
             if (st) {
-              var thread = st.age < 0 ?
+              thread = st.age < 0 ?
                 null : this._output._threadingDriver.threadsByAge[st];
 
               if (thread != st) {
@@ -2426,7 +2426,7 @@
         <parameter name="str"/>
         <body><![CDATA[
           if (!this.completionEngine)
-            return;
+            return null;
           var res = this.completionEngine.complete(str);
           if (res == null)
             this._input._blink();
