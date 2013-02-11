@@ -429,6 +429,13 @@ _DECL_(MessagesThread, Model).prototype =
         this.modelUpdated("messages", {added: [msg]});
         account.historyMgr.addMessage(msg);
 
+        var autoOpen = prefManager.getPref("chat.messages.autoopen");
+          if (autoOpen && account.currentPresence.isAvailable)
+            autoOpen = prefManager.getPref("chat.messages.autoopenwhenaway");
+
+        if (autoOpen)
+          this.openChatTab();
+
         msg._canceler = new NotificationsCanceler();
         var callback = new Callback(function() {
             if (!this._canceler.cancel())
@@ -448,7 +455,8 @@ _DECL_(MessagesThread, Model).prototype =
             this.modelUpdated("unseenCount", {diff: 1});
         }
 
-        if (this.messages.length > len && !msg.isSystemMessage && !msg.isMucMessage)
+        if (!autoOpen && this.messages.length > len &&
+            !msg.isSystemMessage && !msg.isMucMessage)
             msg._canceler.add = account.addEvent(msg.contact.jid, "message",
                                                  _xml("You have new message from <b>{0}</b>",
                                                       msg.contact.visibleName),

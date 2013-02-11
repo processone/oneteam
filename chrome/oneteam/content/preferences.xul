@@ -73,6 +73,10 @@
       prevType = el.value;
     }
 
+    function updateAutoOpen(el) {
+      el.nextSibling.disabled = !el.checked;
+    }
+
     function saveUpdatePrefs() {
 // #ifndef XPI
       var val = document.getElementById("update_channel_selector").value;
@@ -169,6 +173,8 @@
       var settings = account.notificationScheme.generateSettings(null, document,
                              document.documentElement.instantApply);
       document.getElementById("advanced").appendChild(settings);
+
+      updateAutoOpen(document.getElementById("open-on-new-message"));
     }
 
   ]]></script>
@@ -329,6 +335,10 @@
   </prefpane>
 
   <prefpane id="advanced" label="_('Advanced')" onpaneload="initAdvancedPane()">
+    <preferences id="advanced-preferences">
+      <preference id="open-new-messages" name="chat.messages.autoopen" type="bool"/>
+      <preference id="open-new-messages-when-away" name="chat.messages.autoopenwhenaway" type="bool"/>
+    </preferences>
     <!-- #ifndef XPI -->
     <label class="title" value="_('Software updates')"/>
     <hbox class="entry">
@@ -343,7 +353,12 @@
     </hbox>
     <spacer/>
     <!-- #endif -->
-    <label class="title" value="_('Notification global settings')"/>
+    <label class="title" value="_('Message events')"/>
+    <checkbox label="_('Open chat window on new message')" id="open-on-new-message"
+              preference="open-new-messages" oncommand="updateAutoOpen(this)"/>
+    <checkbox label="_('Open chat window on new message when away')" preference="open-new-messages-when-away"/>
+    <spacer/>
+    <label class="title" value="_('Global notifications settings')"/>
   </prefpane>
 
 </prefwindow>

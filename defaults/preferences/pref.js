@@ -34,6 +34,9 @@ pref("chat.general.keepproperties", false);
 pref("chat.general.iconset", "OneTeam");
 pref("chat.general.smilesset", "OneTeam");
 
+pref("chat.messages.autoopen", false);
+pref("chat.messages.autoopenwhenaway", false);
+
 pref("chat.messages.colors", "#ff0000,#6978a3,#46a,#c4d,#3b3,#fa4,#79c,#a7a,#4ca,#c66,#aaa,#ca0,#770,#5cc");
 
 pref("chat.editor.font", "serif");

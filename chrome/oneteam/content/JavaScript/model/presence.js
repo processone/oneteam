@@ -121,6 +121,10 @@ _DECL_(Presence, null, Comparator).prototype =
         return this.show in this._subscriptions;
     },
 
+    get isAvailable() {
+      return this.show == "available" || this.show == "chat"
+    },
+
     get showAsNumber() {
         return this._showValues[this.show] || 5;
     },
