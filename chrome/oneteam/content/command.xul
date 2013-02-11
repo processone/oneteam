@@ -181,7 +181,11 @@
           return "<span class='value-function'>function(){<span class='value-continue'>...</span>}</span>"
         return "<span class='value-function'>"+indent(value.toString())+"</span>";
         break;
+      case "undefined":
+        return "<span class='value-object'>undefined</span>";
+        break;
     }
+    return "";
   }
 
   function extractExpr(str, suffix) {
