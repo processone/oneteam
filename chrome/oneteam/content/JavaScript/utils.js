@@ -1045,7 +1045,9 @@ var Animator = {
         },
 
         handleEvent: function(ev) {
-            this.curTime = ev.timeStamp - this._timeStart;
+            var timeStamp = ev.timeStamp ? ev.timeStamp : ev;
+
+            this.curTime = timeStamp - this._timeStart;
             this._doStep();
         },
 
@@ -1078,8 +1080,11 @@ var Animator = {
                 return;
             }
 
-            if (this._win)
-                this._win.mozRequestAnimationFrame();
+            if (this._win) {
+                if (!this._callback)
+                    this._callback = new Callback(this.handleEvent, this);
+                this._win.mozRequestAnimationFrame(this._callback);
+            }
         }
     },
 
