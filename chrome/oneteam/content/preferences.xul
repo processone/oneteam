@@ -177,6 +177,11 @@
       updateAutoOpen(document.getElementById("open-on-new-message"));
     }
 
+    function initStatusPane() {
+      updateAway(document.getElementById("autoAwayCheckbox"))
+      updateAway(document.getElementById("autoXACheckbox"))
+    }
+
   ]]></script>
 
   <group id="macMenu"/>
@@ -271,7 +276,7 @@
     </grid>
   </prefpane>
 
-  <prefpane id="status" label="_('Status')">
+  <prefpane id="status" label="_('Status')" onpaneload="initStatusPane()">
     <preferences id="status-preferences">
       <preference id="autoaway" name="chat.status.autoaway" type="bool"/>
       <preference id="autoawaytime" name="chat.status.autoaway.time" type="int"/>
@@ -288,7 +293,8 @@
       </columns>
       <rows>
         <row>
-          <checkbox label="_('Automatically set status to \'away\' after')" id="autoAwayCheckbox"
+          <checkbox label="_('Automatically set status to \'away\' after')"
+                    id="autoAwayCheckbox"
                     oncommand="updateAway(this)" preference="autoaway"/>
           <textbox preference="autoawaytime" type="number" size="3"/>
           <label value="_('minutes idle')"/>
@@ -298,7 +304,8 @@
           <textbox preference="autoawaystatus" flex="1"/>
         </hbox>
         <row>
-          <checkbox label="_('Automatically set status to \'not available\' after')" id="autoXACheckbox"
+          <checkbox label="_('Automatically set status to \'not available\' after')"
+                    id="autoXACheckbox"
                     oncommand="updateAway(this)" preference="autoxa"/>
           <textbox preference="autoxatime" type="number" size="3"/>
           <label value="_('minutes idle')"/>
