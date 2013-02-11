@@ -388,8 +388,10 @@
           } else
             this._focused = focus ? textbox : null;
 
-          if (!this._focused || !(textbox.errortext || textbox.getAttribute("errortext")) || textbox.isValid)
-            return this._errorBox.collapsed = true;
+          if (!this._focused || !(textbox.errortext || textbox.getAttribute("errortext")) || textbox.isValid) {
+            this._errorBox.collapsed = true;
+            return;
+          }
 
           if (this._errorText.firstChild)
             this._errorText.removeChild(this._errorText.firstChild);
