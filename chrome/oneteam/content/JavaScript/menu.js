@@ -4,6 +4,8 @@ ML.importMod("views/conference.js");
 
 var menuHandler = {
     init: function() {
+        document.getElementById("withoutPresencesTab").hidden =
+          prefManager.getPref("chat.general.disableStatusTab");
         var node = document.getElementById("conference-menu-separator");
         if (node) {
             this.bookmarksMenuView =

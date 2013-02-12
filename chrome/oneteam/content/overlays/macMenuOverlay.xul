@@ -40,7 +40,7 @@
       </menu>
       <menuseparator insertbefore="close-menuseparator"/>
       <menuitem label="_('_Status Messages Overview...')" command="cmd_presences_tab" key="key_presences_tab"
-                insertbefore="close-menuseparator"/>
+                observes="withoutPresencesTab" insertbefore="close-menuseparator"/>
       <menuitem label="_('_History Manager...')" command="cmd_history" key="key_history"
                 insertbefore="close-menuseparator"/>
       <menuitem label="_('File _Transfers...')" command="cmd_transfers" key="key_transfers"
@@ -148,6 +148,7 @@
   <group id="default-group">
     <broadcasterset>
       <broadcaster id="isOffline" disabled="true"/>
+      <broadcaster id="withoutPresencesTab" hidden="false"/>
     </broadcasterset>
 
     <comandset>
@@ -163,7 +164,8 @@
       <command id="cmd_history" key="key_history" oncommand="account.showHistoryManager()"/>
       <command id="cmd_transfers" key="key_transfers" oncommand="account.showTransfersManager()"/>
       <command id="cmd_disco" key="key_disco" oncommand="account.showDisco()" observes="isOffline"/>
-      <command id="cmd_presences_tab" key="key_presences_tab" oncommand="account.onShowPresences()"/>
+      <command id="cmd_presences_tab" key="key_presences_tab" oncommand="account.onShowPresences()"
+               observes="withoutPresencesTab"/>
       <command id="cmd_adhoc" oncommand="account.onAdHocCommand()" observes="isOffline"/>
       <command id="cmd_disconnect" oncommand="account.disconnect()" observes="isOffline"/>
       <command id="cmd_quit" key="key_quit" oncommand="menuHandler.quit()"/>

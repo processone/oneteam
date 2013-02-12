@@ -34,6 +34,8 @@ pref("chat.general.keepproperties", false);
 pref("chat.general.iconset", "OneTeam");
 pref("chat.general.smilesset", "OneTeam");
 
+pref("chat.general.disableStatusTab", false);
+
 pref("chat.messages.autoopen", false);
 pref("chat.messages.autoopenwhenaway", false);
 
