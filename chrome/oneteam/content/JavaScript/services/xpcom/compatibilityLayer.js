@@ -250,4 +250,7 @@ var navigator = {
             createInstance(Components.interfaces.nsIDOMSerializer);
     }
     global.window = global;
+    global.Image = function() {
+        return global.document.createElementNS(HTMLNS, "img");
+    }
 }
