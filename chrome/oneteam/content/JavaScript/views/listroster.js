@@ -22,7 +22,7 @@ function ListRosterView(node, matchGroups, negativeMatch)
 
     this.rootNode.appendChild(this.containerNode);
 
-    this.dragHandler = new DragDropHandler(this);
+    this.dragHandler = new ContactsDDHandler(this);
 
     this.onModelUpdated(null, "groups", {added: account.groups});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "groups");
@@ -67,8 +67,6 @@ _DECL_(ListRosterView, null, RosterView).prototype =
 
 function ListGroupView(model, parentView)
 {
-    default xml namespace = new Namespace(XULNS);
-
     this.model = model;
     this.parentView = parentView;
     this.root = this.parentView;
@@ -132,14 +130,14 @@ _DECL_(ListGroupView, null, GroupView).prototype =
         this.label.setAttribute("value", name);
     },
 
-    onModelUpdated: function(model, type, data)
+    onModelUpdated: function(model, type, data, virtual)
     {
         if (!this.items)
             return;
 
         if (data.added)
             for each (var addedData in data.added)
-                this.onItemAdded(new ListContactView(addedData, this));
+                this.onItemAdded(new ListContactView(addedData, this, virtual));
 
         if (data.removed)
             for each (var removedData in data.removed)
@@ -157,49 +155,6 @@ _DECL_(ListGroupView, null, GroupView).prototype =
         if (!this.items) {
             this.items = [];
             this.onModelUpdated(this.model, "contacts", {added: this.model.contacts});
-        }
-    },
-
-    onDragOver: function(contact) {
-        if (this.model.contains(contact))
-            return;
-
-        if (this.dragLeaveTimeout)
-            clearTimeout(this.dragLeaveTimeout);
-        this.dragLeaveTimeout = null;
-
-        if (this.dragContact != contact)
-            this.onItemAdded(new ListContactView(contact, this, true));
-        this.dragContact = contact;
-    },
-
-    onDragLeave: function(contact) {
-        if (this.model.contains(contact))
-            return;
-
-        var _this = this;
-        this.dragLeaveTimeout = setTimeout(function() {
-            _this.dragContact = null;
-            _this.onItemRemoved(contact);
-            _this.dragLeaveTimeout = null
-        }, 0);
-    },
-
-    onDrop: function(contact, ev) {
-        var jid = ev.dataTransfer.getData("text/xmpp-jid");
-
-        if (!contact) {
-            account.getOrCreateContact(jid, false, null, [this.model]);
-        } else if (ev.dataTransfer.dropEffect == "copy") {
-            for (var i = 0; i < contact.groups.length; i++)
-                if (contact.groups[i] == this.model)
-                    return;
-            contact.editContact(contact.name, [this.model].concat(contact.groups));
-        } else {
-            if (contact.groups.length == 1 && contact.groups[0] == this.model)
-                return;
-
-            contact.editContact(contact.name, [this.model]);
         }
     }
 }
@@ -291,161 +246,5 @@ _DECL_(ListContactView, null, ContactView).prototype =
 
     onPresenceChanged: function() {
         this.statusText.setAttribute("value", this.model.presence.status || "");
-    },
-
-    onDrop: function(model, ev) {
-      this.parentView.onDrop(model, ev);
-    },
-
-    onDragOver: function(c) {
-      this.parentView.onDragOver(c);
-    },
-
-    onDragLeave: function(c) {
-      this.parentView.onDragLeave(c);
-    }
-}
-
-function DragDropHandler(root) {
-    this.root = root;
-}
-
-_DECL_(DragDropHandler).prototype =
-{
-    handleEvent: function(ev) {
-        var view = ev.currentTarget.view;
-
-        if (ev.type == "dragstart") {
-            ev.dataTransfer.setData("text/uri-list", "xmpp:"+view.model.jid);
-            ev.dataTransfer.setData("text/xmpp-jid", view.model.jid);
-            ev.dataTransfer.setData("text/plain", view.model.visibleName);
-            ev.dataTransfer.effectAllowed = "copyMove";
-            this.createDragImage(ev, view);
-
-            return;
-        }
-
-        if (!ev.dataTransfer.types.contains("text/xmpp-jid"))
-            return;
-
-        var model = this.getModelForEv(ev);
-
-        if (ev.type == "dragover") {
-            var l = view.root.containerNode._scrollbox;
-            var r = l.getBoundingClientRect();
-
-            if (r.top > ev.clientY - 30 && l.scrollTop > 0) {
-                this.scrollDir = 1;
-                this.animScroll();
-            } else if (r.bottom < ev.clientY + 30 && l.scrollTop+l.clientHeight < l.scrollHeight) {
-                this.scrollDir = -1;
-                this.animScroll();
-            } else
-                this.scrollDir = 0;
-
-            if (view.onDragOver)
-                view.onDragOver(model);
-        } else if (ev.type == "dragleave") {
-            this.scrollDir = 0;
-            if (view.onDragLeave)
-                view.onDragLeave(model);
-        } else if (ev.type == "drop") {
-            this.scrollDir = 0;
-
-            if (view.onDragLeave)
-                view.onDragLeave(model);
-            view.onDrop(model, ev);
-        }
-
-        ev.preventDefault();
-    },
-
-    getModelForEv: function(ev) {
-        var jid = ev.dataTransfer.getData("text/xmpp-jid");
-        var contact = account.getContactOrResource(jid);
-
-        if (!contact)
-            return account.getOrCreateContact(jid, false, null, [this.model]);
-
-        return contact;
-    },
-
-    animScroll: function() {
-        if (!this.scrollDir || (this._anim && this._anim.running))
-            return;
-
-        var l = this.root.containerNode._scrollbox;
-
-        this._anim = Animator.animateScroll({
-            element: l,
-            time: 200,
-            stopCallback: new Callback(this.animScroll, this)
-        }, 0, l.scrollTop + (this.scrollDir < 0 ? 30 : -30));
-    },
-
-    createRoundedRectPath: function(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.save();
-        ctx.translate(x, y);
-        ctx.moveTo(r, 0);
-        ctx.lineTo(w-r, 0);
-        ctx.arc(w-r, r, r, 3*Math.PI/2, Math.PI*2);
-        ctx.lineTo(w, h-r);
-        ctx.arc(w-r, h-r, r, Math.PI*2, Math.PI/2);
-        ctx.lineTo(r, h);
-        ctx.arc(r, h-r, r, Math.PI/2, Math.PI);
-        ctx.lineTo(0, r);
-        ctx.arc(r, r, r, Math.PI, 3*Math.PI/2);
-        ctx.closePath();
-        ctx.restore();
-    },
-
-    createDragImage: function(event, view) {
-        var canvas = view.node.ownerDocument.createElementNS(HTMLNS, "canvas");
-
-        var ctx = canvas.getContext("2d");
-        var txt = view.model.visibleName;
-        var tw;
-
-        var s = view.label.ownerDocument.defaultView.getComputedStyle(view.label, "");
-
-        ctx.font = s.fontSize+" "+s.fontFamily;
-
-        tw = ctx.measureText(txt).width;
-        var ft = true;
-
-        while (tw > 500) {
-            if (ft)
-                txt = txt.substr(0, txt.length-1);
-            else
-                txt = txt.substr(0, txt.length-4);
-            ft = false;
-            txt += "...";
-            tw = ctx.measureText(txt).width;
-        }
-
-        canvas.width = 44 + tw;
-        canvas.height = 40;
-        ctx.font = s.fontSize+" "+s.fontFamily;
-
-        this.createRoundedRectPath(ctx, 0.5, 0.5, 38, 38, 5);
-        ctx.fillStyle = "#444";
-        ctx.stroke();
-
-        ctx.fillStyle = "white";
-        ctx.fill();
-
-        var iw = view.avatar._imageObj.width;
-        var ih = view.avatar._imageObj.height;
-        var idiv = iw > ih ? 1/iw : 1/ih;
-
-        ctx.drawImage(view.avatar._imageObj, 2, 2+18*(1-ih*idiv),
-                      36*iw*idiv, 36*ih*idiv);
-
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = "black";
-        ctx.fillText(txt, 44, 20);
-
-        event.dataTransfer.setDragImage(canvas, 20, 20);
     }
 }

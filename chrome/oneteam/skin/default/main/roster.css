@@ -40,6 +40,11 @@ expander[open="true"] .expanderButton {
   -moz-box-shadow: 0 0 3px 1px #b0b0b0;
 }
 
+.contact-view.virtual {
+  opacity: 0.3;
+}
+
+
 .counter-box {
   -moz-box-align: end;
   -moz-box-pack: start;

@@ -1,6 +1,6 @@
 var EXPORTED_SYMBOLS = ["RosterView", "ContactView", "GroupView",
                         "PresenceProfilesView", "ContactTooltip",
-                        "ContactsListView"];
+                        "ContactsListView", "ContactsDDHandler"];
 
 function RosterView(node, matchGroups, negativeMatch)
 {
@@ -9,6 +9,8 @@ function RosterView(node, matchGroups, negativeMatch)
     this.model = account;
     this.matchGroups = matchGroups || [];
     this.negativeMatch = negativeMatch;
+
+    this.dragHandler = new ContactsDDHandler(this);
 
     this.onModelUpdated(null, "groups", {added: account.groups});
     this._regToken = this.model.registerView(this.onModelUpdated, this, "groups");
@@ -87,6 +89,7 @@ function GroupView(model, parentView)
 
     this.model = model;
     this.parentView = parentView;
+    this.root = parentView;
     this.doc = parentView.containerNode.ownerDocument;
     this.contacts = [];
 
@@ -116,6 +119,10 @@ function GroupView(model, parentView)
                                        this._regToken);
 
     this._matchingCount = 0;
+
+    this.node.addEventListener("dragover", this.root.dragHandler, false);
+    this.node.addEventListener("dragleave", this.root.dragHandler, false);
+    this.node.addEventListener("drop", this.root.dragHandler, false);
 }
 
 _DECL_(GroupView, null, ContainerView).prototype =
@@ -154,14 +161,14 @@ _DECL_(GroupView, null, ContainerView).prototype =
             account.cache.setValue("groupExpand-"+this.model.name, !!value);
     },
 
-    onModelUpdated: function(model, type, data)
+    onModelUpdated: function(model, type, data, virtual)
     {
         if (!this.items)
             return;
 
         if (data.added)
             for each (var addedData in data.added)
-                this.onItemAdded(new ContactView(addedData, this));
+                this.onItemAdded(new ContactView(addedData, this, virtual));
 
         if (data.removed)
             for each (var removedData in data.removed)
@@ -215,23 +222,70 @@ _DECL_(GroupView, null, ContainerView).prototype =
 
         ContainerView.prototype.destroy.call(this);
         this.rootNode.removeChild(this.node);
+    },
+
+    onDragOver: function(contact) {
+        if (this.model.contains(contact))
+            return;
+
+        if (this.dragLeaveTimeout)
+            clearTimeout(this.dragLeaveTimeout);
+        this.dragLeaveTimeout = null;
+
+        if (this.dragContact != contact)
+            this.onModelUpdated(this.model, null, {added: [contact]}, true);
+        this.dragContact = contact;
+    },
+
+    onDragLeave: function(contact) {
+        if (this.model.contains(contact))
+            return;
+
+        var _this = this;
+        this.dragLeaveTimeout = setTimeout(function() {
+            _this.dragContact = null;
+            _this.onItemRemoved(contact);
+            _this.dragLeaveTimeout = null
+        }, 0);
+    },
+
+    onDrop: function(contact, ev) {
+        var jid = ev.dataTransfer.getData("text/xmpp-jid");
+
+        if (!contact) {
+            account.getOrCreateContact(jid, false, null, [this.model]);
+        } else if (ev.dataTransfer.dropEffect == "copy") {
+            for (var i = 0; i < contact.groups.length; i++)
+                if (contact.groups[i] == this.model)
+                    return;
+            contact.editContact(contact.name, [this.model].concat(contact.groups));
+        } else {
+            if (contact.groups.length == 1 && contact.groups[0] == this.model)
+                return;
+
+            contact.editContact(contact.name, [this.model]);
+        }
     }
 }
 
-function ContactView(model, parentView)
+function ContactView(model, parentView, virtual)
 {
     default xml namespace = new Namespace(XULNS);
 
     this.model = model;
     this.parentView = parentView;
+    this.root = parentView.root;
     this.doc = parentView.containerNode.ownerDocument;
+
+    this.virtual = virtual;
 
     this.tooltip = model instanceof MyResourcesContact ?
                        new ResourceTooltip(model, this.parentView) :
                        new ContactTooltip(model, this.parentView);
 
     this.node = E4XtoDOM(
-      <hbox class="contact-view" ondblclick="this.model.onDblClick()"
+      <hbox class={"contact-view"+(virtual ? " virtual" : "")}
+            ondblclick="this.model.onDblClick()"
             context={model instanceof MyResourcesContact ?
                      "resource-contextmenu" : "contact-contextmenu"}
             tooltip={this.tooltip.id}>
@@ -280,6 +334,11 @@ function ContactView(model, parentView)
     this.node.model = this.model;
     this.node.menuModel = model;
     this.node.view = this;
+
+    this.node.addEventListener("dragstart", this.root.dragHandler, false);
+    this.node.addEventListener("dragover", this.root.dragHandler, false);
+    this.node.addEventListener("dragleave", this.root.dragHandler, false);
+    this.node.addEventListener("drop", this.root.dragHandler, false);
 
     this._regToken = this.model.registerView(this.onNameChange, this, "name");
     this.model.registerView(this.onActiveResourceChange, this, "activeResource", this._regToken);
@@ -411,6 +470,18 @@ _DECL_(ContactView).prototype =
 
         if (this._matches)
             this.parentView.onMatchingCountChanged(-1);
+    },
+
+    onDrop: function(model, ev) {
+      this.parentView.onDrop(model, ev);
+    },
+
+    onDragOver: function(c) {
+      this.parentView.onDragOver(c);
+    },
+
+    onDragLeave: function(c) {
+      this.parentView.onDragLeave(c);
     }
 }
 
@@ -808,5 +879,158 @@ _DECL_(PresenceProfileView).prototype =
             this.node.parentNode.removeChild(this.node);
 
         this.model.unregisterView(this._token);
+    }
+}
+
+function ContactsDDHandler(root) {
+    this.root = root;
+
+    this.defaultAvatar = root.containerNode.ownerDocument.createElementNS(HTMLNS, "img");
+    this.defaultAvatar.src = defaultAvatar;
+}
+
+_DECL_(ContactsDDHandler).prototype =
+{
+    handleEvent: function(ev) {
+        var view = ev.currentTarget.view;
+
+        if (ev.type == "dragstart") {
+            ev.dataTransfer.setData("text/uri-list", "xmpp:"+view.model.jid);
+            ev.dataTransfer.setData("text/xmpp-jid", view.model.jid);
+            ev.dataTransfer.setData("text/plain", view.model.visibleName);
+            ev.dataTransfer.effectAllowed = "copyMove";
+            this.createDragImage(ev, view);
+
+            return;
+        }
+
+        if (!ev.dataTransfer.types.contains("text/xmpp-jid"))
+            return;
+
+        var model = this.getModelForEv(ev);
+
+        if (ev.type == "dragover") {
+            var l = view.root.containerNode, r;
+
+            if (l._scrollbox)
+                l = l._scrollbox;
+
+            r = l.getBoundingClientRect();
+
+            if (r.top > ev.clientY - 30 && l.scrollTop > 0) {
+                this.scrollDir = 1;
+                this.animScroll();
+            } else if (r.bottom < ev.clientY + 30 && l.scrollTop+l.clientHeight < l.scrollHeight) {
+                this.scrollDir = -1;
+                this.animScroll();
+            } else
+                this.scrollDir = 0;
+
+            if (view.onDragOver)
+                view.onDragOver(model);
+        } else if (ev.type == "dragleave") {
+            this.scrollDir = 0;
+            if (view.onDragLeave)
+                view.onDragLeave(model);
+        } else if (ev.type == "drop") {
+            this.scrollDir = 0;
+
+            if (view.onDragLeave)
+                view.onDragLeave(model);
+            view.onDrop(model, ev);
+        }
+
+        ev.preventDefault();
+    },
+
+    getModelForEv: function(ev) {
+        var jid = ev.dataTransfer.getData("text/xmpp-jid");
+        var contact = account.getContactOrResource(jid);
+
+        if (!contact)
+            return account.getOrCreateContact(jid, false, null, [this.model]);
+
+        return contact;
+    },
+
+    animScroll: function() {
+        if (!this.scrollDir || (this._anim && this._anim.running))
+            return;
+
+        var l = this.root.containerNode._scrollbox;
+
+        this._anim = Animator.animateScroll({
+            element: l,
+            time: 200,
+            stopCallback: new Callback(this.animScroll, this)
+        }, 0, l.scrollTop + (this.scrollDir < 0 ? 30 : -30));
+    },
+
+    createRoundedRectPath: function(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.moveTo(r, 0);
+        ctx.lineTo(w-r, 0);
+        ctx.arc(w-r, r, r, 3*Math.PI/2, Math.PI*2);
+        ctx.lineTo(w, h-r);
+        ctx.arc(w-r, h-r, r, Math.PI*2, Math.PI/2);
+        ctx.lineTo(r, h);
+        ctx.arc(r, h-r, r, Math.PI/2, Math.PI);
+        ctx.lineTo(0, r);
+        ctx.arc(r, r, r, Math.PI, 3*Math.PI/2);
+        ctx.closePath();
+        ctx.restore();
+    },
+
+    createDragImage: function(event, view) {
+        var canvas = view.node.ownerDocument.createElementNS(HTMLNS, "canvas");
+
+        var ctx = canvas.getContext("2d");
+        var txt = view.model.visibleName;
+        var tw;
+
+        var s = view.label.ownerDocument.defaultView.getComputedStyle(view.label, "");
+
+        ctx.font = s.fontSize+" "+s.fontFamily;
+
+        tw = ctx.measureText(txt).width;
+        var ft = true;
+
+        while (tw > 500) {
+            if (ft)
+                txt = txt.substr(0, txt.length-1);
+            else
+                txt = txt.substr(0, txt.length-4);
+            ft = false;
+            txt += "...";
+            tw = ctx.measureText(txt).width;
+        }
+
+        canvas.width = 44 + tw;
+        canvas.height = 40;
+        ctx.font = s.fontSize+" "+s.fontFamily;
+
+        this.createRoundedRectPath(ctx, 0.5, 0.5, 38, 38, 5);
+        ctx.fillStyle = "#444";
+        ctx.stroke();
+
+        ctx.fillStyle = "white";
+        ctx.fill();
+
+        var image = view.avatar._imageObj.width ?
+          view.avatar._imageObj : this.defaultAvatar;
+
+        var iw = image.width;
+        var ih = image.height;
+        var idiv = iw > ih ? 1/iw : 1/ih;
+
+        ctx.drawImage(image, 2, 2+18*(1-ih*idiv), 36*iw*idiv, 36*ih*idiv);
+
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "black";
+        ctx.fillText(txt, 44, 20);
+
+        event.dataTransfer.setDragImage(canvas, 20, 20);
     }
 }
