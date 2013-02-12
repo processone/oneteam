@@ -1963,6 +1963,10 @@
         this._jingleCall = document.getAnonymousElementByAttribute(this, "id", "jingleCall");
         this._jingleCallSep = document.getAnonymousElementByAttribute(this, "id", "jingleCallSep");
         this._extraCmds = document.getAnonymousElementByAttribute(this, "id", "extraCmds");
+        this._editButton = document.getAnonymousElementByAttribute(this, "id", "editButton")
+
+        if (!prefManager.getPref("chat.editor.messageEditingEnabled"))
+          this._editButton.hidden = this._editButton.nextSibling.hidden = true;
 
         recoverSetters(this);
       ]]></constructor>
@@ -2147,6 +2151,9 @@
 
       <property name="editModeAvailable" onget="return this._editModeAvailable">
         <setter><![CDATA[
+          if (!prefManager.getPref("chat.editor.messageEditingEnabled"))
+            val = false;
+
           this._editModeAvailable = val;
           this._chatpaneCommands.syncEditMode();
           this._output.syncEditMode();
