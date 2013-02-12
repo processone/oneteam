@@ -367,8 +367,6 @@
             command="cmd_addContact"/>
       <toolbarbutton id="prefs-button" tooltiptext="_('Preferences')"
             command="cmd_prefs"/>
-      <toolbarbutton id="search-button" tooltiptext="_('Search users')"
-            command="cmd_search"/>
       <toolbarseparator id="gateways-separator" hidden="true"/>
     </toolbarpalette>
 
@@ -403,7 +401,7 @@
     </toolbar>
 
     <toolbar id="actions-toolbar" class="toolbar-primary chromeclass-toolbar"
-             defaultset="initiate-chat-button,join-room-button,presences-tab-button,separator,add-user-button,separator,prefs-button,search-button,gateways-separator" hidden="true"/>
+             defaultset="initiate-chat-button,join-room-button,presences-tab-button,separator,add-user-button,separator,prefs-button,gateways-separator" hidden="true"/>
   </toolbox>
 
   <vbox id="main-box" flex="1">
