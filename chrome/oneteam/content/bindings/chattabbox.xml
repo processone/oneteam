@@ -61,6 +61,9 @@
 
         recoverSetters(this);
 
+        if (!prefManager.getPref("chat.tabbedMode"))
+          this._tabs.collapsed = true;
+
         window.addEventListener("focus", function(event) {
           _this._windowFocusHandler(_this, event)
         }, true);
