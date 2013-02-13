@@ -159,16 +159,28 @@ function ListContactView(model, parentView)
               "resource-contextmenu" : "contact-contextmenu",
           "tooltip": this.tooltip.id
         }, [
-          ["image", {"class": "status-icon"}],
-          ["label", {"class": "contact-label", "flex": "1", "crop": "end"}],
-          ["label", {"class": "counter"}],
-          ["avatar", {"showBlankAvatar": "true", "side": "20"}]
+            ["hbox", {"flex": "1"}, [
+                ["avatar", {"showBlankAvatar": "true", "side": "32"}],
+                ["hbox", {"flex": "1", "align": "start"}, [
+                    ["image", {"class": "status-icon"}],
+                    ["vbox", {"flex": "1"}, [
+                        ["label", {"class": "contact-label", "flex": "1", "crop": "end"}],
+                        ["label", {"class": "status-text"}]
+                    ]],
+                ]],
+                ["label", {"class": "counter"}]
+            ]]
         ]);
 
-    this.statusIcon = this.node.childNodes[0];
-    this.label = this.node.childNodes[1];
-    this.messagesCounter = this.node.childNodes[2];
-    this.avatar = this.node.childNodes[3];
+    var h = this.node.childNodes[0];
+
+    dump(h.childNodes[1].childNodes[1].nodeName+"\n")
+
+    this.avatar = h.childNodes[0];
+    this.statusIcon = h.childNodes[1].childNodes[0]
+    this.label = h.childNodes[1].childNodes[1].childNodes[0];
+    this.statusText = h.childNodes[1].childNodes[1].childNodes[1];
+    this.messagesCounter = h.childNodes[2];
 
     this.messagesCounterContainer = this.messagesCounter;
 
@@ -189,6 +201,7 @@ function ListContactView(model, parentView)
     this._bundle.register(this.model, this.onMsgsInQueueChanged, "msgsInQueue");
     this._bundle.register(this.model, this.onAvatarChanged, "avatar");
     this._bundle.register(this.model, this.onEventsChanged, "events");
+    this._bundle.register(this.model, this.onPresenceChanged, "presence");
 
     this._matches = false;
 
@@ -197,14 +210,24 @@ function ListContactView(model, parentView)
     this.onActiveResourceChange();
     this.onAvatarChanged();
     this.onEventsChanged();
+    this.onPresenceChanged();
 }
 
 _DECL_(ListContactView, null, ContactView).prototype =
 {
+    onActiveResourceChange: function() {
+        this.onPresenceChanged();
+        ContactView.prototype.onActiveResourceChange.apply(this, arguments);
+    },
+
     onPrefChange: function(name, value) {
     },
 
     onEventsChanged: function() {
         this.messagesCounter.setAttribute("value", this.model.events.length);
     },
+
+    onPresenceChanged: function() {
+        this.statusText.setAttribute("value", this.model.presence.status || "");
+    }
 }

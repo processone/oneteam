@@ -120,3 +120,15 @@
 {
   display: none
 }
+
+.contact-label {
+  margin: 2px 0 0 0;
+  padding: 0;
+}
+
+.status-text {
+  margin: 2px 0 0 0;
+  padding: 0;
+  font-size: 75%;
+  font-style: italic;
+}
