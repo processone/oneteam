@@ -744,7 +744,9 @@
                   msgEl.msgId = xMessageId;
                 }
 
-                if (xReplyTo || xMessageId) {
+                if (prefManager.getPref("chat.editor.messageRefersEnabled") &&
+                    (xReplyTo || xMessageId))
+                {
                   var im = doc.createElement("div");
 
                   im.setAttribute("class", "message-action thread-marker" +
