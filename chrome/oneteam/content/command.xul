@@ -58,6 +58,10 @@
     output.contentDocument.getElementsByTagName("HEAD")[0].appendChild(link);
     input.focus();
 
+    input._historyUpdated = function() {
+      account.cache.setValue("command-history", input.history.slice(-50));
+    }
+
     input._send = function(withEnter) {
       if (!withEnter)
         return null;
@@ -68,10 +72,6 @@
         return "";
 
       exec(val);
-
-      setTimeout(function() {
-        account.cache.setValue("command-history", input.history.slice(-50));
-      }, 0)
 
       return val;
     }

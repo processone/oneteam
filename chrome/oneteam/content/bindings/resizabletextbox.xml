@@ -32,7 +32,7 @@
                 onset="return this._input.selectionEnd = val"/>
 
       <property name="history" onget="return this._history"
-                onset="this._history = val; this._historyPosition = val.length-1"/>
+                onset="this._history = val; this._historyPosition = val.length"/>
 
       <constructor><![CDATA[
         this._input = document.getAnonymousElementByAttribute(this, "id", "_input");
@@ -63,8 +63,10 @@
             if (event.keyCode == KeyEvent.DOM_VK_RETURN)
               if ((inputValue = me._send(!event.shiftKey)) != null) {
                 if (inputValue) {
-                  if (!me._history.length || me._history[me._history.length-1][0] != inputValue)
+                  if (!me._history.length || me._history[me._history.length-1][0] != inputValue) {
                     me._history.push([inputValue, me._input.selectionEnd]);
+                    me._historyUpdated();
+                  }
                   me._historyPosition = me._history.length;
                 }
 
@@ -171,6 +173,10 @@
         <body> </body>
       </method>
 
+      <method name="_historyUpdated">
+        <body> </body>
+      </method>
+
       <method name="_handleHistoryKey">
         <parameter name="up"/>
         <body><![CDATA[
@@ -194,9 +200,13 @@
           }
 
           if (this._historyPosition < this._history.length &&
-              this._history[this._historyPosition][0] != this._input.value)
+              this._history[this._historyPosition][0] != this._input.value &&
+              this._input.value) {
             this._history[this._historyPosition] =
               [this._input.value, this._input.selectionStart];
+
+            this._historyUpdated();
+          }
 
           if (histPos >= this._history.length) {
             this._input.value = "";
