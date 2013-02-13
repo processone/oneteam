@@ -592,6 +592,13 @@ _DECL_(JingleSession, null, Model).prototype =
 }
 
 function JingleService() {
+    if (!prefManager.getPref("oneteam.jingleEnabled")) {
+        this._audioSvc = [];
+        this._codecsSvcs = [];
+        this.enabled = false;
+        return;
+    }
+
     var audioTypes = ["pulse", "mac", "windows"];
     for (var i = 0; i < audioTypes.length && !this._audioSvc; i++)
         try {
