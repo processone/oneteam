@@ -123,9 +123,8 @@ _DECL_(SOCKS5Service).prototype =
             return;
         }
 
-        var xml = DOMtoE4X(pkt.getNode());
-        var bsNS = new Namespace("http://jabber.org/protocol/bytestreams");
-        var jid = xml..bsNS::["streamhost-used"].@jid.toString();
+        var jid = pkt.$Q().all("streamhost-used").
+            ns("http://jabber.org/protocol/bytestreams").first().attr("jid");
 
         if (jid == token.fileTransfer.ourJid.toString()) {
             if (token.accepted) {
@@ -169,22 +168,23 @@ _DECL_(SOCKS5Service).prototype =
         if (pkt.getType() != "set")
             return;
 
-        var xml = DOMtoE4X(pkt.getNode());
-        var bsNS = new Namespace("http://jabber.org/protocol/bytestreams");
+        var query = pkt.$Q().all("query").
+            ns("http://jabber.org/protocol/bytestreams").first();
+        var sid = query.attr("sid");
         var token;
 
-        if (!(token = this.transfers[xml.bsNS::query.@sid]))
+        if (!(token = this.transfers[sid]))
             return;
 
-        delete this.transfers[xml.bsNS::query.@sid];
+        delete this.transfers[sid];
 
         var bs = {};
-        for each (var sh in xml..bsNS::streamhost) {
-            if (sh.@port)
-                if (bs[sh.@jid])
-                    bs[sh.@jid].push({host: sh.@host, port: sh.@port});
+        for (var sh in query.all("streamhost")) {
+            if (sh.attr("port"))
+                if (bs[sh.attr("jid")])
+                    bs[sh.attr("jid")].push({host: sh.attr("host"), port: sh.attr("port")});
                 else
-                    bs[sh.@jid] = [{host: sh.@host, port: sh.@port}];
+                    bs[sh.attr("jid")] = [{host: sh.attr("host"), port: sh.attr("port")}];
         }
 
         var SOCKSHostName = hex_sha1(token.fileTransfer.streamID + token.fileTransfer.jid +
@@ -211,12 +211,12 @@ _DECL_(SOCKS5Service).prototype =
             token.bytestream = initiator;
 
             servicesManager.sendIq({
-              id: token.id,
-              to: token.fileTransfer.jid,
-              type: "result",
-              e4x: <query xmlns='http://jabber.org/protocol/bytestreams'>
-                     <streamhost-used jid={initiator._jid}/>
-                   </query>
+                id: token.id,
+                to: token.fileTransfer.jid,
+                type: "result",
+                domBuilder: ["query", {xmlns: "http://jabber.org/protocol/bytestreams"}, [
+                        ["streamhost-used", {jid: initiator._jid}]
+                    ]]
             });
 
             token.fileTransfer.file.open(null, 0x2|0x8|0x20);
@@ -229,11 +229,11 @@ _DECL_(SOCKS5Service).prototype =
         if (token.proxy) {
             var pkt = new JSJaCIQ();
             pkt.setIQ(token.proxy, "set");
-            pkt.getNode().appendChild(E4XtoDOM(
-                <query xmlns='http://jabber.org/protocol/bytestreams'
-                        sid={token.fileTransfer.streamID}>
-                    <activate>{token.fileTransfer.jid}</activate>
-                </query>, pkt.getDoc()));
+            pkt.appendNode(
+                "query", {xmlns: "http://jabber.org/protocol/bytestreams",
+                          sid: token.fileTransfer.streamID}, [
+                    ["activate", {}, [token.fileTransfer.jid]]
+                ]);
 
             account.connection.send(pkt, new Callback(this._sendFileStep2, this), token);
             return;
