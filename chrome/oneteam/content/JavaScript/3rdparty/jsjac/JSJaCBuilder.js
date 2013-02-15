@@ -44,8 +44,9 @@ var JSJaCBuilder = {
    * @private
    */
   buildNode: function(doc, elementName) {
-
-    if (typeof(elementName) == "xml") {
+    if (Array.isArray(elementName)) {
+        return this.buildNode(doc, elementName[0], elementName[1], elementName[2], arguments[3])
+    } else if (typeof(elementName) == "xml") {
       return E4XtoDOM(elementName, doc);
     } else if (elementName instanceof Node)
       return doc.adoptNode(elementName);

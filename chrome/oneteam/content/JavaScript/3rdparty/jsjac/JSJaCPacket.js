@@ -366,25 +366,29 @@ JSJaCPacket.prototype.buildNode = function(elementName) {
   return JSJaCBuilder.buildNode(this.getDoc(),
                                 elementName,
                                 arguments[1],
-                                arguments[2]);
+                                arguments[2],
+                                arguments[3]);
 };
 
 /**
  * Appends node created by buildNode to this packets parent node.
- * @param {@link http://www.w3.org/TR/2000/REC-DOM-Level-2-Core-20001113/core.html#ID-1950641247 Node} element The node to append or
  * @param {String} element A name plus an object hash with attributes (optional) plus an array of childnodes (optional)
  * @see #buildNode
- * @return This packet
+ * @return {Node} newly created node
  * @type JSJaCPacket
  */
 JSJaCPacket.prototype.appendNode = function(element) {
   if (element instanceof Element) { // seems to be a prebuilt node
     return this.getNode().appendChild(element)
+  } else if (Array.isArray(element)) {
+      return this.getNode().appendChild(this.buildNode(element[0],
+                                                       element[1],
+                                                       element[2],
+                                                       this.getNode().namespaceURI));
   } else { // build node
     return this.getNode().appendChild(this.buildNode(element,
                                                      arguments[1],
                                                      arguments[2],
-                                                     null,
                                                      this.getNode().namespaceURI));
   }
 };
