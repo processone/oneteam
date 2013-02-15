@@ -56,13 +56,29 @@
   background: #dadada;
 }
 
-.conferencemember-view > avatar,
-.list-contact-view > avatar {
+.conferencemember-view > avatar {
   -moz-box-flex: 0;
   border: 1px solid #ccc;
   -moz-border-radius: 3px;
   width: 20px;
   height: 20px;
+
+}
+
+.list-contact-view > hbox > hbox.avatarBox {
+  background: white;
+  border: 1px solid #ccc;
+  -moz-border-radius: 3px;
+}
+
+.list-contact-view > hbox > hbox.avatarBox > avatar {
+  border: none;
+  width: 20px;
+  height: 20px;
+}
+
+.list-contact-view[offlineContact="true"] > hbox > hbox > avatar {
+  opacity: 0.5;
 }
 
 .conference-role-view {

@@ -181,7 +181,9 @@ function ListContactView(model, parentView, virtual)
           "tooltip": this.tooltip.id
         }, [
             ["hbox", {"flex": "1", "align": "start"}, [
-                ["avatar", {"showBlankAvatar": "true", "squareBordered": "true", "side": "32"}],
+                ["hbox", {"class": "avatarBox"}, [
+                    ["avatar", {"showBlankAvatar": "true", "squareBordered": "true", "side": "32"}],
+                ]],
                 ["hbox", {"flex": "1", "align": "start"}, [
                     ["image", {"class": "status-icon"}],
                     ["vbox", {"flex": "1"}, [
@@ -195,7 +197,7 @@ function ListContactView(model, parentView, virtual)
 
     var h = this.node.childNodes[0];
 
-    this.avatar = h.childNodes[0];
+    this.avatar = h.childNodes[0].childNodes[0];
     this.statusIcon = h.childNodes[1].childNodes[0]
     this.label = h.childNodes[1].childNodes[1].childNodes[0];
     this.statusText = h.childNodes[1].childNodes[1].childNodes[1];
