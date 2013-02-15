@@ -10,7 +10,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
                         "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
                         "updateMenuList", "alertEx", "fillTooltip", "XULNS",
-                        "HTMLNS"];
+                        "HTMLNS", "dnsSrvRequest"];
 
 ML.importMod("roles.js");
 
@@ -1347,6 +1347,32 @@ function fillTooltip(tipElement, tipNode) {
         return true;
     }
     return false;
+}
+
+function dnsSrvRequest(domain, resolveHosts, callback) {
+    var handler = {
+        callback: callback,
+
+        onLookupComplete: function(request, response) {
+            var res = [];
+            while (response.hasMore())
+                res.push(response.getNextAddrAsString());
+
+            this.callback(res);
+        }
+    };
+
+    try {
+        var dnsSrv = Components.classes["@process-one.net/dns;1"].
+            getService(Components.interfaces.otIDNSService);
+        var mainThread = Components.classes["@mozilla.org/thread-manager;1"].
+            getService(Components.interfaces.nsIThreadManager).mainThread;
+
+        dnsSrv.asyncResolveSRV(domain, resolveHosts ? 1 : 0, handler,
+                               mainThread);
+    } catch (ex) {
+        callback([]);
+    }
 }
 
 var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
