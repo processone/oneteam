@@ -1443,6 +1443,19 @@ _DECL_(domWrapper).prototype =
         return val;
     },
 
+    _processQuery: function(query, node, first) {
+        query = query.replace(/^\s*:context\b/, function(s) {
+            var d = ":root"
+            while (node.parentNode && node.parentNode.parentNode) {
+                d += " > *";
+                node = node.parentNode;
+            }
+            return d;
+        });
+
+        return first ? node.querySelector(query) : node.querySelectorAll(query);
+    },
+
     first: function(query) {
         if (!this.dom)
             return this;
@@ -1453,14 +1466,17 @@ _DECL_(domWrapper).prototype =
             return $Q(this.dom[0]);
         }
 
+        var _this = this;
         return this._mapReduce(null, function(el) {
-                                   return el.querySelector(query)
+                                   return _this._processQuery(query, el, true);
                                }, null, null, $Q);
     },
 
     all: function(query) {
+        var _this = this;
+
         return this._mapReduce(this.dom, function(el){
-                return el.querySelectorAll(query)
+                return _this._processQuery(query, el, false);
             }, function(acc, el) {
                 return Array.isArray(el) ? acc.concat(el) : el
             }, [], $Q);
