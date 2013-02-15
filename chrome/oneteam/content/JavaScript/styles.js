@@ -2,7 +2,7 @@ var EXPORTED_SYMBOLS = ["StylesRegistry", "IconStyle", "SmilesIconStyle",
                         "StatusIconStyle", "defaultAvatar", "defaultHtmlAvatar"];
 
 var defaultAvatar     =   "chrome://oneteam/skin/avatar/imgs/default-avatar.png";
-var defaultHtmlAvatar = "resource://oneteam-skin/avatar/imgs/default-avatar.png"
+var defaultHtmlAvatar = "resource://oneteam-skin/avatar/imgs/default-avatar.png";
 
 function StylesRegistry(cache)
 {
@@ -166,32 +166,32 @@ _DECL_(StylesRegistry, null, Model).prototype =
         try {
             var reader = new Reader(url+"/icondef.xml");
             iconDefData = reader.slurp();
+            iconDefData = iconDefData.replace(/^.*<?xml/, "<?xml");
 
-            iconDefData = iconDefData.replace(/.*<\?xml.*\?>/, "");
-            iconDefData = new XML(iconDefData);
+            var dp = new DOMParser(true);
+            iconDefData = $Q(dp.parseFromString(iconDefData, "text/xml").documentElement);
         } catch (ex) { return false }
 
-        if (iconDefData.name() != "icondef")
+        if (!iconDefData)
             return false;
 
-        var ns = new Namespace("name");
-
-        if (iconDefData..icon.text.length()) {
+        if (iconDefData.first("icon > text").length) {
             var set = new SmilesIconStyle(url, iconDefData);
             this.iconStyles.push(set);
             this.smiles.push(set);
-            if (notify)
+            if (notify) {
                 this.modelUpdated("iconStyles", {added: [set]});
                 this.modelUpdated("smiles", {added: [set]});
+            }
             return true;
-        } else if (iconDefData..ns::x.(function::text().toString().
-                                       indexOf("status") == 0).length()) {
+        } else if (iconDefData.all("icon > x").ns("name").length) {
             var set = new StatusIconStyle(url, iconDefData);
             this.iconStyles.push(set);
             this.statusIcons.push(set);
-            if (notify)
+            if (notify) {
                 this.modelUpdated("iconStyles", {added: [set]});
                 this.modelUpdated("statusIcons", {added: [set]});
+            }
             return true;
         }
         return false;
@@ -200,18 +200,18 @@ _DECL_(StylesRegistry, null, Model).prototype =
 
 function IconStyle(url, iconDefData)
 {
-    this.name = iconDefData.meta.name.text();
-    this.version = iconDefData.meta.version.text();
-    this.desc = iconDefData.meta.description.text();
-    this.creation = iconDefData.meta.creation.text();
-    this.home = iconDefData.meta.home.text();
+    this.name = iconDefData.first("meta > name").text();
+    this.version = iconDefData.first("meta > version").text()
+    this.desc = iconDefData.first("meta > description").text()
+    this.creation = iconDefData.first("meta > creation").text()
+    this.home = iconDefData.first("meta > home").text()
     this.authors = [];
-    for each (var author in iconDefData.meta.author)
+    for each (var author in iconDefData.all("meta > author"))
         this.authors.push({
             name: author.text(),
-            jid: author.@jid.toString(),
-            email: author.@email.toString(),
-            www: author.@www.toString()
+            jid: author.attr("jid"),
+            email: author.attr("email"),
+            www: author.attr("www")
         });
 }
 
@@ -231,20 +231,20 @@ function SmilesIconStyle(url, iconDefData)
 
     var regExp = [];
 
-    for each (var icon in iconDefData.icon) {
-        var img = icon.object.(function::attribute("mime") in handledMimeTypes)[0];
-        if (!img)
+    for each (var icon in iconDefData.all("icon")) {
+        var img = icon.all("object").attr("mime", handledMimeTypes);
+        if (!img.length)
             continue;
 
         this.icons.push(img = {
-            img: url+"/"+img.text(),
+            img: url+"/"+img.first().text(),
             cssStyle: "-ot-smile-"+(++SmilesIconStyle.prototype._id),
-            texts: [i.text().toString() for each (i in icon.text)]
+            texts: icon.all("text").text()
         });
 
-        for each (var text in icon.text) {
-            regExp.push(text.toString());
-            this.revMap[text.toString()] = img;
+        for each (var text in img.texts) {
+            regExp.push(text);
+            this.revMap[text] = img;
         }
         this.cssRules +=
             ".smiles-enabled ."+img.cssStyle+"::before"+
@@ -315,15 +315,17 @@ function StatusIconStyle(url, iconDefData)
     this.icons = [];
     this.iconsMap = {};
 
-    for each (data in iconDefData.*::x.(function::namespace()=="client:name"))
-        filters.push("client.clientName == "+uneval(data.text().toString()));
-    for each (data in iconDefData.*::x.(function::namespace()=="client:regexp"))
+
+
+    for each (data in iconDefData.all("x").ns("client:name"))
+        filters.push("client.clientName == "+uneval(data.text()));
+    for each (data in iconDefData.all("x").ns("client:regexp"))
         filters.push("/"+data.text()+"/.test(client.clientName)");
 
-    for each (data in iconDefData.*::x.(function::namespace()=="transport:name"))
+    for each (data in iconDefData.all("x").ns("transport:name"))
         filters.push("(useGatewayIcons && client.gateway && client.gateway.gatewayType == "+
-                    uneval(data.text().toString())+")");
-    for each (data in iconDefData.*::x.(function::namespace()=="transport:regexp"))
+                    uneval(data.text())+")");
+    for each (data in iconDefData.all("x").ns("transport:regexp"))
         filters.push("(useGatewayIcons && client.gateway && /"+data.text()+"/.test(client.gateway.gatewayType))");
 
     if (filters.length)
@@ -331,18 +333,16 @@ function StatusIconStyle(url, iconDefData)
                                    "prefManager.getPref('chat.general.usegatewayicons');"+
                                    "return "+filters.join("||"));
 
-    var ns = new Namespace("name");
-    var ns2 = new Namespace("blink");
-    for each (var icon in iconDefData.icon) {
-        var type = icon.ns::x;
-        var img = icon.object.(function::attribute("mime") in handledMimeTypes)[0];
-        if (!type || !img)
+    for each (var icon in iconDefData.all("icon")) {
+        var type = icon.all("x").ns("name");
+        var img = icon.all("object").attr("mime", handledMimeTypes);
+        if (!type.length || !img.length)
             continue;
 
         this.icons.push({
-            img: url+"/"+img.text(),
-            type: type.text(),
-            blinking: icon.ns2::x.text() == "true"
+            img: url+"/"+img.first().text(),
+            type: type.first().text(),
+            blinking: icon.all("x").ns("blink").text("true").length > 0
         });
         this.iconsMap[type.text()] = this.icons[this.icons.length-1];
     }
