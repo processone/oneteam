@@ -199,6 +199,7 @@
       <preference id="ask_to_quit" name="chat.general.ask_to_quit" type="bool"/>
       <preference id="systray" name="chat.systray" type="bool"/>
       <preference id="rosterAsIcons" name="chat.roster.asicons" type="bool"/>
+      <preference id="tabbedMode" name="chat.tabbedMode" type="bool"/>
     </preferences>
     <checkbox label="_('Sort contacts by status')" preference="sortbystatus"/>
     <checkbox label="_('Play sounds')" preference="sounds"/>
@@ -212,6 +213,8 @@
               preference="systray"/>
     <checkbox label="_('Display roster as icons')"
               preference="rosterAsIcons"/>
+    <checkbox label="_('Use tabbed interface for chats')"
+              preference="tabbedMode"/>
   </prefpane>
 
   <prefpane id="connection" label="_('Connection')">
@@ -324,13 +327,13 @@
       <preference id="iconset" name="chat.general.iconset" type="string"/>
       <preference id="smilesset" name="chat.general.smilesset" type="string"/>
     </preferences>
-    <label value="_('Default icon set:')"/>
+    <label class="title" value="_('Default icon set:')"/>
     <richlistbox id="iconsSet" preference="iconset"
                  onsynctopreference="return this.value"
                  onselect="this.parentNode.userChangedValue(this)"/>
     <checkbox label="_('Use gateway specific icons')" preference="usegatewayicons"/>
     <spacer/>
-    <label value="_('Default smiles set:')"/>
+    <label class="title" value="_('Default smiles set:')"/>
     <richlistbox id="smilesSet" preference="smilesset"
                  onsynctopreference="return this.value"
                  onselect="this.parentNode.userChangedValue(this)"/>
