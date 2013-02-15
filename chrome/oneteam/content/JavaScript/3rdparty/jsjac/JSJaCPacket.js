@@ -58,6 +58,10 @@ JSJaCPacket.prototype.getNode = function() {
     return null;
 };
 
+JSJaCPacket.prototype.$Q = function() {
+    return $Q(this.getNode());
+};
+
 /**
  * Sets the 'to' attribute of the root node of this packet
  * @param {String} to

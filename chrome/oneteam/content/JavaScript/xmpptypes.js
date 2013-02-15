@@ -333,18 +333,49 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
 
     _handleVCard: function(pkt, value)
     {
-        var photo, photos = pkt.getNode().getElementsByTagName("PHOTO");
-
-        for (var i = 0; i < photos.length; i++) {
-            var binval = photos[i].getElementsByTagName("BINVAL")[0];
-            if (binval && binval.textContent) {
-                photo = binval.textContent.replace(/\s/g,"");
-                break;
-            }
-        }
+        var photo, photos = pkt.$Q().all("PHOTO");
 
         this.avatarRetrieved = true;
 
+        for (var p in photos) {
+            var val;
+
+            if ((val = p.first("BINVAL")).length) {
+                photo = val.text().replace(/\s/g,"");
+                this._handleVCardPhoto(atob(photo));
+                return;
+            } else if ((val = p.first("EXTVAL")).length) {
+                var hash = account.cache.getValue("urlAvatarHash-"+val.text());
+
+                if (hash) {
+                    this.avatar = account.cache.getValue("avatar-"+hash, true);
+                    if (this.avatar) {
+                        var jid = this.realJID ? this.realJID.shortJID :
+                            this.jid.resource ? null : this.jid;
+                        var date = new Date(Date.now()+30*24*60*60*1000);
+
+                        account.cache.bumpExpirationDate("avatar-"+hash, date);
+                        if (jid)
+                            account.cache.setValue("jidAvatar-"+jid, hash, date);
+
+                        this.avatarHash = hash;
+                        this.modelUpdated("avatar");
+
+                        return;
+                    }
+                }
+                slurpFileAsync(new Callback(this._avatarImageReceived, this).
+                                   addArgs(val.text()), val.text());
+            }
+        }
+        this._handleVCardPhoto(null);
+    },
+
+    _avatarImageReceived: function(data, url) {
+        this._handleVCardPhoto(data, url)
+    },
+
+    _handleVCardPhoto: function(photo, url) {
         var jid = this.realJID ? this.realJID.shortJID :
             this.jid.resource ? null : this.jid;
 
@@ -359,10 +390,12 @@ _DECL_(vCardDataAccessor, null, XMPPDataAccessorBase).prototype =
             return;
         }
 
-        photo = atob(photo);
-
         this.avatarHash = hex_sha1(photo);
         this.avatar = account.cache.getValue("avatar-"+this.avatarHash, true);
+
+        if (url)
+            account.cache.setValue("urlAvatarHash-"+url, this.avatarHash,
+                                   new Date(Date.now()+30*24*60*60*1000))
 
         if (jid)
             account.cache.setValue("jidAvatar-"+jid, this.avatarHash,
