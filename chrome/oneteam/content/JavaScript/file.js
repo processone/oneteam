@@ -1,7 +1,7 @@
 var EXPORTED_SYMBOLS = ["CharsetConverter", "detectXMLCharset",
                         "convertCharsetOfXMLData", "CharsetConvertError",
                         "Reader", "IOError", "File", "slurpFile",
-                        "DataUrlFile", "makeDataUrlFromFile"];
+                        "DataUrlFile", "makeDataUrlFromFile", "slurpFileAsync"];
 
 ML.importMod("roles.js");
 ML.importMod("exceptions.js");
@@ -278,7 +278,7 @@ _DECL_(Reader).prototype =
      *
      * @public
      */
-    open: function(charset)
+    open: function(charset, mode, perms, asyncHandler)
     {
         const classes = Components.classes;
         const interfaces = Components.interfaces;
@@ -295,17 +295,21 @@ _DECL_(Reader).prototype =
             throw new IOError("Reader.open: unable to create channel");
 
         try {
-            var is = channel.open();
+            if (asyncHandler) {
+                channel.asyncOpen(asyncHandler, null);
+            } else {
+                var is = channel.open();
 
-            this.__binaryInputStream = classes["@mozilla.org/binaryinputstream;1"].
-                createInstance(interfaces.nsIBinaryInputStream);
+                this.__inputStream = classes["@mozilla.org/scriptableinputstream;1"].
+                    createInstance(interfaces.nsIScriptableInputStream);
 
-            this.__binaryInputStream.setInputStream(is);
+                this.__inputStream.init(is);
 
-            this.__inputStream = classes["@mozilla.org/scriptableinputstream;1"].
-                createInstance(interfaces.nsIScriptableInputStream);
+                this.__binaryInputStream = classes["@mozilla.org/binaryinputstream;1"].
+                    createInstance(interfaces.nsIBinaryInputStream);
 
-            this.__inputStream.init(is);
+                this.__binaryInputStream.setInputStream(is);
+            }
         } catch (ex) {
             throw new IOError("Reader.open: unable to create stream", ex);
         }
@@ -374,6 +378,30 @@ _DECL_(Reader).prototype =
         if (this.__inputStream)
             this.__inputStream.close();
         this.__inputStream = null;
+    },
+
+    slurpAsync: function(callback) {
+        this.open(null, 1, null, this.c={
+                data: "",
+                callback: callback,
+
+                onStartRequest: function(request, context) {
+                },
+
+                onDataAvailable: function(request, context, is, offset, count) {
+                    if (!this.sis) {
+                        this.sis = Components.classes["@mozilla.org/binaryinputstream;1"].
+                            createInstance(Components.interfaces.nsIBinaryInputStream);
+
+                        this.sis.setInputStream(is);
+                    }
+                    this.data += this.sis.readBytes(count);
+                },
+
+                onStopRequest: function(request, context, status) {
+                    this.callback(this.data);
+                }
+            }, null);
     },
 
     slurp: function() {
@@ -771,6 +799,12 @@ function slurpFile()
 {
     var file = new Reader(Array.slice(arguments, 0));
     return file.slurp();
+}
+
+function slurpFileAsync(callback)
+{
+    var file = new Reader(Array.slice(arguments, 1));
+    file.slurpAsync(callback);
 }
 
 function makeDataUrlFromFile()
