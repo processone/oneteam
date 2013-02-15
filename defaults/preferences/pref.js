@@ -11,7 +11,7 @@ pref("chat.connection.overridehost", false);
 pref("chat.connection.autoconnect", false);
 pref("chat.connection.reconnect", true);
 
-pref("chat.roster.asicons", false);
+pref("chat.roster.asicons", true);
 pref("chat.roster.showoffline", true);
 pref("chat.roster.filtered", false);
 pref("chat.roster.showemptygroup", true);
