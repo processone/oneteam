@@ -1392,34 +1392,78 @@ _DECL_(domWrapper).prototype =
                 yield $Q(this.dom[i]);
     },
 
+    _mapReduce: function(emptyValue, mapFun, reduceFun, reduceInit, wrapFun) {
+        var val, valA;
+
+        if (mapFun) {
+            if (!this.dom)
+                val = emptyValue;
+            else if (this.dom instanceof Node)
+                val = mapFun(this.dom);
+            else
+                valA = Array.map(this.dom, mapFun);
+        } else {
+            if (!this.dom)
+                val = emptyValue;
+            else if (this.dom instanceof Node)
+                val = this.dom;
+            else
+                valA = this.dom;
+        }
+
+        if (reduceFun) {
+            if (valA)
+                val = valA.reduce(reduceFun, reduceInit);
+            else if (this.dom)
+                val = reduceFun(reduceInit, val);
+            else
+                val = reduceInit;
+        } else if (valA)
+            val = valA;
+
+        if (wrapFun)
+            return wrapFun(val);
+
+        return val;
+    },
+
+    _filter: function(emptyVal, filterFun, wrapFun) {
+        var val;
+
+        if (!this.dom)
+            val = emptyVal;
+        else if (this.dom instanceof Node)
+            val = filterFun(this.dom) ? this.dom : emptyVal;
+        else
+            val = Array.filter(this.dom, filterFun);
+
+        if (wrapFun)
+            return wrapFun(val);
+
+        return val;
+    },
+
     first: function(query) {
         if (!this.dom)
             return this;
 
-        if (!query)
-            if ("nodeType" in this.dom)
+        if (!query) {
+            if (this.dom instanceof Node)
                 return this;
-            else
-                return $Q(this.dom[0]);
+            return $Q(this.dom[0]);
+        }
 
-        if ("nodeType" in this.dom)
-            return $Q(this.dom.querySelector(query));
-
-        return $Q(Array.map(this.dom, function(e){
-            return el.querySelector(query)
-        }))
+        return this._mapReduce(null, function(el) {
+                                   return el.querySelector(query)
+                               }, null, null, $Q);
     },
 
     all: function(query) {
-        if (!this.dom)
-            return this;
-
-        if ("nodeType" in this.dom)
-            return $Q(this.dom.querySelectorAll(query));
-
-        return $Q(Array.reduce(this.dom, function(acc, el) {
-            return acc.concat(el.querySelectorAll(query))
-        }, []))
+        return this._mapReduce(this.dom, function(el){
+                return el.querySelectorAll(query)
+            }, function(acc, el) {
+                return Array.isArray(el) ? acc.concat(el) : el
+            }, [], $Q);
     },
 
     get length() {
@@ -1433,105 +1477,55 @@ _DECL_(domWrapper).prototype =
     },
 
     text: function(str) {
-        if (str == null) {
-            if (!this.dom)
-                return "";
+        if (str == null)
+            return this._mapReduce("", function(el){return el.textContent});
 
-            if ("nodeType" in this.dom)
-                return this.dom.textContent;
-
-            return Array.map(this.dom, function(el){return el.textContent});
-        }
-
-        if (!this.dom)
-            return this;
-
-        if ("nodeType" in this.dom)
-            return $Q._cmpStr(this.dom.textContent, str) ? this : $Q(null);
-
-        return $Q(Array.filter(this.dom, function(e){
-            return $Q._cmpStr(e.textContent, str);
-        }));
+        return this._filter(null, function(el) {
+                return $Q._cmpStr(el.textContent, str);
+            }, $Q);
     },
 
     attr: function(name, val) {
-        if (val == null) {
-            if (!this.dom)
-                return "";
+        if (val == null)
+            return this._mapReduce("", function(el){return el.getAttribute(name)});
 
-            if ("nodeType" in this.dom)
-                return this.dom.getAttribute(name);
-
-            return Array.map(this.dom, function(el){
-                return el.getAttribute(name);
-            });
-        }
-        if (!this.dom)
-            return this;
-
-        if ("nodeType" in this.dom)
-            return $Q._cmpStr(this.dom.getAttribute(name), val) ? this : $Q(null);
-
-        return $Q(Array.filter(this.dom, function(e) {
-            return $Q._cmpStr(e.getAttribute(name), val)
-        }));
+        return this._filter(null, function(el) {
+            return $Q._cmpStr(el.getAttribute(name), val)
+        }, $Q);
     },
 
     ns: function(ns) {
-        if (!ns) {
-            if (!this.dom)
-                return null;
+        if (!ns)
+            return this._mapReduce(null, function(el){return el.namespaceURI});
 
-            if ("nodeType" in this.dom)
-                return this.dom.namespaceURI;
-
-            return Array.map(this.dom, function(el){return dom.namespaceURI});
-        }
-        if (!this.dom)
-            return this;
-
-        if ("nodeType" in this.dom)
-            return $Q._cmpStr(this.dom.namespaceURI, ns) ? this : $Q(null);
-
-        return $Q(Array.filter(this.dom, function(e) {
-            return $Q._cmpStr(e.namespaceURI, ns)
-        }));
+        return this._filter(null, function(el) {
+            return $Q._cmpStr(el.namespaceURI, ns)
+        }, $Q);
     },
 
     filter: function(fun) {
-        if (!this.dom)
-            return this;
-
-        if ("nodeType" in this.dom)
-            return fun(this) ? this : $Q(null);
-
-        return $Q(Array.filter(this.dom, function(e){return fun($Q(e))}));
+        return this._filter(null, fun, $Q);
     },
 
     xml: function() {
-        if (!this.dom)
-            return "";
-
         var serializer = new XMLSerializer();
 
-        if ("nodeType" in this.dom)
-            return serializer.serializeToString(this.dom);
-
-        return "["+Array.map(this.dom, function(el) {
-            return serializer.serializeToString(el);
-        }).join(", ")+"]"
+        return this._mapReduce("", function(el){
+                return serializer.serializeToString(el);
+            }, null, null, function(str){
+                return Array.isArray(str) ? "["+str.join(", ")+"]" : str
+            });
     },
 
     toString: function() {
         if (!this.dom)
             return [];
 
-        if ("nodeType" in this.dom)
-            return "<"+this.dom.nodeName+"/>";
-
-        return "["+Array.map(this.dom, function(el) {
-            return "<"+el.nodeName+"/>";
-        }).join(", ")+"]"
+        return this._mapReduce("", function(el){
+                return "<"+el.nodeName+"/>";
+            }, null, null, function(str){
+                return Array.isArray(str) ? "["+str.join(", ")+"]" : str
+            });
     }
 }
 

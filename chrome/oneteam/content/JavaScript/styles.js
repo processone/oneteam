@@ -232,19 +232,19 @@ function SmilesIconStyle(url, iconDefData)
     var regExp = [];
 
     for each (var icon in iconDefData.all("icon")) {
-        var img = icon.all("object").attr("mime", handledMimeTypes);
+        var img = icon.all("object").attr("mime", handledMimeTypes).first();
         if (!img.length)
             continue;
 
         this.icons.push(img = {
-            img: url+"/"+img.first().text(),
+            img: url+"/"+img.text(),
             cssStyle: "-ot-smile-"+(++SmilesIconStyle.prototype._id),
             texts: icon.all("text").text()
         });
 
-        for each (var text in img.texts) {
-            regExp.push(text);
-            this.revMap[text] = img;
+        for (var i = 0; i < img.texts.length; i++) {
+            regExp.push(img.texts[i]);
+            this.revMap[img.texts[i]] = img;
         }
         this.cssRules +=
             ".smiles-enabled ."+img.cssStyle+"::before"+
@@ -334,14 +334,14 @@ function StatusIconStyle(url, iconDefData)
                                    "return "+filters.join("||"));
 
     for each (var icon in iconDefData.all("icon")) {
-        var type = icon.all("x").ns("name");
-        var img = icon.all("object").attr("mime", handledMimeTypes);
+        var type = icon.all("x").ns("name").first();
+        var img = icon.all("object").attr("mime", handledMimeTypes).first();
         if (!type.length || !img.length)
             continue;
 
         this.icons.push({
             img: url+"/"+img.first().text(),
-            type: type.first().text(),
+            type: type.text(),
             blinking: icon.all("x").ns("blink").text("true").length > 0
         });
         this.iconsMap[type.text()] = this.icons[this.icons.length-1];
