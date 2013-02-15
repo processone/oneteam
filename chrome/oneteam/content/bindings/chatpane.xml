@@ -1847,6 +1847,9 @@
       <xul:toolbarbutton id="vcardButton" oncommand="this.parentNode.model.showVCard()"
                          tooltiptext="_('Show contact details')"/>
 
+      <xul:toolbarbutton id="historyButton" oncommand="this.parentNode.model.onShowHistory()"
+                         tooltiptext="_('Show messages archive')"/>
+
       <xul:toolbarseparator id="sendFileSep"/>
 
       <xul:toolbarbutton id="sendFile" oncommand="this.parentNode._model.onSendFile()"

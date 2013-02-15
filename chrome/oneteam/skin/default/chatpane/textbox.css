@@ -128,3 +128,7 @@ toolbar[type="chatpane-commands"] dropmarker {
 #editButton[type="disabled"] {
   list-style-image: url(imgs/toolbar/edit-disabled.png);
 }
+
+#historyButton {
+  list-style-image: url(imgs/toolbar/history.png);
+}
