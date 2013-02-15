@@ -1453,6 +1453,18 @@ _DECL_(domWrapper).prototype =
             return d;
         });
 
+        var res;
+        if (res = query.match(/(.*[\s>])?([^>\s]*)\s*\|\s*([^>\s]*)(?:\s*(>))?(.*)/)) {
+            var ns = res[2] == "XULNS" ? XULNS : res[2] == "HTMLNS" ? HTMLNS : res[2];
+            var els = $Q(node).all((res[1]||"")+" "+res[3]).ns(ns);
+            query = (res[4] && res[4].search(/\S/) >= 0 ? ":context > " : "")+res[5];
+
+            if (!query.search(/\S/) >= 0)
+                return first ? els.first().dom : els.dom;
+
+            return first ? els.first(query).first().dom : els.all(query).dom;
+        }
+
         return first ? node.querySelector(query) : node.querySelectorAll(query);
     },
 
