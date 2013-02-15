@@ -98,12 +98,11 @@ var menuHandler = {
 
         idx += Array.indexOf(m.childNodes, this._tabsSep)+1;
 
-        var mi = E4XtoDOM(
-          <menuitem name="windows" class="menu-iconic"
-                    label={cp._thread.contact.visibleName}
-                    image={cp._thread.contact.avatar || defaultAvatar}
-                    oncommand="menuHandler.showChatpane(this)"/>
-        , document);
+        var mi = JSJaCBuilder.buildNode(document,
+            "menuitem", {xmlns: XULNS, name: "windows", "class": "menu-iconic",
+                         label: cp._thread.contact.visibleName,
+                         image: cp._thread.contact.avatar || defaultAvatar,
+                         oncommand:"menuHandler.showChatpane(this)"});
 
         if (idx >= m.childNodes.length)
             m.appendChild(mi);

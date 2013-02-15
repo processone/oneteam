@@ -13,9 +13,9 @@ _DECL_(SOCKS5Service).prototype =
     registerProxy: function(jid)
     {
         servicesManager.sendIq({
-          to: jid,
-          type: "get",
-          e4x: <query xmlns="http://jabber.org/protocol/bytestreams"/>
+            to: jid,
+            type: "get",
+            domBuilder: ["query", {xmlns: "http://jabber.org/protocol/bytestreams"}]
         }, new Callback(this._onProxyAddress, this));
     },
 
@@ -44,9 +44,8 @@ _DECL_(SOCKS5Service).prototype =
 
     sendFile: function(fileTransfer, rangeOffset, rangeLength)
     {
-        var bsNS = new Namespace("http://jabber.org/protocol/bytestreams");
-        var xml = <query xmlns="http://jabber.org/protocol/bytestreams" mode="tcp"
-                     sid={fileTransfer.streamID}/>;
+        var xml = ["query", {xmlns: "http://jabber.org/protocol/bytestreams",
+                            mode: "tcp", sid: fileTransfer.streamID}, []];
 
         var SOCKSHostName = hex_sha1(fileTransfer.streamID + fileTransfer.ourJid +
                                      fileTransfer.jid);
@@ -88,16 +87,16 @@ _DECL_(SOCKS5Service).prototype =
         }
 
         for (var i = 0; i < this.ipAddresses.length; i++)
-            xml.appendChild(<streamhost host={this.ipAddresses[i]} jid={fileTransfer.ourJid}
-                                port={token.bytestream.port} />);
+            xml[2].push(["streamhost", {host: this.ipAddresses[i], jid: fileTransfer.ourJid,
+                                        port: token.bytestream.port}]);
 
         for (i in this.proxies)
-            xml.appendChild(<streamhost host={this.proxies[i].host} jid={i}
-                                port={this.proxies[i].port} />);
+            xml[2].push(["streamhost", {host: this.proxies[i].host, jid: i,
+                                        port: this.proxies[i].port}]);
 
         var pkt = new JSJaCIQ();
         pkt.setIQ(fileTransfer.jid, "set");
-        pkt.getNode().appendChild(E4XtoDOM(xml, pkt.getDoc()));
+        pkt.appendNode(xml);
 
         account.connection.send(pkt, new Callback(this._sendFileStep, this), token);
 
