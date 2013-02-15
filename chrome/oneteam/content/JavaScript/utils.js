@@ -10,7 +10,7 @@ var EXPORTED_SYMBOLS = ["E4XtoDOM", "DOMtoE4X", "ppFileSize", "ppTimeInterval",
                         "createRangeForSubstring", "escapeRe", "bsearchEx",
                         "xmlUnescape", "getMimeTypeForFile", "getWindowWithType",
                         "updateMenuList", "alertEx", "fillTooltip", "XULNS",
-                        "HTMLNS", "dnsSrvRequest"];
+                        "HTMLNS", "dnsSrvRequest", "$Q"];
 
 ML.importMod("roles.js");
 
@@ -1373,6 +1373,206 @@ function dnsSrvRequest(domain, resolveHosts, callback) {
     } catch (ex) {
         callback([]);
     }
+}
+
+function domWrapper(el) {
+    this.dom = el;
+
+}
+_DECL_(domWrapper).prototype =
+{
+    __iterator__: function() {
+        if (!this.dom)
+            return;
+
+        if ("nodeType" in this.dom)
+            yield $Q(this.dom);
+        else
+            for (var i = 0; i < this.dom.length; i++)
+                yield $Q(this.dom[i]);
+    },
+
+    first: function(query) {
+        if (!this.dom)
+            return this;
+
+        if (!query)
+            if ("nodeType" in this.dom)
+                return this;
+            else
+                return $Q(this.dom[0]);
+
+        if ("nodeType" in this.dom)
+            return $Q(this.dom.querySelector(query));
+
+        return $Q(Array.map(this.dom, function(e){
+            return el.querySelector(query)
+        }))
+    },
+
+    all: function(query) {
+        if (!this.dom)
+            return this;
+
+        if ("nodeType" in this.dom)
+            return $Q(this.dom.querySelectorAll(query));
+
+        return $Q(Array.reduce(this.dom, function(acc, el) {
+            return acc.concat(el.querySelectorAll(query))
+        }, []))
+    },
+
+    get length() {
+        if (!this.dom)
+            return 0;
+
+        if ("nodeType" in this.dom)
+            return 1;
+
+        return this.dom.length;
+    },
+
+    text: function(str) {
+        if (str == null) {
+            if (!this.dom)
+                return "";
+
+            if ("nodeType" in this.dom)
+                return this.dom.textContent;
+
+            return Array.map(this.dom, function(el){return el.textContent});
+        }
+
+        if (!this.dom)
+            return this;
+
+        if ("nodeType" in this.dom)
+            return $Q._cmpStr(this.dom.textContent, str) ? this : $Q(null);
+
+        return $Q(Array.filter(this.dom, function(e){
+            return $Q._cmpStr(e.textContent, str);
+        }));
+    },
+
+    attr: function(name, val) {
+        if (val == null) {
+            if (!this.dom)
+                return "";
+
+            if ("nodeType" in this.dom)
+                return this.dom.getAttribute(name);
+
+            return Array.map(this.dom, function(el){
+                return el.getAttribute(name);
+            });
+        }
+        if (!this.dom)
+            return this;
+
+        if ("nodeType" in this.dom)
+            return $Q._cmpStr(this.dom.getAttribute(name), val) ? this : $Q(null);
+
+        return $Q(Array.filter(this.dom, function(e) {
+            return $Q._cmpStr(e.getAttribute(name), val)
+        }));
+    },
+
+    ns: function(ns) {
+        if (!ns) {
+            if (!this.dom)
+                return null;
+
+            if ("nodeType" in this.dom)
+                return this.dom.namespaceURI;
+
+            return Array.map(this.dom, function(el){return dom.namespaceURI});
+        }
+        if (!this.dom)
+            return this;
+
+        if ("nodeType" in this.dom)
+            return $Q._cmpStr(this.dom.namespaceURI, ns) ? this : $Q(null);
+
+        return $Q(Array.filter(this.dom, function(e) {
+            return $Q._cmpStr(e.namespaceURI, ns)
+        }));
+    },
+
+    filter: function(fun) {
+        if (!this.dom)
+            return this;
+
+        if ("nodeType" in this.dom)
+            return fun(this) ? this : $Q(null);
+
+        return $Q(Array.filter(this.dom, function(e){return fun($Q(e))}));
+    },
+
+    xml: function() {
+        if (!this.dom)
+            return "";
+
+        var serializer = new XMLSerializer();
+
+        if ("nodeType" in this.dom)
+            return serializer.serializeToString(this.dom);
+
+        return "["+Array.map(this.dom, function(el) {
+            return serializer.serializeToString(el);
+        }).join(", ")+"]"
+    },
+
+    toString: function() {
+        if (!this.dom)
+            return [];
+
+        if ("nodeType" in this.dom)
+            return "<"+this.dom.nodeName+"/>";
+
+        return "["+Array.map(this.dom, function(el) {
+            return "<"+el.nodeName+"/>";
+        }).join(", ")+"]"
+    }
+}
+
+var domMap, nullDomWrapper;
+
+if (typeof(WeakMap) != "undefined")
+    domMap = new WeakMap();
+
+function $Q(el) {
+    if (el == null) {
+        if (!nullDomWrapper)
+            nullDomWrapper = new domWrapper(null);
+        return nullDomWrapper;
+    }
+
+    var val;
+    if (domMap)
+        val = domMap.get(el);
+
+    if (!val) {
+        val = new domWrapper(el);
+        if (domMap)
+            domMap.set(el, val);
+    }
+
+    return val;
+}
+
+$Q.ns = function(ns) {
+    return function(e) { return e.ns() == ns }
+}
+
+$Q._cmpStr = function(str, strCmp) {
+    if (typeof(strCmp) == "string")
+        return str == strCmp;
+    if (strCmp instanceof RegExp)
+        return strCmp.exec(str);
+    if (Array.isArray(strCmp))
+        return strCmp.indexOf(str) >= 0;
+
+    return str in strCmp;
 }
 
 var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
