@@ -51,8 +51,8 @@ function ppTimeInterval(time)
         if (coeffs[i] <= time)
             break;
 
-    var t1, t2 = parseInt(time/coeffs[i]);
-    if (i != 3)
+    var t1 = parseInt(time/coeffs[i]), t2 = 0;
+    if (i < 3)
         t2 = parseInt((time-t1*coeffs[i])/coeffs[i+1]);
 
     switch (i) {
@@ -105,7 +105,7 @@ function openLink(uri)
 
 function pickFile(title, forSave, filters, path, win)
 {
-    var filtersMask;
+    var filtersMask = 0;
     var picker = Components.classes["@mozilla.org/filepicker;1"].
         createInstance(Components.interfaces.nsIFilePicker);
 
