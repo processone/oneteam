@@ -1,6 +1,6 @@
 var EXPORTED_SYMBOLS = ["RosterView", "ContactView", "GroupView",
                         "PresenceProfilesView", "ContactTooltip",
-                        "ContactsListView", "ContactsDDHandler"];
+                        "ContactsListView", "ContactsDDHandler", "ResourceTooltip"];
 
 function RosterView(node, matchGroups, negativeMatch)
 {
